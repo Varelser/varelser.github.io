@@ -7,7 +7,6 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
   const libraryScope = env.VITE_LIBRARY_SCOPE ?? process.env.VITE_LIBRARY_SCOPE ?? 'private';
     return {
-      base: mode === 'production' ? '/kalokagathia/' : '/',
       server: {
         port: 3000,
         host: '0.0.0.0',
