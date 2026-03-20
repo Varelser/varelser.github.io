@@ -205,7 +205,84 @@
     </section>
 
     <!-- ARTICLES_START -->
-    <!-- ARTICLES_END -->
+<article>
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:41:18 Z</p>
+  <h2 class="article-title">Box Maze: LLMの信頼性の高い推論のためのプロセス制御アーキテクチャ</h2>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論プロセスにおける信頼性向上を目指す「Box Maze」という新しいアーキテクチャを提案しています。<br><br>LLMは強力な生成能力を持つ一方で、幻覚や不確かな推論といった課題を抱えています。既存の安全対策は行動レベルに留まり、推論プロセスの整合性を保証する建築的なメカニズムが不足していました。Box Mazeは、推論を「記憶の接地」「構造化推論」「境界強制」の3つの明示的なレイヤーに分解します。<br><br>シミュレーションベースの評価では、複数のLLMシステムに対し、境界侵食シナリオを用いて検証が行われました。その結果、Box Mazeのアーキテクチャ的制約により、敵対的条件下での境界失敗率が約40%から1%未満に大幅に低減されることが示唆されました。<br><br>この研究は、シミュレーションに基づいた予備的な結果ですが、プロセスレベルでの制御がLLMの推論信頼性向上に有望な方向性であることを示しています。今後の実世界での検証が期待されます。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.AI<br>
+    著者：Zou Qiang<br>
+    分類：cs.AI, cs.CL<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19182v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:41 Z</p>
+  <h2 class="article-title">FinTradeBench: LLMのための金融推論ベンチマーク</h2>
+  <div class="summary">本論文は、LLMが金融分野における意思決定を行う能力を評価するための新しいベンチマーク「FinTradeBench」を提案しています。<br><br>現実世界の金融意思決定には、企業財務情報や市場の取引シグナルといった多様な情報源からの推論が必要です。既存のベンチマークは主に財務諸表データに焦点を当てており、市場での取引やファンダメンタルズとの相互作用に関する推論を十分に評価できていませんでした。FinTradeBenchは、企業ファンダメンタルズと取引シグナルを統合し、1,400の質問から構成されています。<br><br>このベンチマークは、「ファンダメンタルズ中心」「取引シグナル中心」「ハイブリッド（クロスシグナル推論）」の3つの推論カテゴリに分類されます。評価手法には、専門家による質問作成、複数モデルによる応答生成、自己フィルタリング、数値監査、人間とLLMによる評価者の整合性確保といった、信頼性を高めるためのフレームワークが採用されています。<br><br>14のLLMをゼロショットおよび検索拡張設定で評価した結果、明確な性能差が見られました。特に、テキストベースのファンダメンタルズ推論では検索拡張が有効でしたが、取引シグナル推論への効果は限定的でした。これは、現在のLLMにおける数値的・時系列推論の課題を浮き彫りにし、今後の金融知能研究の方向性を示唆しています。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.AI<br>
+    著者：Yogesh Agrawal, Aniruddha Dutta, Md Mahadi Hasan, Santu Karmaker, Aritra Dutta<br>
+    分類：cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19225v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19225v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:20:56 Z</p>
+  <h2 class="article-title">意味と測定：ビジョン言語ナビゲーションのためのマルチエージェント確率的接地</h2>
+  <div class="summary">本論文は、ロボットが自然言語の指示を物理的に実現可能な行動に変換する能力、特に「冷蔵庫の右に2メートル進む」といった指示における意味的・計量的制約の理解を向上させるための「MAPG（Multi-Agent Probabilistic Grounding）」フレームワークを提案しています。<br><br>現在のビジョン言語モデル（VLM）は意味的な理解に優れていますが、物理空間における計量的な制約の推論は苦手としています。MAPGは、言語指示を構造化されたサブコンポーネントに分解し、VLMに各コンポーネントの接地を問い合わせます。その後、これらの接地された出力を確率的に合成することで、計量的に一貫性のある、実行可能な3D空間での決定を生成します。<br><br>MAPGは、HM-EQAベンチマークで評価され、既存の強力なベースラインと比較して一貫した性能向上が示されました。さらに、計量・意味的目標接地を評価するための新しいベンチマーク「MAPG-Bench」も導入されました。これは、既存の言語接地評価におけるギャップを埋めるものです。<br><br>シミュレーションを超えた実世界でのロボットデモンストレーションも行われ、構造化されたシーン表現が利用可能な場合にMAPGが有効であることが示されました。この研究は、ロボットが人間とより効果的に協働するための基盤技術となる可能性を秘めています。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.AI<br>
+    著者：Swagat Padhan, Lakshya Jain, Bhavya Minesh Shah, Omkar Patil, Thao Nguyen, Nakul Gopalan<br>
+    分類：cs.RO, cs.AI, cs.CL, cs.CV, cs.LG<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19166v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19166v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:50:07 Z</p>
+  <h2 class="article-title">LLMの聴覚知識がオーディオ言語モデルに与える影響：包括的評価</h2>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が大規模オーディオ言語モデル（LALM）の知識基盤として広く利用されている現状に着目し、テキストのみの事前学習を通じてLLMがどの程度の聴覚知識をエンコードしているか、そしてそれが下流タスクのパフォーマンスにどのように影響するかを明らかにすることを目的としています。<br><br>このギャップを研究するため、著者らはテキストのみの2つの設定と、オーディオを考慮した1つの設定で異なるLLMを比較評価しました。具体的には、聴覚知識の幅と深さをテストするベンチマーク「AKB-2000」での直接的なプロービング、オーディオキャプショナーからのテキスト記述に対するLLMの推論能力を評価するカスケード評価、そしてオーディオエンコーダーと共にLLMをLALMにファインチューニングするオーディオグラウンデッド評価を実施しました。<br><br>実験の結果、LLMファミリー間で聴覚知識のエンコード量に大きなばらつきがあること、そしてテキストのみでの評価結果がオーディオタスクのパフォーマンスと強く相関することが明らかになりました。本研究は、オーディオ分野におけるLLMの理解を深めるための経験的な基盤を提供します。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.CL<br>
+    著者：Ke-Han Lu, Szu-Wei Fu, Chao-Han Huck Yang, Zhehuai Chen, Sung-Feng Huang, Chih-Kai Yang, Yi-Cheng Lin, Chi-Yuan Hsiao<br>
+    分類：eess.AS, cs.CL, cs.SD<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19195v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19195v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:23:20 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける反事実的戦略的推論の評価</h2>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が、戦略的パフォーマンスにおいて真の推論を反映しているのか、それとも記憶されたパターンに依存しているのかを評価することを目的としています。この評価のために、著者らはLLMを繰り返しゲーム理論の設定で検証しました。<br><br>具体的には、囚人のジレンマ（PD）とじゃんけん（RPS）という2つの古典的なゲームを取り上げ、これらのゲームに反事実的なバリエーションを導入しました。これらのバリエーションでは、ペイオフ構造や行動ラベルが変更され、馴染みのある対称性や優位関係が破られています。これにより、LLMが変化した状況下で戦略的にどのように振る舞うかを分析しました。<br><br>多指標評価フレームワークを用いて、デフォルト設定と反事実的設定でのパフォーマンスを比較した結果、LLMは反事実的な環境において、インセンティブへの感度、構造的汎化、戦略的推論において限界を示すことが示されました。この研究は、LLMの戦略的推論能力の評価における新たな視点を提供します。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.CL<br>
+    著者：Dimitrios Georgousis, Maria Lymperaiou, Angeliki Dimitriou, Giorgos Filandrianos, Giorgos Stamou<br>
+    分類：cs.CL<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19167v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19167v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 16:59:37 Z</p>
+  <h2 class="article-title">UGID：大規模言語モデルのバイアス除去のための統一グラフ同型性</h2>
+  <div class="summary">本論文は、大規模言語モデル（LLM）に見られる顕著な社会的バイアスに着目し、そのバイアスを内部表現レベルで除去するための新しいフレームワーク「UGID（Unified Graph Isomorphism for Debiasing）」を提案しています。従来の出力レベルやデータ最適化に基づく手法ではバイアスを完全に解決できないという課題に対し、UGIDはTransformerアーキテクチャを構造化された計算グラフとしてモデル化し、注意機構をグラフのルーティングエッジ、隠れ状態をグラフノードとして捉えます。<br><br>UGIDでは、バイアス除去を、反事実的な入力間でのグラフ構造の不変性を強制する問題として定式化します。これにより、バイアスに敏感な属性の違いのみを許容し、注意ルーティングと隠れ表現の両方を効果的に制約することで、バイアスのアーキテクチャコンポーネント間での移行を防ぎます。さらに、モデルの汎用的な能力を損なうことなく、行動アライメントを達成するために、敏感なロジットに対する対数空間制約と、定義的意味を保持するための選択的アンカーベースの目的関数が導入されています。<br><br>大規模言語モデルを用いた広範な実験により、UGIDは分布内および分布外の両方の設定で効果的にバイアスを削減し、内部構造の不一致を大幅に低減することが示されました。また、モデルの安全性と有用性も維持されることが確認されました。この研究は、LLMのバイアス除去における新たなアプローチを提示し、より公平で信頼性の高いAIシステムの開発に貢献するものです。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.CL<br>
+    著者：Zikang Ding, Junchi Yao, Junhao Li, Yi Zhang, Wenbo Jiang, Hongbo Liu, Lijie Hu<br>
+    分類：cs.CL, cs.AI<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19144v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19144v1</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
   </div>
 
   <script>
