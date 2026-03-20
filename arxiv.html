@@ -156,170 +156,252 @@
     <a href="/hp/" class="back-link">← ホームに戻る</a>
     <p class="page-title">最新のAI・哲学・研究論文</p>
     <p class="page-desc">最新のAI・哲学・研究論文をAIで要約し、日付・ジャンル・分野で整理して表示します。</p>
-
     <section class="digest-controls" aria-label="論文の整理">
       <div class="digest-controls-grid">
-        <label class="control">
-          <span>日付</span>
-          <select id="filter-month">
-            <option value="">すべて</option>
-          </select>
-        </label>
-
-        <label class="control">
-          <span>ジャンル</span>
-          <select id="filter-genre">
-            <option value="">すべて</option>
-          </select>
-        </label>
-
-        <label class="control">
-          <span>分野</span>
-          <select id="filter-field">
-            <option value="">すべて</option>
-          </select>
-        </label>
-
-        <label class="control">
-          <span>配信元</span>
-          <select id="filter-source">
-            <option value="">すべて</option>
-          </select>
-        </label>
-
-        <label class="control control-wide">
-          <span>キーワード</span>
-          <input id="filter-keyword" type="search" placeholder="タイトル・要約・分類を検索" />
-        </label>
-
-        <label class="control">
-          <span>並び順</span>
-          <select id="sort-order">
-            <option value="newest">新しい順</option>
-            <option value="oldest">古い順</option>
-            <option value="title">タイトル順</option>
-          </select>
-        </label>
+        <label class="control"><span>日付</span><select id="filter-month"><option value="">すべて</option></select></label>
+        <label class="control"><span>ジャンル</span><select id="filter-genre"><option value="">すべて</option></select></label>
+        <label class="control"><span>分野</span><select id="filter-field"><option value="">すべて</option></select></label>
+        <label class="control"><span>配信元</span><select id="filter-source"><option value="">すべて</option></select></label>
+        <label class="control control-wide"><span>キーワード</span><input id="filter-keyword" type="search" placeholder="タイトル・要約・分類を検索" /></label>
+        <label class="control"><span>並び順</span><select id="sort-order"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">タイトル順</option></select></label>
       </div>
       <p id="digest-result-count" class="digest-result-count"></p>
     </section>
-
     <!-- ARTICLES_START -->
-<article>
-  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:41:18 Z</p>
-  <h2 class="article-title">Box Maze: LLMの信頼性の高い推論のためのプロセス制御アーキテクチャ</h2>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の推論プロセスにおける信頼性向上を目指す「Box Maze」という新しいアーキテクチャを提案しています。<br><br>LLMは強力な生成能力を持つ一方で、幻覚や不確かな推論といった課題を抱えています。既存の安全対策は行動レベルに留まり、推論プロセスの整合性を保証する建築的なメカニズムが不足していました。Box Mazeは、推論を「記憶の接地」「構造化推論」「境界強制」の3つの明示的なレイヤーに分解します。<br><br>シミュレーションベースの評価では、複数のLLMシステムに対し、境界侵食シナリオを用いて検証が行われました。その結果、Box Mazeのアーキテクチャ的制約により、敵対的条件下での境界失敗率が約40%から1%未満に大幅に低減されることが示唆されました。<br><br>この研究は、シミュレーションに基づいた予備的な結果ですが、プロセスレベルでの制御がLLMの推論信頼性向上に有望な方向性であることを示しています。今後の実世界での検証が期待されます。</div>
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV, cs.LG, eess.SY" data-title="実世界における自律移動ロボットの信頼性評価ベンチマーク「NavTrust」" data-timestamp="1773943191000" data-url="https://arxiv.org/abs/2603.19229v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:51 Z</p>
+  <h2 class="article-title">実世界における自律移動ロボットの信頼性評価ベンチマーク「NavTrust」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、自律移動ロボットの信頼性、特に視覚と言語によるナビゲーション（VLN）と物体目標ナビゲーション（OGN）における信頼性を評価するための統一ベンチマーク「NavTrust」を提案します。<br><br>従来の評価は正常な条件下での性能に偏っていましたが、実世界ではRGB画像、深度情報、自然言語指示などの入力に様々なノイズや劣化が生じます。NavTrustは、これらの現実的なシナリオにおける入力モダリティの劣化がナビゲーション性能に与える影響を体系的に評価します。<br><br>7つの最先端モデルの評価により、現実的な劣化条件下での性能低下が顕著であることが明らかになり、より信頼性の高い自律移動ナビゲーションシステム構築に向けた課題と方向性を示唆しています。さらに、RGB-深度劣化および指示のバリエーションに対するロバスト性向上のための4つの緩和戦略も評価されました。<br><br>本研究は、実環境でのロボットナビゲーションにおける信頼性評価の重要性を強調し、今後の研究開発における重要な基盤となることが期待されます。</div>
   <div class="source-box">
-    <strong>ソース・引用元</strong><br>
-    配信元：arXiv cs.AI<br>
-    著者：Zou Qiang<br>
-    分類：cs.AI, cs.CL<br>
-    原文URL：<a href="https://arxiv.org/abs/2603.19182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19182v1</a>
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Huaide Jiang, Yash Chaudhary, Yuping Wang, Zehao Wang, Raghav Sharma, Manan Mehta, Yang Zhou, Lichao Sun<br>
+        分類：cs.RO, cs.AI, cs.CV, cs.LG, eess.SY<br>
+        分野：cs.RO<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19229v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19229v1</a>
   </div>
 </article>
 
-<article>
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP" data-title="FinTradeBench: LLMのための金融推論ベンチマーク" data-timestamp="1773943181000" data-url="https://arxiv.org/abs/2603.19225v1">
   <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:41 Z</p>
   <h2 class="article-title">FinTradeBench: LLMのための金融推論ベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CE</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IR</span></div>
   <div class="summary">本論文は、LLMが金融分野における意思決定を行う能力を評価するための新しいベンチマーク「FinTradeBench」を提案しています。<br><br>現実世界の金融意思決定には、企業財務情報や市場の取引シグナルといった多様な情報源からの推論が必要です。既存のベンチマークは主に財務諸表データに焦点を当てており、市場での取引やファンダメンタルズとの相互作用に関する推論を十分に評価できていませんでした。FinTradeBenchは、企業ファンダメンタルズと取引シグナルを統合し、1,400の質問から構成されています。<br><br>このベンチマークは、「ファンダメンタルズ中心」「取引シグナル中心」「ハイブリッド（クロスシグナル推論）」の3つの推論カテゴリに分類されます。評価手法には、専門家による質問作成、複数モデルによる応答生成、自己フィルタリング、数値監査、人間とLLMによる評価者の整合性確保といった、信頼性を高めるためのフレームワークが採用されています。<br><br>14のLLMをゼロショットおよび検索拡張設定で評価した結果、明確な性能差が見られました。特に、テキストベースのファンダメンタルズ推論では検索拡張が有効でしたが、取引シグナル推論への効果は限定的でした。これは、現在のLLMにおける数値的・時系列推論の課題を浮き彫りにし、今後の金融知能研究の方向性を示唆しています。</div>
   <div class="source-box">
-    <strong>ソース・引用元</strong><br>
-    配信元：arXiv cs.AI<br>
-    著者：Yogesh Agrawal, Aniruddha Dutta, Md Mahadi Hasan, Santu Karmaker, Aritra Dutta<br>
-    分類：cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP<br>
-    原文URL：<a href="https://arxiv.org/abs/2603.19225v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19225v1</a>
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yogesh Agrawal, Aniruddha Dutta, Md Mahadi Hasan, Santu Karmaker, Aritra Dutta<br>
+        分類：cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP<br>
+        分野：cs.CE<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19225v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19225v1</a>
   </div>
 </article>
 
-<article>
-  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:20:56 Z</p>
-  <h2 class="article-title">意味と測定：ビジョン言語ナビゲーションのためのマルチエージェント確率的接地</h2>
-  <div class="summary">本論文は、ロボットが自然言語の指示を物理的に実現可能な行動に変換する能力、特に「冷蔵庫の右に2メートル進む」といった指示における意味的・計量的制約の理解を向上させるための「MAPG（Multi-Agent Probabilistic Grounding）」フレームワークを提案しています。<br><br>現在のビジョン言語モデル（VLM）は意味的な理解に優れていますが、物理空間における計量的な制約の推論は苦手としています。MAPGは、言語指示を構造化されたサブコンポーネントに分解し、VLMに各コンポーネントの接地を問い合わせます。その後、これらの接地された出力を確率的に合成することで、計量的に一貫性のある、実行可能な3D空間での決定を生成します。<br><br>MAPGは、HM-EQAベンチマークで評価され、既存の強力なベースラインと比較して一貫した性能向上が示されました。さらに、計量・意味的目標接地を評価するための新しいベンチマーク「MAPG-Bench」も導入されました。これは、既存の言語接地評価におけるギャップを埋めるものです。<br><br>シミュレーションを超えた実世界でのロボットデモンストレーションも行われ、構造化されたシーン表現が利用可能な場合にMAPGが有効であることが示されました。この研究は、ロボットが人間とより効果的に協働するための基盤技術となる可能性を秘めています。</div>
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="多言語世界のための包括的で効率的な埋め込みモデル「F2LLM-v2」" data-timestamp="1773943161000" data-url="https://arxiv.org/abs/2603.19223v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:21 Z</p>
+  <h2 class="article-title">多言語世界のための包括的で効率的な埋め込みモデル「F2LLM-v2」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文では、8つの異なるサイズ（80Mから14B）を持つ新しい汎用多言語埋め込みモデルファミリー「F2LLM-v2」を発表します。<br><br>新たにキュレーションされた6000万件の高品質な公開データサンプルからなる複合データセットで学習されたF2LLM-v2は、200以上の言語をサポートし、特にこれまで十分にサポートされてこなかった中・低リソース言語に重点を置いています。2段階のLLMベース埋め込み学習パイプラインに、マトゥリョーシュカ学習、モデルプルーニング、知識蒸留技術を統合することで、以前のLLMベース埋め込みモデルよりもはるかに効率的でありながら、競争力のある性能を維持するモデルを実現しました。<br><br>広範な評価により、F2LLM-v2-14Bが11のMTEBベンチマークで1位を獲得し、ファミリー内の小規模モデルもリソース制約のあるアプリケーションにおいて新たな最先端技術を確立していることが確認されました。オープンソースの埋め込みモデル研究を促進するため、すべてのモデル、データ、コード、中間チェックポイントを公開します。</div>
   <div class="source-box">
-    <strong>ソース・引用元</strong><br>
-    配信元：arXiv cs.AI<br>
-    著者：Swagat Padhan, Lakshya Jain, Bhavya Minesh Shah, Omkar Patil, Thao Nguyen, Nakul Gopalan<br>
-    分類：cs.RO, cs.AI, cs.CL, cs.CV, cs.LG<br>
-    原文URL：<a href="https://arxiv.org/abs/2603.19166v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19166v1</a>
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Ziyin Zhang, Zihan Liao, Hang Yu, Peng Di, Rui Wang<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19223v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19223v1</a>
   </div>
 </article>
 
-<article>
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="「Nemotron-Cascade 2」：カスケード強化学習とマルチドメイン蒸留による大規模言語モデルのポストトレーニング" data-timestamp="1773943132000" data-url="https://arxiv.org/abs/2603.19220v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:58:52 Z</p>
+  <h2 class="article-title">「Nemotron-Cascade 2」：カスケード強化学習とマルチドメイン蒸留による大規模言語モデルのポストトレーニング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文では、オープンソースの大規模言語モデル（LLM）「Nemotron-Cascade 2」を紹介します。これは30億パラメータ（アクティブパラメータ3億）のMoEモデルであり、最先端の推論能力とエージェント能力を備えています。<br><br>このモデルは、そのコンパクトなサイズにもかかわらず、数学やコーディングの推論性能において最先端のオープンモデルに匹敵します。特に、国際数学オリンピック（IMO）、国際情報オリンピック（IOI）、ICPC世界大会において、わずか20分の1のパラメータ数で金メダルレベルの性能を達成しました。これは、非常に高い知能密度を示しています。<br><br>Nemotron-Cascade 1からの主な技術的進歩は、カスケード強化学習（Cascade RL）の適用範囲を大幅に拡大し、より広範な推論およびエージェントドメインをカバーしたことです。さらに、Cascade RLプロセス中に各ドメインの強力な中間教師モデルからのマルチドメインオンポリシー蒸留を導入し、性能向上を効率的に維持しました。<br><br>本研究は、効率的かつ高性能なLLMの開発手法を示し、オープンソースコミュニティへの貢献としてモデルチェックポイントとトレーニングデータが公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zhuolin Yang, Zihan Liu, Yang Chen, Wenliang Dai, Boxin Wang, Sheng-Chieh Lin, Chankyu Lee, Yangyi Chen<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19220v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19220v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="eess.AS" data-source="arXiv cs.CL" data-area="AI" data-categories="eess.AS, cs.CL, cs.SD" data-title="LLMの聴覚知識がオーディオ言語モデルに与える影響：包括的評価" data-timestamp="1773942607000" data-url="https://arxiv.org/abs/2603.19195v1">
   <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:50:07 Z</p>
   <h2 class="article-title">LLMの聴覚知識がオーディオ言語モデルに与える影響：包括的評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">eess.AS</span><span class="tag">cs.CL</span><span class="tag">cs.SD</span></div>
   <div class="summary">本論文は、大規模言語モデル（LLM）が大規模オーディオ言語モデル（LALM）の知識基盤として広く利用されている現状に着目し、テキストのみの事前学習を通じてLLMがどの程度の聴覚知識をエンコードしているか、そしてそれが下流タスクのパフォーマンスにどのように影響するかを明らかにすることを目的としています。<br><br>このギャップを研究するため、著者らはテキストのみの2つの設定と、オーディオを考慮した1つの設定で異なるLLMを比較評価しました。具体的には、聴覚知識の幅と深さをテストするベンチマーク「AKB-2000」での直接的なプロービング、オーディオキャプショナーからのテキスト記述に対するLLMの推論能力を評価するカスケード評価、そしてオーディオエンコーダーと共にLLMをLALMにファインチューニングするオーディオグラウンデッド評価を実施しました。<br><br>実験の結果、LLMファミリー間で聴覚知識のエンコード量に大きなばらつきがあること、そしてテキストのみでの評価結果がオーディオタスクのパフォーマンスと強く相関することが明らかになりました。本研究は、オーディオ分野におけるLLMの理解を深めるための経験的な基盤を提供します。</div>
   <div class="source-box">
-    <strong>ソース・引用元</strong><br>
-    配信元：arXiv cs.CL<br>
-    著者：Ke-Han Lu, Szu-Wei Fu, Chao-Han Huck Yang, Zhehuai Chen, Sung-Feng Huang, Chih-Kai Yang, Yi-Cheng Lin, Chi-Yuan Hsiao<br>
-    分類：eess.AS, cs.CL, cs.SD<br>
-    原文URL：<a href="https://arxiv.org/abs/2603.19195v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19195v1</a>
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Ke-Han Lu, Szu-Wei Fu, Chao-Han Huck Yang, Zhehuai Chen, Sung-Feng Huang, Chih-Kai Yang, Yi-Cheng Lin, Chi-Yuan Hsiao<br>
+        分類：eess.AS, cs.CL, cs.SD<br>
+        分野：eess.AS<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19195v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19195v1</a>
   </div>
 </article>
 
-<article>
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="Box Maze: LLMの信頼性の高い推論のためのプロセス制御アーキテクチャ" data-timestamp="1773942078000" data-url="https://arxiv.org/abs/2603.19182v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:41:18 Z</p>
+  <h2 class="article-title">Box Maze: LLMの信頼性の高い推論のためのプロセス制御アーキテクチャ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論プロセスにおける信頼性向上を目指す「Box Maze」という新しいアーキテクチャを提案しています。<br><br>LLMは強力な生成能力を持つ一方で、幻覚や不確かな推論といった課題を抱えています。既存の安全対策は行動レベルに留まり、推論プロセスの整合性を保証する建築的なメカニズムが不足していました。Box Mazeは、推論を「記憶の接地」「構造化推論」「境界強制」の3つの明示的なレイヤーに分解します。<br><br>シミュレーションベースの評価では、複数のLLMシステムに対し、境界侵食シナリオを用いて検証が行われました。その結果、Box Mazeのアーキテクチャ的制約により、敵対的条件下での境界失敗率が約40%から1%未満に大幅に低減されることが示唆されました。<br><br>この研究は、シミュレーションに基づいた予備的な結果ですが、プロセスレベルでの制御がLLMの推論信頼性向上に有望な方向性であることを示しています。今後の実世界での検証が期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zou Qiang<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19182v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="GPUカーネル最適化の限界を測る「SOL-ExecBench」ベンチマーク" data-timestamp="1773941402000" data-url="https://arxiv.org/abs/2603.19173v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:30:02 Z</p>
+  <h2 class="article-title">GPUカーネル最適化の限界を測る「SOL-ExecBench」ベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、GPUカーネルの最適化性能を評価するための新しいベンチマーク「SOL-ExecBench」を提案します。これは、従来のソフトウェアベースラインとの比較ではなく、ハードウェアの理論的な限界（Speed-of-Light, SOL）にどれだけ近づけるかを測定することに焦点を当てています。<br><br>SOL-ExecBenchは、言語、拡散モデル、画像、音声、動画など、様々なAIモデルから抽出された235個のCUDAカーネル最適化問題で構成されており、NVIDIA Blackwell GPUをターゲットとしています。BF16、FP8、NVFP4フォーマットに対応し、Blackwell特有の機能が重要となるカーネルも含まれています。<br><br>本ベンチマークでは、SOLARというパイプラインを用いてハードウェアに根差したSOL境界を解析的に導出し、最適化の固定目標を提供します。これにより、カーネルの性能をSOL境界に対して定量化する「SOLスコア」が算出されます。また、エージェント型最適化ツールの評価を支援するため、GPUクロックロック、キャッシュクリア、静的解析などの機能を備えたサンドボックス化された実行環境も提供されます。<br><br>SOL-ExecBenchは、GPUカーネルのベンチマーク手法を、変化するソフトウェアベースラインを上回ることから、ハードウェアの理論的限界に迫るという新たな視点へと転換させるものです。これにより、より効率的でハードウェアに最適化されたGPUカーネルの開発が促進されることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Edward Lin, Sahil Modi, Siva Kumar Sastry Hari, Qijing Huang, Zhifan Ye, Nestor Qin, Fengzhe Zhou, Yuan Zhang<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19173v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19173v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルにおける反事実的戦略的推論の評価" data-timestamp="1773941000000" data-url="https://arxiv.org/abs/2603.19167v1">
   <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:23:20 Z</p>
   <h2 class="article-title">大規模言語モデルにおける反事実的戦略的推論の評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
   <div class="summary">本論文は、大規模言語モデル（LLM）が、戦略的パフォーマンスにおいて真の推論を反映しているのか、それとも記憶されたパターンに依存しているのかを評価することを目的としています。この評価のために、著者らはLLMを繰り返しゲーム理論の設定で検証しました。<br><br>具体的には、囚人のジレンマ（PD）とじゃんけん（RPS）という2つの古典的なゲームを取り上げ、これらのゲームに反事実的なバリエーションを導入しました。これらのバリエーションでは、ペイオフ構造や行動ラベルが変更され、馴染みのある対称性や優位関係が破られています。これにより、LLMが変化した状況下で戦略的にどのように振る舞うかを分析しました。<br><br>多指標評価フレームワークを用いて、デフォルト設定と反事実的設定でのパフォーマンスを比較した結果、LLMは反事実的な環境において、インセンティブへの感度、構造的汎化、戦略的推論において限界を示すことが示されました。この研究は、LLMの戦略的推論能力の評価における新たな視点を提供します。</div>
   <div class="source-box">
-    <strong>ソース・引用元</strong><br>
-    配信元：arXiv cs.CL<br>
-    著者：Dimitrios Georgousis, Maria Lymperaiou, Angeliki Dimitriou, Giorgos Filandrianos, Giorgos Stamou<br>
-    分類：cs.CL<br>
-    原文URL：<a href="https://arxiv.org/abs/2603.19167v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19167v1</a>
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Dimitrios Georgousis, Maria Lymperaiou, Angeliki Dimitriou, Giorgos Filandrianos, Giorgos Stamou<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19167v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19167v1</a>
   </div>
 </article>
 
-<article>
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CL, cs.CV, cs.LG" data-title="意味と測定：ビジョン言語ナビゲーションのためのマルチエージェント確率的接地" data-timestamp="1773940856000" data-url="https://arxiv.org/abs/2603.19166v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:20:56 Z</p>
+  <h2 class="article-title">意味と測定：ビジョン言語ナビゲーションのためのマルチエージェント確率的接地</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、ロボットが自然言語の指示を物理的に実現可能な行動に変換する能力、特に「冷蔵庫の右に2メートル進む」といった指示における意味的・計量的制約の理解を向上させるための「MAPG（Multi-Agent Probabilistic Grounding）」フレームワークを提案しています。<br><br>現在のビジョン言語モデル（VLM）は意味的な理解に優れていますが、物理空間における計量的な制約の推論は苦手としています。MAPGは、言語指示を構造化されたサブコンポーネントに分解し、VLMに各コンポーネントの接地を問い合わせます。その後、これらの接地された出力を確率的に合成することで、計量的に一貫性のある、実行可能な3D空間での決定を生成します。<br><br>MAPGは、HM-EQAベンチマークで評価され、既存の強力なベースラインと比較して一貫した性能向上が示されました。さらに、計量・意味的目標接地を評価するための新しいベンチマーク「MAPG-Bench」も導入されました。これは、既存の言語接地評価におけるギャップを埋めるものです。<br><br>シミュレーションを超えた実世界でのロボットデモンストレーションも行われ、構造化されたシーン表現が利用可能な場合にMAPGが有効であることが示されました。この研究は、ロボットが人間とより効果的に協働するための基盤技術となる可能性を秘めています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Swagat Padhan, Lakshya Jain, Bhavya Minesh Shah, Omkar Patil, Thao Nguyen, Nakul Gopalan<br>
+        分類：cs.RO, cs.AI, cs.CL, cs.CV, cs.LG<br>
+        分野：cs.RO<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19166v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19166v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="stat.ME" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ME, stat.ML" data-title="予測駆動推論における差分推定量の根拠としてのPPI" data-timestamp="1773940588000" data-url="https://arxiv.org/abs/2603.19160v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 17:16:28 Z</p>
+  <h2 class="article-title">予測駆動推論における差分推定量の根拠としてのPPI</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">stat.ME</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、予測駆動推論（PPI）の根幹をなす推定量が、1970年代に遡る調査サンプリングの分野における確立された推定量と等価であることを論じます。<br><br>具体的には、母集団平均に対するPPI推定量は、Casselら（1976）の差分推定量と代数的に等価であり、PPIプラスはSarndalら（2003）の一般化回帰（GREG）推定量に対応します。この等価性を認識することで、PPIのどの部分が長年の統計学の文献から受け継がれ、何が真に新しいのか、そして推論の主張にはどのような注意が必要かを考察します。<br><br>PPIとモデル支援推定との違いを分析し、推論のモード、ラベルなしデータプールにおける役割、そして差分予測誤差が平均処置効果などのサブグループ推定値に与える影響の違いを明らかにします。PPI研究者は、キャリブレーション、最適配分、設計ベースの診断に関する調査サンプリング文献の理論を活用でき、調査サンプリング研究者は、非標準的な推定値への拡張や、アクセスしやすいソフトウェアエコシステムから恩恵を受けることができます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Reagan Mozer<br>
+        分類：stat.ME, stat.ML<br>
+        分野：stat.ME<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19160v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19160v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="低リソース言語向け可変エントロピー方策最適化モデル「VEPO」" data-timestamp="1773940229000" data-url="https://arxiv.org/abs/2603.19152v1">
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:10:29 Z</p>
+  <h2 class="article-title">低リソース言語向け可変エントロピー方策最適化モデル「VEPO」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、低リソース言語における大規模言語モデルの性能低下問題に対処するため、可変エントロピー方策最適化（VEPO）を提案します。<br><br>VEPOは、検証可能な報酬を用いた強化学習を活用し、決定論的な構造的制約を方策アライメントプロセスに組み込みます。これにより、学習中に指定されたシーケンス長、形式の一貫性、言語的な適切性が保証されます。特に、エントロピーの可変メカニズムにより、モデルは文字通りの忠実性と意味的な自然さの間の均衡を動的に調整します。<br><br>エントロピーを調整したアドバンテージ推定と非対称クリッピングを統合することで、VEPOは頑健な探索を維持しつつ、方策の崩壊を軽減します。90のFLORES-200、COMET-22、chrF方向での実証評価により、VEPOはトークン化効率と翻訳品質の両方で大幅な改善をもたらし、過小評価されている言語の性能ギャップを埋めることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Chonghan Liu, Yimin Du, Qi An, Xin He, Cunqi Zhai, Fei Tan, Weijia Lin, Xiaochun Gong<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19152v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19152v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="UGID：大規模言語モデルのバイアス除去のための統一グラフ同型性" data-timestamp="1773939577000" data-url="https://arxiv.org/abs/2603.19144v1">
   <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 16:59:37 Z</p>
   <h2 class="article-title">UGID：大規模言語モデルのバイアス除去のための統一グラフ同型性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
   <div class="summary">本論文は、大規模言語モデル（LLM）に見られる顕著な社会的バイアスに着目し、そのバイアスを内部表現レベルで除去するための新しいフレームワーク「UGID（Unified Graph Isomorphism for Debiasing）」を提案しています。従来の出力レベルやデータ最適化に基づく手法ではバイアスを完全に解決できないという課題に対し、UGIDはTransformerアーキテクチャを構造化された計算グラフとしてモデル化し、注意機構をグラフのルーティングエッジ、隠れ状態をグラフノードとして捉えます。<br><br>UGIDでは、バイアス除去を、反事実的な入力間でのグラフ構造の不変性を強制する問題として定式化します。これにより、バイアスに敏感な属性の違いのみを許容し、注意ルーティングと隠れ表現の両方を効果的に制約することで、バイアスのアーキテクチャコンポーネント間での移行を防ぎます。さらに、モデルの汎用的な能力を損なうことなく、行動アライメントを達成するために、敏感なロジットに対する対数空間制約と、定義的意味を保持するための選択的アンカーベースの目的関数が導入されています。<br><br>大規模言語モデルを用いた広範な実験により、UGIDは分布内および分布外の両方の設定で効果的にバイアスを削減し、内部構造の不一致を大幅に低減することが示されました。また、モデルの安全性と有用性も維持されることが確認されました。この研究は、LLMのバイアス除去における新たなアプローチを提示し、より公平で信頼性の高いAIシステムの開発に貢献するものです。</div>
   <div class="source-box">
-    <strong>ソース・引用元</strong><br>
-    配信元：arXiv cs.CL<br>
-    著者：Zikang Ding, Junchi Yao, Junhao Li, Yi Zhang, Wenbo Jiang, Hongbo Liu, Lijie Hu<br>
-    分類：cs.CL, cs.AI<br>
-    原文URL：<a href="https://arxiv.org/abs/2603.19144v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19144v1</a>
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zikang Ding, Junchi Yao, Junhao Li, Yi Zhang, Wenbo Jiang, Hongbo Liu, Lijie Hu<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19144v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19144v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
   </div>
-
   <script>
     (function(){
       function byId(id){ return document.getElementById(id); }
-
       function normalize(text){
         try {
-          return String(text || '').toLowerCase().normalize('NFKC').replace(/\s+/g, ' ').trim();
+          return String(text || "").toLowerCase().normalize("NFKC").replace(/\s+/g, " ").trim();
         } catch (e) {
-          return String(text || '').toLowerCase().replace(/\s+/g, ' ').trim();
+          return String(text || "").toLowerCase().replace(/\s+/g, " ").trim();
         }
       }
-
       function uniqueSorted(list){
         return Array.from(new Set(list.filter(Boolean))).sort(function(a, b){
-          return String(a).localeCompare(String(b), 'ja');
+          return String(a).localeCompare(String(b), "ja");
         });
       }
-
       function fillSelect(select, values){
         if (!select) return;
-        var current = select.value || '';
-        select.innerHTML = '';
-
-        var base = document.createElement('option');
-        base.value = '';
-        base.textContent = 'すべて';
+        var current = select.value || "";
+        select.innerHTML = "";
+        var base = document.createElement("option");
+        base.value = "";
+        base.textContent = "すべて";
         select.appendChild(base);
-
         values.forEach(function(value){
-          var option = document.createElement('option');
+          var option = document.createElement("option");
           option.value = value;
           option.textContent = value;
           select.appendChild(option);
         });
-
         for (var i = 0; i < select.options.length; i++) {
           if (select.options[i].value === current) {
             select.value = current;
@@ -327,84 +409,68 @@
           }
         }
       }
-
       function getArticles(){
-        return Array.prototype.slice.call(document.querySelectorAll('article.digest-article'));
+        return Array.prototype.slice.call(document.querySelectorAll("article.digest-article"));
       }
-
       function buildOptions(){
         var articles = getArticles();
-        fillSelect(byId('filter-month'), uniqueSorted(articles.map(function(el){ return el.dataset.month || ''; })).reverse());
-        fillSelect(byId('filter-genre'), uniqueSorted(articles.map(function(el){ return el.dataset.genre || ''; })));
-        fillSelect(byId('filter-field'), uniqueSorted(articles.map(function(el){ return el.dataset.field || ''; })));
-        fillSelect(byId('filter-source'), uniqueSorted(articles.map(function(el){ return el.dataset.source || ''; })));
+        fillSelect(byId("filter-month"), uniqueSorted(articles.map(function(el){ return el.dataset.month || ""; })).reverse());
+        fillSelect(byId("filter-genre"), uniqueSorted(articles.map(function(el){ return el.dataset.genre || ""; })));
+        fillSelect(byId("filter-field"), uniqueSorted(articles.map(function(el){ return el.dataset.field || ""; })));
+        fillSelect(byId("filter-source"), uniqueSorted(articles.map(function(el){ return el.dataset.source || ""; })));
       }
-
       function getKeywordHaystack(article){
         return normalize([
-          article.dataset.title || '',
-          article.dataset.genre || '',
-          article.dataset.field || '',
-          article.dataset.source || '',
-          article.dataset.categories || '',
-          article.textContent || ''
-        ].join(' '));
+          article.dataset.title || "",
+          article.dataset.genre || "",
+          article.dataset.field || "",
+          article.dataset.source || "",
+          article.dataset.categories || "",
+          article.textContent || ""
+        ].join(" "));
       }
-
       function applyFilters(){
-        var month = byId('filter-month') ? byId('filter-month').value : '';
-        var genre = byId('filter-genre') ? byId('filter-genre').value : '';
-        var field = byId('filter-field') ? byId('filter-field').value : '';
-        var source = byId('filter-source') ? byId('filter-source').value : '';
-        var keyword = normalize(byId('filter-keyword') ? byId('filter-keyword').value : '');
-        var sortOrder = byId('sort-order') ? byId('sort-order').value : 'newest';
+        var month = byId("filter-month") ? byId("filter-month").value : "";
+        var genre = byId("filter-genre") ? byId("filter-genre").value : "";
+        var field = byId("filter-field") ? byId("filter-field").value : "";
+        var source = byId("filter-source") ? byId("filter-source").value : "";
+        var keyword = normalize(byId("filter-keyword") ? byId("filter-keyword").value : "");
+        var sortOrder = byId("sort-order") ? byId("sort-order").value : "newest";
         var articles = getArticles();
 
         var matched = articles.filter(function(article){
-          if (month && (article.dataset.month || '') !== month) return false;
-          if (genre && (article.dataset.genre || '') !== genre) return false;
-          if (field && (article.dataset.field || '') !== field) return false;
-          if (source && (article.dataset.source || '') !== source) return false;
+          if (month && (article.dataset.month || "") !== month) return false;
+          if (genre && (article.dataset.genre || "") !== genre) return false;
+          if (field && (article.dataset.field || "") !== field) return false;
+          if (source && (article.dataset.source || "") !== source) return false;
           if (keyword && getKeywordHaystack(article).indexOf(keyword) === -1) return false;
           return true;
         });
 
         var sorted = matched.slice().sort(function(a, b){
-          if (sortOrder === 'oldest') {
-            return Number(a.dataset.timestamp || 0) - Number(b.dataset.timestamp || 0);
-          }
-          if (sortOrder === 'title') {
-            return String(a.dataset.title || '').localeCompare(String(b.dataset.title || ''), 'ja');
-          }
+          if (sortOrder === "oldest") return Number(a.dataset.timestamp || 0) - Number(b.dataset.timestamp || 0);
+          if (sortOrder === "title") return String(a.dataset.title || "").localeCompare(String(b.dataset.title || ""), "ja");
           return Number(b.dataset.timestamp || 0) - Number(a.dataset.timestamp || 0);
         });
 
-        articles.forEach(function(article){
-          article.style.display = 'none';
-        });
-
+        articles.forEach(function(article){ article.style.display = "none"; });
         sorted.forEach(function(article){
-          article.style.display = '';
+          article.style.display = "";
           article.parentNode.appendChild(article);
         });
 
-        var counter = byId('digest-result-count');
-        if (counter) {
-          counter.textContent = '表示件数: ' + matched.length + ' / ' + articles.length;
-        }
+        var counter = byId("digest-result-count");
+        if (counter) counter.textContent = "表示件数: " + matched.length + " / " + articles.length;
       }
 
-      document.addEventListener('DOMContentLoaded', function(){
+      document.addEventListener("DOMContentLoaded", function(){
         buildOptions();
-
-        ['filter-month', 'filter-genre', 'filter-field', 'filter-source', 'sort-order'].forEach(function(id){
+        ["filter-month", "filter-genre", "filter-field", "filter-source", "sort-order"].forEach(function(id){
           var el = byId(id);
-          if (el) el.addEventListener('change', applyFilters);
+          if (el) el.addEventListener("change", applyFilters);
         });
-
-        var keyword = byId('filter-keyword');
-        if (keyword) keyword.addEventListener('input', applyFilters);
-
+        var keyword = byId("filter-keyword");
+        if (keyword) keyword.addEventListener("input", applyFilters);
         applyFilters();
       });
     })();
