@@ -102,6 +102,84 @@
     <p class="page-desc">arXiv の最新AI論文をAIで日本語要約し、定期更新しています。</p>
 <!-- ARTICLES_START -->
 <article>
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 14:54:38 Z</p>
+  <h2 class="article-title">OmniAnomalyによる異常検知の再評価：PCAベースモデルとの性能比較</h2>
+  <div class="summary">本論文は、多変量時系列異常検知（MTSAD）における深層学習モデルの性能評価の不均一性を指摘し、広く用いられているOmniAnomalyモデルと主成分分析（PCA）ベースの線形モデルを比較検討しています。<br><br>両モデルは同一の閾値設定と評価プロトコルに基づき、28台のサーバーマシンデータセットを用いて100回の実験を繰り返し評価されました。評価指標には、ポイントレベルでの適合率、再現率、F1スコアが用いられ、ポイント調整の有無や集約戦略による影響も分析されています。<br><br>実験の結果、マシンごとに性能のばらつきが大きいことが明らかになりました。特に、ポイント調整なしの場合、PCAがOmniAnomalyと同等、あるいはそれ以上の性能を示すことが示されました。この結果は、現在のベンチマーク手法における複雑なアーキテクチャの付加価値に疑問を投げかけ、MTSAD研究における評価方法論の重要性を強調しています。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv stat.ML<br>
+    著者：Bruna Alves, Ana Martins, Armando J. Pinho, Sónia Gouveia<br>
+    分類：stat.ML, cs.LG<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.18985v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.18985v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:59:12 Z</p>
+  <h2 class="article-title">スペクトル情報に基づく拡散モデルのノイズスケジュール設計</h2>
+  <div class="summary">本研究は、高品質な画像・動画生成に用いられるデノイジング拡散モデルの性能を向上させるため、ノイズスケジュールの設計手法を提案しています。ノイズスケジュールは、モデルの性能に大きく影響しますが、従来は手作業での調整が必要でした。<br><br>提案手法では、画像のスペクトル特性に基づいて、インスタンスごとに最適なノイズスケジュールを設計します。理論的な境界を導出し、冗長なステップを排除した「タイトな」ノイズスケジュールを作成します。さらに、推論時には条件付きでノイズスケジュールをサンプリングする手法も導入しています。<br><br>実験の結果、提案されたノイズスケジュールは、特に低ステップ数での生成品質を向上させることが示されました。このアプローチは、手作業によるチューニングを削減し、拡散モデルの効率と生成能力を高める可能性を示唆しています。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.LG<br>
+    著者：Carlos Esteves, Ameesh Makadia<br>
+    分類：cs.CV, cs.LG<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19222v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19222v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:53:32 Z</p>
+  <h2 class="article-title">フィッシング検出における頑健性、コスト、攻撃対象の集中度</h2>
+  <div class="summary">本論文は、フィッシング検出器の実際の運用におけるセキュリティ上の課題、特に攻撃者による特徴量の操作に対する頑健性に焦点を当てています。従来の評価では高い精度を示すものの、実環境では脆弱性が存在します。<br><br>研究では、コストを考慮した回避フレームワークを導入し、攻撃者の予算内で離散的かつ単調な特徴量編集をモデル化しました。最小回避コスト（MEC）、回避生存率、頑健性集中度指数（RCI）の3つの診断指標を提案しています。UCIフィッシングウェブサイトベンチマークデータセットを用いた実験では、様々なモデルが静的評価では高い精度を示しましたが、予算付きの回避攻撃下では、少数の低コストな特徴量に攻撃が集中する傾向が見られました。<br><br>結果として、モデルの複雑さよりも、特徴量の経済性（コストと影響度）がフィッシング検出の頑健性を決定する重要な要因であることが示されました。この知見は、より効果的なフィッシング対策システムの設計に貢献する可能性があります。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.LG<br>
+    著者：Julian Allagan, Mohamed Elbakary, Zohreh Safari, Weizheng Gao, Gabrielle Morgan, Essence Morgan, Vladimir Deriglazov<br>
+    分類：cs.LG<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19204v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19204v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:43:12 Z</p>
+  <h2 class="article-title">共変量不一致下でのRCTに基づく処置効果推定の改善：キャリブレーションアラインメントによるアプローチ</h2>
+  <div class="summary">本論文は、ランダム化比較試験（RCT）に基づく異質的処置効果の推定において、共変量の不一致問題に対処するための新しい手法「CALM（Calibrated ALignment under covariate Mismatch）」を提案します。<br><br>CALMは、インピュテーションを回避し、各データソースの特徴量を共通の表現空間にマッピングする埋め込み（embedding）を学習します。観測研究（OS）の処置効果モデルをRCTの埋め込み空間に転送し、ランダム化による因果関係の特定性を維持しながら、試験データを用いてキャリブレーションを行います。<br><br>提案手法は、埋め込みアラインメント誤差、アウトカムモデルの複雑さ、キャリブレーションの複雑さに基づいてリスクを分解し、埋め込みアラインメントがインピュテーションを上回る条件を特定します。シミュレーション実験では、キャリブレーションベースの手法が線形CATEにおいて同等であり、ニューラル埋め込み変種が非線形レジーム設定で大きな差をつけて優位であることを確認しました。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.LG<br>
+    著者：Amir Asiaee, Samhita Pal<br>
+    分類：cs.LG<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19186v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19186v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 16:42:05 Z</p>
+  <h2 class="article-title">推論モデルにおける不確実性推定のサンプリングによるスケーリング特性</h2>
+  <div class="summary">本論文は、推論言語モデルにおける不確実性推定の重要性に焦点を当て、特に連鎖的思考（chain-of-thought）推論が拡張された場合の挙動を調査します。<br><br>提案手法は、言語化された信頼度（verbalized confidence）と自己整合性（self-consistency）を用いる、完全にブラックボックスな並列サンプリングアプローチです。3つの推論モデルと17のタスク（数学、STEM、人文科学）を用いて、これらの信号がどのようにスケーリングするかを特徴づけます。<br><br>自己整合性と言語化された信頼度の両方が推論モデルでスケーリングしますが、自己整合性は初期の識別力が低く、中程度のサンプリングでは言語化された信頼度に遅れをとることが示されました。しかし、不確実性の改善の大部分は信号の組み合わせからもたらされ、わずか2つのサンプルでハイブリッド推定器がAUROCを平均で最大+12向上させ、サンプリング数を増やしても単独の信号を上回ることが示されました。これらの効果はドメイン依存的であり、特に数学ドメインで不確実性の質が高く、補完性とスケーリング速度が速いことが明らかになりました。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv cs.CL<br>
+    著者：Maksym Del, Markus Kängsepp, Marharyta Domnich, Ardi Tampuu, Lisa Yankovskaya, Meelis Kull, Mark Fishel<br>
+    分類：cs.AI, cs.CL, cs.LG<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19118v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19118v1</a>
+  </div>
+</article>
+
+<article>
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 15:38:12 Z</p>
+  <h2 class="article-title">ニューラルネットワーク誤差逆伝播を用いた高速かつ解釈可能な自己回帰推定</h2>
+  <div class="summary">本論文は、時系列分析で広く用いられる自己回帰（AR）モデルのパラメータ推定における計算コストと収束性の問題を解決するため、ニューラルネットワーク（NN）を用いた新しいアプローチを提案します。<br><br>提案手法は、AR構造をフィードフォワードNNに直接埋め込むことで、誤差逆伝播（backpropagation）による係数推定を可能にし、解釈性を維持します。シミュレーション実験では、提案されたNNベースの手法が、従来の条件付き最尤推定（CML）が収束に失敗するケースの約55%においても、一貫してモデル係数を回復できることが示されました。<br><br>両手法が収束した場合、推定精度は同等でしたが、NNベースの手法は大幅な計算速度の向上を実現し、モデル次数が高い場合には最大34.2倍の速度向上を達成しました。全体として、勾配降下法を用いたNN最適化が、解釈可能なARパラメータ推定のための高速かつ効率的な代替手段を提供できることを実証しています。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong><br>
+    配信元：arXiv stat.ML<br>
+    著者：Anaísa Lucena, Ana Martins, Armando J. Pinho, Sónia Gouveia<br>
+    分類：stat.ML, cs.LG<br>
+    原文URL：<a href="https://arxiv.org/abs/2603.19041v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19041v1</a>
+  </div>
+</article>
+
+<article>
   <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:58:11 Z</p>
   <h2 class="article-title">意味的に根拠付けられた、部品レベルの3D生成フレームワーク「DreamPartGen」</h2>
   <div class="summary">本論文は、意味的・機能的な部品構造を考慮した3Dオブジェクトの生成を目指す「DreamPartGen」というフレームワークを提案しています。<br><br>従来のテキストから3D生成手法では、部品の構造や意味的な関連性が十分に扱われていませんでした。DreamPartGenは、部品の形状と外観を同時にモデル化する「Duplex Part Latents (DPLs)」と、言語から導出される部品間の依存関係を捉える「Relational Semantic Latents (RSLs)」を導入します。<br><br>同期された共同デノイジングプロセスにより、幾何学的・意味的な一貫性を強制し、テキストに整合した、解釈可能で一貫性のある3D合成を実現します。複数のベンチマークにおいて、幾何学的忠実度とテキスト形状整合性で最先端の性能を示しました。</div>
