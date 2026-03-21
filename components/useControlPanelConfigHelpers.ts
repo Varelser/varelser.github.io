@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Layer2Type, ParticleConfig } from '../types';
+import { normalizeParticleContrast } from '../lib/appState';
 import { type ScreenFxPreset } from './controlPanelParts';
 
 type UseControlPanelConfigHelpersArgs = {
@@ -40,6 +41,15 @@ export function useControlPanelConfigHelpers({
         if (next.layer3Type === 'lorenz' && !prev.layer3Enabled) next.layer3Type = 'orbit';
         if (!prev.layer3Enabled) next.layer3Source = 'sphere';
         next.layer3Trail = Math.max(next.layer3Trail, 0.06);
+      }
+
+      if (key === 'particleColor' || key === 'backgroundColor') {
+        const normalized = normalizeParticleContrast({
+          particleColor: key === 'particleColor' ? (value as ParticleConfig['particleColor']) : next.particleColor,
+          backgroundColor: key === 'backgroundColor' ? (value as ParticleConfig['backgroundColor']) : next.backgroundColor,
+        });
+        next.particleColor = normalized.particleColor;
+        next.backgroundColor = normalized.backgroundColor;
       }
 
       return next;

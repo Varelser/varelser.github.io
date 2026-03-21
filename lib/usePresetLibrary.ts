@@ -59,7 +59,7 @@ export function usePresetLibrary({
       return;
     }
 
-    setConfig((prev) => buildRandomizedPresetConfig(prev));
+    setConfig((prev) => normalizeConfig(buildRandomizedPresetConfig(prev)));
   }, [isPublicLibraryMode, setConfig]);
 
   const handleCreatePreset = useCallback((name: string) => {

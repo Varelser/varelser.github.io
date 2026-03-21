@@ -11,7 +11,7 @@ export const DEFAULT_CONFIG: ParticleConfig = {
   baseSize: 1.0, sphereRadius: 50, layer1Volume: 0.0, jitter: 0.0, pulseSpeed: 0.003, pulseAmplitude: 0.5,
   layer2Enabled: false, layer2Source: 'sphere', layer2SourceCount: 1, layer2SourceSpread: 200, layer2SourcePositions: [],
   layer2Type: 'flow', layer2MotionMix: false, layer2Motions: [], layer2Count: 3000, layer2BaseSize: 0.8, layer2RadiusScale: 1.0,
-  layer2FlowSpeed: 0.005, layer2FlowAmplitude: 20, layer2FlowFrequency: 1.5, layer2Complexity: 1, layer2Trail: 0.0, layer2Life: 0, layer2LifeSpread: 0, layer2LifeSizeBoost: 0, layer2LifeSizeTaper: 0, layer2Burst: 0, layer2BurstPhase: 0, layer2BurstMode: 'radial', layer2BurstWaveform: 'decay', layer2BurstSweepSpeed: 0.9, layer2BurstSweepTilt: 0.35, layer2BurstConeWidth: 0.45, layer2EmitterOrbitSpeed: 0, layer2EmitterOrbitRadius: 0, layer2EmitterPulseAmount: 0, layer2TrailDrag: 0, layer2TrailTurbulence: 0, layer2TrailDrift: 0, layer2VelocityGlow: 0, layer2VelocityAlpha: 0, layer2FlickerAmount: 0, layer2FlickerSpeed: 1, layer2Streak: 0, layer2SpriteMode: 'soft',
+  layer2FlowSpeed: 0.005, layer2FlowAmplitude: 20, layer2FlowFrequency: 1.5, layer2Complexity: 1, layer2Trail: 0.0, layer2Life: 0, layer2LifeSpread: 0, layer2LifeSizeBoost: 0, layer2LifeSizeTaper: 0, layer2Burst: 0, layer2BurstPhase: 0, layer2BurstMode: 'radial', layer2BurstWaveform: 'single', layer2BurstSweepSpeed: 0.9, layer2BurstSweepTilt: 0.35, layer2BurstConeWidth: 0.45, layer2EmitterOrbitSpeed: 0, layer2EmitterOrbitRadius: 0, layer2EmitterPulseAmount: 0, layer2TrailDrag: 0, layer2TrailTurbulence: 0, layer2TrailDrift: 0, layer2VelocityGlow: 0, layer2VelocityAlpha: 0, layer2FlickerAmount: 0, layer2FlickerSpeed: 1, layer2Streak: 0, layer2SpriteMode: 'soft',
   layer2Counts: [], layer2Sizes: [], layer2RadiusScales: [], layer2FlowSpeeds: [], layer2FlowAmps: [], layer2FlowFreqs: [],
   layer2ConnectionEnabled: false, layer2ConnectionDistance: 50, layer2ConnectionOpacity: 0.2, layer2LineVelocityGlow: 0.35, layer2LineVelocityAlpha: 0.25, layer2LineBurstPulse: 0.25, layer2LineShimmer: 0.18, layer2LineFlickerSpeed: 1.2,
   layer2Gravity: 0, layer2Resistance: 0, layer2SpinX: 0, layer2SpinY: 0, layer2SpinZ: 0, layer2WindX: 0, layer2WindY: 0, layer2WindZ: 0,
@@ -21,7 +21,7 @@ export const DEFAULT_CONFIG: ParticleConfig = {
   layer2AuxEnabled: false, layer2AuxCount: 1800, layer2AuxLife: 50, layer2AuxDiffusion: 1.0, layer2SparkEnabled: false, layer2SparkCount: 1600, layer2SparkLife: 24, layer2SparkDiffusion: 2.5, layer2SparkBurst: 0.9,
   layer3Enabled: false, layer3Source: 'sphere', layer3SourceCount: 1, layer3SourceSpread: 200, layer3SourcePositions: [],
   layer3Type: 'flow', layer3MotionMix: false, layer3Motions: [], layer3Count: 1800, layer3BaseSize: 0.8, layer3RadiusScale: 1.0,
-  layer3FlowSpeed: 0.005, layer3FlowAmplitude: 20, layer3FlowFrequency: 1.5, layer3Complexity: 1, layer3Trail: 0.0, layer3Life: 0, layer3LifeSpread: 0, layer3LifeSizeBoost: 0, layer3LifeSizeTaper: 0, layer3Burst: 0, layer3BurstPhase: 0, layer3BurstMode: 'radial', layer3BurstWaveform: 'decay', layer3BurstSweepSpeed: 1.0, layer3BurstSweepTilt: 0.35, layer3BurstConeWidth: 0.4, layer3EmitterOrbitSpeed: 0, layer3EmitterOrbitRadius: 0, layer3EmitterPulseAmount: 0, layer3TrailDrag: 0, layer3TrailTurbulence: 0, layer3TrailDrift: 0, layer3VelocityGlow: 0, layer3VelocityAlpha: 0, layer3FlickerAmount: 0, layer3FlickerSpeed: 1, layer3Streak: 0, layer3SpriteMode: 'soft',
+  layer3FlowSpeed: 0.005, layer3FlowAmplitude: 20, layer3FlowFrequency: 1.5, layer3Complexity: 1, layer3Trail: 0.0, layer3Life: 0, layer3LifeSpread: 0, layer3LifeSizeBoost: 0, layer3LifeSizeTaper: 0, layer3Burst: 0, layer3BurstPhase: 0, layer3BurstMode: 'radial', layer3BurstWaveform: 'single', layer3BurstSweepSpeed: 1.0, layer3BurstSweepTilt: 0.35, layer3BurstConeWidth: 0.4, layer3EmitterOrbitSpeed: 0, layer3EmitterOrbitRadius: 0, layer3EmitterPulseAmount: 0, layer3TrailDrag: 0, layer3TrailTurbulence: 0, layer3TrailDrift: 0, layer3VelocityGlow: 0, layer3VelocityAlpha: 0, layer3FlickerAmount: 0, layer3FlickerSpeed: 1, layer3Streak: 0, layer3SpriteMode: 'soft',
   layer3Counts: [], layer3Sizes: [], layer3RadiusScales: [], layer3FlowSpeeds: [], layer3FlowAmps: [], layer3FlowFreqs: [],
   layer3ConnectionEnabled: false, layer3ConnectionDistance: 50, layer3ConnectionOpacity: 0.2, layer3LineVelocityGlow: 0.42, layer3LineVelocityAlpha: 0.3, layer3LineBurstPulse: 0.32, layer3LineShimmer: 0.24, layer3LineFlickerSpeed: 1.45,
   layer3Gravity: 0, layer3Resistance: 0, layer3SpinX: 0, layer3SpinY: 0, layer3SpinZ: 0, layer3WindX: 0, layer3WindY: 0, layer3WindZ: 0,
@@ -93,6 +93,17 @@ export function resolveSynthSemitoneOffset(scale: SynthScale, degree: number) {
   return interval + octave * 12;
 }
 
+export function normalizeParticleContrast<T extends Pick<ParticleConfig, 'particleColor' | 'backgroundColor'>>(config: T): T {
+  if (config.particleColor !== config.backgroundColor) {
+    return config;
+  }
+
+  return {
+    ...config,
+    backgroundColor: config.particleColor === 'black' ? 'white' : 'black',
+  };
+}
+
 export function normalizeConfig(candidate: Partial<ParticleConfig> | null | undefined): ParticleConfig {
   const merged = { ...DEFAULT_CONFIG, ...(candidate ?? {}) } as ParticleConfig;
   const mergedArrayConfig = merged as unknown as Record<string, unknown>;
@@ -102,7 +113,7 @@ export function normalizeConfig(candidate: Partial<ParticleConfig> | null | unde
     mergedArrayConfig[key] = Array.isArray(value) ? [...value] : [...defaultArrayConfig[key]];
   }
   merged.synthPattern = normalizeSynthPattern(merged.synthPattern);
-  return merged;
+  return normalizeParticleContrast(merged);
 }
 
 export function normalizeSequenceTransitionEasing(value: unknown): SequenceTransitionEasing {
