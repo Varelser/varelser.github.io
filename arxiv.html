@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Digest | VARELSER</title>
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip-bg:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;
+      line-height:1.8;
+      font-size:16px;
+    }
+    .container{
+      max-width:860px;
+      margin:0 auto;
+      padding:48px 24px;
+    }
+    .back-link{
+      display:inline-block;
+      margin-bottom:32px;
+      color:var(--muted);
+      text-decoration:none;
+      font-size:14px;
+    }
+    .back-link:hover{color:var(--fg);}
+    .page-title{
+      font-size:22px;
+      font-weight:700;
+      margin:0 0 8px;
+      letter-spacing:.02em;
+    }
+    .page-desc{
+      color:var(--muted);
+      font-size:13px;
+      margin:0 0 28px;
+    }
+    .digest-controls{
+      margin:0 0 40px;
+      padding:18px;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:10px;
+    }
+    .digest-controls-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .control{display:block;}
+    .control span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px;
+    }
+    .control select,.control input{
+      width:100%;
+      height:42px;
+      padding:0 12px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      background:#fff;
+      color:var(--fg);
+      font-size:14px;
+    }
+    .control-wide{grid-column:1 / -1;}
+    .digest-result-count{
+      margin:14px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+    article{
+      margin-bottom:56px;
+      padding-bottom:48px;
+      border-bottom:1px solid var(--border);
+    }
+    article:last-child{border-bottom:none;}
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 10px;
+      letter-spacing:.02em;
+    }
+    .article-title{
+      font-size:19px;
+      font-weight:700;
+      margin:0 0 14px;
+      line-height:1.5;
+      letter-spacing:.01em;
+    }
+    .article-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:0 0 14px;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      min-height:28px;
+      padding:0 10px;
+      border-radius:999px;
+      background:var(--chip-bg);
+      border:1px solid var(--border);
+      color:#333;
+      font-size:12px;
+      line-height:1;
+    }
+    .summary{
+      font-size:15px;
+      color:#222;
+      line-height:1.9;
+      margin-bottom:24px;
+      white-space:normal;
+    }
+    .source-box{
+      background:var(--card-bg);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:14px 16px;
+      font-size:13px;
+      color:#555;
+      line-height:1.7;
+    }
+    .source-box strong{
+      color:var(--fg);
+      display:block;
+      margin-bottom:4px;
+    }
+    .source-box a{
+      color:var(--accent);
+      word-break:break-all;
+    }
+    @media (max-width: 720px){
+      .container{padding:32px 16px;}
+      .digest-controls-grid{grid-template-columns:1fr;}
+      .control-wide{grid-column:auto;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/hp/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新のAI・哲学・研究論文</p>
+    <p class="page-desc">最新のAI・哲学・研究論文をAIで要約し、日付・ジャンル・分野で整理して表示します。</p>
+    <section class="digest-controls" aria-label="論文の整理">
+      <div class="digest-controls-grid">
+        <label class="control"><span>日付</span><select id="filter-month"><option value="">すべて</option></select></label>
+        <label class="control"><span>ジャンル</span><select id="filter-genre"><option value="">すべて</option></select></label>
+        <label class="control"><span>分野</span><select id="filter-field"><option value="">すべて</option></select></label>
+        <label class="control"><span>配信元</span><select id="filter-source"><option value="">すべて</option></select></label>
+        <label class="control control-wide"><span>キーワード</span><input id="filter-keyword" type="search" placeholder="タイトル・要約・分類を検索" /></label>
+        <label class="control"><span>並び順</span><select id="sort-order"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">タイトル順</option></select></label>
+      </div>
+      <p id="digest-result-count" class="digest-result-count"></p>
+    </section>
+    <!-- ARTICLES_START -->
+<article class="digest-article" data-month="2121-04" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="自然持続可能性倫理による宇宙空間の課題解決" data-timestamp="4774550400000" data-url="https://doi.org/10.61781/11i20212bmlm">
+  <p class="meta">Crossref Ethics　Sun, 20 Apr 2121 00:00:00 Z</p>
+  <h2 class="article-title">自然持続可能性倫理による宇宙空間の課題解決</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、宇宙空間における現在の課題を解決するための「自然持続可能性倫理」を提案するものである。<br><br>宇宙開発が進む中で、宇宙空間での採掘、観光、医療、テラフォーミングといった活動は、人間のアイデンティティや宇宙的持続可能性に関する深刻な倫理的問題を生じさせている。既存の持続可能な開発（SD）の概念は、地球中心主義的で、時間的・経済的・人間中心的なプロジェクトに限定されている。本研究では、このSDの概念を、地球を超え、時間を超え、経済を超え、人間を超えた発展へと拡張する。<br><br>本研究では、人間中心主義（自然は人間のためにある）と非人間中心主義（人間は自然のためにある）という二つの現代的見解を区別し、それぞれに自然の成果・プロセス、あるいは自然の産業的利用・成果を含めることで、4つの枠組みを構築する。この枠組みの中で、宇宙空間における進歩（OSA）の倫理的含意を探求する。また、管理上の含意と限界についても議論し、今後の研究の方向性を示唆する。<br><br>本研究は、宇宙開発に伴う倫理的課題に対し、より広範で包括的な視点を提供する。特に、持続可能性の概念を宇宙空間にまで拡張し、人間中心主義を超えた倫理的枠組みを提示する点で重要である。<br><br>本研究の知見は、宇宙開発における倫理的指針の策定や、国際的な協力体制の構築に貢献することが期待される。また、将来の宇宙利用における持続可能性を確保するための、実務的および政策的な示唆を与えるだろう。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Oswald A.J., Mascarenhas S.J.<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Journal of Business, Ethics and Society<br>
+        DOI：10.61781/11i20212bmlm<br>
+        原文URL：<a href="https://doi.org/10.61781/11i20212bmlm" target="_blank" rel="noopener">https://doi.org/10.61781/11i20212bmlm</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2103-03" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="市場の失敗か政府の失敗か：ジョルスキ氏への応答" data-timestamp="4202928000000" data-url="https://doi.org/10.12747/bejr2013.01.08">
+  <p class="meta">Crossref Ethics　Sat, 10 Mar 2103 00:00:00 Z</p>
+  <h2 class="article-title">市場の失敗か政府の失敗か：ジョルスキ氏への応答</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、市場の失敗と政府の失敗という二つの概念について、ジョルスキ氏の議論に応答する形で論じます。<br><br>具体的な方法論や着眼点については、提供されたメタデータからは詳細を把握することが困難です。しかし、タイトルから、経済学や公共政策における基本的な問題設定に対する哲学的な考察が展開されていると推測されます。<br><br>この議論は、効率的な資源配分や社会全体の厚生を最大化するための政策立案において、市場メカニズムと政府の介入のどちらに焦点を当てるべきかという、根源的な問いに対する洞察を提供する可能性があります。<br><br>ただし、公開メタデータ上の要旨情報が限定的であるため、論文の具体的な主張や結論、そしてその限界点については、現時点では詳細な言及が難しい状況です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Joseph Heath<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Business Ethics Journal Review<br>
+        DOI：10.12747/bejr2013.01.08<br>
+        原文URL：<a href="https://doi.org/10.12747/bejr2013.01.08" target="_blank" rel="noopener">https://doi.org/10.12747/bejr2013.01.08</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2036-03" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="タイトル未定 (7256)" data-timestamp="2088979200000" data-url="https://doi.org/10.3998/ptpbio.7256">
+  <p class="meta">Crossref Philosophy　Thu, 13 Mar 2036 00:00:00 Z</p>
+  <h2 class="article-title">タイトル未定 (7256)</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、公開メタデータ上の要旨情報が限定的であり、具体的な内容を特定できません。<br><br>現時点では、論文がどのようなテーマを扱い、どのような方法論や主張を展開しているのか、あるいはどのような着眼点を持っているのかについて、詳細な情報を提供することが困難です。<br><br>この論文に関する詳細な情報については、今後の公開または追加のメタデータにご注意ください。現時点では、その重要性、限界、または制作・研究・実務への示唆について述べることはできません。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Philosophy, Theory, and Practice in Biology<br>
+        DOI：10.3998/ptpbio.7256<br>
+        原文URL：<a href="https://doi.org/10.3998/ptpbio.7256" target="_blank" rel="noopener">https://doi.org/10.3998/ptpbio.7256</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2036-01" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="タイトル未定 (7433)" data-timestamp="2085091200000" data-url="https://doi.org/10.3998/ptpbio.7433">
+  <p class="meta">Crossref Philosophy　Mon, 28 Jan 2036 00:00:00 Z</p>
+  <h2 class="article-title">タイトル未定 (7433)</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、公開メタデータ上の要旨情報が限定的であり、具体的な内容を特定できません。<br><br>現時点では、論文がどのようなテーマを扱い、どのような方法論や主張を展開しているのか、あるいはどのような着眼点を持っているのかについて、詳細な情報を提供することが困難です。<br><br>この論文に関する詳細な情報については、今後の公開または追加のメタデータにご注意ください。現時点では、その重要性、限界、または制作・研究・実務への示唆について述べることはできません。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Philosophy, Theory, and Practice in Biology<br>
+        DOI：10.3998/ptpbio.7433<br>
+        原文URL：<a href="https://doi.org/10.3998/ptpbio.7433" target="_blank" rel="noopener">https://doi.org/10.3998/ptpbio.7433</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2036-01" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="未定のタイトル 8209" data-timestamp="2083881600000" data-url="https://doi.org/10.3998/ptpbio.8209">
+  <p class="meta">Crossref Philosophy　Mon, 14 Jan 2036 00:00:00 Z</p>
+  <h2 class="article-title">未定のタイトル 8209</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、生物学における哲学、理論、および実践に関するテーマを扱います。<br><br>具体的な研究内容や方法論、主張に関する詳細な情報は、提供されたメタデータからは読み取れません。この論文がどのような哲学的問いに焦点を当て、どのような理論的アプローチや実践的考察を展開するのかは不明です。<br><br>公開メタデータ上の要旨情報が限定的であるため、本論文の重要性、限界、または制作・研究・実務への示唆について具体的に述べることは困難です。さらなる情報があれば、より詳細な分析が可能です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Philosophy, Theory, and Practice in Biology<br>
+        DOI：10.3998/ptpbio.8209<br>
+        原文URL：<a href="https://doi.org/10.3998/ptpbio.8209" target="_blank" rel="noopener">https://doi.org/10.3998/ptpbio.8209</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2035-12" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="未定のタイトル 7888" data-timestamp="2081721600000" data-url="https://doi.org/10.3998/ptpbio.7888">
+  <p class="meta">Crossref Philosophy　Thu, 20 Dec 2035 00:00:00 Z</p>
+  <h2 class="article-title">未定のタイトル 7888</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、生物学分野における哲学、理論、および実践に関する考察を提供します。<br><br>提供された情報からは、論文の具体的な研究対象、採用された方法論、あるいは中心的な主張についての詳細を把握することはできません。どのような哲学的問題提起があり、どのような理論的枠組みや実践的観点から論じられているのかは不明瞭です。<br><br>公開されているメタデータのみでは、本論文の重要性、限界、または制作・研究・実務への示唆を評価することはできません。詳細な内容の開示が待たれます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Philosophy, Theory, and Practice in Biology<br>
+        DOI：10.3998/ptpbio.7888<br>
+        原文URL：<a href="https://doi.org/10.3998/ptpbio.7888" target="_blank" rel="noopener">https://doi.org/10.3998/ptpbio.7888</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2035-11" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="未定のタイトル 6744" data-timestamp="2078438400000" data-url="https://doi.org/10.3998/ptpbio.6744">
+  <p class="meta">Crossref Philosophy　Mon, 12 Nov 2035 00:00:00 Z</p>
+  <h2 class="article-title">未定のタイトル 6744</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、生物学の分野における哲学、理論、および実践に関連するテーマを探求します。<br><br>提供されたメタデータからは、論文が具体的にどのような問題を扱い、どのような方法論を採用し、どのような独自の主張を展開しているのかを特定することはできません。哲学的問い、理論的アプローチ、実践的考察のいずれについても、詳細な情報は得られていません。<br><br>公開メタデータ上の要旨情報が限定的であるため、本論文の重要性、限界、または制作・研究・実務への示唆について具体的に論じることは困難です。さらなる情報提供があれば、より深い理解が可能となります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Philosophy, Theory, and Practice in Biology<br>
+        DOI：10.3998/ptpbio.6744<br>
+        原文URL：<a href="https://doi.org/10.3998/ptpbio.6744" target="_blank" rel="noopener">https://doi.org/10.3998/ptpbio.6744</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2035-11" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="タイトル未定 9068" data-timestamp="2078006400000" data-url="https://doi.org/10.3998/ptpbio.9068">
+  <p class="meta">Crossref Philosophy　Wed, 07 Nov 2035 00:00:00 Z</p>
+  <h2 class="article-title">タイトル未定 9068</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、公開メタデータ上の要旨情報が限定的であるため、具体的な内容を特定できません。<br><br>タイトルが「Title Pending 9068」とされており、これは論文がまだ最終的なタイトル決定に至っていないか、あるいは何らかの理由でタイトル情報が一時的に保留されている状態を示唆しています。<br><br>「Philosophy, Theory, and Practice in Biology」というジャーナルに掲載される予定であることから、生物学における哲学、理論、実践に関連するテーマを扱っている可能性が考えられますが、詳細な研究内容についてはさらなる情報が必要です。<br><br>現時点では、論文の目的、方法論、結論、およびその重要性について言及することは困難です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Philosophy, Theory, and Practice in Biology<br>
+        DOI：10.3998/ptpbio.9068<br>
+        原文URL：<a href="https://doi.org/10.3998/ptpbio.9068" target="_blank" rel="noopener">https://doi.org/10.3998/ptpbio.9068</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2031-01" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="G. ガズダノフ短編小説における死の芸術的哲学" data-timestamp="1924992000000" data-url="https://doi.org/10.17223/18137083/55/9">
+  <p class="meta">Crossref Philosophy　Wed, 01 Jan 2031 00:00:00 Z</p>
+  <h2 class="article-title">G. ガズダノフ短編小説における死の芸術的哲学</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、ロシアの作家G. ガズダノフの短編小説に描かれた「死」の芸術的哲学を探求します。<br><br>ガズダノフの作品における死の表象は、単なる終焉としてではなく、人間の存在や意識、そして芸術的表現と深く結びついたテーマとして扱われています。本論文では、彼の短編小説群を分析対象とし、死に対する独特の哲学的アプローチを明らかにしようと試みます。<br><br>ガズダノフの描く死は、しばしば生の意味や価値を問い直す契機となり、登場人物の内面世界や精神的な探求に深く関わってきます。その表現は、文学的な技法と哲学的な思索が融合した、独特の芸術的様式を形成しています。<br><br>本研究は、ガズダノフ文学における死の哲学的な側面を解明することで、彼の作品の理解を深めるとともに、文学と哲学の関係性についての新たな視点を提供することを目指しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        著者：E. N. Proskurina<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Sibirskiy filologicheskiy zhurnal<br>
+        DOI：10.17223/18137083/55/9<br>
+        原文URL：<a href="https://doi.org/10.17223/18137083/55/9" target="_blank" rel="noopener">https://doi.org/10.17223/18137083/55/9</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2028-01" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="ブロックチェーン技術による持続可能な未来の創造：社会的持続可能性と組織的誇りへの変革力" data-timestamp="1830297600000" data-url="https://doi.org/10.1504/ijbpm.2028.10075554">
+  <p class="meta">Crossref Ethics　Sat, 01 Jan 2028 00:00:00 Z</p>
+  <h2 class="article-title">ブロックチェーン技術による持続可能な未来の創造：社会的持続可能性と組織的誇りへの変革力</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、ブロックチェーン技術が、企業倫理とCSRの真正性を媒介として、社会的持続可能性と組織的誇りに与える変革的な影響を探求します。<br><br>研究では、ブロックチェーン技術の導入が、企業の社会的責任（CSR）の実施において、どのように透明性や信頼性を向上させ、それが組織全体の持続可能性や従業員の誇りに繋がるのかを分析します。特に、CSR活動の真正性が、これらのポジティブな効果をどのように媒介するかという点に着眼しています。<br><br>この研究は、企業がブロックチェーン技術を活用することで、単なる技術導入に留まらず、社会的な持続可能性の向上や組織文化の醸成に貢献できる可能性を示唆しています。これは、現代の企業経営における重要な課題に対する実践的な示唆を与えるものです。<br><br>しかしながら、ブロックチェーン技術の導入に伴う技術的・制度的な課題や、その効果測定の難しさなど、本論文で十分にカバーされていない側面も存在する可能性があります。公開メタデータ上の要旨情報が限定的であるため、詳細な限界点については言及が難しい状況です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Tien Le Thi Cam<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：International Journal of Business Performance Management<br>
+        DOI：10.1504/ijbpm.2028.10075554<br>
+        原文URL：<a href="https://doi.org/10.1504/ijbpm.2028.10075554" target="_blank" rel="noopener">https://doi.org/10.1504/ijbpm.2028.10075554</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2027-06" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="台湾桃園市における基層官僚の裁量権と代表性：社会行政と原住民支援の事例研究" data-timestamp="1811808000000" data-url="https://doi.org/10.53106/1018189x202512002">
+  <p class="meta">Crossref Philosophy　Tue, 01 Jun 2027 00:00:00 Z</p>
+  <h2 class="article-title">台湾桃園市における基層官僚の裁量権と代表性：社会行政と原住民支援の事例研究</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、台湾桃園市における基層官僚の裁量権と官僚代表性について、社会行政と原住民急難救助の事例を通して考察するものです。<br><br>研究では、基層官僚が直面する具体的な状況における裁量権の行使と、それが官僚の代表性にどのように影響を与えるかに着目しています。<br><br>この研究は、行政の実践における官僚の役割と、多様な住民への対応のあり方を理解する上で重要な示唆を与える可能性があります。ただし、事例研究であるため、他の地域や行政分野への一般化には注意が必要です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        著者：孫煒 Way Sun<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：人文及社會科學集刊<br>
+        DOI：10.53106/1018189x202512002<br>
+        原文URL：<a href="https://doi.org/10.53106/1018189x202512002" target="_blank" rel="noopener">https://doi.org/10.53106/1018189x202512002</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2027-03" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="ネットワーク外部性の下での二部料金ライセンス：理論的分析" data-timestamp="1803859200000" data-url="https://doi.org/10.53106/1018189x202509101">
+  <p class="meta">Crossref Philosophy　Mon, 01 Mar 2027 00:00:00 Z</p>
+  <h2 class="article-title">ネットワーク外部性の下での二部料金ライセンス：理論的分析</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、ネットワーク外部性が存在する状況下における二部料金ライセンスの理論的側面を分析します。<br><br>研究では、二部料金ライセンスの構造が、ネットワーク外部性の影響を受ける市場において、どのように機能するか、また、その最適化について考察しています。<br><br>この分析は、プラットフォームビジネスやデジタルサービスなど、ネットワーク外部性が強く働く分野における価格設定戦略やライセンス契約の設計に貢献する可能性があります。ただし、理論モデルに基づく分析であるため、実際の市場における適用にはさらなる検証が必要となるでしょう。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        著者：鍾暳陵 Hui-ling Chung, 陳宏易 Hung-yi Chen, 施姵全 Pei-cyuan Shih<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：人文及社會科學集刊<br>
+        DOI：10.53106/1018189x202509101<br>
+        原文URL：<a href="https://doi.org/10.53106/1018189x202509101" target="_blank" rel="noopener">https://doi.org/10.53106/1018189x202509101</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-12" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="未定のタイトル 9700" data-timestamp="1798675200000" data-url="https://doi.org/10.3998/ergo.9700">
+  <p class="meta">Crossref Philosophy　Thu, 31 Dec 2026 00:00:00 Z</p>
+  <h2 class="article-title">未定のタイトル 9700</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は哲学分野における「未定のタイトル 9700」と題された研究です。<br><br>具体的な研究内容、方法、主張、着眼点に関する情報は、提供されたメタデータからは限定的です。<br><br>公開メタデータ上の要旨情報が限定的であるため、詳細な重要性、限界、または制作・研究・実務への示唆については言及できません。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Ergo an Open Access Journal of Philosophy<br>
+        DOI：10.3998/ergo.9700<br>
+        原文URL：<a href="https://doi.org/10.3998/ergo.9700" target="_blank" rel="noopener">https://doi.org/10.3998/ergo.9700</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-12" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="未定のタイトル 9318" data-timestamp="1798675200000" data-url="https://doi.org/10.3998/ergo.9318">
+  <p class="meta">Crossref Philosophy　Thu, 31 Dec 2026 00:00:00 Z</p>
+  <h2 class="article-title">未定のタイトル 9318</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は哲学分野における「未定のタイトル 9318」と題された研究です。<br><br>具体的な研究内容、方法、主張、着眼点に関する情報は、提供されたメタデータからは限定的です。<br><br>公開メタデータ上の要旨情報が限定的であるため、詳細な重要性、限界、または制作・研究・実務への示唆については言及できません。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Ergo an Open Access Journal of Philosophy<br>
+        DOI：10.3998/ergo.9318<br>
+        原文URL：<a href="https://doi.org/10.3998/ergo.9318" target="_blank" rel="noopener">https://doi.org/10.3998/ergo.9318</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-12" data-genre="Philosophy" data-field="Philosophy" data-source="Crossref Philosophy" data-area="Philosophy" data-categories="" data-title="タイトル未定（Ergo誌掲載予定論文）" data-timestamp="1798675200000" data-url="https://doi.org/10.3998/ergo.9683">
+  <p class="meta">Crossref Philosophy　Thu, 31 Dec 2026 00:00:00 Z</p>
+  <h2 class="article-title">タイトル未定（Ergo誌掲載予定論文）</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、哲学分野における未定のテーマを扱います。<br><br>公開されているメタデータからは、具体的な研究内容、方法、主張についての詳細な情報は得られませんでした。<br><br>公開メタデータ上の要旨情報が限定的であるため、論文の重要性、限界、または実務への示唆について現時点で述べることは困難です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Philosophy<br>
+        サイト：Crossref<br>
+        分野：Philosophy<br>
+        ジャンル：Philosophy<br>
+        掲載先：Ergo an Open Access Journal of Philosophy<br>
+        DOI：10.3998/ergo.9683<br>
+        原文URL：<a href="https://doi.org/10.3998/ergo.9683" target="_blank" rel="noopener">https://doi.org/10.3998/ergo.9683</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="健常者と意識障害患者における内受容性皮質血行動態：パイロット研究" data-timestamp="1790812800000" data-url="https://doi.org/10.54270/atljm.2025.93">
+  <p class="meta">Crossref Consciousness　Thu, 01 Oct 2026 00:00:00 Z</p>
+  <h2 class="article-title">健常者と意識障害患者における内受容性皮質血行動態：パイロット研究</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本パイロット研究は、健常者と意識障害患者において、安静時および心拍数カウント課題中の皮質オキシヘモグロビン（HbO）応答を機能的近赤外分光法（fNIRS）を用いて調査することを目的としています。<br><br>研究では、健常者13名と意識障害患者6名が参加し、fNIRSを用いて前頭葉および頭頂側頭葉領域の血行動態を測定しました。健常者では、心拍数カウント課題中に左前頭葉および中前頭葉領域でHbOレベルの有意な減少が観察されましたが、意識障害患者群では安静時と課題間で有意な差は見られませんでした。<br><br>健常者と意識障害患者群の間では、健常者の方が左および右側頭頂葉領域でより低いHbO値を示しました。これらの結果は、内受容プロセスと意識メカニズムとの関連性を示唆しており、fNIRSが意識障害のバイオマーカー開発に貢献する可能性を示しています。ただし、サンプルサイズが限られているため、さらなる研究が必要です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：MERVE ALÖKTEN<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Atlas Universitesi Tip ve Saglik Bilimleri Dergisi<br>
+        DOI：10.54270/atljm.2025.93<br>
+        原文URL：<a href="https://doi.org/10.54270/atljm.2025.93" target="_blank" rel="noopener">https://doi.org/10.54270/atljm.2025.93</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="AI倫理とガバナンスの連携：系統的文献レビューによる将来展望" data-timestamp="1788220800000" data-url="https://doi.org/10.1016/j.dim.2026.100122">
+  <p class="meta">Crossref Ethics　Tue, 01 Sep 2026 00:00:00 Z</p>
+  <h2 class="article-title">AI倫理とガバナンスの連携：系統的文献レビューによる将来展望</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、AI倫理とガバナンスの連携について、系統的文献レビューを用いて考察するものです。<br><br>AI技術の発展に伴い、その倫理的側面とガバナンス体制の構築が喫緊の課題となっています。本研究では、既存の文献を網羅的にレビューすることで、この二つの領域がどのように関連し、どのような課題が存在するのかを明らかにすることを目指します。<br><br>この研究は、AI倫理とガバナンスに関する今後の研究の方向性を示すとともに、政策立案者や実務家に対して、より効果的なAIの導入と管理のための示唆を提供することが期待されます。しかし、文献レビューの性質上、レビュー対象外の文献や未発表の研究については触れることができません。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Maryam Ikram, Waqas Mehmood, Syed Muhammad Umer Saleem, Shamsiah Banu Mohamad Hanefar<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Data and Information Management<br>
+        DOI：10.1016/j.dim.2026.100122<br>
+        原文URL：<a href="https://doi.org/10.1016/j.dim.2026.100122" target="_blank" rel="noopener">https://doi.org/10.1016/j.dim.2026.100122</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="データライフサイクルへのAI倫理の埋め込み：エンタープライズAIガバナンスのためのフレームワーク" data-timestamp="1788220800000" data-url="https://doi.org/10.1016/j.techsoc.2026.103261">
+  <p class="meta">Crossref Ethics　Tue, 01 Sep 2026 00:00:00 Z</p>
+  <h2 class="article-title">データライフサイクルへのAI倫理の埋め込み：エンタープライズAIガバナンスのためのフレームワーク</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、エンタープライズAIガバナンスの文脈において、データライフサイクル全体にAI倫理を組み込むためのフレームワークを提案します。<br><br>研究では、AIシステムの開発から運用、廃棄に至るまでの各段階で発生する倫理的な課題に対処するため、具体的なガバナンス構造と実践的なアプローチを提示します。データ収集、処理、利用、共有といった各フェーズにおける倫理的配慮の重要性を強調し、そのための体系的な枠組みを構築することを目指しています。<br><br>このフレームワークは、企業が責任あるAI開発と展開を推進し、AI技術の恩恵を最大化すると同時に、潜在的なリスクを最小限に抑えるための指針となります。AI倫理の実践を組織全体に浸透させるための重要な一歩となることが期待されます。<br><br>ただし、提案されるフレームワークの具体的な実装における技術的・組織的な障壁や、異なる業界や組織文化への適用可能性については、さらなる検討が必要となる可能性があります。公開メタデータ上の要旨情報が限定的であるため、詳細な限界点については言及が難しい状況です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Xinping Huang, Tianqi Kou, Qianwen Zhou<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Technology in Society<br>
+        DOI：10.1016/j.techsoc.2026.103261<br>
+        原文URL：<a href="https://doi.org/10.1016/j.techsoc.2026.103261" target="_blank" rel="noopener">https://doi.org/10.1016/j.techsoc.2026.103261</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="エリスロポエチンとアンチドーピング倫理：パフォーマンス、認識、政策の再考" data-timestamp="1782864000000" data-url="https://doi.org/10.1016/j.peh.2026.100425">
+  <p class="meta">Crossref Ethics　Wed, 01 Jul 2026 00:00:00 Z</p>
+  <h2 class="article-title">エリスロポエチンとアンチドーピング倫理：パフォーマンス、認識、政策の再考</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、エリスロポエチン（EPO）の使用とアンチ・ドーピング政策における倫理的課題について論じます。<br><br>パフォーマンス向上薬としてのEPOの認識と、それがスポーツにおける公平性や健康に与える影響に着目し、従来のアンチ・ドーピング政策のあり方を見直す必要性を提起します。<br><br>スポーツにおける倫理的なパフォーマンス向上と、ドーピング防止策のバランスをどのように取るべきか、政策立案者や関係者にとって重要な示唆を与える可能性があります。しかし、個々の選手の状況や、EPOの医学的・倫理的側面に関するさらなる議論が必要です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Jo Morrison<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Performance Enhancement &amp; Health<br>
+        DOI：10.1016/j.peh.2026.100425<br>
+        原文URL：<a href="https://doi.org/10.1016/j.peh.2026.100425" target="_blank" rel="noopener">https://doi.org/10.1016/j.peh.2026.100425</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="予測的警察活動と予測的正義：AI法における倫理、データ保護" data-timestamp="1782864000000" data-url="https://doi.org/10.1016/j.clsr.2026.106282">
+  <p class="meta">Crossref Ethics　Wed, 01 Jul 2026 00:00:00 Z</p>
+  <h2 class="article-title">予測的警察活動と予測的正義：AI法における倫理、データ保護</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、予測的警察活動と予測的正義における倫理的課題、データ保護、そしてAI法との関連性について論じます。<br><br>AI技術を用いた予測的警察活動や予測的正義は、犯罪抑止や司法の効率化に貢献する可能性を秘めていますが、同時にプライバシー侵害や差別助長といった倫理的な懸念も指摘されています。本研究では、これらの技術がもたらす倫理的・法的問題点を分析し、特にEUのAI法などの規制枠組みとの関係性を探求します。<br><br>この研究は、AI技術の社会実装における倫理的配慮の重要性を浮き彫りにし、データ保護と個人の権利を尊重したAIシステムの開発・運用に向けた指針を提供することを目指しています。ただし、予測技術の精度や公平性に関するさらなる検証が必要となる可能性があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Chiara Gallese<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Computer Law &amp; Security Review<br>
+        DOI：10.1016/j.clsr.2026.106282<br>
+        原文URL：<a href="https://doi.org/10.1016/j.clsr.2026.106282" target="_blank" rel="noopener">https://doi.org/10.1016/j.clsr.2026.106282</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="神経適応型AIと量子強化BCIによる意識評価の向上" data-timestamp="1782864000000" data-url="https://doi.org/10.1016/j.clineuro.2026.109396">
+  <p class="meta">Crossref Consciousness　Wed, 01 Jul 2026 00:00:00 Z</p>
+  <h2 class="article-title">神経適応型AIと量子強化BCIによる意識評価の向上</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、神経適応型人工知能と量子強化型脳コンピューターインターフェース（BCI）を活用して、意識の評価を向上させる可能性について論じています。<br><br>公開メタデータ上の要旨情報が限定的であり、具体的な方法論や着眼点、主張に関する詳細な情報は現時点では不明です。<br><br>しかし、タイトルから推測される内容としては、高度なAI技術とBCI技術を組み合わせることで、従来の意識評価手法では捉えきれなかった意識の状態や変化をより精密に検出し、臨床的な応用を目指す研究であると考えられます。このアプローチは、神経科学や医療分野における意識障害の診断や治療に新たな道を開く可能性があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Olivier Oullier, Florian Roser, Paul Barbaste, Xavier Vasques<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Clinical Neurology and Neurosurgery<br>
+        DOI：10.1016/j.clineuro.2026.109396<br>
+        原文URL：<a href="https://doi.org/10.1016/j.clineuro.2026.109396" target="_blank" rel="noopener">https://doi.org/10.1016/j.clineuro.2026.109396</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="ニカイア信条の「光から出た光」という概念：キリスト教倫理にとって比喩は依然として適切か？" data-timestamp="1782777600000" data-url="https://doi.org/10.4102/ids.v60i2.3197">
+  <p class="meta">Crossref Ethics　Tue, 30 Jun 2026 00:00:00 Z</p>
+  <h2 class="article-title">ニカイア信条の「光から出た光」という概念：キリスト教倫理にとって比喩は依然として適切か？</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、古典的な改革派神学の観点から、AD 381年のニカイア・コンスタンティノープル信条における「光から出た光」という比喩が、特に神学的倫理の領域において、現代において依然として適切であるかという問いを探求します。<br><br>現代の「低いキリスト教理解」（low Christologies）では、イエス・キリストの神性とその倫理への関連性が、歴史的イエスに根差した「内在的解放」の倫理という観点から疑問視されています。本稿では、この比喩の古典的な解釈が、現代の神学的社会倫理を豊かにし、解放の概念を真の人類への包括的なビジョンへと広げることができるという理論的議論を展開します。<br><br>結論として、著者は、子を「光から出た光」とする古典的な比喩解釈から流れる、真の人類と道徳的行為者への道筋を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Jacobus M. Vorster<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：In die Skriflig/In Luce Verbi<br>
+        DOI：10.4102/ids.v60i2.3197<br>
+        原文URL：<a href="https://doi.org/10.4102/ids.v60i2.3197" target="_blank" rel="noopener">https://doi.org/10.4102/ids.v60i2.3197</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="AI駆動型科学広告の倫理、可視性、研究誠実性" data-timestamp="1780272000000" data-url="https://doi.org/10.1016/j.teler.2026.100314">
+  <p class="meta">Crossref Ethics　Mon, 01 Jun 2026 00:00:00 Z</p>
+  <h2 class="article-title">AI駆動型科学広告の倫理、可視性、研究誠実性</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、AIが科学広告に与える影響について、倫理的側面、研究の可視性、および研究の誠実性という観点から考察します。<br><br>AI技術の進展により、科学研究の成果を広告する手法が変化しており、その効率性やリーチの拡大が期待される一方で、倫理的な課題や研究の信頼性に対する影響も懸念されています。本論文では、これらの課題に焦点を当て、AI駆動型科学広告の現状と将来について論じます。<br><br>AIを活用した科学広告は、研究成果の普及を促進する可能性を秘めていますが、その利用にあたっては、透明性、公平性、そして研究者自身の責任が問われます。特に、AIによる情報操作や偏った情報発信のリスクを考慮し、研究の誠実性を維持するためのガイドラインや倫理的枠組みの構築が重要となります。<br><br>本研究は、AIと科学広告の交差点における倫理的課題を明らかにし、今後の研究や実務におけるAIの責任ある利用に向けた示唆を提供することを目指しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Nasser Bouchareb, Ilham Moussaoui<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Telematics and Informatics Reports<br>
+        DOI：10.1016/j.teler.2026.100314<br>
+        原文URL：<a href="https://doi.org/10.1016/j.teler.2026.100314" target="_blank" rel="noopener">https://doi.org/10.1016/j.teler.2026.100314</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="デジタル変革のための倫理統治：フレームワークの開発、テスト、検証" data-timestamp="1780272000000" data-url="https://doi.org/10.1016/j.giq.2026.102117">
+  <p class="meta">Crossref Ethics　Mon, 01 Jun 2026 00:00:00 Z</p>
+  <h2 class="article-title">デジタル変革のための倫理統治：フレームワークの開発、テスト、検証</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、デジタル変革時代における倫理統治のあり方を探求するものです。<br><br>デジタル化が進む中で、政府や組織が倫理的な課題にどのように対応すべきか、そのための具体的なフレームワークの開発、テスト、検証に焦点を当てています。特に、倫理的な原則を実効性のある統治メカニズムへと落とし込む方法論が提示されます。<br><br>この研究は、急速に変化するデジタル環境において、倫理的な意思決定と実践を支援するための重要な指針を提供するものです。提案されるフレームワークは、政策立案者や実務家が、倫理的な課題に体系的に対処するための道筋を示すことが期待されます。ただし、フレームワークの普遍的な適用性や、異なる文脈での有効性については、さらなる検証が必要となる可能性があります。<br><br>本研究の成果は、デジタル化に伴う倫理的リスクを管理し、より公正で信頼性の高いデジタル社会を構築するための実務的な示唆を与えるものです。研究者や政策立案者は、このフレームワークを参考に、具体的な政策やガイドラインの策定を進めることができるでしょう。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Emma Pullen, Erna Ruijer, Albert Meijer<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Government Information Quarterly<br>
+        DOI：10.1016/j.giq.2026.102117<br>
+        原文URL：<a href="https://doi.org/10.1016/j.giq.2026.102117" target="_blank" rel="noopener">https://doi.org/10.1016/j.giq.2026.102117</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="インターセックス医療研究における応答可能性：形式を超えた倫理" data-timestamp="1780272000000" data-url="https://doi.org/10.1016/j.metip.2026.100229">
+  <p class="meta">Crossref Ethics　Mon, 01 Jun 2026 00:00:00 Z</p>
+  <h2 class="article-title">インターセックス医療研究における応答可能性：形式を超えた倫理</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、インターセックス（性分化疾患）を持つ人々の医療研究における倫理的課題を探求します。<br><br>従来の倫理審査の枠組みでは捉えきれない、研究参加者との関係性や応答可能性の重要性を主張します。特に、インターセックス当事者の多様な経験やニーズに寄り添う研究アプローチの必要性を強調します。<br><br>この研究は、インターセックス当事者の尊厳を守り、より包摂的な研究実践を推進するための倫理的指針を提供するものです。ただし、具体的な応答可能性の実践方法については、さらなる検討が求められます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Marta Prandelli<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Methods in Psychology<br>
+        DOI：10.1016/j.metip.2026.100229<br>
+        原文URL：<a href="https://doi.org/10.1016/j.metip.2026.100229" target="_blank" rel="noopener">https://doi.org/10.1016/j.metip.2026.100229</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="終末期ケアにおける倫理教育介入：看護学生向けシステマティックレビュー" data-timestamp="1780272000000" data-url="https://doi.org/10.1016/j.ijnsa.2025.100465">
+  <p class="meta">Crossref Ethics　Mon, 01 Jun 2026 00:00:00 Z</p>
+  <h2 class="article-title">終末期ケアにおける倫理教育介入：看護学生向けシステマティックレビュー</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、看護学生を対象とした終末期ケアにおける倫理に基づいた教育介入の効果を評価するシステマティックレビューです。<br><br>既存の研究を網羅的に調査し、どのような教育介入が看護学生の倫理的判断能力や終末期ケアの実践に有効であるか、そのエビデンスを明らかにすることを目的としています。<br><br>本レビューの結果は、看護教育カリキュラムにおける終末期ケアの倫理教育の質を向上させるための重要な情報源となることが期待されます。ただし、レビュー対象となった研究の質や多様性には限界があり、今後の研究デザインの改善が望まれます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Saeko Kutsunugi, Satoko Ono, Misae Ito, Kaho Suda, Siu Ling Chan, John Tai Chun Fung, Claudia Kam Yuk Lai, Kyoko Murakami<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：International Journal of Nursing Studies Advances<br>
+        DOI：10.1016/j.ijnsa.2025.100465<br>
+        原文URL：<a href="https://doi.org/10.1016/j.ijnsa.2025.100465" target="_blank" rel="noopener">https://doi.org/10.1016/j.ijnsa.2025.100465</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Ethics" data-area="Philosophy" data-categories="" data-title="インサービス教員の信頼・不信と関連するインテリジェントTPACK尺度の倫理領域" data-timestamp="1780272000000" data-url="https://doi.org/10.1016/j.caeo.2025.100321">
+  <p class="meta">Crossref Ethics　Mon, 01 Jun 2026 00:00:00 Z</p>
+  <h2 class="article-title">インサービス教員の信頼・不信と関連するインテリジェントTPACK尺度の倫理領域</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、インサービス教員が持つインテリジェントTPACK（技術的・教育学的・主題知識）尺度における倫理領域と、それに関連する教員の信頼および不信感について分析します。<br><br>教育現場におけるAI活用が進む中で、教員の技術に対する理解や信頼は、その導入効果に大きく影響します。本研究では、教員がAIを教育に活用する際に考慮する倫理的な側面と、それらが教員のAIに対する信頼感・不信感にどのように結びつくのかを明らかにすることに焦点を当てています。<br><br>この研究は、効果的なAI教育ツールの開発や教員研修プログラムの設計に貢献することが期待されます。教員がAIを安心して活用できる環境を整備するためには、倫理的な側面への配慮が不可欠であることを示唆しています。ただし、本研究は特定の尺度の分析に限定されており、他の要因との関連についてはさらなる検討が必要です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Ethics<br>
+        サイト：Crossref<br>
+        著者：Ceren Ocak, Secil Caskurlu<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Computers and Education Open<br>
+        DOI：10.1016/j.caeo.2025.100321<br>
+        原文URL：<a href="https://doi.org/10.1016/j.caeo.2025.100321" target="_blank" rel="noopener">https://doi.org/10.1016/j.caeo.2025.100321</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="健常者と意識障害患者における感情的ビデオに対する関連EEG特徴の特定：集団横断的分析" data-timestamp="1780272000000" data-url="https://doi.org/10.1016/j.bspc.2026.109669">
+  <p class="meta">Crossref Consciousness　Mon, 01 Jun 2026 00:00:00 Z</p>
+  <h2 class="article-title">健常者と意識障害患者における感情的ビデオに対する関連EEG特徴の特定：集団横断的分析</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、健常者と意識障害患者を対象に、感情的なビデオに対する脳波（EEG）の特徴を特定することを目的としています。<br><br>研究では、感情的なビデオ視聴中のEEGデータを用いて、健常者と意識障害患者の間で異なる脳活動パターンを分析し、個々の感情的反応に関連するEEG特徴を明らかにしようとしています。<br><br>公開メタデータ上の要旨情報が限定的であり、具体的な方法論や結果、示唆については詳細が不明です。この研究は、意識障害の診断や回復モニタリングに役立つ可能性のあるバイオマーカーの発見に貢献することが期待されますが、さらなる詳細な研究結果の公開が待たれます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Anny Maza, Sandra Goizueta, María Dolores Navarro, Enrique Noé, Joan Ferri, Valery Naranjo, Roberto Llorens<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Biomedical Signal Processing and Control<br>
+        DOI：10.1016/j.bspc.2026.109669<br>
+        原文URL：<a href="https://doi.org/10.1016/j.bspc.2026.109669" target="_blank" rel="noopener">https://doi.org/10.1016/j.bspc.2026.109669</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="Z世代のオーガニック食品購入意向に影響を与える要因：健康・環境意識、知識、信頼性の探求" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.jafr.2026.102839">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">Z世代のオーガニック食品購入意向に影響を与える要因：健康・環境意識、知識、信頼性の探求</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、Z世代のオーガニック食品に対する購入意向に、健康意識、環境意識、知識、信頼性がどのように影響するかを調査します。<br><br>健康意識、環境意識、知識、信頼性といった複数の要因が、Z世代のオーガニック食品への購買行動に与える影響を分析することを目的としています。<br><br>この研究は、持続可能な食品消費を促進するためのマーケティング戦略や政策立案に貢献する可能性があります。特に、Z世代の購買行動を理解することは、今後の食品業界において重要となるでしょう。<br><br>ただし、本研究で得られた知見は、特定の地域や文化圏のZ世代に限定される可能性があり、一般的な結論を導くにはさらなる検証が必要となる場合があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Thi Thuy An Ngo, Thi Ngoc Trang Le, Thi Yen Nhi Phan, Tran Bao Ngoc Le<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Journal of Agriculture and Food Research<br>
+        DOI：10.1016/j.jafr.2026.102839<br>
+        原文URL：<a href="https://doi.org/10.1016/j.jafr.2026.102839" target="_blank" rel="noopener">https://doi.org/10.1016/j.jafr.2026.102839</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="外部意味論指向のDIKWP人工意識のための意味的セキュリティと制御フレームワーク" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.knosys.2026.115752">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">外部意味論指向のDIKWP人工意識のための意味的セキュリティと制御フレームワーク</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、外部意味論を指向するDIKWP（Data, Information, Knowledge, Wisdom, Philosophy）人工意識システムにおける意味的セキュリティと制御に関するフレームワークを提案します。<br><br>提案するフレームワークは、人工意識システムが外部の意味論と連携する際に、データの意味的な整合性、セキュリティ、および制御可能性を確保することを目指しています。DIKWPの階層構造を活用し、各レベルでの意味的セキュリティと制御メカニズムを検討します。<br><br>この研究は、高度な人工知能システムの開発において、信頼性と安全性を確保するための基盤を提供するものです。特に、外部システムとの連携が不可欠なAI応用分野において、その重要性が期待されます。<br><br>公開メタデータ上の要旨情報が限定的であるため、具体的な方法論や実験結果に関する詳細は不明です。今後の研究の進展により、フレームワークの実装可能性や有効性がさらに明らかにされることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Yingtian Mei, Yucong Duan, Hien D. Nguyen<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Knowledge-Based Systems<br>
+        DOI：10.1016/j.knosys.2026.115752<br>
+        原文URL：<a href="https://doi.org/10.1016/j.knosys.2026.115752" target="_blank" rel="noopener">https://doi.org/10.1016/j.knosys.2026.115752</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="産業デザインにおける表象プロセスを支援する意識心理学" data-timestamp="1777593600000" data-url="https://doi.org/10.21608/idj.2026.468443.1524">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">産業デザインにおける表象プロセスを支援する意識心理学</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、産業デザイン分野における表象プロセスにおいて、意識心理学がどのように貢献できるかを考察します。<br><br>産業デザインにおける創造的な表象プロセスを、意識心理学の観点から分析し、デザイナーの認知プロセスや意思決定がデザインの表象に与える影響に着目します。特に、意識の役割がデザインの具現化にどう関わるかを論じます。<br><br>この研究は、デザイン教育や実践において、より効果的な表象戦略を開発するための新たな視点を提供する可能性があります。デザイナーの意識的なプロセスを理解することで、よりユーザー中心のデザインが可能になることが期待されます。<br><br>ただし、本研究は主に理論的な考察に基づいている可能性があり、具体的なデザインプロセスへの応用にはさらなる実証的な研究が必要となる場合があります。また、意識心理学の概念を産業デザインの文脈でどのように具体的に適用するかについては、さらなる検討が求められます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Ahmed Abd Elaziz Elbably, Samar Nawar<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：International Design Journal<br>
+        DOI：10.21608/idj.2026.468443.1524<br>
+        原文URL：<a href="https://doi.org/10.21608/idj.2026.468443.1524" target="_blank" rel="noopener">https://doi.org/10.21608/idj.2026.468443.1524</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="空間と時間における知覚：視覚的意識に対する外因性空間注意とリズミカル時間注意の効果比較" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.concog.2026.104040">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">空間と時間における知覚：視覚的意識に対する外因性空間注意とリズミカル時間注意の効果比較</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、視覚的意識における空間的注意と時間的注意の効果を比較検討するものである。<br><br>外因性空間注意とリズミカル時間注意という二つの異なる注意メカニズムが、どのように視覚情報の処理と意識体験に影響を与えるかを探求する。特に、注意の焦点が空間的なものか、時間的なリズムに基づいたものかで、知覚体験がどのように変化するかを検証する。<br><br>この研究は、注意がどのように知覚を形成するかについての理解を深める上で重要である。空間と時間の両方における注意の相互作用を明らかにすることで、意識のメカニズムに関する新たな知見を提供する可能性がある。<br><br>ただし、実験条件や参加者の特性によっては、結果の一般化に限界が生じる可能性がある。今後の研究では、より多様な条件下での検証が求められる。<br><br>本研究の知見は、注意メカニズムの理解を深め、人間中心のインターフェース設計や、注意障害のリハビリテーションなど、実務的な応用への示唆を与えることが期待される。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Mariagrazia Capizzi, Pom Charras, Ana B. Chica<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Consciousness and Cognition<br>
+        DOI：10.1016/j.concog.2026.104040<br>
+        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104040" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104040</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="時間順序知覚における手がかり効果と応答マッピングの関係" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.concog.2026.104033">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">時間順序知覚における手がかり効果と応答マッピングの関係</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、時間順序知覚における手がかり（キュー）の効果について、応答マッピングとの関連から考察するものです。<br><br>特に、先行手がかりと後続手がかりが時間順序の判断にどのように影響するか、そしてその影響が応答マッピングの様式（正交応答マッピング）によってどのように変化するかを検証します。<br><br>この研究は、知覚と認知のメカニズム、特に時間情報の処理における意識的・無意識的プロセスの理解を深める上で重要です。応答マッピングの設計が知覚判断に与える影響を明らかにすることで、実験デザインや人間工学への示唆が期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Fuminori Ono<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Consciousness and Cognition<br>
+        DOI：10.1016/j.concog.2026.104033<br>
+        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104033" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104033</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="表象能力欠如者の短期記憶における結合性：視覚イメージと語彙符号化の役割" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.concog.2026.104036">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">表象能力欠如者の短期記憶における結合性：視覚イメージと語彙符号化の役割</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、表象能力（アファンタジア）を持つ個人における短期記憶の結合性について、視覚イメージと語彙符号化の役割を調査します。<br><br>アファンタジアの個人が、視覚的なイメージを想起することなく、どのようにして短期記憶内で複数の情報を結びつけることができるのか、そのメカニズムに焦点を当てます。特に、語彙による符号化が、視覚イメージに依存しない結合性においてどのような役割を果たすのかを明らかにしようとしています。<br><br>この研究は、記憶のメカニズム、特に視覚的表象と他の認知プロセスとの相互作用に関する理解を深める上で重要です。アファンタジアという特殊なケースを調べることで、健常者の記憶機能についても新たな視点を提供する可能性があります。研究結果は、記憶障害の理解や、記憶を支援する技術開発に貢献することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Emma Delhaye, Pauline Fritz, Charlotte Martial, Christine Bastin<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Consciousness and Cognition<br>
+        DOI：10.1016/j.concog.2026.104036<br>
+        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104036" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104036</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="比喩プライミングによる無意識的意味処理の解明" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.concog.2026.104035">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">比喩プライミングによる無意識的意味処理の解明</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、比喩プライミングの手法を用いて、無意識下における意味処理のメカニズムを探求します。<br><br>研究では、被験者が意識せずに触れた比喩的な表現（プライミング）が、その後の意味的な判断や理解にどのような影響を与えるかを調べます。これにより、私たちが日常的に無意識のうちに意味情報を処理している可能性とその方法について考察します。<br><br>この研究は、意識と無意識の境界、および意味理解における無意識的プロセスの重要性についての理解を深める上で重要です。比喩という言語的・認知的現象を通じて、人間の情報処理の深層を探る試みであり、言語学、心理学、認知科学の分野に新たな知見をもたらす可能性があります。研究結果は、コミュニケーションや広告、教育など、意味の伝達が重要な様々な分野への応用が期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Chiara Saponaro, Andrea Nadalini, Daniel Casasanto, Davide Crepaldi, Roberto Bottini<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Consciousness and Cognition<br>
+        DOI：10.1016/j.concog.2026.104035<br>
+        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104035" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104035</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="内受容・外受容タイミングにおける知覚・メタ認知プロファイルの差異" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.concog.2026.104043">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">内受容・外受容タイミングにおける知覚・メタ認知プロファイルの差異</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、内受容（身体内部の状態を感知する能力）と外受容（外部環境からの感覚情報を処理する能力）におけるタイミング知覚とメタ認知のプロファイルの違いを調査するものです。<br><br>研究では、これらの異なる感覚モダリティにおけるタイミングの知覚と、それに対する自己評価や制御といったメタ認知的な側面が、どのように異なる特性を示すかに着目しています。<br><br>この研究は、意識や認知のメカニズムを理解する上で、感覚情報の処理経路の違いがどのように影響するかを明らかにすることに貢献します。結果は、認知神経科学や心理学の分野における今後の研究に示唆を与える可能性があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Shuai Chen, Meihong Zheng<br>
+        分野：Philosophy<br>
+        ジャンル：Consciousness / Philosophy<br>
+        掲載先：Consciousness and Cognition<br>
+        DOI：10.1016/j.concog.2026.104043<br>
+        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104043" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104043</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="社会的マインドフルネスと自己バイアスの低減：計算論的アプローチ" data-timestamp="1777593600000" data-url="https://doi.org/10.1016/j.concog.2026.104037">
+  <p class="meta">Crossref Consciousness　Fri, 01 May 2026 00:00:00 Z</p>
+  <h2 class="article-title">社会的マインドフルネスと自己バイアスの低減：計算論的アプローチ</h2>
+  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
+  <div class="summary">本論文は、社会的マインドフルネス（他者への配慮や共感といった意識的な状態）が、自己中心的バイアス（自分自身を過大評価したり、他者よりも優先したりする傾向）をどのように低減させるかを計算論的なアプローチを用いて検証します。<br><br>研究では、マインドフルネスの度合いと自己バイアスの強さの関係を、計算モデルを用いて定量的に分析し、そのメカニズムを明らかにしようと試みています。<br><br>この研究は、社会的相互作用における偏見や不公平さを軽減するための介入策の開発に貢献する可能性があり、心理学や社会科学の分野に新たな視点を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：Crossref Consciousness<br>
+        サイト：Crossref<br>
+        著者：Marius Golubickis, Siobhan Caughey, Esther S. Selvaraj, Parnian Jalalian, Yadvi Sharma, Jessica Highflield, Rinki Kanakraj, C. Neil Macrae<br>
+        分野：Philosophy<br>
+        ジャンル：Ethics / Safety<br>
+        掲載先：Consciousness and Cognition<br>
+        DOI：10.1016/j.concog.2026.104037<br>
+        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104037" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104037</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV, cs.LG, eess.SY" data-title="実世界における自律移動ロボットの信頼性評価ベンチマーク「NavTrust」" data-timestamp="1773943191000" data-url="https://arxiv.org/abs/2603.19229v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:51 Z</p>
+  <h2 class="article-title">実世界における自律移動ロボットの信頼性評価ベンチマーク「NavTrust」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、自律移動ロボットの信頼性、特に視覚と言語によるナビゲーション（VLN）と物体目標ナビゲーション（OGN）における信頼性を評価するための統一ベンチマーク「NavTrust」を提案します。<br><br>従来の評価は正常な条件下での性能に偏っていましたが、実世界ではRGB画像、深度情報、自然言語指示などの入力に様々なノイズや劣化が生じます。NavTrustは、これらの現実的なシナリオにおける入力モダリティの劣化がナビゲーション性能に与える影響を体系的に評価します。<br><br>7つの最先端モデルの評価により、現実的な劣化条件下での性能低下が顕著であることが明らかになり、より信頼性の高い自律移動ナビゲーションシステム構築に向けた課題と方向性を示唆しています。さらに、RGB-深度劣化および指示のバリエーションに対するロバスト性向上のための4つの緩和戦略も評価されました。<br><br>本研究は、実環境でのロボットナビゲーションにおける信頼性評価の重要性を強調し、今後の研究開発における重要な基盤となることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Huaide Jiang, Yash Chaudhary, Yuping Wang, Zehao Wang, Raghav Sharma, Manan Mehta, Yang Zhou, Lichao Sun<br>
+        分類：cs.RO, cs.AI, cs.CV, cs.LG, eess.SY<br>
+        分野：cs.RO<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19229v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19229v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP" data-title="FinTradeBench: LLMのための金融推論ベンチマーク" data-timestamp="1773943181000" data-url="https://arxiv.org/abs/2603.19225v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:41 Z</p>
+  <h2 class="article-title">FinTradeBench: LLMのための金融推論ベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CE</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IR</span></div>
+  <div class="summary">本論文は、LLMが金融分野における意思決定を行う能力を評価するための新しいベンチマーク「FinTradeBench」を提案しています。<br><br>現実世界の金融意思決定には、企業財務情報や市場の取引シグナルといった多様な情報源からの推論が必要です。既存のベンチマークは主に財務諸表データに焦点を当てており、市場での取引やファンダメンタルズとの相互作用に関する推論を十分に評価できていませんでした。FinTradeBenchは、企業ファンダメンタルズと取引シグナルを統合し、1,400の質問から構成されています。<br><br>このベンチマークは、「ファンダメンタルズ中心」「取引シグナル中心」「ハイブリッド（クロスシグナル推論）」の3つの推論カテゴリに分類されます。評価手法には、専門家による質問作成、複数モデルによる応答生成、自己フィルタリング、数値監査、人間とLLMによる評価者の整合性確保といった、信頼性を高めるためのフレームワークが採用されています。<br><br>14のLLMをゼロショットおよび検索拡張設定で評価した結果、明確な性能差が見られました。特に、テキストベースのファンダメンタルズ推論では検索拡張が有効でしたが、取引シグナル推論への効果は限定的でした。これは、現在のLLMにおける数値的・時系列推論の課題を浮き彫りにし、今後の金融知能研究の方向性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yogesh Agrawal, Aniruddha Dutta, Md Mahadi Hasan, Santu Karmaker, Aritra Dutta<br>
+        分類：cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP<br>
+        分野：cs.CE<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19225v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19225v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="多言語世界のための包括的で効率的な埋め込みモデル「F2LLM-v2」" data-timestamp="1773943161000" data-url="https://arxiv.org/abs/2603.19223v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:21 Z</p>
+  <h2 class="article-title">多言語世界のための包括的で効率的な埋め込みモデル「F2LLM-v2」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文では、8つの異なるサイズ（80Mから14B）を持つ新しい汎用多言語埋め込みモデルファミリー「F2LLM-v2」を発表します。<br><br>新たにキュレーションされた6000万件の高品質な公開データサンプルからなる複合データセットで学習されたF2LLM-v2は、200以上の言語をサポートし、特にこれまで十分にサポートされてこなかった中・低リソース言語に重点を置いています。2段階のLLMベース埋め込み学習パイプラインに、マトゥリョーシュカ学習、モデルプルーニング、知識蒸留技術を統合することで、以前のLLMベース埋め込みモデルよりもはるかに効率的でありながら、競争力のある性能を維持するモデルを実現しました。<br><br>広範な評価により、F2LLM-v2-14Bが11のMTEBベンチマークで1位を獲得し、ファミリー内の小規模モデルもリソース制約のあるアプリケーションにおいて新たな最先端技術を確立していることが確認されました。オープンソースの埋め込みモデル研究を促進するため、すべてのモデル、データ、コード、中間チェックポイントを公開します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Ziyin Zhang, Zihan Liao, Hang Yu, Peng Di, Rui Wang<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19223v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19223v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="スペクトル情報に基づく拡散モデルのノイズスケジュール設計" data-timestamp="1773943152000" data-url="https://arxiv.org/abs/2603.19222v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:59:12 Z</p>
+  <h2 class="article-title">スペクトル情報に基づく拡散モデルのノイズスケジュール設計</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、高品質な画像・動画生成に広く用いられるデノイジング拡散モデルの性能を向上させるため、ノイズスケジュールの設計に焦点を当てています。ノイズスケジュールはモデルの性能に大きく影響しますが、従来は手作業での調整が必要でした。<br><br>本研究では、画像固有のスペクトル特性に基づいて、インスタンスごとにノイズスケジュールを設計する原理的な手法を提案します。理論的な境界を導出することで、冗長なステップを排除した「タイトな」ノイズスケジュールを設計し、推論時には条件付きでサンプリングする手法も提案しています。<br><br>実験の結果、提案手法によるノイズスケジュールは、特に低ステップ数での生成品質を向上させることが示されました。これは、拡散モデルの効率的な学習と生成に貢献する可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Carlos Esteves, Ameesh Makadia<br>
+        分類：cs.CV, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19222v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19222v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL, cs.GT" data-title="ランキングフィードバックを用いたオンライン学習と均衡計算" data-timestamp="1773943147000" data-url="https://arxiv.org/abs/2603.19221v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:59:07 Z</p>
+  <h2 class="article-title">ランキングフィードバックを用いたオンライン学習と均衡計算</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">cs.GT</span></div>
+  <div class="summary">本論文は、数値的な効用フィードバックが得られない環境下でのオンライン学習モデルを提案します。<br><br>従来のオンライン学習アルゴリズムは数値フィードバックを前提としていましたが、本研究では、各タイムステップで提案された行動の集合に対するランキング情報のみを観測するモデルを扱います。瞬時効用に基づくランキングと時間平均効用に基づくランキング、および完全情報とバンディットフィードバックの両設定を検討します。<br><br>一般的なランキングフィードバックでは劣線形後退を達成できないことを示しつつ、効用系列の総変動が劣線形であるという追加仮定の下で劣線形後退を達成する新しいアルゴリズムを開発しました。この結果は、正規形ゲームの全プレイヤーが本アルゴリズムに従う場合、繰り返しプレイが近似的な粗相関均衡をもたらすことを示唆します。また、大規模言語モデルのルーティングタスクにおける有効性も実証しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Mingyang Liu, Yongshan Chen, Zhiyuan Fan, Gabriele Farina, Asuman Ozdaglar, Kaiqing Zhang<br>
+        分類：cs.LG, cs.CL, cs.GT<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19221v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19221v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="「Nemotron-Cascade 2」：カスケード強化学習とマルチドメイン蒸留による大規模言語モデルのポストトレーニング" data-timestamp="1773943132000" data-url="https://arxiv.org/abs/2603.19220v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:58:52 Z</p>
+  <h2 class="article-title">「Nemotron-Cascade 2」：カスケード強化学習とマルチドメイン蒸留による大規模言語モデルのポストトレーニング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文では、オープンソースの大規模言語モデル（LLM）「Nemotron-Cascade 2」を紹介します。これは30億パラメータ（アクティブパラメータ3億）のMoEモデルであり、最先端の推論能力とエージェント能力を備えています。<br><br>このモデルは、そのコンパクトなサイズにもかかわらず、数学やコーディングの推論性能において最先端のオープンモデルに匹敵します。特に、国際数学オリンピック（IMO）、国際情報オリンピック（IOI）、ICPC世界大会において、わずか20分の1のパラメータ数で金メダルレベルの性能を達成しました。これは、非常に高い知能密度を示しています。<br><br>Nemotron-Cascade 1からの主な技術的進歩は、カスケード強化学習（Cascade RL）の適用範囲を大幅に拡大し、より広範な推論およびエージェントドメインをカバーしたことです。さらに、Cascade RLプロセス中に各ドメインの強力な中間教師モデルからのマルチドメインオンポリシー蒸留を導入し、性能向上を効率的に維持しました。<br><br>本研究は、効率的かつ高性能なLLMの開発手法を示し、オープンソースコミュニティへの貢献としてモデルチェックポイントとトレーニングデータが公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zhuolin Yang, Zihan Liu, Yang Chen, Wenliang Dai, Boxin Wang, Sheng-Chieh Lin, Chankyu Lee, Yangyi Chen<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19220v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19220v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="3D運転シーンのトークン化によるマルチビュー再構成と理解 DriveTok" data-timestamp="1773943102000" data-url="https://arxiv.org/abs/2603.19219v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:58:22 Z</p>
+  <h2 class="article-title">3D運転シーンのトークン化によるマルチビュー再構成と理解 DriveTok</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、自律走行システムにおけるスケーラブルな画像トークン化の重要性に着目し、高解像度マルチビュー運転シーンにおける非効率性とビュー間の一貫性の問題を解決する「DriveTok」を提案します。<br><br>DriveTokは、まず基盤モデルから意味的にリッチな視覚特徴を取得し、それを3D変形クロスアテンションを用いてシーントークンに変換します。デコーディングでは、マルチビュー・トランスフォーマーを用いてシーントークンからマルチビュー特徴を再構成し、RGB、深度、意味論的再構成を行います。さらに、3Dヘッドをシーントークンに直接適用し、3D意味論的占有予測による空間認識能力の向上も図ります。<br><br>この手法により、意味論的、幾何学的、テクスチャ情報を統合した統一的なシーントークンを学習し、効率的なマルチビュー・トークン化を実現します。実験の結果、DriveTokのシーントークンは、画像再構成、意味セグメンテーション、深度予測、3D占有予測タスクにおいて優れた性能を示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Dong Zhuo, Wenzhao Zheng, Sicheng Zuo, Siming Yan, Lu Hou, Jie Zhou, Jiwen Lu<br>
+        分類：cs.CV, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19219v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19219v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG" data-title="意味的に根拠付けられた、部品レベルの3D生成フレームワーク" data-timestamp="1773943091000" data-url="https://arxiv.org/abs/2603.19216v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:58:11 Z</p>
+  <h2 class="article-title">意味的に根拠付けられた、部品レベルの3D生成フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、意味的に根拠付けられた部品レベルの3D生成を可能にする「DreamPartGen」というフレームワークを提案しています。<br><br>従来のテキストから3D生成の手法では、3Dオブジェクトの構成要素である部品の意味的・機能的構造が考慮されてきませんでした。本研究では、部品の形状と外観を同時にモデル化する「Duplex Part Latents (DPLs)」と、言語から派生した部品間の依存関係を捉える「Relational Semantic Latents (RSLs)」を導入します。<br><br>同期された共同デノイジングプロセスにより、幾何学的および意味的な一貫性を強制し、一貫性があり、解釈可能で、テキストに沿った3D合成を実現します。複数のベンチマークにおいて、幾何学的忠実度とテキスト形状の整合性において最先端のパフォーマンスを示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Tianjiao Yu, Xinzhuo Li, Muntasir Wahed, Jerry Xiong, Yifan Shen, Ying Shen, Ismini Lourentzou<br>
+        分類：cs.CV, cs.AI, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19216v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19216v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Generative Models" data-field="math.AG" data-source="arXiv cs.AI" data-area="AI" data-categories="math.AG, cs.AI, cs.HC, math.NT" data-title="3次曲面上のR同値性 I: 非自明な普遍同値性が存在するケース" data-timestamp="1773943058000" data-url="https://arxiv.org/abs/2603.19215v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:57:38 Z</p>
+  <h2 class="article-title">3次曲面上のR同値性 I: 非自明な普遍同値性が存在するケース</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">math.AG</span><span class="tag">cs.AI</span><span class="tag">cs.HC</span><span class="tag">math.NT</span></div>
+  <div class="summary">本論文は、p進体上の滑らかな3次曲面におけるR同値性について考察するものです。<br><br>Swinnerton-Dyerによる先行研究では、R同値性が自明でない可能性のある3つの特別なケースが指摘されていましたが、その解析は困難でした。本研究では、これらのケースに焦点を当て、新しい解析手法を開発しました。<br><br>特に、すべてのEckardt簡約を持つ2進数体上の3次曲面において、R同値性が自明であるか、または指数2であることを証明しました。これにより、Maninの長年の問いに答え、またKanevskyによる指数2のケースも確認しました。本研究は、生成AIモデルとの協働から生まれたものであり、その利用方法についても詳述しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Dimitri Kanevsky, Julian Salazar, Matt Harvey<br>
+        分類：math.AG, cs.AI, cs.HC, math.NT<br>
+        分野：math.AG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19215v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19215v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="大規模言語モデルにおけるビジョンエンコーダーとしての状態空間モデルの評価" data-timestamp="1773942992000" data-url="https://arxiv.org/abs/2603.19209v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:56:32 Z</p>
+  <h2 class="article-title">大規模言語モデルにおけるビジョンエンコーダーとしての状態空間モデルの評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模ビジョン言語モデル（VLM）において、従来のTransformerベースのビジョンエンコーダーに代わるものとして、状態空間モデル（SSM）が有効かどうかを検証しています。<br><br>実験では、SSMビジョンバックボーンが、Transformerベースのエンコーダーと比較して、VQA（Visual Question Answering）や物体検出・位置特定タスクにおいて、同等の初期化条件下で優れた性能を示すことが示されました。さらに、SSMはより小さなモデルサイズで競争力のある性能を維持できることが確認されました。<br><br>本研究は、ImageNetの精度やバックボーンのサイズが必ずしもVLMの性能向上に直結しないこと、また一部のバックボーンが位置特定において不安定であることを明らかにしました。これらの知見に基づき、両方のバックボーンファミリーの堅牢性を向上させる安定化戦略が提案されており、SSMがVLMにおけるTransformerベースのビジョンエンコーダーの有力な代替となりうることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Shang-Jui Ray Kuo, Paola Cascante-Bonilla<br>
+        分類：cs.CV, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19209v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19209v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Robotics" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="フィッシング検出における頑健性、コスト、攻撃対象の集中度" data-timestamp="1773942812000" data-url="https://arxiv.org/abs/2603.19204v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:53:32 Z</p>
+  <h2 class="article-title">フィッシング検出における頑健性、コスト、攻撃対象の集中度</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、フィッシング検出器の実際の運用におけるセキュリティ、特に展開後の特徴量操作に対する頑健性について、コストを考慮した回避フレームワークを用いて分析します。攻撃者の予算を明示し、離散的かつ単調な特徴量の編集をモデル化しています。<br><br>最小回避コスト（MEC）、回避生存率、頑健性集中度指数（RCI）という3つの診断指標を導入しました。UCIフィッシングウェブサイトベンチマークデータセットを用いた実験では、様々な機械学習モデルが静的評価では高い精度を示しましたが、予算制約下での回避実験では、多くの回避策が少数の低コストな特徴量に集中することが明らかになりました。<br><br>この結果は、フィッシング検出における頑健性がモデルの複雑さよりも、特徴量の経済性（コストと回避のしやすさ）に強く依存することを示唆しています。特に、低コストな特徴量への攻撃対象の集中は、モデルの頑健性を向上させるための新たなアプローチを示唆するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Julian Allagan, Mohamed Elbakary, Zohreh Safari, Weizheng Gao, Gabrielle Morgan, Essence Morgan, Vladimir Deriglazov<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19204v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19204v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Robotics" data-field="stat.ML" data-source="arXiv cs.LG" data-area="AI" data-categories="stat.ML, cs.LG" data-title="指数加重シグネチャ" data-timestamp="1773942680000" data-url="https://arxiv.org/abs/2603.19198v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:51:20 Z</p>
+  <h2 class="article-title">指数加重シグネチャ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、多次元パスの表現であるシグネチャに、過去の情報に対する文脈的な関連性を組み込むための新しい手法を導入します。<br><br>古典的なシグネチャは過去の情報を均等に扱いますが、本研究で提案する指数加重シグネチャ（EWS）は、時間的重み付けにおけるクロスチャネル結合と、振動的、成長的、またはレジーム依存的な振る舞いを含むより豊かなメモリダイナミクスを可能にします。これにより、古典的なシグネチャの代数的利点を維持しつつ、より高度な表現力を実現します。<br><br>EWSはテンソル代数上の線形制御微分方程式の唯一の解であり、状態空間モデルやパスのラプラス変換およびフーリエ変換を一般化することが示されました。EWSの群様構造は効率的な計算を可能にし、勾配ベース学習に適しています。このフレームワークを用いて、2つのSDEベース回帰タスクにおいて、EWSと古典的シグネチャおよびEFMとの表現力のギャップを実証しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Alexandre Bloch, Samuel N. Cohen, Terry Lyons, Joël Mouterde, Benjamin Walker<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19198v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19198v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="eess.AS" data-source="arXiv cs.CL" data-area="AI" data-categories="eess.AS, cs.CL, cs.SD" data-title="LLMの聴覚知識がオーディオ言語モデルに与える影響：包括的評価" data-timestamp="1773942607000" data-url="https://arxiv.org/abs/2603.19195v1">
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:50:07 Z</p>
+  <h2 class="article-title">LLMの聴覚知識がオーディオ言語モデルに与える影響：包括的評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">eess.AS</span><span class="tag">cs.CL</span><span class="tag">cs.SD</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が大規模オーディオ言語モデル（LALM）の知識基盤として広く利用されている現状に着目し、テキストのみの事前学習を通じてLLMがどの程度の聴覚知識をエンコードしているか、そしてそれが下流タスクのパフォーマンスにどのように影響するかを明らかにすることを目的としています。<br><br>このギャップを研究するため、著者らはテキストのみの2つの設定と、オーディオを考慮した1つの設定で異なるLLMを比較評価しました。具体的には、聴覚知識の幅と深さをテストするベンチマーク「AKB-2000」での直接的なプロービング、オーディオキャプショナーからのテキスト記述に対するLLMの推論能力を評価するカスケード評価、そしてオーディオエンコーダーと共にLLMをLALMにファインチューニングするオーディオグラウンデッド評価を実施しました。<br><br>実験の結果、LLMファミリー間で聴覚知識のエンコード量に大きなばらつきがあること、そしてテキストのみでの評価結果がオーディオタスクのパフォーマンスと強く相関することが明らかになりました。本研究は、オーディオ分野におけるLLMの理解を深めるための経験的な基盤を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Ke-Han Lu, Szu-Wei Fu, Chao-Han Huck Yang, Zhehuai Chen, Sung-Feng Huang, Chih-Kai Yang, Yi-Cheng Lin, Chi-Yuan Hsiao<br>
+        分類：eess.AS, cs.CL, cs.SD<br>
+        分野：eess.AS<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19195v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19195v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="汎用GUIエージェントのためのスケーラブルな批評フレームワーク" data-timestamp="1773942467000" data-url="https://arxiv.org/abs/2603.19191v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:47:47 Z</p>
+  <h2 class="article-title">汎用GUIエージェントのためのスケーラブルな批評フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、汎用GUIエージェントの堅牢性向上に貢献する、スケーラブルで高精度なマルチエージェント批評フレームワーク「OS-Themis」を提案しています。<br><br>強化学習（RL）はGUIエージェントの性能向上に貢献する可能性がありますが、学習は報酬関数の質に大きく依存します。既存の報酬手法は、スケーラビリティと性能の両立に課題がありました。OS-Themisは、軌道を検証可能なマイルストーンに分解し、意思決定のための重要な証拠を分離します。さらに、最終的な判定を下す前に証拠連鎖を厳密に監査するレビューメカニズムを採用しています。<br><br>評価を容易にするため、GUI結果報酬のための包括的なクロスプラットフォームベンチマーク「OmniGUIRewardBench (OGRBench)」も導入しました。本フレームワークは、オンラインRLトレーニングをサポートする際に10.3%の改善、自己トレーニングループでの軌道検証とフィルタリングに使用する際には6.9%の向上をもたらし、エージェントの進化を促進する可能性を示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zehao Li, Zhenyu Wu, Yibo Zhao, Bowen Yang, Jingjing Xie, Zhaoyang Liu, Zhoumianze Liu, Kaiming Jin<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19191v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19191v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="共変量不一致下におけるRCTベースの処置効果推定の改善手法" data-timestamp="1773942192000" data-url="https://arxiv.org/abs/2603.19186v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:43:12 Z</p>
+  <h2 class="article-title">共変量不一致下におけるRCTベースの処置効果推定の改善手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、ランダム化比較試験（RCT）と観察研究（OS）の間で共変量（特徴量）が一致しない場合に、処置効果の推定精度を向上させる手法「CALM」を提案するものです。<br><br>CALMは、特徴量を直接補完するのではなく、各データソースの特徴量を共通の表現空間にマッピングする埋め込み（embedding）を学習します。これにより、OSのモデルをRCTの埋め込み空間に転移させ、RCTデータで調整（キャリブレーション）することで、ランダム化による因果関係の特定性を維持します。<br><br>提案手法は、埋め込みの整合性、アウトカムモデルの複雑さ、キャリブレーションの複雑さに基づいて、有限サンプルリスクを分解し、埋め込みによる整合が補完よりも優れる条件を明らかにします。シミュレーション実験では、提案手法が線形および非線形の両方のケースで、既存の補完手法と比較して優れた性能を示すことが確認されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Amir Asiaee, Samhita Pal<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19186v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19186v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="MIDSTチャレンジ：拡散モデルによる合成表形式データに対するメンバーシップ推論" data-timestamp="1773942166000" data-url="https://arxiv.org/abs/2603.19185v1">
+  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:42:46 Z</p>
+  <h2 class="article-title">MIDSTチャレンジ：拡散モデルによる合成表形式データに対するメンバーシップ推論</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、合成データがデータ匿名化やプライバシー保護の解決策として期待される中、特に表形式データにおける拡散モデルのプライバシー保護性能、とりわけメンバーシップ推論攻撃（MIA）に対する耐性を評価するMIDSTチャレンジについて報告しています。<br><br>拡散モデルは様々なデータタイプに有効ですが、表形式データにおけるプライバシー耐性は十分に探求されていませんでした。MIDSTチャレンジでは、拡散モデルによって生成された合成表形式データのプライバシー利得を定量的に評価し、MIAへの耐性を検証することを目的としました。特に、単一テーブルや多関係テーブルなど、表形式データの複雑性と多様性に対応するため、複数のターゲットモデルがMIAの対象として検討されました。<br><br>本チャレンジの重要な成果として、ターゲットとする拡散モデルに特化した新規のブラックボックスおよびホワイトボックスMIAが開発され、それらのプライバシー有効性を包括的に評価することが可能になりました。この研究は、合成データ、特に拡散モデルを用いた表形式データのプライバシー保護に関する理解を深める上で重要な貢献をしています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Masoumeh Shafieinejad, Xi He, Mahshid Alinoori, John Jewell, Sana Ayromlou, Wei Pang, Veronica Chatrath, Garui Sharma<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19185v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19185v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="Box Maze: LLMの信頼性の高い推論のためのプロセス制御アーキテクチャ" data-timestamp="1773942078000" data-url="https://arxiv.org/abs/2603.19182v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:41:18 Z</p>
+  <h2 class="article-title">Box Maze: LLMの信頼性の高い推論のためのプロセス制御アーキテクチャ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論プロセスにおける信頼性向上を目指す「Box Maze」という新しいアーキテクチャを提案しています。<br><br>LLMは強力な生成能力を持つ一方で、幻覚や不確かな推論といった課題を抱えています。既存の安全対策は行動レベルに留まり、推論プロセスの整合性を保証する建築的なメカニズムが不足していました。Box Mazeは、推論を「記憶の接地」「構造化推論」「境界強制」の3つの明示的なレイヤーに分解します。<br><br>シミュレーションベースの評価では、複数のLLMシステムに対し、境界侵食シナリオを用いて検証が行われました。その結果、Box Mazeのアーキテクチャ的制約により、敵対的条件下での境界失敗率が約40%から1%未満に大幅に低減されることが示唆されました。<br><br>この研究は、シミュレーションに基づいた予備的な結果ですが、プロセスレベルでの制御がLLMの推論信頼性向上に有望な方向性であることを示しています。今後の実世界での検証が期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zou Qiang<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19182v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="GPUカーネル最適化の限界を測る「SOL-ExecBench」ベンチマーク" data-timestamp="1773941402000" data-url="https://arxiv.org/abs/2603.19173v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:30:02 Z</p>
+  <h2 class="article-title">GPUカーネル最適化の限界を測る「SOL-ExecBench」ベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、GPUカーネルの最適化性能を評価するための新しいベンチマーク「SOL-ExecBench」を提案します。これは、従来のソフトウェアベースラインとの比較ではなく、ハードウェアの理論的な限界（Speed-of-Light, SOL）にどれだけ近づけるかを測定することに焦点を当てています。<br><br>SOL-ExecBenchは、言語、拡散モデル、画像、音声、動画など、様々なAIモデルから抽出された235個のCUDAカーネル最適化問題で構成されており、NVIDIA Blackwell GPUをターゲットとしています。BF16、FP8、NVFP4フォーマットに対応し、Blackwell特有の機能が重要となるカーネルも含まれています。<br><br>本ベンチマークでは、SOLARというパイプラインを用いてハードウェアに根差したSOL境界を解析的に導出し、最適化の固定目標を提供します。これにより、カーネルの性能をSOL境界に対して定量化する「SOLスコア」が算出されます。また、エージェント型最適化ツールの評価を支援するため、GPUクロックロック、キャッシュクリア、静的解析などの機能を備えたサンドボックス化された実行環境も提供されます。<br><br>SOL-ExecBenchは、GPUカーネルのベンチマーク手法を、変化するソフトウェアベースラインを上回ることから、ハードウェアの理論的限界に迫るという新たな視点へと転換させるものです。これにより、より効率的でハードウェアに最適化されたGPUカーネルの開発が促進されることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Edward Lin, Sahil Modi, Siva Kumar Sastry Hari, Qijing Huang, Zhifan Ye, Nestor Qin, Fengzhe Zhou, Yuan Zhang<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19173v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19173v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="信頼性の高い冠動脈造影分析のための知覚・推論シナジーフレームワーク" data-timestamp="1773941119000" data-url="https://arxiv.org/abs/2603.19169v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:25:19 Z</p>
+  <h2 class="article-title">信頼性の高い冠動脈造影分析のための知覚・推論シナジーフレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、冠動脈血管のセグメンテーションにおけるトポロジカル制約を強制できず、ピクセルレベルの精度が高いにもかかわらず断片的な血管樹を生成してしまうという課題に対し、知覚と推論を連携させた「ARIADNE」フレームワークを提案しています。<br><br>ARIADNEは、DPO（Direct Preference Optimization）を用いて、Betti数制約を選好信号としてSa2VAビジョン・言語基盤モデルをファインチューニングし、ピクセル単位のオーバーラップ指標ではなく、幾何学的に完全な血管構造へとポリシーを整合させます。さらに、狭窄部位の特定をマルコフ決定過程として定式化し、分岐部や血管交差部のような曖昧な解剖学的候補を自律的に除外するメカニズムを導入することで、網羅率の最大化から信頼性の最適化へとシフトします。<br><br>1,400件の臨床造影画像において、最先端のセンターラインDiceスコア0.838を達成し、幾何学的ベースラインと比較して偽陽性を41%削減しました。外部検証でも、異なる取得プロトコル間での汎化性能が確認されています。これは、医療画像におけるトポロジカル整合性のためのDPOの初の応用であり、構造的制約に対する選好ベース学習が、介入心臓病学ワークフローにおける診断感度を維持しながらトポロジカル違反を軽減できることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zhan Jin, Yu Luo, Yizhou Zhang, Ziyang Cui, Yuqing Wei, Xianchao Liu, Xueying Zeng, Qing Zhang<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19169v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19169v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルにおける反事実的戦略的推論の評価" data-timestamp="1773941000000" data-url="https://arxiv.org/abs/2603.19167v1">
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:23:20 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける反事実的戦略的推論の評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が、戦略的パフォーマンスにおいて真の推論を反映しているのか、それとも記憶されたパターンに依存しているのかを評価することを目的としています。この評価のために、著者らはLLMを繰り返しゲーム理論の設定で検証しました。<br><br>具体的には、囚人のジレンマ（PD）とじゃんけん（RPS）という2つの古典的なゲームを取り上げ、これらのゲームに反事実的なバリエーションを導入しました。これらのバリエーションでは、ペイオフ構造や行動ラベルが変更され、馴染みのある対称性や優位関係が破られています。これにより、LLMが変化した状況下で戦略的にどのように振る舞うかを分析しました。<br><br>多指標評価フレームワークを用いて、デフォルト設定と反事実的設定でのパフォーマンスを比較した結果、LLMは反事実的な環境において、インセンティブへの感度、構造的汎化、戦略的推論において限界を示すことが示されました。この研究は、LLMの戦略的推論能力の評価における新たな視点を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Dimitrios Georgousis, Maria Lymperaiou, Angeliki Dimitriou, Giorgos Filandrianos, Giorgos Stamou<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19167v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19167v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CL, cs.CV, cs.LG" data-title="意味と測定：ビジョン言語ナビゲーションのためのマルチエージェント確率的接地" data-timestamp="1773940856000" data-url="https://arxiv.org/abs/2603.19166v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:20:56 Z</p>
+  <h2 class="article-title">意味と測定：ビジョン言語ナビゲーションのためのマルチエージェント確率的接地</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、ロボットが自然言語の指示を物理的に実現可能な行動に変換する能力、特に「冷蔵庫の右に2メートル進む」といった指示における意味的・計量的制約の理解を向上させるための「MAPG（Multi-Agent Probabilistic Grounding）」フレームワークを提案しています。<br><br>現在のビジョン言語モデル（VLM）は意味的な理解に優れていますが、物理空間における計量的な制約の推論は苦手としています。MAPGは、言語指示を構造化されたサブコンポーネントに分解し、VLMに各コンポーネントの接地を問い合わせます。その後、これらの接地された出力を確率的に合成することで、計量的に一貫性のある、実行可能な3D空間での決定を生成します。<br><br>MAPGは、HM-EQAベンチマークで評価され、既存の強力なベースラインと比較して一貫した性能向上が示されました。さらに、計量・意味的目標接地を評価するための新しいベンチマーク「MAPG-Bench」も導入されました。これは、既存の言語接地評価におけるギャップを埋めるものです。<br><br>シミュレーションを超えた実世界でのロボットデモンストレーションも行われ、構造化されたシーン表現が利用可能な場合にMAPGが有効であることが示されました。この研究は、ロボットが人間とより効果的に協働するための基盤技術となる可能性を秘めています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Swagat Padhan, Lakshya Jain, Bhavya Minesh Shah, Omkar Patil, Thao Nguyen, Nakul Gopalan<br>
+        分類：cs.RO, cs.AI, cs.CL, cs.CV, cs.LG<br>
+        分野：cs.RO<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19166v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19166v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.DC" data-title="GPU活用型汎用組合せ最適化フレームワーク cuGenOpt" data-timestamp="1773940761000" data-url="https://arxiv.org/abs/2603.19163v1">
+  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:19:21 Z</p>
+  <h2 class="article-title">GPU活用型汎用組合せ最適化フレームワーク cuGenOpt</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.DC</span></div>
+  <div class="summary">本論文は、組合せ最適化問題に対するGPUアクセラレータ搭載の汎用メタヒューリスティックフレームワーク「cuGenOpt」を提案するものです。<br><br>cuGenOptは、「1ブロックが1ソリューションを進化させる」というCUDAアーキテクチャを採用し、統一されたエンコーディング抽象化、2段階適応型オペレータ選択メカニズム、ハードウェアを意識したリソース管理を特徴としています。また、ユーザー定義オペレータ登録インターフェースにより、問題固有のCUDA探索オペレータを組み込むことが可能です。<br><br>JITコンパイルパイプラインとLLMベースのモデリングアシスタントにより、Python APIとして利用でき、自然言語での問題記述からソルバーコードを生成します。実験では、既存の汎用MIPソルバーを桁違いに上回り、特定ソルバーとも競争力のある品質を示しました。このフレームワークは、最適化問題の解決における汎用性、性能、使いやすさのトレードオフを同時に解決することを目指しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yuyang Liu<br>
+        分類：cs.AI, cs.DC<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19163v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19163v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="stat.ME" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ME, stat.ML" data-title="予測駆動推論における差分推定量の根拠としてのPPI" data-timestamp="1773940588000" data-url="https://arxiv.org/abs/2603.19160v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 17:16:28 Z</p>
+  <h2 class="article-title">予測駆動推論における差分推定量の根拠としてのPPI</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">stat.ME</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、予測駆動推論（PPI）の根幹をなす推定量が、1970年代に遡る調査サンプリングの分野における確立された推定量と等価であることを論じます。<br><br>具体的には、母集団平均に対するPPI推定量は、Casselら（1976）の差分推定量と代数的に等価であり、PPIプラスはSarndalら（2003）の一般化回帰（GREG）推定量に対応します。この等価性を認識することで、PPIのどの部分が長年の統計学の文献から受け継がれ、何が真に新しいのか、そして推論の主張にはどのような注意が必要かを考察します。<br><br>PPIとモデル支援推定との違いを分析し、推論のモード、ラベルなしデータプールにおける役割、そして差分予測誤差が平均処置効果などのサブグループ推定値に与える影響の違いを明らかにします。PPI研究者は、キャリブレーション、最適配分、設計ベースの診断に関する調査サンプリング文献の理論を活用でき、調査サンプリング研究者は、非標準的な推定値への拡張や、アクセスしやすいソフトウェアエコシステムから恩恵を受けることができます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Reagan Mozer<br>
+        分類：stat.ME, stat.ML<br>
+        分野：stat.ME<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19160v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19160v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="低リソース言語向け可変エントロピー方策最適化モデル「VEPO」" data-timestamp="1773940229000" data-url="https://arxiv.org/abs/2603.19152v1">
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:10:29 Z</p>
+  <h2 class="article-title">低リソース言語向け可変エントロピー方策最適化モデル「VEPO」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、低リソース言語における大規模言語モデルの性能低下問題に対処するため、可変エントロピー方策最適化（VEPO）を提案します。<br><br>VEPOは、検証可能な報酬を用いた強化学習を活用し、決定論的な構造的制約を方策アライメントプロセスに組み込みます。これにより、学習中に指定されたシーケンス長、形式の一貫性、言語的な適切性が保証されます。特に、エントロピーの可変メカニズムにより、モデルは文字通りの忠実性と意味的な自然さの間の均衡を動的に調整します。<br><br>エントロピーを調整したアドバンテージ推定と非対称クリッピングを統合することで、VEPOは頑健な探索を維持しつつ、方策の崩壊を軽減します。90のFLORES-200、COMET-22、chrF方向での実証評価により、VEPOはトークン化効率と翻訳品質の両方で大幅な改善をもたらし、過小評価されている言語の性能ギャップを埋めることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Chonghan Liu, Yimin Du, Qi An, Xin He, Cunqi Zhai, Fei Tan, Weijia Lin, Xiaochun Gong<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19152v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19152v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.LG" data-title="言語モデルの最適分割：混合データから専門ドメインへの特化" data-timestamp="1773940025000" data-url="https://arxiv.org/abs/2603.19149v1">
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 17:07:05 Z</p>
+  <h2 class="article-title">言語モデルの最適分割：混合データから専門ドメインへの特化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデルが多様なデータセットによる事前学習を通じて、知識、言語、推論タスクで高い性能を発揮する現状を踏まえ、モデルの分割と専門ドメインへの特化に関する新しいアプローチを提案しています。<br><br>従来の2段階学習パラダイム（事前学習後、専門データでの微調整）に対し、本研究では複数のモデルを一般的な事前学習コーパスで独立に学習させ、その後の専門ドメインへの継続的な事前学習における計算資源の最適な配分をスケーリング則を用いて決定する方法を提案します。このアプローチは、モデルサイズNとトークン数D、D'における損失を正確に予測し、より大きなモデルサイズやトークン数への外挿を可能にします。<br><br>言語モデルのトレーニングに応用した結果、本手法は共通認識知識や推論ベンチマークにおいて、様々なモデルサイズと計算予算で一貫して性能を向上させることが示されました。これは、モデルの分割と専門化を最適化することで、限られた計算資源でより高いパフォーマンスを引き出すことができる可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Skyler Seto, Pierre Ablin, Anastasiia Filippova, Jiayuan Ye, Louis Bethune, Angelos Katharopoulos, David Grangier<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19149v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19149v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="UGID：大規模言語モデルのバイアス除去のための統一グラフ同型性" data-timestamp="1773939577000" data-url="https://arxiv.org/abs/2603.19144v1">
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 16:59:37 Z</p>
+  <h2 class="article-title">UGID：大規模言語モデルのバイアス除去のための統一グラフ同型性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）に見られる顕著な社会的バイアスに着目し、そのバイアスを内部表現レベルで除去するための新しいフレームワーク「UGID（Unified Graph Isomorphism for Debiasing）」を提案しています。従来の出力レベルやデータ最適化に基づく手法ではバイアスを完全に解決できないという課題に対し、UGIDはTransformerアーキテクチャを構造化された計算グラフとしてモデル化し、注意機構をグラフのルーティングエッジ、隠れ状態をグラフノードとして捉えます。<br><br>UGIDでは、バイアス除去を、反事実的な入力間でのグラフ構造の不変性を強制する問題として定式化します。これにより、バイアスに敏感な属性の違いのみを許容し、注意ルーティングと隠れ表現の両方を効果的に制約することで、バイアスのアーキテクチャコンポーネント間での移行を防ぎます。さらに、モデルの汎用的な能力を損なうことなく、行動アライメントを達成するために、敏感なロジットに対する対数空間制約と、定義的意味を保持するための選択的アンカーベースの目的関数が導入されています。<br><br>大規模言語モデルを用いた広範な実験により、UGIDは分布内および分布外の両方の設定で効果的にバイアスを削減し、内部構造の不一致を大幅に低減することが示されました。また、モデルの安全性と有用性も維持されることが確認されました。この研究は、LLMのバイアス除去における新たなアプローチを提示し、より公平で信頼性の高いAIシステムの開発に貢献するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zikang Ding, Junchi Yao, Junhao Li, Yi Zhang, Wenbo Jiang, Hongbo Liu, Lijie Hu<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19144v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19144v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG" data-title="推論モデルにおける不確実性推定のサンプリング依存性" data-timestamp="1773938525000" data-url="https://arxiv.org/abs/2603.19118v1">
+  <p class="meta">arXiv cs.CL　Thu, 19 Mar 2026 16:42:05 Z</p>
+  <h2 class="article-title">推論モデルにおける不確実性推定のサンプリング依存性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、推論を行う大規模言語モデル（LLM）において、不確実性（モデルがどれだけ確からしいと考えているか）をどのように推定できるか、特にサンプリング回数との関係性を調査しています。<br><br>提案手法は、モデルの回答の確信度を言語化する「Verbalized Confidence」と、同じ質問を複数回行い回答の一貫性をみる「Self-Consistency」という、ブラックボックスで利用可能な2つの手法を評価します。これらを組み合わせることで、少ないサンプリング回数でも単一の手法よりも高い不確実性推定精度が得られることを示しました。<br><br>実験の結果、これらの手法は推論モデルにおいて有効であり、特に複数の手法を組み合わせることで、サンプリング回数が増えるにつれて不確実性推定の精度が向上することが明らかになりました。ただし、その効果はドメイン（数学、STEM、人文科学）によって異なり、数学分野で最も高い精度を示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Maksym Del, Markus Kängsepp, Marharyta Domnich, Ardi Tampuu, Lisa Yankovskaya, Meelis Kull, Mark Fishel<br>
+        分類：cs.AI, cs.CL, cs.LG<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19118v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19118v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="math.NA" data-source="arXiv stat.ML" data-area="AI" data-categories="math.NA, stat.ML" data-title="カルーネン・ルーベー展開構築における数値的考察" data-timestamp="1773938086000" data-url="https://arxiv.org/abs/2603.19108v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 16:34:46 Z</p>
+  <h2 class="article-title">カルーネン・ルーベー展開構築における数値的考察</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">math.NA</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本報告書は、二次確率過程のカルーネン・ルーベー展開（KLE）を構築する際の数値的な側面について詳細に検討します。KLEは、共分散作用素のスペクトル分解を通じて構築され、これはフレドホルム積分方程式の第二種として定式化され、計算グリッド上で離散化されることで固有値分解の問題に帰着します。<br><br>本研究では、フレドホルム積分方程式に基づく固有値解と、重み付けされた標本行列の特異値分解（SVD）との間の代数的等価性を導出し、モデルベースおよびデータ駆動型KLE構築の両方で一貫した解を得られることを示します。指数関数型および二乗指数関数型共分散カーネルに対する解析的固有値解を、1次元設定における数値的一貫性と精度を評価するための基準ベンチマークとして用います。SVDに基づく固有値推定値とKL係数の経験分布が、標本数に依存して理論的な正規分布（N(0,1)）に収束する様子を特徴づけています。<br><br>さらに、高次元設定として、2次元の不規則領域を2つの洗練レベルを持つ非構造化三角形メッシュで離散化した場合と、3次元トーラス領域でグリッド点間のユークリッド距離と最短内部経路距離の比較を動機づける非単連結トポロジーを持つ場合を扱います。これらの数値結果は、離散化戦略、求積規則、標本数の相互作用と、それらがKLEの結果に与える影響を浮き彫りにします。この研究は、KLEの数値計算における精度と効率を高めるための実践的な指針を提供し、統計モデリングや機械学習分野における応用への貢献が期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Cosmin Safta, Habib N. Najm<br>
+        分類：math.NA, stat.ML<br>
+        分野：math.NA<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19108v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19108v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="cs.CG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.CG, cs.DS, cs.LG, stat.ML" data-title="高次元線形分類問題の計算論的困難性" data-timestamp="1773935621000" data-url="https://arxiv.org/abs/2603.19061v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 15:53:41 Z</p>
+  <h2 class="article-title">高次元線形分類問題の計算論的困難性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.CG</span><span class="tag">cs.DS</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、線形分類のモデルとなる最大半空間不一致問題（Maximum Halfspace Discrepancy）について、次元数に対して指数関数的な下限を新たに確立するものです。<br><br>従来、この問題および計算幾何学・機械学習における関連問題に対しては、$O(n^d)$ および $\tilde O(1/\varepsilon^d)$ といった上限しか知られておらず、指数関数的な依存性を支持する多項式下限しか存在しませんでした。本研究では、アフィン退化テスト（Affine Degeneracy testing）やk-Sum問題といった、広く困難であると信じられている問題からの還元により、このギャップを対数多項式項まで埋めることを目指します。<br><br>その結果、アフィン退化テストからは $\tildeΩ(n^d)$ および $\tildeΩ(1/\varepsilon^d)$ に対応する下限が、k-Sum問題からは $\tildeΩ(n^{d/2})$ および $\tildeΩ(1/\varepsilon^{d/2})$ に対応する下限が得られました。さらに、計算モデルが片側クエリ（sidedness queries）に限定される場合、これは多くの現代的なアルゴリズムや計算パラダイムで実装・最適化されている広く普及した設定に対応しますが、最初の $\tildeΩ(n^d)$ の下限は無条件に成り立ちます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Alexander Munteanu, Simon Omlor, Jeff M. Phillips<br>
+        分類：cs.CG, cs.DS, cs.LG, stat.ML<br>
+        分野：cs.CG<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19061v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19061v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="stat.CO" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.CO, physics.ao-ph, stat.ME, stat.ML" data-title="P-スプライン三角測度輸送による適応型非線形データ同化" data-timestamp="1773935438000" data-url="https://arxiv.org/abs/2603.19058v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 15:50:38 Z</p>
+  <h2 class="article-title">P-スプライン三角測度輸送による適応型非線形データ同化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.CO</span><span class="tag">physics.ao-ph</span><span class="tag">stat.ME</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、非ガウス統計が課題となるデータ同化において、適応型非線形手法を提案するものである。<br><br>線形手法では問題が単純化されすぎ、完全な非線形手法は実用的でない場合が多い。本研究では、三角測度輸送フレームワークを拡張し、P-スプライン基底関数と情報量基準を用いた適応アルゴリズムを開発することで、この両極端の中間的な解を追求する。これにより、輸送マップのパラメータ化を自動的に選択し、過学習を防ぎつつ重要な構造を捉えることを目指す。<br><br>提案手法は、勾配降下法を可能にし、高次元設定での効率的かつ微細な適応を実現する。ハイパーパラメータの調整も不要であり、システム統計とアンサンブルサイズに基づいて輸送マップの複雑さを適切なレベルに調整する。この手法は、非線形かつ非ガウス問題、特に高次元の分散型地下水モデルにおいてその性能が実証されている。<br><br>本研究は、データ同化における非線形性の課題に対する、より柔軟で効率的なアプローチを提供する。特に、実世界の複雑なシステムをモデル化する際に有効であると考えられる。<br><br>提案された適応型データ同化手法は、気象予測、気候モデリング、資源管理など、様々な分野での応用が期待される。特に、不確実性の高い非ガウスデータを扱う場合に、その有効性が発揮されるだろう。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Berent Å. S. Lunde, Maximilian Ramgraber<br>
+        分類：stat.CO, physics.ao-ph, stat.ME, stat.ML<br>
+        分野：stat.CO<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19058v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19058v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="ニューラルネットワークを用いた高速かつ解釈可能な自己回帰モデル推定" data-timestamp="1773934692000" data-url="https://arxiv.org/abs/2603.19041v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 15:38:12 Z</p>
+  <h2 class="article-title">ニューラルネットワークを用いた高速かつ解釈可能な自己回帰モデル推定</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、時系列分析で広く用いられる自己回帰（AR）モデルのパラメータ推定において、計算コストが高く収束に問題を抱えがちな従来の推定方法に代わる、ニューラルネットワーク（NN）を用いた新しい手法を提案します。<br><br>提案手法は、ARモデルの構造をフィードフォワードNNに組み込み、バックプロパゲーションを用いて係数を推定します。これにより、従来のモデルの解釈性を維持しつつ、計算効率と収束性を大幅に改善することを目指します。<br><br>シミュレーション実験では、提案されたNNベースの手法が、従来の条件付き最尤法（CML）が収束に失敗するケースでも信頼性の高い推定値を提供し、計算速度も大幅に向上することを示しました。これにより、ARモデルのパラメータ推定において、高速かつ効率的な代替手段となる可能性が示唆されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Anaísa Lucena, Ana Martins, Armando J. Pinho, Sónia Gouveia<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.19041v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19041v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="OmniAnomalyによる異常検知の再評価：PCAベースモデルとの性能比較" data-timestamp="1773932078000" data-url="https://arxiv.org/abs/2603.18985v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 14:54:38 Z</p>
+  <h2 class="article-title">OmniAnomalyによる異常検知の再評価：PCAベースモデルとの性能比較</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、多変量時系列異常検知（MTSAD）における深層学習モデルの性能評価の不均一性に着目し、広く用いられているOmniAnomalyモデルと主成分分析（PCA）ベースの線形モデルを比較評価するものです。<br><br>両モデルは同一の閾値設定と評価手順の下で、サーバーマシンデータセット（SMD）の28台のマシンに対し100回の実験を繰り返し実施しました。評価指標には、ポイントレベルでの適合率、再現率、F1スコアを用い、ポイント調整の有無や集約戦略による影響も分析しました。<br><br>実験の結果、マシンごとに性能のばらつきが大きいことが明らかになりました。特に、ポイント調整を行わない場合、PCAベースのモデルがOmniAnomalyと同等、あるいはそれ以上の性能を示すことが示されました。これは、現在のベンチマーク手法における複雑なアーキテクチャの付加価値に疑問を投げかけるものであり、MTSAD研究における評価方法論の重要性を強調しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Bruna Alves, Ana Martins, Armando J. Pinho, Sónia Gouveia<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.18985v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.18985v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="最大エントロピー探索：将来の状態・行動訪問尺度を用いたアプローチ" data-timestamp="1773930608000" data-url="https://arxiv.org/abs/2603.18965v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 14:30:08 Z</p>
+  <h2 class="article-title">最大エントロピー探索：将来の状態・行動訪問尺度を用いたアプローチ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、強化学習エージェントが状態と行動を探索する際に、将来訪問する状態・行動の分布のエントロピーを最大化する「最大エントロピー探索」について論じます。<br><br>提案手法では、将来の割引状態・行動特徴量の分布エントロピーに比例する内在報酬を導入します。このアプローチは、期待される内在報酬の合計が、初期状態から始まる軌道で訪問する状態・行動特徴量の割引分布エントロピーの下限となること、そして、内在報酬の定義に用いられる分布が収縮写像の不動点でありオフポリシーで推定可能であることを示す結果に基づいています。<br><br>実験の結果、この新しい目的関数は、個々の軌道内での特徴量の訪問を改善する一方で、軌道全体での特徴量の訪問期待値はわずかに低下することが示されました。これは下限値が示唆するとおりです。また、探索のみを行うエージェントの学習収束速度も向上しました。評価されたベンチマークでは、ほとんどの手法で制御性能は同等でした。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Adrien Bolland, Gaspard Lambrechts, Damien Ernst<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.18965v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.18965v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Generative Models" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="深層学習を用いた多変量時系列異常検知の統一的分類体系" data-timestamp="1773929848000" data-url="https://arxiv.org/abs/2603.18941v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 14:17:28 Z</p>
+  <h2 class="article-title">深層学習を用いた多変量時系列異常検知の統一的分類体系</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本研究は、近年急速に発展している多変量時系列異常検知（MTSAD）の分野において、深層学習（DL）モデルが主流となっている現状を踏まえ、その研究動向を整理するための統一的な分類体系を提案します。<br><br>この分類体系は、「入力」「出力」「モデル」の3つのパートにわたる11の次元から構成されます。次元は、方法論的研究の包括的な分析と、レビュー論文からの知見を組み合わせて確立されました。さらに、提案された分類体系は、最近の論文群を用いて検証され、MTSADにおける方法論的トレンドの明確な概要を提供します。<br><br>結果として、Transformerベースのモデルや、再構成・予測モデルへの収束が明らかになり、適応的・生成的なトレンドの萌芽が示されました。既存のサーベイを補完するこの統一的分類体系は、将来の発展に対応できるように設計されており、分野の進展に伴い新しいカテゴリや次元を追加することが可能です。これにより、断片化された知識が統合され、MTSAD分野における将来の研究の参照点となります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Bruna Alves, Armando J. Pinho, Sónia Gouveia<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.18941v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.18941v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, math.ST" data-title="カーネル単一指数バンディット：推定、推論、学習" data-timestamp="1773929716000" data-url="https://arxiv.org/abs/2603.18938v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 14:15:16 Z</p>
+  <h2 class="article-title">カーネル単一指数バンディット：推定、推論、学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">math.ST</span></div>
+  <div class="summary">本論文では、各アームの報酬が、アーム固有のインデックスパラメータと未知のノンパラメトリックリンク関数を持つ単一指数モデルに従う、有限個のアクションを持つコンテクスチュアルバンディット問題を扱います。<br><br>本研究では、アームが安定した意思決定オプションに対応し、共変量がバンディットポリシーの下で適応的に進化する状況を想定しています。この設定は、サンプリング分布が割り当てルールに依存し、観測が時間とともに依存し、逆傾向スコア重み付けが分散拡大を引き起こすなど、統計的に大きな課題をもたらします。提案手法は、カーネル化されたε-greedyアルゴリズムであり、Steinベースのインデックスパラメータ推定と、逆傾向スコア重み付けされたカーネルリッジ回帰を報酬関数に組み合わせています。このアプローチにより、解釈性を維持しながら柔軟な半パラメトリック学習が可能になります。<br><br>分析では、適応的に収集されたデータを用いた推論のための新しいツールを開発します。適応的サンプリング下での単一インデックス推定量の漸近正規性を確立し、有効な信頼領域を提供します。また、RKHS推定量の方向性関数中心極限定理を導出し、漸近的に有効な点ごとの信頼区間を提供します。これらの結果は、単一指数コンテクスチュアルバンディットにおける同時学習と推論のための統一的なフレームワークを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Sakshi Arya, Satarupa Bhattacharjee, Bharath K. Sriperumbudur<br>
+        分類：stat.ML, cs.LG, math.ST<br>
+        分野：stat.ML<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.18938v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.18938v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="モデルアンサンブルを用いた公平性を考慮した予測の後処理フレームワーク" data-timestamp="1773923923000" data-url="https://arxiv.org/abs/2603.18838v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 12:38:43 Z</p>
+  <h2 class="article-title">モデルアンサンブルを用いた公平性を考慮した予測の後処理フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、機械学習における予測性能と公平性の最適なバランスを取るという、依然として根本的な課題に取り組むものです。<br><br>提案する後処理フレームワークは、モデルアンサンブルを活用することで公平性を考慮した予測を促進します。特定のモデルの内部構造に依存せずに設計されているため、様々な学習タスク、モデルアーキテクチャ、公平性の定義に広く適用可能です。<br><br>分類、回帰、生存分析にわたる広範な実験を通じて、このフレームワークが予測精度を維持、あるいはわずかに影響を与えるだけで、効果的に公平性を向上させることが実証されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Zhouting Zhao, Tin Lok James Ng<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.18838v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.18838v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, stat.AP" data-title="小誤差領域における再帰的輸送代理の改善" data-timestamp="1773919948000" data-url="https://arxiv.org/abs/2603.18781v1">
+  <p class="meta">arXiv stat.ML　Thu, 19 Mar 2026 11:32:28 Z</p>
+  <h2 class="article-title">小誤差領域における再帰的輸送代理の改善</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">stat.AP</span></div>
+  <div class="summary">本論文は、Wasserstein距離の計算効率の良い代理手法である再帰的分割法について、特に誤差が小さい領域における統計的挙動と解像度を扱います。<br><br>研究では、再帰的ランクマッチング（RRM）を人口基準で固定した設定で分析し、その収束率を明らかにしました。さらに、誤差が小さい領域で解像度が低下する主な原因となる不一致メカニズムを特定しました。<br><br>この分析に基づき、選択的再帰的ランクマッチング（SRRM）を提案しています。SRRMは、特定された不一致を抑制することで、計算コストの増加を抑えつつ、Wasserstein距離のより忠実な代理手法を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Yufei Zhang, Tao Wang, Jingyi Zhang<br>
+        分類：stat.ML, cs.LG, stat.AP<br>
+        分野：stat.ML<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.18781v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.18781v1</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
+  </div>
+  <script>
+    (function(){
+      function byId(id){ return document.getElementById(id); }
+      function normalize(text){
+        try {
+          return String(text || "").toLowerCase().normalize("NFKC").replace(/\s+/g, " ").trim();
+        } catch (e) {
+          return String(text || "").toLowerCase().replace(/\s+/g, " ").trim();
+        }
+      }
+      function uniqueSorted(list){
+        return Array.from(new Set(list.filter(Boolean))).sort(function(a, b){
+          return String(a).localeCompare(String(b), "ja");
+        });
+      }
+      function fillSelect(select, values){
+        if (!select) return;
+        var current = select.value || "";
+        select.innerHTML = "";
+        var base = document.createElement("option");
+        base.value = "";
+        base.textContent = "すべて";
+        select.appendChild(base);
+        values.forEach(function(value){
+          var option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
+        for (var i = 0; i < select.options.length; i++) {
+          if (select.options[i].value === current) {
+            select.value = current;
+            break;
+          }
+        }
+      }
+      function getArticles(){
+        return Array.prototype.slice.call(document.querySelectorAll("article.digest-article"));
+      }
+      function buildOptions(){
+        var articles = getArticles();
+        fillSelect(byId("filter-month"), uniqueSorted(articles.map(function(el){ return el.dataset.month || ""; })).reverse());
+        fillSelect(byId("filter-genre"), uniqueSorted(articles.map(function(el){ return el.dataset.genre || ""; })));
+        fillSelect(byId("filter-field"), uniqueSorted(articles.map(function(el){ return el.dataset.field || ""; })));
+        fillSelect(byId("filter-source"), uniqueSorted(articles.map(function(el){ return el.dataset.source || ""; })));
+      }
+      function getKeywordHaystack(article){
+        return normalize([
+          article.dataset.title || "",
+          article.dataset.genre || "",
+          article.dataset.field || "",
+          article.dataset.source || "",
+          article.dataset.categories || "",
+          article.textContent || ""
+        ].join(" "));
+      }
+      function applyFilters(){
+        var month = byId("filter-month") ? byId("filter-month").value : "";
+        var genre = byId("filter-genre") ? byId("filter-genre").value : "";
+        var field = byId("filter-field") ? byId("filter-field").value : "";
+        var source = byId("filter-source") ? byId("filter-source").value : "";
+        var keyword = normalize(byId("filter-keyword") ? byId("filter-keyword").value : "");
+        var sortOrder = byId("sort-order") ? byId("sort-order").value : "newest";
+        var articles = getArticles();
+
+        var matched = articles.filter(function(article){
+          if (month && (article.dataset.month || "") !== month) return false;
+          if (genre && (article.dataset.genre || "") !== genre) return false;
+          if (field && (article.dataset.field || "") !== field) return false;
+          if (source && (article.dataset.source || "") !== source) return false;
+          if (keyword && getKeywordHaystack(article).indexOf(keyword) === -1) return false;
+          return true;
+        });
+
+        var sorted = matched.slice().sort(function(a, b){
+          if (sortOrder === "oldest") return Number(a.dataset.timestamp || 0) - Number(b.dataset.timestamp || 0);
+          if (sortOrder === "title") return String(a.dataset.title || "").localeCompare(String(b.dataset.title || ""), "ja");
+          return Number(b.dataset.timestamp || 0) - Number(a.dataset.timestamp || 0);
+        });
+
+        articles.forEach(function(article){ article.style.display = "none"; });
+        sorted.forEach(function(article){
+          article.style.display = "";
+          article.parentNode.appendChild(article);
+        });
+
+        var counter = byId("digest-result-count");
+        if (counter) counter.textContent = "表示件数: " + matched.length + " / " + articles.length;
+      }
+
+      document.addEventListener("DOMContentLoaded", function(){
+        buildOptions();
+        ["filter-month", "filter-genre", "filter-field", "filter-source", "sort-order"].forEach(function(id){
+          var el = byId(id);
+          if (el) el.addEventListener("change", applyFilters);
+        });
+        var keyword = byId("filter-keyword");
+        if (keyword) keyword.addEventListener("input", applyFilters);
+        applyFilters();
+      });
+    })();
+  </script>
+</body>
+</html>
