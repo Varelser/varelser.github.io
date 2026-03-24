@@ -3,28 +3,97 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#020202" />
-    <meta
-      name="description"
-      content="Thought Workbench: spatial knowledge mapping with branches, review, timeline, and multi-pane analysis."
-    />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="icon" type="image/svg+xml" href="/4dthinkingos/favicon.svg" />
-    <link rel="apple-touch-icon" href="/4dthinkingos/icon.svg" />
-    <link rel="manifest" href="/4dthinkingos/manifest.webmanifest" />
-    <title>Thought Workbench</title>
-    <script type="module" crossorigin src="/4dthinkingos/assets/index-CKPF3mJN.js"></script>
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/vendor-runtime-YH0EB74N.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/vendor-pdf-3-Yqd_nx.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-core-Dx41DG6N.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-panels-Da0IvuPM.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-views-cUQ2VXJ-.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-spatial-U1r_71di.js">
-    <link rel="stylesheet" crossorigin href="/4dthinkingos/assets/index-Bk4W9UkG.css">
-  <link rel="manifest" href="/4dthinkingos/manifest.webmanifest"></head>
+    <title>VARELSER</title>
+    <meta name="description" content="VARELSER の公式兖閃ページ。Thought Workbench への六加入口." />
+    <meta name="theme-color" content="#070707" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #070707;
+        --panel: #111111;
+        --border: rgba(255, 255, 255, 0.12);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.6);
+        --accent: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+      }
+      body {
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      main {
+        width: min(720px, 100%);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(28px, 5vw, 48px);
+        letter-spacing: 0.08em;
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .grid {
+        margin-top: 24px;
+        display: grid;
+        gap: 12px;
+      }
+      .card {
+        display: block;
+        padding: 18px 16px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        color: var(--text);
+        text-decoration: none;
+        transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.24);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .card strong {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 6px;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
   <body>
-    <div id="root"></div>
+    <main>
+      <h1>VARELSER</h1>
+      <p>公式版作ニカタレグ、 実験・ツールの入口。</p>
+      <div class="grid">
+        <a class="card" href="/4dthinkingos/">
+          <strong>Thought Workbench</strong>
+          <span>空間知マップィングアプリ</span>
+        </a>
+        <a class="card" href="https://github.com/Varelser" target="_blank" rel="noopener">
+          <strong>GitHub</strong>
+          <span>リポジトリ一覧</span>
+        </a>
+      </div>
+      <p class="footer">このページは GAtHub Pages の q啬（凪口）にして使用します。</p>
+    </main>
   </body>
 </html>
