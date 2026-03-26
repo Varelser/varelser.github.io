@@ -26,14 +26,24 @@
         background: rgba(128, 128, 128, 0.6);
       }
     </style>
-    <script type="module" crossorigin src="/assets/index-BApkzEdL.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          regs.forEach(function(r) { r.unregister(); });
+        });
+        caches.keys().then(function(names) {
+          names.filter(function(n) { return n.startsWith('thought-workbench'); }).forEach(function(n) { caches.delete(n); });
+        });
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DfotlWZe.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/react-vendor-CkJLvdje.js">
-    <link rel="modulepreload" crossorigin href="/assets/three-core-DcoU4_cg.js">
+    <link rel="modulepreload" crossorigin href="/assets/three-core-BtOYI46v.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-CISYfLjf.js">
     <link rel="modulepreload" crossorigin href="/assets/r3f-utils-Dn54R4Rf.js">
-    <link rel="modulepreload" crossorigin href="/assets/r3f-fiber-vpCQzsl0.js">
-    <link rel="modulepreload" crossorigin href="/assets/r3f-drei-DuEV6U-F.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-COnZ1S10.css">
+    <link rel="modulepreload" crossorigin href="/assets/r3f-fiber-DT2ZsH3f.js">
+    <link rel="modulepreload" crossorigin href="/assets/r3f-drei-RMSHSn_Q.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BNY6Pawh.css">
   </head>
   <body>
     <div id="root"></div>
