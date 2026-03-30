@@ -928,6 +928,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="パープレキシティの誤謬：ハイブリッド系列モデルの生成特化型蒸留" data-timestamp="1774628183000" data-url="https://arxiv.org/abs/2603.26556v1">
+  <p class="meta">arXiv cs.AI　Fri, 27 Mar 2026 16:16:23 Z</p>
+  <h2 class="article-title">パープレキシティの誤謬：ハイブリッド系列モデルの生成特化型蒸留</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、事前学習済みTransformerを蒸留によって効率的なハイブリッドモデルに変換する手法について論じています。特に、蒸留モデルにおける高品質な生成能力の実現には、学生モデルのアーキテクチャと蒸留プロセスの両方を慎重に設計する必要があることを強調しています。<br><br>従来の多くの蒸留研究では、自己回帰的な生成を要求せず、候補回答の対数尤度によるランキングで下流の多肢選択ベンチマークを評価していました。しかし、本研究では、この評価方法ではモデルの品質における重要な違いが見過ごされる可能性があることを示しています。例えば、対数尤度スコアリングで教師モデルにほぼ匹敵する7Bパラメータの蒸留モデルが、自己回帰的に回答を生成させる場合には20.8ppも劣ることを実証しました。<br><br>そこで、本研究では、ハイブリッドKimi Delta Attention（Hybrid-KDA）アーキテクチャと、生成ベースの評価を全体を通して使用する多段階蒸留パイプラインであるGenDistillを提案しています。このアプローチをQwen3-0.6Bに適用し、6つの設計軸（学習目的、損失マスキング、学習期間、データセット選択、パラメータ凍結、アーキテクチャ選択）について系統的にアブレーション研究を行いました。その結果、対数尤度ベースの評価は教師と学生のギャップを一貫して過小評価し、設計選択のランキングを逆転させる可能性さえあることが判明しました。本研究で調査した要因の中で、データセット選択、完了のみのマスキング、およびポストトレーニング中のアテンション層の凍結が、生成品質に最も大きな影響を与えることがわかりました。最良のHybrid-KDAモデルは、知識ベンチマークで教師の精度を86〜90%維持しつつ、KVキャッシュメモリを最大75%削減し、128Kトークンのコンテキストでファーストトークンまでの時間を2〜4倍改善しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Juan Gabriel Kostelec, Xiang Wang, Axel Laborieux, Christos Sourmpis, Qinghai Guo<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.26556v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26556v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, q-bio.QM" data-title="大規模言語モデルを用いたファーマコビジランスにおける信号検出手法の性能評価のためのEU時間インデックス参照データセットの開発" data-timestamp="1774626812000" data-url="https://arxiv.org/abs/2603.26544v1">
+  <p class="meta">arXiv cs.CL　Fri, 27 Mar 2026 15:53:32 Z</p>
+  <h2 class="article-title">大規模言語モデルを用いたファーマコビジランスにおける信号検出手法の性能評価のためのEU時間インデックス参照データセットの開発</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">q-bio.QM</span></div>
+  <div class="summary">本論文は、ファーマコビジランスにおける信号検出手法の最適な特定が、信頼できる参照データセットの欠如によって妨げられているという背景に基づいています。既存のデータセットは、副作用（AE）が規制当局によって公式に認識された時期を捉えておらず、確認前期間への分析の制限や早期検出性能の評価を制限しています。<br><br>このギャップを埋めるため、本研究では、製品ラベルへのAEの記載時期と規制メタデータを組み込んだ、欧州連合（EU）の時間インデックス参照データセットを開発しました。中央認可された全ての製品（n=1,513）の現在および過去の製品特性概要（SmPC）を取得し、DeepSeek V3を用いてAEを特定しました。規制メタデータ、ラベル変更を含む、はプログラム的に抽出され、時間インデックスはSmPCへのAE記載日を基準としました。<br><br>開発されたデータベースには、1995年から2025年までの17,763のSmPCバージョンが含まれ、125,026の薬剤-AE関連が含まれています。アクティブな製品に限定された時間インデックス参照データセットには、1,479の医薬品と110,823の薬剤-AE関連が含まれていました。ほとんどのAEは市販前（74.5%）に特定され、市販後（25.5%）でした。安全性の更新は2012年頃にピークを迎えました。胃腸、皮膚、神経系の障害が最も代表的な臓器別分類（SOC）でした。薬剤は、14のSOCにわたって中央値48のAEを持っていました。本データセットは、AE認識の時間情報をEUに組み込むことで、ファーマコビジランスにおける重要なギャップに対処し、信号検出性能のより正確な評価をサポートし、分析アプローチ間の方法論的比較を促進します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Maria Kefala, Jeffery L. Painter, Syed Tauhid Bukhari, Maurizio Sessa<br>
+        分類：cs.CL, q-bio.QM<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.26544v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26544v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-03" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="ALBA: 生成LLMの言語および言語学的次元を評価する欧州ポルトガル語ベンチマーク" data-timestamp="1774625144000" data-url="https://arxiv.org/abs/2603.26516v1">
   <p class="meta">arXiv cs.CL　Fri, 27 Mar 2026 15:25:44 Z</p>
   <h2 class="article-title">ALBA: 生成LLMの言語および言語学的次元を評価する欧州ポルトガル語ベンチマーク</h2>
@@ -942,6 +976,74 @@
         分野：cs.CL<br>
         ジャンル：Generative Models<br>
         原文URL：<a href="https://arxiv.org/abs/2603.26516v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26516v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="リアルタイム対話システム向け、音響と言語を統合した発話交代検出モデル「JAL-Turn」" data-timestamp="1774625138000" data-url="https://arxiv.org/abs/2603.26515v1">
+  <p class="meta">arXiv cs.CL　Fri, 27 Mar 2026 15:25:38 Z</p>
+  <h2 class="article-title">リアルタイム対話システム向け、音響と言語を統合した発話交代検出モデル「JAL-Turn」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、リアルタイムで堅牢な発話交代検出を実現する「JAL-Turn」という軽量かつ効率的な音声のみのフレームワークを提案します。<br><br>既存システムは音響または意味情報のみに依存し、精度や安定性に課題がありました。一方、大規模言語モデル（LLM）をフルデュプレックス化する試みは、高コストなデータと計算負荷を伴います。JAL-Turnは、クロスアテンションモジュールを用いて事前学習済み音響表現と言語特徴を統合し、低遅延での発話交代予測を可能にします。<br><br>ASRエンコーダーを共有することで、音声認識と並列に動作し、追加の遅延や計算オーバーヘッドを生じさせません。また、大規模な実世界の対話コーパスから信頼性の高い発話交代ラベルを自動的に抽出するスケーラブルなデータ構築パイプラインも導入されています。<br><br>実験の結果、JAL-Turnは多言語ベンチマークおよび日本語の顧客サービスデータセットにおいて、最先端のベースラインを上回る検出精度と優れたリアルタイム性能を示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Guangzhao Yang, Yu Pan, Shi Qiu, Ningjie Bai<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.26515v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26515v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="欧州ポルトガル語に特化したオープンソース大規模言語モデル「AMALIA」" data-timestamp="1774624953000" data-url="https://arxiv.org/abs/2603.26511v1">
+  <p class="meta">arXiv cs.CL　Fri, 27 Mar 2026 15:22:33 Z</p>
+  <h2 class="article-title">欧州ポルトガル語に特化したオープンソース大規模言語モデル「AMALIA」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、欧州ポルトガル語（pt-PT）に特化した、完全にオープンソースの大規模言語モデル（LLM）である「AMALIA」を紹介します。<br><br>既存のオープンLLMはpt-PTのデータが少なく、機械翻訳されたベンチマークでは言語的・文化的なニュアンスが失われる可能性があります。AMALIAは、高品質なpt-PTデータを中間段階と事後段階の両方で重視して学習されています。<br><br>pt-PTに特化した評価のため、標準的なタスクの翻訳に加え、pt-PTの生成能力、言語能力、およびpt-PT/pt-BR間のバイアスを対象とした4つの新しいデータセットを含む、pt-PTベンチマーク群を公開します。<br><br>実験により、AMALIAは翻訳されたベンチマークでは強力なベースラインに匹敵し、pt-PT固有の評価において大幅に性能を向上させることが示されました。これは、欧州ポルトガル語に対するターゲットを絞った学習とネイティブベンチマークの重要性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Afonso Simplício, Gonçalo Vinagre, Miguel Moura Ramos, Diogo Tavares, Rafael Ferreira, Giuseppe Attanasio, Duarte M. Alves, Inês Calvo<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.26511v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26511v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ポルトガル語臨床固有表現抽出におけるBERTモデルとLLMのベンチマーク" data-timestamp="1774624927000" data-url="https://arxiv.org/abs/2603.26510v1">
+  <p class="meta">arXiv cs.CL　Fri, 27 Mar 2026 15:22:07 Z</p>
+  <h2 class="article-title">ポルトガル語臨床固有表現抽出におけるBERTモデルとLLMのベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本研究は、ポルトガル語の臨床テキストにおける固有表現抽出（NER）を対象とし、最新のBERTベースモデルと大規模言語モデル（LLM）の性能を評価します。<br><br>臨床ノートには貴重な非構造化情報が含まれており、NERは医療概念の自動抽出を可能にします。しかし、ポルトガル語のベンチマークは依然として不足しています。本研究では、BioBERTpt、BERTimbau、ModernBERT、mmBERT、およびGPT-5、Gemini-2.5といったLLMを比較し、多ラベル不均衡に対処する戦略も検証しました。<br><br>公開されているSemClinBrコーパスと民間のがんデータセットを使用し、モデルは同一条件下で学習・評価されました。反復的層化、重み付け損失、オーバーサンプリングといった手法がクラス不均衡の緩和に検討されました。その結果、mmBERT-baseモデルが最高の性能（マイクロF1 = 0.76）を達成しました。<br><br>反復的層化はクラスバランスと全体的な性能を向上させました。多言語BERTモデル、特にmmBERTは、ポルトガル語の臨床NERにおいて高い性能を発揮し、限られた計算リソースでローカル実行が可能です。データ分割戦略のバランス調整は、さらなる性能向上に寄与しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Vinicius Anjos de Almeida, Sandro Saorin da Silva, Josimar Chire, Leonardo Vicenzi, Nícolas Henrique Borges, Helena Kociolek, Sarah Miriã de Castro Rocha, Frederico Nassif Gomes<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.26510v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26510v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.AI, cs.LG" data-title="マルチモーダルデータのための生成スコア推論" data-timestamp="1774614252000" data-url="https://arxiv.org/abs/2603.26349v1">
+  <p class="meta">arXiv stat.ML　Fri, 27 Mar 2026 12:24:12 Z</p>
+  <h2 class="article-title">マルチモーダルデータのための生成スコア推論</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、画像やテキストのような複雑なマルチモーダルデータを扱う様々な教師あり学習シナリオにおいて、信頼性の高い意思決定を行うために正確な不確実性定量化が不可欠であることを論じています。しかし、現在の手法は、しばしば厳格な仮定や限定的な一般化可能性といった顕著な限界に直面しており、多様な教師あり学習タスク全体での有効性を制約しています。<br><br>これらの限界を克服するため、本研究では、統計的に妥当で情報量の多い予測および信頼集合を、広範なマルチモーダル学習問題全体にわたって構築できる柔軟な推論フレームワークである生成スコア推論（GSI）を導入します。GSIは、深層生成モデルによって生成された合成サンプルを利用して条件付きスコア分布を近似し、データやタスクに関する制限的な仮定なしに、正確な不確実性定量化を可能にします。<br><br>本研究では、大規模言語モデルにおける幻覚検出と画像キャプションにおける不確実性推定という2つの代表的なシナリオを通じて、GSIの能力を経験的に検証しました。提案手法は、幻覚検出において最先端の性能を達成し、画像キャプションにおいて堅牢な予測不確実性を示しました。また、その性能は、基盤となる生成モデルの品質によって肯定的な影響を受けることが示されました。これらの結果は、GSIが汎用性の高い推論フレームワークとして、マルチモーダル学習における不確実性定量化と信頼性を大幅に向上させる可能性を強調しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Xinyu Tian, Xiaotong Shen<br>
+        分類：stat.ML, cs.AI, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.26349v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26349v1</a>
   </div>
 </article>
 
@@ -1452,108 +1554,6 @@
         分野：cs.RO<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2603.19229v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19229v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP" data-title="FinTradeBench: LLMのための金融推論ベンチマーク" data-timestamp="1773943181000" data-url="https://arxiv.org/abs/2603.19225v1">
-  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:41 Z</p>
-  <h2 class="article-title">FinTradeBench: LLMのための金融推論ベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CE</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、LLMが金融分野における意思決定を行う能力を評価するための新しいベンチマーク「FinTradeBench」を提案しています。<br><br>現実世界の金融意思決定には、企業財務情報や市場の取引シグナルといった多様な情報源からの推論が必要です。既存のベンチマークは主に財務諸表データに焦点を当てており、市場での取引やファンダメンタルズとの相互作用に関する推論を十分に評価できていませんでした。FinTradeBenchは、企業ファンダメンタルズと取引シグナルを統合し、1,400の質問から構成されています。<br><br>このベンチマークは、「ファンダメンタルズ中心」「取引シグナル中心」「ハイブリッド（クロスシグナル推論）」の3つの推論カテゴリに分類されます。評価手法には、専門家による質問作成、複数モデルによる応答生成、自己フィルタリング、数値監査、人間とLLMによる評価者の整合性確保といった、信頼性を高めるためのフレームワークが採用されています。<br><br>14のLLMをゼロショットおよび検索拡張設定で評価した結果、明確な性能差が見られました。特に、テキストベースのファンダメンタルズ推論では検索拡張が有効でしたが、取引シグナル推論への効果は限定的でした。これは、現在のLLMにおける数値的・時系列推論の課題を浮き彫りにし、今後の金融知能研究の方向性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Yogesh Agrawal, Aniruddha Dutta, Md Mahadi Hasan, Santu Karmaker, Aritra Dutta<br>
-        分類：cs.CE, cs.AI, cs.CL, cs.IR, q-fin.CP<br>
-        分野：cs.CE<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.19225v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19225v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="多言語世界のための包括的で効率的な埋め込みモデル「F2LLM-v2」" data-timestamp="1773943161000" data-url="https://arxiv.org/abs/2603.19223v1">
-  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:59:21 Z</p>
-  <h2 class="article-title">多言語世界のための包括的で効率的な埋め込みモデル「F2LLM-v2」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文では、8つの異なるサイズ（80Mから14B）を持つ新しい汎用多言語埋め込みモデルファミリー「F2LLM-v2」を発表します。<br><br>新たにキュレーションされた6000万件の高品質な公開データサンプルからなる複合データセットで学習されたF2LLM-v2は、200以上の言語をサポートし、特にこれまで十分にサポートされてこなかった中・低リソース言語に重点を置いています。2段階のLLMベース埋め込み学習パイプラインに、マトゥリョーシュカ学習、モデルプルーニング、知識蒸留技術を統合することで、以前のLLMベース埋め込みモデルよりもはるかに効率的でありながら、競争力のある性能を維持するモデルを実現しました。<br><br>広範な評価により、F2LLM-v2-14Bが11のMTEBベンチマークで1位を獲得し、ファミリー内の小規模モデルもリソース制約のあるアプリケーションにおいて新たな最先端技術を確立していることが確認されました。オープンソースの埋め込みモデル研究を促進するため、すべてのモデル、データ、コード、中間チェックポイントを公開します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Ziyin Zhang, Zihan Liao, Hang Yu, Peng Di, Rui Wang<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.19223v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19223v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="スペクトル情報に基づく拡散モデルのノイズスケジュール設計" data-timestamp="1773943152000" data-url="https://arxiv.org/abs/2603.19222v1">
-  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:59:12 Z</p>
-  <h2 class="article-title">スペクトル情報に基づく拡散モデルのノイズスケジュール設計</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、高品質な画像・動画生成に広く用いられるデノイジング拡散モデルの性能を向上させるため、ノイズスケジュールの設計に焦点を当てています。ノイズスケジュールはモデルの性能に大きく影響しますが、従来は手作業での調整が必要でした。<br><br>本研究では、画像固有のスペクトル特性に基づいて、インスタンスごとにノイズスケジュールを設計する原理的な手法を提案します。理論的な境界を導出することで、冗長なステップを排除した「タイトな」ノイズスケジュールを設計し、推論時には条件付きでサンプリングする手法も提案しています。<br><br>実験の結果、提案手法によるノイズスケジュールは、特に低ステップ数での生成品質を向上させることが示されました。これは、拡散モデルの効率的な学習と生成に貢献する可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Carlos Esteves, Ameesh Makadia<br>
-        分類：cs.CV, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.19222v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19222v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL, cs.GT" data-title="ランキングフィードバックを用いたオンライン学習と均衡計算" data-timestamp="1773943147000" data-url="https://arxiv.org/abs/2603.19221v1">
-  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:59:07 Z</p>
-  <h2 class="article-title">ランキングフィードバックを用いたオンライン学習と均衡計算</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">cs.GT</span></div>
-  <div class="summary">本論文は、数値的な効用フィードバックが得られない環境下でのオンライン学習モデルを提案します。<br><br>従来のオンライン学習アルゴリズムは数値フィードバックを前提としていましたが、本研究では、各タイムステップで提案された行動の集合に対するランキング情報のみを観測するモデルを扱います。瞬時効用に基づくランキングと時間平均効用に基づくランキング、および完全情報とバンディットフィードバックの両設定を検討します。<br><br>一般的なランキングフィードバックでは劣線形後退を達成できないことを示しつつ、効用系列の総変動が劣線形であるという追加仮定の下で劣線形後退を達成する新しいアルゴリズムを開発しました。この結果は、正規形ゲームの全プレイヤーが本アルゴリズムに従う場合、繰り返しプレイが近似的な粗相関均衡をもたらすことを示唆します。また、大規模言語モデルのルーティングタスクにおける有効性も実証しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Mingyang Liu, Yongshan Chen, Zhiyuan Fan, Gabriele Farina, Asuman Ozdaglar, Kaiqing Zhang<br>
-        分類：cs.LG, cs.CL, cs.GT<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.19221v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19221v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="「Nemotron-Cascade 2」：カスケード強化学習とマルチドメイン蒸留による大規模言語モデルのポストトレーニング" data-timestamp="1773943132000" data-url="https://arxiv.org/abs/2603.19220v1">
-  <p class="meta">arXiv cs.AI　Thu, 19 Mar 2026 17:58:52 Z</p>
-  <h2 class="article-title">「Nemotron-Cascade 2」：カスケード強化学習とマルチドメイン蒸留による大規模言語モデルのポストトレーニング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文では、オープンソースの大規模言語モデル（LLM）「Nemotron-Cascade 2」を紹介します。これは30億パラメータ（アクティブパラメータ3億）のMoEモデルであり、最先端の推論能力とエージェント能力を備えています。<br><br>このモデルは、そのコンパクトなサイズにもかかわらず、数学やコーディングの推論性能において最先端のオープンモデルに匹敵します。特に、国際数学オリンピック（IMO）、国際情報オリンピック（IOI）、ICPC世界大会において、わずか20分の1のパラメータ数で金メダルレベルの性能を達成しました。これは、非常に高い知能密度を示しています。<br><br>Nemotron-Cascade 1からの主な技術的進歩は、カスケード強化学習（Cascade RL）の適用範囲を大幅に拡大し、より広範な推論およびエージェントドメインをカバーしたことです。さらに、Cascade RLプロセス中に各ドメインの強力な中間教師モデルからのマルチドメインオンポリシー蒸留を導入し、性能向上を効率的に維持しました。<br><br>本研究は、効率的かつ高性能なLLMの開発手法を示し、オープンソースコミュニティへの貢献としてモデルチェックポイントとトレーニングデータが公開されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Zhuolin Yang, Zihan Liu, Yang Chen, Wenliang Dai, Boxin Wang, Sheng-Chieh Lin, Chankyu Lee, Yangyi Chen<br>
-        分類：cs.CL, cs.AI, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.19220v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19220v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="3D運転シーンのトークン化によるマルチビュー再構成と理解 DriveTok" data-timestamp="1773943102000" data-url="https://arxiv.org/abs/2603.19219v1">
-  <p class="meta">arXiv cs.LG　Thu, 19 Mar 2026 17:58:22 Z</p>
-  <h2 class="article-title">3D運転シーンのトークン化によるマルチビュー再構成と理解 DriveTok</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、自律走行システムにおけるスケーラブルな画像トークン化の重要性に着目し、高解像度マルチビュー運転シーンにおける非効率性とビュー間の一貫性の問題を解決する「DriveTok」を提案します。<br><br>DriveTokは、まず基盤モデルから意味的にリッチな視覚特徴を取得し、それを3D変形クロスアテンションを用いてシーントークンに変換します。デコーディングでは、マルチビュー・トランスフォーマーを用いてシーントークンからマルチビュー特徴を再構成し、RGB、深度、意味論的再構成を行います。さらに、3Dヘッドをシーントークンに直接適用し、3D意味論的占有予測による空間認識能力の向上も図ります。<br><br>この手法により、意味論的、幾何学的、テクスチャ情報を統合した統一的なシーントークンを学習し、効率的なマルチビュー・トークン化を実現します。実験の結果、DriveTokのシーントークンは、画像再構成、意味セグメンテーション、深度予測、3D占有予測タスクにおいて優れた性能を示しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Dong Zhuo, Wenzhao Zheng, Sicheng Zuo, Siming Yan, Lu Hou, Jie Zhou, Jiwen Lu<br>
-        分類：cs.CV, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.19219v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.19219v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
