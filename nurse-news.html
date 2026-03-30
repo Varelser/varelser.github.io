@@ -43,8 +43,16 @@
     .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
     .source-box a{color:var(--accent);word-break:break-all;}
     .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .filter-toggle{display:none;width:100%;padding:10px 14px;background:var(--chip);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer;text-align:left;margin-bottom:10px;}
     @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
-    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+    @media (max-width: 640px){
+      .container{padding:32px 16px 56px;}
+      .article-title{font-size:18px;}
+      article{padding:18px;}
+      .filter-toggle{display:block;}
+      .filter-grid{display:none;grid-template-columns:1fr;}
+      .filter-grid.is-open{display:grid;}
+    }
   </style>
 </head>
 <body>
@@ -53,7 +61,8 @@
     <p class="page-title">最新の医療・看護ニュース</p>
     <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
     <section class="filter-panel">
-      <div class="filter-grid">
+      <button type="button" class="filter-toggle" id="filterToggle">▼ 絞り込みを表示</button>
+      <div class="filter-grid" id="filterGrid">
         <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
         <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-03">2026-03</option><option value="2026-02">2026-02</option></select></div>
         <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="公衆衛生">公衆衛生</option><option value="医療政策">医療政策</option><option value="医薬品">医薬品</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="感染症">感染症</option><option value="栄養">栄養</option><option value="疼痛">疼痛</option><option value="神経">神経</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="高齢者">高齢者</option></select></div>
@@ -1309,6 +1318,14 @@
   </div>
   <script>
     (function(){
+      const filterToggle = document.getElementById("filterToggle");
+      const filterGrid = document.getElementById("filterGrid");
+      if (filterToggle && filterGrid) {
+        filterToggle.addEventListener("click", function(){
+          const open = filterGrid.classList.toggle("is-open");
+          filterToggle.textContent = open ? "▲ 絞り込みを非表示" : "▼ 絞り込みを表示";
+        });
+      }
       const els = {
         search: document.getElementById("searchInput"),
         month: document.getElementById("monthFilter"),
