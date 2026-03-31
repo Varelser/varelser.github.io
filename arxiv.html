@@ -843,6 +843,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="適応型ブロック・スケールデータ型：NVFP4の限界を超える" data-timestamp="1774893573000" data-url="https://arxiv.org/abs/2603.28765v1">
+  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 17:59:33 Z</p>
+  <h2 class="article-title">適応型ブロック・スケールデータ型：NVFP4の限界を超える</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデルの量子化に広く用いられている4ビットフォーマットNVFP4の限界を克服する新しいデータ型「適応型ブロック・スケールデータ型」を提案します。<br><br>NVFP4はハードウェアサポートがあり、少ないビット数で情報を保持できますが、量子化誤差の分布に課題があります。特に、各グループの最大値付近で大きな誤差が生じやすいという問題点が指摘されています。本研究では、この誤差分布の特性に着目し、入力値の分布に適応するデータ型を設計しました。<br><br>提案手法であるIF4（Int/Float 4）は、4ビット量子化において、16個の値のグループごとにFP4とINT4の表現を選択し、NVFP4と同様にE4M3スケールファクターでスケーリングします。この選択情報は、NVFP4では未使用のスケールファクターの符号ビットを利用します。さらに、この考え方を拡張し、IF3やIF6といった他のビット幅のフォーマットも設計・評価しています。<br><br>言語モデルの量子化にIF4を適用した結果、既存の4ビットブロック・スケールフォーマットを上回る性能を示しました。量子化学習時の損失を低減し、学習後の量子化タスクにおいても高い精度を達成しています。また、IF4用の乗算・累積（MAC）ユニットを設計・評価し、次世代ハードウェアアクセラレータでの効率的な実装が可能であることを示しました。この研究は、より効率的で高精度なモデル量子化手法の開発に貢献するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Jack Cook, Hyemin S. Lee, Kathryn Le, Junxian Guo, Giovanni Traverso, Anantha P. Chandrakasan, Song Han<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.28765v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28765v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-03" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, math.DG, q-bio.NC" data-title="リーマン多様体および統計的多様体上のニューラル表現のための幾何学を意識した類似性指標" data-timestamp="1774893562000" data-url="https://arxiv.org/abs/2603.28764v1">
   <p class="meta">arXiv cs.AI　Mon, 30 Mar 2026 17:59:22 Z</p>
   <h2 class="article-title">リーマン多様体および統計的多様体上のニューラル表現のための幾何学を意識した類似性指標</h2>
@@ -1064,6 +1081,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルを用いた電子カルテからのてんかん早期検出システム「EpiScreen」" data-timestamp="1774890968000" data-url="https://arxiv.org/abs/2603.28698v1">
+  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 17:16:08 Z</p>
+  <h2 class="article-title">大規模言語モデルを用いた電子カルテからのてんかん早期検出システム「EpiScreen」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、電子カルテ（EHR）に記録された臨床情報から、てんかんおよび心因性非てんかん性発作（PNES）を早期に検出するための新しいアプローチ「EpiScreen」を提案します。<br><br>てんかんとPNESは、発作様の症状が似ているにもかかわらず、治療法が大きく異なるため、誤診が頻繁に発生し、診断の遅延や不適切な治療につながる可能性があります。従来の診断法である長時間ビデオ脳波検査は、高コストでアクセスが限られているため、迅速な診断を妨げています。EpiScreenは、この課題に対し、日常的に収集される臨床記録を活用した低コストで効果的な検出手法を提供します。<br><br>EpiScreenは、大規模言語モデル（LLM）をラベル付けされた臨床記録でファインチューニングすることで、てんかんの早期検出を行います。MIMIC-IVデータセットでは最大0.875、独自のコホートでは0.980のAUC（Area Under the Curve）を達成しました。さらに、臨床医とAIの協働環境においては、EpiScreen支援を受けた神経科医は、支援を受けない専門医よりも最大10.9%高いパフォーマンスを示しました。<br><br>本研究は、EpiScreenがてんかんの早期検出を支援し、特にリソースの限られた地域において、診断の遅延を軽減し、不要な介入を回避するのに役立つ可能性を示唆しています。この技術は、医療現場における診断効率の向上と患者ケアの質の向上に貢献することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Shuang Zhou, Kai Yu, Zaifu Zhan, Huixue Zhou, Min Zeng, Feng Xie, Zhiyi Sha, Rui Zhang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.28698v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28698v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="AdaptToken: エントロピーに基づく適応的トークン選択によるMLLMの長動画理解" data-timestamp="1774890855000" data-url="https://arxiv.org/abs/2603.28696v1">
   <p class="meta">arXiv cs.AI　Mon, 30 Mar 2026 17:14:15 Z</p>
   <h2 class="article-title">AdaptToken: エントロピーに基づく適応的トークン選択によるMLLMの長動画理解</h2>
@@ -1234,6 +1268,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-03" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, physics.data-an" data-title="行列積演算子分解によるTransformer言語モデルの圧縮：PicoGPTの事例研究" data-timestamp="1774882667000" data-url="https://arxiv.org/abs/2603.28534v1">
+  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 14:57:47 Z</p>
+  <h2 class="article-title">行列積演算子分解によるTransformer言語モデルの圧縮：PicoGPTの事例研究</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span><span class="tag">physics.data-an</span></div>
+  <div class="summary">本論文は、Transformerベースの言語モデルの計算コストとメモリ使用量を削減するための圧縮手法として、行列積演算子（MPO）分解に着目し、PicoGPTを用いた事例研究を行いました。<br><br>Transformerモデルは自然言語処理タスクで高い性能を発揮しますが、隠れ層の次元に対して二次関数的に増加するパラメータ数が、リソースが制約されたハードウェアへのデプロイを困難にしています。MPO分解は、重み行列を低ランクコアの連鎖に因子分解することで、近似品質をボンド次元（chi）で制御できる、原理に基づいた圧縮手法です。本研究では、PicoGPT（約100万パラメータのGPT-2風文字レベル言語モデル）の各`nn.Linear`層を、MPO連鎖としてパラメータ化された`MPOLinear`モジュールに置き換えました。<br><br>コアは、事前学習済み密行列からのTT-SVDまたはランダム初期化により初期化され、標準的なPyTorchオートグラッドを用いて学習されました。PicoGPTの5つの異なる重み形状に対してバランスの取れた因子分解スキームを導出し、ボンド次元chiを{4, 8, 16, 32}で評価しました。その結果、MPO圧縮はchi=4でトランスフォーマーブロックあたり最大13倍の圧縮を達成しました。chi=16では、モデルは1,020,224パラメータの代わりに191,872パラメータを使用し、ベースラインのトークン精度（51.6% vs 52.8%）の97.7%を維持しました。<br><br>再構成誤差は予想される傾向に従い、同じボンド次元では3サイト因子分解の方が2サイト因子分解よりも低くなりました。chi=8のモデルは、パラメータあたりの精度が最も高く、この指標において密ベースラインを2.7倍上回りました。これらの結果は、MPOパラメータ化が、Transformer圧縮のための低ランク手法や非構造的プルーニングに対する実用的かつ理論的に根拠のある代替手段であることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Younes Javanmard, Tanmoy Pandit, Masoud Mardani<br>
+        分類：cs.CL, physics.data-an<br>
+        分野：cs.CL<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.28534v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28534v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="GraphWalker: 合成軌跡カリキュラムによるエージェント型知識グラフQA" data-timestamp="1774882619000" data-url="https://arxiv.org/abs/2603.28533v1">
+  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 14:56:59 Z</p>
+  <h2 class="article-title">GraphWalker: 合成軌跡カリキュラムによるエージェント型知識グラフQA</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、エージェント型知識グラフ質問応答（KGQA）における訓練データ不足と推論汎化の課題に取り組むフレームワーク「GraphWalker」を提案します。<br><br>従来のKGQA手法は、エージェントの探索を制限する傾向がありました。プロンプトベースの手法では自律的なナビゲーション訓練が不足し、既存の訓練パイプラインは推論を定義済みの軌跡に限定していました。GraphWalkerは、「自動軌跡合成」と「段階的ファインチューニング」により、これらの課題を解決します。<br><br>GraphWalkerは2段階のSFT訓練パラダイムを採用しています。まず、構造的に多様な合成軌跡でエージェントを訓練し、KG全体にわたる広範な探索事前知識を確立します。次に、少数の専門家軌跡でファインチューニングを行い、反省とエラー回復能力を開発します。<br><br>実験の結果、この段階的SFTパラダイムが軽量な強化学習（RL）ステージの性能上限を引き上げ、CWQとWebQSPで最先端の性能を達成しました。GrailQAとGraphWalkerBenchでの追加結果は、分布外推論パスへの汎化能力向上を確認しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Shuwen Xu, Yao Xu, Jiaxiang Liu, Chenhao Yuan, Wenshuo Peng, Jun Zhao, Kang Liu<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.28533v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28533v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LaTeX執筆履歴から抽出した初期段階の科学論文改訂データセット" data-timestamp="1774882024000" data-url="https://arxiv.org/abs/2603.28515v1">
   <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 14:47:04 Z</p>
   <h2 class="article-title">LaTeX執筆履歴から抽出した初期段階の科学論文改訂データセット</h2>
@@ -1248,6 +1316,40 @@
         分野：cs.CL<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2603.28515v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28515v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="cs.CV" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.CV, stat.ML" data-title="CNNの後付け自己説明手法" data-timestamp="1774879537000" data-url="https://arxiv.org/abs/2603.28466v1">
+  <p class="meta">arXiv stat.ML　Mon, 30 Mar 2026 14:05:37 Z</p>
+  <h2 class="article-title">CNNの後付け自己説明手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.CV</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本研究は、標準的な畳み込みニューラルネットワーク（CNN）を自己説明モデル（SEM）として数学的に再解釈するアプローチを提案します。<br><br>従来のCNNでは、内蔵プロトタイプがデータを正確に表現しないという課題がありました。本研究では、最終層をk-meansベースの分類器に置き換えることで、性能を損なうことなくこの問題を解決します。さらに、分類器、エンコーダの最終出力（B4）、および中間特徴活性化の組み合わせに対するk-meansベースの後付け説明の一般的な形式化を導入します。<br><br>中間特徴活性化を利用する後者のアプローチは、畳み込み受容野の空間的整合性を活用して概念ベースの説明マップを生成します。これは勾配フリーの特徴帰属マップによっても裏付けられます。<br><br>ResNet34を用いた経験的評価により、最後の3ブロック（B234）のような、より浅く圧縮度の低い特徴活性化を使用すると、意味的忠実度と予測性能のわずかな低下とのトレードオフが生じることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Ahcène Boubekki, Line H. Clemmensen<br>
+        分類：cs.CV, stat.ML<br>
+        分野：cs.CV<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.28466v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28466v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="機械学習支援による高次元行列推定" data-timestamp="1774872959000" data-url="https://arxiv.org/abs/2603.28346v1">
+  <p class="meta">arXiv stat.ML　Mon, 30 Mar 2026 12:15:59 Z</p>
+  <h2 class="article-title">機械学習支援による高次元行列推定</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、現代の多変量統計学の根幹をなす高次元行列（共分散行列や精度行列を含む）の効率的な推定に関する研究です。<br><br>既存研究の多くは、推定量の理論的特性（一貫性やスパース性など）に焦点を当ててきましたが、高次元設定における計算上の課題は十分に考慮されてきませんでした。本研究では、学習ベースの最適化手法の進歩に着想を得て、機械学習による高次元行列推定の支援を探求します。<br><br>具体的には、高次元行列推定の最適化問題に対し、線形化交互方向乗数法（LADMM）に基づく解手順を提示します。さらに、学習可能なパラメータを導入し、反復スキーム内のプロキシマル演算子をニューラルネットワークでモデル化することで、推定精度を向上させ、収束を加速させます。<br><br>理論的には、LADMMの収束を証明し、その再パラメータ化されたバージョンの収束、収束率、単調性を確立します。特に、再パラメータ化されたLADMMがより高速な収束率を持つことを示します。この再パラメータ化理論と方法は、高次元共分散行列と精度行列の両方の推定に適用可能です。提案手法の有効性を、異なる構造と次元の高次元行列に対する古典的な最適化アルゴリズムとの比較により検証しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Wan Tian, Hui Yang, Zhouhui Lian, Lingyue Zhang, Yijie Peng<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.28346v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28346v1</a>
   </div>
 </article>
 
@@ -1452,108 +1554,6 @@
         分野：stat.ML<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2603.26349v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.26349v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="UniMotion: 動き・テキスト・映像を統合的に理解・生成するフレームワーク" data-timestamp="1774288788000" data-url="https://arxiv.org/abs/2603.22282v1">
-  <p class="meta">arXiv cs.AI　Mon, 23 Mar 2026 17:59:48 Z</p>
-  <h2 class="article-title">UniMotion: 動き・テキスト・映像を統合的に理解・生成するフレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、人間の動き、自然言語、RGB映像を単一のアーキテクチャで同時に理解・生成するための、初の統合フレームワーク「UniMotion」を提案します。<br><br>従来の統合モデルは、動きとテキスト、または静的なポーズと画像といった限定的なモダリティの組み合わせしか扱えず、離散的なトークン化に依存していました。これにより、量子化誤差が生じ、時間的な連続性が損なわれるという問題がありました。UniMotionは、動きをRGB映像と同等の第一級の連続的モダリティとして扱うという中心原理により、これらの限界を克服します。<br><br>提案手法では、新しいCross-Modal Aligned Motion VAE（CMA-VAE）と対称的なデュアルパスエンベッダーを用いて、共有LLMバックボーン内で動きとRGBの並列連続パスを構築します。さらに、推論時に画像が不要な状態で視覚的意味論的先験知識を動き表現に注入するため、Dual-Posterior KL Alignment（DPA）を提案し、画像融合エンコーダーのより豊富な事後分布を動きのみのエンコーダーに蒸留します。また、テキストのみの教師信号では新しい動きパスを調整するには不十分であるというコールドスタート問題に対処するため、Latent Reconstruction Alignment（LRA）という自己教師あり事前学習戦略を導入し、密な動き潜在変数を曖昧さのない条件として使用してエンベッダー、バックボーン、フローヘッドを共同で調整し、すべての下流タスクのための安定した動き認識基盤を確立します。<br><br>UniMotionは、3つのモダリティ間のあらゆる種類の理解、生成、編集を網羅する7つのタスクすべてにおいて、最先端のパフォーマンスを達成しました。特に、クロスモーダルな構成タスクにおいて強力な優位性を示しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Ziyi Wang, Xinshun Wang, Shuang Chen, Yang Cong, Mengyuan Liu<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.22282v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.22282v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="言語指示による3D空間編集のための構造化推論フレームワーク" data-timestamp="1774288754000" data-url="https://arxiv.org/abs/2603.22279v1">
-  <p class="meta">arXiv cs.AI　Mon, 23 Mar 2026 17:59:14 Z</p>
-  <h2 class="article-title">言語指示による3D空間編集のための構造化推論フレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）やビジョン言語モデル（VLM）が空間理解やレイアウトの一貫性に課題を抱える中、言語指示に基づいた3D空間編集を行うための構造化推論フレームワーク「3D-Layout-R1」を提案します。<br><br>このフレームワークは、シーングラフ推論を通じてテキスト条件を満たす更新されたシーングラフを生成します。構造化された関係表現により、推論プロセスを明示的に誘導することで、解釈可能性と空間関係の制御性を向上させます。<br><br>新しいテキスト誘導レイアウト編集ベンチマーク（ソート、空間配置、部屋編集タスクを含む）で評価した結果、提案手法は既存手法と比較してIoUで平均15%の改善、中心距離誤差で25%の削減を達成しました。これは、空間精度が大幅に向上したことを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Haoyu Zhen, Xiaolong Li, Yilin Zhao, Han Zhang, Sifei Liu, Kaichun Mo, Chuang Gan, Subhashree Radhakrishnan<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.22279v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.22279v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="アクセシビリティ向上は生成AIにおける差別を増幅させる可能性" data-timestamp="1774288064000" data-url="https://arxiv.org/abs/2603.22260v1">
-  <p class="meta">arXiv cs.CL　Mon, 23 Mar 2026 17:47:44 Z</p>
-  <h2 class="article-title">アクセシビリティ向上は生成AIにおける差別を増幅させる可能性</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、生成AI、特に音声インターフェースのアクセシビリティ向上と、それに伴う差別増幅の可能性について論じています。<br><br>数百万人もの人々が教育、仕事、医療において大規模言語モデル（LLM）を利用していますが、これらのモデルは訓練データに含まれる社会的な偏見を再現・増幅することが知られています。さらに、テキストベースのインターフェースは、識字能力の低いユーザーや運動障害のあるユーザー、モバイル専用デバイスのユーザーなど、多くの人々にとって依然として障壁となっています。音声対話はアクセシビリティを拡大する可能性を秘めていますが、テキストとは異なり、音声にはユーザーが容易に隠せない個人情報が含まれるため、アクセシビリティの向上が公平な扱いを犠牲にするのではないかという懸念が生じます。<br><br>本研究では、音声対応LLMが体系的なジェンダー差別を示し、話者の声のみに基づいて応答をジェンダーステレオタイプな形容詞や職業へとシフトさせ、テキストベースの対話で観察される以上のバイアスを増幅することを示しました。したがって、音声インターフェースは単にテキストモデルを新しいモダリティに拡張するだけでなく、パラ言語的キューに関連する独自のバイアス機構を導入します。補完的な調査（n=1,000）によると、チャットボットの利用頻度が低いユーザーほど、属性の隠された推論に対して最も躊躇し、そのような慣行が明らかになった場合に離脱する可能性が最も高いことが示されました。<br><br>潜在的な緩和戦略として、ピッチ操作によってジェンダー差別的な出力を体系的に調整できることを示しました。全体として、本研究の結果はAI開発における重要な緊張関係を明らかにしています。音声インターフェースを通じたアクセシビリティの拡大への取り組みは、同時に差別の新たな経路を生み出しており、公平性とアクセシビリティを連携して対処する必要があることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Carolin Holtermann, Minh Duc Bui, Kaitlyn Zhou, Valentin Hofmann, Katharina von der Wense, Anne Lauscher<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.22260v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.22260v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="MemDLM: メモリ拡張型拡散言語モデルの訓練手法" data-timestamp="1774287596000" data-url="https://arxiv.org/abs/2603.22241v1">
-  <p class="meta">arXiv cs.CL　Mon, 23 Mar 2026 17:39:56 Z</p>
-  <h2 class="article-title">MemDLM: メモリ拡張型拡散言語モデルの訓練手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、拡散言語モデル（DLM）の訓練と推論における不一致を解消するための新しい手法「MemDLM（Memory-Enhanced DLM）」を提案します。<br><br>DLMは、全アテンション並列デコーディングや柔軟な生成といった、自己回帰（AR）モデルに対する魅力的な利点を提供します。しかし、DLMは訓練時に静的な単一段階マスク予測目的関数を使用するのに対し、推論時には多段階の漸進的なノイズ除去軌道を通じて展開されるという、訓練と推論の不一致に悩まされています。MemDLMは、二重レベル最適化を通じて、シミュレートされたノイズ除去プロセスを訓練に組み込むことで、このギャップを縮小します。<br><br>提案手法では、内部ループが高速な重みのセットを更新し、各サンプルの局所的な軌道経験を捉えるパラメータメモリを形成します。一方、外部ループは、このメモリを条件としてベースモデルを更新します。これにより、トークン表現からパラメータへの記憶圧力をオフロードすることで、MemDLMはより速い収束と低い訓練損失を実現します。さらに、内部ループは推論時に適応ステップとして再有効化でき、長文コンテキスト理解において追加的な改善をもたらします。推論時にこのパラメータメモリがアクティブ化されると、挑戦的な「Needle-in-a-Haystack」検索タスクにおいて、トークンレベルのアテンションボトルネックをさらに軽減する、出現的なインウェイト検索メカニズムとして機能することがわかりました。<br><br>この手法は、DLMの訓練効率と推論時の性能を向上させる可能性を示しています。特に、長文コンテキストの理解や複雑な検索タスクにおいて有効であることが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Zehua Pei, Hui-Ling Zhen, Weizhe Lin, Sinno Jialin Pan, Yunhe Wang, Mingxuan Yuan, Bei Yu<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.22241v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.22241v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="テキスト画像生成における空間的一貫性のための検証可能な空間報酬モデリング" data-timestamp="1774286795000" data-url="https://arxiv.org/abs/2603.22228v1">
-  <p class="meta">arXiv cs.AI　Mon, 23 Mar 2026 17:26:35 Z</p>
-  <h2 class="article-title">テキスト画像生成における空間的一貫性のための検証可能な空間報酬モデリング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、テキストから画像を生成する際に、生成画像全体の妥当性だけでなく、オブジェクトの配置などの細かい空間関係の不正確さを解消するため、「SpatialReward」という検証可能な空間報酬モデルを提案します。<br><br>SpatialRewardは、プロンプトからエンティティや空間メタデータを抽出し、専門家検出器でオブジェクトの位置や属性を正確に把握し、ビジョン言語モデルが推論を行う多段階パイプラインを採用しています。これにより、複雑な空間関係を評価します。<br><br>「SpatRelBench」という新しいベンチマークを用いてStable DiffusionやFLUXで実験した結果、SpatialRewardを組み込んだ強化学習トレーニングは、空間的一貫性と全体的な生成品質を一貫して向上させ、人間の判断により近い結果をもたらしました。これは、検証可能な報酬モデルが、テキストから画像生成モデルのより正確で制御可能な最適化に貢献する可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Sashuai Zhou, Qiang Zhou, Junpeng Ma, Yue Cao, Ruofan Hu, Ziang Zhang, Xiaoda Yang, Zhibin Wang<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.22228v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.22228v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="LLM / NLP" data-field="cs.CR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CR, cs.AI, cs.LG" data-title="大規模言語モデルの自動判定システムの信頼性と忠実性の評価" data-timestamp="1774285949000" data-url="https://arxiv.org/abs/2603.22214v1">
-  <p class="meta">arXiv cs.AI　Mon, 23 Mar 2026 17:12:29 Z</p>
-  <h2 class="article-title">大規模言語モデルの自動判定システムの信頼性と忠実性の評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CR</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）を「ジャッジ」として用い、他のLLMの出力を評価する自動判定システムの信頼性と、人間の評価との一致度を検証します。<br><br>このシステムは、特定のジャッジプロンプトを持つLLMと、評価対象のLLMの組み合わせで構成され、人間の評価者よりも高速かつ一貫した評価を可能にします。本研究では、37種類のLLMと5種類のジャッジプロンプト、セカンドレベルジャッジ、タスク特化型ファインチューニングモデルの効果を、8つの評価カテゴリと人間による評価結果を基にしたグラウンドトゥルースラベルを用いて検証しました。<br><br>実験の結果、適切なプロンプトと組み合わせることで、GPT-4oや一部のオープンソースモデル（32Bパラメータ以上）が人間の評価と高い相関を示すことが明らかになりました。これは、LLMを自動品質評価器として適用する有効性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Tom Biskupski, Stephan Kleber<br>
-        分類：cs.CR, cs.AI, cs.LG<br>
-        分野：cs.CR<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.22214v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.22214v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
