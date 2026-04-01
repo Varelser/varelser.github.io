@@ -843,6 +843,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="連鎖思考（CoT）の安全な最適化：整合、直交、または対立" data-timestamp="1774978719000" data-url="https://arxiv.org/abs/2603.30036v1">
+  <p class="meta">arXiv cs.AI　Tue, 31 Mar 2026 17:38:39 Z</p>
+  <h2 class="article-title">連鎖思考（CoT）の安全な最適化：整合、直交、または対立</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の連鎖思考（Chain-of-Thought, CoT）を監視するアプローチの有効性について論じています。CoTの監視可能性は、モデルが推論の重要な特徴を隠すように学習するなど、訓練によって影響を受ける可能性があります。<br><br>提案手法は、この問題が発生する時期と理由を予測するための概念的フレームワークを提案し、経験的に検証します。LLMのポストトレーニングを強化学習（RL）環境としてモデル化し、報酬を最終出力に依存する項とCoTに依存する項に分解します。このフレームワークにより、訓練前にこれらの2つの項を「整合（aligned）」、「直交（orthogonal）」、または「対立（in-conflict）」として分類できます。<br><br>対立する項を持つ訓練は監視可能性を低下させ、直交する項は影響を与えず、整合する項はそれを改善すると予測されます。このフレームワークを検証するため、一連のRL環境を分類し、それらの環境内でLLMを訓練し、訓練がCoTの監視可能性にどのように影響するかを評価します。実験の結果、対立する報酬項を持つ訓練はCoTの監視可能性を低下させ、対立する報酬項の最適化は困難であることが確認されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Max Kaufmann, David Lindner, Roland S. Zimmermann, and Rohin Shah<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.30036v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.30036v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="NeuralUCBを用いた報酬ベースのオンラインLLMルーティング" data-timestamp="1774978534000" data-url="https://arxiv.org/abs/2603.30035v1">
   <p class="meta">arXiv cs.LG　Tue, 31 Mar 2026 17:35:34 Z</p>
   <h2 class="article-title">NeuralUCBを用いた報酬ベースのオンラインLLMルーティング</h2>
@@ -979,6 +996,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="MONAの拡張：カメラドロップボックスにおける再現、学習済み承認、および報酬ハッキング緩和のための設計" data-timestamp="1774976170000" data-url="https://arxiv.org/abs/2603.29993v1">
+  <p class="meta">arXiv cs.AI　Tue, 31 Mar 2026 16:56:10 Z</p>
+  <h2 class="article-title">MONAの拡張：カメラドロップボックスにおける再現、学習済み承認、および報酬ハッキング緩和のための設計</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、多段階報酬ハッキングを緩和する「Myopic Optimization with Non-myopic Approval (MONA)」手法について、カメラドロップボックス環境における拡張と検証を行っています。特に、承認の構築方法がMONAの安全性保証にどのように影響するかという重要な未解決問題に焦点を当てています。<br><br>提案手法は、公開されているMONAカメラドロップボックス環境を再現・拡張し、標準的なPythonプロジェクトとしてコードベースを再パッケージ化し、スクリプト化されたPPO訓練を実行します。公開されている参照配列を使用して、通常の強化学習（91.5%の報酬ハッキング率）とオラクルMONA（0.0%のハッキング率）の対比を確認します。さらに、オラクル、ノイズあり、誤指定、学習済み、キャリブレーション済み承認メカニズムを網羅するモジュラーな学習済み承認スイートを導入します。<br><br>承認方法、ホライゾン、データセットサイズ、キャリブレーション戦略にわたる限定的なパイロットスイープでは、最もキャリブレーションされた学習済みオーバーサー実行は、報酬ハッキングをゼロに抑えましたが、オラクルMONAと比較して意図した行動率は大幅に低下しました（11.9%対99.9%）。これは、再発的なハッキングではなく、最適化不足と一致します。これらの結果は、MONA論文の承認スペクトル仮説を実行可能な実験対象として具体化し、中心的なエンジニアリング課題がMONAの概念の証明から、十分な先見性を維持しつつ報酬ハッキングチャネルを再開放しない学習済み承認モデルの構築へとシフトすることを示唆しています。コード、設定、再現コマンドは公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Nathan Heath<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.29993v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.29993v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.HC, cs.IR" data-title="生成エンジンの最適化における構造的特徴量エンジニアリング：コンテンツ構造が引用行動に与える影響" data-timestamp="1774975303000" data-url="https://arxiv.org/abs/2603.29979v1">
+  <p class="meta">arXiv cs.CL　Tue, 31 Mar 2026 16:41:43 Z</p>
+  <h2 class="article-title">生成エンジンの最適化における構造的特徴量エンジニアリング：コンテンツ構造が引用行動に与える影響</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.HC</span><span class="tag">cs.IR</span></div>
+  <div class="summary">本論文は、AI検索エンジンの普及に伴い、情報発見が引用行動に影響を与える生成エンジン最適化（GEO）の新たな課題に取り組むものです。<br><br>従来のGEOアプローチが主に意味内容の側面に焦点を当てていたのに対し、本研究ではコンテンツ構造をマクロ（文書構造）、メソ（情報チャンキング）、ミクロ（視覚的強調）の3階層に分解し、それらが引用確率に与える影響をモデル化します。意味的整合性を保ちつつ構造的有効性を向上させるための、アーキテクチャを考慮した最適化戦略と予測モデルを開発しました。<br><br>6つの主要な生成エンジンでの実験評価により、引用率（17.3%）と主観的品質（18.5%）の一貫した改善が示され、提案フレームワークの有効性と汎用性が検証されました。本研究は、構造的最適化をGEOの基礎的構成要素として確立し、LLMベースの情報エコシステムにおけるコンテンツ可視性を高めるためのデータ駆動型手法を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Junwei Yu, Mufeng Yang, Yepeng Ding, Hiroyuki Sato<br>
+        分類：cs.CL, cs.HC, cs.IR<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.29979v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.29979v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.SE, cs.LG" data-title="コード生成における「いつでも思考」を可能にするメカニズム" data-timestamp="1774974243000" data-url="https://arxiv.org/abs/2603.29957v1">
   <p class="meta">arXiv cs.LG　Tue, 31 Mar 2026 16:24:03 Z</p>
   <h2 class="article-title">コード生成における「いつでも思考」を可能にするメカニズム</h2>
@@ -1030,6 +1081,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="FLEURS-Kobani：北クルド語向けFLEURSデータセットの拡張" data-timestamp="1774971601000" data-url="https://arxiv.org/abs/2603.29892v1">
+  <p class="meta">arXiv cs.CL　Tue, 31 Mar 2026 15:40:01 Z</p>
+  <h2 class="article-title">FLEURS-Kobani：北クルド語向けFLEURSデータセットの拡張</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、音声認識および音声翻訳タスクにおける北クルド語のベンチマークを制限していたFLEURSデータセットの限界を克服することを目的としています。<br><br>FLEURS-Kobaniは、北クルド語（ISO 639-3 KMR）の音声拡張データセットであり、31名のネイティブスピーカーによる5,162の検証済み発話（合計18時間24分）を含みます。これにより、リソースの少ないクルド語方言のベンチマークカバレッジが拡張されます。<br><br>ベースラインとして、Whisper v3-largeをASR用に、E2E S2TT用にファインチューニングしました。共通音声からFLEURS-Kobaniへの2段階ファインチューニング戦略がASRで最良の性能（WER 28.11, CER 9.84）を示しました。E2E S2TT（KMRからEN）では、Whisperが8.68 BLEUを達成しました。FLEURS-Kobaniは、ASR、S2TT、S2STタスク評価のための初の公開北クルド語ベンチマークを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Daban Q. Jaff, Mohammad Mohammadamini<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.29892v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.29892v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="ドイツのESGレポートにおける文単位の可読性スコアリングによる消費者エンパワーメントに向けて" data-timestamp="1774970342000" data-url="https://arxiv.org/abs/2603.29861v1">
+  <p class="meta">arXiv cs.CL　Tue, 31 Mar 2026 15:19:02 Z</p>
+  <h2 class="article-title">ドイツのESGレポートにおける文単位の可読性スコアリングによる消費者エンパワーメントに向けて</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、持続可能性への関心の高まりとともに、消費者がESGレポートの情報に容易にアクセスできるよう、文単位の可読性スコアリングの重要性を論じています。<br><br>既存のドイツ語ESGレポートの文単位データセットにクラウドソーシングによる可読性アノテーションを追加し、ネイティブスピーカーの知覚ではESGレポートの文は一般的に読みやすいものの、可読性には主観性があることを発見しました。様々な可読性スコアリング手法を評価し、LLMプロンプティングには明確な文と読みにくい文を区別する可能性がある一方、小規模なファインチューニングされたトランスフォーマーが最も低いエラーで人間の可読性を予測することを示しました。<br><br>複数のモデルの予測を平均化することで、推論速度の低下と引き換えに性能をわずかに向上させることができます。この研究は、文単位の可読性スコアリングが、ESGレポートのアクセシビリティ向上に貢献する可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Benjamin Josef Schüßler, Jakob Prange<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.29861v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.29861v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="SNEAK：大規模言語モデルにおける戦略的コミュニケーションと情報漏洩の評価" data-timestamp="1774969632000" data-url="https://arxiv.org/abs/2603.29846v1">
   <p class="meta">arXiv cs.CL　Tue, 31 Mar 2026 15:07:12 Z</p>
   <h2 class="article-title">SNEAK：大規模言語モデルにおける戦略的コミュニケーションと情報漏洩の評価</h2>
@@ -1044,6 +1129,23 @@
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2603.29846v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.29846v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-03" data-genre="Consciousness / Philosophy" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, stat.ML" data-title="概念フラストレーション：人間の概念と機械表現の整合性" data-timestamp="1774959441000" data-url="https://arxiv.org/abs/2603.29654v1">
+  <p class="meta">arXiv stat.ML　Tue, 31 Mar 2026 12:17:21 Z</p>
+  <h2 class="article-title">概念フラストレーション：人間の概念と機械表現の整合性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Consciousness / Philosophy</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、解釈可能なAIにおける中心的な課題である、人間が理解可能な概念と現代の機械学習システムが学習する内部表現との整合性について論じています。<br><br>提案手法は、教師あり学習で得られた人間の概念と、基盤モデルの埋め込みから抽出された教師なしの中間表現を比較するための幾何学的フレームワークを導入します。科学的発見における概念的飛躍の役割に着想を得て、「概念フラストレーション」という概念を形式化します。これは、観測されていない概念が既存のオントロジー内で整合性を保てない関係性を既知の概念間に誘発する矛盾として定義されます。<br><br>タスクに合わせた類似性尺度を開発し、概念ベースのモデルと基盤モデルから派生した教師なし表現との間の概念フラストレーションを検出します。従来のユークリッド比較が失敗するタスクに合わせた幾何学において、この現象が検出可能であることを示します。線形ガウス生成モデルの下では、ベイズ最適概念ベース分類器の精度に対する閉形式表現を導出し、予測信号を知っているもの、知らないもの、未知のものに分解し、フラストレーションが性能に影響を与える箇所を解析的に特定します。<br><br>合成データおよび実際の言語・視覚タスクでの実験により、基盤モデル表現においてフラストレーションが検出可能であり、解釈可能なモデルにフラストレーションを誘発する概念を組み込むことが、人間の推論と機械の推論をより良く整合させるために、学習された概念表現の幾何学を再編成することを示唆しています。これらの結果は、不完全な概念オントロジーを診断し、人間と機械の概念的推論を整合させるための原理的なフレームワークを示唆しており、高リスクアプリケーションにおける安全で解釈可能なAIの開発と検証に影響を与えます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Enrico Parisini, Christopher J. Soelistyo, Ahab Isaac, Alessandro Barp, Christopher R. S. Banerji<br>
+        分類：cs.LG, cs.AI, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Consciousness / Philosophy<br>
+        原文URL：<a href="https://arxiv.org/abs/2603.29654v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.29654v1</a>
   </div>
 </article>
 
@@ -1452,108 +1554,6 @@
         分野：cs.CV<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2603.28610v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28610v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.CY, cs.LG" data-title="プライバシー保護画像生成のための制御可能な匿名化手法" data-timestamp="1774886087000" data-url="https://arxiv.org/abs/2603.28605v1">
-  <p class="meta">arXiv cs.LG　Mon, 30 Mar 2026 15:54:47 Z</p>
-  <h2 class="article-title">プライバシー保護画像生成のための制御可能な匿名化手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CY</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模画像データセットに含まれる個人情報や機密情報によるプライバシーリスクに対処するため、画像中の機密領域のみを編集する自動化されたパイプライン「Unsafe2Safe」を提案するものです。<br><br>この手法は、まずビジョン言語モデルを用いて画像のリスクを評価し、機密情報を含むキャプションと含まないキャプションを生成します。次に、これらのキャプションに基づき、大規模言語モデルが構造化された、個人を特定できない編集指示を作成します。続く第二段階では、指示に基づいた拡散編集モデルが、プライバシーを保護しつつ、画像の全体構造やタスク関連の意味論を維持しながら機密情報を中立化します。<br><br>提案手法の評価のため、品質、不正行為、プライバシー、有用性の4つの次元を網羅する評価スイートが導入されました。実験の結果、Unsafe2Safeは顔の類似性、テキストの類似性、人口統計学的予測可能性を大幅に削減し、同時に生データで学習した場合と同等の下流モデル精度を維持しました。さらに、自動生成されたデータセットで拡散編集モデルをファインチューニングすることで、プライバシー保護と意味論的忠実度の両方が向上しました。この手法は、視覚的一貫性や下流タスクの有用性を犠牲にすることなく、大規模でプライバシー保護されたデータセットを構築するためのスケーラブルで原則的な解決策を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Mih Dinh, SouYoung Jin<br>
-        分類：cs.CV, cs.CY, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.28605v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28605v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Agents / Reasoning" data-field="cs.HC" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.HC, cs.AI, cs.CL" data-title="振り返りを越えて：言語モデルを計画と翻訳に応用する" data-timestamp="1774885358000" data-url="https://arxiv.org/abs/2603.28596v1">
-  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 15:42:38 Z</p>
-  <h2 class="article-title">振り返りを越えて：言語モデルを計画と翻訳に応用する</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.HC</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、学習者の内省的スキル育成に寄与する「振り返り」において、大規模言語モデル（LLM）を計画と翻訳の段階に応用する新しいアプローチを提案しています。<br><br>従来のLLM活用は、主に作成された文章へのフィードバック提供に留まっていましたが、本研究では、認知プロセス理論（CPT）に着想を得て、LLMを振り返りの計画段階と概念抽出による翻訳段階で活用するツール「Pensée」を開発しました。これにより、構造化された内省計画を対話型エージェントが支援し、主要概念の自動抽出による翻訳をサポートします。<br><br>実験の結果、計画と翻訳の段階でAIの支援を受けた学習者は、そうでない学習者と比較して、振り返りの深さと構造的質が有意に向上しました。ただし、この効果は後日のテストではやや低下する傾向が見られました。学習者の行動と認識の分析からは、CPTに沿った対話型支援が内省プロセスと学習体験にどのように影響を与えるかが示唆され、LLMの理論に基づいた活用法に実証的な証拠を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Seyed Parsa Neshaei, Richard Lee Davis, Tanja Käser<br>
-        分類：cs.HC, cs.AI, cs.CL<br>
-        分野：cs.HC<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.28596v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28596v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="文脈依存のルーブリックに基づく短答式採点のための学習データ生成" data-timestamp="1774882793000" data-url="https://arxiv.org/abs/2603.28537v1">
-  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 14:59:53 Z</p>
-  <h2 class="article-title">文脈依存のルーブリックに基づく短答式採点のための学習データ生成</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、国際的な生徒の学力調査であるPISAテストにおける、自動採点手法の学習に必要な大規模データセットの生成方法を探求するものです。<br><br>言語の違いや採点者の偏りを避けるため、自動採点手法の開発には、ドメイン固有の大規模データセットが不可欠です。しかし、機密性の高いデータセットを扱う場合、その利用には制約が伴います。そこで本研究では、比較的少量の機密データセットを参照として、単純な派生テキスト形式を活用することで、大規模な学習データセットを生成する手法を検討しています。<br><br>これらの手法を用いることで、参照データセットに少なくとも表面上は類似した3つの代理データセットを成功裏に作成しました。初期の実験では、これらのアプローチのいずれかがモデル学習の改善につながる可能性が示唆されています。この研究は、教育分野におけるAI技術の応用、特に自動採点システムの開発に貢献する可能性があります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Pavel Šindelář, Dávid Slivka, Christopher Bouma, Filip Prášil, Ondřej Bojar<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.28537v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28537v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, physics.data-an" data-title="行列積演算子分解によるTransformer言語モデルの圧縮：PicoGPTの事例研究" data-timestamp="1774882667000" data-url="https://arxiv.org/abs/2603.28534v1">
-  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 14:57:47 Z</p>
-  <h2 class="article-title">行列積演算子分解によるTransformer言語モデルの圧縮：PicoGPTの事例研究</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span><span class="tag">physics.data-an</span></div>
-  <div class="summary">本論文は、Transformerベースの言語モデルの計算コストとメモリ使用量を削減するための圧縮手法として、行列積演算子（MPO）分解に着目し、PicoGPTを用いた事例研究を行いました。<br><br>Transformerモデルは自然言語処理タスクで高い性能を発揮しますが、隠れ層の次元に対して二次関数的に増加するパラメータ数が、リソースが制約されたハードウェアへのデプロイを困難にしています。MPO分解は、重み行列を低ランクコアの連鎖に因子分解することで、近似品質をボンド次元（chi）で制御できる、原理に基づいた圧縮手法です。本研究では、PicoGPT（約100万パラメータのGPT-2風文字レベル言語モデル）の各`nn.Linear`層を、MPO連鎖としてパラメータ化された`MPOLinear`モジュールに置き換えました。<br><br>コアは、事前学習済み密行列からのTT-SVDまたはランダム初期化により初期化され、標準的なPyTorchオートグラッドを用いて学習されました。PicoGPTの5つの異なる重み形状に対してバランスの取れた因子分解スキームを導出し、ボンド次元chiを{4, 8, 16, 32}で評価しました。その結果、MPO圧縮はchi=4でトランスフォーマーブロックあたり最大13倍の圧縮を達成しました。chi=16では、モデルは1,020,224パラメータの代わりに191,872パラメータを使用し、ベースラインのトークン精度（51.6% vs 52.8%）の97.7%を維持しました。<br><br>再構成誤差は予想される傾向に従い、同じボンド次元では3サイト因子分解の方が2サイト因子分解よりも低くなりました。chi=8のモデルは、パラメータあたりの精度が最も高く、この指標において密ベースラインを2.7倍上回りました。これらの結果は、MPOパラメータ化が、Transformer圧縮のための低ランク手法や非構造的プルーニングに対する実用的かつ理論的に根拠のある代替手段であることを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Younes Javanmard, Tanmoy Pandit, Masoud Mardani<br>
-        分類：cs.CL, physics.data-an<br>
-        分野：cs.CL<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.28534v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28534v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="GraphWalker: 合成軌跡カリキュラムによるエージェント型知識グラフQA" data-timestamp="1774882619000" data-url="https://arxiv.org/abs/2603.28533v1">
-  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 14:56:59 Z</p>
-  <h2 class="article-title">GraphWalker: 合成軌跡カリキュラムによるエージェント型知識グラフQA</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、エージェント型知識グラフ質問応答（KGQA）における訓練データ不足と推論汎化の課題に取り組むフレームワーク「GraphWalker」を提案します。<br><br>従来のKGQA手法は、エージェントの探索を制限する傾向がありました。プロンプトベースの手法では自律的なナビゲーション訓練が不足し、既存の訓練パイプラインは推論を定義済みの軌跡に限定していました。GraphWalkerは、「自動軌跡合成」と「段階的ファインチューニング」により、これらの課題を解決します。<br><br>GraphWalkerは2段階のSFT訓練パラダイムを採用しています。まず、構造的に多様な合成軌跡でエージェントを訓練し、KG全体にわたる広範な探索事前知識を確立します。次に、少数の専門家軌跡でファインチューニングを行い、反省とエラー回復能力を開発します。<br><br>実験の結果、この段階的SFTパラダイムが軽量な強化学習（RL）ステージの性能上限を引き上げ、CWQとWebQSPで最先端の性能を達成しました。GrailQAとGraphWalkerBenchでの追加結果は、分布外推論パスへの汎化能力向上を確認しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Shuwen Xu, Yao Xu, Jiaxiang Liu, Chenhao Yuan, Wenshuo Peng, Jun Zhao, Kang Liu<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.28533v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28533v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-03" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LaTeX執筆履歴から抽出した初期段階の科学論文改訂データセット" data-timestamp="1774882024000" data-url="https://arxiv.org/abs/2603.28515v1">
-  <p class="meta">arXiv cs.CL　Mon, 30 Mar 2026 14:47:04 Z</p>
-  <h2 class="article-title">LaTeX執筆履歴から抽出した初期段階の科学論文改訂データセット</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、科学論文の執筆プロセスにおける初期段階の改訂に焦点を当てた新しいデータセット「EarlySciRev」を提案します。通常、公開されているリソースでは最終版に近い論文しか利用できず、改訂行動の経験的研究や大規模言語モデル（LLM）の評価が制限されていました。<br><br>EarlySciRevは、arXivのLaTeXソースファイルから自動的に抽出された初期段階の科学テキスト改訂データを含んでいます。この手法の鍵となるのは、LaTeXのコメントアウトされたテキストが、著者自身が破棄した、あるいは代替として記述した表現を保持しているという観察です。コメントアウトされたセグメントを近くの最終テキストと照合することで、段落レベルの候補となる改訂ペアを抽出し、LLMベースのフィルタリングを適用して実際の改訂のみを保持します。<br><br>128万件の候補ペアから、57万8千件の検証済み改訂ペアが、実際の初期ドラフトトレースに基づいて生成されました。さらに、改訂検出のための人間による注釈付きベンチマークも提供されています。EarlySciRevは、後期の改訂や合成的な書き換えに焦点を当てた既存のリソースを補完し、科学執筆のダイナミクス、改訂モデリング、LLM支援編集の研究をサポートします。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Léane Jourdan, Julien Aubert-Béduchaud, Yannis Chupin, Marah Baccari, Florian Boudin<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2603.28515v1" target="_blank" rel="noopener">https://arxiv.org/abs/2603.28515v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
