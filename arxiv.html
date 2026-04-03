@@ -999,6 +999,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AR" data-title="整数演算ネイティブのエッジ推論向け高速ソフトマックス近似" data-timestamp="1775151149000" data-url="https://arxiv.org/abs/2604.02292v1">
+  <p class="meta">arXiv cs.LG　Thu, 02 Apr 2026 17:32:29 Z</p>
+  <h2 class="article-title">整数演算ネイティブのエッジ推論向け高速ソフトマックス近似</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.AR</span></div>
+  <div class="summary">本論文は、TransformerモデルのMulti-Head Attention (MHA)ブロックにおける計算ボトルネックとなりうるソフトマックス関数に着目しています。<br><br>特に低精度推論環境下では、指数関数計算と正規化処理が大きなオーバーヘッドを生じさせます。そこで、本研究ではHead-Calibrated Clipped-Linear Softmax (HCCS)という、指数関数ソフトマックスの有界かつ単調な代替手法を提案します。これは、最大中心化されたアテンションロジットをクリップ線形写像することで近似します。<br><br>この近似手法は、安定した確率分布を生成し、元のロジットの順序を維持し、非負の値を持つという特徴があります。HCCSは、個々のアテンションヘッドの統計的特性を維持するために、代表的なデータセットに基づいてオフラインで最適化された軽量なキャリブレーションパラメータを含み、各アテンションヘッドごとに調整される点が、従来のソフトマックス代替手法と異なります。<br><br>さらに、AMD Versal AI Engineをターゲットとした、高スループットシナリオ向けのHCCSのハードウェア実装についても言及しています。AMDの既存実装はbfloat16演算またはLUTを利用していますが、HCCSはAI Engineのint8乗算加算(MAC)ユニットに自然にマッピングされ、他の実装を大幅に上回る速度性能と、量子化後再学習におけるタスク精度を両立させることが示されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Dimitrios Danopoulos, Enrico Lupi, Michael Kagan, Maurizio Pierini<br>
+        分類：cs.LG, cs.AR<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.02292v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02292v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="限定的な3Dデータで3Dネイティブ基盤モデルを探求するOmni123：テキストから2D・3D生成を統合" data-timestamp="1775150978000" data-url="https://arxiv.org/abs/2604.02289v1">
   <p class="meta">arXiv cs.AI　Thu, 02 Apr 2026 17:29:38 Z</p>
   <h2 class="article-title">限定的な3Dデータで3Dネイティブ基盤モデルを探求するOmni123：テキストから2D・3D生成を統合</h2>
@@ -1101,6 +1118,57 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.RO" data-title="時間変動ダイナミクス下におけるモデルベース強化学習制御" data-timestamp="1775148779000" data-url="https://arxiv.org/abs/2604.02260v1">
+  <p class="meta">arXiv cs.LG　Thu, 02 Apr 2026 16:52:59 Z</p>
+  <h2 class="article-title">時間変動ダイナミクス下におけるモデルベース強化学習制御</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.RO</span></div>
+  <div class="summary">本論文は、実世界のシステムでしばしば見られる、時間とともに変化するシステムダイナミクス下での強化学習制御について考察しています。<br><br>特に、エピソードごとに遷移ダイナミクスが進化する連続的なモデルベース強化学習の設定を扱います。ガウス過程ダイナミクスモデルと頻度論的変動予算の仮定を用いて分析が行われ、非定常性が持続する場合、古いデータの જો પ્રભાવ ને મર્યાદિત કરવો જરૂરી છે તે દર્શાવે છે.<br><br>この分析に基づき、適応的なデータバッファ機構を備えた実用的な楽観的モデルベース強化学習アルゴリズムを提案しています。非定常ダイナミクスを持つ連続制御ベンチマークにおいて、性能が向上することが実証されました。これは、実環境における制御システムの適応性向上に貢献する可能性があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Klemens Iten, Bruce Lee, Chenhao Li, Lenart Treven, Andreas Krause, Bhavya Sukhija<br>
+        分類：cs.LG, cs.RO<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.02260v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02260v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="拡散デノイジング目的関数を用いた因果構造学習" data-timestamp="1775148080000" data-url="https://arxiv.org/abs/2604.02250v1">
+  <p class="meta">arXiv stat.ML　Thu, 02 Apr 2026 16:41:20 Z</p>
+  <h2 class="article-title">拡散デノイジング目的関数を用いた因果構造学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、観測データにおける因果関係の理解が意思決定に不可欠であるという背景のもと、因果構造学習における新たなアプローチを提案しています。<br><br>既存手法の多くは、高次元データや特徴とサンプルの不均衡がある場合にスケーラビリティや安定性の問題に直面しますが、本研究では拡散モデルのデノイジングスコアマッチング目的関数が、より高速で安定した収束を促進する勾配平滑化効果を持つことを示します。さらに、既存手法で必要とされていた行列演算を回避する適応的k-ホップ非巡回制約を導入し、実行時間を改善するフレームワーク「Denoising Diffusion Causal Discovery (DDCD)」を提案しています。<br><br>DDCDは、生成モデルとは異なり、逆デノイジングプロセスを用いてデータ生成ではなくパラメータ化された因果構造を推論します。合成ベンチマークデータでの競争力のある性能が実証されており、実世界データへの定性分析でも実用性が示されています。この研究は、因果推論の分野における計算効率と安定性の向上に貢献するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Hao Zhu, Di Zhou, Donna Slonim<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.02250v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02250v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="プライバシーを考慮したベイズ的垂直連邦学習によるマルチモーダル生存時間予測" data-timestamp="1775147864000" data-url="https://arxiv.org/abs/2604.02248v1">
+  <p class="meta">arXiv stat.ML　Thu, 02 Apr 2026 16:37:44 Z</p>
+  <h2 class="article-title">プライバシーを考慮したベイズ的垂直連邦学習によるマルチモーダル生存時間予測</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、複数の機関に分散された機密性の高いマルチモーダルデータを統合して生存時間予測を行う際のプライバシー保護と不確実性推定の課題に取り組んでいます。<br><br>提案手法「BVFLMSP」は、スプリットニューラルネットワークアーキテクチャに基づくベイズ的垂直連邦学習（VFL）フレームワークです。各クライアントは特定のデータモダリティを独立してモデル化し、中央サーバーが中間表現を集約して生存リスク予測を行います。プライバシー保護のため、差分プライバシー機構を統合し、連邦学習中の情報漏洩に対する形式的なプライバシー保証を提供します。<br><br>実験の結果、BVFLMSPはマルチモーダルデータを効果的に統合し、既存のベースライン手法と比較して識別性能を向上させることが示されました。また、様々なプライバシー予算下での連邦学習と中央集権学習の比較により、予測性能とプライバシーのトレードオフが明らかになりました。本研究は、プライバシー制約下でも信頼性の高い生存時間予測と不確実性推定を可能にする実用的なフレームワークを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Abhilash Kar, Basisth Saha, Tanmay Sen, Biswabrata Pradhan<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.02248v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02248v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="VISTA：効率的な分析によるトークン帰属の可視化" data-timestamp="1775146153000" data-url="https://arxiv.org/abs/2604.02217v1">
   <p class="meta">arXiv cs.CL　Thu, 02 Apr 2026 16:09:13 Z</p>
   <h2 class="article-title">VISTA：効率的な分析によるトークン帰属の可視化</h2>
@@ -1132,6 +1200,23 @@
         分野：cs.CL<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2604.02209v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02209v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="胸部CTレポートのLLM生成日本語翻訳に対するブラインド放射線科医とLLM評価の比較研究" data-timestamp="1775145580000" data-url="https://arxiv.org/abs/2604.02207v1">
+  <p class="meta">arXiv cs.CL　Thu, 02 Apr 2026 15:59:40 Z</p>
+  <h2 class="article-title">胸部CTレポートのLLM生成日本語翻訳に対するブラインド放射線科医とLLM評価の比較研究</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本研究は、多言語研究、臨床コミュニケーション、放射線教育において重要な胸部CTレポートの正確な翻訳の必要性に着目し、LLMによる評価の妥当性を検証することを目的としています。<br><br>英語の胸部CTレポート150件を対象に、人間による編集済み日本語翻訳とLLM（DeepSeek-V3.2）による生成日本語翻訳を比較しました。専門医と研修医が、専門用語の正確性、読みやすさ、全体的な品質、放射線科医らしい表現の4つの基準でブラインド評価を実施しました。同時に、3つのLLM（DeepSeek-V3.2、Mistral Large 3、GPT-5）も同様の評価を行いました。<br><br>結果として、放射線科医とLLM評価者間の一致率は非常に低い（QWK=-0.04〜0.15）ことが明らかになりました。一方、LLM評価者間では、LLM生成翻訳に対して強い好意的な評価（70%〜99%）を示し、放射線科医らしい表現であると評価しました。しかし、2名の放射線科医間でも評価の一致率は低い（QWK=0.01〜0.06）という結果でした。<br><br>この研究から、LLM生成翻訳は自然で流暢な場合が多いものの、専門医による評価は大きく異なり、LLMによる自動評価のみでは不十分であることが示唆されました。教育目的での翻訳レポート利用においては、専門医によるレビューが依然として重要であると結論付けています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Yosuke Yamagishi, Atsushi Takamatsu, Yasunori Hamaguchi, Tomohiro Kikuchi, Shouhei Hanaoka, Takeharu Yoshikawa, Osamu Abe<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.02207v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02207v1</a>
   </div>
 </article>
 
@@ -1200,6 +1285,23 @@
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2604.02176v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02176v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.NE, stat.ML" data-title="自己組織化トランスフォーマーの階層的プロトタイプ構造に関する理論的基礎" data-timestamp="1775126346000" data-url="https://arxiv.org/abs/2604.01880v1">
+  <p class="meta">arXiv stat.ML　Thu, 02 Apr 2026 10:39:06 Z</p>
+  <h2 class="article-title">自己組織化トランスフォーマーの階層的プロトタイプ構造に関する理論的基礎</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.NE</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、現代のトランスフォーマーモデルが持つ、事前に固定されたアーキテクチャ設計の必要性という課題に対し、訓練中に自己組織化する新しいアーキテクチャを提案しています。<br><br>「DDCL-INCRT」は、「Deep Dual Competitive Learning (DDCL)」と「Incremental Transformer (INCRT)」という2つのアイデアを組み合わせています。DDCLは、フィードフォワードブロックを学習されたプロトタイプベクトルの辞書に置き換え、プロトタイプが自動的に分離するようにします。INCRTは、必要に応じてアテンションヘッドを追加することで、ネットワークの深さを動的に制御します。これにより、タスクに最適な、必要最小限のアーキテクチャが自動的に構築されます。<br><br>理論的な発見として、これらのメカニズムが相互に強化し合い、ネットワークが階層的な構造へと自己組織化することが証明されています。この構造は一意かつ最小であることが保証されており、安定性、収束性、およびプルーニングの安全性に関する形式的な保証も確立されています。本研究は、アーキテクチャ設計のプロセスを、事前の設計から導出へと転換させる可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Giansalvo Cirrincione<br>
+        分類：cs.LG, cs.NE, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.01880v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01880v1</a>
   </div>
 </article>
 
@@ -1455,108 +1557,6 @@
         分野：cs.LG<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2604.01178v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01178v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="大気質予測のためのニューラル動的拡散移流場と証拠融合" data-timestamp="1775064463000" data-url="https://arxiv.org/abs/2604.01175v1">
-  <p class="meta">arXiv cs.LG　Wed, 01 Apr 2026 17:27:43 Z</p>
-  <h2 class="article-title">大気質予測のためのニューラル動的拡散移流場と証拠融合</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、公衆衛生保護と環境政策立案に不可欠な大気質予測の精度向上を目指し、非線形な時空間ダイナミクス、風による輸送、地域間の分布シフトといった課題に対処します。<br><br>物理ベースモデルは解釈可能ですが計算コストが高く、データ駆動型モデルは精度が高いものの頑健性や不確実性の校正に課題があります。これらを解決するため、本研究では物理情報に基づいた予測フレームワーク「NeuroDDAF」を提案します。これは、ニューラル表現学習と開放系輸送モデリングを統合したものです。<br><br>NeuroDDAFは、GRU-Graph Attentionエンコーダー、学習可能な残差を持つフーリエ領域拡散移流モジュール、時間変化する接続下での連続時間進化をモデル化する風変調型潜在ニューラルODE、そして物理情報とニューラル予測を適応的に組み合わせ不確実性を定量化する証拠融合メカニズムを統合しています。4つの都市データセットを用いた実験では、NeuroDDAFが長期予測においてRMSEを最大9.7%、MAEを最大9.4%削減し、既存の強力なベースラインを上回る性能を示しました。さらに、都市間汎化能力の向上と、適切に校正された不確実性推定を実現しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Prasanjit Dey, Soumyabrata Dev, Angela Meyer, Bianca Schoen-Phelan<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.01175v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01175v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="eess.SY" data-source="arXiv cs.LG" data-area="AI" data-categories="eess.SY, cs.LG, math.OC" data-title="不確実性定量化に基づく安全な学習制御" data-timestamp="1775064210000" data-url="https://arxiv.org/abs/2604.01173v1">
-  <p class="meta">arXiv cs.LG　Wed, 01 Apr 2026 17:23:30 Z</p>
-  <h2 class="article-title">不確実性定量化に基づく安全な学習制御</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">eess.SY</span><span class="tag">cs.LG</span><span class="tag">math.OC</span></div>
-  <div class="summary">本論文は、安全性が重視されるシステムに学習ベースの制御手法を導入する際に不可欠な不確実性定量化について論じています。一般的に、これは、報酬関数、制約関数、または基盤となるダイナミクスモデルなどの未知の関数を高い確率で囲む不確実性チューブを構築することで実現されます。<br><br>しかし、既存の不確実性定量化アプローチは、関数のノルムやリプシッツ定数の既知の境界といった未知の関数に対する制限的な仮定に依存しており、不連続性に対処するのが難しいという課題があります。本研究では、未知の関数を、独立かつ同一に分布した実現値（realizations）を生成できる確率的関数としてモデル化します。<br><br>そして、シナリオアプローチを通じて、サンプリングされた実現値のみに依存し、高い確率で成り立つ不確実性チューブを構築します。これらの不確実性チューブを安全なベイズ最適化アルゴリズムに統合し、実際のフルータ振り子で制御パラメータを安全に調整するために使用します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Abdullah Tokmak, Toni Karvonen, Thomas B. Schön, Dominik Baumann<br>
-        分類：eess.SY, cs.LG, math.OC<br>
-        分野：eess.SY<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.01173v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01173v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL, stat.AP, stat.ML" data-title="オンライン推論キャリブレーション：テスト時学習による汎用的な共分散LLM推論の実現" data-timestamp="1775064110000" data-url="https://arxiv.org/abs/2604.01170v1">
-  <p class="meta">arXiv stat.ML　Wed, 01 Apr 2026 17:21:50 Z</p>
-  <h2 class="article-title">オンライン推論キャリブレーション：テスト時学習による汎用的な共分散LLM推論の実現</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">stat.AP</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の推論における計算コストの非効率性を解消するためのフレームワーク「オンライン推論キャリブレーション（ORCA）」を提案しています。<br><br>ORCAは、共分散予測とテスト時学習を組み合わせ、推論のサンプリングプロセスを調整します。特に、入力ごとにキャリブレーションモジュールを更新するメタ学習手順を導入することで、推論過程の思考パターンやモデル開発・展開間のプロンプト分布の変化といった分布シフト下でも、信頼性の高い推定値を提供します。<br><br>ORCAは理論的な保証に加え、様々な推論タスクにおいて効率と汎化性能の向上を実証しました。特に、分布内タスクでは効率が最大47.5%向上し、ゼロショットのドメイン外設定では、静的キャリブレーションベースラインと比較してMATH-500タスクでの効率が24.8%から67.0%に向上しました。この手法は、モデルファミリーや下流ベンチマーク全体で同様の傾向を示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Cai Zhou, Zekai Wang, Menghua Wu, Qianyu Julie Zhu, Flora C. Shi, Chenyu Wang, Ashia Wilson, Tommi Jaakkola<br>
-        分類：cs.LG, cs.AI, cs.CL, stat.AP, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.01170v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01170v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cond-mat.mtrl-sci, q-bio.BM" data-title="敵対的分布アライメントを用いた生成モデルによるシミュレーションと実験のギャップ橋渡し" data-timestamp="1775064093000" data-url="https://arxiv.org/abs/2604.01169v1">
-  <p class="meta">arXiv cs.LG　Wed, 01 Apr 2026 17:21:33 Z</p>
-  <h2 class="article-title">敵対的分布アライメントを用いた生成モデルによるシミュレーションと実験のギャップ橋渡し</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cond-mat.mtrl-sci</span><span class="tag">q-bio.BM</span></div>
-  <div class="summary">本論文は、科学技術分野における根本的な課題である、シミュレーションと実験の間のギャップを埋めるためのデータ駆動型フレームワークを提案します。<br><br>物理法則が複雑なシステムに対して厳密に解けない場合、シミュレータが用いられますが、これらは計算上の近似を伴います。一方、実験的測定は現実世界をより忠実に表しますが、システムの完全な状態の一部しか反映しない観測データとなります。本研究では、まず完全なシミュレーションデータで生成モデルを事前学習し、次に部分的な実験観測データと整合させることで、このギャップを橋渡しします。<br><br>提案手法である敵対的分布アライメント（ADA）は、原子位置の生成モデルを、シミュレートされたボルツマン分布から実験的観測の分布へと整合させます。この手法は、合成データ、分子データ、タンパク質データなど、多様な観測値を持つ生成モデルを整合させることができることを実証しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Kai Nelson, Tobias Kreiman, Sergey Levine, Aditi S. Krishnapriyan<br>
-        分類：cs.LG, cond-mat.mtrl-sci, q-bio.BM<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.01169v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01169v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="S0 Tuning: Zero-Overhead Adaptation of Hybrid Recurrent-Attention Models" data-timestamp="1775064075000" data-url="https://arxiv.org/abs/2604.01168v1">
-  <p class="meta">arXiv cs.LG　Wed, 01 Apr 2026 17:21:15 Z</p>
-  <h2 class="article-title">S0 Tuning: Zero-Overhead Adaptation of Hybrid Recurrent-Attention Models</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: S0 Tuning: Zero-Overhead Adaptation of Hybrid Recurrent-Attention Models Authors: Jack Young Categories: cs.CL, cs.LG Abstract / Summary: Using roughly 48 execution-verified HumanEval training solutions, tuning a single initial state matrix per recurrent layer, with zero inference overhead, outperforms LoRA by +10.8 pp (p <br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Jack Young<br>
-        分類：cs.CL, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.01168v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01168v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="eess.IV" data-source="arXiv cs.AI" data-area="AI" data-categories="eess.IV, cs.AI, cs.CV" data-title="AdaLoRA-QAT：適応的低ランクと量子化認識型セグメンテーション" data-timestamp="1775063926000" data-url="https://arxiv.org/abs/2604.01167v1">
-  <p class="meta">arXiv cs.AI　Wed, 01 Apr 2026 17:18:46 Z</p>
-  <h2 class="article-title">AdaLoRA-QAT：適応的低ランクと量子化認識型セグメンテーション</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">eess.IV</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
-  <div class="summary">本論文は、臨床現場での計算リソースの制約に対応するため、胸部X線（CXR）画像セグメンテーションにおける大規模基盤モデルの展開を可能にする、AdaLoRA-QATという新しいファインチューニングフレームワークを提案します。<br><br>このフレームワークは、適応的な低ランクエンコーダー適応と、完全な量子化認識型トレーニングを組み合わせた二段階ファインチューニング手法です。適応的なランク割り当てはパラメータ効率を向上させ、選択的な混合精度INT8量子化は臨床的信頼性にとって重要な構造的忠実性を維持します。<br><br>大規模CXRデータセットでの評価の結果、AdaLoRA-QATは、フル精度SAMデコーダーファインチューニングと同等の95.6%のDiceスコアを達成しつつ、学習可能パラメータを16.6倍削減し、モデル圧縮率2.24倍を実現しました。量子化がセグメンテーション精度を著しく低下させないことが統計的に確認されており、AdaLoRA-QATは精度、効率、構造的信頼性のバランスを取り、医療画像セグメンテーションのためのコンパクトで展開可能な基盤モデルを可能にすることが示されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Prantik Deb, Srimanth Dhondy, N. Ramakrishna, Anu Kapoor, Raju S. Bapi, Tapabrata Chakraborti<br>
-        分類：eess.IV, cs.AI, cs.CV<br>
-        分野：eess.IV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.01167v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.01167v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
