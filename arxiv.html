@@ -1090,6 +1090,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CV" data-title="TriAttention：三角関数KV圧縮による効率的な長文推論" data-timestamp="1775498322000" data-url="https://arxiv.org/abs/2604.04921v1">
+  <p class="meta">arXiv cs.CL　Mon, 06 Apr 2026 17:58:42 Z</p>
+  <h2 class="article-title">TriAttention：三角関数KV圧縮による効率的な長文推論</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）における長文推論時のKVキャッシュメモリのボトルネックを解消する手法を提案します。<br><br>既存のKVキャッシュ圧縮手法は、最近のRoPE後クエリの注意スコアを用いてKVの重要度を推定しますが、RoPEによるクエリの回転のため、代表的なクエリが少なく、トップキー選択の精度や推論の安定性に問題がありました。本研究では、この問題に対処するため、RoPE前の空間に着目します。<br><br>RoPE前の空間では、Q（クエリ）とK（キー）ベクトルが固定された非ゼロ中心の周りに高度に集中しており、位置によらず安定していることが観測されました。この集中により、クエリは特定の距離にあるキーに優先的に注意を向けることが示され、その中心が三角関数級数を通じてどの距離が好まれるかを決定します。この発見に基づき、TriAttentionはこれらの中心を利用してキーの重要度を推定します。<br><br>TriAttentionは、三角関数級数を通じて、中心によって特徴付けられる距離の好みを位置に応じてキーにスコアリングし、さらにQ/Kのノルムを重要度推定の追加信号として活用します。AIME25（32Kトークン生成）での実験では、TriAttentionは完全な注意機構と同等の推論精度を達成しつつ、スループットを2.5倍向上させるか、KVメモリを10.7倍削減しました。これは、既存の主要なベースラインが同等の効率で約半分の精度しか達成できないのと比較して、顕著な改善です。TriAttentionにより、通常ではメモリ不足となるような長文コンテキストでも、OpenClawを単一のコンシューマーGPUにデプロイすることが可能になります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Weian Mao, Xi Lin, Wei Huang, Yuxin Xie, Tianfu Fu, Bohan Zhuang, Song Han, Yukang Chen<br>
+        分類：cs.CL, cs.CV<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.04921v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.04921v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="FileGram：ファイルシステム行動履歴に基づくエージェントのパーソナライゼーション" data-timestamp="1775497771000" data-url="https://arxiv.org/abs/2604.04901v1">
+  <p class="meta">arXiv cs.AI　Mon, 06 Apr 2026 17:49:31 Z</p>
+  <h2 class="article-title">FileGram：ファイルシステム行動履歴に基づくエージェントのパーソナライゼーション</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、ローカルファイルシステムで動作する協調AIエージェントのパーソナライゼーションにおける課題に対処します。<br><br>従来のパーソナライゼーション手法は、プライバシー保護やマルチモーダルデータの収集困難性から、スケーラブルな学習と評価が制限されていました。また、対話中心のアプローチでは、ファイルシステム操作における詳細な行動履歴が軽視されていました。<br><br>このギャップを埋めるため、本研究ではファイルシステム行動履歴にエージェントの記憶とパーソナライゼーションを根付かせる包括的なフレームワーク「FileGram」を提案します。FileGramは、現実的なワークフローをシミュレートし、大規模かつ詳細なマルチモーダル行動シーケンスを生成する「FileGramEngine」、ファイルシステム行動履歴に基づいた診断ベンチマークである「FileGramBench」、そして対話要約ではなくアトミックな行動やコンテンツの差分から直接ユーザープロファイルを構築する「FileGramOS」の3つの主要コンポーネントから構成されます。<br><br>広範な実験により、FileGramBenchが最先端のメモリシステムにとって依然として挑戦的であることが示され、FileGramEngineとFileGramOSの効果も確認されました。本フレームワークのオープンソース化により、パーソナライズされたメモリ中心のファイルシステムエージェントに関する今後の研究が促進されることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Shuai Liu, Shulin Tian, Kairui Hu, Yuhao Dong, Zhe Yang, Bo Li, Jingkang Yang, Chen Change Loy<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.04901v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.04901v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="RLVRにおける探索の再考：エントロピー正則化から双方向エントロピー変調による洗練へ" data-timestamp="1775497358000" data-url="https://arxiv.org/abs/2604.04894v1">
+  <p class="meta">arXiv cs.AI　Mon, 06 Apr 2026 17:42:38 Z</p>
+  <h2 class="article-title">RLVRにおける探索の再考：エントロピー正則化から双方向エントロピー変調による洗練へ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論能力を向上させる強化学習（RLVR）における「限定的な探索」という根本的な課題に取り組みます。<br><br>RLVRでは、ポリシーが急速に狭い解の集合に収束してしまう問題があります。エントロピー正則化は探索を維持するための一般的なアプローチですが、ハイパーパラメータへの感度が高く、性能向上も限定的であることが多いです。本研究では、ポリシーエントロピーと探索の関係を再考し、エントロピーを「情報エントロピー」（多様な解パスを維持）と「偽エントロピー」（推論パターンを損なう）に分解します。<br><br>分析の結果、効果的な探索には、単なる最大化ではなく、「エントロピー洗練」が必要であることが明らかになりました。これは、グループ相対アドバンテージ推定に暗黙的に組み込まれたメカニズムであり、肯定的なロールアウトで情報エントロピーを維持し、否定的なロールアウトで偽エントロピーを抑制します。この洞察に基づき、肯定的なロールアウトと否定的なロールアウトの変調を明示的に分離する探索フレームワーク「AsymGRPO」を提案します。<br><br>これにより、情報エントロピーの維持と偽エントロピーの抑制を独立して制御できます。広範な実験により、AsymGRPOが既存の強力なベースラインを上回る性能を達成し、既存のエントロピー正則化手法とも相乗効果を発揮する可能性が示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Hengrui Gu, Xiaotian Han, Yujing Bian, Kaixiong Zhou<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.04894v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.04894v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="機械学習エンジニアリングエージェント訓練のための合成サンドボックス" data-timestamp="1775495969000" data-url="https://arxiv.org/abs/2604.04872v1">
+  <p class="meta">arXiv cs.LG　Mon, 06 Apr 2026 17:19:29 Z</p>
+  <h2 class="article-title">機械学習エンジニアリングエージェント訓練のための合成サンドボックス</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、AI分野における機械学習エンジニアリング（MLE）タスクを担うエージェントの訓練に関する課題と、その解決策としての合成環境の構築について述べています。従来のソフトウェアエンジニアリング（SWE）タスクと異なり、MLEタスクの検証には大規模なデータセットを用いたMLパイプライン全体の実行が必要であり、これがエージェント訓練のボトルネックとなっていました。<br><br>この課題に対し、本研究では「SandMLE」というマルチエージェントフレームワークを提案しています。これは、少数のシードタスクから多様で検証可能な合成MLE環境を生成するものです。これにより、実世界の複雑さを維持しつつ、データセットをマイクロスケールに制約することで、実行時間を大幅に短縮します。<br><br>実験の結果、SandMLEは実行時間を13倍以上短縮し、MLEドメインで初めて大規模なオンポリシー軌道ごとの強化学習を可能にしました。これにより、Qwen3-8B、14B、30B-A3Bモデルにおいて、SFTベースラインと比較してメダル率が20.3%から66.9%向上しました。さらに、訓練されたポリシーは未知のエージェント足場にも汎化し、MLE-Dojoで最大32.4%高いHumanRankスコアを達成しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Yuhang Zhou, Lizhu Zhang, Yifan Wu, Jiayi Liu, Xiangjun Fan, Zhuokai Zhao, Hong Yan<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.04872v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.04872v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="DSPyを用いた宣言的学習によるLLMプロンプトエンジニアリングの最適化" data-timestamp="1775495877000" data-url="https://arxiv.org/abs/2604.04869v1">
+  <p class="meta">arXiv cs.LG　Mon, 06 Apr 2026 17:17:57 Z</p>
+  <h2 class="article-title">DSPyを用いた宣言的学習によるLLMプロンプトエンジニアリングの最適化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）の性能を左右するプロンプトエンジニアリングの最適化手法について論じています。従来の試行錯誤に頼る手法の限界を指摘し、DSPyという宣言的フレームワークを用いた自動化、モジュール化、学習可能なプロンプト構築の可能性を探求しています。<br><br>提案手法は、プロンプト合成、修正、キャリブレーション、適応的推論制御に焦点を当て、記号計画、勾配フリー最適化、自動モジュール書き換えを統合した統一DSPy LLMアーキテクチャを導入しています。これにより、幻覚の低減、事実に基づいた根拠の向上、不要なプロンプトの複雑さの回避を目指します。<br><br>推論タスク、検索拡張生成、多段階連鎖思考ベンチマークにおける実験評価では、出力の信頼性、効率性、モデル間での汎化性能が一貫して向上しました。具体的には、事実の正確性が30～45%向上し、幻覚発生率が約25%減少しました。最後に、本研究の限界と、宣言的プロンプト最適化フレームワークの将来的な研究の方向性について考察しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Shiek Ruksana, Sailesh Kiran Kurra, Thipparthi Sanjay Baradwaj<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.04869v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.04869v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="もっともらしさ（尤もらしさ）は常識推論の一種：人間は成功するが、大規模言語モデルは失敗する" data-timestamp="1775492826000" data-url="https://arxiv.org/abs/2604.04825v1">
+  <p class="meta">arXiv cs.CL　Mon, 06 Apr 2026 16:27:06 Z</p>
+  <h2 class="article-title">もっともらしさ（尤もらしさ）は常識推論の一種：人間は成功するが、大規模言語モデルは失敗する</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）の常識推論能力、特に文脈の曖昧性解消における世界知識の統合能力について検証しています。人間がどのように曖昧性を解決するのか、そしてLLMがそれをどの程度模倣できているのかを、トルコ語の前置詞句関係節の係り受け曖昧性を例に調査しています。<br><br>研究では、統語構造を固定し、事象のもっともらしさ（尤もらしさ）によって高位係属（HA）または低位係属（LA）が選択的に有利になるような曖昧な項目を構築しました。独立したノルム評価によってこれらの対比を検証した後、被験者を用いた速度強制選択理解実験を実施しました。その結果、人間はもっともらしさの効果を大きく、かつ正しく示すことが明らかになりました。<br><br>次に、トルコ語および多言語LLMを評価したところ、モデル間ではもっともらしさによる係属選好のシフトは弱く、不安定、あるいは逆転する傾向が見られました。これらの結果は、テストされたモデルでは、もっともらしさ情報が人間の判断ほど確実に係属選好を導かないことを示唆しています。本研究は、トルコ語関係節の係り受け曖昧性を、広範なベンチマークを超えた言語間の診断として有用であることを強調しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Sercan Karakaş<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.04825v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.04825v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="サーバー学習による連合学習の頑健性向上" data-timestamp="1775238689000" data-url="https://arxiv.org/abs/2604.03226v1">
   <p class="meta">arXiv cs.AI　Fri, 03 Apr 2026 17:51:29 Z</p>
   <h2 class="article-title">サーバー学習による連合学習の頑健性向上</h2>
@@ -1461,108 +1563,6 @@
         分野：stat.ML<br>
         ジャンル：Machine Learning<br>
         原文URL：<a href="https://arxiv.org/abs/2604.03146v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.03146v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.AR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AR, cs.AI, cs.CL" data-title="InCoder-32B-Thinking: 産業コードの世界モデルによる推論" data-timestamp="1775232385000" data-url="https://arxiv.org/abs/2604.03144v1">
-  <p class="meta">arXiv cs.AI　Fri, 03 Apr 2026 16:06:25 Z</p>
-  <h2 class="article-title">InCoder-32B-Thinking: 産業コードの世界モデルによる推論</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AR</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、産業用ソフトウェア開発における専門家の推論プロセスをモデル化する「InCoder-32B-Thinking」を提案しています。<br><br>エラー駆動型連鎖思考（ECoT）合成フレームワークと産業コード世界モデル（ICWM）を用いて、ハードウェア制約やタイミングセマンティクスに関するエンジニアの推論過程を生成します。ICWMは、VerilogシミュレーションやGPUプロファイリングなどのドメイン固有の実行トレースから学習し、コードがハードウェアの挙動にどのように影響するかという因果関係をモデル化します。<br><br>生成された推論トレースはドメインツールチェーンで検証され、産業タスクの自然な推論深度分布に一致するトレーニングデータを作成します。14の汎用ベンチマークと9の産業ベンチマークでの評価により、InCoder-32B-Thinkingがオープンソースの最上位クラスの結果を達成することが示されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Jian Yang, Wei Zhang, Jiajun Wu, Junhang Cheng, Tuney Zheng, Fanglin Xu, Weicheng Gu, Lin Jing<br>
-        分類：cs.AR, cs.AI, cs.CL<br>
-        分野：cs.AR<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.03144v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.03144v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="長文生成における事実性評価：精度を超えた重要度考慮型リコール" data-timestamp="1775232236000" data-url="https://arxiv.org/abs/2604.03141v1">
-  <p class="meta">arXiv cs.CL　Fri, 03 Apr 2026 16:03:56 Z</p>
-  <h2 class="article-title">長文生成における事実性評価：精度を超えた重要度考慮型リコール</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）による長文生成の事実性評価における課題、特にオープンエンドな応答に含まれる多数の微細な事実ステートメントの評価の難しさに取り組んでいます。<br><br>既存の評価手法は主に精度に焦点を当てており、応答を原子的な主張に分解して外部知識源で検証しますが、事実性におけるもう一つの重要な側面である「リコール」、すなわち生成応答が含めるべき関連事実を網羅しているかを見落としていました。そこで本研究では、精度とリコールを同時に測定する包括的な事実性評価フレームワークを提案します。<br><br>提案手法は、外部知識源を利用して参照事実を構築し、それらが生成テキストで捉えられているかを確認します。さらに、関連性と顕著性に基づいた重要度考慮型の重み付けスキームを導入します。このフレームワークにより、LLMは精度よりもリコールにおいて大幅に劣ることが明らかになりました。<br><br>この結果は、事実の不完全性が長文生成の主要な限界であり、モデルは重要な事実を網羅する能力は高いものの、関連する事実セット全体を網羅する能力には課題があることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Nazanin Jafari, James Allan, Mohit Iyyer<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.03141v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.03141v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="StoryScope：AI生成フィクションにおける特異性の調査" data-timestamp="1775231798000" data-url="https://arxiv.org/abs/2604.03136v1">
-  <p class="meta">arXiv cs.CL　Fri, 03 Apr 2026 15:56:38 Z</p>
-  <h2 class="article-title">StoryScope：AI生成フィクションにおける特異性の調査</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、AI生成フィクションの普及に伴い、著作者性や独創性に関する問題が重要視される中で、AI生成物語と人間が書いた物語を、文体的な手がかりに頼らずに区別できるかという問いを探求します。特に、キャラクターの主体性や時間的連続性の不整合といった、談話レベルの物語上の選択に焦点を当てています。<br><br>提案手法「StoryScope」は、10次元にわたる談話レベルの物語特徴の、細粒度で解釈可能な特徴空間を自動的に誘導するパイプラインです。この手法を、10,272件の執筆プロンプト（各プロンプトに対し人間と5つのLLMが執筆）からなる並列コーパスに適用し、各物語（約5,000語）から304個の特徴を抽出しました。<br><br>物語特徴のみを用いた場合、人間とAIの検出で93.2%のマクロF1スコア、68.4%のマクロF1スコアで6者間の著作者特定が可能であることが示されました。これは、文体的な手がかりを含むモデルの性能の97%以上を維持しています。30個のコア物語特徴のコンパクトなセットが、この信号の多くを捉えています。<br><br>具体的には、AI物語はテーマを過剰に説明し、整然とした単線的なプロットを好む傾向がある一方、人間が書いた物語は主人公の選択をより道徳的に曖昧に描写し、時間的な複雑さが増加する傾向が見られました。モデルごとのフィンガープリント特徴により、Claudeはイベントのエスカレーションが著しく平坦である、GPTは夢のシーケンスを過剰にインデックス化する、Geminiは外部のキャラクター描写にデフォルトするなど、6者間の特定が可能です。AI生成物語は物語空間内で共通の領域にクラスタ化するのに対し、人間が書いた物語はより多様性を示すことがわかりました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Jenna Russell, Rishanth Rajendhran, Mohit Iyyer, John Wieting<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.03136v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.03136v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="stat.ME" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ME, q-bio.GN, q-bio.QM, stat.AP, stat.ML" data-title="高次元多対多対多媒介分析" data-timestamp="1775206130000" data-url="https://arxiv.org/abs/2604.02886v1">
-  <p class="meta">arXiv stat.ML　Fri, 03 Apr 2026 08:48:50 Z</p>
-  <h2 class="article-title">高次元多対多対多媒介分析</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ME</span><span class="tag">q-bio.GN</span><span class="tag">q-bio.QM</span><span class="tag">stat.AP</span></div>
-  <div class="summary">本論文は、曝露、媒介変数、結果がすべて多変量であり、曝露と媒介変数の両方が高次元である可能性のある高次元媒介分析を扱います。<br><br>これを多対多対多（MMM）媒介分析問題として形式化し、高次元曝露と媒介変数の変数選択、間接効果行列の推定、多変量結果の予測を同時に行います。<br><br>提案手法は、推定された間接効果行列の一貫性と漸近正規性を理論的に示し、推定量の誤差限界を導出します。シミュレーション研究とアルツハイマー病神経画像イニシアチブのデータへの応用により、遺伝子-神経-認知経路の解明と予測性能の向上が示されました。これは、科学における複雑な多層経路を調査するための統計的手法の価値を強調するものです。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Tien Dat Nguyen, Trung Khang Tran, Cong Khanh Truong, Duy-Cat Can, Binh T. Nguyen, Oliver Y. Chén<br>
-        分類：stat.ME, q-bio.GN, q-bio.QM, stat.AP, stat.ML<br>
-        分野：stat.ME<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.02886v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02886v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Generative Models" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, math.OC, stat.CO" data-title="断続的に破損した観測値に対する状態推定とノイズ同定：ベイズ変分推論によるアプローチ" data-timestamp="1775193649000" data-url="https://arxiv.org/abs/2604.02738v1">
-  <p class="meta">arXiv stat.ML　Fri, 03 Apr 2026 05:20:49 Z</p>
-  <h2 class="article-title">断続的に破損した観測値に対する状態推定とノイズ同定：ベイズ変分推論によるアプローチ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">math.OC</span><span class="tag">stat.CO</span></div>
-  <div class="summary">本論文は、断続的なパケット損失、観測値の破損、未知のノイズ共分散が共存する分散センサーネットワークにおける状態推定問題に焦点を当てています。<br><br>この課題に対処するため、システム状態、ノイズパラメータ、ネットワーク信頼性の同時推定をベイズ変分推論問題として定式化し、潜在パラメータの同時事後確率密度を近似する新しい変分ベイズ適応カルマンフィルタ（VB-AKF）を提案します。<br><br>提案手法は、観測された通信損失と潜在的なデータ真正性の両方を明示的に特徴付ける二重マスク生成モデルを採用し、複数の同時観測を適応フィルタリングフレームワークに統合することで、統計的識別性を大幅に向上させます。数値実験により、パラメータ同定と状態推定の両方がセンサー数増加に伴い理論的最適下限に漸近的に収束することが検証されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Peng Sun, Ruoyu Wang, Xue Luo<br>
-        分類：stat.ML, cs.LG, math.OC, stat.CO<br>
-        分野：stat.ML<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.02738v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02738v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Robotics" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, math.NA, stat.ML" data-title="ランダム部分空間反復による事前学習済みモデルの低ランク圧縮" data-timestamp="1775184423000" data-url="https://arxiv.org/abs/2604.02659v1">
-  <p class="meta">arXiv stat.ML　Fri, 03 Apr 2026 02:47:03 Z</p>
-  <h2 class="article-title">ランダム部分空間反復による事前学習済みモデルの低ランク圧縮</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">math.NA</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、大規模な事前学習済みモデルの効率的な圧縮手法について論じています。<br><br>従来の特異値分解（SVD）に基づく低ランク近似は計算コストが高いという課題があり、ランダム化SVD（RSVD）は近似精度が低い場合があることが指摘されています。本研究では、RSVDの限界を克服するため、ランダム化部分空間反復（RSI）を提案しています。<br><br>RSIは、複数のべき乗反復を取り入れることでスペクトル分離を改善し、近似品質を制御可能にします。畳み込みニューラルネットワークとTransformerベースのアーキテクチャで評価した結果、RSIはRSVDよりも高い予測精度を示し、効率的なモデル圧縮を可能にすることが示されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Farhad Pourkamali-Anaraki<br>
-        分類：cs.LG, cs.AI, math.NA, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.02659v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.02659v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
