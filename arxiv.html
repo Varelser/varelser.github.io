@@ -1382,6 +1382,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="stat.ML" data-source="arXiv cs.AI" data-area="AI" data-categories="stat.ML, cs.AI, cs.CL, cs.DS, cs.LG" data-title="差分プライバシー下での言語生成と識別：極限における考察" data-timestamp="1775756926000" data-url="https://arxiv.org/abs/2604.08504v1">
+  <p class="meta">arXiv cs.AI　Thu, 09 Apr 2026 17:48:46 Z</p>
+  <h2 class="article-title">差分プライバシー下での言語生成と識別：極限における考察</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">stat.ML</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.DS</span></div>
+  <div class="summary">本論文は、差分プライバシー（DP）の制約下で、言語生成と識別という2つの問題を極限設定で考察する初期の研究です。<br><br>まず、言語生成に関しては、可算無限個の言語の集合に対して、プライバシーを保護しながら極限で文字列を生成するDPアルゴリズムが存在することを示しました。これは、多くの学習設定でプライバシーが学習可能性を不可能にするのと対照的です。しかし、プライバシーは定量的なコストを伴い、有限個の言語集合であっても、非プライベートな設定では1つのサンプルで十分な場合に、DP下では多くのサンプルが必要となる場合があります。<br><br>次に、より困難な言語識別問題に焦点を当てます。ここでは、プライバシーが根本的な障壁となることを証明しました。特に、無限の共通部分と有限の差集合を持つ2つの言語を含む集合に対しては、いかなるDPアルゴリズムも識別できないことを示しました。これは、古典的な非プライベートな識別可能性の条件よりもはるかに厳しい条件です。<br><br>さらに、文字列が確率分布から独立同分布（i.i.d.）でサンプリングされる確率的設定についても考察しました。この設定では、DP下での識別が可能であることと、敵対的設定での識別が可能であることが同値であることを示しました。これらの結果は、生成と識別が異なる次元で差異を示すこと、そしてプライバシー制約が敵対的設定と確率的設定の間で識別可能性に分離をもたらすことを明らかにしています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Anay Mehrotra, Grigoris Velegkas, Xifan Yu, Felix Zhou<br>
+        分類：stat.ML, cs.AI, cs.CL, cs.DS, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.08504v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08504v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="医療画像分類における説明の一貫性を定量化するC-Score指標" data-timestamp="1775756851000" data-url="https://arxiv.org/abs/2604.08502v1">
   <p class="meta">arXiv cs.AI　Thu, 09 Apr 2026 17:47:31 Z</p>
   <h2 class="article-title">医療画像分類における説明の一貫性を定量化するC-Score指標</h2>
@@ -1467,105 +1484,88 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="航空宇宙分野における連合学習の精度と通信効率のトレードオフに関する量子化の影響" data-timestamp="1775754795000" data-url="https://arxiv.org/abs/2604.08474v1">
-  <p class="meta">arXiv cs.LG　Thu, 09 Apr 2026 17:13:15 Z</p>
-  <h2 class="article-title">航空宇宙分野における連合学習の精度と通信効率のトレードオフに関する量子化の影響</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、航空宇宙分野における予知保全のための連合学習（FL）に焦点を当てています。FLはプライバシーを保護しながら分散した航空宇宙機群全体での予知保全を可能にしますが、勾配通信のオーバーヘッドが帯域幅が限られたIoTノードへの展開を制約します。本研究では、対称一様量子化（$b \in \{32,8,4,2\}$ビット）が、現実的なNon-IIDクライアント分割下でNASA C-MAPSSベンチマーク上で訓練された、カスタム設計の軽量1次元畳み込みモデル（AeroConv1D、9,697パラメータ）の精度と効率のトレードオフに与える影響を調査します。<br><br>厳密な複数シード評価（$N=10$シード）により、INT4がFD001（$p=0.341$）およびFD002（$p=0.264$ MAE、$p=0.534$ NASAスコア）の両方でFP32と統計的に区別できない精度を達成しつつ、勾配通信コストを8倍削減（1ラウンドあたり37.88 KiBから4.73 KiB）できることを示します。重要な方法論的発見として、単純なIIDクライアント分割は分散を人工的に抑制し、真の運用上の不安定性はNon-IID評価によって明らかになることが示されています。これは、IIDとNon-IIDの直接的な経験的比較によって実証されます。<br><br>INT2は経験的に不適切であることが特徴づけられます。極端な量子化誘発過正則化によりFD002で低いMAEを達成しますが、この見かけ上の利点はNASAスコアの壊滅的な不安定性（FP32の22.3%に対しCV=45.8%）を伴い、異種運用条件下での再現性の欠如を確認します。Xilinx ZCU102上の分析的FPGAリソース予測は、INT4がハードウェア制約（DSP利用率85.5%）内に収まることを確認し、単一SoC上での完全なFLパイプラインの実現可能性を示唆します。シミュレーションコードベースとFPGA推定スクリプトは公開されています。</div>
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="TTVS: テスト時変分合成による自己探索強化学習の強化" data-timestamp="1775754229000" data-url="https://arxiv.org/abs/2604.08468v1">
+  <p class="meta">arXiv cs.LG　Thu, 09 Apr 2026 17:03:49 Z</p>
+  <h2 class="article-title">TTVS: テスト時変分合成による自己探索強化学習の強化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、検証可能な報酬を用いた強化学習（RLVR）による大規模推論モデル（LRM）の進歩が、専門的または新規なドメインにおいて、高価な教師あり学習が利用できない場合に限界に直面するという課題に取り組んでいます。<br><br>この課題に対処するため、テスト時変分合成（TTVS）という新しいフレームワークを提案します。TTVSは、教師なしテストクエリから動的に訓練ストリームを拡張することで、LRMが自己進化することを可能にします。このフレームワークは、オンライン変分合成モジュールとテスト時ハイブリッド探索モジュールから構成され、モデルが表面的なパターンではなく、問題の根本的な論理を学習するように促します。<br><br>広範な実験により、TTVSが8つの異なるモデルアーキテクチャにおいて優れた性能を発揮することが示されました。特に、TTVSは教師なしテスト時データのみを使用した場合でも、他のテスト時適応手法を上回り、さらに大量の高品質な教師ありデータで訓練された最先端の教師ありRLベースの手法をも凌駕しました。この結果は、TTVSが特に教師ありデータが不足している状況下でのモデル性能向上に有効であることを示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.LG<br>
         サイト：arXiv<br>
-        著者：Abdelkarim Loukili<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.08474v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08474v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="トポロジー的特徴を組み込んだ永続性拡張ニューラルネットワーク" data-timestamp="1775754366000" data-url="https://arxiv.org/abs/2604.08469v1">
-  <p class="meta">arXiv cs.LG　Thu, 09 Apr 2026 17:06:06 Z</p>
-  <h2 class="article-title">トポロジー的特徴を組み込んだ永続性拡張ニューラルネットワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、トポロジーデータ解析（TDA）のツールをディープラーニングパイプラインに統合する新しいフレームワークを提案します。TDAはデータの形状を記述する強力なツールですが、特に局所的な幾何学的構造をグローバルに要約するのではなく保持する場合、その特徴をディープラーニングに組み込むことは依然として課題です。本研究では、モース・スメール複体を用いて局所的な勾配流領域とその階層的進化をエンコードする、永続性ベースのデータ拡張フレームワークを提案します。<br><br>この表現は、畳み込みニューラルネットワーク（CNN）とグラフニューラルネットワーク（GNN）の両方と互換性があり、複数のスケールにわたって空間的に局所化されたトポロジー情報を保持します。重要なことに、拡張手順自体の計算複雑性は$O(n \log n)$であり、大規模データセットへの適用が実用的です。提案手法は、ヒストパソロジー画像分類や3D多孔質材料の回帰といったタスクにおいて、ベースライン手法や永続性画像・ランドスケープなどのグローバルTDA記述子を上回る性能を示しました。<br><br>さらに、階層の基底レベルを枝刈りすることで、メモリ使用量を削減しつつ競争力のある性能を維持できることも示されました。これらの結果は、局所的で構造化されたトポロジー拡張が、データモダリティを超えたスケーラブルで解釈可能な学習に大きな可能性を秘めていることを強調しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Elena Xinyi Wang, Arnur Nigmetov, Dmitriy Morozov<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.08469v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08469v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="逆問題定式化によるターボファン健康状態推定のための機械学習フレームワーク" data-timestamp="1775753797000" data-url="https://arxiv.org/abs/2604.08460v1">
-  <p class="meta">arXiv cs.LG　Thu, 09 Apr 2026 16:56:37 Z</p>
-  <h2 class="article-title">逆問題定式化によるターボファン健康状態推定のための機械学習フレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本研究は、ターボファンエンジンの健康状態推定という、センサーデータのスパース性や複雑な非線形熱力学によって困難になる、不良設定の逆問題に取り組んでいます。<br><br>研究では、メンテナンスイベントや使用状況の変化といった現実的な複雑さを組み込んだ新しいデータセットを導入し、運用センサーデータからコンポーネントレベルの健康状態指標を復元する方法を調査します。このデータセットを用いて、定常および非定常データ駆動モデル、そして古典的な手法であるベイズフィルタを比較する初期ベンチマークを確立しました。<br><br>さらに、現実世界の運用制約を反映した、真の健康ラベルなしで潜在表現を学習する自己教師あり学習（SSL）アプローチを導入しました。これらの教師なし表現のダウンストリーム推定性能を直接予測ベースラインと比較することで、この逆問題を解決する上での実践的な下限を確立します。結果として、従来のフィルタは依然として強力なベースラインですが、SSL手法は健康推定の本質的な複雑さを明らかにし、より高度で解釈可能な推論戦略の必要性を強調しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Milad Leyli-Abadi, Lucas Thil, Sebastien Razakarivony, Guillaume Doquet, Jesse Read<br>
+        著者：Sikai Bai, Haoxi Li, Jie Zhang, Yongjiang Liu, Song Guo<br>
         分類：cs.LG, cs.AI<br>
         分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.08460v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08460v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="高リスクタスクにおける性能と信頼度忠実性の調和：ハイブリッド事後学習によるアプローチ" data-timestamp="1775753411000" data-url="https://arxiv.org/abs/2604.08454v1">
-  <p class="meta">arXiv cs.LG　Thu, 09 Apr 2026 16:50:11 Z</p>
-  <h2 class="article-title">高リスクタスクにおける性能と信頼度忠実性の調和：ハイブリッド事後学習によるアプローチ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、高リスクタスクにおいて、大規模言語モデル（LLM）の性能と信頼度（自信度）の忠実性を同時に向上させるための新しい手法「HyTuning」を提案します。<br><br>高リスクタスクでは、誤った推論に対する自信度の高さが深刻な損害を引き起こす可能性があるため、信頼度忠実性が重要視されます。既存のアプローチは、高品質な学習データの不足、過剰な自信、誤った更新の増幅といった課題に直面していました。本研究では、人間が不確実性から確実性へと信頼度を蓄積する過程に着想を得て、推論ステップが最終的な回答への支持を段階的に強化するかを測定する「Progressive Reasoning Gain（PRG）」を導入します。<br><br>HyTuningは、このPRG指標を用いて、少量の教師あり推論トレースを安定したアンカーとして利用しつつ、大量のラベルなしクエリを活用してスケーラビリティを確保するために、Reasoning Distillation（RD）とReinforcement Learning from Internal Feedback（RLIF）の重みを適応的に再配分するハイブリッド事後学習フレームワークです。これにより、「Less Approximates More」という効果、すなわち少ない情報からより良い近似を得ることを目指します。<br><br>実験の結果、HyTuningは限られた教師あり学習の下で、精度を向上させつつ信頼度忠実性を達成することが示されました。これは、LLMを実際の高リスクな応用分野に安全かつ効果的に展開するための重要な一歩となります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Haokai Ma, Lee Yan Zhen, Gang Yang, Yunshan Ma, Ee-Chien Chang, Tat-Seng Chua<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
         ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.08454v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08454v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2604.08468v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08468v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, stat.ML" data-title="機械学習コンペティションのエコシステム：プラットフォーム、参加者、AI開発への影響" data-timestamp="1775725575000" data-url="https://arxiv.org/abs/2604.08001v1">
-  <p class="meta">arXiv stat.ML　Thu, 09 Apr 2026 09:06:15 Z</p>
-  <h2 class="article-title">機械学習コンペティションのエコシステム：プラットフォーム、参加者、AI開発への影響</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本研究は、機械学習コンペティション（MLC）が、イノベーション、スキル開発、実践的な問題解決を促進することで、人工知能（AI）の進歩において極めて重要な役割を果たしていることを分析します。<br><br>KaggleやZindiなどの主要なコンペティションプラットフォームのワークフロー、評価方法、報酬構造を包括的に分析し、コンペティションの質、参加者の専門知識、グローバルなリーチを評価します。特に、上位入賞者の人口統計学的傾向に注目します。コンペティション主催者の動機を探ることで、AI開発の形成、協力の促進、影響力のある技術的進歩の推進におけるMLCの重要な役割を強調します。<br><br>さらに、文献の統合とプラットフォームレベルのデータ分析、実践者の洞察を組み合わせることで、MLCエコシステムに関する包括的な理解を提供します。MLCは学術研究と産業応用の交差点で機能し、ドメイン間の知識、データ、実践的な方法論の交換を促進します。オープンソースコミュニティとの強い結びつきは、より広範なMLエコシステム内での協力、再現性、継続的なイノベーションをさらに促進します。研究の優先順位を形成し、業界標準を形成し、大規模なクラウドソーシングによる問題解決を可能にすることで、これらのコンペティションはAIの継続的な進化において重要な役割を果たしています。</div>
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG, stat.ML" data-title="任意の微分可能ターゲットのための合成データ生成" data-timestamp="1775751820000" data-url="https://arxiv.org/abs/2604.08423v1">
+  <p class="meta">arXiv stat.ML　Thu, 09 Apr 2026 16:23:40 Z</p>
+  <h2 class="article-title">任意の微分可能ターゲットのための合成データ生成</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、合成訓練データを用いた言語モデルの制御の限界を探求します。提案手法であるデータセット方策勾配（DPG）は、ターゲットとなる例のデータセットを生成するために、合成データ生成器を精密に最適化する強化学習（RL）プリミティブです。<br><br>DPGは、高階勾配による正確なデータ帰属を利用し、そのスコアを方策勾配報酬として使用します。これにより、ターゲットモデルの教師ありファインチューニング（SFT）において、選択した微分可能メトリックで良好な性能を発揮する例を生成します。この手続きは、真の、しかし計算困難な合成データ生成器の勾配を近似することが証明されています。<br><br>DPGの柔軟性を示すために、SFTのみを用いて、ターゲットモデルのLMヘッドの重みがQRコードを埋め込んだり、特定のパターンを埋め込んだり、L2ノルムを低下させたりすることが可能であることを実証しました。さらに、生成器の入力プロンプトに明示的に指示されていないにもかかわらず、新しい言語での入力の言い換えや、特定のUUIDの生成も可能であることを示しました。これらの結果は、DPGが合成訓練例のみを使用してモデルの特性を形成するための強力で柔軟な技術であることを示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Ioannis Nasios<br>
-        分類：cs.LG, cs.AI, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.08001v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08001v1</a>
+        著者：Tristan Thrush, Sung Min Park, Herman Brunborg, Luke Bailey, Marcel Roed, Neil Band, Christopher Potts, Tatsunori Hashimoto<br>
+        分類：cs.CL, cs.AI, cs.LG, stat.ML<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.08423v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08423v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.GR, cs.LG" data-title="弾性テスト時学習による高速空間メモリ" data-timestamp="1775671188000" data-url="https://arxiv.org/abs/2604.07350v1">
-  <p class="meta">arXiv cs.LG　Wed, 08 Apr 2026 17:59:48 Z</p>
-  <h2 class="article-title">弾性テスト時学習による高速空間メモリ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.CV</span><span class="tag">cs.GR</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、長文脈3D再構成における大規模チャンクテスト時学習（LaCT）の課題に対処します。LaCTは高い性能を示しますが、推論時の完全な可塑的更新は破滅的忘却や過学習のリスクを抱えています。<br><br>そこで、弾性重み統合に着想を得た「弾性テスト時学習（Elastic Test-Time Training）」を提案します。これは、維持されるアンカー状態周りのフィッシャー重み付き弾性事前分布により、LaCTの高速重み更新を安定化させます。アンカーは過去の高速重みの指数移動平均として進化し、安定性と可塑性のバランスを取ります。<br><br>この更新されたアーキテクチャに基づき、4D再構成のための効率的かつスケーラブルなモデル「Fast Spatial Memory（FSM）」を導入します。FSMは、長い観測シーケンスから時空間表現を学習し、新しい視点と時間の組み合わせをレンダリングします。大規模なキュレーションされた3D/4Dデータで事前学習されたFSMは、複雑な空間環境のダイナミクスと意味論を捉えます。実験により、FSMは長いシーケンスにわたる高速適応をサポートし、より小さなチャンクで高品質な3D/4D再構成を実現し、カメラ補間ショートカットを軽減することが示されました。この研究は、LaCTを単一チャンク設定を超えて、真に長いシーケンスへの汎化に不可欠な堅牢なマルチチャンク適応へと進めることを目指しています。</div>
+<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="cs.CE" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.CE, eess.SP, stat.CO, stat.ML" data-title="エネルギーベースモデルのためのコントラスティブ学習、重要度サンプリング、ブリッジサンプリングの統一的視点" data-timestamp="1775734564000" data-url="https://arxiv.org/abs/2604.08116v1">
+  <p class="meta">arXiv stat.ML　Thu, 09 Apr 2026 11:36:04 Z</p>
+  <h2 class="article-title">エネルギーベースモデルのためのコントラスティブ学習、重要度サンプリング、ブリッジサンプリングの統一的視点</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.CE</span><span class="tag">eess.SP</span><span class="tag">stat.CO</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本研究は、尤度の一部が計算不可能であり、明示的に評価できない確率モデルの一種であるエネルギーベースモデル（EBM）に焦点を当てています。EBMにおけるパラメータ推定は、従来の推論手法では困難であることが知られています。<br><br>本論文では、ノイズコントラスティブ推定（NCE）、逆ロジスティック回帰（RLR）、多重重要度サンプリング（MIS）、およびブリッジサンプリングをEBMの文脈で結びつける統一的なフレームワークを提供します。特定の条件下では、これらの手法が等価であることを示し、既存手法間の関係性を明確化します。<br><br>この統一的視点は、新しい推定手法の開発を可能にし、統計的および計算的効率の向上をもたらす可能性があります。また、NCEの柔軟性と頑健性の成功を解明するとともに、その性能がさらに向上する可能性のあるシナリオを特定します。本研究は、単なる記述的なレビューではなく、統一的な視点と方法論的な貢献を提供します。数値実験に使用されたMATLABコードも、結果の再現性を支援するために公開されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
+        配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Ziqiao Ma, Xueyang Yu, Haoyu Zhen, Yuncong Yang, Joyce Chai, Chuang Gan<br>
-        分類：cs.CV, cs.GR, cs.LG<br>
-        分野：cs.CV<br>
+        著者：Luca Martino<br>
+        分類：cs.CE, eess.SP, stat.CO, stat.ML<br>
+        分野：cs.CE<br>
         ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.07350v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.07350v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2604.08116v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.08116v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="math.OC" data-source="arXiv stat.ML" data-area="AI" data-categories="math.OC, stat.ML" data-title="文脈学習における精度保証付き統一停止規則" data-timestamp="1775719815000" data-url="https://arxiv.org/abs/2604.07913v1">
+  <p class="meta">arXiv stat.ML　Thu, 09 Apr 2026 07:30:15 Z</p>
+  <h2 class="article-title">文脈学習における精度保証付き統一停止規則</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">math.OC</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、文脈学習におけるデータ収集の停止時期を決定するための統一的な停止規則を提案するものです。<br><br>文脈学習では、個人の特性に基づいて最適な行動を決定するポリシーをデータ収集を通じて学習しますが、いつデータ収集を終了すれば学習したポリシーの精度が十分に保証されるかが重要な問題となります。本研究では、文脈ごとの基準と、ポリシー全体の価値基準という2つの精度基準の下で、この問題を扱います。<br><br>提案手法は、ペアワイズな行動比較のための一般化尤度比（GLR）統計量に基づいています。これにより、サンプリング分散が未知の場合でも、非構造化および構造化線形設定の両方で統一的な停止規則を開発しました。さらに、時間一様偏差不等式を導出し、平均と分散の不確実性を分離することによる保守性を回避しています。<br><br>提案された停止規則は、合成インスタンスおよび2つのケーススタディにおける数値実験で、ベンチマーク手法よりも大幅に少ないサンプル数で目標精度を達成することが示されました。このフレームワークは、個人化された意思決定問題におけるデータ収集の停止時期を決定するための実用的な方法を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Mingrui Ding, Qiuhong Zhao, Siyang Gao, Jing Dong<br>
+        分類：math.OC, stat.ML<br>
+        分野：math.OC<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.07913v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.07913v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, math.PR, stat.ME" data-title="強度内積グラフ：ランダムなノード集団を考慮したグラフモデル" data-timestamp="1775711303000" data-url="https://arxiv.org/abs/2604.07810v1">
+  <p class="meta">arXiv stat.ML　Thu, 09 Apr 2026 05:08:23 Z</p>
+  <h2 class="article-title">強度内積グラフ：ランダムなノード集団を考慮したグラフモデル</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">math.PR</span><span class="tag">stat.ME</span></div>
+  <div class="summary">本論文は、ランダムドット積グラフ（RDPG）を拡張した「強度内積グラフ」（IDPG）という新しいランダムグラフモデルを提案します。<br><br>従来の潜在位置ランダムグラフモデルではノード集合が固定されることが一般的でしたが、IDPGでは固定された潜在位置の代わりに、ユークリッド潜在空間上のポアソン点過程を用います。これにより、ノード集団がランダムでありながら、RDPGのような内積アフィニティを持ち、さらに集団レベルの強度によって連続的な潜在構造と有限な観測グラフを結びつけることが可能になります。<br><br>本研究では、確率行列の連続的な類似物としてヒートマップとデザイア演算子を定義し、隣接行列の特異値と演算子のスペクトルを結びつけるスペクトル整合性結果を証明します。また、この構成法をグラフォンやジグラフォン表現と比較し、古典的なRDPGがどのように集中極限として現れるかを示します。<br><br>IDPGは、強度パラメータが時間とともに変化するモデルであるため、偏微分方程式を用いた時間的拡張が自然に導かれます。このモデルは、ランダムなノード集団を持つグラフ構造をより柔軟に表現できる可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Giulio Valentino Dalla Riva, Matteo Dalla Riva<br>
+        分類：stat.ML, cs.LG, math.PR, stat.ME<br>
+        分野：stat.ML<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.07810v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.07810v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
