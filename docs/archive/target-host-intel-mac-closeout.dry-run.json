@@ -1,0 +1,153 @@
+{
+  "generatedAt": "2026-04-06T12:22:14.751Z",
+  "runId": "2026-04-06T12-22-14-617Z",
+  "targetHost": "darwin/x64",
+  "currentHost": "linux/x64/gnu",
+  "dryRun": true,
+  "browserExecutablePath": null,
+  "appUrl": "http://127.0.0.1:3000/",
+  "logsDir": "docs/archive/target-host-intel-mac-closeout-logs",
+  "notes": [
+    "Playwright Chromium executable is not currently resolved. Use --install-playwright-chromium or pass --browser-executable-path on the target host."
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 0,
+    "blocked": 0,
+    "skipped": 11
+  },
+  "steps": [
+    {
+      "id": "npm-install-optional",
+      "command": "internal",
+      "status": "skipped",
+      "ok": false,
+      "blocked": false,
+      "skipped": true,
+      "reason": "not requested",
+      "stdoutTail": "",
+      "stderrTail": ""
+    },
+    {
+      "id": "playwright-install-chromium",
+      "command": "internal",
+      "status": "skipped",
+      "ok": false,
+      "blocked": false,
+      "skipped": true,
+      "reason": "not requested",
+      "stdoutTail": "",
+      "stderrTail": ""
+    },
+    {
+      "id": "inspect-intel-mac-runtime",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/verify-target-host-runtime.mjs --platform darwin --arch x64 --write docs/archive/target-host-runtime-intel-mac.json",
+      "status": "dry-run",
+      "ok": true,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "envApplied": []
+    },
+    {
+      "id": "inspect-intel-mac-live-browser-readiness",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/verify-target-live-browser-readiness.mjs --platform darwin --arch x64 --home-dir /home/oai --write docs/archive/target-live-browser-readiness-intel-mac.json",
+      "status": "dry-run",
+      "ok": true,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "envApplied": []
+    },
+    {
+      "id": "build",
+      "command": "npm run build",
+      "status": "dry-run",
+      "ok": true,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "envApplied": []
+    },
+    {
+      "id": "verify-phase4",
+      "command": "npm run verify:phase4",
+      "status": "dry-run",
+      "ok": true,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "envApplied": []
+    },
+    {
+      "id": "verify-phase5",
+      "command": "npm run verify:phase5",
+      "status": "dry-run",
+      "ok": true,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "envApplied": []
+    },
+    {
+      "id": "live-server",
+      "command": "internal",
+      "status": "skipped",
+      "ok": false,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": ""
+    },
+    {
+      "id": "verify-all-browser-live",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/verify-suite.mjs",
+      "status": "dry-run",
+      "ok": true,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "envApplied": [
+        "VERIFY_RUNTIME_MODE",
+        "VERIFY_SUITE_ONLY",
+        "APP_URL"
+      ]
+    },
+    {
+      "id": "intel-mac-live-browser-proof-pipeline",
+      "command": "internal",
+      "status": "skipped",
+      "ok": false,
+      "blocked": false,
+      "skipped": true,
+      "reason": "proof pipeline explicitly skipped",
+      "stdoutTail": "",
+      "stderrTail": ""
+    },
+    {
+      "id": "doctor-package-handoff",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/doctor-package-handoff.mjs --write docs/archive/package-handoff-doctor.json",
+      "status": "dry-run",
+      "ok": true,
+      "blocked": false,
+      "skipped": true,
+      "reason": "dry-run",
+      "stdoutTail": "",
+      "stderrTail": "",
+      "envApplied": []
+    }
+  ]
+}

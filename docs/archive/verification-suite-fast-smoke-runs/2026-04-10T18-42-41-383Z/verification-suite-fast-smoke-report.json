@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-04-10T18:42:54.331Z",
+  "runId": "2026-04-10T18-42-41-383Z",
+  "runDir": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z",
+  "total": 7,
+  "parallelStageCount": 2,
+  "passedCount": 7,
+  "failedCount": 0,
+  "steps": [
+    {
+      "id": "verify:audio-reactive:check",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 1718,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z/step-logs/verify_audio-reactive_check.log",
+      "tail": "{\n  \"ok\": true,\n  \"fileCount\": 18,\n  \"diagnostics\": []\n}"
+    },
+    {
+      "id": "verify:audio-reactive",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 279,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z/step-logs/verify_audio-reactive.log",
+      "tail": "{\n  \"ok\": true,\n  \"missingFiles\": [],\n  \"phases\": [\n    {\n      \"phase\": \"A\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"B\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"C\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"D\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"E\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"F\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"G\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"H\",\n      \"percent\": 100\n    }\n  ],\n  \"liveSystems\": 13,\n  \"liveTargets\": 155\n}"
+    },
+    {
+      "id": "typecheck",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 12005,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z/step-logs/typecheck.log",
+      "tail": ""
+    },
+    {
+      "id": "build",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 0,
+      "execution": "cached-build",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z/step-logs/build.log",
+      "tail": "{\n  \"reusable\": true,\n  \"reason\": \"fresh-dist\",\n  \"distDir\": \"/mnt/data/work_refresh_pass/work/kalokagathia_work_full-local-dev_2026-04-10_project-seed-replay-upgrade/dist\",\n  \"latestDistMtimeMs\": 1775846470945.274,\n  \"latestSourceMtimeMs\": 1775845247000\n}"
+    },
+    {
+      "id": "verify:phase4:project-state-smoke",
+      "stageIndex": 1,
+      "passed": true,
+      "durationMs": 294,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z/step-logs/verify_phase4_project-state-smoke.log",
+      "tail": "{\n  \"passed\": true,\n  \"verificationTier\": \"source-contract-smoke\",\n  \"verifiedFileCount\": 6,\n  \"summary\": [\n    {\n      \"file\": \"lib/projectState.ts\",\n      \"passed\": true,\n      \"requiredCount\": 2,\n      \"matchedCount\": 2,\n      \"matched\": [\n        \"export { buildProjectData } from './projectStateData';\",\n        \"export { loadProjectData, parseProjectData, saveProjectData } from './projectStateStorage';\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectStateData.ts\",\n      \"passed\": true,\n      \"requiredCount\": 1,\n      \"matchedCount\": 1,\n      \"matched\": [\n        \"export function buildProjectData\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectStateStorage.ts\",\n      \"passed\": true,\n      \"requiredCount\": 1,\n      \"matchedCount\": 1,\n      \"matched\": [\n        \"export function parseProjectData\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectExecutionRouting.ts\",\n      \"passed\": true,\n      \"requiredCount\": 1,\n      \"matchedCount\": 1,\n      \"matched\": [\n        \"export function buildProjectExecutionRoutingMap\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectSerializationSnapshot.ts\",\n      \"passed\": true,\n      \"requiredCount\": 1,\n      \"matchedCount\": 1,\n      \"matched\": [\n        \"export function buildProjectSerializationSnapshot\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"scripts/verify-project-state-entry.ts\",\n      \"passed\": true,\n      \"requiredCount\": 4,\n      \"matchedCount\": 4,\n      \"matched\": [\n        \"buildProjectData\",\n        \"parseProjectData\",\n        \"buildProjectExecutionRoutingMap\",\n        \"buildProjectSerializationSnapshot\"\n      ],\n      \"missing\": []\n    }\n  ]\n}\n{\n  \"passed\": true,\n  \"verifiedStepCount\": 1,\n  \"buildFreshness\": {\n    \"reusable\": true,\n    \"reason\": \"fresh-dist\",\n    \"distDir\": \"/mnt/data/work_refresh_pass/work/kalokagathia_work_full-local-dev_2026-04-10_project-seed-replay-upgrade/dist\",\n    \"latestDistMtimeMs\": 1775846470945.274,\n    \"latestSourceMtimeMs\": 1775845247000\n  },\n  \"summary\": [\n    {\n      \"id\": \"project-state-smoke\",\n      \"status\": 0,\n      \"signal\": null,\n      \"durationMs\": 113,\n      \"timedOut\": false,\n      \"tail\": \"      \\\"matched\\\": [\\n        \\\"export function buildProjectSerializationSnapshot\\\"\\n      ],\\n      \\\"missing\\\": []\\n    },\\n    {\\n      \\\"file\\\": \\\"scripts/verify-project-state-entry.ts\\\",\\n      \\\"passed\\\": true,\\n      \\\"requiredCount\\\": 4,\\n      \\\"matchedCount\\\": 4,\\n      \\\"matched\\\": [\\n        \\\"buildProjectData\\\",\\n        \\\"parseProjectData\\\",\\n        \\\"buildProjectExecutionRoutingMap\\\",\\n        \\\"buildProjectSerializationSnapshot\\\"\\n      ],\\n      \\\"missing\\\": []\\n    }\\n  ]\\n}\"\n    }\n  ]\n}"
+    },
+    {
+      "id": "verify:phase5:smoke",
+      "stageIndex": 1,
+      "passed": true,
+      "durationMs": 681,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z/step-logs/verify_phase5_smoke.log",
+      "tail": "[verify-phase5] 1/4 fixture-files-synced start\n[verify-phase5] 1/4 fixture-files-synced done 182ms\n[verify-phase5] 2/4 sparse-serialization-recovery start\n[verify-phase5] 2/4 sparse-serialization-recovery done 95ms\n[verify-phase5] 3/4 legacy-migration-rebuild start\n[verify-phase5] 3/4 legacy-migration-rebuild done 98ms\n[verify-phase5] 4/4 import-inspection-diagnostics start\n[verify-phase5] 4/4 import-inspection-diagnostics done 102ms\n{\n  \"profile\": \"smoke\",\n  \"verifiedScenarioCount\": 4,\n  \"durationMs\": 478,\n  \"scenarios\": [\n    {\n      \"id\": \"fixture-files-synced\",\n      \"checks\": [\n        \"phase5-native-rich.json\",\n        \"phase5-sparse-layer2-custom.json\",\n        \"phase5-legacy-v24.json\",\n        \"phase5-duplicate-ids-invalid-active.json\",\n        \"phase5-orphan-sequence.json\"\n      ],\n      \"durationMs\": 182\n    },\n    {\n      \"id\": \"sparse-serialization-recovery\",\n      \"checks\": [\n        \"custom-layer-metadata-preserved\",\n        \"fallback-block-values-restored\",\n        \"execution-block-merged\",\n        \"serialization-schema-synced\"\n      ],\n      \"durationMs\": 95\n    },\n    {\n      \"id\": \"legacy-migration-rebuild\",\n      \"checks\": [\n        \"schema-marked-migrated\",\n        \"manifest-rebuilt\",\n        \"serialization-rebuilt\",\n        \"sequence-preserved\"\n      ],\n      \"durationMs\": 98\n    },\n    {\n      \"id\": \"import-inspection-diagnostics\",\n      \"checks\": [\n        \"invalid-json-detected\",\n        \"unsupported-project-payload-detected\",\n        \"valid-project-payload-accepted\"\n      ],\n      \"durationMs\": 102\n    }\n  ]\n}"
+    },
+    {
+      "id": "verify:export:smoke",
+      "stageIndex": 1,
+      "passed": true,
+      "durationMs": 902,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/verification-suite-fast-smoke-runs/2026-04-10T18-42-41-383Z/step-logs/verify_export_smoke.log",
+      "tail": "{\n  \"mode\": \"pngjs-harness-smoke\",\n  \"profile\": \"smoke\",\n  \"verificationTier\": \"pngjs-static-harness-fallback\",\n  \"liveAttempted\": false,\n  \"liveVerified\": false,\n  \"fallbackUsed\": true,\n  \"fallbackVerified\": true,\n  \"unresolvedLiveCoverage\": false,\n  \"notes\": [\n    \"smoke-profile :: browser and inline-runtime checks skipped\",\n    \"skia-unavailable :: optional package not installed\"\n  ],\n  \"opaque\": {\n    \"width\": 480,\n    \"height\": 360,\n    \"transparentPixels\": 0,\n    \"partialAlphaPixels\": 5773,\n    \"totalPixels\": 172800\n  },\n  \"transparent\": {\n    \"width\": 480,\n    \"height\": 360,\n    \"transparentPixels\": 141637,\n    \"partialAlphaPixels\": 5773,\n    \"totalPixels\": 172800\n  },\n  \"verdict\": {\n    \"opaqueIsSolid\": true,\n    \"hasTransparentBackground\": true,\n    \"passed\": true\n  }\n}"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+- `sceneVoxelLatticeSystem.tsx` を Shared / Runtime / Render の three-layer split へ移行。
+- facade は `components/sceneVoxelLatticeSystem.tsx` に維持し、`typecheck` / `build` / `verify-phase5` を通過。

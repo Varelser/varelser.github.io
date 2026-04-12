@@ -1,0 +1,101 @@
+{
+  "version": 13,
+  "schema": {
+    "format": "kalokagathia-project",
+    "projectDataVersion": 13,
+    "manifestSchemaVersion": 11,
+    "serializationSchemaVersion": 2,
+    "migrationState": "native",
+    "migratedFromProjectDataVersion": null
+  },
+  "exportedAt": "2026-03-31T00:00:00.000Z",
+  "name": "Phase 5 Native Rich Fixture",
+  "currentConfig": {
+    "layer2Enabled": true,
+    "layer2Type": "surface_shell",
+    "layer2Source": "video",
+    "layer3Enabled": true,
+    "layer3Type": "fiber_field",
+    "layer3Source": "text",
+    "gpgpuEnabled": true,
+    "gpgpuFluidEnabled": true,
+    "postFxStackProfile": "dream-smear",
+    "postBloomEnabled": true
+  },
+  "activePresetId": "preset-alpha",
+  "presetBlendDuration": 1.8,
+  "sequenceLoopEnabled": true,
+  "presets": [
+    {
+      "id": "preset-alpha",
+      "name": "Alpha",
+      "config": {
+        "layer2Enabled": true,
+        "layer2Type": "surface_shell",
+        "layer2Source": "image"
+      },
+      "createdAt": "2026-03-31T00:00:00.000Z",
+      "updatedAt": "2026-03-31T00:00:00.000Z"
+    },
+    {
+      "id": "preset-beta",
+      "name": "Beta",
+      "config": {
+        "layer3Enabled": true,
+        "layer3Type": "fiber_field",
+        "layer3Source": "text"
+      },
+      "createdAt": "2026-03-31T00:00:00.000Z",
+      "updatedAt": "2026-03-31T00:00:00.000Z"
+    }
+  ],
+  "presetSequence": [
+    {
+      "id": "seq-1",
+      "presetId": "preset-alpha",
+      "label": "Open",
+      "holdSeconds": 2,
+      "transitionSeconds": 1.2,
+      "transitionEasing": "ease-in-out"
+    },
+    {
+      "id": "seq-2",
+      "presetId": "preset-beta",
+      "label": "Close",
+      "holdSeconds": 2.4,
+      "transitionSeconds": 1.4,
+      "transitionEasing": "linear"
+    }
+  ],
+  "ui": {
+    "isPlaying": false,
+    "isPanelOpen": true,
+    "videoExportMode": "sequence",
+    "videoDurationSeconds": 9,
+    "videoFps": 30
+  },
+  "serialization": {
+    "schemaVersion": 2,
+    "layers": [
+      { "key": "layer1", "label": "Layer 1", "modeId": "spheres", "blocks": { "execution": { "id": "execution", "label": "Execution", "values": ["cpu-geometry", "points"] } } },
+      { "key": "layer2", "label": "Layer 2", "modeId": "surface_shell", "blocks": { "execution": { "id": "execution", "label": "Execution", "values": ["webgl-particle", "points"] } } },
+      { "key": "layer3", "label": "Layer 3", "modeId": "fiber_field", "blocks": { "execution": { "id": "execution", "label": "Execution", "values": ["webgl-particle", "points"] } } },
+      { "key": "gpgpu", "label": "GPGPU", "modeId": "metaball", "blocks": { "execution": { "id": "execution", "label": "Execution", "values": ["webgpu", "points"] } } }
+    ]
+  },
+  "manifest": {
+    "schemaVersion": 11,
+    "serializationSchemaVersion": 2,
+    "execution": [
+      { "key": "layer1", "label": "Layer 1", "enabled": true, "mode": "spheres", "resolvedEngine": "cpu-geometry", "path": "points" },
+      { "key": "layer2", "label": "Layer 2", "enabled": true, "mode": "surface_shell", "resolvedEngine": "webgl-particle", "path": "points" },
+      { "key": "layer3", "label": "Layer 3", "enabled": true, "mode": "fiber_field", "resolvedEngine": "webgl-particle", "path": "points" },
+      { "key": "gpgpu", "label": "GPGPU", "enabled": true, "mode": "metaball", "resolvedEngine": "webgpu", "path": "points" }
+    ],
+    "stats": {
+      "presetCount": 2,
+      "sequenceCount": 2,
+      "sequenceLoopEnabled": true
+    }
+  }
+}

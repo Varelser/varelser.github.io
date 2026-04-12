@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-04-10T19:03:16.060Z",
+  "summary": {
+    "blockerCount": 6,
+    "dropPassed": 6,
+    "dropTotal": 11,
+    "targetPassed": 5,
+    "targetTotal": 6,
+    "doctorNextStepCount": 5,
+    "statusBlockerCount": 6
+  },
+  "blockers": [
+    {
+      "scope": "drop",
+      "kind": "fixture-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+      "action": "real-export fixture JSON を追加または修正する"
+    },
+    {
+      "scope": "drop",
+      "kind": "fixture-json-valid",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+      "action": "real-export fixture JSON を追加または修正する"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json",
+      "action": "real-export-proof.json を captured 状態に更新する"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-artifact-paths",
+      "target": "listed paths in real-export-proof.json",
+      "action": "drop scaffold を確認する"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-project-linkage",
+      "target": "capture.sourceProjectSlug -> artifacts.exports",
+      "action": "drop scaffold を確認する"
+    },
+    {
+      "scope": "target",
+      "kind": "browser-executable",
+      "target": "/home/oai/Library/Caches/ms-playwright/chromium-1208/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "action": "Playwright Chromium か Chrome 実体を用意し、必要なら executable path を渡す"
+    }
+  ]
+}

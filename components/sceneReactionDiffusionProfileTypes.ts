@@ -1,0 +1,63 @@
+import type { ParticleConfig } from '../types';
+
+export type ReactionMode = ParticleConfig['layer2Type'];
+export type ReactionSource = ParticleConfig['layer2Source'];
+
+export type ReactionProfile = {
+  feedAdd: number;
+  killAdd: number;
+  dtMul: number;
+  warpMul: number;
+  flowAniso: number;
+  diffusionA: number;
+  diffusionB: number;
+  reactionBoost: number;
+  poolMix: number;
+  colonyBands: number;
+  cellScale: number;
+  contourTightness: number;
+  hueShift: number;
+  lightnessShift: number;
+  opacityMul: number;
+  heightGain: number;
+  ridgeGain: number;
+  pitGain: number;
+  wetness: number;
+  scarStrength: number;
+  bulge: number;
+  rimPinch: number;
+  shear: number;
+  tiltX: number;
+  tiltY: number;
+  curl: number;
+  depthBands: number;
+  frontBias: number;
+  seedRing: number;
+  seedLedger: number;
+  seedSweep: number;
+  seedCanopy: number;
+  seedColumn: number;
+  seedTerrace: number;
+  seedBlob: number;
+};
+
+export type ReactionSourceProfile = {
+  bulgeAdd: number;
+  rimPinchAdd: number;
+  shearAdd: number;
+  tiltXAdd: number;
+  tiltYAdd: number;
+  curlAdd: number;
+  depthBandsAdd: number;
+  frontBiasAdd: number;
+  seedRingAdd: number;
+  seedLedgerAdd: number;
+  seedSweepAdd: number;
+  seedCanopyAdd: number;
+  seedColumnAdd: number;
+  seedTerraceAdd: number;
+  seedBlobAdd: number;
+  hueShiftAdd: number;
+  lightnessShiftAdd: number;
+  opacityMul: number;
+};

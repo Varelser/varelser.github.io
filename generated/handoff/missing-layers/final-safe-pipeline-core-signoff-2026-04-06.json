@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "id": "final-safe-pipeline-core-signoff-2026-04-06",
+    "revision": "rev13",
+    "generatedAt": "2026-04-06T00:00:00+09:00",
+    "sourceSummaryPath": "generated/future-native-suite-status/verify-future-native-safe-pipeline-core.json",
+    "resumeUsed": true,
+    "baseRepo": "/mnt/data/session/merged_rev11_closeout_repo"
+  },
+  "status": "pass",
+  "title": "verify-future-native-safe-pipeline-core",
+  "resumed": true,
+  "resumedStepCount": 3,
+  "totalSteps": 4,
+  "steps": [
+    {
+      "step": "verify:future-native-guardrails",
+      "status": "pass",
+      "durationMs": 27504,
+      "exitCode": 0
+    },
+    {
+      "step": "verify:future-native-scene-bindings",
+      "status": "pass",
+      "durationMs": 3052,
+      "exitCode": 0
+    },
+    {
+      "step": "verify:future-native-volumetric-routes",
+      "status": "pass",
+      "durationMs": 3137,
+      "exitCode": 0
+    },
+    {
+      "step": "verify:future-native-nonvolumetric-routes",
+      "status": "pass",
+      "durationMs": 1707,
+      "exitCode": 0
+    }
+  ],
+  "stepLabels": [
+    "verify:future-native-guardrails",
+    "verify:future-native-scene-bindings",
+    "verify:future-native-volumetric-routes",
+    "verify:future-native-nonvolumetric-routes"
+  ],
+  "durationsMs": {
+    "verify:future-native-guardrails": 27504,
+    "verify:future-native-scene-bindings": 3052,
+    "verify:future-native-volumetric-routes": 3137,
+    "verify:future-native-nonvolumetric-routes": 1707
+  },
+  "totalDurationMs": 35400,
+  "notes": [
+    "volumetric routes まで pass 済みだった summary を resume し、nonvolumetric routes を追加で完走した。",
+    "docs truth 同期のみの変更帯で safe pipeline core の最終 pass を固定した。"
+  ]
+}

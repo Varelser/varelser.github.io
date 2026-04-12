@@ -1,0 +1,96 @@
+{
+  "id": "verify:video-audio",
+  "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+  "args": [
+    "scripts/verify-video-audio.mjs"
+  ],
+  "requestedMode": "static",
+  "stepEnv": {},
+  "startedAt": "2026-04-06T10:51:05.766Z",
+  "finishedAt": "2026-04-06T10:51:06.708Z",
+  "durationMs": 942,
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "timedOut": false,
+  "execution": "source-static-fallback",
+  "effectiveMode": "static",
+  "verificationTier": "source-static-fallback",
+  "liveAttempted": false,
+  "liveVerified": false,
+  "fallbackUsed": true,
+  "unresolvedLiveCoverage": true,
+  "payload": {
+    "verifier": "video-audio",
+    "appUrl": "http://127.0.0.1:3000/",
+    "requestedMode": "static",
+    "effectiveMode": "static",
+    "verificationTier": "source-static-fallback",
+    "host": {
+      "platform": "linux",
+      "release": "4.4.0",
+      "arch": "x64",
+      "node": "v22.16.0",
+      "requestedMode": "static",
+      "browserExecutableOverride": null,
+      "hostConstraints": [
+        "sandbox may block browser-managed navigation to localhost/file/data URLs",
+        "native browser binaries may be unavailable on constrained hosts"
+      ]
+    },
+    "liveAttempted": false,
+    "liveVerified": false,
+    "fallbackUsed": true,
+    "fallbackVerified": true,
+    "unresolvedLiveCoverage": true,
+    "mode": "static-fallback",
+    "reason": "Error: Static verification forced by VERIFY_RUNTIME_MODE=static.",
+    "checks": [
+      {
+        "label": "audio-source-action-labels",
+        "file": "components/useControlPanelState.ts",
+        "pass": true,
+        "found": [
+          "Start Microphone",
+          "Microphone Active",
+          "Open Standalone Synth",
+          "Standalone Synth Active"
+        ],
+        "missing": []
+      },
+      {
+        "label": "video-export-control",
+        "file": "components/controlPanelGlobalExport.tsx",
+        "pass": true,
+        "found": [
+          "Record WebM"
+        ],
+        "missing": []
+      },
+      {
+        "label": "video-export-audio-composition",
+        "file": "lib/videoExportHelpers.ts",
+        "pass": true,
+        "found": [
+          "microphoneStreamRef.current",
+          "standaloneSynthStreamRef.current",
+          "new MediaStream([...videoTracks, ...audioTracks])"
+        ],
+        "missing": []
+      },
+      {
+        "label": "standalone-synth-connected-marker",
+        "file": "components/StandaloneSynthWindow.tsx",
+        "pass": true,
+        "found": [
+          "Standalone synth connected."
+        ],
+        "missing": []
+      }
+    ],
+    "passed": true
+  },
+  "error": null,
+  "logPath": "docs/archive/verification-suite-runs/2026-04-06T10-50-55-445Z/step-logs/verify_video-audio.log",
+  "tail": "{\n  \"verifier\": \"video-audio\",\n  \"appUrl\": \"http://127.0.0.1:3000/\",\n  \"requestedMode\": \"static\",\n  \"effectiveMode\": \"static\",\n  \"verificationTier\": \"source-static-fallback\",\n  \"host\": {\n    \"platform\": \"linux\",\n    \"release\": \"4.4.0\",\n    \"arch\": \"x64\",\n    \"node\": \"v22.16.0\",\n    \"requestedMode\": \"static\",\n    \"browserExecutableOverride\": null,\n    \"hostConstraints\": [\n      \"sandbox may block browser-managed navigation to localhost/file/data URLs\",\n      \"native browser binaries may be unavailable on constrained hosts\"\n    ]\n  },\n  \"liveAttempted\": false,\n  \"liveVerified\": false,\n  \"fallbackUsed\": true,\n  \"fallbackVerified\": true,\n  \"unresolvedLiveCoverage\": true,\n  \"mode\": \"static-fallback\",\n  \"reason\": \"Error: Static verification forced by VERIFY_RUNTIME_MODE=static.\",\n  \"checks\": [\n    {\n      \"label\": \"audio-source-action-labels\",\n      \"file\": \"components/useControlPanelState.ts\",\n      \"pass\": true,\n      \"found\": [\n        \"Start Microphone\",\n        \"Microphone Active\",\n        \"Open Standalone Synth\",\n        \"Standalone Synth Active\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"video-export-control\",\n      \"file\": \"components/controlPanelGlobalExport.tsx\",\n      \"pass\": true,\n      \"found\": [\n        \"Record WebM\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"video-export-audio-composition\",\n      \"file\": \"lib/videoExportHelpers.ts\",\n      \"pass\": true,\n      \"found\": [\n        \"microphoneStreamRef.current\",\n        \"standaloneSynthStreamRef.current\",\n        \"new MediaStream([...videoTracks, ...audioTracks])\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"standalone-synth-connected-marker\",\n      \"file\": \"components/StandaloneSynthWindow.tsx\",\n      \"pass\": true,\n      \"found\": [\n        \"Standalone synth connected.\"\n      ],\n      \"missing\": []\n    }\n  ],\n  \"passed\": true\n}"
+}

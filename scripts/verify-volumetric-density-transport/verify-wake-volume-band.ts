@@ -1,0 +1,45 @@
+import { assert, type VolumetricDensityTransportVerificationBundle } from './shared';
+
+export function verifyVolumetricWakeAndVolumeBand(bundle: VolumetricDensityTransportVerificationBundle): void {
+  const { stats, render } = bundle;
+  assert(stats.obstacleWakeMean > 0.0004, 'volumetric obstacle wake too weak');
+  assert(stats.obstacleWakePeak >= stats.obstacleWakeMean, 'volumetric obstacle wake peak missing');
+  assert(stats.obstacleWakeCells >= 2, 'volumetric obstacle wake cells too low');
+  assert(stats.wakeTurbulenceMean > 0.001, 'volumetric wake turbulence too weak');
+  assert(stats.wakeTurbulencePeak >= stats.wakeTurbulenceMean, 'volumetric wake turbulence peak missing');
+  assert(stats.layeredWakeActiveCells >= 2, 'volumetric layered wake activity too low');
+  assert(stats.shearLayerRollupMean > 0.0005, 'volumetric shear-layer rollup too weak');
+  assert(stats.shearLayerRollupPeak >= stats.shearLayerRollupMean, 'volumetric shear-layer rollup peak missing');
+  assert(stats.recirculationPocketCells >= 2, 'volumetric recirculation pocket cells too low');
+  assert(stats.vortexPacketCells >= 2, 'volumetric vortex packet cells too low');
+  assert(stats.vortexPacketLayerMean > 0.001, 'volumetric vortex packet layering too weak');
+  assert(stats.vortexPacketLayerActiveCells >= 3, 'volumetric vortex packet layered cells too low');
+  assert(stats.vortexPacketPeak >= 0.01, 'volumetric vortex packet peak missing');
+  assert(stats.volumeDepthMean > 0.02, 'volumetric volume depth too weak');
+  assert(stats.volumeDepthPeak >= stats.volumeDepthMean, 'volumetric volume depth peak missing');
+  assert((render.stats.obstacleWakeLineCount ?? 0) >= 2, 'volumetric obstacle wake lines missing');
+  assert((render.stats.obstacleWakeContourPoints ?? 0) >= 2, 'volumetric obstacle wake contour missing');
+  assert((render.stats.obstacleWakeBridgeLineCount ?? 0) >= 1, 'volumetric obstacle wake bridge missing');
+  assert((render.stats.obstacleWakeModeCount ?? 0) >= 2, 'volumetric obstacle wake modes missing');
+  assert((render.stats.layeredWakeLineCount ?? 0) >= 2, 'volumetric layered wake lines missing');
+  assert((render.stats.layeredWakeBridgeLineCount ?? 0) >= 1, 'volumetric layered wake bridge missing');
+  assert((render.stats.layeredWakeContourPoints ?? 0) >= 2, 'volumetric layered wake contour missing');
+  assert((render.stats.layeredWakeModeCount ?? 0) >= 2, 'volumetric layered wake modes missing');
+  assert((render.stats.vorticityConfinementLineCount ?? 0) >= 1, 'volumetric vorticity confinement lines missing');
+  assert((render.stats.vorticityConfinementCentroidCount ?? 0) >= 1, 'volumetric vorticity centroids missing');
+  assert((render.stats.wakeRecirculationShellLineCount ?? 0) >= 1, 'volumetric wake recirculation shell lines missing');
+  assert((render.stats.wakeRecirculationModeCount ?? 0) >= 1, 'volumetric wake recirculation modes missing');
+  assert((render.stats.shearLayerRollupLineCount ?? 0) >= 1, 'volumetric shear-layer rollup lines missing');
+  assert((render.stats.vortexPacketLineCount ?? 0) >= 1, 'volumetric vortex packet lines missing');
+  assert((render.stats.vortexPacketModeCount ?? 0) >= 1, 'volumetric vortex packet modes missing');
+  assert((render.stats.vortexPacketLayerLineCount ?? 0) >= 1, 'volumetric vortex packet layer lines missing');
+  assert((render.stats.vortexPacketLayerBridgeLineCount ?? 0) >= 1, 'volumetric vortex packet layer bridges missing');
+  assert((render.stats.vortexPacketLayerModeCount ?? 0) >= 2, 'volumetric vortex packet layer modes missing');
+  assert((render.stats.shearLayerModeCount ?? 0) >= 1, 'volumetric shear-layer rollup modes missing');
+  assert((render.stats.recirculationPocketLineCount ?? 0) >= 1, 'volumetric recirculation pocket lines missing');
+  assert((render.stats.recirculationPocketModeCount ?? 0) >= 1, 'volumetric recirculation pocket modes missing');
+  assert((render.stats.volumeLayerPointCount ?? 0) >= 12, 'volumetric volume layer points missing');
+  assert((render.stats.volumeLayerLineCount ?? 0) >= 12, 'volumetric volume layer lines missing');
+  assert((render.stats.volumeDepthLayerCount ?? 0) >= 3, 'volumetric depth layers missing');
+  assert((render.stats.volumeDepthRange ?? 0) > 0, 'volumetric depth range missing');
+}

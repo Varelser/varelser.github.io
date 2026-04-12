@@ -1,0 +1,107 @@
+{
+  "id": "verify:public-ui",
+  "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+  "args": [
+    "scripts/verify-public-ui.mjs"
+  ],
+  "requestedMode": "static",
+  "stepEnv": {},
+  "startedAt": "2026-04-06T10:50:55.540Z",
+  "finishedAt": "2026-04-06T10:50:59.370Z",
+  "durationMs": 3830,
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "timedOut": false,
+  "execution": "source-static-fallback",
+  "effectiveMode": "static",
+  "verificationTier": "source-static-fallback",
+  "liveAttempted": false,
+  "liveVerified": false,
+  "fallbackUsed": true,
+  "unresolvedLiveCoverage": true,
+  "payload": {
+    "verifier": "public-ui",
+    "appUrl": "http://127.0.0.1:3000/",
+    "requestedMode": "static",
+    "effectiveMode": "static",
+    "verificationTier": "source-static-fallback",
+    "host": {
+      "platform": "linux",
+      "release": "4.4.0",
+      "arch": "x64",
+      "node": "v22.16.0",
+      "requestedMode": "static",
+      "browserExecutableOverride": null,
+      "hostConstraints": [
+        "sandbox may block browser-managed navigation to localhost/file/data URLs",
+        "native browser binaries may be unavailable on constrained hosts"
+      ]
+    },
+    "liveAttempted": false,
+    "liveVerified": false,
+    "fallbackUsed": true,
+    "fallbackVerified": true,
+    "unresolvedLiveCoverage": true,
+    "mode": "static-fallback",
+    "reason": "Error: Static verification forced by VERIFY_RUNTIME_MODE=static.",
+    "checks": [
+      {
+        "label": "public-library-gate",
+        "file": "App.tsx",
+        "pass": true,
+        "found": [
+          "LIBRARY_SCOPE === 'public'",
+          "PUBLIC_PRESET_LIBRARY"
+        ],
+        "missing": []
+      },
+      {
+        "label": "public-exhibition-notice",
+        "file": "components/controlPanelTabs.tsx",
+        "pass": true,
+        "found": [
+          "Public exhibition mode: scene parameters and sequence editing are locked."
+        ],
+        "missing": []
+      },
+      {
+        "label": "public-preset-locks",
+        "file": "components/controlPanelGlobalPresets.tsx",
+        "pass": true,
+        "found": [
+          "Public build: bundled presets are read-only.",
+          "Browse Library"
+        ],
+        "missing": []
+      },
+      {
+        "label": "public-sequence-locks",
+        "file": "components/controlPanelGlobalSequence.tsx",
+        "pass": true,
+        "found": [
+          "Playlist structure is bundled in the public build.",
+          "Locked in public build"
+        ],
+        "missing": []
+      },
+      {
+        "label": "bundled-public-library",
+        "file": "public-library.json",
+        "pass": true,
+        "found": [
+          "\"presets\"",
+          "\"presetSequence\""
+        ],
+        "missing": []
+      }
+    ],
+    "inlineRuntimeAttempted": true,
+    "inlineRuntimePassed": false,
+    "inlineRuntimeError": "verify-inline build failed: [run-vite] current host is missing required native runtime pieces for Vite/Rollup/Playwright.\n- rollup: node_modules/@rollup/rollup-linux-x64-gnu\n- esbuild: node_modules/@esbuild/linux-x64\n[run-vite] run npm install on this host, then rerun npm run verify:host-runtime and npm run build.",
+    "passed": true
+  },
+  "error": null,
+  "logPath": "docs/archive/verification-suite-runs/2026-04-06T10-50-55-445Z/step-logs/verify_public-ui.log",
+  "tail": "{\n  \"verifier\": \"public-ui\",\n  \"appUrl\": \"http://127.0.0.1:3000/\",\n  \"requestedMode\": \"static\",\n  \"effectiveMode\": \"static\",\n  \"verificationTier\": \"source-static-fallback\",\n  \"host\": {\n    \"platform\": \"linux\",\n    \"release\": \"4.4.0\",\n    \"arch\": \"x64\",\n    \"node\": \"v22.16.0\",\n    \"requestedMode\": \"static\",\n    \"browserExecutableOverride\": null,\n    \"hostConstraints\": [\n      \"sandbox may block browser-managed navigation to localhost/file/data URLs\",\n      \"native browser binaries may be unavailable on constrained hosts\"\n    ]\n  },\n  \"liveAttempted\": false,\n  \"liveVerified\": false,\n  \"fallbackUsed\": true,\n  \"fallbackVerified\": true,\n  \"unresolvedLiveCoverage\": true,\n  \"mode\": \"static-fallback\",\n  \"reason\": \"Error: Static verification forced by VERIFY_RUNTIME_MODE=static.\",\n  \"checks\": [\n    {\n      \"label\": \"public-library-gate\",\n      \"file\": \"App.tsx\",\n      \"pass\": true,\n      \"found\": [\n        \"LIBRARY_SCOPE === 'public'\",\n        \"PUBLIC_PRESET_LIBRARY\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"public-exhibition-notice\",\n      \"file\": \"components/controlPanelTabs.tsx\",\n      \"pass\": true,\n      \"found\": [\n        \"Public exhibition mode: scene parameters and sequence editing are locked.\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"public-preset-locks\",\n      \"file\": \"components/controlPanelGlobalPresets.tsx\",\n      \"pass\": true,\n      \"found\": [\n        \"Public build: bundled presets are read-only.\",\n        \"Browse Library\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"public-sequence-locks\",\n      \"file\": \"components/controlPanelGlobalSequence.tsx\",\n      \"pass\": true,\n      \"found\": [\n        \"Playlist structure is bundled in the public build.\",\n        \"Locked in public build\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"bundled-public-library\",\n      \"file\": \"public-library.json\",\n      \"pass\": true,\n      \"found\": [\n        \"\\\"presets\\\"\",\n        \"\\\"presetSequence\\\"\"\n      ],\n      \"missing\": []\n    }\n  ],\n  \"inlineRuntimeAttempted\": true,\n  \"inlineRuntimePassed\": false,\n  \"inlineRuntimeError\": \"verify-inline build failed: [run-vite] current host is missing required native runtime pieces for Vite/Rollup/Playwright.\\n- rollup: node_modules/@rollup/rollup-linux-x64-gnu\\n- esbuild: node_modules/@esbuild/linux-x64\\n[run-vite] run npm install on this host, then rerun npm run verify:host-runtime and npm run build.\",\n  \"passed\": true\n}"
+}

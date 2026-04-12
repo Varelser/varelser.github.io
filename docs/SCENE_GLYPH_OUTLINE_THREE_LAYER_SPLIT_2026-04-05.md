@@ -1,0 +1,3 @@
+- `sceneGlyphOutlineSystem.tsx` を facade + Shared / Runtime / Render に三層化。
+- `typecheck` / `build` / `verify-phase5` を維持。
+- Task 6 の残りは `sceneHybridSurfacePatchSystem` / `sceneHybridMembraneSystem` / `sceneHybridGranularFieldSystem` / `sceneHybridFiberFieldSystem` / `sceneMetaballSystem`。

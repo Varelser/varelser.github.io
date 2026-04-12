@@ -1,0 +1,110 @@
+# Future-Native Source-Only Package
+
+- generatedAt: 2026-04-08T12:13:51.019Z
+- archivePath: `docs/handoff/archive/generated/future-native-source-only-package/future-native-source-only.zip`
+- archiveSize: 2.67 MB
+- archiveSha256: `115dfcb9d964793edb7ac42a22eb005c0a3526d6831ff31ae118267d272ba8a7`
+- includedFileCount: 1986
+- includedDirectoryCount: 166
+- includedPayloadSize: 8.40 MB
+
+## top-level entries
+- `.github`
+- `.gitignore`
+- `.npmrc`
+- `.packageignore.md`
+- `.vercel`
+- `AUDIO_REACTIVE_AI_HANDOFF.md`
+- `AUDIO_REACTIVE_ARCHITECTURE.md`
+- `AUDIO_REACTIVE_COVERAGE_MATRIX.md`
+- `AUDIO_REACTIVE_ENVIRONMENT.md`
+- `AUDIO_REACTIVE_ENVIRONMENT_STATUS_2026-04-01.md`
+- `AUDIO_REACTIVE_LEGACY_RETIREMENT.md`
+- `AUDIO_REACTIVE_PROGRESS.md`
+- `AUDIO_REACTIVE_ROADMAP.md`
+- `AUDIO_REACTIVE_VERIFICATION.md`
+- `App.tsx`
+- `AppInlineVerify.tsx`
+- `CURRENT_STATUS.md`
+- `DOCS_INDEX.md`
+- `FINAL_INTERNAL_HANDOFF_2026-04-08.md`
+- `FUTURE_NATIVE_EXECUTION_ROADMAP_2026-04-08.md`
+- `IMPLEMENTATION_NOTE_VERIFY_SYNC_2026-04-06.md`
+- `KALOKAGATHIA_unstarted_unrelated_handoff_2026-04-07.md`
+- `PHASE0_COMPLETION_STATUS.md`
+- `README.md`
+- `REFACTOR_PLAN_LARGE_FILES.md`
+- `REVIEW.md`
+- `RUN_INTEL_MAC_CLOSEOUT_AND_PACKAGE.command`
+- `RUN_TARGET_HOST_INTEL_MAC_CLOSEOUT.command`
+- `START_MONOSPHERE.command`
+- `SYSTEM_DESIGN_BLUEPRINT.md`
+- `UPGRADE_ROADMAP.md`
+- `VERIFY_STATUS_2026-04-06.md`
+- `VERIFY_STATUS_2026-04-07.md`
+- `build.log`
+- `build_after.log`
+- `build_after2.log`
+- `check_mpm.mjs`
+- `check_mpm.ts`
+- `components`
+- `docs`
+- `exports`
+- `fixtures`
+- `generated`
+- `index.html`
+- `index.tsx`
+- `kal_finalwork`
+- `launch-kalokagathia.command`
+- `lib`
+- `metadata.json`
+- `netlify.toml`
+- `package-lock.json`
+- `package.json`
+- `pbd_probe.mjs`
+- `pbd_probe.ts`
+- `pbd_probe2.mjs`
+- `pbd_probe2.ts`
+- `public-library.json`
+- `public-library.provenance.json`
+- `react-three-fiber.d.ts`
+- `scripts`
+- `skills-lock.json`
+- `styles.css`
+- `tests`
+- `tsconfig.audio-reactive.json`
+- `tsconfig.json`
+- `types`
+- `types.ts`
+- `vite.config.ts`
+- `workers`
+
+## excluded entries
+- `dist/`
+- `docs/handoff/archive/generated/future-native-source-only-package/`
+- `node_modules/`
+- `scripts/.tmp_debug_smoke.ts`
+- `tmp/`
+
+## critical path checks
+- `package.json`: ok
+- `package-lock.json`: ok
+- `scripts/run-ts-entry.mjs`: ok
+- `scripts/run-registered-verify-entry.mjs`: ok
+- `scripts/verify-entry-registry.mjs`: ok
+- `scripts/package-future-native-source-only.mjs`: ok
+- `scripts/emit-future-native-artifact-suite.mjs`: ok
+- `scripts/emit-future-native-artifact-core.mjs`: ok
+- `scripts/emit-future-native-artifact-tail.mjs`: ok
+- `scripts/verify-future-native-artifact-suite.mjs`: ok
+- `scripts/verify-future-native-safe-pipeline-core.mjs`: ok
+- `scripts/verify-future-native-artifact-tail.mjs`: ok
+- `scripts/emit-future-native-generated-artifact-inventory.mjs`: ok
+- `scripts/emit-future-native-suite-status-report.mjs`: ok
+- `scripts/verify-future-native-source-only-artifacts.mjs`: ok
+- `scripts/verify-future-native-specialist-family-previews.mjs`: ok
+- `scripts/verify-future-native-family-preview-surfaces.mjs`: ok
+- `scripts/emit-future-native-family-previews.mjs`: ok
+- `docs/handoff/FUTURE_NATIVE_SOURCE_ONLY_DISTRIBUTION.md`: ok
+- `docs/handoff/FUTURE_NATIVE_RELEASE_CHECKLIST.md`: ok
+- `CURRENT_STATUS.md`: ok

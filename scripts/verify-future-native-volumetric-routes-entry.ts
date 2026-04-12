@@ -1,0 +1,48 @@
+import { buildFutureNativeDensityPreviewSignature, buildFutureNativePressurePreviewSignature } from '../lib/future-native-families/futureNativeVolumetricDensityPressureAuthoring';
+import { normalizeConfig } from '../lib/appStateConfig';
+import { getExecutionDiagnostics } from '../lib/executionDiagnostics';
+import { buildFutureNativeVolumetricRouteTrendSummary } from '../lib/future-native-families/futureNativeVolumetricRouteTrend';
+import { getFutureNativeVolumetricBundleCoverage } from '../lib/future-native-families/futureNativeVolumetricBundleCoverage';
+
+const summary = buildFutureNativeVolumetricRouteTrendSummary();
+if (summary.familyCount < 4) throw new Error(`Future-native volumetric route summary too small: ${summary.familyCount}`);
+const lightShadow = summary.lowBandFamilies.find((entry) => entry.familyId === 'volumetric-light-shadow-coupling');
+if (!lightShadow) throw new Error('Future-native volumetric route summary missing light/shadow family');
+const advection = summary.lowBandFamilies.find((entry) => entry.familyId === 'volumetric-advection');
+if (!advection) throw new Error('Future-native volumetric route summary missing advection family');
+const advectionCoverage = getFutureNativeVolumetricBundleCoverage('volumetric-advection');
+if (!advectionCoverage || !advectionCoverage.helperArtifacts.includes('futureNativeSceneBridgeVolumetricAdvection.ts')) throw new Error('Future-native volumetric coverage missing advection helper');
+const smokeCoverage = getFutureNativeVolumetricBundleCoverage('volumetric-smoke');
+if (!smokeCoverage || !smokeCoverage.helperArtifacts.includes('futureNativeSceneBridgeVolumetricSmokePayload.ts')) throw new Error('Future-native volumetric coverage missing smoke helper');
+if (!smokeCoverage.bundleArtifacts.includes('futureNativeScenePresetPatchesVolumetricSmoke.ts')) throw new Error('Future-native volumetric coverage missing smoke preset bundle');
+const coverage = getFutureNativeVolumetricBundleCoverage('volumetric-light-shadow-coupling');
+if (!coverage || !coverage.helperArtifacts.includes('futureNativeSceneBridgeVolumetricLightShadow.ts')) throw new Error('Future-native volumetric coverage missing light/shadow helper');
+const densityCoverage = getFutureNativeVolumetricBundleCoverage('volumetric-density-transport');
+if (!densityCoverage || !densityCoverage.helperArtifacts.includes('futureNativeSceneBridgeVolumetricDensityPressure.ts')) throw new Error('Future-native volumetric coverage missing density helper');
+const pressureCoverage = getFutureNativeVolumetricBundleCoverage('volumetric-pressure-coupling');
+if (!pressureCoverage || !pressureCoverage.helperArtifacts.includes('futureNativeSceneBridgeVolumetricDensityPressure.ts')) throw new Error('Future-native volumetric coverage missing pressure helper');
+
+const densityPreviewSignature = buildFutureNativeDensityPreviewSignature(normalizeConfig({ layer2Enabled: true, layer2Type: 'condense_field', layer2Source: 'plane', layer2FogDensity: 0.48, layer2FogDrift: 0.22, layer2TemporalStrength: 0.28, layer2TemporalSpeed: 0.18 }), 2, 'future-native-volumetric-density-plume-weave');
+if (!densityPreviewSignature.some((value) => value.startsWith('preset:future-native-volumetric-density-plume-weave'))) throw new Error('Volumetric density preview signature missing preset');
+const pressurePreviewSignature = buildFutureNativePressurePreviewSignature(normalizeConfig({ layer2Enabled: true, layer2Type: 'pressure_cells', layer2Source: 'grid', layer2FogDensity: 0.52, layer2FogGlow: 0.12, layer2FogDrift: 0.18, layer2TemporalStrength: 0.24, layer2TemporalSpeed: 0.18 }), 2, 'future-native-volumetric-pressure-cells-basin');
+if (!pressurePreviewSignature.some((value) => value.startsWith('preset:future-native-volumetric-pressure-cells-basin'))) throw new Error('Volumetric pressure preview signature missing preset');
+
+const diagnostics = getExecutionDiagnostics(normalizeConfig({ layer2Enabled: true, layer2Type: 'charge_veil', layer2Source: 'video', layer2FogDensity: 0.28, layer2FogGlow: 0.32, layer2FogAnisotropy: 0.86, layer2TemporalStrength: 0.24, layer2TemporalSpeed: 0.18 }));
+const layer2 = diagnostics.find((entry) => entry.id === 'layer2');
+const diag = layer2?.futureNativeVolumetricDiagnostics?.find((entry) => entry.label === 'light/shadow tuning');
+if (!diag) throw new Error('Execution diagnostics missing light/shadow tuning entry');
+if (!diag.runtimeConfigValues.some((value) => value.startsWith('lightExtinction:'))) throw new Error('Execution diagnostics missing light extinction diagnostic');
+if (!diag.runtimeConfigValues.some((value) => value.startsWith('occlusion:'))) throw new Error('Execution diagnostics missing occlusion diagnostic');
+const advectionDiagnostics = getExecutionDiagnostics(normalizeConfig({ layer2Enabled: true, layer2Type: 'condense_field', layer2Source: 'plane', layer2FogDensity: 0.48, layer2FogDrift: 0.22, layer2TemporalStrength: 0.28, layer2TemporalSpeed: 0.18 }));
+const advectionLayer = advectionDiagnostics.find((entry) => entry.id === 'layer2');
+const advectionDiag = advectionLayer?.futureNativeVolumetricDiagnostics?.find((entry) => entry.label === 'advection tuning');
+if (!advectionDiag) throw new Error('Execution diagnostics missing advection tuning entry');
+if (!advectionDiag.runtimeConfigValues.some((value) => value.startsWith('transportLoad:'))) throw new Error('Execution diagnostics missing density transport diagnostic');
+const pressureDiagnostics = getExecutionDiagnostics(normalizeConfig({ layer2Enabled: true, layer2Type: 'pressure_cells', layer2Source: 'grid', layer2FogDensity: 0.52, layer2FogGlow: 0.12, layer2FogDrift: 0.18, layer2TemporalStrength: 0.24, layer2TemporalSpeed: 0.18 }));
+const pressureLayer = pressureDiagnostics.find((entry) => entry.id === 'layer2');
+const pressureDiag = pressureLayer?.futureNativeVolumetricDiagnostics?.find((entry) => entry.label === 'pressure tuning');
+if (!pressureDiag) throw new Error('Execution diagnostics missing pressure tuning entry');
+if (!pressureDiag.runtimeConfigValues.some((value) => value.startsWith('pressureResidual:'))) throw new Error('Execution diagnostics missing pressure residual diagnostic');
+if (!pressureDiag.runtimeConfigValues.some((value) => value.startsWith('divergenceBudget:'))) throw new Error('Execution diagnostics missing divergence budget diagnostic');
+console.log('PASS future-native-volumetric-routes');
+console.log(JSON.stringify({ familyCount: summary.familyCount, lowBandFamilyCount: summary.lowBandFamilies.length, diagnostics: diag.runtimeConfigValues, densityDiagnostics: advectionDiag.runtimeConfigValues, pressureDiagnostics: pressureDiag.runtimeConfigValues, densityPreviewSignature, pressurePreviewSignature }, null, 2));

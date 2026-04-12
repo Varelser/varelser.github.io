@@ -1,0 +1,56 @@
+{
+  "id": "verify:phase4",
+  "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+  "args": [
+    "scripts/verify-phase4-smoke.mjs"
+  ],
+  "requestedMode": "static",
+  "stepEnv": {},
+  "startedAt": "2026-04-06T21:48:05.264Z",
+  "finishedAt": "2026-04-06T21:48:05.986Z",
+  "durationMs": 722,
+  "passed": true,
+  "blocked": false,
+  "status": 0,
+  "signal": null,
+  "timedOut": false,
+  "execution": "direct",
+  "effectiveMode": "direct",
+  "verificationTier": null,
+  "liveAttempted": false,
+  "liveVerified": false,
+  "fallbackUsed": false,
+  "unresolvedLiveCoverage": false,
+  "payload": {
+    "passed": true,
+    "verifiedStepCount": 2,
+    "buildFreshness": {
+      "reusable": true,
+      "reason": "fresh-dist",
+      "distDir": "/mnt/data/pass14_work/dist",
+      "latestDistMtimeMs": 1775512069257.5146,
+      "latestSourceMtimeMs": 1775512051427.5127
+    },
+    "summary": [
+      {
+        "id": "project-state-smoke",
+        "status": 0,
+        "signal": null,
+        "durationMs": 59,
+        "timedOut": false,
+        "tail": "        \"buildProjectData\",\n        \"parseProjectData\",\n        \"buildProjectExecutionRoutingMap\",\n        \"buildProjectSerializationSnapshot\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectStateStorage.ts\",\n      \"passed\": true,\n      \"requiredCount\": 2,\n      \"matchedCount\": 2,\n      \"matched\": [\n        \"export function buildProjectData\",\n        \"export function parseProjectData\"\n      ],\n      \"missing\": []\n    }\n  ]\n}"
+      },
+      {
+        "id": "export-smoke",
+        "status": 0,
+        "signal": null,
+        "durationMs": 573,
+        "timedOut": false,
+        "tail": "  \"opaque\": {\n    \"width\": 480,\n    \"height\": 360,\n    \"transparentPixels\": 0,\n    \"partialAlphaPixels\": 5773,\n    \"totalPixels\": 172800\n  },\n  \"transparent\": {\n    \"width\": 480,\n    \"height\": 360,\n    \"transparentPixels\": 141637,\n    \"partialAlphaPixels\": 5773,\n    \"totalPixels\": 172800\n  },\n  \"verdict\": {\n    \"opaqueIsSolid\": true,\n    \"hasTransparentBackground\": true,\n    \"passed\": true\n  }\n}"
+      }
+    ]
+  },
+  "error": null,
+  "logPath": "docs/archive/verification-suite-runs/2026-04-06T21-47-54-468Z/step-logs/verify_phase4.log",
+  "tail": "\"requiredCount\": 3,\n      \"matchedCount\": 3,\n      \"matched\": [\n        \"buildProjectData\",\n        \"parseProjectData\",\n        \"./projectStateStorage\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectExecutionRouting.ts\",\n      \"passed\": true,\n      \"requiredCount\": 1,\n      \"matchedCount\": 1,\n      \"matched\": [\n        \"export function buildProjectExecutionRoutingMap\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectSerializationSnapshot.ts\",\n      \"passed\": true,\n      \"requiredCount\": 1,\n      \"matchedCount\": 1,\n      \"matched\": [\n        \"export function buildProjectSerializationSnapshot\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"scripts/verify-project-state-entry.ts\",\n      \"passed\": true,\n      \"requiredCount\": 4,\n      \"matchedCount\": 4,\n      \"matched\": [\n        \"buildProjectData\",\n        \"parseProjectData\",\n        \"buildProjectExecutionRoutingMap\",\n        \"buildProjectSerializationSnapshot\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"file\": \"lib/projectStateStorage.ts\",\n      \"passed\": true,\n      \"requiredCount\": 2,\n      \"matchedCount\": 2,\n      \"matched\": [\n        \"export function buildProjectData\",\n        \"export function parseProjectData\"\n      ],\n      \"missing\": []\n    }\n  ]\n}\n\n{\n  \"mode\": \"pngjs-harness-smoke\",\n  \"profile\": \"smoke\",\n  \"verificationTier\": \"pngjs-static-harness-fallback\",\n  \"liveAttempted\": false,\n  \"liveVerified\": false,\n  \"fallbackUsed\": true,\n  \"fallbackVerified\": true,\n  \"unresolvedLiveCoverage\": false,\n  \"notes\": [\n    \"smoke-profile :: browser and inline-runtime checks skipped\",\n    \"skia-unavailable :: optional package not installed\"\n  ],\n  \"opaque\": {\n    \"width\": 480,\n    \"height\": 360,\n    \"transparentPixels\": 0,\n    \"partialAlphaPixels\": 5773,\n    \"totalPixels\": 172800\n  },\n  \"transparent\": {\n    \"width\": 480,\n    \"height\": 360,\n    \"transparentPixels\": 141637,\n    \"partialAlphaPixels\": 5773,\n    \"totalPixels\": 172800\n  },\n  \"verdict\": {\n    \"opaqueIsSolid\": true,\n    \"hasTransparentBackground\": true,\n    \"passed\": true\n  }\n}\n\n{\n  \"passed\": true,\n  \"verifiedStepCount\": 2,\n  \"buildFreshness\": {\n    \"reusable\": true,\n    \"reason\": \"fresh-dist\",\n    \"distDir\": \"/mnt/data/pass14_work/dist\",\n    \"latestDistMtimeMs\": 1775512069257.5146,\n    \"latestSourceMtimeMs\": 1775512051427.5127\n  },\n  \"summary\": [\n    {\n      \"id\": \"project-state-smoke\",\n      \"status\": 0,\n      \"signal\": null,\n      \"durationMs\": 59,\n      \"timedOut\": false,\n      \"tail\": \"        \\\"buildProjectData\\\",\\n        \\\"parseProjectData\\\",\\n        \\\"buildProjectExecutionRoutingMap\\\",\\n        \\\"buildProjectSerializationSnapshot\\\"\\n      ],\\n      \\\"missing\\\": []\\n    },\\n    {\\n      \\\"file\\\": \\\"lib/projectStateStorage.ts\\\",\\n      \\\"passed\\\": true,\\n      \\\"requiredCount\\\": 2,\\n      \\\"matchedCount\\\": 2,\\n      \\\"matched\\\": [\\n        \\\"export function buildProjectData\\\",\\n        \\\"export function parseProjectData\\\"\\n      ],\\n      \\\"missing\\\": []\\n    }\\n  ]\\n}\"\n    },\n    {\n      \"id\": \"export-smoke\",\n      \"status\": 0,\n      \"signal\": null,\n      \"durationMs\": 573,\n      \"timedOut\": false,\n      \"tail\": \"  \\\"opaque\\\": {\\n    \\\"width\\\": 480,\\n    \\\"height\\\": 360,\\n    \\\"transparentPixels\\\": 0,\\n    \\\"partialAlphaPixels\\\": 5773,\\n    \\\"totalPixels\\\": 172800\\n  },\\n  \\\"transparent\\\": {\\n    \\\"width\\\": 480,\\n    \\\"height\\\": 360,\\n    \\\"transparentPixels\\\": 141637,\\n    \\\"partialAlphaPixels\\\": 5773,\\n    \\\"totalPixels\\\": 172800\\n  },\\n  \\\"verdict\\\": {\\n    \\\"opaqueIsSolid\\\": true,\\n    \\\"hasTransparentBackground\\\": true,\\n    \\\"passed\\\": true\\n  }\\n}\"\n    }\n  ]\n}"
+}

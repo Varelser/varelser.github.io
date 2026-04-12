@@ -1,0 +1,124 @@
+{
+  "generatedAt": "2026-04-10T19:03:15.956Z",
+  "sourceDir": "exports/intel-mac-live-browser-proof-drop",
+  "summary": {
+    "total": 11,
+    "passed": 6,
+    "failed": 5,
+    "bundleCount": 1,
+    "fixtureCount": 0,
+    "parsedFixtureCount": 0,
+    "invalidFixtureCount": 0,
+    "proofFileCount": 3,
+    "structuredProofFileCount": 1,
+    "missingProofSummaryArtifactCount": 0
+  },
+  "checks": [
+    {
+      "kind": "drop-dir",
+      "target": "exports/intel-mac-live-browser-proof-drop",
+      "ok": true
+    },
+    {
+      "kind": "drop-readme",
+      "target": "exports/intel-mac-live-browser-proof-drop/README.md",
+      "ok": true
+    },
+    {
+      "kind": "drop-metadata",
+      "target": "exports/intel-mac-live-browser-proof-drop/capture-metadata.json",
+      "ok": true
+    },
+    {
+      "kind": "proof-notes",
+      "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-capture-notes.md",
+      "ok": true
+    },
+    {
+      "kind": "incoming-bundle-zip",
+      "target": "exports/intel-mac-live-browser-proof-drop/incoming/*.zip",
+      "ok": true,
+      "bundleCount": 1,
+      "bundleNames": [
+        "intel-mac-proof-preflight-bundle.zip"
+      ]
+    },
+    {
+      "kind": "fixture-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+      "ok": false,
+      "bundleCount": 1,
+      "fixtureCount": 0,
+      "fixtureNames": []
+    },
+    {
+      "kind": "fixture-json-valid",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+      "ok": false,
+      "parsedFixtures": 0,
+      "invalidFixtureCount": 0,
+      "invalidFixtures": []
+    },
+    {
+      "kind": "proof-summary-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json",
+      "ok": false,
+      "parsed": true,
+      "errors": [],
+      "metadata": {
+        "status": "pending",
+        "capturedAt": "2026-04-08T20:18:59.096Z",
+        "hostPlatform": "darwin",
+        "hostArch": "x64",
+        "browserName": "Chromium",
+        "executablePath": null,
+        "screenshotCount": 0,
+        "logCount": 1,
+        "exportCount": 0,
+        "sourceProjectSlug": null,
+        "missingArtifactCount": 0,
+        "slugLinked": false
+      }
+    },
+    {
+      "kind": "proof-summary-artifact-paths",
+      "target": "listed paths in real-export-proof.json",
+      "ok": false,
+      "missingArtifactCount": 0,
+      "missingArtifacts": []
+    },
+    {
+      "kind": "proof-summary-project-linkage",
+      "target": "capture.sourceProjectSlug -> artifacts.exports",
+      "ok": false,
+      "sourceProjectSlug": null
+    },
+    {
+      "kind": "structured-proof-files",
+      "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/logs/*.(log|txt|json)",
+      "ok": true,
+      "proofFileCount": 1,
+      "proofFiles": [
+        "logs/preflight-seed.log"
+      ]
+    }
+  ],
+  "proofFiles": [
+    "logs/preflight-seed.log",
+    "real-export-capture-notes.md",
+    "real-export-proof.json"
+  ],
+  "fixtureInspections": [],
+  "recommendedNextSteps": [
+    "optionally drop one bundle zip into exports/intel-mac-live-browser-proof-drop/incoming/ and let the pipeline auto-extract it",
+    "run npm run scaffold:intel-mac-live-browser-proof-drop if the drop directory is missing",
+    "place at least one real browser export json into exports/intel-mac-live-browser-proof-drop/real-export/",
+    "make sure the dropped fixture JSON parses and still contains schema/presets/manifest.execution/serialization.layers",
+    "keep notes in exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-capture-notes.md",
+    "run npm run draft:intel-mac-live-browser-proof-summary to auto-populate real-export-proof.json from dropped files",
+    "edit phase5-proof-input/real-export-proof.json and set status=captured with browser path, timestamps, sourceProjectSlug, exports, screenshots, and logs",
+    "make every path listed in real-export-proof.json point at an existing file under the drop directory",
+    "add at least one structured proof artifact under phase5-proof-input/logs/ (.log, .txt, or .json)",
+    "then run npm run finalize:intel-mac-live-browser-proof -- --browser-executable-path <actual path>"
+  ]
+}

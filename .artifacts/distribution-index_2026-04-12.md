@@ -1,0 +1,113 @@
+# Distribution Bundle Index
+
+- generatedAt: 2026-04-11T21:42:21.273Z
+- projectName: km_full_complete_latest_with_node_modules_2026-04-11 2
+- bundleCount: 6
+- availableBundleCount: 5
+- satisfiedBundleCount: 6
+- supersededBundleCount: 1
+- unsatisfiedBundleCount: 0
+
+## quick advice
+- immediateResume: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_full-local-dev_2026-04-12.zip`
+- lightweightHandoff: `/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_source-only_2026-04-12.zip`
+- verifyStatusOnly: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-verify-status_2026-04-12.zip`
+- intelMacCloseoutOnly: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-intel-mac-closeout_2026-04-12.zip`
+
+## bundles
+- full-local-dev
+  - status: available
+  - category: resume
+  - classId: full-local-dev
+  - packageClass: full-local-dev
+  - bundleKind: n/a
+  - supersededBy: n/a
+  - archivePath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_full-local-dev_2026-04-12.zip`
+  - archiveSizeBytes: 102059045
+  - manifestPath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_full-local-dev_2026-04-12.manifest.json`
+  - requiresBootstrap: false
+  - audience: すぐにローカル開発を再開したい人
+  - chooseThisWhen: 依存込みの完全な作業環境をそのまま引き継ぎたいとき
+  - preferInstead: 軽量引き継ぎだけなら source-only-clean、検証結果だけなら proof-packet-verify-status
+  - command: npm run package:full-zip
+  - recommendedUse: そのまま再開する local-dev complete handoff
+- source-only-clean
+  - status: available
+  - category: resume
+  - classId: source-only
+  - packageClass: source-only
+  - bundleKind: n/a
+  - supersededBy: n/a
+  - archivePath: `/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_source-only_2026-04-12.zip`
+  - archiveSizeBytes: 3427464
+  - manifestPath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_source-only_2026-04-12.manifest.json`
+  - requiresBootstrap: true
+  - audience: 軽量なソース引き継ぎをしたい人
+  - chooseThisWhen: 容量を抑えてコードと文書を渡したいとき
+  - preferInstead: 即再開したいなら full-local-dev、検証だけ見たいなら proof-packet-verify-status
+  - command: npm run package:source-only-clean
+  - recommendedUse: 軽量なソース引き継ぎ。再開前に bootstrap が必要
+- proof-packet-verify-status
+  - status: available
+  - category: proof
+  - classId: verify-status
+  - packageClass: n/a
+  - bundleKind: proof-packet-verify-status
+  - supersededBy: n/a
+  - archivePath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-verify-status_2026-04-12.zip`
+  - archiveSizeBytes: 274229
+  - manifestPath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-verify-status_2026-04-12.manifest.json`
+  - requiresBootstrap: false
+  - audience: verify / status / readiness の確認だけしたい人
+  - chooseThisWhen: コード本体ではなく、現在の検証結果と状態文書を確認したいとき
+  - preferInstead: Intel Mac 証跡が必要なら proof-packet-intel-mac-closeout、全体監査なら proof-packet
+  - command: npm run package:proof-packet:verify-status
+  - recommendedUse: verify / status / readiness の共有
+- proof-packet-intel-mac-closeout
+  - status: available
+  - category: proof
+  - classId: intel-mac-closeout
+  - packageClass: n/a
+  - bundleKind: proof-packet-intel-mac-closeout
+  - supersededBy: n/a
+  - archivePath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-intel-mac-closeout_2026-04-12.zip`
+  - archiveSizeBytes: 63847
+  - manifestPath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-intel-mac-closeout_2026-04-12.manifest.json`
+  - requiresBootstrap: false
+  - audience: Intel Mac target-host closeout と live-browser proof の担当者
+  - chooseThisWhen: Intel Mac 実機側の証跡確認と handoff だけを軽く渡したいとき
+  - preferInstead: verify/status 全般を見るなら proof-packet-verify-status、全体監査なら proof-packet
+  - command: npm run package:proof-packet:intel-mac-closeout
+  - recommendedUse: Intel Mac target-host closeout と live-browser proof の引き継ぎ
+- proof-packet
+  - status: available
+  - category: proof
+  - classId: proof-combined
+  - packageClass: n/a
+  - bundleKind: proof-packet
+  - supersededBy: n/a
+  - archivePath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet_2026-04-12.zip`
+  - archiveSizeBytes: 324344
+  - manifestPath: `.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet_2026-04-12.manifest.json`
+  - requiresBootstrap: false
+  - audience: status / verify / closeout をまとめて見たい人
+  - chooseThisWhen: どの bundle を取るべきか未確定で、まず全体像を見たいとき
+  - preferInstead: verify/status だけ見たいなら proof-packet-verify-status、Intel Mac 証跡だけなら proof-packet-intel-mac-closeout
+  - command: npm run package:proof-packet
+  - recommendedUse: status / verify / closeout をまとめて参照する監査用 handoff
+- platform-specific-runtime-bundled
+  - status: superseded
+  - category: resume
+  - classId: partial-full
+  - packageClass: platform-specific-runtime-bundled
+  - bundleKind: n/a
+  - supersededBy: full-local-dev
+  - archivePath: missing
+  - archiveSizeBytes: n/a
+  - manifestPath: missing
+  - requiresBootstrap: false
+  - audience: host 依存 runtime を含む partial full handoff が必要な人
+  - chooseThisWhen: 対象 host 向けの runtime 同梱 bundle を扱いたいとき
+  - preferInstead: 一般的な再開なら full-local-dev、軽量引き継ぎなら source-only-clean
+  - command: npm run package:full-zip -- --allow-partial
+  - recommendedUse: host 依存 runtime を含む partial full handoff

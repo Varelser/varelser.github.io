@@ -1,0 +1,97 @@
+{
+  "generatedAt": "2026-04-06T00:14:16.798Z",
+  "sourceDir": "exports/intel-mac-live-browser-proof-drop",
+  "dryRun": false,
+  "browserExecutable": {
+    "path": "- browser version:",
+    "source": "notes"
+  },
+  "proofReady": false,
+  "finalizeAttempted": false,
+  "finalizeSucceeded": false,
+  "summary": {
+    "dropPassed": 4,
+    "dropTotal": 11,
+    "projectedAfterFinalizePassed": 2,
+    "projectedAfterFinalizeTotal": 6,
+    "doctorBlockers": 11,
+    "remediationExactFileCount": 9,
+    "statusBlockerCount": 0
+  },
+  "missingProofKinds": [
+    "incoming-bundle-zip",
+    "fixture-json",
+    "fixture-json-valid",
+    "proof-summary-json",
+    "proof-summary-artifact-paths",
+    "proof-summary-project-linkage",
+    "structured-proof-files"
+  ],
+  "commands": [
+    {
+      "label": "scaffold:intel-mac-live-browser-proof-drop",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/scaffold-intel-mac-live-browser-proof-drop.mjs --source-dir exports/intel-mac-live-browser-proof-drop",
+      "status": 0,
+      "ok": true,
+      "stdout": "[scaffold-intel-mac-live-browser-proof-drop] ready: exports/intel-mac-live-browser-proof-drop",
+      "stderr": ""
+    },
+    {
+      "label": "draft:intel-mac-live-browser-proof-summary",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/draft-intel-mac-live-browser-proof-summary.mjs --source-dir exports/intel-mac-live-browser-proof-drop",
+      "status": 0,
+      "ok": true,
+      "stdout": "[draft-intel-mac-live-browser-proof-summary] status=pending fixtures=0 screenshots=0 logs=0 slug=missing notes=1\n{\n  \"generatedAt\": \"2026-04-06T00:14:16.437Z\",\n  \"sourceDir\": \"exports/intel-mac-live-browser-proof-drop\",\n  \"summaryPath\": \"exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json\",\n  \"summary\": {\n    \"status\": \"pending\",\n    \"capture\": {\n      \"hostPlatform\": \"darwin\",\n      \"hostArch\": \"x64\",\n      \"capturedAt\": \"\",\n      \"sourceProjectSlug\": \"\"\n    },\n    \"browser\": {\n      \"name\": \"Chromium\",\n      \"executablePath\": \"\",\n      \"version\": \"\"\n    },\n    \"artifacts\": {\n      \"exports\": [],\n      \"screenshots\": [],\n      \"logs\": []\n    },\n    \"notes\": \"- export executed from Procedural Mode / real browser\\n- attach at least one screenshot and one structured log\",\n    \"captureMetadata\": {\n      \"targetHost\": {\n        \"platform\": \"darwin\",\n        \"arch\": \"x64\"\n      },\n      \"generatedAt\": \"2026-04-06T00:14:16.377Z\"\n    }\n  },\n  \"discovered\": {\n    \"fixtureCount\": 0,\n    \"screenshotCount\": 0,\n    \"logCount\": 0,\n    \"inferredSlug\": null,\n    \"inferredCapturedAt\": null,\n    \"notesPath\": \"exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-capture-notes.md\",\n    \"notesUsed\": {\n      \"browserExecutablePath\": false,\n      \"exportTimestamp\": false,\n      \"sourceProjectSlug\": false,\n      \"browserVersion\": false,\n      \"notes\": true\n    }\n  },\n  \"nextAction\": \"add missing executable path / sourceProjectSlug / evidence files, then rerun this draft step\"\n}",
+      "stderr": ""
+    },
+    {
+      "label": "verify:intel-mac-live-browser-proof-drop",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/verify-intel-mac-live-browser-proof-drop.mjs --source-dir exports/intel-mac-live-browser-proof-drop --write docs/archive/intel-mac-live-browser-proof-drop-check.json",
+      "status": 0,
+      "ok": true,
+      "stdout": "[verify-intel-mac-live-browser-proof-drop] 4/11 ok fixtures=0 invalid=0 proofFiles=2\n[verify-intel-mac-live-browser-proof-drop] missing:\n- incoming-bundle-zip: exports/intel-mac-live-browser-proof-drop/incoming/*.zip\n- fixture-json: exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json\n- fixture-json-valid: exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json\n- proof-summary-json: exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json\n- proof-summary-artifact-paths: listed paths in real-export-proof.json\n- proof-summary-project-linkage: capture.sourceProjectSlug -> artifacts.exports\n- structured-proof-files: exports/intel-mac-live-browser-proof-drop/phase5-proof-input/*.(log|txt|json)",
+      "stderr": ""
+    },
+    {
+      "label": "report:intel-mac-live-browser-proof-remediation",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/generate-intel-mac-live-browser-proof-remediation-report.mjs --write-json docs/archive/intel-mac-live-browser-proof-remediation.json --write-markdown docs/archive/intel-mac-live-browser-proof-remediation.md",
+      "status": 0,
+      "ok": true,
+      "stdout": "[generate-intel-mac-live-browser-proof-remediation-report] exactFiles=9 blockers=11 projected=2/6",
+      "stderr": ""
+    },
+    {
+      "label": "report:intel-mac-live-browser-proof-projection",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/generate-intel-mac-live-browser-proof-projection-report.mjs --write-json docs/archive/intel-mac-live-browser-proof-projection.json --write-markdown docs/archive/intel-mac-live-browser-proof-projection.md",
+      "status": 0,
+      "ok": true,
+      "stdout": "[generate-intel-mac-live-browser-proof-projection-report] current=2/6 projected=2/6 blockers=6",
+      "stderr": ""
+    },
+    {
+      "label": "doctor:intel-mac-live-browser-proof",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/doctor-intel-mac-live-browser-proof.mjs --write docs/archive/intel-mac-live-browser-proof-doctor.json",
+      "status": 0,
+      "ok": true,
+      "stdout": "[doctor-intel-mac-live-browser-proof] drop=4/11 target=2/6 projected=2/6 invalid=0 blockers=11 handoff=host-runtime-mismatch\n- Intel Mac 実機で real-export JSON を 1 本採取し、exports/intel-mac-live-browser-proof-drop/real-export/ へ置く\n- または Intel Mac 実機で採った proof 一式を bundle zip にして exports/intel-mac-live-browser-proof-drop/incoming/ へ置く\n- npm run draft:intel-mac-live-browser-proof-summary を実行して proof summary を自動下書きし、その後 captured 状態へ仕上げる\n- build log / verify log / console dump のいずれかを phase5-proof-input へ追加する\n- Intel Mac 実機で npx playwright install chromium を実行し、必要なら --browser-executable-path を付けて再監査する",
+      "stderr": ""
+    },
+    {
+      "label": "report:intel-mac-live-browser-proof-status",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/generate-intel-mac-live-browser-proof-status-report.mjs --write-json docs/archive/intel-mac-live-browser-proof-status.json --write-markdown docs/archive/intel-mac-live-browser-proof-status.md",
+      "status": 0,
+      "ok": true,
+      "stdout": "[generate-intel-mac-live-browser-proof-status-report] drop=4/11 target=2/6 blockers=11",
+      "stderr": ""
+    },
+    {
+      "label": "report:intel-mac-live-browser-proof-blockers",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node scripts/generate-intel-mac-live-browser-proof-blocker-report.mjs --write-json docs/archive/intel-mac-live-browser-proof-blockers.json --write-markdown docs/archive/intel-mac-live-browser-proof-blockers.md",
+      "status": 0,
+      "ok": true,
+      "stdout": "[generate-intel-mac-live-browser-proof-blocker-report] blockers=11 drop=4/11 target=2/6",
+      "stderr": ""
+    }
+  ],
+  "nextAction": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-<slug>.json"
+}

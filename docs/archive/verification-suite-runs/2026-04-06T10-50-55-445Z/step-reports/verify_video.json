@@ -1,0 +1,97 @@
+{
+  "id": "verify:video",
+  "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+  "args": [
+    "scripts/verify-video.mjs"
+  ],
+  "requestedMode": "static",
+  "stepEnv": {},
+  "startedAt": "2026-04-06T10:51:00.606Z",
+  "finishedAt": "2026-04-06T10:51:01.557Z",
+  "durationMs": 951,
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "timedOut": false,
+  "execution": "source-static-fallback",
+  "effectiveMode": "static",
+  "verificationTier": "source-static-fallback",
+  "liveAttempted": false,
+  "liveVerified": false,
+  "fallbackUsed": true,
+  "unresolvedLiveCoverage": true,
+  "payload": {
+    "verifier": "video",
+    "appUrl": "http://127.0.0.1:3000/",
+    "requestedMode": "static",
+    "effectiveMode": "static",
+    "verificationTier": "source-static-fallback",
+    "host": {
+      "platform": "linux",
+      "release": "4.4.0",
+      "arch": "x64",
+      "node": "v22.16.0",
+      "requestedMode": "static",
+      "browserExecutableOverride": null,
+      "hostConstraints": [
+        "sandbox may block browser-managed navigation to localhost/file/data URLs",
+        "native browser binaries may be unavailable on constrained hosts"
+      ]
+    },
+    "liveAttempted": false,
+    "liveVerified": false,
+    "fallbackUsed": true,
+    "fallbackVerified": true,
+    "unresolvedLiveCoverage": true,
+    "mode": "static-fallback",
+    "reason": "Error: Static verification forced by VERIFY_RUNTIME_MODE=static.",
+    "checks": [
+      {
+        "label": "video-export-controls",
+        "file": "components/controlPanelGlobalExport.tsx",
+        "pass": true,
+        "found": [
+          "Record WebM",
+          "Recording Mode",
+          "Duration Seconds"
+        ],
+        "missing": []
+      },
+      {
+        "label": "canvas-capture-hook",
+        "file": "lib/useCanvasStream.ts",
+        "pass": true,
+        "found": [
+          "captureStream",
+          "MediaRecorder"
+        ],
+        "missing": []
+      },
+      {
+        "label": "video-export-recording",
+        "file": "lib/videoExportRecording.ts",
+        "pass": true,
+        "found": [
+          "Video exported.",
+          "new MediaRecorder"
+        ],
+        "missing": []
+      },
+      {
+        "label": "video-export-helper",
+        "file": "lib/videoExportHelpers.ts",
+        "pass": true,
+        "found": [
+          "video/webm",
+          "captureStream",
+          "anchor.download"
+        ],
+        "missing": []
+      }
+    ],
+    "passed": true
+  },
+  "error": null,
+  "logPath": "docs/archive/verification-suite-runs/2026-04-06T10-50-55-445Z/step-logs/verify_video.log",
+  "tail": "{\n  \"verifier\": \"video\",\n  \"appUrl\": \"http://127.0.0.1:3000/\",\n  \"requestedMode\": \"static\",\n  \"effectiveMode\": \"static\",\n  \"verificationTier\": \"source-static-fallback\",\n  \"host\": {\n    \"platform\": \"linux\",\n    \"release\": \"4.4.0\",\n    \"arch\": \"x64\",\n    \"node\": \"v22.16.0\",\n    \"requestedMode\": \"static\",\n    \"browserExecutableOverride\": null,\n    \"hostConstraints\": [\n      \"sandbox may block browser-managed navigation to localhost/file/data URLs\",\n      \"native browser binaries may be unavailable on constrained hosts\"\n    ]\n  },\n  \"liveAttempted\": false,\n  \"liveVerified\": false,\n  \"fallbackUsed\": true,\n  \"fallbackVerified\": true,\n  \"unresolvedLiveCoverage\": true,\n  \"mode\": \"static-fallback\",\n  \"reason\": \"Error: Static verification forced by VERIFY_RUNTIME_MODE=static.\",\n  \"checks\": [\n    {\n      \"label\": \"video-export-controls\",\n      \"file\": \"components/controlPanelGlobalExport.tsx\",\n      \"pass\": true,\n      \"found\": [\n        \"Record WebM\",\n        \"Recording Mode\",\n        \"Duration Seconds\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"canvas-capture-hook\",\n      \"file\": \"lib/useCanvasStream.ts\",\n      \"pass\": true,\n      \"found\": [\n        \"captureStream\",\n        \"MediaRecorder\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"video-export-recording\",\n      \"file\": \"lib/videoExportRecording.ts\",\n      \"pass\": true,\n      \"found\": [\n        \"Video exported.\",\n        \"new MediaRecorder\"\n      ],\n      \"missing\": []\n    },\n    {\n      \"label\": \"video-export-helper\",\n      \"file\": \"lib/videoExportHelpers.ts\",\n      \"pass\": true,\n      \"found\": [\n        \"video/webm\",\n        \"captureStream\",\n        \"anchor.download\"\n      ],\n      \"missing\": []\n    }\n  ],\n  \"passed\": true\n}"
+}

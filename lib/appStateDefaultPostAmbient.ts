@@ -1,0 +1,53 @@
+import type { ParticleConfig } from '../types';
+
+export const APP_STATE_DEFAULT_POST_AMBIENT: Partial<ParticleConfig> = {
+  // SDF Particle Shape & Pseudo-3D Lighting
+  sdfShapeEnabled: false,
+  sdfShape: 'sphere' as const,
+  sdfLightX: 0.5,
+  sdfLightY: 0.7,
+  sdfSpecularIntensity: 0.8,
+  sdfSpecularShininess: 16.0,
+  sdfAmbientLight: 0.3,
+
+  // Post Processing
+  postFxStackProfile: 'manual' as const,
+  postBloomEnabled: false,
+  postBloomIntensity: 1.0,
+  postBloomRadius: 0.4,
+  postBloomThreshold: 0.15,
+  postChromaticAberrationEnabled: false,
+  postChromaticAberrationOffset: 0.003,
+  postDofEnabled: false,
+  postDofFocusDistance: 0.02,
+  postDofFocalLength: 0.05,
+  postDofBokehScale: 2.0,
+  postNoiseEnabled: false,
+  postNoiseOpacity: 0.12,
+  postVignetteEnabled: false,
+  postVignetteOffset: 0.35,
+  postVignetteDarkness: 0.45,
+  postBrightnessContrastEnabled: false,
+  postBrightness: 0,
+  postContrastAmount: 0,
+  postN8aoEnabled: false,
+  postN8aoIntensity: 1.2,
+  postN8aoRadius: 3.5,
+  postN8aoDistanceFalloff: 1.0,
+  postN8aoQuality: 'medium' as const,
+  executionDiagnosticsEnabled: false,
+  executionDiagnosticsVerbose: false,
+  hybridSdfEnabled: false,
+  hybridPatchEnabled: false,
+  hybridFiberEnabled: false,
+  hybridGranularEnabled: false,
+  hybridMembraneEnabled: false,
+
+  // Ambient Layer
+  ambientEnabled: false,
+  ambientColor: '#888888',
+  ambientCount: 200,
+  ambientSpread: 800,
+  ambientSpeed: 0.003,
+  ambientBaseSize: 0.5,
+};

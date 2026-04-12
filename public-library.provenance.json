@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "bundledTargetPath": "public-library.json",
+  "canonicalSourcePath": "exports/public-library/latest-export.json",
+  "canonicalSourcePolicy": "repo-relative",
+  "canonicalSourceCommitPolicy": "ignored-local-default",
+  "canonicalSourceBootstrapPolicy": "bootstrap-from-bundled-target",
+  "sourceEmbeddedProvenancePolicy": "allowed-and-copied-to-last-sync",
+  "notes": [
+    "Place the private export JSON at exports/public-library/latest-export.json when you want a repo-local canonical source.",
+    "Use npm run sync:public-library with no args to sync from that canonical source path.",
+    "If the canonical source file is missing, bootstrap it from the bundled target with npm run bootstrap:public-library-source.",
+    "public-library.json remains a generated bundled target and should not be edited by hand.",
+    "The canonical source JSON is ignored by default and is not meant to be committed on every change.",
+    "When the source JSON embeds _publicLibrarySourceMeta, sync copies that metadata into public-library.provenance.json lastSync."
+  ],
+  "lastSync": null
+}

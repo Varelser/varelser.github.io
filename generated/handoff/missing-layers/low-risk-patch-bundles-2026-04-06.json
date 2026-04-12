@@ -1,0 +1,467 @@
+{
+  "meta": {
+    "generatedAt": "2026-04-06",
+    "repoRoot": "/mnt/data/workrepo/repo/kalokagathia",
+    "seedPath": "/mnt/data/KALOKAGATHIA_missing_layers_patch_overlay_rev5_2026-04-06/kalokagathia/generated/handoff/missing-layers/official-ledger-seed-2026-04-06.json",
+    "matrixPath": "/mnt/data/KALOKAGATHIA_missing_layers_patch_overlay_rev5_2026-04-06/kalokagathia/generated/handoff/missing-layers/worker-evidence-matrix-2026-04-06.json",
+    "outDir": "/mnt/data/KALOKAGATHIA_missing_layers_patch_overlay_rev5_2026-04-06/kalokagathia/generated/handoff/missing-layers/low-risk-patches-2026-04-06"
+  },
+  "summary": {
+    "bundleCount": 9,
+    "roleBundles": 4,
+    "familyBundles": 5,
+    "totalIncludedPackets": 26,
+    "futureNativeFamilies": 22,
+    "audioHotspots": 7,
+    "mainlineReviewBundles": 1
+  },
+  "bundles": [
+    {
+      "bundleId": "bundle-archive-duplicate-audit",
+      "title": "Archive duplicate audit low-risk patch bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "archive-duplicate-audit",
+      "recommendedRole": "docs-package-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "role-archive-duplicate-audit"
+      ],
+      "includedFamilies": [],
+      "includedGroups": [],
+      "verifyCommands": [
+        "node scripts/verify-package-integrity.mjs --strict"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "archive 整理を docs only にするか closeout 時にまとめるか"
+      ],
+      "candidateAdditiveOutputs": [
+        "archive duplicate audit md",
+        "same-relative-path danger list md",
+        "mainline escalation memo md"
+      ],
+      "riskNotes": [
+        "archive duplicate undefined 件は誤統合事故源",
+        "audit は low-risk だが archive 削除や移動は mainline 判断"
+      ]
+    },
+    {
+      "bundleId": "bundle-audio-hotspot-evidence",
+      "title": "Audio hotspot low-risk patch bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "audio-hotspot-audit",
+      "recommendedRole": "audio-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "role-audio-hotspots"
+      ],
+      "includedFamilies": [],
+      "includedGroups": [],
+      "verifyCommands": [
+        "npm run verify:audio",
+        "npm run typecheck:audio-reactive:attempt",
+        "node scripts/inspect-project-health.mjs"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "audio docs truth の最終同期",
+        "分割単位を patch に留めるか branch にするか"
+      ],
+      "candidateAdditiveOutputs": [
+        "audio hotspot evidence note md",
+        "audio verify checklist md",
+        "audio split proposal md"
+      ],
+      "riskNotes": [
+        "audio hotspot 7 本のうち長大 file を含む",
+        "local split 提案までは low-risk だが global routing 変更は禁止"
+      ]
+    },
+    {
+      "bundleId": "bundle-docs-package-evidence",
+      "title": "Docs and package evidence low-risk patch bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "docs-package-evidence",
+      "recommendedRole": "docs-package-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "role-docs-package"
+      ],
+      "includedFamilies": [],
+      "includedGroups": [],
+      "verifyCommands": [
+        "node scripts/doctor-package-handoff.mjs",
+        "node scripts/verify-package-integrity.mjs --strict"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "package class の最終確定",
+        "docs truth の最終同期タイミング"
+      ],
+      "candidateAdditiveOutputs": [
+        "docs evidence note md",
+        "package class evidence note md",
+        "handoff contradiction memo md"
+      ],
+      "riskNotes": [
+        "docs truth は先に確定しない",
+        "package class の最終決定は禁止"
+      ]
+    },
+    {
+      "bundleId": "bundle-fracture-family-closure-evidence",
+      "title": "Fracture family closure evidence bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "family-fracture",
+      "recommendedRole": "family-fracture-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "family-fracture-crack-propagation",
+        "family-fracture-debris-generation",
+        "family-fracture-lattice",
+        "family-fracture-voxel"
+      ],
+      "includedFamilies": [
+        "fracture-crack-propagation",
+        "fracture-debris-generation",
+        "fracture-lattice",
+        "fracture-voxel"
+      ],
+      "includedGroups": [
+        "fracture"
+      ],
+      "verifyCommands": [
+        "npm run verify:fracture-crack-propagation",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:fracture-debris-generation",
+        "npm run verify:fracture-lattice",
+        "npm run verify:fracture-voxel"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateAdditiveOutputs": [
+        "family evidence note md",
+        "family verify checklist md",
+        "family closure gap note md"
+      ],
+      "riskNotes": [
+        "4 family packet をまとめる group bundle",
+        "0 family が implemented 以外候補",
+        "scene binding と preset 導線の実接続を確認する"
+      ]
+    },
+    {
+      "bundleId": "bundle-mpm-family-closure-evidence",
+      "title": "MPM family closure evidence bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "family-mpm",
+      "recommendedRole": "family-mpm-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "family-mpm-granular",
+        "family-mpm-mud",
+        "family-mpm-paste",
+        "family-mpm-snow",
+        "family-mpm-viscoplastic"
+      ],
+      "includedFamilies": [
+        "mpm-granular",
+        "mpm-mud",
+        "mpm-paste",
+        "mpm-snow",
+        "mpm-viscoplastic"
+      ],
+      "includedGroups": [
+        "mpm"
+      ],
+      "verifyCommands": [
+        "npm run verify:mpm-granular",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:mpm-mud",
+        "npm run verify:mpm-paste",
+        "npm run verify:mpm-snow",
+        "npm run verify:mpm-viscoplastic"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateAdditiveOutputs": [
+        "family evidence note md",
+        "family verify checklist md",
+        "family closure gap note md"
+      ],
+      "riskNotes": [
+        "5 family packet をまとめる group bundle",
+        "0 family が implemented 以外候補",
+        "helper / runtime renderer の長大 file に注意する"
+      ]
+    },
+    {
+      "bundleId": "bundle-pbd-family-closure-evidence",
+      "title": "PBD family closure evidence bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "family-pbd",
+      "recommendedRole": "family-pbd-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "family-pbd-cloth",
+        "family-pbd-membrane",
+        "family-pbd-rope",
+        "family-pbd-softbody"
+      ],
+      "includedFamilies": [
+        "pbd-cloth",
+        "pbd-membrane",
+        "pbd-rope",
+        "pbd-softbody"
+      ],
+      "includedGroups": [
+        "pbd"
+      ],
+      "verifyCommands": [
+        "npm run verify:pbd-cloth",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:pbd-membrane",
+        "npm run verify:pbd-rope",
+        "npm run verify:pbd-softbody"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateAdditiveOutputs": [
+        "family evidence note md",
+        "family verify checklist md",
+        "family closure gap note md"
+      ],
+      "riskNotes": [
+        "4 family packet をまとめる group bundle",
+        "0 family が implemented 以外候補",
+        "surface integration / rope payload 接続不足を確認する"
+      ]
+    },
+    {
+      "bundleId": "bundle-specialist-family-mainline-review",
+      "title": "Specialist native family mainline review bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "family-specialist-native",
+      "recommendedRole": "specialist-mainline-review",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "includedPackets": [
+        "family-specialist-houdini-native",
+        "family-specialist-niagara-native",
+        "family-specialist-touchdesigner-native",
+        "family-specialist-unity-vfx-native"
+      ],
+      "includedFamilies": [
+        "specialist-houdini-native",
+        "specialist-niagara-native",
+        "specialist-touchdesigner-native",
+        "specialist-unity-vfx-native"
+      ],
+      "includedGroups": [
+        "specialist-native"
+      ],
+      "verifyCommands": [
+        "npm run verify:specialist-houdini-native",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:specialist-niagara-native",
+        "npm run verify:specialist-touchdesigner-native",
+        "npm run verify:specialist-unity-vfx-native"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateAdditiveOutputs": [
+        "specialist family evidence note md",
+        "specialist route / export gap note md",
+        "mainline review memo md"
+      ],
+      "riskNotes": [
+        "4 family packet をまとめる group bundle",
+        "0 family が implemented 以外候補",
+        "4 family は mainline-only 候補を含む",
+        "specialist family は final closure を mainline が握る"
+      ]
+    },
+    {
+      "bundleId": "bundle-verification-baseline",
+      "title": "Verification baseline low-risk patch bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "verification-baseline",
+      "recommendedRole": "verification-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "role-verification-core"
+      ],
+      "includedFamilies": [],
+      "includedGroups": [],
+      "verifyCommands": [
+        "npm run typecheck",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:future-native-safe-pipeline:core",
+        "node scripts/verify-package-integrity.mjs --strict"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "official verify criteria の最終固定"
+      ],
+      "candidateAdditiveOutputs": [
+        "verification checklist md",
+        "proof index md",
+        "verify gap note md"
+      ],
+      "riskNotes": [
+        "verify baseline は additive でよい",
+        "global criteria の最終固定は mainline へ戻す"
+      ]
+    },
+    {
+      "bundleId": "bundle-volumetric-family-closure-evidence",
+      "title": "Volumetric family closure evidence bundle",
+      "bundleClass": "low-risk-docs-generated-patch",
+      "scope": "family-volumetric",
+      "recommendedRole": "family-volumetric-worker",
+      "recommendedReturnUnit": "patch",
+      "includedPackets": [
+        "family-volumetric-advection",
+        "family-volumetric-density-transport",
+        "family-volumetric-light-shadow-coupling",
+        "family-volumetric-pressure-coupling",
+        "family-volumetric-smoke"
+      ],
+      "includedFamilies": [
+        "volumetric-advection",
+        "volumetric-density-transport",
+        "volumetric-light-shadow-coupling",
+        "volumetric-pressure-coupling",
+        "volumetric-smoke"
+      ],
+      "includedGroups": [
+        "volumetric"
+      ],
+      "verifyCommands": [
+        "npm run verify:volumetric-advection",
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:volumetric-density-transport",
+        "npm run verify:volumetric-smoke"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateAdditiveOutputs": [
+        "family evidence note md",
+        "family verify checklist md",
+        "family closure gap note md"
+      ],
+      "riskNotes": [
+        "5 family packet をまとめる group bundle",
+        "0 family が implemented 以外候補",
+        "scene / preset / runtime coupling の確認を先に行う"
+      ]
+    }
+  ],
+  "coverage": {
+    "familyGroups": {
+      "mpm": 5,
+      "pbd": 4,
+      "fracture": 4,
+      "volumetric": 5,
+      "specialist-native": 4
+    },
+    "rolePacketIds": [
+      "role-audio-hotspots",
+      "role-archive-duplicate-audit",
+      "role-verification-core",
+      "role-docs-package"
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "id": "mainline-residual-review-queue-2026-04-06",
+    "revision": "rev13",
+    "generatedAt": "2026-04-06T00:00:00+09:00"
+  },
+  "summary": {
+    "futureNativeFamilies": 22,
+    "directPatchCandidates": 18,
+    "directReviewReady": 17,
+    "directNeedsReview": 1,
+    "specialistMainlineOnly": 4,
+    "reviewQueueTotal": 5,
+    "reviewReadyFamilies": 21,
+    "reviewReadyPercent": 95.45
+  },
+  "needsReview": [
+    {
+      "familyId": "volumetric-smoke",
+      "patchId": "direct-volumetric-smoke",
+      "title": "Volumetric Smoke",
+      "group": "volumetric",
+      "progressPercent": 100,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "needs-review",
+      "ownershipClass": "conditional",
+      "verifyCommands": [
+        "npm run verify:volumetric-smoke",
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "reason": "closureCandidate が review-ready ではないため mainline 判定前に単独統合しない"
+    }
+  ],
+  "mainlineOnlySpecialist": [
+    {
+      "familyId": "specialist-houdini-native",
+      "patchId": "family-closure-specialist-houdini-native",
+      "title": "Houdini-like Native Bundle",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "reason": "specialist-native / mainline-only のため worker 直統合しない"
+    },
+    {
+      "familyId": "specialist-niagara-native",
+      "patchId": "family-closure-specialist-niagara-native",
+      "title": "Niagara-like Native Bundle",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "reason": "specialist-native / mainline-only のため worker 直統合しない"
+    },
+    {
+      "familyId": "specialist-touchdesigner-native",
+      "patchId": "family-closure-specialist-touchdesigner-native",
+      "title": "TouchDesigner-like Native Bundle",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "reason": "specialist-native / mainline-only のため worker 直統合しない"
+    },
+    {
+      "familyId": "specialist-unity-vfx-native",
+      "patchId": "family-closure-specialist-unity-vfx-native",
+      "title": "Unity VFX-like Native Bundle",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "reason": "specialist-native / mainline-only のため worker 直統合しない"
+    }
+  ]
+}

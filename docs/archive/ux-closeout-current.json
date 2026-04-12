@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-04-09T19:26:49.812Z",
+  "summary": {
+    "done": 5,
+    "deferred": 0,
+    "hostProofRequired": 1
+  },
+  "items": [
+    {
+      "id": "audio-bulk-edit-route-editor-slider-retirement",
+      "status": "done",
+      "implementationBoundary": "repo-complete",
+      "notes": "Audio bulk edit / route editor / slider retirement surface is implemented and closed in repo."
+    },
+    {
+      "id": "shortcut-undo-redo-formal-contract",
+      "status": "done",
+      "implementationBoundary": "repo-complete",
+      "notes": "Route editor scoped undo/redo is implemented with Cmd/Ctrl+Z, Shift+Cmd/Ctrl+Z, and Ctrl+Y."
+    },
+    {
+      "id": "legacy-hard-retirement",
+      "status": "done",
+      "implementationBoundary": "repo-complete",
+      "notes": "Safe legacy slider retirement finalized while preserving compatibility import fields."
+    },
+    {
+      "id": "legacy-controls-inventory",
+      "status": "done",
+      "implementationBoundary": "repo-complete",
+      "notes": "Legacy control inventory is intentionally retained as read-only documentation and migration context."
+    },
+    {
+      "id": "canonical-closeout-report",
+      "status": "done",
+      "implementationBoundary": "repo-complete",
+      "notes": "Canonical closeout report is covered by current docs + scorecard sync."
+    },
+    {
+      "id": "intel-mac-host-proof",
+      "status": "host-proof-required",
+      "implementationBoundary": "target-host",
+      "notes": "Real browser/export proof must still be captured on Intel Mac target host."
+    }
+  ],
+  "shortcutBoundary": {
+    "scope": "audio route editor only",
+    "supported": [
+      "Cmd/Ctrl+Z",
+      "Shift+Cmd/Ctrl+Z",
+      "Ctrl+Y"
+    ],
+    "coveredOperations": [
+      "bulk edit",
+      "reorder",
+      "import append/replace",
+      "preset pack apply",
+      "clear",
+      "legacy->routes sync"
+    ],
+    "excluded": [
+      "global preset timeline",
+      "non-route editor panels",
+      "target-host proof operations"
+    ]
+  }
+}

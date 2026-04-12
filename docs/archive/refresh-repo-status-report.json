@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-04-10T18:35:48.546Z",
+  "runId": "2026-04-10T18-35-47-326Z",
+  "runDir": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z",
+  "total": 7,
+  "parallelStageCount": 1,
+  "passedCount": 7,
+  "failedCount": 0,
+  "steps": [
+    {
+      "id": "verify:package-integrity",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 162,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z/step-logs/verify_package-integrity.log",
+      "tail": "[verify-package-integrity] repo 30/30 ok; zip not checked; host-runtime 2/2 ok"
+    },
+    {
+      "id": "verify:host-runtime",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 152,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z/step-logs/verify_host-runtime.log",
+      "tail": "[verify-host-runtime] host=linux/x64/gnu 2/2 ok"
+    },
+    {
+      "id": "verify:live-browser-readiness",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 1006,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z/step-logs/verify_live-browser-readiness.log",
+      "tail": "[verify-live-browser-readiness] host=linux/x64/gnu 6/6 ok"
+    },
+    {
+      "id": "verify:dead-code",
+      "stageIndex": 0,
+      "passed": true,
+      "durationMs": 752,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z/step-logs/verify_dead-code.log",
+      "tail": "{\n  \"reportPath\": \"docs/archive/dead-code-report.json\",\n  \"orphanModuleCount\": 166,\n  \"applicationCandidateCount\": 0,\n  \"devOnlyCandidateCount\": 27,\n  \"barrelOnlyCandidateCount\": 3,\n  \"applicationCandidates\": []\n}"
+    },
+    {
+      "id": "doctor:package-handoff",
+      "stageIndex": 1,
+      "passed": true,
+      "durationMs": 72,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z/step-logs/doctor_package-handoff.log",
+      "tail": "[doctor-package-handoff] class=full-local-dev\n[doctor-package-handoff] legacy aliases=full\n[doctor-package-handoff] root files・critical node_modules・zip structure が揃った local-dev complete handoff。\n[doctor-package-handoff] next: npm run verify:package-integrity:strict\n[doctor-package-handoff] effective-status=ready\n[doctor-package-handoff] host-runtime 2/2 ok on linux/x64/gnu\n[doctor-package-handoff] live-browser 6/6 ok on linux/x64/gnu\n[doctor-package-handoff] intel-mac runtime 2/2 ok on darwin/x64\n[doctor-package-handoff] intel-mac live-browser 5/6 ok on darwin/x64"
+    },
+    {
+      "id": "generate:closeout-report",
+      "stageIndex": 1,
+      "passed": true,
+      "durationMs": 60,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z/step-logs/generate_closeout-report.log",
+      "tail": "/mnt/data/work/kalokagathia_work_full-local-dev_2026-04-10_project-seed-replay-upgrade/docs/archive/closeout-report.json\n/mnt/data/work/kalokagathia_work_full-local-dev_2026-04-10_project-seed-replay-upgrade/docs/CLOSEOUT_REPORT_2026-04-10.md\n/mnt/data/work/kalokagathia_work_full-local-dev_2026-04-10_project-seed-replay-upgrade/docs/CLOSEOUT_REPORT_CURRENT.md"
+    },
+    {
+      "id": "report:repo-status",
+      "stageIndex": 1,
+      "passed": true,
+      "durationMs": 64,
+      "execution": "direct",
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "timedOut": false,
+      "logPath": "docs/archive/refresh-repo-status-runs/2026-04-10T18-35-47-326Z/step-logs/report_repo-status.log",
+      "tail": "/mnt/data/work/kalokagathia_work_full-local-dev_2026-04-10_project-seed-replay-upgrade/docs/archive/repo-status-current.json\n/mnt/data/work/kalokagathia_work_full-local-dev_2026-04-10_project-seed-replay-upgrade/docs/REPO_STATUS_CURRENT.md"
+    }
+  ]
+}

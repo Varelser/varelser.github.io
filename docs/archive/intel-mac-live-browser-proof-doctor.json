@@ -1,0 +1,296 @@
+{
+  "generatedAt": "2026-04-09T09:58:43.683Z",
+  "commands": [
+    {
+      "label": "draft-intel-mac-live-browser-proof-summary",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/draft-intel-mac-live-browser-proof-summary.mjs"
+      ],
+      "status": 0
+    },
+    {
+      "label": "verify-intel-mac-live-browser-proof-drop",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/verify-intel-mac-live-browser-proof-drop.mjs",
+        "--write",
+        "docs/archive/intel-mac-live-browser-proof-drop-check.json"
+      ],
+      "status": 0
+    },
+    {
+      "label": "verify-target-live-browser-readiness",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/verify-target-live-browser-readiness.mjs",
+        "--platform",
+        "darwin",
+        "--arch",
+        "x64",
+        "--home-dir",
+        "/home/oai",
+        "--write",
+        "docs/archive/target-live-browser-readiness-intel-mac.json"
+      ],
+      "status": 0
+    },
+    {
+      "label": "doctor-package-handoff",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/doctor-package-handoff.mjs",
+        "--write",
+        "docs/archive/package-handoff-doctor.json"
+      ],
+      "status": 0
+    },
+    {
+      "label": "generate-intel-mac-live-browser-proof-status-report",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/generate-intel-mac-live-browser-proof-status-report.mjs",
+        "--write-json",
+        "docs/archive/intel-mac-live-browser-proof-status.json",
+        "--write-markdown",
+        "docs/archive/intel-mac-live-browser-proof-status.md"
+      ],
+      "status": 0
+    },
+    {
+      "label": "generate-intel-mac-live-browser-proof-blocker-report",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/generate-intel-mac-live-browser-proof-blocker-report.mjs",
+        "--write-json",
+        "docs/archive/intel-mac-live-browser-proof-blockers.json",
+        "--write-markdown",
+        "docs/archive/intel-mac-live-browser-proof-blockers.md"
+      ],
+      "status": 0
+    },
+    {
+      "label": "generate-intel-mac-live-browser-proof-remediation-report",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/generate-intel-mac-live-browser-proof-remediation-report.mjs",
+        "--write-json",
+        "docs/archive/intel-mac-live-browser-proof-remediation.json",
+        "--write-markdown",
+        "docs/archive/intel-mac-live-browser-proof-remediation.md"
+      ],
+      "status": 0
+    }
+  ],
+  "summary": {
+    "dropPassed": 4,
+    "dropTotal": 11,
+    "dropFixtureCount": 0,
+    "invalidFixtureCount": 0,
+    "structuredProofFileCount": 0,
+    "proofSummaryOk": false,
+    "targetPassed": 5,
+    "targetTotal": 6,
+    "currentPassed": 6,
+    "currentTotal": 6,
+    "ingestedFixtures": 0,
+    "ingestedProofFiles": 0,
+    "finalizedTargetPassed": null,
+    "finalizedTargetTotal": null,
+    "handoffEffectiveStatus": "ready",
+    "statusBlockerCount": 8,
+    "projectedPassed": 2,
+    "projectedTotal": 6,
+    "projectedBlockerCount": 6,
+    "remediationExactFileCount": 7
+  },
+  "dropFixtureCheck": {
+    "kind": "fixture-json",
+    "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+    "ok": false,
+    "bundleCount": 0,
+    "fixtureCount": 0,
+    "fixtureNames": []
+  },
+  "dropFixtureValidCheck": {
+    "kind": "fixture-json-valid",
+    "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+    "ok": false,
+    "parsedFixtures": 0,
+    "invalidFixtureCount": 0,
+    "invalidFixtures": []
+  },
+  "dropProofSummaryCheck": {
+    "kind": "proof-summary-json",
+    "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json",
+    "ok": false,
+    "parsed": true,
+    "errors": [],
+    "metadata": {
+      "status": "pending",
+      "capturedAt": "2026-04-08T20:18:59.096Z",
+      "hostPlatform": "darwin",
+      "hostArch": "x64",
+      "browserName": "Chromium",
+      "executablePath": null,
+      "screenshotCount": 0,
+      "logCount": 1,
+      "exportCount": 0,
+      "sourceProjectSlug": null,
+      "missingArtifactCount": 0,
+      "slugLinked": false
+    }
+  },
+  "dropStructuredProofCheck": {
+    "kind": "structured-proof-files",
+    "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/logs/*.(log|txt|json)",
+    "ok": false,
+    "proofFileCount": 0,
+    "proofFiles": []
+  },
+  "targetBrowserCheck": {
+    "kind": "browser-executable",
+    "target": "/home/oai/Library/Caches/ms-playwright/chromium-1208/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "ok": false,
+    "executablePath": null,
+    "executableSource": null,
+    "inferred": true,
+    "candidatePaths": [
+      "/home/oai/Library/Caches/ms-playwright/chromium-1208/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "/home/oai/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    ]
+  },
+  "targetManifestCheck": {
+    "kind": "real-export-manifest",
+    "target": "fixtures/project-state/real-export/manifest.json",
+    "ok": true,
+    "manifestPath": "/mnt/data/finalrepo/kalokagathia_work/fixtures/project-state/real-export/manifest.json",
+    "entryCount": 1
+  },
+  "targetReadinessReportCheck": {
+    "kind": "real-export-readiness-report",
+    "target": "docs/archive/phase5-real-export-readiness-report.json",
+    "ok": true,
+    "reportPath": "/mnt/data/finalrepo/kalokagathia_work/docs/archive/phase5-real-export-readiness-report.json",
+    "verifiedCount": 1,
+    "failingCount": 0
+  },
+  "projectionReport": {
+    "generatedAt": "2026-04-06T00:14:16.613Z",
+    "summary": {
+      "currentTargetPassed": 2,
+      "currentTargetTotal": 6,
+      "projectedAfterFinalizePassed": 2,
+      "projectedAfterFinalizeTotal": 6,
+      "blockerCount": 6
+    },
+    "projectedChecks": [
+      {
+        "kind": "node-module",
+        "ok": true,
+        "rationale": "playwright module already present"
+      },
+      {
+        "kind": "browser-executable",
+        "ok": false,
+        "rationale": "browser executable still missing on target host"
+      },
+      {
+        "kind": "real-export-fixture",
+        "ok": false,
+        "rationale": "no valid dropped fixture available yet"
+      },
+      {
+        "kind": "real-export-manifest-after-finalize",
+        "ok": false,
+        "rationale": "manifest cannot be regenerated until a valid fixture is dropped"
+      },
+      {
+        "kind": "real-export-readiness-report-after-finalize",
+        "ok": false,
+        "rationale": "finalize still lacks valid fixture/proof summary/artifact paths/structured proof evidence"
+      },
+      {
+        "kind": "proof-notes",
+        "ok": true,
+        "rationale": "proof notes template already present"
+      }
+    ],
+    "blockers": [
+      "valid real-export fixture JSON",
+      "captured real-export-proof.json",
+      "artifact paths in real-export-proof.json that point at real files",
+      "capture.sourceProjectSlug matched to exported project JSON",
+      "structured proof artifact (.log/.txt/.json)",
+      "browser executable on Intel Mac target host"
+    ],
+    "nextAction": "close the remaining blockers, then rerun finalize to lift target live browser readiness"
+  },
+  "remediationReport": {
+    "generatedAt": "2026-04-09T09:58:43.669Z",
+    "summary": {
+      "dropPassed": 4,
+      "dropTotal": 11,
+      "targetPassed": 5,
+      "targetTotal": 6,
+      "projectedAfterFinalizePassed": 2,
+      "projectedAfterFinalizeTotal": 6,
+      "blockerCount": 8
+    },
+    "exactFiles": [
+      {
+        "kind": "real-export-fixture",
+        "path": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-<slug>.json",
+        "why": "real browser export JSON がまだ無い"
+      },
+      {
+        "kind": "bundle-drop",
+        "path": "exports/intel-mac-live-browser-proof-drop/incoming/kalokagathia-intel-mac-live-browser-proof-<slug>.zip",
+        "why": "個別ファイルの代わりに bundle zip を 1 本置くこともできる"
+      },
+      {
+        "kind": "proof-summary",
+        "path": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json",
+        "why": "captured 状態へ更新されていない"
+      },
+      {
+        "kind": "summary-artifacts",
+        "path": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/screenshots/*",
+        "why": "summary に書いた artifact path が実在する必要がある"
+      },
+      {
+        "kind": "summary-artifacts",
+        "path": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/logs/*",
+        "why": "summary に書いた artifact path が実在する必要がある"
+      },
+      {
+        "kind": "structured-log",
+        "path": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/logs/<build|verify|console>.log",
+        "why": "proof notes 以外に structured proof が必要"
+      },
+      {
+        "kind": "browser-executable",
+        "path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "why": "Intel Mac 実機の browser executable が必要"
+      }
+    ],
+    "commands": [
+      "npm run scaffold:intel-mac-live-browser-proof-drop",
+      "npm run run:intel-mac-live-browser-proof-pipeline",
+      "npm run draft:intel-mac-live-browser-proof-summary",
+      "npm run verify:intel-mac-live-browser-proof-drop",
+      "npm run finalize:intel-mac-live-browser-proof -- --browser-executable-path \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\"",
+      "npm run doctor:intel-mac-live-browser-proof:refresh"
+    ],
+    "nextFocus": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-<slug>.json"
+  },
+  "nextSteps": [
+    "Intel Mac 実機で real-export JSON を 1 本採取し、exports/intel-mac-live-browser-proof-drop/real-export/ へ置く",
+    "または Intel Mac 実機で採った proof 一式を bundle zip にして exports/intel-mac-live-browser-proof-drop/incoming/ へ置く",
+    "npm run draft:intel-mac-live-browser-proof-summary を実行して proof summary を自動下書きし、その後 captured 状態へ仕上げる",
+    "build log / verify log / console dump のいずれかを phase5-proof-input へ追加する",
+    "Intel Mac 実機で npx playwright install chromium を実行し、必要なら --browser-executable-path を付けて再監査する"
+  ]
+}

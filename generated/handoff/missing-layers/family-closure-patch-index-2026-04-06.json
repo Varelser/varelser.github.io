@@ -1,0 +1,1929 @@
+{
+  "meta": {
+    "generatedAt": "2026-04-06",
+    "repoRoot": "/mnt/data/session/repo/kalokagathia",
+    "matrixPath": "/mnt/data/KALOKAGATHIA_missing_layers_patch_overlay_rev6_2026-04-06/kalokagathia/generated/handoff/missing-layers/worker-evidence-matrix-2026-04-06.json",
+    "lowRiskPath": "/mnt/data/KALOKAGATHIA_missing_layers_patch_overlay_rev6_2026-04-06/kalokagathia/generated/handoff/missing-layers/low-risk-patch-bundles-2026-04-06.json",
+    "outDir": "/mnt/data/KALOKAGATHIA_missing_layers_patch_overlay_rev6_2026-04-06/kalokagathia/generated/handoff/missing-layers/family-closure-patches-2026-04-06"
+  },
+  "summary": {
+    "familyPatchCount": 22,
+    "directPatchCandidates": 18,
+    "mainlineReviewCandidates": 4,
+    "implementedCandidates": 22,
+    "reviewReadyCandidates": 21,
+    "familyCoveragePercent": 100,
+    "groups": {
+      "fracture": 4,
+      "mpm": 5,
+      "pbd": 4,
+      "specialist-native": 4,
+      "volumetric": 5
+    }
+  },
+  "familyPatches": [
+    {
+      "patchId": "family-closure-pbd-cloth",
+      "title": "PBD Cloth",
+      "familyId": "pbd-cloth",
+      "group": "pbd",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-pbd-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:pbd-cloth",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesPbd.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativePbdFamilyPreview.ts",
+        "lib/future-native-families/futureNativePbdMembraneRoutePreview.ts",
+        "lib/future-native-families/futureNativePbdRopeRoutePreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdClothSoftbody.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdMembrane.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesPbdClothSoftbody.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesPbdMembrane.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.js",
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.js",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothUi.ts",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.js",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.ts",
+        "lib/future-native-families/starter-runtime/pbd_membraneAdapter.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "pbd-cloth evidence note md",
+        "pbd-cloth verify checklist md",
+        "pbd-cloth closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "surface integration / rope payload の取り違えに注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-pbd-membrane",
+      "title": "PBD Membrane",
+      "familyId": "pbd-membrane",
+      "group": "pbd",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-pbd-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:pbd-membrane",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesPbd.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativePbdFamilyPreview.ts",
+        "lib/future-native-families/futureNativePbdMembraneRoutePreview.ts",
+        "lib/future-native-families/futureNativePbdRopeRoutePreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdClothSoftbody.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdMembrane.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesPbdClothSoftbody.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesPbdMembrane.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.js",
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.js",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothUi.ts",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.js",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.ts",
+        "lib/future-native-families/starter-runtime/pbd_membraneAdapter.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "pbd-membrane evidence note md",
+        "pbd-membrane verify checklist md",
+        "pbd-membrane closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "surface integration / rope payload の取り違えに注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-pbd-rope",
+      "title": "PBD Rope",
+      "familyId": "pbd-rope",
+      "group": "pbd",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-pbd-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:pbd-rope",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesPbd.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativePbdFamilyPreview.ts",
+        "lib/future-native-families/futureNativePbdMembraneRoutePreview.ts",
+        "lib/future-native-families/futureNativePbdRopeRoutePreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdClothSoftbody.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdMembrane.ts",
+        "lib/future-native-families/futureNativeSceneBridgeRopeAuroraThreads.ts",
+        "lib/future-native-families/futureNativeSceneBridgeRopePayload.js"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.js",
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.js",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothUi.ts",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.js",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.ts",
+        "lib/future-native-families/starter-runtime/pbd_membraneAdapter.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "pbd-rope evidence note md",
+        "pbd-rope verify checklist md",
+        "pbd-rope closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "surface integration / rope payload の取り違えに注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-pbd-softbody",
+      "title": "PBD Softbody",
+      "familyId": "pbd-softbody",
+      "group": "pbd",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-pbd-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:pbd-softbody",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesPbd.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativePbdFamilyPreview.ts",
+        "lib/future-native-families/futureNativePbdMembraneRoutePreview.ts",
+        "lib/future-native-families/futureNativePbdRopeRoutePreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdClothSoftbody.ts",
+        "lib/future-native-families/futureNativeSceneBridgePbdMembrane.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesPbdClothSoftbody.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesPbdMembrane.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.js",
+        "lib/future-native-families/starter-runtime/pbd_clothAdapter.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.js",
+        "lib/future-native-families/starter-runtime/pbd_clothRenderer.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSchema.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.js",
+        "lib/future-native-families/starter-runtime/pbd_clothSolver.ts",
+        "lib/future-native-families/starter-runtime/pbd_clothUi.ts",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.js",
+        "lib/future-native-families/starter-runtime/pbd_collisionConstraints.ts",
+        "lib/future-native-families/starter-runtime/pbd_membraneAdapter.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "pbd-softbody evidence note md",
+        "pbd-softbody verify checklist md",
+        "pbd-softbody closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "surface integration / rope payload の取り違えに注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-mpm-granular",
+      "title": "MPM Granular",
+      "familyId": "mpm-granular",
+      "group": "mpm",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-mpm-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:mpm-granular",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesMpm.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeMpmDedicatedRoutePreview.ts",
+        "lib/future-native-families/futureNativeMpmFamilyPreview.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmGranular.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmInputs.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmMudPaste.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.js",
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.js",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.js",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererShells.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularSchema.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "mpm-granular evidence note md",
+        "mpm-granular verify checklist md",
+        "mpm-granular closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "starter-runtime renderer helper と scene bridge の差分に注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-mpm-mud",
+      "title": "MPM Mud",
+      "familyId": "mpm-mud",
+      "group": "mpm",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-mpm-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:mpm-mud",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesMpm.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeMpmDedicatedRoutePreview.ts",
+        "lib/future-native-families/futureNativeMpmFamilyPreview.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmGranular.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmInputs.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmMudPaste.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.js",
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.js",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.js",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererShells.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularSchema.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "mpm-mud evidence note md",
+        "mpm-mud verify checklist md",
+        "mpm-mud closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "starter-runtime renderer helper と scene bridge の差分に注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-mpm-paste",
+      "title": "MPM Paste",
+      "familyId": "mpm-paste",
+      "group": "mpm",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-mpm-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:mpm-paste",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesMpm.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeMpmDedicatedRoutePreview.ts",
+        "lib/future-native-families/futureNativeMpmFamilyPreview.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmGranular.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmInputs.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmMudPaste.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.js",
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.js",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.js",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererShells.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularSchema.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "mpm-paste evidence note md",
+        "mpm-paste verify checklist md",
+        "mpm-paste closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "starter-runtime renderer helper と scene bridge の差分に注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-mpm-snow",
+      "title": "MPM Snow",
+      "familyId": "mpm-snow",
+      "group": "mpm",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-mpm-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:mpm-snow",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesMpm.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeMpmDedicatedRoutePreview.ts",
+        "lib/future-native-families/futureNativeMpmFamilyPreview.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmGranular.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmInputs.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmMudPaste.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.js",
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.js",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.js",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererShells.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularSchema.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "mpm-snow evidence note md",
+        "mpm-snow verify checklist md",
+        "mpm-snow closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "starter-runtime renderer helper と scene bridge の差分に注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-mpm-viscoplastic",
+      "title": "MPM Viscoplastic",
+      "familyId": "mpm-viscoplastic",
+      "group": "mpm",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-mpm-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:mpm-viscoplastic",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesMpm.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeMpmDedicatedRoutePreview.ts",
+        "lib/future-native-families/futureNativeMpmFamilyPreview.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmGranular.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmInputs.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmMudPaste.ts",
+        "lib/future-native-families/futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.js",
+        "lib/future-native-families/starter-runtime/mpm_granularAdapter.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.js",
+        "lib/future-native-families/starter-runtime/mpm_granularConstraints.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.js",
+        "lib/future-native-families/starter-runtime/mpm_granularGrid.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRenderer.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.js",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularRendererShells.ts",
+        "lib/future-native-families/starter-runtime/mpm_granularSchema.js"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "mpm-viscoplastic evidence note md",
+        "mpm-viscoplastic verify checklist md",
+        "mpm-viscoplastic closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "starter-runtime renderer helper と scene bridge の差分に注意"
+      ]
+    },
+    {
+      "patchId": "family-closure-fracture-crack-propagation",
+      "title": "Crack Propagation",
+      "familyId": "fracture-crack-propagation",
+      "group": "fracture",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-fracture-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:fracture-crack-propagation",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 13,
+      "existingRuntimeFiles": 13,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFractureDedicatedReportPreview.ts",
+        "lib/future-native-families/futureNativeFractureFamilyPreview.ts",
+        "lib/future-native-families/futureNativeFractureLatticeReportPreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureDedicated.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureInputs.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesFracture.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "fracture-crack-propagation evidence note md",
+        "fracture-crack-propagation verify checklist md",
+        "fracture-crack-propagation closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 13/13 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "preset / scene binding と crack / debris runtime の対応確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-fracture-debris-generation",
+      "title": "Debris Generation",
+      "familyId": "fracture-debris-generation",
+      "group": "fracture",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-fracture-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:fracture-debris-generation",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 13,
+      "existingRuntimeFiles": 13,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFractureDedicatedReportPreview.ts",
+        "lib/future-native-families/futureNativeFractureFamilyPreview.ts",
+        "lib/future-native-families/futureNativeFractureLatticeReportPreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureDedicated.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureInputs.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesFracture.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "fracture-debris-generation evidence note md",
+        "fracture-debris-generation verify checklist md",
+        "fracture-debris-generation closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 13/13 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "preset / scene binding と crack / debris runtime の対応確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-fracture-lattice",
+      "title": "Lattice Fracture",
+      "familyId": "fracture-lattice",
+      "group": "fracture",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-fracture-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:fracture-lattice",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 13,
+      "existingRuntimeFiles": 13,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFractureDedicatedReportPreview.ts",
+        "lib/future-native-families/futureNativeFractureFamilyPreview.ts",
+        "lib/future-native-families/futureNativeFractureLatticeReportPreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureDedicated.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureInputs.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesFracture.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "fracture-lattice evidence note md",
+        "fracture-lattice verify checklist md",
+        "fracture-lattice closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 13/13 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "preset / scene binding と crack / debris runtime の対応確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-fracture-voxel",
+      "title": "Voxel Fracture",
+      "familyId": "fracture-voxel",
+      "group": "fracture",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-fracture-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:fracture-voxel",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 13,
+      "existingRuntimeFiles": 13,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFractureDedicatedReportPreview.ts",
+        "lib/future-native-families/futureNativeFractureFamilyPreview.ts",
+        "lib/future-native-families/futureNativeFractureLatticeReportPreview.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureDedicated.ts",
+        "lib/future-native-families/futureNativeSceneBridgeFractureInputs.ts",
+        "lib/future-native-families/futureNativeScenePresetPatchesFracture.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "fracture-voxel evidence note md",
+        "fracture-voxel verify checklist md",
+        "fracture-voxel closure gap memo md"
+      ],
+      "exitCriteria": [
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 13/13 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "preset / scene binding と crack / debris runtime の対応確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-volumetric-advection",
+      "title": "Volumetric Advection",
+      "familyId": "volumetric-advection",
+      "group": "volumetric",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-volumetric-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:volumetric-advection",
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationVolumetricFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFamiliesVolumetric.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBundleCoverage.ts",
+        "lib/future-native-families/futureNativeNonVolumetricFamilyMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteGroupTrend.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteHighlights.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "volumetric-advection evidence note md",
+        "volumetric-advection verify checklist md",
+        "volumetric-advection closure gap memo md"
+      ],
+      "exitCriteria": [
+        "volumetric route verify の結果を添付する",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "route verify と density / pressure / lighting coupling の組み合わせ確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-volumetric-density-transport",
+      "title": "Density Transport",
+      "familyId": "volumetric-density-transport",
+      "group": "volumetric",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-volumetric-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:volumetric-density-transport",
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationVolumetricFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFamiliesVolumetric.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBundleCoverage.ts",
+        "lib/future-native-families/futureNativeNonVolumetricFamilyMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteGroupTrend.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteHighlights.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "volumetric-density-transport evidence note md",
+        "volumetric-density-transport verify checklist md",
+        "volumetric-density-transport closure gap memo md"
+      ],
+      "exitCriteria": [
+        "volumetric route verify の結果を添付する",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "route verify と density / pressure / lighting coupling の組み合わせ確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-volumetric-light-shadow-coupling",
+      "title": "Volumetric Light/Shadow Coupling",
+      "familyId": "volumetric-light-shadow-coupling",
+      "group": "volumetric",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-volumetric-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationVolumetricFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFamiliesVolumetric.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBundleCoverage.ts",
+        "lib/future-native-families/futureNativeNonVolumetricFamilyMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteGroupTrend.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteHighlights.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "volumetric-light-shadow-coupling evidence note md",
+        "volumetric-light-shadow-coupling verify checklist md",
+        "volumetric-light-shadow-coupling closure gap memo md"
+      ],
+      "exitCriteria": [
+        "volumetric route verify の結果を添付する",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "route verify と density / pressure / lighting coupling の組み合わせ確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-volumetric-pressure-coupling",
+      "title": "Volumetric Pressure Coupling",
+      "familyId": "volumetric-pressure-coupling",
+      "group": "volumetric",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-volumetric-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationVolumetricFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFamiliesVolumetric.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBundleCoverage.ts",
+        "lib/future-native-families/futureNativeNonVolumetricFamilyMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteGroupTrend.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteHighlights.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "volumetric-pressure-coupling evidence note md",
+        "volumetric-pressure-coupling verify checklist md",
+        "volumetric-pressure-coupling closure gap memo md"
+      ],
+      "exitCriteria": [
+        "volumetric route verify の結果を添付する",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / conditional",
+        "route verify と density / pressure / lighting coupling の組み合わせ確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-volumetric-smoke",
+      "title": "Volumetric Smoke",
+      "familyId": "volumetric-smoke",
+      "group": "volumetric",
+      "progressPercent": 100,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "needs-review",
+      "ownershipClass": "conditional",
+      "recommendedReturnUnit": "patch",
+      "lowRiskBundleId": "bundle-volumetric-family-closure-evidence",
+      "verifyCommands": [
+        "npm run verify:volumetric-smoke",
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationVolumetricFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesProgress.ts",
+        "lib/future-native-families/futureNativeFamiliesRegistry.ts",
+        "lib/future-native-families/futureNativeFamiliesVolumetric.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts",
+        "lib/future-native-families/futureNativeNonVolumetricBundleCoverage.ts",
+        "lib/future-native-families/futureNativeNonVolumetricFamilyMetadata.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteGroupTrend.ts",
+        "lib/future-native-families/futureNativeNonVolumetricRouteHighlights.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportAdapter.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportDerived.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportInjector.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportLighting.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportObstacle.ts",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.js",
+        "lib/future-native-families/starter-runtime/volumetric_density_transportRenderer.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "volumetric-smoke evidence note md",
+        "volumetric-smoke verify checklist md",
+        "volumetric-smoke closure gap memo md"
+      ],
+      "exitCriteria": [
+        "volumetric route verify の結果を添付する",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "100% progress candidate / project-integrated",
+        "implemented / needs-review / conditional",
+        "route verify と density / pressure / lighting coupling の組み合わせ確認が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-specialist-houdini-native",
+      "title": "Houdini-like Native Bundle",
+      "familyId": "specialist-houdini-native",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "lowRiskBundleId": "bundle-specialist-family-mainline-review",
+      "verifyCommands": [
+        "npm run verify:specialist-houdini-native",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesAcceptance.ts",
+        "lib/future-native-families/futureNativeFamiliesAiPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesBacklog.ts",
+        "lib/future-native-families/futureNativeFamiliesDefaults.ts",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesImplementationPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegration.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationProject.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "specialist-houdini-native evidence note md",
+        "specialist-houdini-native verify checklist md",
+        "specialist-houdini-native closure gap memo md",
+        "specialist-houdini-native mainline review memo md"
+      ],
+      "exitCriteria": [
+        "specialist route / export / runtime 差分を mainline review へ戻す",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / mainline-only",
+        "specialist family は docs-only で閉じず mainline review が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-specialist-niagara-native",
+      "title": "Niagara-like Native Bundle",
+      "familyId": "specialist-niagara-native",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "lowRiskBundleId": "bundle-specialist-family-mainline-review",
+      "verifyCommands": [
+        "npm run verify:specialist-niagara-native",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesAcceptance.ts",
+        "lib/future-native-families/futureNativeFamiliesAiPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesBacklog.ts",
+        "lib/future-native-families/futureNativeFamiliesDefaults.ts",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesImplementationPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegration.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationProject.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "specialist-niagara-native evidence note md",
+        "specialist-niagara-native verify checklist md",
+        "specialist-niagara-native closure gap memo md",
+        "specialist-niagara-native mainline review memo md"
+      ],
+      "exitCriteria": [
+        "specialist route / export / runtime 差分を mainline review へ戻す",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / mainline-only",
+        "specialist family は docs-only で閉じず mainline review が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-specialist-touchdesigner-native",
+      "title": "TouchDesigner-like Native Bundle",
+      "familyId": "specialist-touchdesigner-native",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "lowRiskBundleId": "bundle-specialist-family-mainline-review",
+      "verifyCommands": [
+        "npm run verify:specialist-touchdesigner-native",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesAcceptance.ts",
+        "lib/future-native-families/futureNativeFamiliesAiPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesBacklog.ts",
+        "lib/future-native-families/futureNativeFamiliesDefaults.ts",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesImplementationPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegration.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationProject.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "specialist-touchdesigner-native evidence note md",
+        "specialist-touchdesigner-native verify checklist md",
+        "specialist-touchdesigner-native closure gap memo md",
+        "specialist-touchdesigner-native mainline review memo md"
+      ],
+      "exitCriteria": [
+        "specialist route / export / runtime 差分を mainline review へ戻す",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / mainline-only",
+        "specialist family は docs-only で閉じず mainline review が必要"
+      ]
+    },
+    {
+      "patchId": "family-closure-specialist-unity-vfx-native",
+      "title": "Unity VFX-like Native Bundle",
+      "familyId": "specialist-unity-vfx-native",
+      "group": "specialist-native",
+      "progressPercent": 98,
+      "officialStateCandidate": "implemented",
+      "closureCandidate": "review-ready",
+      "ownershipClass": "mainline-only",
+      "recommendedReturnUnit": "patch-with-mainline-review",
+      "lowRiskBundleId": "bundle-specialist-family-mainline-review",
+      "verifyCommands": [
+        "npm run verify:specialist-unity-vfx-native",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "declaredEvidencePaths": 24,
+      "existingEvidencePaths": 24,
+      "declaredRuntimeFiles": 16,
+      "existingRuntimeFiles": 16,
+      "keyEvidencePaths": [
+        "docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md",
+        "lib/future-native-families/futureNativeFamiliesAcceptance.ts",
+        "lib/future-native-families/futureNativeFamiliesAiPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesBacklog.ts",
+        "lib/future-native-families/futureNativeFamiliesDefaults.ts",
+        "lib/future-native-families/futureNativeFamiliesFracture.ts",
+        "lib/future-native-families/futureNativeFamiliesImplementationPackets.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegration.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationFractureFixtures.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationProject.ts",
+        "lib/future-native-families/futureNativeFamiliesIntegrationShared.ts"
+      ],
+      "keyRuntimeFiles": [
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeAdapter.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeRenderer.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererDebris.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererPatterns.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShared.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeRendererShells.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSchema.ts",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.js",
+        "lib/future-native-families/starter-runtime/fracture_latticeSolver.ts"
+      ],
+      "touchableZones": [
+        "docs/handoff",
+        "lib/future-native-families"
+      ],
+      "untouchedTrunks": [
+        "manifest 正本の意味変更",
+        "registry 正本の意味変更",
+        "routing 正本の意味変更",
+        "package class の最終決定",
+        "CURRENT_STATUS.md の最終同期",
+        "REVIEW.md / DOCS_INDEX.md の最終 truth 化"
+      ],
+      "mainlineDecisionPoints": [
+        "officialState の最終確定",
+        "closureCandidate の最終確定",
+        "parallel / conditional / mainline-only の最終確定",
+        "merge unit を patch のまま保持するか branch 化するか"
+      ],
+      "candidateOutputs": [
+        "specialist-unity-vfx-native evidence note md",
+        "specialist-unity-vfx-native verify checklist md",
+        "specialist-unity-vfx-native closure gap memo md",
+        "specialist-unity-vfx-native mainline review memo md"
+      ],
+      "exitCriteria": [
+        "specialist route / export / runtime 差分を mainline review へ戻す",
+        "family evidence note が現物パスと矛盾しない",
+        "verify 実行結果と officialState 候補が矛盾しない",
+        "scene bridge / preset patch / runtime の接続確認結果が記録される",
+        "manifest / registry / routing の正本意味変更を含めない",
+        "mainline 判断点が返却 bundle に明記される"
+      ],
+      "riskNotes": [
+        "evidence 24/24 paths exist",
+        "runtime 16/16 files exist",
+        "98% progress candidate / project-integrated",
+        "implemented / review-ready / mainline-only",
+        "specialist family は docs-only で閉じず mainline review が必要"
+      ]
+    }
+  ]
+}

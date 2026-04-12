@@ -1,0 +1,94 @@
+# MPM Granular direct patch candidate
+
+- patchId: direct-mpm-granular
+- familyId: mpm-granular
+- group: mpm
+- progressPercent: 98
+- officialStateCandidate: implemented
+- closureCandidate: review-ready
+- ownershipClass: conditional
+- mergeClass: direct-patch-candidate
+
+## Ready-to-return outputs
+
+- mpm-granular evidence note md
+- mpm-granular verify checklist md
+- mpm-granular closure gap memo md
+- mpm-granular mainline handoff summary md
+
+## Verify commands
+
+- `npm run verify:mpm-granular`
+- `npm run verify:future-native-nonvolumetric-routes`
+- `npm run verify:future-native-project-state-fast`
+
+## Touchable zones
+
+- docs/handoff
+- lib/future-native-families
+
+## Key evidence paths
+
+- docs/handoff/FUTURE_NATIVE_RELEASE_REPORT.md
+- lib/future-native-families/futureNativeFamiliesIntegrationShared.ts
+- lib/future-native-families/futureNativeFamiliesMpm.ts
+- lib/future-native-families/futureNativeFamiliesProgress.ts
+- lib/future-native-families/futureNativeFamiliesRegistry.ts
+- lib/future-native-families/futureNativeMpmDedicatedRoutePreview.ts
+- lib/future-native-families/futureNativeMpmFamilyPreview.ts
+- lib/future-native-families/futureNativeNonVolumetricBindingMetadataMpm.ts
+- lib/future-native-families/futureNativeSceneBridgeMpmGranular.ts
+- lib/future-native-families/futureNativeSceneBridgeMpmInputs.ts
+- lib/future-native-families/futureNativeSceneBridgeMpmMudPaste.ts
+- lib/future-native-families/futureNativeSceneBridgeMpmRuntime.ts
+
+## Key runtime files
+
+- lib/future-native-families/starter-runtime/mpm_granularAdapter.js
+- lib/future-native-families/starter-runtime/mpm_granularAdapter.ts
+- lib/future-native-families/starter-runtime/mpm_granularConstraints.js
+- lib/future-native-families/starter-runtime/mpm_granularConstraints.ts
+- lib/future-native-families/starter-runtime/mpm_granularGrid.js
+- lib/future-native-families/starter-runtime/mpm_granularGrid.ts
+- lib/future-native-families/starter-runtime/mpm_granularRenderer.js
+- lib/future-native-families/starter-runtime/mpm_granularRenderer.ts
+- lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.js
+- lib/future-native-families/starter-runtime/mpm_granularRendererHelpers.ts
+- lib/future-native-families/starter-runtime/mpm_granularRendererShells.ts
+- lib/future-native-families/starter-runtime/mpm_granularSchema.js
+
+## Untouched trunks
+
+- manifest 正本の意味変更
+- registry 正本の意味変更
+- routing 正本の意味変更
+- package class の最終決定
+- CURRENT_STATUS.md の最終同期
+- REVIEW.md / DOCS_INDEX.md の最終 truth 化
+
+## Mainline decision points
+
+- officialState の最終確定
+- closureCandidate の最終確定
+- parallel / conditional / mainline-only の最終確定
+- merge unit を patch のまま保持するか branch 化するか
+
+## Risk notes
+
+- evidence 24/24 paths exist
+- runtime 16/16 files exist
+- 98% progress candidate / project-integrated
+- implemented / review-ready / conditional
+- starter-runtime renderer helper と scene bridge の差分に注意
+
+## Return template
+
+```md
+- 対象: mpm-granular
+- 種別: patch
+- 触った範囲: docs/handoff, generated/handoff, lib/future-native-families の局所
+- 触っていない幹線: manifest / registry / routing / CURRENT_STATUS / REVIEW / DOCS_INDEX
+- 実行 verify: 
+- 残件: 
+- mainline 判断が必要な点: 
+```

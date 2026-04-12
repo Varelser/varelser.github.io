@@ -1,0 +1,67 @@
+{
+  "id": "build",
+  "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+  "args": [
+    "scripts/run-vite.mjs",
+    "build"
+  ],
+  "requestedMode": "static",
+  "stepEnv": {},
+  "startedAt": "2026-04-06T11:07:08.647Z",
+  "finishedAt": "2026-04-06T11:07:08.647Z",
+  "durationMs": 0,
+  "passed": false,
+  "blocked": true,
+  "status": null,
+  "signal": null,
+  "timedOut": false,
+  "execution": "blocked-host-runtime",
+  "effectiveMode": "blocked",
+  "verificationTier": "host-runtime-blocked",
+  "liveAttempted": false,
+  "liveVerified": false,
+  "fallbackUsed": false,
+  "unresolvedLiveCoverage": false,
+  "payload": {
+    "passed": false,
+    "blocked": true,
+    "failedStep": "host-runtime",
+    "reason": "current host is missing native runtime pieces required for this verification step",
+    "host": {
+      "platform": "linux",
+      "arch": "x64",
+      "libc": "gnu"
+    },
+    "hostDescriptor": "linux/x64/gnu",
+    "summary": {
+      "total": 2,
+      "passed": 0,
+      "failed": 2,
+      "missingTargets": [
+        {
+          "kind": "native-node-module",
+          "target": "node_modules/@rollup/rollup-linux-x64-gnu",
+          "runtime": "rollup",
+          "host": "linux/x64/gnu",
+          "executablePath": null
+        },
+        {
+          "kind": "native-node-module",
+          "target": "node_modules/@esbuild/linux-x64",
+          "runtime": "esbuild",
+          "host": "linux/x64/gnu",
+          "executablePath": null
+        }
+      ]
+    },
+    "recommendedNextSteps": [
+      "run npm install on the target host to refresh host-native optional packages",
+      "rerun npm run verify:host-runtime",
+      "rerun build"
+    ]
+  },
+  "reason": "current host is missing native runtime pieces required for this verification step",
+  "error": null,
+  "logPath": "docs/archive/verification-suite-runs/2026-04-06T11-07-08-628Z/step-logs/build.log",
+  "tail": "{\n  \"passed\": false,\n  \"blocked\": true,\n  \"failedStep\": \"host-runtime\",\n  \"reason\": \"current host is missing native runtime pieces required for this verification step\",\n  \"host\": {\n    \"platform\": \"linux\",\n    \"arch\": \"x64\",\n    \"libc\": \"gnu\"\n  },\n  \"hostDescriptor\": \"linux/x64/gnu\",\n  \"summary\": {\n    \"total\": 2,\n    \"passed\": 0,\n    \"failed\": 2,\n    \"missingTargets\": [\n      {\n        \"kind\": \"native-node-module\",\n        \"target\": \"node_modules/@rollup/rollup-linux-x64-gnu\",\n        \"runtime\": \"rollup\",\n        \"host\": \"linux/x64/gnu\",\n        \"executablePath\": null\n      },\n      {\n        \"kind\": \"native-node-module\",\n        \"target\": \"node_modules/@esbuild/linux-x64\",\n        \"runtime\": \"esbuild\",\n        \"host\": \"linux/x64/gnu\",\n        \"executablePath\": null\n      }\n    ]\n  },\n  \"recommendedNextSteps\": [\n    \"run npm install on the target host to refresh host-native optional packages\",\n    \"rerun npm run verify:host-runtime\",\n    \"rerun build\"\n  ]\n}"
+}

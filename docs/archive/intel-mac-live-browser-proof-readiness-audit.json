@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-04-10T19:03:16.719Z",
+  "score": {
+    "dropPassed": 6,
+    "dropTotal": 11,
+    "targetPassed": 5,
+    "targetTotal": 6,
+    "projectedAfterFinalizePassed": 2,
+    "projectedAfterFinalizeTotal": 6
+  },
+  "phase": {
+    "dropScaffolded": true,
+    "fixtureReady": false,
+    "proofSummaryReady": false,
+    "structuredProofReady": true,
+    "ingestExecuted": false,
+    "finalizeExecuted": false,
+    "doctorFresh": true,
+    "operatorPacketFresh": true
+  },
+  "decision": {
+    "readyForRealCapture": true,
+    "readyForHostFinalize": false,
+    "effectivelyClosable": false,
+    "recommendedMode": "capture-missing-evidence"
+  },
+  "blockers": [
+    {
+      "scope": "drop",
+      "kind": "fixture-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json"
+    },
+    {
+      "scope": "drop",
+      "kind": "fixture-json-valid",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-artifact-paths",
+      "target": "listed paths in real-export-proof.json"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-project-linkage",
+      "target": "capture.sourceProjectSlug -> artifacts.exports"
+    },
+    {
+      "scope": "target",
+      "kind": "browser-executable",
+      "target": "/home/oai/Library/Caches/ms-playwright/chromium-1208/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+    }
+  ],
+  "nextActions": [
+    "Intel Mac 実機で real-export JSON を 1 本採取し、stage-artifacts-on-intel-mac.sh か npm run stage:intel-mac-live-browser-proof-artifacts で drop へ正規配置する",
+    "stage-artifacts-on-intel-mac.sh か npm run stage:intel-mac-live-browser-proof-artifacts で real-export-proof.json と evidence-manifest.json を再生成する",
+    "browser executable / manifest / readiness report の欠損を埋めて finalize を再実行する",
+    "projection after finalize is 2/6; close remaining blockers before rerun",
+    "Intel Mac target can start capture immediately using the bundled .command wrapper"
+  ]
+}

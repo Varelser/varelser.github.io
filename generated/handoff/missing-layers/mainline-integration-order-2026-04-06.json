@@ -1,0 +1,640 @@
+{
+  "meta": {
+    "createdAt": "2026-04-06",
+    "kind": "mainline-integration-order",
+    "sources": {
+      "directIndex": "generated/handoff/missing-layers/direct-patch-candidate-index-2026-04-06.json",
+      "familyIndex": "generated/handoff/missing-layers/family-closure-patch-index-2026-04-06.json",
+      "packageJson": "package.json"
+    }
+  },
+  "summary": {
+    "stageCount": 8,
+    "directPatchCandidateCount": 18,
+    "reviewReadyDirectCount": 17,
+    "needsReviewDirectCount": 1,
+    "specialistReviewCount": 4,
+    "verifyCommandCount": 31,
+    "missingVerifyScriptCount": 0,
+    "overallMergeReadinessPercent": 75
+  },
+  "stages": [
+    {
+      "stageId": "stage-0-preflight",
+      "title": "Overlay preflight and additive verify gate",
+      "mergeMode": "preflight",
+      "familyCount": 0,
+      "familyIds": [],
+      "patchIds": [],
+      "progressPercentAverage": null,
+      "ownershipClasses": [],
+      "closureCandidates": [],
+      "verifyCommands": [
+        "node scripts/verify-missing-layers-overlay.mjs --repo .",
+        "node scripts/verify-missing-layers-worker-packets.mjs --repo .",
+        "node scripts/verify-missing-layers-low-risk-patches.mjs --repo .",
+        "node scripts/verify-missing-layers-family-closure-patches.mjs --repo .",
+        "node scripts/verify-missing-layers-direct-patch-candidates.mjs --repo .",
+        "npm run verify:future-native-project-state-fast"
+      ],
+      "riskBand": "low",
+      "notes": [
+        "まだ CURRENT_STATUS / REVIEW / DOCS_INDEX は更新しない。",
+        "まず additive overlay 側の整合だけを固定する。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "node scripts/verify-missing-layers-overlay.mjs --repo .",
+          "kind": "shell-or-node",
+          "exists": true
+        },
+        {
+          "command": "node scripts/verify-missing-layers-worker-packets.mjs --repo .",
+          "kind": "shell-or-node",
+          "exists": true
+        },
+        {
+          "command": "node scripts/verify-missing-layers-low-risk-patches.mjs --repo .",
+          "kind": "shell-or-node",
+          "exists": true
+        },
+        {
+          "command": "node scripts/verify-missing-layers-family-closure-patches.mjs --repo .",
+          "kind": "shell-or-node",
+          "exists": true
+        },
+        {
+          "command": "node scripts/verify-missing-layers-direct-patch-candidates.mjs --repo .",
+          "kind": "shell-or-node",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 6,
+        "existingScriptCount": 6,
+        "missingScriptCount": 0
+      }
+    },
+    {
+      "stageId": "stage-1-pbd-direct",
+      "title": "Review-ready PBD direct patch candidates",
+      "mergeMode": "direct-patch",
+      "familyCount": 4,
+      "familyIds": [
+        "pbd-cloth",
+        "pbd-membrane",
+        "pbd-rope",
+        "pbd-softbody"
+      ],
+      "patchIds": [
+        "direct-pbd-cloth",
+        "direct-pbd-membrane",
+        "direct-pbd-rope",
+        "direct-pbd-softbody"
+      ],
+      "progressPercentAverage": 98,
+      "ownershipClasses": [
+        "conditional"
+      ],
+      "closureCandidates": [
+        "review-ready"
+      ],
+      "verifyCommands": [
+        "npm run verify:pbd-cloth",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:pbd-membrane",
+        "npm run verify:pbd-rope",
+        "npm run verify:pbd-softbody"
+      ],
+      "riskBand": "low",
+      "notes": [
+        "PBD 群は nonvolumetric routes 前提でまとめて戻す。",
+        "surface integration は局所 verify として維持し、manifest 正本はまだ触らない。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "npm run verify:pbd-cloth",
+          "kind": "npm-script",
+          "scriptName": "verify:pbd-cloth",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-nonvolumetric-routes",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-nonvolumetric-routes",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:pbd-membrane",
+          "kind": "npm-script",
+          "scriptName": "verify:pbd-membrane",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:pbd-rope",
+          "kind": "npm-script",
+          "scriptName": "verify:pbd-rope",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:pbd-softbody",
+          "kind": "npm-script",
+          "scriptName": "verify:pbd-softbody",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 6,
+        "existingScriptCount": 6,
+        "missingScriptCount": 0
+      }
+    },
+    {
+      "stageId": "stage-2-mpm-direct",
+      "title": "Review-ready MPM direct patch candidates",
+      "mergeMode": "direct-patch",
+      "familyCount": 5,
+      "familyIds": [
+        "mpm-granular",
+        "mpm-mud",
+        "mpm-paste",
+        "mpm-snow",
+        "mpm-viscoplastic"
+      ],
+      "patchIds": [
+        "direct-mpm-granular",
+        "direct-mpm-mud",
+        "direct-mpm-paste",
+        "direct-mpm-snow",
+        "direct-mpm-viscoplastic"
+      ],
+      "progressPercentAverage": 98,
+      "ownershipClasses": [
+        "conditional"
+      ],
+      "closureCandidates": [
+        "review-ready"
+      ],
+      "verifyCommands": [
+        "npm run verify:mpm-granular",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:mpm-mud",
+        "npm run verify:mpm-paste",
+        "npm run verify:mpm-snow",
+        "npm run verify:mpm-viscoplastic"
+      ],
+      "riskBand": "low",
+      "notes": [
+        "MPM 群は PBD の後に戻す。",
+        "UI truth より runtime / preset / preview evidence を先に固める。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "npm run verify:mpm-granular",
+          "kind": "npm-script",
+          "scriptName": "verify:mpm-granular",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-nonvolumetric-routes",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-nonvolumetric-routes",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:mpm-mud",
+          "kind": "npm-script",
+          "scriptName": "verify:mpm-mud",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:mpm-paste",
+          "kind": "npm-script",
+          "scriptName": "verify:mpm-paste",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:mpm-snow",
+          "kind": "npm-script",
+          "scriptName": "verify:mpm-snow",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:mpm-viscoplastic",
+          "kind": "npm-script",
+          "scriptName": "verify:mpm-viscoplastic",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 7,
+        "existingScriptCount": 7,
+        "missingScriptCount": 0
+      }
+    },
+    {
+      "stageId": "stage-3-fracture-direct",
+      "title": "Review-ready fracture direct patch candidates",
+      "mergeMode": "direct-patch",
+      "familyCount": 4,
+      "familyIds": [
+        "fracture-crack-propagation",
+        "fracture-debris-generation",
+        "fracture-lattice",
+        "fracture-voxel"
+      ],
+      "patchIds": [
+        "direct-fracture-crack-propagation",
+        "direct-fracture-debris-generation",
+        "direct-fracture-lattice",
+        "direct-fracture-voxel"
+      ],
+      "progressPercentAverage": 98,
+      "ownershipClasses": [
+        "conditional"
+      ],
+      "closureCandidates": [
+        "review-ready"
+      ],
+      "verifyCommands": [
+        "npm run verify:fracture-crack-propagation",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:fracture-debris-generation",
+        "npm run verify:fracture-lattice",
+        "npm run verify:fracture-voxel"
+      ],
+      "riskBand": "medium",
+      "notes": [
+        "fracture は debris / crack propagation の意味衝突をまとめて確認する。",
+        "render handoff 影響が見えた場合は単独 family 統合へ降格させる。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "npm run verify:fracture-crack-propagation",
+          "kind": "npm-script",
+          "scriptName": "verify:fracture-crack-propagation",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-nonvolumetric-routes",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-nonvolumetric-routes",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:fracture-debris-generation",
+          "kind": "npm-script",
+          "scriptName": "verify:fracture-debris-generation",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:fracture-lattice",
+          "kind": "npm-script",
+          "scriptName": "verify:fracture-lattice",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:fracture-voxel",
+          "kind": "npm-script",
+          "scriptName": "verify:fracture-voxel",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 6,
+        "existingScriptCount": 6,
+        "missingScriptCount": 0
+      }
+    },
+    {
+      "stageId": "stage-4-volumetric-core",
+      "title": "Review-ready volumetric direct patch candidates except smoke",
+      "mergeMode": "direct-patch",
+      "familyCount": 4,
+      "familyIds": [
+        "volumetric-advection",
+        "volumetric-density-transport",
+        "volumetric-light-shadow-coupling",
+        "volumetric-pressure-coupling"
+      ],
+      "patchIds": [
+        "direct-volumetric-advection",
+        "direct-volumetric-density-transport",
+        "direct-volumetric-light-shadow-coupling",
+        "direct-volumetric-pressure-coupling"
+      ],
+      "progressPercentAverage": 98,
+      "ownershipClasses": [
+        "conditional"
+      ],
+      "closureCandidates": [
+        "review-ready"
+      ],
+      "verifyCommands": [
+        "npm run verify:volumetric-advection",
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:volumetric-density-transport"
+      ],
+      "riskBand": "medium",
+      "notes": [
+        "volumetric core は smoke を分離して先に戻す。",
+        "volumetric routes と safe pipeline core を一緒に確認する。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "npm run verify:volumetric-advection",
+          "kind": "npm-script",
+          "scriptName": "verify:volumetric-advection",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-volumetric-routes",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-volumetric-routes",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:volumetric-density-transport",
+          "kind": "npm-script",
+          "scriptName": "verify:volumetric-density-transport",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 4,
+        "existingScriptCount": 4,
+        "missingScriptCount": 0
+      }
+    },
+    {
+      "stageId": "stage-5-volumetric-smoke-review",
+      "title": "Volumetric smoke review gate",
+      "mergeMode": "mainline-review",
+      "familyCount": 1,
+      "familyIds": [
+        "volumetric-smoke"
+      ],
+      "patchIds": [
+        "direct-volumetric-smoke"
+      ],
+      "progressPercentAverage": 100,
+      "ownershipClasses": [
+        "conditional"
+      ],
+      "closureCandidates": [
+        "needs-review"
+      ],
+      "verifyCommands": [
+        "npm run verify:volumetric-smoke",
+        "npm run verify:future-native-volumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:future-native-safe-pipeline:core"
+      ],
+      "riskBand": "high",
+      "notes": [
+        "volumetric-smoke は needs-review のため direct merge しない。",
+        "mainline owner が routing / preview / package truth への影響を確認してから扱う。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "npm run verify:volumetric-smoke",
+          "kind": "npm-script",
+          "scriptName": "verify:volumetric-smoke",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-volumetric-routes",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-volumetric-routes",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-safe-pipeline:core",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-safe-pipeline:core",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 4,
+        "existingScriptCount": 4,
+        "missingScriptCount": 0
+      }
+    },
+    {
+      "stageId": "stage-6-specialist-review",
+      "title": "Specialist-native mainline review queue",
+      "mergeMode": "patch-with-mainline-review",
+      "familyCount": 4,
+      "familyIds": [
+        "specialist-houdini-native",
+        "specialist-niagara-native",
+        "specialist-touchdesigner-native",
+        "specialist-unity-vfx-native"
+      ],
+      "patchIds": [
+        "family-closure-specialist-houdini-native",
+        "family-closure-specialist-niagara-native",
+        "family-closure-specialist-touchdesigner-native",
+        "family-closure-specialist-unity-vfx-native"
+      ],
+      "progressPercentAverage": 98,
+      "ownershipClasses": [
+        "mainline-only"
+      ],
+      "closureCandidates": [
+        "review-ready"
+      ],
+      "verifyCommands": [
+        "npm run verify:specialist-houdini-native",
+        "npm run verify:future-native-nonvolumetric-routes",
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:specialist-niagara-native",
+        "npm run verify:specialist-touchdesigner-native",
+        "npm run verify:specialist-unity-vfx-native",
+        "npm run verify:future-native-specialist-routes",
+        "npm run verify:future-native-specialist-runtime-export-regression"
+      ],
+      "riskBand": "high",
+      "notes": [
+        "specialist-native 4 family は patch-with-mainline-review のまま維持する。",
+        "nonvolumetric routes と specialist export regression を両方確認する。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "npm run verify:specialist-houdini-native",
+          "kind": "npm-script",
+          "scriptName": "verify:specialist-houdini-native",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-nonvolumetric-routes",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-nonvolumetric-routes",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:specialist-niagara-native",
+          "kind": "npm-script",
+          "scriptName": "verify:specialist-niagara-native",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:specialist-touchdesigner-native",
+          "kind": "npm-script",
+          "scriptName": "verify:specialist-touchdesigner-native",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:specialist-unity-vfx-native",
+          "kind": "npm-script",
+          "scriptName": "verify:specialist-unity-vfx-native",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-specialist-routes",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-specialist-routes",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-specialist-runtime-export-regression",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-specialist-runtime-export-regression",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 8,
+        "existingScriptCount": 8,
+        "missingScriptCount": 0
+      }
+    },
+    {
+      "stageId": "stage-7-truth-sync-closeout",
+      "title": "Truth sync and closeout",
+      "mergeMode": "docs-truth-sync",
+      "familyCount": 17,
+      "familyIds": [
+        "pbd-cloth",
+        "pbd-membrane",
+        "pbd-rope",
+        "pbd-softbody",
+        "mpm-granular",
+        "mpm-mud",
+        "mpm-paste",
+        "mpm-snow",
+        "mpm-viscoplastic",
+        "fracture-crack-propagation",
+        "fracture-debris-generation",
+        "fracture-lattice",
+        "fracture-voxel",
+        "volumetric-advection",
+        "volumetric-density-transport",
+        "volumetric-light-shadow-coupling",
+        "volumetric-pressure-coupling"
+      ],
+      "patchIds": [
+        "direct-pbd-cloth",
+        "direct-pbd-membrane",
+        "direct-pbd-rope",
+        "direct-pbd-softbody",
+        "direct-mpm-granular",
+        "direct-mpm-mud",
+        "direct-mpm-paste",
+        "direct-mpm-snow",
+        "direct-mpm-viscoplastic",
+        "direct-fracture-crack-propagation",
+        "direct-fracture-debris-generation",
+        "direct-fracture-lattice",
+        "direct-fracture-voxel",
+        "direct-volumetric-advection",
+        "direct-volumetric-density-transport",
+        "direct-volumetric-light-shadow-coupling",
+        "direct-volumetric-pressure-coupling"
+      ],
+      "progressPercentAverage": 98,
+      "ownershipClasses": [
+        "conditional"
+      ],
+      "closureCandidates": [
+        "review-ready"
+      ],
+      "verifyCommands": [
+        "npm run verify:future-native-project-state-fast",
+        "npm run verify:future-native-safe-pipeline:core"
+      ],
+      "riskBand": "high",
+      "notes": [
+        "ここで初めて CURRENT_STATUS / REVIEW / DOCS_INDEX を同期する。",
+        "overlay generated index と docs truth の数値を一致させる。",
+        "needs-review 系が残っている場合は closeout に未解決点として明記する。"
+      ],
+      "verifyCoverage": [
+        {
+          "command": "npm run verify:future-native-project-state-fast",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-project-state-fast",
+          "exists": true
+        },
+        {
+          "command": "npm run verify:future-native-safe-pipeline:core",
+          "kind": "npm-script",
+          "scriptName": "verify:future-native-safe-pipeline:core",
+          "exists": true
+        }
+      ],
+      "verifyCoverageSummary": {
+        "totalCommands": 2,
+        "existingScriptCount": 2,
+        "missingScriptCount": 0
+      }
+    }
+  ]
+}

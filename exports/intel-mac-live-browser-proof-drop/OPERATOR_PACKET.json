@@ -1,0 +1,131 @@
+{
+  "generatedAt": "2026-04-10T19:03:16.110Z",
+  "sourceDir": "exports/intel-mac-live-browser-proof-drop",
+  "summary": {
+    "dropPassed": 6,
+    "dropTotal": 11,
+    "targetPassed": 5,
+    "targetTotal": 6,
+    "blockerCount": 6,
+    "proofReady": false
+  },
+  "requiredFiles": [
+    "real-export/kalokagathia-project-<slug>.json",
+    "phase5-proof-input/real-export-proof.json",
+    "phase5-proof-input/real-export-capture-notes.md",
+    "phase5-proof-input/logs/*.log",
+    "phase5-proof-input/screenshots/*.png",
+    "incoming/kalokagathia-intel-mac-live-browser-proof-<slug>.zip"
+  ],
+  "failedCheckKinds": [
+    "fixture-json",
+    "fixture-json-valid",
+    "proof-summary-json",
+    "proof-summary-artifact-paths",
+    "proof-summary-project-linkage"
+  ],
+  "prioritizedActions": [
+    {
+      "id": "capture-real-export",
+      "reason": "real browser export JSON is still missing from the drop",
+      "command": "./capture-on-intel-mac.sh /path/to/repo <slug> /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome $PWD",
+      "outputs": [
+        "phase5-proof-input/logs/pipeline.log",
+        "real browser UI export saved to ~/Downloads/kalokagathia-project-<slug>.json"
+      ]
+    },
+    {
+      "id": "stage-real-proof-artifacts",
+      "reason": "copied export/screenshots/logs must be normalized into the drop before verify/finalize can pass",
+      "command": "npm run stage:intel-mac-live-browser-proof-artifacts -- --source-dir exports/intel-mac-live-browser-proof-drop --slug <slug> --browser-executable-path \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --real-export ~/Downloads/kalokagathia-project-<slug>.json --screenshot ~/Desktop/export-overview.png --log exports/intel-mac-live-browser-proof-drop/phase5-proof-input/logs/pipeline.log",
+      "outputs": [
+        "real-export/kalokagathia-project-<slug>.json",
+        "phase5-proof-input/real-export-proof.json",
+        "phase5-proof-input/evidence-manifest.json",
+        "phase5-proof-input/screenshots/*.png",
+        "phase5-proof-input/logs/*.log"
+      ]
+    },
+    {
+      "id": "draft-proof-summary",
+      "reason": "proof summary JSON is incomplete or still pending",
+      "command": "npm run draft:intel-mac-live-browser-proof-summary -- --source-dir exports/intel-mac-live-browser-proof-drop --browser-executable-path \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\"",
+      "outputs": [
+        "phase5-proof-input/real-export-proof.json"
+      ]
+    },
+    {
+      "id": "host-finalize",
+      "reason": "after the drop is populated, ingest/finalize must regenerate repo-side manifests and status",
+      "command": "./finalize-on-host.sh /path/to/repo exports/intel-mac-live-browser-proof-drop /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome",
+      "outputs": [
+        "fixtures/project-state/real-export/manifest.json",
+        "docs/archive/phase5-real-export-readiness-report.json",
+        "docs/archive/intel-mac-live-browser-proof-status.json"
+      ]
+    }
+  ],
+  "commands": {
+    "scaffold": "npm run scaffold:intel-mac-live-browser-proof-drop -- --source-dir exports/intel-mac-live-browser-proof-drop",
+    "stage": "npm run stage:intel-mac-live-browser-proof-artifacts -- --source-dir exports/intel-mac-live-browser-proof-drop --slug <slug> --browser-executable-path \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --real-export ~/Downloads/kalokagathia-project-<slug>.json --screenshot ~/Desktop/export-overview.png --log exports/intel-mac-live-browser-proof-drop/phase5-proof-input/logs/pipeline.log",
+    "draft": "npm run draft:intel-mac-live-browser-proof-summary -- --source-dir exports/intel-mac-live-browser-proof-drop --browser-executable-path \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\"",
+    "verify": "npm run verify:intel-mac-live-browser-proof-drop -- --source-dir exports/intel-mac-live-browser-proof-drop",
+    "pipeline": "npm run run:intel-mac-live-browser-proof-pipeline -- --source-dir exports/intel-mac-live-browser-proof-drop --browser-executable-path \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\"",
+    "finalize": "npm run finalize:intel-mac-live-browser-proof -- --source-dir exports/intel-mac-live-browser-proof-drop --browser-executable-path \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\"",
+    "doctor": "npm run doctor:intel-mac-live-browser-proof:refresh"
+  },
+  "outputs": {
+    "captureScript": "exports/intel-mac-live-browser-proof-drop/capture-on-intel-mac.sh",
+    "stageScript": "exports/intel-mac-live-browser-proof-drop/stage-artifacts-on-intel-mac.sh",
+    "packageScript": "exports/intel-mac-live-browser-proof-drop/package-proof-bundle.sh",
+    "finalizeScript": "exports/intel-mac-live-browser-proof-drop/finalize-on-host.sh",
+    "readme": "exports/intel-mac-live-browser-proof-drop/README.md",
+    "notes": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-capture-notes.md",
+    "summary": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json",
+    "evidenceManifest": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/evidence-manifest.json"
+  },
+  "blockers": [
+    {
+      "scope": "drop",
+      "kind": "fixture-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+      "action": "real-export fixture JSON を追加または修正する"
+    },
+    {
+      "scope": "drop",
+      "kind": "fixture-json-valid",
+      "target": "exports/intel-mac-live-browser-proof-drop/real-export/kalokagathia-project-*.json",
+      "action": "real-export fixture JSON を追加または修正する"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-json",
+      "target": "exports/intel-mac-live-browser-proof-drop/phase5-proof-input/real-export-proof.json",
+      "action": "real-export-proof.json を captured 状態に更新する"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-artifact-paths",
+      "target": "listed paths in real-export-proof.json",
+      "action": "drop scaffold を確認する"
+    },
+    {
+      "scope": "drop",
+      "kind": "proof-summary-project-linkage",
+      "target": "capture.sourceProjectSlug -> artifacts.exports",
+      "action": "drop scaffold を確認する"
+    },
+    {
+      "scope": "target",
+      "kind": "browser-executable",
+      "target": "/home/oai/Library/Caches/ms-playwright/chromium-1208/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "action": "Playwright Chromium か Chrome 実体を用意し、必要なら executable path を渡す"
+    }
+  ],
+  "nextActions": [
+    "Intel Mac 実機で real-export JSON を 1 本採取し、stage-artifacts-on-intel-mac.sh か npm run stage:intel-mac-live-browser-proof-artifacts で drop へ正規配置する",
+    "stage-artifacts-on-intel-mac.sh か npm run stage:intel-mac-live-browser-proof-artifacts で real-export-proof.json と evidence-manifest.json を再生成する",
+    "browser executable / manifest / readiness report の欠損を埋めて finalize を再実行する",
+    "projection after finalize is 2/6; close remaining blockers before rerun"
+  ]
+}

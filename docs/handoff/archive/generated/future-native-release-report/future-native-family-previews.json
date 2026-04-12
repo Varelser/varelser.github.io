@@ -1,0 +1,810 @@
+{
+  "generatedAt": "2026-04-08T12:12:45.645Z",
+  "mpm": [
+    {
+      "familyId": "mpm-granular",
+      "routeCount": 2,
+      "presetCount": 2,
+      "bindingModes": [
+        "native-particles"
+      ],
+      "primaryPresetIds": [
+        "future-native-mpm-granular-sand-fall",
+        "future-native-mpm-granular-jammed-pack"
+      ],
+      "previewSignature": "mpm-granular:2:2:native-particles:granular-family-preview-split"
+    },
+    {
+      "familyId": "mpm-viscoplastic",
+      "routeCount": 3,
+      "presetCount": 3,
+      "bindingModes": [
+        "native-particles"
+      ],
+      "primaryPresetIds": [
+        "future-native-mpm-viscoplastic-evaporative-sheet",
+        "future-native-mpm-viscoplastic-melt-front",
+        "future-native-mpm-viscoplastic-viscous-flow"
+      ],
+      "previewSignature": "mpm-viscoplastic:3:3:native-particles:viscoplastic-family-preview-split"
+    },
+    {
+      "familyId": "mpm-snow",
+      "routeCount": 3,
+      "presetCount": 3,
+      "bindingModes": [
+        "native-particles"
+      ],
+      "primaryPresetIds": [
+        "future-native-mpm-snow-ashfall",
+        "future-native-mpm-snow-avalanche-field",
+        "future-native-mpm-snow-frost-lattice"
+      ],
+      "previewSignature": "mpm-snow:3:3:native-particles:snow-family-preview-split"
+    },
+    {
+      "familyId": "mpm-mud",
+      "routeCount": 3,
+      "presetCount": 3,
+      "bindingModes": [
+        "native-particles"
+      ],
+      "primaryPresetIds": [
+        "future-native-mpm-mud-liquid-smear",
+        "future-native-mpm-mud-sediment-stack",
+        "future-native-mpm-mud-talus-heap"
+      ],
+      "previewSignature": "mpm-mud:3:3:native-particles:mud-family-preview-split"
+    },
+    {
+      "familyId": "mpm-paste",
+      "routeCount": 3,
+      "presetCount": 3,
+      "bindingModes": [
+        "native-particles"
+      ],
+      "primaryPresetIds": [
+        "future-native-mpm-paste-capillary-sheet",
+        "future-native-mpm-paste-crawl-seep",
+        "future-native-mpm-paste-percolation-sheet"
+      ],
+      "previewSignature": "mpm-paste:3:3:native-particles:paste-family-preview-split"
+    }
+  ],
+  "mpmDedicated": [
+    {
+      "familyId": "mpm-viscoplastic",
+      "routeCount": 3,
+      "presetCount": 3,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeMpmSnowViscoplastic.ts",
+        "futureNativeMpmDedicatedRoutePreview.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesMpmSnowViscoplastic.ts",
+        "futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "coverageLabel": "viscoplastic-family-preview-split",
+      "primaryPresetIds": [
+        "future-native-mpm-viscoplastic-viscous-flow",
+        "future-native-mpm-viscoplastic-melt-front",
+        "future-native-mpm-viscoplastic-evaporative-sheet"
+      ],
+      "averageWarmFrameCount": 17,
+      "maxWarmFrameCount": 20,
+      "materialKinds": [
+        "mud",
+        "paste"
+      ],
+      "previewSignature": "mpm-viscoplastic:3:3:mud/paste:viscoplastic-family-preview-split",
+      "routes": [
+        {
+          "familyId": "mpm-viscoplastic",
+          "modeId": "viscous_flow",
+          "routeTag": "future-native-mpm-viscoplastic-flow",
+          "primaryPresetId": "future-native-mpm-viscoplastic-viscous-flow",
+          "bindingMode": "native-particles",
+          "materialKind": "mud",
+          "particleCount": 4320,
+          "cellResolution": 47,
+          "substeps": 6,
+          "cohesion": 0.234,
+          "friction": 0.557,
+          "plasticity": 0.674,
+          "hardening": 0.387,
+          "kernelRadius": 2.212,
+          "warmFrameCountMin": 12,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-viscoplastic|future-native-mpm-viscoplastic-flow|mud|p4320|grid47|sub6|warm12-20"
+        },
+        {
+          "familyId": "mpm-viscoplastic",
+          "modeId": "melt_front",
+          "routeTag": "future-native-mpm-viscoplastic-melt-front",
+          "primaryPresetId": "future-native-mpm-viscoplastic-melt-front",
+          "bindingMode": "native-particles",
+          "materialKind": "paste",
+          "particleCount": 4320,
+          "cellResolution": 47,
+          "substeps": 7,
+          "cohesion": 0.274,
+          "friction": 0.497,
+          "plasticity": 0.774,
+          "hardening": 0.487,
+          "kernelRadius": 2.372,
+          "warmFrameCountMin": 16,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-viscoplastic|future-native-mpm-viscoplastic-melt-front|paste|p4320|grid47|sub7|warm16-20"
+        },
+        {
+          "familyId": "mpm-viscoplastic",
+          "modeId": "evaporative_sheet",
+          "routeTag": "future-native-mpm-viscoplastic-evaporative-sheet",
+          "primaryPresetId": "future-native-mpm-viscoplastic-evaporative-sheet",
+          "bindingMode": "native-particles",
+          "materialKind": "mud",
+          "particleCount": 4560,
+          "cellResolution": 47,
+          "substeps": 6,
+          "cohesion": 0.204,
+          "friction": 0.557,
+          "plasticity": 0.614,
+          "hardening": 0.287,
+          "kernelRadius": 2.132,
+          "warmFrameCountMin": 14,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-viscoplastic|future-native-mpm-viscoplastic-evaporative-sheet|mud|p4560|grid47|sub6|warm14-20"
+        }
+      ]
+    },
+    {
+      "familyId": "mpm-snow",
+      "routeCount": 3,
+      "presetCount": 3,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeMpmSnowViscoplastic.ts",
+        "futureNativeMpmDedicatedRoutePreview.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesMpmSnowViscoplastic.ts",
+        "futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "coverageLabel": "snow-family-preview-split",
+      "primaryPresetIds": [
+        "future-native-mpm-snow-ashfall",
+        "future-native-mpm-snow-frost-lattice",
+        "future-native-mpm-snow-avalanche-field"
+      ],
+      "averageWarmFrameCount": 17,
+      "maxWarmFrameCount": 20,
+      "materialKinds": [
+        "snow"
+      ],
+      "previewSignature": "mpm-snow:3:3:snow:snow-family-preview-split",
+      "routes": [
+        {
+          "familyId": "mpm-snow",
+          "modeId": "ashfall",
+          "routeTag": "future-native-mpm-snow-ashfall",
+          "primaryPresetId": "future-native-mpm-snow-ashfall",
+          "bindingMode": "native-particles",
+          "materialKind": "snow",
+          "particleCount": 4080,
+          "cellResolution": 45,
+          "substeps": 6,
+          "cohesion": 0.145,
+          "friction": 0.737,
+          "plasticity": 0.664,
+          "hardening": 0.459,
+          "kernelRadius": 2.172,
+          "warmFrameCountMin": 12,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-snow|future-native-mpm-snow-ashfall|snow|p4080|grid45|sub6|warm12-20"
+        },
+        {
+          "familyId": "mpm-snow",
+          "modeId": "frost_lattice",
+          "routeTag": "future-native-mpm-snow-frost-lattice",
+          "primaryPresetId": "future-native-mpm-snow-frost-lattice",
+          "bindingMode": "native-particles",
+          "materialKind": "snow",
+          "particleCount": 3840,
+          "cellResolution": 47,
+          "substeps": 6,
+          "cohesion": 0.185,
+          "friction": 0.777,
+          "plasticity": 0.724,
+          "hardening": 0.519,
+          "kernelRadius": 2.272,
+          "warmFrameCountMin": 14,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-snow|future-native-mpm-snow-frost-lattice|snow|p3840|grid47|sub6|warm14-20"
+        },
+        {
+          "familyId": "mpm-snow",
+          "modeId": "avalanche_field",
+          "routeTag": "future-native-mpm-snow-avalanche-field",
+          "primaryPresetId": "future-native-mpm-snow-avalanche-field",
+          "bindingMode": "native-particles",
+          "materialKind": "snow",
+          "particleCount": 4560,
+          "cellResolution": 45,
+          "substeps": 7,
+          "cohesion": 0.125,
+          "friction": 0.677,
+          "plasticity": 0.604,
+          "hardening": 0.399,
+          "kernelRadius": 2.112,
+          "warmFrameCountMin": 16,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-snow|future-native-mpm-snow-avalanche-field|snow|p4560|grid45|sub7|warm16-20"
+        }
+      ]
+    },
+    {
+      "familyId": "mpm-mud",
+      "routeCount": 3,
+      "presetCount": 3,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeMpmMudPaste.ts",
+        "futureNativeMpmDedicatedRoutePreview.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesMpmMudPaste.ts",
+        "futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "coverageLabel": "mud-family-preview-split",
+      "primaryPresetIds": [
+        "future-native-mpm-mud-sediment-stack",
+        "future-native-mpm-mud-talus-heap",
+        "future-native-mpm-mud-liquid-smear"
+      ],
+      "averageWarmFrameCount": 16.667,
+      "maxWarmFrameCount": 20,
+      "materialKinds": [
+        "mud"
+      ],
+      "previewSignature": "mpm-mud:3:3:mud:mud-family-preview-split",
+      "routes": [
+        {
+          "familyId": "mpm-mud",
+          "modeId": "sediment_stack",
+          "routeTag": "future-native-mpm-mud-sediment-stack",
+          "primaryPresetId": "future-native-mpm-mud-sediment-stack",
+          "bindingMode": "native-particles",
+          "materialKind": "mud",
+          "particleCount": 3840,
+          "cellResolution": 47,
+          "substeps": 6,
+          "cohesion": 0.254,
+          "friction": 0.577,
+          "plasticity": 0.654,
+          "hardening": 0.359,
+          "kernelRadius": 2.232,
+          "warmFrameCountMin": 12,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-mud|future-native-mpm-mud-sediment-stack|mud|p3840|grid47|sub6|warm12-20"
+        },
+        {
+          "familyId": "mpm-mud",
+          "modeId": "talus_heap",
+          "routeTag": "future-native-mpm-mud-talus-heap",
+          "primaryPresetId": "future-native-mpm-mud-talus-heap",
+          "bindingMode": "native-particles",
+          "materialKind": "mud",
+          "particleCount": 4320,
+          "cellResolution": 45,
+          "substeps": 7,
+          "cohesion": 0.234,
+          "friction": 0.617,
+          "plasticity": 0.614,
+          "hardening": 0.319,
+          "kernelRadius": 2.172,
+          "warmFrameCountMin": 15,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-mud|future-native-mpm-mud-talus-heap|mud|p4320|grid45|sub7|warm15-20"
+        },
+        {
+          "familyId": "mpm-mud",
+          "modeId": "liquid_smear",
+          "routeTag": "future-native-mpm-mud-liquid-smear",
+          "primaryPresetId": "future-native-mpm-mud-liquid-smear",
+          "bindingMode": "native-particles",
+          "materialKind": "mud",
+          "particleCount": 4080,
+          "cellResolution": 45,
+          "substeps": 6,
+          "cohesion": 0.214,
+          "friction": 0.497,
+          "plasticity": 0.694,
+          "hardening": 0.399,
+          "kernelRadius": 2.312,
+          "warmFrameCountMin": 13,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-mud|future-native-mpm-mud-liquid-smear|mud|p4080|grid45|sub6|warm13-20"
+        }
+      ]
+    },
+    {
+      "familyId": "mpm-paste",
+      "routeCount": 3,
+      "presetCount": 3,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeMpmMudPaste.ts",
+        "futureNativeMpmDedicatedRoutePreview.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesMpmMudPaste.ts",
+        "futureNativeSceneBridgeMpmRuntime.ts"
+      ],
+      "coverageLabel": "paste-family-preview-split",
+      "primaryPresetIds": [
+        "future-native-mpm-paste-capillary-sheet",
+        "future-native-mpm-paste-percolation-sheet",
+        "future-native-mpm-paste-crawl-seep"
+      ],
+      "averageWarmFrameCount": 17,
+      "maxWarmFrameCount": 20,
+      "materialKinds": [
+        "paste"
+      ],
+      "previewSignature": "mpm-paste:3:3:paste:paste-family-preview-split",
+      "routes": [
+        {
+          "familyId": "mpm-paste",
+          "modeId": "capillary_sheet",
+          "routeTag": "future-native-mpm-paste-capillary-sheet",
+          "primaryPresetId": "future-native-mpm-paste-capillary-sheet",
+          "bindingMode": "native-particles",
+          "materialKind": "paste",
+          "particleCount": 4080,
+          "cellResolution": 49,
+          "substeps": 6,
+          "cohesion": 0.274,
+          "friction": 0.457,
+          "plasticity": 0.814,
+          "hardening": 0.479,
+          "kernelRadius": 2.312,
+          "warmFrameCountMin": 13,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-paste|future-native-mpm-paste-capillary-sheet|paste|p4080|grid49|sub6|warm13-20"
+        },
+        {
+          "familyId": "mpm-paste",
+          "modeId": "percolation_sheet",
+          "routeTag": "future-native-mpm-paste-percolation-sheet",
+          "primaryPresetId": "future-native-mpm-paste-percolation-sheet",
+          "bindingMode": "native-particles",
+          "materialKind": "paste",
+          "particleCount": 3840,
+          "cellResolution": 47,
+          "substeps": 6,
+          "cohesion": 0.294,
+          "friction": 0.477,
+          "plasticity": 0.834,
+          "hardening": 0.499,
+          "kernelRadius": 2.352,
+          "warmFrameCountMin": 14,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-paste|future-native-mpm-paste-percolation-sheet|paste|p3840|grid47|sub6|warm14-20"
+        },
+        {
+          "familyId": "mpm-paste",
+          "modeId": "crawl_seep",
+          "routeTag": "future-native-mpm-paste-crawl-seep",
+          "primaryPresetId": "future-native-mpm-paste-crawl-seep",
+          "bindingMode": "native-particles",
+          "materialKind": "paste",
+          "particleCount": 3600,
+          "cellResolution": 47,
+          "substeps": 7,
+          "cohesion": 0.314,
+          "friction": 0.517,
+          "plasticity": 0.874,
+          "hardening": 0.539,
+          "kernelRadius": 2.392,
+          "warmFrameCountMin": 15,
+          "warmFrameCountMax": 20,
+          "previewSignature": "mpm-paste|future-native-mpm-paste-crawl-seep|paste|p3600|grid47|sub7|warm15-20"
+        }
+      ]
+    }
+  ],
+  "fracture": [
+    {
+      "familyId": "fracture-lattice",
+      "routeCount": 2,
+      "presetCount": 2,
+      "bindingModes": [
+        "native-structure"
+      ],
+      "primaryPresetIds": [
+        "future-native-fracture-lattice-collapse",
+        "future-native-fracture-lattice-grammar"
+      ],
+      "previewSignature": "fracture-lattice:2:2:native-structure:lattice-preview-split"
+    },
+    {
+      "familyId": "fracture-voxel",
+      "routeCount": 1,
+      "presetCount": 1,
+      "bindingModes": [
+        "native-structure"
+      ],
+      "primaryPresetIds": [
+        "future-native-fracture-voxel-lattice"
+      ],
+      "previewSignature": "fracture-voxel:1:1:native-structure:voxel-family-preview-split"
+    },
+    {
+      "familyId": "fracture-crack-propagation",
+      "routeCount": 1,
+      "presetCount": 1,
+      "bindingModes": [
+        "native-structure"
+      ],
+      "primaryPresetIds": [
+        "future-native-fracture-crack-propagation-seep"
+      ],
+      "previewSignature": "fracture-crack-propagation:1:1:native-structure:crack-family-preview-split"
+    },
+    {
+      "familyId": "fracture-debris-generation",
+      "routeCount": 3,
+      "presetCount": 3,
+      "bindingModes": [
+        "native-structure"
+      ],
+      "primaryPresetIds": [
+        "future-native-fracture-debris-generation-pollen",
+        "future-native-fracture-debris-generation-orbit",
+        "future-native-fracture-debris-generation-shard"
+      ],
+      "previewSignature": "fracture-debris-generation:3:3:native-structure:debris-family-preview-split"
+    }
+  ],
+  "fractureDedicated": [
+    {
+      "familyId": "fracture-crack-propagation",
+      "routeCount": 1,
+      "presetCount": 1,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeFractureDedicated.ts",
+        "futureNativeSceneBridgeRuntimeControl.ts",
+        "futureNativeFractureDedicatedReportPreview.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesFractureDedicated.ts"
+      ],
+      "coverageLabel": "crack-family-preview-split",
+      "primaryPresetIds": [
+        "future-native-fracture-crack-propagation-seep"
+      ],
+      "averageBrokenBondCount": 85,
+      "averageDebrisCount": 23,
+      "maxCrackFrontRadius": 0.691,
+      "previewSignature": "fracture-crack-propagation:1:1:broken85:debris23:crack-family-preview-split",
+      "routes": [
+        {
+          "familyId": "fracture-crack-propagation",
+          "modeId": "seep_fracture",
+          "routeTag": "future-native-fracture-crack-propagation",
+          "primaryPresetId": "future-native-fracture-crack-propagation-seep",
+          "bindingMode": "native-structure",
+          "width": 10,
+          "height": 5,
+          "impulseThreshold": 0.62,
+          "debrisSpawnRate": 0.12,
+          "impactRadius": 0.17,
+          "impulseMagnitude": 1.58,
+          "propagationFalloff": 0.1,
+          "directionalBias": 0.84,
+          "splitAffinity": 0.7,
+          "fragmentDetachThreshold": 0.06,
+          "brokenBondCount": 85,
+          "debrisCount": 23,
+          "detachedFragmentCount": 49,
+          "fractureRadius": 0.743,
+          "crackFrontRadius": 0.691,
+          "simulationSteps": 9,
+          "previewSignature": "fracture-crack-propagation:future-native-fracture-crack-propagation:10x5:broken85:debris23:front0.691:bias0.84"
+        }
+      ]
+    },
+    {
+      "familyId": "fracture-debris-generation",
+      "routeCount": 3,
+      "presetCount": 3,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeFractureDedicated.ts",
+        "futureNativeSceneBridgeRuntimeControl.ts",
+        "futureNativeFractureDedicatedReportPreview.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesFractureDedicated.ts"
+      ],
+      "coverageLabel": "debris-family-preview-split",
+      "primaryPresetIds": [
+        "future-native-fracture-debris-generation-shard",
+        "future-native-fracture-debris-generation-orbit",
+        "future-native-fracture-debris-generation-pollen"
+      ],
+      "averageBrokenBondCount": 87.667,
+      "averageDebrisCount": 60,
+      "maxCrackFrontRadius": 0.739,
+      "previewSignature": "fracture-debris-generation:3:3:broken87.667:debris60:debris-family-preview-split",
+      "routes": [
+        {
+          "familyId": "fracture-debris-generation",
+          "modeId": "shard_debris",
+          "routeTag": "future-native-fracture-debris-shard",
+          "primaryPresetId": "future-native-fracture-debris-generation-shard",
+          "bindingMode": "native-structure",
+          "width": 9,
+          "height": 6,
+          "impulseThreshold": 0.58,
+          "debrisSpawnRate": 0.56,
+          "impactRadius": 0.22,
+          "impulseMagnitude": 1.74,
+          "propagationFalloff": 0.28,
+          "directionalBias": 0.38,
+          "splitAffinity": 0.76,
+          "fragmentDetachThreshold": 0.055,
+          "brokenBondCount": 79,
+          "debrisCount": 59,
+          "detachedFragmentCount": 39,
+          "fractureRadius": 0.739,
+          "crackFrontRadius": 0.739,
+          "simulationSteps": 6,
+          "previewSignature": "fracture-debris-generation:future-native-fracture-debris-shard:9x6:broken79:debris59:front0.739:bias0.38"
+        },
+        {
+          "familyId": "fracture-debris-generation",
+          "modeId": "orbit_fracture",
+          "routeTag": "future-native-fracture-debris-orbit",
+          "primaryPresetId": "future-native-fracture-debris-generation-orbit",
+          "bindingMode": "native-structure",
+          "width": 9,
+          "height": 6,
+          "impulseThreshold": 0.58,
+          "debrisSpawnRate": 0.5,
+          "impactRadius": 0.25,
+          "impulseMagnitude": 1.68,
+          "propagationFalloff": 0.28,
+          "directionalBias": 0.51,
+          "splitAffinity": 0.66,
+          "fragmentDetachThreshold": 0.06,
+          "brokenBondCount": 93,
+          "debrisCount": 52,
+          "detachedFragmentCount": 53,
+          "fractureRadius": 0.739,
+          "crackFrontRadius": 0,
+          "simulationSteps": 8,
+          "previewSignature": "fracture-debris-generation:future-native-fracture-debris-orbit:9x6:broken93:debris52:front0:bias0.51"
+        },
+        {
+          "familyId": "fracture-debris-generation",
+          "modeId": "fracture_pollen",
+          "routeTag": "future-native-fracture-debris-pollen",
+          "primaryPresetId": "future-native-fracture-debris-generation-pollen",
+          "bindingMode": "native-structure",
+          "width": 9,
+          "height": 6,
+          "impulseThreshold": 0.58,
+          "debrisSpawnRate": 0.62,
+          "impactRadius": 0.28,
+          "impulseMagnitude": 1.48,
+          "propagationFalloff": 0.34,
+          "directionalBias": 0.32,
+          "splitAffinity": 0.72,
+          "fragmentDetachThreshold": 0.05,
+          "brokenBondCount": 91,
+          "debrisCount": 69,
+          "detachedFragmentCount": 51,
+          "fractureRadius": 0.739,
+          "crackFrontRadius": 0.739,
+          "simulationSteps": 7,
+          "previewSignature": "fracture-debris-generation:future-native-fracture-debris-pollen:9x6:broken91:debris69:front0.739:bias0.32"
+        }
+      ]
+    }
+  ],
+  "pbd": [
+    {
+      "familyId": "pbd-rope",
+      "routeCount": 3,
+      "presetCount": 3,
+      "bindingModes": [
+        "native-structure"
+      ],
+      "primaryPresetIds": [
+        "future-native-pbd-rope-aurora-threads",
+        "future-native-pbd-rope-plasma-thread",
+        "future-native-pbd-rope-signal-braid"
+      ],
+      "previewSignature": "pbd-rope:3:3:native-structure:rope-authoring-split"
+    },
+    {
+      "familyId": "pbd-cloth",
+      "routeCount": 1,
+      "presetCount": 1,
+      "bindingModes": [
+        "native-surface"
+      ],
+      "primaryPresetIds": [
+        "future-native-pbd-cloth-drape"
+      ],
+      "previewSignature": "pbd-cloth:1:1:native-surface:cloth-family-preview-split"
+    },
+    {
+      "familyId": "pbd-membrane",
+      "routeCount": 2,
+      "presetCount": 2,
+      "bindingModes": [
+        "native-surface"
+      ],
+      "primaryPresetIds": [
+        "future-native-pbd-membrane-elastic",
+        "future-native-pbd-membrane-memory"
+      ],
+      "previewSignature": "pbd-membrane:2:2:native-surface:membrane-family-preview-split"
+    },
+    {
+      "familyId": "pbd-softbody",
+      "routeCount": 2,
+      "presetCount": 2,
+      "bindingModes": [
+        "native-surface"
+      ],
+      "primaryPresetIds": [
+        "future-native-pbd-softbody-lattice",
+        "future-native-pbd-softbody-shell"
+      ],
+      "previewSignature": "pbd-softbody:2:2:native-surface:softbody-family-preview-split"
+    }
+  ],
+  "volumetric": [
+    {
+      "familyId": "volumetric-advection",
+      "routeCount": 2,
+      "presetCount": 2,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeVolumetricAdvection.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesVolumetricAdvection.ts",
+        "futureNativeVolumetricAdvectionLightShadowAuthoring.ts",
+        "futureNativeVolumetricRouteTrend.ts"
+      ],
+      "coverageLabel": "advection-helper-split",
+      "previewSignature": [
+        "preset:future-native-volumetric-condense-field",
+        "advection:1.200",
+        "buoyancy:0.142",
+        "obstacle:0.568",
+        "depth:0.766"
+      ]
+    },
+    {
+      "familyId": "volumetric-density-transport",
+      "routeCount": 1,
+      "presetCount": 1,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeVolumetricDensityPressure.ts",
+        "futureNativeVolumetricDensityPressureAuthoring.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesVolumetricDensityPressure.ts",
+        "futureNativeVolumetricRouteTrend.ts"
+      ],
+      "coverageLabel": "density-authoring-split",
+      "previewSignature": [
+        "preset:future-native-volumetric-density-plume-weave",
+        "transportLoad:6.000",
+        "shadowOcclusion:0.355",
+        "densityLift:0.109"
+      ]
+    },
+    {
+      "familyId": "volumetric-pressure-coupling",
+      "routeCount": 2,
+      "presetCount": 2,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeVolumetricDensityPressure.ts",
+        "futureNativeVolumetricDensityPressureAuthoring.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesVolumetricDensityPressure.ts",
+        "futureNativeVolumetricRouteTrend.ts"
+      ],
+      "coverageLabel": "pressure-authoring-split",
+      "previewSignature": [
+        "preset:future-native-volumetric-pressure-vortex-column",
+        "pressureResidual:0.090",
+        "divergenceBudget:1.800",
+        "projectionOcclusion:0.142"
+      ]
+    },
+    {
+      "familyId": "volumetric-light-shadow-coupling",
+      "routeCount": 2,
+      "presetCount": 2,
+      "helperArtifacts": [
+        "futureNativeSceneBridgeVolumetricLightShadow.ts"
+      ],
+      "bundleArtifacts": [
+        "futureNativeScenePresetPatchesVolumetricLightShadow.ts",
+        "futureNativeVolumetricAdvectionLightShadowAuthoring.ts",
+        "futureNativeVolumetricRouteTrend.ts"
+      ],
+      "coverageLabel": "light-shadow-helper-split",
+      "previewSignature": [
+        "preset:future-native-volumetric-light-charge-veil",
+        "absorption:0.296",
+        "shadow:0.374",
+        "march:13.000",
+        "depth:1.062"
+      ]
+    }
+  ],
+  "specialist": [
+    {
+      "familyId": "specialist-houdini-native",
+      "routeId": "native-node-chain-route",
+      "routeLabel": "Node-chain bridge route",
+      "selectedAdapterId": "surface-volume-primary",
+      "executionTarget": "hybrid:surface-volume-stack",
+      "previewSignature": "specialist-houdini-native|native-node-chain-route|surface-volume-primary|hybrid:surface-volume-stack",
+      "comparisonSignature": "specialist-houdini-native|override-history+fallback-history+capability-trend|manifest-stable|serialization-stable|control-stable",
+      "warningValues": [
+        "override-history",
+        "fallback-history",
+        "capability-trend",
+        "pinned-override"
+      ]
+    },
+    {
+      "familyId": "specialist-niagara-native",
+      "routeId": "native-emitter-stack-route",
+      "routeLabel": "Emitter stack bridge route",
+      "selectedAdapterId": "emitter-primary",
+      "executionTarget": "hybrid:emitter-event-stack",
+      "previewSignature": "specialist-niagara-native|native-emitter-stack-route|emitter-primary|hybrid:emitter-event-stack",
+      "comparisonSignature": "specialist-niagara-native|override-history+fallback-history+capability-trend|manifest-stable|serialization-stable|control-stable",
+      "warningValues": [
+        "override-history",
+        "fallback-history",
+        "capability-trend"
+      ]
+    },
+    {
+      "familyId": "specialist-touchdesigner-native",
+      "routeId": "native-operator-pipe-route",
+      "routeLabel": "Operator-pipe bridge route",
+      "selectedAdapterId": "image-field-primary",
+      "executionTarget": "hybrid:image-field-pipe",
+      "previewSignature": "specialist-touchdesigner-native|native-operator-pipe-route|image-field-primary|hybrid:image-field-pipe",
+      "comparisonSignature": "specialist-touchdesigner-native|override-history+fallback-history+capability-trend|manifest-stable|serialization-stable|control-stable",
+      "warningValues": [
+        "override-history",
+        "fallback-history",
+        "capability-trend",
+        "pinned-override"
+      ]
+    },
+    {
+      "familyId": "specialist-unity-vfx-native",
+      "routeId": "native-gpu-event-route",
+      "routeLabel": "GPU event bridge route",
+      "selectedAdapterId": "gpu-event-primary",
+      "executionTarget": "hybrid:gpu-event-graph",
+      "previewSignature": "specialist-unity-vfx-native|native-gpu-event-route|gpu-event-primary|hybrid:gpu-event-graph",
+      "comparisonSignature": "specialist-unity-vfx-native|override-history+fallback-history+capability-trend|manifest-stable|serialization-stable|control-stable",
+      "warningValues": [
+        "override-history",
+        "fallback-history",
+        "capability-trend"
+      ]
+    }
+  ]
+}

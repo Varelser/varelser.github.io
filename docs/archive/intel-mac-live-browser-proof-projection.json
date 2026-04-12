@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-04-09T19:11:18.242Z",
+  "summary": {
+    "currentTargetPassed": 5,
+    "currentTargetTotal": 6,
+    "projectedAfterFinalizePassed": 2,
+    "projectedAfterFinalizeTotal": 6,
+    "blockerCount": 5
+  },
+  "projectedChecks": [
+    {
+      "kind": "node-module",
+      "ok": true,
+      "rationale": "playwright module already present"
+    },
+    {
+      "kind": "browser-executable",
+      "ok": false,
+      "rationale": "browser executable still missing on target host"
+    },
+    {
+      "kind": "real-export-fixture",
+      "ok": false,
+      "rationale": "no valid dropped fixture available yet"
+    },
+    {
+      "kind": "real-export-manifest-after-finalize",
+      "ok": false,
+      "rationale": "manifest cannot be regenerated until a valid fixture is dropped"
+    },
+    {
+      "kind": "real-export-readiness-report-after-finalize",
+      "ok": false,
+      "rationale": "finalize still lacks valid fixture/proof summary/artifact paths/structured proof evidence"
+    },
+    {
+      "kind": "proof-notes",
+      "ok": true,
+      "rationale": "proof notes template already present"
+    }
+  ],
+  "blockers": [
+    "valid real-export fixture JSON",
+    "captured real-export-proof.json",
+    "artifact paths in real-export-proof.json that point at real files",
+    "capture.sourceProjectSlug matched to exported project JSON",
+    "browser executable on Intel Mac target host"
+  ],
+  "nextAction": "close the remaining blockers, then rerun finalize to lift target live browser readiness"
+}

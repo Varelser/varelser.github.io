@@ -1,0 +1,169 @@
+{
+  "generatedAt": "2026-04-06T11:01:43.137Z",
+  "runId": "2026-04-06T11-01-24-161Z",
+  "runDir": "docs/archive/verification-suite-runs/2026-04-06T11-01-24-161Z",
+  "requestedMode": "static",
+  "suiteResume": false,
+  "stopOnFailure": false,
+  "total": 8,
+  "passedCount": 3,
+  "failedCount": 0,
+  "progressPercent": 37.5,
+  "executionBreakdown": {
+    "live": 0,
+    "inlineRuntimeFallback": 0,
+    "sourceStaticFallback": 0,
+    "nodeSkiaRuntimeFallback": 0,
+    "pngjsStaticHarnessFallback": 0,
+    "direct": 2,
+    "opaque": 1
+  },
+  "verificationTierBreakdown": {
+    "none": 3
+  },
+  "coverageBreakdown": {
+    "liveAttempted": 0,
+    "liveVerified": 0,
+    "fallbackUsed": 0,
+    "unresolvedLiveCoverage": 0
+  },
+  "unresolvedLiveSteps": [],
+  "summary": [
+    {
+      "id": "typecheck:audio-reactive:attempt",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "./node_modules/typescript/lib/_tsc.js",
+        "-p",
+        "tsconfig.audio-reactive.json",
+        "--noEmit"
+      ],
+      "requestedMode": "static",
+      "stepEnv": {},
+      "startedAt": "2026-04-06T11:01:24.252Z",
+      "finishedAt": "2026-04-06T11:01:41.463Z",
+      "durationMs": 17211,
+      "passed": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "execution": "opaque",
+      "effectiveMode": "unknown",
+      "verificationTier": null,
+      "liveAttempted": false,
+      "liveVerified": false,
+      "fallbackUsed": false,
+      "unresolvedLiveCoverage": false,
+      "payload": null,
+      "error": null,
+      "logPath": "docs/archive/verification-suite-runs/2026-04-06T11-01-24-161Z/step-logs/typecheck_audio-reactive_attempt.log",
+      "tail": "",
+      "group": "core",
+      "resumed": false,
+      "reportPath": "docs/archive/verification-suite-runs/2026-04-06T11-01-24-161Z/step-reports/typecheck_audio-reactive_attempt.json"
+    },
+    {
+      "id": "verify:audio-reactive:check",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/check-audio-reactive.mjs"
+      ],
+      "requestedMode": "static",
+      "stepEnv": {},
+      "startedAt": "2026-04-06T11:01:41.571Z",
+      "finishedAt": "2026-04-06T11:01:42.921Z",
+      "durationMs": 1350,
+      "passed": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "execution": "direct",
+      "effectiveMode": "direct",
+      "verificationTier": null,
+      "liveAttempted": false,
+      "liveVerified": false,
+      "fallbackUsed": false,
+      "unresolvedLiveCoverage": false,
+      "payload": {
+        "ok": true,
+        "fileCount": 18,
+        "diagnostics": []
+      },
+      "error": null,
+      "logPath": "docs/archive/verification-suite-runs/2026-04-06T11-01-24-161Z/step-logs/verify_audio-reactive_check.log",
+      "tail": "{\n  \"ok\": true,\n  \"fileCount\": 18,\n  \"diagnostics\": []\n}",
+      "group": "core",
+      "resumed": false,
+      "reportPath": "docs/archive/verification-suite-runs/2026-04-06T11-01-24-161Z/step-reports/verify_audio-reactive_check.json"
+    },
+    {
+      "id": "verify:audio-reactive",
+      "command": "/opt/nvm/versions/node/v22.16.0/bin/node",
+      "args": [
+        "scripts/verify-audio-reactive.mjs"
+      ],
+      "requestedMode": "static",
+      "stepEnv": {},
+      "startedAt": "2026-04-06T11:01:43.022Z",
+      "finishedAt": "2026-04-06T11:01:43.122Z",
+      "durationMs": 100,
+      "passed": true,
+      "status": 0,
+      "signal": null,
+      "timedOut": false,
+      "execution": "direct",
+      "effectiveMode": "direct",
+      "verificationTier": null,
+      "liveAttempted": false,
+      "liveVerified": false,
+      "fallbackUsed": false,
+      "unresolvedLiveCoverage": false,
+      "payload": {
+        "ok": true,
+        "missingFiles": [],
+        "phases": [
+          {
+            "phase": "A",
+            "percent": 100
+          },
+          {
+            "phase": "B",
+            "percent": 100
+          },
+          {
+            "phase": "C",
+            "percent": 100
+          },
+          {
+            "phase": "D",
+            "percent": 100
+          },
+          {
+            "phase": "E",
+            "percent": 100
+          },
+          {
+            "phase": "F",
+            "percent": 100
+          },
+          {
+            "phase": "G",
+            "percent": 100
+          },
+          {
+            "phase": "H",
+            "percent": 100
+          }
+        ],
+        "liveSystems": 12,
+        "liveTargets": 141
+      },
+      "error": null,
+      "logPath": "docs/archive/verification-suite-runs/2026-04-06T11-01-24-161Z/step-logs/verify_audio-reactive.log",
+      "tail": "{\n  \"ok\": true,\n  \"missingFiles\": [],\n  \"phases\": [\n    {\n      \"phase\": \"A\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"B\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"C\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"D\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"E\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"F\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"G\",\n      \"percent\": 100\n    },\n    {\n      \"phase\": \"H\",\n      \"percent\": 100\n    }\n  ],\n  \"liveSystems\": 12,\n  \"liveTargets\": 141\n}",
+      "group": "core",
+      "resumed": false,
+      "reportPath": "docs/archive/verification-suite-runs/2026-04-06T11-01-24-161Z/step-reports/verify_audio-reactive.json"
+    }
+  ]
+}

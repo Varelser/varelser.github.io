@@ -1,0 +1,2 @@
+- `sceneVolumetricFieldSystem.tsx` を Shared / Runtime / Render の三層へ分割。
+- facade は軽量化し、更新処理は runtime hook、shader / uniform 定義は shared、JSX は render へ分離。

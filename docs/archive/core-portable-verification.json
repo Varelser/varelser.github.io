@@ -1,0 +1,121 @@
+{
+  "generatedAt": "2026-04-06T11:50:30.000Z",
+  "runId": "2026-04-06T11-50-30-portable-core-manual",
+  "hostDescriptor": "linux/x64/gnu",
+  "portableTotal": 5,
+  "portablePassCount": 5,
+  "portableProgressPercent": 100.0,
+  "blockedCount": 3,
+  "failedCount": 0,
+  "hostRuntime": {
+    "total": 2,
+    "passed": 0,
+    "failed": 2,
+    "missingTargets": [
+      {
+        "kind": "native-node-module",
+        "target": "node_modules/@rollup/rollup-linux-x64-gnu",
+        "runtime": "rollup",
+        "host": "linux/x64/gnu",
+        "executablePath": null
+      },
+      {
+        "kind": "native-node-module",
+        "target": "node_modules/@esbuild/linux-x64",
+        "runtime": "esbuild",
+        "host": "linux/x64/gnu",
+        "executablePath": null
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "typecheck:audio-reactive:attempt",
+      "category": "portable-core",
+      "passed": true,
+      "blocked": false,
+      "status": 0,
+      "execution": "opaque",
+      "verificationTier": null,
+      "reason": null,
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/typecheck_audio-reactive_attempt.log"
+    },
+    {
+      "id": "verify:audio-reactive:check",
+      "category": "portable-core",
+      "passed": true,
+      "blocked": false,
+      "status": 0,
+      "execution": "direct",
+      "verificationTier": null,
+      "reason": null,
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/verify_audio-reactive_check.log"
+    },
+    {
+      "id": "verify:audio-reactive",
+      "category": "portable-core",
+      "passed": true,
+      "blocked": false,
+      "status": 0,
+      "execution": "direct",
+      "verificationTier": null,
+      "reason": null,
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/verify_audio-reactive.log"
+    },
+    {
+      "id": "typecheck",
+      "category": "portable-core",
+      "passed": true,
+      "blocked": false,
+      "status": 0,
+      "execution": "opaque",
+      "verificationTier": null,
+      "reason": null,
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/typecheck.log"
+    },
+    {
+      "id": "build",
+      "category": "host-runtime",
+      "passed": false,
+      "blocked": true,
+      "status": null,
+      "execution": "blocked-host-runtime",
+      "verificationTier": "host-runtime-blocked",
+      "reason": "current host is missing native runtime pieces required for this verification step",
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/build.log"
+    },
+    {
+      "id": "verify:phase4",
+      "category": "host-runtime",
+      "passed": false,
+      "blocked": true,
+      "status": null,
+      "execution": "blocked-host-runtime",
+      "verificationTier": "host-runtime-blocked",
+      "reason": "current host is missing native runtime pieces required for this verification step",
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/verify_phase4.log"
+    },
+    {
+      "id": "verify:phase5",
+      "category": "host-runtime",
+      "passed": false,
+      "blocked": true,
+      "status": null,
+      "execution": "blocked-host-runtime",
+      "verificationTier": "host-runtime-blocked",
+      "reason": "current host is missing native runtime pieces required for this verification step",
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/verify_phase5.log"
+    },
+    {
+      "id": "verify:export",
+      "category": "portable-core",
+      "passed": true,
+      "blocked": false,
+      "status": 0,
+      "execution": "pngjs-static-harness-fallback",
+      "verificationTier": "pngjs-static-harness-fallback",
+      "reason": null,
+      "logPath": "docs/archive/core-portable-verification-runs/2026-04-06T11-50-30-portable-core-manual/step-logs/verify_export.log"
+    }
+  ]
+}

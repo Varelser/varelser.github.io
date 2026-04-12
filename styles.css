@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-size-panel: 10px;
+  --font-size-panel-sm: 9px;
+  --font-size-panel-xs: 8px;
+  --font-size-panel-lg: 11px;
+}
+
+.text-panel {
+  font-size: var(--font-size-panel);
+}
+
+.text-panel-sm {
+  font-size: var(--font-size-panel-sm);
+}
+
+.text-panel-xs {
+  font-size: var(--font-size-panel-xs);
+}
+
+.text-panel-lg {
+  font-size: var(--font-size-panel-lg);
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.4);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 128, 0.6);
+}
+
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+.touch-none {
+  touch-action: none;
+}

@@ -1,0 +1,223 @@
+{
+  "generatedAt": "2026-04-11T21:50:14.655Z",
+  "overallCompletionPercent": 100,
+  "domainProgress": {
+    "packagingGuards": 100,
+    "distributionBundles": 100,
+    "buildLane": 100,
+    "handoffDoctor": 100,
+    "hostRuntime": 100,
+    "liveBrowserReadiness": 100,
+    "deadCodeAudit": 100
+  },
+  "packageIntegrityReportPath": "/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/docs/archive/package-integrity-report.json",
+  "deadCodeReportPath": "/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/docs/archive/dead-code-report.json",
+  "applicationCandidateCount": 0,
+  "orphanModuleCount": 85,
+  "distributionBundles": {
+    "generatedAt": "2026-04-11T21:50:14.648Z",
+    "projectName": "km_full_complete_latest_with_node_modules_2026-04-11 2",
+    "bundleCount": 6,
+    "availableBundleCount": 5,
+    "satisfiedBundleCount": 6,
+    "supersededBundleCount": 1,
+    "unsatisfiedBundleCount": 0,
+    "bundles": [
+      {
+        "id": "full-local-dev",
+        "classId": "full-local-dev",
+        "category": "resume",
+        "packageClass": "full-local-dev",
+        "bundleKind": null,
+        "status": "available",
+        "supersededBy": null,
+        "archivePath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_full-local-dev_2026-04-12.zip",
+        "archiveSizeBytes": 102059045,
+        "manifestPath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_full-local-dev_2026-04-12.manifest.json",
+        "requiresBootstrap": false,
+        "quickAdvice": {
+          "audience": "すぐにローカル開発を再開したい人",
+          "chooseThisWhen": "依存込みの完全な作業環境をそのまま引き継ぎたいとき",
+          "preferInstead": "軽量引き継ぎだけなら source-only-clean、検証結果だけなら proof-packet-verify-status"
+        },
+        "recommendedUse": "そのまま再開する local-dev complete handoff",
+        "command": "npm run package:full-zip"
+      },
+      {
+        "id": "source-only-clean",
+        "classId": "source-only",
+        "category": "resume",
+        "packageClass": "source-only",
+        "bundleKind": null,
+        "status": "available",
+        "supersededBy": null,
+        "archivePath": "/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_source-only_2026-04-12.zip",
+        "archiveSizeBytes": 3427464,
+        "manifestPath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_source-only_2026-04-12.manifest.json",
+        "requiresBootstrap": true,
+        "quickAdvice": {
+          "audience": "軽量なソース引き継ぎをしたい人",
+          "chooseThisWhen": "容量を抑えてコードと文書を渡したいとき",
+          "preferInstead": "即再開したいなら full-local-dev、検証だけ見たいなら proof-packet-verify-status"
+        },
+        "recommendedUse": "軽量なソース引き継ぎ。再開前に bootstrap が必要",
+        "command": "npm run package:source-only-clean"
+      },
+      {
+        "id": "proof-packet-verify-status",
+        "classId": "verify-status",
+        "category": "proof",
+        "packageClass": null,
+        "bundleKind": "proof-packet-verify-status",
+        "status": "available",
+        "supersededBy": null,
+        "archivePath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-verify-status_2026-04-12.zip",
+        "archiveSizeBytes": 274229,
+        "manifestPath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-verify-status_2026-04-12.manifest.json",
+        "requiresBootstrap": false,
+        "quickAdvice": {
+          "audience": "verify / status / readiness の確認だけしたい人",
+          "chooseThisWhen": "コード本体ではなく、現在の検証結果と状態文書を確認したいとき",
+          "preferInstead": "Intel Mac 証跡が必要なら proof-packet-intel-mac-closeout、全体監査なら proof-packet"
+        },
+        "recommendedUse": "verify / status / readiness の共有",
+        "command": "npm run package:proof-packet:verify-status"
+      },
+      {
+        "id": "proof-packet-intel-mac-closeout",
+        "classId": "intel-mac-closeout",
+        "category": "proof",
+        "packageClass": null,
+        "bundleKind": "proof-packet-intel-mac-closeout",
+        "status": "available",
+        "supersededBy": null,
+        "archivePath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-intel-mac-closeout_2026-04-12.zip",
+        "archiveSizeBytes": 63847,
+        "manifestPath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-intel-mac-closeout_2026-04-12.manifest.json",
+        "requiresBootstrap": false,
+        "quickAdvice": {
+          "audience": "Intel Mac target-host closeout と live-browser proof の担当者",
+          "chooseThisWhen": "Intel Mac 実機側の証跡確認と handoff だけを軽く渡したいとき",
+          "preferInstead": "verify/status 全般を見るなら proof-packet-verify-status、全体監査なら proof-packet"
+        },
+        "recommendedUse": "Intel Mac target-host closeout と live-browser proof の引き継ぎ",
+        "command": "npm run package:proof-packet:intel-mac-closeout"
+      },
+      {
+        "id": "proof-packet",
+        "classId": "proof-combined",
+        "category": "proof",
+        "packageClass": null,
+        "bundleKind": "proof-packet",
+        "status": "available",
+        "supersededBy": null,
+        "archivePath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet_2026-04-12.zip",
+        "archiveSizeBytes": 324344,
+        "manifestPath": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet_2026-04-12.manifest.json",
+        "requiresBootstrap": false,
+        "quickAdvice": {
+          "audience": "status / verify / closeout をまとめて見たい人",
+          "chooseThisWhen": "どの bundle を取るべきか未確定で、まず全体像を見たいとき",
+          "preferInstead": "verify/status だけ見たいなら proof-packet-verify-status、Intel Mac 証跡だけなら proof-packet-intel-mac-closeout"
+        },
+        "recommendedUse": "status / verify / closeout をまとめて参照する監査用 handoff",
+        "command": "npm run package:proof-packet"
+      },
+      {
+        "id": "platform-specific-runtime-bundled",
+        "classId": "partial-full",
+        "category": "resume",
+        "packageClass": "platform-specific-runtime-bundled",
+        "bundleKind": null,
+        "status": "superseded",
+        "supersededBy": "full-local-dev",
+        "archivePath": null,
+        "archiveSizeBytes": null,
+        "manifestPath": null,
+        "requiresBootstrap": false,
+        "quickAdvice": {
+          "audience": "host 依存 runtime を含む partial full handoff が必要な人",
+          "chooseThisWhen": "対象 host 向けの runtime 同梱 bundle を扱いたいとき",
+          "preferInstead": "一般的な再開なら full-local-dev、軽量引き継ぎなら source-only-clean"
+        },
+        "recommendedUse": "host 依存 runtime を含む partial full handoff",
+        "command": "npm run package:full-zip -- --allow-partial"
+      }
+    ],
+    "quickAdvice": {
+      "immediateResume": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_full-local-dev_2026-04-12.zip",
+      "lightweightHandoff": "/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/.artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_source-only_2026-04-12.zip",
+      "verifyStatusOnly": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-verify-status_2026-04-12.zip",
+      "intelMacCloseoutOnly": ".artifacts/km_full_complete_latest_with_node_modules_2026-04-11 2_proof-packet-intel-mac-closeout_2026-04-12.zip"
+    }
+  },
+  "buildLane": {
+    "resolvedOutDir": "/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/dist",
+    "distReady": true,
+    "preloadCheck": {
+      "ready": true,
+      "modulePreloadCount": 0,
+      "unexpectedEntries": []
+    },
+    "chunkWarning": {
+      "documented": true,
+      "warningFree": true
+    },
+    "topChunks": [
+      {
+        "name": "three-core-BJWSfq3i.js",
+        "kb": 658.87
+      },
+      {
+        "name": "ui-control-panel-BDCGexiv.js",
+        "kb": 509.36
+      },
+      {
+        "name": "scene-future-native-BF9ZJXF_.js",
+        "kb": 352.74
+      },
+      {
+        "name": "react-vendor-90TsaYq4.js",
+        "kb": 176.42
+      },
+      {
+        "name": "particleDataWorker-C-jklohq.js",
+        "kb": 152.55
+      },
+      {
+        "name": "scene-postfx-n8ao-vendor-D-Vs-Ch0.js",
+        "kb": 128.35
+      },
+      {
+        "name": "vendor-DgiyTDPb.js",
+        "kb": 123
+      },
+      {
+        "name": "r3f-fiber-JVvlL8p5.js",
+        "kb": 122.77
+      }
+    ],
+    "progressPercent": 100
+  },
+  "externalControl": {
+    "statusPath": null,
+    "protocolDocPath": "/mnt/data/work/km_full_complete_latest_with_node_modules_2026-04-11 2/docs/EXTERNAL_CONTROL_BRIDGE_CURRENT.md",
+    "proxyReady": true,
+    "fixtureSenderReady": true,
+    "latestStatusObserved": false,
+    "connectedClientCount": 0,
+    "messageCount": 0
+  },
+  "packagingRefreshItems": [],
+  "externalBlockers": [
+    {
+      "id": "live-browser-proof",
+      "reason": "static readiness/pass と実機 live proof は別。Intel Mac 実ブラウザ証跡の最終固定は外部実行が必要。"
+    }
+  ],
+  "completionDecision": {
+    "assistantScope": "complete-with-external-blockers",
+    "recommendedHandoff": "full-local-dev",
+    "recommendedNextStep": "Intel Mac 実ブラウザ proof を固定し、doctor/status を再生成する。"
+  }
+}
