@@ -1288,6 +1288,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="長文対応型アップサイクリング：ハイブリッドLLMスケーリングの新境地" data-timestamp="1777310617000" data-url="https://arxiv.org/abs/2604.24715v1">
+  <p class="meta">arXiv cs.LG　Mon, 27 Apr 2026 17:23:37 Z</p>
+  <h2 class="article-title">長文対応型アップサイクリング：ハイブリッドLLMスケーリングの新境地</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、効率的なTransformerコンポーネントと線形シーケンスモデリングブロックを組み合わせたハイブリッドシーケンスモデルが、純粋なTransformerに代わる有望な選択肢であると指摘しつつ、既存のTransformerモデルを再利用して長文対応能力を向上させる「アップサイクリング」という実用的なアプローチを提案します。<br><br>提案手法「HyLo（HYbrid LOng-context）」は、アーキテクチャ適応、効率的なTransformerブロック（Multi-Head Latent Attention: MLA）、線形ブロック（Mamba2またはGated DeltaNet）、段階的な長文コンテキスト学習、そして教師あり蒸留を組み合わせることで、既存の事前学習済みTransformer LLMをハイブリッドアーキテクチャに変換します。これにより、短文コンテキストの品質を維持しながら長文コンテキスト能力を向上させます。<br><br>HyLoは、効率的なポストトレーニングにより、使用可能なコンテキスト長を最大32倍に拡張し、KVキャッシュメモリを90%以上削減することで、200万トークンまでの事前生成（prefill）とデコーディングを可能にします。これは、比較対象のLlamaベースラインが64Kコンテキストを超えるとメモリ不足になるのと対照的です。1Bおよび3Bスケールの設定（LlamaおよびQwenベースのバリアント）において、HyLoは一貫して高い短文および長文コンテキスト性能を発揮し、長文評価（RULERなど）で最先端のアップサイクル済みハイブリッドベースラインを大幅に上回りました。<br><br>特に注目すべきは、同程度のスケールで、わずか10Bトークンで学習されたHyLo-Qwen-1.7Bが、400Bトークンで学習されたJetNemotronをGSM8K、Lm-Harnessの常識推論、およびRULER-64Kで大幅に上回った点です。これは、HyLoが効率的な学習とアーキテクチャ設計により、LLMのスケーリングにおいて新たな可能性を開くことを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Parsa Ashrafi Fashi, Utkarsh Saxena, Mehdi Rezagholizadeh, Aref Jafari, Akash Haridas, Mingyu Yang, Vansh Bhatia, Guihong Li<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.24715v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.24715v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="Green Shielding：信頼できるAIのためのユーザー中心アプローチ" data-timestamp="1777309457000" data-url="https://arxiv.org/abs/2604.24700v1">
+  <p class="meta">arXiv cs.AI　Mon, 27 Apr 2026 17:04:17 Z</p>
+  <h2 class="article-title">Green Shielding：信頼できるAIのためのユーザー中心アプローチ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の出力が、ユーザーの質問の言い回しの些細な変化に敏感に反応する問題に対処するための「Green Shielding」というユーザー中心のアプローチを提案します。<br><br>このアプローチは、無害な入力のバリエーションがモデルの挙動をどのように変化させるかを特徴づけることで、証拠に基づいた展開ガイダンスを構築することを目指しています。具体的には、文脈（Context）、有用性（Utility）、誘発（Elicitation）の基準（CUE）を定義し、これらを医療診断の分野に適用した「HealthCareMagic-Diagnosis（HCM-Dx）」というベンチマークを開発しました。<br><br>HCM-Dxは、患者が作成した質問、構造化された参照診断セット、および臨床的に根拠のある評価指標を用いて、LLMの診断能力を評価します。実験の結果、プロンプトの選択がモデルの出力を臨床的に意味のある次元で体系的に変化させることが示されました。例えば、臨床内容を維持しつつ一般的なユーザー要因を除去する「中立化」は、診断の妥当性を高め、より簡潔な診断リストを生成しますが、可能性の高い、または安全上重要な条件の網羅性を低下させるというトレードオフが明らかになりました。<br><br>これらの結果は、対話の選択がモデル出力のタスク関連特性を体系的に変化させうることを示しており、高リスク領域における安全な展開のためのユーザー向けガイダンスを裏付けるものです。このアプローチは医療診断に限定されず、他の意思決定支援設定やエージェンティックAIシステムにも応用可能です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Aaron J. Li, Nicolas Sanchez, Hao Huang, Ruijiang Dong, Jaskaran Bains, Katrin Jaradeh, Zhen Xiang, Bo Li<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.24700v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.24700v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LLMにおけるペルソナ崩壊と均質化の限界" data-timestamp="1777309308000" data-url="https://arxiv.org/abs/2604.24698v1">
+  <p class="meta">arXiv cs.CL　Mon, 27 Apr 2026 17:01:48 Z</p>
+  <h2 class="article-title">LLMにおけるペルソナ崩壊と均質化の限界</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）を用いた応用、特にマルチエージェントシミュレーションにおいて、エージェントの多様性が失われる「ペルソナ崩壊」という現象を調査します。<br><br>ペルソナ崩壊とは、個別のプロファイルを与えられたエージェントが、結果的に狭い行動様式に収束し、均質なシミュレーション集団を生み出してしまう失敗モードを指します。これを定量化するため、集団が占めるペルソナ空間の広がり（カバレッジ）、その中でのエージェントの均一性（ユニフォーミティ）、そして結果として生じる行動パターンの豊かさ（複雑性）を測定するフレームワークを提案しています。<br><br>10のLLMを対象に、性格シミュレーション、道徳的推論、自己紹介のタスクで評価した結果、ペルソナ崩壊は「次元」と「ドメイン」の2つの軸で観測されました。モデルは、ある軸では多様に見えても別の軸では構造的に退化する可能性があり、また、同じモデルでも性格においては最も崩壊しつつ、道徳的推論においては最も多様であるといった現象が見られました。さらに、行動の多様性は、個々のペルソナで指定された詳細な個人差よりも、粗い人口統計学的ステレオタイプに追随する傾向があることが明らかになりました。興味深いことに、ペルソナごとの忠実度が最も高いモデルほど、一貫して最もステレオタイプ化された集団を生成することが示されました。本研究では、ツールキットとデータを公開し、LLMの集団レベル評価を支援します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Yunze Xiao, Vivienne J. Zhang, Chenghao Yang, Ningshan Ma, Weihao Xuan, Jen-tse Huang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.24698v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.24698v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LLMは歴史家になれるか？科挙を題材にした歴史研究能力の評価" data-timestamp="1777308640000" data-url="https://arxiv.org/abs/2604.24690v1">
+  <p class="meta">arXiv cs.CL　Mon, 27 Apr 2026 16:50:40 Z</p>
+  <h2 class="article-title">LLMは歴史家になれるか？科挙を題材にした歴史研究能力の評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">大規模言語モデル（LLM）は、テキスト処理などの歴史的タスクを支援するようになっていますが、専門家レベルの歴史的推論能力については十分に探求されていません。既存のベンチマークは、主に基本的な知識の広さや語彙理解を評価するものであり、歴史研究の中心である証拠に基づく推論のような高次のスキルを捉えきれていません。<br><br>このギャップを埋めるため、1300年以上にわたる東アジアの政治、社会、知的歴史の包括的なミクロコスモスである中国の科挙制度を基盤とした、新しいベンチマーク「ProHist-Bench」を導入します。学際的な深い協力によって開発されたProHist-Benchは、8つの王朝にわたる400の挑戦的で専門家が厳選した質問と、10,891のきめ細かな評価ルーブリックを備えています。<br><br>18のLLMに対する厳格な評価を通じて、著者は顕著な能力ギャップを明らかにしました。最先端のLLMでさえ、複雑な歴史研究の質問に対処するのに苦労しています。本研究は、ProHist-Benchがドメイン固有の推論LLMの開発を促進し、計算歴史研究を進歩させ、LLMの未開拓の可能性をさらに明らかにするのに役立つことを期待しています。ProHist-Benchは公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Lirong Gao, Zeqing Wang, Yuyan Cai, Jiayi Deng, Yanmei Gu, Yiming Zhang, Jia Zhou, Yanfei Zhang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.24690v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.24690v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="トルコ語におけるソース依存推論のベンチマーク：証拠信頼性操作下での人間とLLMの比較" data-timestamp="1777307180000" data-url="https://arxiv.org/abs/2604.24665v1">
+  <p class="meta">arXiv cs.AI　Mon, 27 Apr 2026 16:26:20 Z</p>
+  <h2 class="article-title">トルコ語におけるソース依存推論のベンチマーク：証拠信頼性操作下での人間とLLMの比較</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本研究は、トルコ語の証拠形態論において、情報源の信頼性が推論に影響を与えるか、また大規模言語モデル（LLM）がこの感度を追跡できるかを調査します。<br><br>特に、過去の出来事を表す「-DI」と「-mIs」という2つの形態素に焦点を当て、情報源が外部にあると明示され、その信頼性のみが操作される（高信頼性 vs. 低信頼性）状況下でのクロース（空所補充）文脈で分析を行いました。人間の発話実験では、トルコ語話者は信頼性の影響を強く受け、高信頼性文脈では「-DI」が、低信頼性文脈では「-mIs」が相対的に多く使用される傾向が見られました。<br><br>次に、10種類のLLMを3つのプロンプティングパラダイム（空所補充、明示的な過去形空所補充、強制選択）で評価しました。LLMの挙動はモデルやプロンプトに大きく依存し、一部のモデルでは弱い、あるいは局所的な信頼性に応じたシフトが見られましたが、全体的に効果は不安定で、しばしば逆転したり、出力コンプライアンスの問題や形態素の基本的な使用頻度に影響されたりしました。<br><br>これらの結果は、トルコ語の証拠性に関する信頼性/コミットメントに基づく説明に新たな証拠を提供する一方で、ソース依存の証拠推論において人間とLLMの間には明確なギャップが存在することを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Sercan Karakaş, Yusuf Şimşek<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.24665v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.24665v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="気象予報士向け専門知識、局所性、多峰性を評価するK-MetBench" data-timestamp="1777306394000" data-url="https://arxiv.org/abs/2604.24645v1">
+  <p class="meta">arXiv cs.CL　Mon, 27 Apr 2026 16:13:14 Z</p>
+  <h2 class="article-title">気象予報士向け専門知識、局所性、多峰性を評価するK-MetBench</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">韓国の気象予報士向け実用的な（多峰性）大規模言語モデル（LLM）アシスタントの開発は、権威ある情報源に基づいた多次元的かつ専門家レベルの評価フレームワークが存在しないために阻害されています。<br><br>この課題に対処するため、国家資格試験に基づいた診断ベンチマークであるK-MetBenchを導入します。これは、専門家による図表の視覚的推論、専門家による根拠を通じた論理的妥当性、韓国特有の地理的・文化的理解、そして詳細なドメイン分析という4つの次元にわたる重要なギャップを明らかにします。<br><br>55のモデルを評価した結果、専門的な図表の解釈における顕著なモダリティギャップと、正しい予測にもかかわらずモデルが論理を幻覚する（hallucinate）推論ギャップが明らかになりました。特に、韓国のモデルは、ローカルな文脈において、より大規模なグローバルモデルよりも大幅に優れた性能を示し、パラメータのスケーリングだけでは文化的な依存性を解決できないことを実証しています。K-MetBenchは、信頼性が高く、文化的に適応した専門家AIエージェントの開発ロードマップとして機能します。データセットは公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Soyeon Kim, Cheongwoong Kang, Myeongjin Lee, Eun-Chul Chang, Jaedeok Lee, Jaesik Choi<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.24645v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.24645v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CY, cs.HC, cs.SE" data-title="AIエージェントのトークン消費分析と予測" data-timestamp="1777053287000" data-url="https://arxiv.org/abs/2604.22750v1">
   <p class="meta">arXiv cs.CL　Fri, 24 Apr 2026 17:54:47 Z</p>
   <h2 class="article-title">AIエージェントのトークン消費分析と予測</h2>
@@ -1472,108 +1574,6 @@
         分野：cs.LG<br>
         ジャンル：Robotics<br>
         原文URL：<a href="https://arxiv.org/abs/2604.22676v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.22676v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.HC" data-title="XAI評価の再考：高リスク設定におけるShapleyベンチマークの人中心監査" data-timestamp="1777045124000" data-url="https://arxiv.org/abs/2604.22662v1">
-  <p class="meta">arXiv cs.AI　Fri, 24 Apr 2026 15:38:44 Z</p>
-  <h2 class="article-title">XAI評価の再考：高リスク設定におけるShapleyベンチマークの人中心監査</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.HC</span></div>
-  <div class="summary">本論文は、説明可能なAI（XAI）におけるShapley値の評価方法について、人間の判断との乖離を指摘しています。<br><br>Shapley値には複数の定式化が存在し、その違いは理論的には文書化されていますが、実践的な展開におけるコンセンサスは乏しいのが現状です。本研究では、8つのShapley値のバリアント間の意味論的な違いを、運用リスクワークフローの低遅延制約下で分離しました。実際の不正検出環境で、専門家アナリストと3,735件のケースレビューを含む大規模な実証評価を実施しました。<br><br>結果として、標準的な定量的指標（スパース性、忠実性など）と人間が知覚する明瞭性および意思決定の有用性との間に根本的な不一致があることが明らかになりました。さらに、どの定式化も客観的なアナリストのパフォーマンスを向上させませんでしたが、説明は意思決定の信頼性を一貫して増加させ、高リスク設定における自動バイアスの重大なリスクを示唆しています。これらの発見は、現在の評価指標が人間の下流への影響を予測するには不十分であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Inês Oliveira e Silva, Sérgio Jesus, Iker Perez, Rita P. Ribeiro, Carlos Soares, Hugo Ferreira, Pedro Bizarro<br>
-        分類：cs.LG, cs.AI, cs.HC<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.22662v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.22662v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.IR" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.IR, cs.CL" data-title="RAGパイプラインにおけるクエリ変種選択の評価" data-timestamp="1777045000000" data-url="https://arxiv.org/abs/2604.22661v1">
-  <p class="meta">arXiv cs.CL　Fri, 24 Apr 2026 15:36:40 Z</p>
-  <h2 class="article-title">RAGパイプラインにおけるクエリ変種選択の評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.IR</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、検索拡張生成（RAG）パイプラインにおいて、複数のクエリ変種の中から最適なものを選択する手法について論じています。<br><br>従来のクエリパフォーマンス予測（QPP）はクエリの難易度を推定していましたが、本研究では同じ情報ニーズに対する複数のクエリ変種の中から最適なものを選ぶ「イントラトピック識別」に焦点を当てています。大規模実験を通じて、検索の関連性と生成される回答の質との間に「ユーティリティギャップ」が存在することが明らかになりました。<br><br>しかし、QPPを用いることで、元のクエリよりもエンドツーエンドの品質を向上させるクエリ変種を特定できることが示されました。特に、軽量な事前検索予測子が、より高コストな事後検索手法と同等以上の性能を示す場合があり、堅牢なRAGのための効率的なアプローチを提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Negar Arabzadeh, Andrew Drozdov, Michael Bendersky, Matei Zaharia<br>
-        分類：cs.IR, cs.CL<br>
-        分野：cs.IR<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.22661v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.22661v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="自己教師あり音声認識モデルの音素埋め込みにおける人口統計学的不公平性の特定と類型化" data-timestamp="1777043019000" data-url="https://arxiv.org/abs/2604.22631v1">
-  <p class="meta">arXiv cs.CL　Fri, 24 Apr 2026 15:03:39 Z</p>
-  <h2 class="article-title">自己教師あり音声認識モデルの音素埋め込みにおける人口統計学的不公平性の特定と類型化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、自動音声認識（ASR）システムにおける、話者グループ間の性能差の要因を分析する研究です。<br><br>近年のASRシステムは全体的な性能が向上していますが、特定の話者グループに対しては依然として性能が劣るという観測があります。本研究では、音声エンコーダーモデルが犯すエラーの構造をより深く理解し、特に性能が高いグループと低いグループの埋め込み構造の違いに着目することで、公平性向上への道筋を探ります。具体的には、音素埋め込みにおける2種類の誤差、すなわちランダム誤差（高分散）と系統誤差（埋め込みバイアス）を類型化するフレームワークを提案しています。<br><br>単一の、通常は不利な話者グループのみで音素分類プローブを訓練すると、そのグループの性能が向上する場合があることが示され、これは音素埋め込みにおけるグループレベルのバイアスの存在を示唆しています。一方で、音素分散が高い話者やグループは、音素予測精度が低い話者やグループと同じであることが判明しました。これらの結果から、ランダム誤差と系統誤差の両方が音素埋め込みに存在し、ASRにおけるグループレベルの不公平性の原因となり得ますが、ランダム誤差の方が系統誤差よりも公平性の阻害要因となる可能性が高いと結論付けています。<br><br>さらに、公平性向上アルゴリズム（ドメイン拡張および敵対的訓練）を用いてエンコーダーモデルをファインチューニングしても、ドメイン内音素分類プローブ訓練の利点や、測定されたランダム埋め込み誤差のレベルは変化しないことが見出されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Felix Herron, Solange Rossato, Alexandre Allauzen, François Portet<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.22631v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.22631v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LLMを用いたYouTube上の牛尿健康法に関する言説分析" data-timestamp="1777041113000" data-url="https://arxiv.org/abs/2604.22606v1">
-  <p class="meta">arXiv cs.CL　Fri, 24 Apr 2026 14:31:53 Z</p>
-  <h2 class="article-title">LLMを用いたYouTube上の牛尿健康法に関する言説分析</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、ソーシャルメディアにおける健康情報の誤謬、特に文化的伝統と科学的装いを帯びた主張が交差する問題に取り組んでいます。<br><br>YouTube上の牛尿（ゴムトラ）を健康法として推奨または否定する100件のトランスクリプトを対象に、権威への訴え、有効性への訴え、陰謀論のフレーム化といったレトリック戦略に焦点を当てています。GPT-4、Gemini 2.5 Proなどの大規模言語モデル（LLM）を用いて、14カテゴリーの説得技法分類でアノテーションを行いました。<br><br>分析の結果、推奨者は主に有効性への訴えと社会的証明に依存し、否定者は権威と反論を強調することが明らかになりました。この研究は、誤情報分析のための計算手法を進歩させ、LLMがオンライン上の文化的言説の大規模研究を支援できることを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Sheza Munir, Ratna Kandala, Anamta Khan, Deepti, Joyojeet Pal<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.22606v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.22606v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="LLM / NLP" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI" data-title="自然言語から検証済みコードへ：Dafnyベースの形式検証によるAI支援問題解決コード生成に向けて" data-timestamp="1777040890000" data-url="https://arxiv.org/abs/2604.22601v1">
-  <p class="meta">arXiv cs.AI　Fri, 24 Apr 2026 14:28:10 Z</p>
-  <h2 class="article-title">自然言語から検証済みコードへ：Dafnyベースの形式検証によるAI支援問題解決コード生成に向けて</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AIによるソフトウェア開発におけるコード生成の信頼性向上を目指す研究です。<br><br>大規模言語モデル（LLM）は自動ソフトウェアエンジニアリングにおいて有望視されていますが、生成されるコードの正確性には課題があります。本研究では、LLMが形式仕様と実装ロジックを同時に生成し、それらが数学的検証器によって証明されることでモデルの信頼性を確保するアプローチを提案しています。特に、自然言語から形式仕様への移行の困難さを克服するため、60個の複雑なアルゴリズム問題からなる「NL2VC-60」データセットを構築しました。<br><br>7つのオープンウェイトLLMに対し、コンテキストなしプロンプト、構造的アンカーを提供するシグネチャプロンプト、Dafny検証器からの反復フィードバックを利用するセルフヒーリングプロンプトという段階的なプロンプト戦略を用いて評価を行いました。また、モデルが単純な仕様で検証器を満たす「空虚な検証」に対処するため、uDebugプラットフォームを統合し、機能検証を保証しています。<br><br>結果として、コンテキストなしプロンプトではほぼ失敗しましたが、構造的シグネチャと反復的なセルフヒーリングにより、性能が劇的に向上しました。特にGemma 4-31Bは90.91%の検証成功率を達成し、GPT-OSS 120Bはシグネチャ誘導フィードバックにより0%から81.82%に成功率が向上しました。これらの発見は、オープンウェイトLLMでも形式検証が可能であり、高保証ソフトウェア開発に貢献できることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Md Erfan, Md Kamal Hossain Chowdhury, Ahmed Ryan, Md Rayhanur Rahman<br>
-        分類：cs.SE, cs.AI<br>
-        分野：cs.SE<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.22601v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.22601v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="SPDnetを用いた幾何学を考慮した連合深層学習：FedSPDnet" data-timestamp="1777033256000" data-url="https://arxiv.org/abs/2604.22494v1">
-  <p class="meta">arXiv stat.ML　Fri, 24 Apr 2026 12:20:56 Z</p>
-  <h2 class="article-title">SPDnetを用いた幾何学を考慮した連合深層学習：FedSPDnet</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、対称正定値（SPD）行列上で動作する古典的なSPDnetモデルのための、2つの連合学習フレームワークを提案する研究です。<br><br>従来のユークリッド平均化とは異なり、本アプローチは直交性を維持しつつ幾何学的構造を保持します。そのために、算術平均をStiefel多様体に射影する「ProjAvg」と、接空間平均をレトラクションとリフティングを介して近似する「RLAvg」という、2つの効率的な集約戦略を採用しています。これらの手法は計算効率が高く、オプティマイザに依存せず、特徴量がSPD行列である信号処理アプリケーションのためのスケーラブルな連合学習を可能にします。<br><br>提案手法であるFedSPDnetは、Stiefel多様体上のパラメータに制約を持つSPDnetモデルに適用されます。シミュレーションは、EEG運動イメージングベンチマークデータセットを用いて行われました。その結果、FedSPDnetは連合EEGnetと比較して、F1スコアと連合および部分参加に対するロバスト性において優れていることが示されました。また、通信ラウンドあたりのパラメータ使用量も少ないことが確認されています。<br><br>この研究は、幾何学的な構造を考慮した連合学習が、特にSPD行列を扱うような複雑なデータ構造を持つ深層学習タスクにおいて、従来のユークリッド空間ベースのアプローチよりも優れた性能と効率を発揮する可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Thibault Pautrel, Florent Bouchard, Ammar Mian, Guillaume Ginolhac<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.22494v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.22494v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
