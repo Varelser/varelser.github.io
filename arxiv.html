@@ -1475,105 +1475,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="学習なしで最小ニューラルアーキテクチャを発見する「Random Cloud」" data-timestamp="1777478221000" data-url="https://arxiv.org/abs/2604.26830v1">
-  <p class="meta">arXiv cs.AI　Wed, 29 Apr 2026 15:57:01 Z</p>
-  <h2 class="article-title">学習なしで最小ニューラルアーキテクチャを発見する「Random Cloud」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、ニューラルアーキテクチャ探索（NAS）において、学習を必要としない「Random Cloud」という手法を提案しています。<br><br>この手法は、確率的探索と構造的削減を通じて、最小限のフィードフォワードネットワークトポロジーを発見します。従来の学習後プルーニングとは異なり、バックプロパゲーションなしでランダム初期化されたネットワークを評価し、トポロジーを段階的に削減した後、最終的に最も良い最小候補のみを学習させます。<br><br>7つの分類ベンチマークで評価した結果、Random Cloudは既存のプルーニング手法と比較して、多くのデータセットで同等またはそれ以上の性能を示しました。特に、パラメータ数を87%削減しつつ、精度を統計的に有意に向上させました。さらに、学習済みのフルサイズネットワークを回避するため、計算コストも大幅に削減されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Javier Gil Blázquez<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.26830v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26830v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="ViCrop-Det: 小物体検出のための訓練不要な空間的注意エントロピー誘導クロッピング" data-timestamp="1777476903000" data-url="https://arxiv.org/abs/2604.26806v1">
-  <p class="meta">arXiv cs.AI　Wed, 29 Apr 2026 15:35:03 Z</p>
-  <h2 class="article-title">ViCrop-Det: 小物体検出のための訓練不要な空間的注意エントロピー誘導クロッピング</h2>
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="メモリ推論と適応的補正による学習不要なオープンボキャブラリ変化検出" data-timestamp="1777475137000" data-url="https://arxiv.org/abs/2604.26774v1">
+  <p class="meta">arXiv cs.AI　Wed, 29 Apr 2026 15:05:37 Z</p>
+  <h2 class="article-title">メモリ推論と適応的補正による学習不要なオープンボキャブラリ変化検出</h2>
   <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AI分野における小物体検出の課題に取り組む「ViCrop-Det」という新しいフレームワークを提案しています。<br><br>従来のTransformerベースのモデルは、画像内の情報密度の違いに対応できず、特に微細な対象物が密集する領域で特徴が劣化するという問題がありました。ViCrop-Detは、この問題に対し、訓練不要な推論フレームワークとして、適応的な空間的信頼領域の縮小を導入します。これは、注意エントロピーを異常セグメンテーションに利用する考え方から着想を得ており、検出デコーダーのクロスアテンション分布を内的なプローブとして活用します。<br><br>空間的注意エントロピー（SAE）を用いて局所的な空間的不確実性を評価し、計算リソースをターゲットの顕著性と認知的不確実性の両方が高い領域にのみ割り当てる動的な空間ルーティングを実行します。これにより、モデル構造を変更することなく、空間的不確実性を解消し、微細な特徴を復元します。VisDroneやDOTA-v1.5での評価では、既存モデルの性能を向上させることが示されています。また、MS COCOデータセットでは、微細な対象物の検出精度を向上させつつ、中・大対象物の性能は維持されました。計算リソースを同等にした場合、提案手法は均一なスライシング手法を上回り、精度と速度のトレードオフを最適化しています。</div>
+  <div class="summary">本論文は、定義済みのカテゴリなしで、時系列リモートセンシング画像における意味的な変化を特定するオープンボキャブラリ変化検出（OVCD）を扱います。既存の手法は、各時点を独立に処理するか、最終段階でのみ相互作用するため、意味的な推論における時間的結合が不十分で、非意味的な外観の差異と真の変化を区別することが困難でした。<br><br>提案手法「MemOVCD」は、クロス時間メモリ推論とグローバル・ローカル適応的補正に基づく学習不要なOVCDフレームワークです。時系列変化検出を2フレーム追跡問題として再定式化し、双方向伝播を用いて両方の時間方向からの意味的証拠を集約します。大きな時間差におけるメモリ伝播を安定化させるため、ヒストグラム整合された遷移フレームを構築し、外観変化を平滑化します。<br><br>さらに、グローバル・ローカル適応的補正戦略は、ローカルとグローバルの両方の予測を適応的に融合し、空間的な一貫性を向上させつつ、詳細な情報を保持します。5つのベンチマークでの実験により、MemOVCDは2つの変化検出タスクで良好な性能を示し、多様なオープンボキャブラリ設定下での有効性と汎化能力を検証しました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Hui Wang, Hongze Li, Wei Chen, Xiaojin Zhang<br>
+        著者：Zuzheng Kuang, Honghao Chang, Boqiang Liang, Haoqian Wang, Lijun He, Fan Li, Haixia Bi<br>
         分類：cs.CV, cs.AI<br>
         分野：cs.CV<br>
         ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.26806v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26806v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2604.26774v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26774v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.MA" data-title="Bian Que: オンラインシステム運用のための柔軟なスキル配置を備えたエージェントフレームワーク" data-timestamp="1777476901000" data-url="https://arxiv.org/abs/2604.26805v1">
-  <p class="meta">arXiv cs.AI　Wed, 29 Apr 2026 15:35:01 Z</p>
-  <h2 class="article-title">Bian Que: オンラインシステム運用のための柔軟なスキル配置を備えたエージェントフレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.MA</span></div>
-  <div class="summary">本論文は、AI分野におけるオンラインシステム運用・保守（O&M）の効率化を目指す「Bian Que」というエージェントフレームワークを提案しています。<br><br>大規模オンラインシステム（検索、レコメンデーション、広告など）のO&Mには、リリース監視、アラート対応、根本原因分析などに多大な人的労力が必要です。LLMベースのエージェントはこれらのタスクに適していますが、実際の運用では、関連データ（メトリクス、ログ、変更イベント）と運用知識（ハンドブック、経験）の適切な選択と整理が課題となります。Bian Queは、この課題に対し、3つの貢献を特徴としています。第一に、日々のO&Mをリリース監視、プロアクティブ検査、アラート根本原因分析の3つの標準的なパターンに抽象化する統一運用パラダイムです。<br><br>第二に、「柔軟なスキル配置」です。各スキルは、特定のビジネスモジュールコンテキストにおけるデータと知識の取得方法を指定し、LLMによって自動生成・更新されるか、エンジニアの指示で反復的に改良できます。第三に、「統一された自己進化メカニズム」です。1つの修正信号が、ケースメモリから知識への蒸留と、ターゲットスキルの改良という2つの並列経路を駆動します。中国の大手ショートビデオプラットフォームであるKuaiShouのEコマース検索エンジンに導入されたBian Queは、アラート量を75%削減し、根本原因分析の精度を80%達成し、平均解決時間を50%以上短縮しました。オフライン評価でも99.0%の合格率を達成しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Bochao Liu, Zhipeng Qian, Yang Zhao, Xinyuan Jiang, Zihan Liang, Yufei Ma, Junpeng Zhuang, Ben Chen<br>
-        分類：cs.AI, cs.MA<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.26805v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26805v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.CL" data-title="システム統合型推論的デコーディングによるRL後学習ロールアウトの高速化" data-timestamp="1777475508000" data-url="https://arxiv.org/abs/2604.26779v1">
-  <p class="meta">arXiv cs.CL　Wed, 29 Apr 2026 15:11:48 Z</p>
-  <h2 class="article-title">システム統合型推論的デコーディングによるRL後学習ロールアウトの高速化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、強化学習（RL）を用いた大規模言語モデルの後学習プロセスにおけるボトルネックとなっているロールアウト生成を高速化する手法を提案します。<br><br>従来の効率化手法は、オフポリシー実行やリプレイ、低精度生成など、ロールアウトや最適化の方式を変更することが一般的でした。本研究では、ターゲットモデルの出力分布を維持する損失のない高速化手法として「推論的デコーディング」に着目し、これをRLの後学習に統合することを検討しました。NeMo-RLにvLLMバックエンドを組み込み、同期および非同期パイプラインの両方で推論的デコーディングをサポートし、RLロールアウト中の推論を可能にしました。<br><br>8Bスケールの推論後学習ワークロードにおいて、同期RL下で推論的デコーディングを適用した結果、ロールアウトのスループットが1.8倍向上しました。さらに、高忠実度パフォーマンスシミュレータを用いたシミュレーションでは、非同期RLと組み合わせることで、235Bスケールにおいて最大2.5倍の全体的な学習速度向上が予測されました。この研究は、推論的デコーディングをRLトレーニングに統合するための実用的な道筋を示すものです。</div>
+<article class="digest-article" data-month="2026-04" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="知識とタスクのサブスペースを分離するComposable PRAG" data-timestamp="1777474835000" data-url="https://arxiv.org/abs/2604.26768v1">
+  <p class="meta">arXiv cs.CL　Wed, 29 Apr 2026 15:00:35 Z</p>
+  <h2 class="article-title">知識とタスクのサブスペースを分離するComposable PRAG</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、外部文書を軽量なパラメータモジュールにエンコードし、推論時に検索・統合するParametric Retrieval-Augmented Generation (PRAG) の改良手法を提案しています。<br><br>従来のPRAGでは、文書アダプターが文書固有の事実とタスク解決能力の両方をエンコードしてしまうため、アダプターの合成時にタスク挙動の重複が起こり、安定性や焦点のずれが生じる可能性がありました。本研究では、Orthogonal Subspace Decomposition (OSD) という、タスク挙動と文書固有知識を分離するアダプター学習設定を提案します。<br><br>具体的には、まずタスクLoRAで再利用可能なタスク挙動を捉え、次に文書LoRAで文書固有知識を直交するサブスペースにエンコードします。この設定により、タスクと文書LoRAの更新を直交化することが、マルチ文書PRAGにおけるアダプター合成にどのように影響するかを検証します。実験の結果、この直交化戦略は、特に複数の文書アダプターを統合する際に、パラメトリックRAGにおける合成ロバスト性を向上させることが示唆されました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Hayate Iso, Tiyasa Mitra, Sudipta Mondal, Rasoul Shafipour, Venmugil Elango, Terry Kong, Yuki Huang, Seonjin Na<br>
-        分類：cs.LG, cs.CL<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.26779v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26779v1</a>
+        著者：Weihang Su, Hanwen Zhang, Qingyao Ai, Yiqun Liu<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.26768v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26768v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.CL, stat.ML" data-title="LLM強化学習における性能飽和をエントロピー曲線の精密制御で解決" data-timestamp="1777443393000" data-url="https://arxiv.org/abs/2604.26326v1">
-  <p class="meta">arXiv stat.ML　Wed, 29 Apr 2026 06:16:33 Z</p>
-  <h2 class="article-title">LLM強化学習における性能飽和をエントロピー曲線の精密制御で解決</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の強化学習（RL）における性能飽和問題に対処することを目的としています。RLはLLMに複雑な推論能力をもたらしますが、学習が進むにつれて性能が頭打ちになる「性能飽和」に悩まされています。これは、RLにおける探索の重要な指標であるエントロピーの崩壊によって特徴づけられます。<br><br>既存の研究では、正則化やクリッピングによってエントロピー崩壊を防ごうとしてきましたが、長期的に不安定なエントロピー曲線が生じ、性能向上の妨げとなっていました。本論文では、アドバンテージ分布にバイアスをかけるシンプルな棄却サンプリング手法「Entrocraft」を提案します。これにより、ユーザーがカスタマイズした任意のエントロピースケジュールを実現します。Entrocraftは、客観的な正則化を必要とせず、アドバンテージ推定器にも依存しません。<br><br>理論的には、最小限の仮定の下で、ステップごとのエントロピー変化とアドバンテージ分布の関係を明らかにしました。これにより、既存のRLおよびエントロピー維持手法の挙動を説明します。また、Entrocraftはエントロピースケジュールの体系的な研究を可能にし、線形減衰（高く開始し、わずかに低い目標値に減衰させる）が最も良い結果をもたらすことを発見しました。経験的には、Entrocraftは性能飽和に対処し、汎化性能、出力多様性、長期学習を大幅に向上させます。具体的には、4Bモデルが8Bベースラインを上回り、プラトーに達するまでの学習期間を4倍に延長し、pass@Kをベースライン比50%向上させました。</div>
+<article class="digest-article" data-month="2026-04" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="小規模言語モデルによる臨床トリアージ支援の信頼性向上" data-timestamp="1777474809000" data-url="https://arxiv.org/abs/2604.26766v1">
+  <p class="meta">arXiv cs.CL　Wed, 29 Apr 2026 15:00:09 Z</p>
+  <h2 class="article-title">小規模言語モデルによる臨床トリアージ支援の信頼性向上</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、緊急部門における緊急度指数（ESI）の割り当て精度向上を目的としています。緊急部門では、自由記述のトリアージ記録のばらつきが誤診や非効率なワークフローの原因となっています。<br><br>研究では、オープンソースの小規模言語モデル（SLM）が、信頼性が高くプライバシーに配慮した意思決定支援ツールとして機能するかを評価しました。臨床症例（トリアージ記録の簡潔な要約）を用いたプロンプトパイプラインを比較した結果、Qwen2.5-7Bモデルが最も高い精度、安定性、計算効率を示しました。<br><br>専門家が作成したデータとシルバースタンダードデータを用いた大規模なドメイン適応により、ファインチューニングされたQwen2.5-7Bモデルは、不一致や臨床的に重要なエラーを大幅に削減し、ベースラインSLMやGPT-4oなどの商用大規模言語モデル（LLM）を上回る性能を示しました。この結果は、機関固有のSLMが信頼性の高いESI意思決定支援に利用可能であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Manar Aljohani, Brandon Ho, Kenneth McKinley, Dennis Ren, Xuan Wang<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.26766v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26766v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="ベイズテンソルネットワークカーネルマシンへのラプラス近似の適用" data-timestamp="1777470213000" data-url="https://arxiv.org/abs/2604.26673v1">
+  <p class="meta">arXiv stat.ML　Wed, 29 Apr 2026 13:43:33 Z</p>
+  <h2 class="article-title">ベイズテンソルネットワークカーネルマシンへのラプラス近似の適用</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、不確実な入力や分布外の入力に対するロバストな意思決定に不可欠な不確実性推定について論じています。ガウス過程（GP）は、不確実性定量化を提供し、小〜中規模データセットで良好な性能を示しますが、テンソルネットワーク仮定下での重み空間学習は、標準的な確率的推論を複雑にします。<br><br>この問題に対処するため、本研究ではラプラス近似を用いた新しいベイズテンソルネットワークカーネルマシン（LA-TNKM）を提案します。この手法は、テンソルネットワークカーネルマシンがどのようにして原理的な不確実性推定を提供できるかという根本的な問いに答えるものです。<br><br>広範な数値実験の結果、提案手法はUCI回帰ベンチマークにおいて、ガウス過程やベイズニューラルネットワーク（BNN）と同等またはそれ以上の性能を一貫して示しました。これは、LA-TNKMの有効性と実用的な関連性を強調するものです。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Bolian Li, Yifan Wang, Yi Ding, Anamika Lochab, Ananth Grama, Ruqi Zhang<br>
-        分類：cs.LG, cs.CL, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.26326v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26326v1</a>
+        著者：Albert Saiapin, Kim Batselier<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.26673v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26673v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="eess.SY" data-source="arXiv stat.ML" data-area="AI" data-categories="eess.SY, cs.AI, cs.LG, math.OC, stat.ML" data-title="Co-Learning Port-Hamiltonian Systems and Optimal Energy-Shaping Control" data-timestamp="1777418830000" data-url="https://arxiv.org/abs/2604.26172v1">
-  <p class="meta">arXiv stat.ML　Tue, 28 Apr 2026 23:27:10 Z</p>
-  <h2 class="article-title">Co-Learning Port-Hamiltonian Systems and Optimal Energy-Shaping Control</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">eess.SY</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">math.OC</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv stat.ML Site: arXiv Title: Co-Learning Port-Hamiltonian Systems and Optimal Energy-Shaping Control Authors: Ankur Kamboj, Biswadip Dey, Vaibhav Srivastava Categories: eess.SY, cs.AI, cs.LG, math.OC, stat.ML Abstract / Summary: We develop a physics-informed learning framework for energy-shaping control of port-Hamiltonian (pH) systems from trajectory data. The proposed approach {co-learns} a pH system model and an optimal energy-balancing passivity-based controller (EB-PBC) through alternating optimization with policy-aware data collection. At each iteration, the system model is refined using trajectory data collected under the current control policy, and the controller is re-optimized on the updated model. Both components are parameterized by neural networks that embed the pH {dynamics} and EB-PBC structure, ensuring interpretability in terms of energy {interactio…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, stat.ME" data-title="深層学習を用いた仮説検定：依存性検出への応用" data-timestamp="1777463132000" data-url="https://arxiv.org/abs/2604.26558v1">
+  <p class="meta">arXiv stat.ML　Wed, 29 Apr 2026 11:45:32 Z</p>
+  <h2 class="article-title">深層学習を用いた仮説検定：依存性検出への応用</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">stat.ME</span></div>
+  <div class="summary">本論文は、深層学習（ディープラーニング）の手法を仮説検定に応用する「ディープ・テスティング」という新しい手法を提案しています。<br><br>深層学習が画像認識などで高い性能を示すように、統計モデルから生成されたデータとそうでないデータを識別する能力を仮説検定に活用します。具体的には、ニューラルネットワークに帰無仮説と対立仮説を満たすシミュレーションデータを学習させ、その識別能力を検定統計量として利用することで、強力な検定を構築します。<br><br>この手法の有効性を示すため、統計学における最も重要な問題の一つである独立性の検定に適用されました。大規模なシミュレーション研究では、提案手法が19の競合手法と比較して、広範な依存構造に対して最も高い検出力を達成し、その実用性が確認されました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Ankur Kamboj, Biswadip Dey, Vaibhav Srivastava<br>
-        分類：eess.SY, cs.AI, cs.LG, math.OC, stat.ML<br>
-        分野：eess.SY<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.26172v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26172v1</a>
+        著者：Gery Geenens, Pierre Lafaye de Micheaux, Ivan Muyun Zou<br>
+        分類：stat.ML, cs.LG, stat.ME<br>
+        分野：stat.ML<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.26558v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26558v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-04" data-genre="Generative Models" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="外れ値に強い条件付き拡散モデルによる構造監視データの品質評価" data-timestamp="1777447597000" data-url="https://arxiv.org/abs/2604.26366v1">
+  <p class="meta">arXiv stat.ML　Wed, 29 Apr 2026 07:26:37 Z</p>
+  <h2 class="article-title">外れ値に強い条件付き拡散モデルによる構造監視データの品質評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、構造ヘルスモニタリング（SHM）タスクの信頼性を確保するためのデータ品質評価手法として、予測偏差に基づく新しいアプローチを提案しています。<br><br>提案手法では、条件付き拡散モデル（CDM）を用いて、各データ点に外れ値確率を割り当て、データセット全体の品質を評価します。CDMは、標準的な拡散モデルに条件付き埋め込みモジュールを組み込み、時系列コンテキストを取り込み、四分位正規化で分布の歪みを軽減し、Huber損失で外れ値に対する頑健性を向上させています。これにより、外れ値の診断とデータクリーニングが可能になります。<br><br>実際の構造からの運用データを用いた広範なケーススタディでは、提案フレームワークが他の強力なベースライン手法（クラスタリング、孤立ベース、深層再構成法）を上回り、データ品質評価の精度を大幅に向上させることが実証されました。さらに、アブレーション実験とハイパーパラメータ分析の結果も、提案フレームワークの有効性と頑健性を裏付けています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Qi Li, Yong Huang, Hui Li<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.26366v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.26366v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
