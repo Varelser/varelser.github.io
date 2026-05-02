@@ -1476,105 +1476,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.SI" data-title="LLMエージェントによる都市感情認識：ペルソナの妥当性と振る舞いの安定性" data-timestamp="1777564751000" data-url="https://arxiv.org/abs/2604.28048v1">
-  <p class="meta">arXiv cs.CL　Thu, 30 Apr 2026 15:59:11 Z</p>
-  <h2 class="article-title">LLMエージェントによる都市感情認識：ペルソナの妥当性と振る舞いの安定性</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.SI</span></div>
-  <div class="summary">本論文は、都市分析における人間知覚の代理として大規模言語モデル（LLM）が利用される際の、ペルソナプロンプティングによる行動の多様性と再現性について調査します。<br><br>性別、経済状況、政治的指向、性格といった要因を組み合わせたペルソナを用いて、複数のLLMエージェントを生成し、都市の風景画像を評価させました。これにより、同一ペルソナ内での一貫性と、ペルソナ間の差異を分析しました。結果として、同一ペルソナを共有するエージェント間では、安定した再現性のある振る舞いが確認されました。<br><br>しかし、ペルソナ間の差異は限定的でした。経済状況と性格は統計的に検出可能ながらも実質的な影響は小さく、性別には測定可能な効果がなく、政治的指向の影響もわずかでした。また、エージェントは極端なバイアスを示し、人間によるアノテーションで一般的な中間的な感情カテゴリを単純化する傾向がありました。<br><br>このため、粗い極性タスクでは性能が高いものの、感情の解像度が増すにつれて性能が低下しました。単純なラベルベースのペルソナプロンプティングでは、細かい知覚的判断を捉えきれない可能性が示唆されます。さらに、ペルソナなしの場合と比較した結果、ペルソナなしモデルが一部のタスクで同等以上の性能を示すこともあり、ペルソナプロンプティングの付加価値が限定的である可能性も示唆されました。</div>
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.OS" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.OS, cs.AI" data-title="エージェントサンドボックスのためのセマンティクスを考慮したチェックポイント/リストアランタイム「Crab」" data-timestamp="1777569619000" data-url="https://arxiv.org/abs/2604.28138v1">
+  <p class="meta">arXiv cs.AI　Thu, 30 Apr 2026 17:20:19 Z</p>
+  <h2 class="article-title">エージェントサンドボックスのためのセマンティクスを考慮したチェックポイント/リストアランタイム「Crab」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.OS</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、自律エージェントが利用するサンドボックス化されたコンテナやマイクロVMの状態を効率的かつ正確にチェックポイント（保存）およびリストア（復元）するための新しいランタイムシステム「Crab」を提案します。<br><br>エージェントはファイルシステム、プロセス、ランタイムアーティファクトにまたがる状態を持ち、これらをチェックポイント・リストアすることは、耐障害性、スポット実行、強化学習のロールアウト分岐、安全なロールバックなどに不可欠です。しかし、既存のアプローチは、アプリケーションレベルの回復ではOS側の影響を捉えきれず、完全なターンごとのチェックポイントではコストが高すぎるという二極端な問題がありました。これは、エージェントフレームワークがツール呼び出ししか認識しないのに対し、OSはターンごとの文脈なしに状態変化を認識するという、エージェントとOS間の意味論的なギャップに起因します。<br><br>Crabは、このギャップを埋める透過的なホストサイドランタイムであり、エージェントやチェックポイント・リストアバックエンドを変更する必要がありません。eBPFベースのインスペクタがOSレベルの影響を分類し、チェックポイントの粒度を決定します。コーディネーターがチェックポイントをターン境界に合わせ、LLMの待機時間とチェックポイント/リストアをオーバーラップさせます。ホストスコープエンジンが、共配置されたサンドボックス間でチェックポイントトラフィックをスケジュールします。シェル集約型およびコード修復ワークロードにおいて、Crabは回復の正確性を8%から100%に向上させ、チェックポイントトラフィックを最大87%削減し、障害のない実行時間に対して1.9%以内のオーバーヘッドに抑えました。これは、エージェントの状態管理における効率性と正確性を大幅に向上させる可能性を示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
+        配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Neemias B da Silva, Rodrigo Minetto, Daniel Silver, Thiago H Silva<br>
-        分類：cs.CL, cs.SI<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.28048v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28048v1</a>
+        著者：Tianyuan Wu, Chaokun Chang, Lunxi Cao, Wei Gao, Wei Wang<br>
+        分類：cs.OS, cs.AI<br>
+        分野：cs.OS<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.28138v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28138v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルの多段階発想における制約遵守能力" data-timestamp="1777563993000" data-url="https://arxiv.org/abs/2604.28031v1">
-  <p class="meta">arXiv cs.CL　Thu, 30 Apr 2026 15:46:33 Z</p>
-  <h2 class="article-title">大規模言語モデルの多段階発想における制約遵守能力</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）を用いた科学的発想の多段階プロセスにおいて、初期の目的に対する忠実性が維持されるかを評価するベンチマーク「DriftBench」を提案します。<br><br>7つのモデル、5つのプロバイダー、4つの対話条件、38の研究ブリーフ、24の科学分野にわたる2,146回の評価の結果、反復的な指示は構造的複雑性を増加させ、元の制約への遵守を低下させることが明らかになりました。モデルは制約を正確に言い換えることができるにもかかわらず、実際にはそれを破るという、宣言的な記憶と行動的な遵守の乖離が示されました。<br><br>「知っているが破る（KBV）」率はモデル間で8%から99%と広範囲にわたりました。チェックポイントによる構造化はKBV率を部分的に低減しましたが、乖離は解消されず、複雑性の増加も持続しました。人間の評価では、LLMの判断が制約違反を見逃す傾向があることが確認され、報告される遵守率は保守的であることが示唆されました。温度や指示のタイプに対する感度分析でも、これらの発見は頑健であることが確認されました。本研究では、すべてのブリーフ、プロンプト、評価基準、トランスクリプト、スコアを公開ベンチマークとしてリリースします。</div>
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CR, cs.AI" data-title="潜在的敵対的検出：マルチターン攻撃検出のためのLLM活性化の適応的プロービング" data-timestamp="1777569393000" data-url="https://arxiv.org/abs/2604.28129v1">
+  <p class="meta">arXiv cs.AI　Thu, 30 Apr 2026 17:16:33 Z</p>
+  <h2 class="article-title">潜在的敵対的検出：マルチターン攻撃検出のためのLLM活性化の適応的プロービング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CR</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）に対するマルチターンのプロンプトインジェクション攻撃を、テキストレベルの防御では見逃されがちな、モデルの内部活性化シグナルを検出することで、より効果的に検知する手法を提案します。<br><br>マルチターンのプロンプトインジェクション攻撃は、信頼構築、ピボット、エスカレーションという段階を踏みますが、個々のターンが正規に見えるため、テキストベースの防御では検知が困難です。本研究では、この攻撃パスがモデルの残差ストリームに活性化レベルのシグナルを残すことを発見しました。各段階の遷移が活性化を変化させ、正規の会話よりもはるかに長いパス長を生み出す「敵対的落ち着きのなさ」として捉えられます。このシグナルを捉える5つのスカラー軌跡特徴量を用いることで、会話レベルの検出率を76.2%から93.8%に向上させることが示されました。<br><br>このシグナルは4つの異なるモデルファミリー（24B-70B）で再現されましたが、プローブはモデル固有であり、アーキテクチャ間で転移しません。汎化性能はソースに依存し、合成データ、LMSYS-Chat-1M、SafeDialBenchのそれぞれが異なる攻撃分布を捉えていることが示されました。3つのソースを組み合わせたトレーニングにより、混合データセットに対する検出率は89.4%、偽陽性率は2.4%を達成しました。さらに、本研究で提案された3段階のターンレベルラベル（正規/ピボット/敵対的）が、バイナリの会話レベルラベルよりも検出精度を高める上で不可欠であることが明らかになりました。これらの結果は、「敵対的落ち着きのなさ」が信頼性の高い活性化レベルのシグナルであることを確立し、実用的な展開のためのデータ要件を特徴づけています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Prashant Kulkarni<br>
+        分類：cs.CR, cs.AI<br>
+        分野：cs.CR<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.28129v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28129v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL" data-title="多モーダル強化学習のためのブラックボックス方策内蒸留による事前整合「PRISM」" data-timestamp="1777569173000" data-url="https://arxiv.org/abs/2604.28123v1">
+  <p class="meta">arXiv cs.AI　Thu, 30 Apr 2026 17:12:53 Z</p>
+  <h2 class="article-title">多モーダル強化学習のためのブラックボックス方策内蒸留による事前整合「PRISM」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、多モーダル強化学習（Multimodal Reinforcement Learning: MRL）における分布ドリフトの問題に対処するため、「PRISM」という新しい3段階パイプラインを提案します。<br><br>標準的な大規模多モーダルモデル（LMM）の学習では、教師ありファインチューニング（SFT）後に検証可能な報酬を用いた強化学習（RLVR）が行われますが、SFTはモデルの元の能力を損ない、教師データの分布を忠実に再現しないという問題があります。これは、知覚エラーと推論エラーが複合的に影響する多モーダル推論において特に顕著です。<br><br>PRISMは、SFTとRLVRの間に明示的な分布整合ステージを挿入することで、このドリフトを軽減します。方策と、専用の知覚・推論エキスパートを持つMixture-of-Experts（MoE）識別器との間のブラックボックス、応答レベルの敵対的ゲームとして整合を捉え、教師のロジットにアクセスせずにモデルを教師分布に誘導する分離された修正信号を提供します。実験では、PRISMが複数のRLアルゴリズムと多様な多モーダルベンチマークにおいて、一貫してRLVRのパフォーマンスを向上させることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Sudong Wang, Weiquan Huang, Xiaomin Yu, Zuhao Yang, Hehai Lin, Keming Wu, Chaojun Xiao, Chen Chen<br>
+        分類：cs.CV, cs.AI, cs.CL<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.28123v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28123v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="表形式質問応答における暗黙的予測と推論のためのベンチマーク「TopBench」" data-timestamp="1777566171000" data-url="https://arxiv.org/abs/2604.28076v1">
+  <p class="meta">arXiv cs.CL　Thu, 30 Apr 2026 16:22:51 Z</p>
+  <h2 class="article-title">表形式質問応答における暗黙的予測と推論のためのベンチマーク「TopBench」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、表形式質問応答（Table Question Answering: TQA）における暗黙的な予測と推論能力を評価するための新しいベンチマーク「TopBench」を提案します。<br><br>従来のTQA研究では、情報の抽出や単純な集計で回答できる質問が主流でした。しかし、現実世界の多くの質問は、過去のパターンから観察されていない回答を推論する必要がある、暗黙的な予測を伴います。これには、潜在的な意図の認識と、大規模な表に対する信頼性の高い予測推論という2つの課題があります。<br><br>TopBenchは、単一点予測から意思決定、処置効果分析、複雑なフィルタリングまで、4つのサブタスクにわたる779サンプルで構成されています。モデルには、推論テキストと構造化テーブルの両方を生成することが求められます。実験の結果、現在のモデルは意図認識に苦労し、単なる検索に陥りがちであることが明らかになりました。さらに、予測精度の上限を引き上げるには、より高度なモデリングまたは推論能力の統合が必要であることが示唆されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Garvin Kruthof<br>
-        分類：cs.CL<br>
+        著者：An-Yang Ji, Jun-Peng Jiang, De-Chuan Zhan, Han-Jia Ye<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.28076v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28076v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="サンプル効率の良いドイツ語言語モデリングのための高信号データフィルタリング：多様性より繰り返し" data-timestamp="1777566088000" data-url="https://arxiv.org/abs/2604.28075v1">
+  <p class="meta">arXiv cs.CL　Thu, 30 Apr 2026 16:21:28 Z</p>
+  <h2 class="article-title">サンプル効率の良いドイツ語言語モデリングのための高信号データフィルタリング：多様性より繰り返し</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、サンプル効率の良いドイツ語言語モデリングにおいて、データフィルタリング戦略のトレードオフを調査します。<br><br>大規模な英語コーパスのフィルタリングによる高品質サブセットの構築が学習効率を向上させることが示されていますが、ドイツ語のような非英語圏の言語では、多様性を優先して軽度にフィルタリングされた大量のウェブデータを一度学習させるか、あるいは品質を厳密にフィルタリングしたコアデータを複数エポック繰り返すかという戦略的ジレンマが存在します。<br><br>本研究では、5億件のウェブ文書に階層的な品質フィルターを適用してドイツ語のデータセットを構築し、フィルタリングされたサブセットの複数エポック学習と、多様なコーパスの単一パス学習を比較しました。実験の結果、高品質データの繰り返し学習が、より大きな、あまりフィルタリングされていないセットでの単一パス学習を一貫して上回ることが示されました。この性能差は7エポック後でも持続しました。これらの発見は、非英語LLMにおいては、単にユニークなデータ量を最大化するよりも、品質フィルタリングによる意味的な集中が、効率的な言語モデリングにより実行可能な道であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Ansar Aynetdinov, Patrick Haller, Alan Akbik<br>
+        分類：cs.CL, cs.AI<br>
         分野：cs.CL<br>
         ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.28031v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28031v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2604.28075v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28075v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.DB, cs.IR" data-title="テンプレート制約デコーディングによる繰り返し質問への信頼性の高い回答生成" data-timestamp="1777563874000" data-url="https://arxiv.org/abs/2604.28028v1">
-  <p class="meta">arXiv cs.CL　Thu, 30 Apr 2026 15:44:34 Z</p>
-  <h2 class="article-title">テンプレート制約デコーディングによる繰り返し質問への信頼性の高い回答生成</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.DB</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）を用いたText-to-SQL生成における精度向上と、特に複雑または未知のスキーマにおける無効なSQL生成のリスクを低減するシステム「Template Constrained Decoding（TeCoD）」を提案します。<br><br>TeCoDは、過去の自然言語質問とSQLクエリのペアから再利用可能なテンプレートを生成し、ファインチューニングされた自然言語推論モデルを用いてクエリとの適合性を効率的に判定するテンプレート選択モジュールを導入します。テンプレートが選択されると、文法制約付きデコーディングを通じてSQL生成時にそのテンプレートを強制します。これは、構文的な妥当性と効率性の両方を保証する新しい分割戦略によって実装されます。<br><br>これらのコンポーネントの組み合わせにより、既存のin-context learning（ICL）と比較して最大36%高い実行精度と、一致したクエリに対して2.2倍低いレイテンシを実現しました。これにより、繰り返し発生するクエリパターンを活用して、より信頼性の高いSQL生成が可能になります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Smit Jivani, Sarvam Maheshwari, Sunita Sarawagi<br>
-        分類：cs.CL, cs.AI, cs.DB, cs.IR<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.28028v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28028v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="カーネル化アドバンテージ推定：非パラメトリック統計からLLM推論へ" data-timestamp="1777562854000" data-url="https://arxiv.org/abs/2604.28005v1">
-  <p class="meta">arXiv stat.ML　Thu, 30 Apr 2026 15:27:34 Z</p>
-  <h2 class="article-title">カーネル化アドバンテージ推定：非パラメトリック統計からLLM推論へ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の推論能力向上のために、強化学習（RL）の分野で広く採用されているアプローチにおける課題と、それに対する新しい解決策を提案します。<br><br>従来のRL手法では、方策勾配の分散を低減するために価値関数を推定する深層ニューラルネットワークが用いられますが、これには計算・メモリコストがかかります。また、サンプル平均で価値関数を近似する手法（GRPO）は、正確な近似のために多数の推論トレースをサンプリングする必要があり、計算コストが高くなります。一方、REINFORCE型アルゴリズムは計算コストを削減しますが、サンプル効率が悪いです。<br><br>本研究では、プロンプトあたりにサンプリングできる推論トレースが少なく、かつ低分散な勾配推定が不可欠な、リソース制約のある実用的な設定に焦点を当てます。この課題に対処するため、計算効率と統計的効率を兼ね備えた古典的な非パラメトリック統計的手法をLLM推論に適用します。<br><br>具体的には、カーネル平滑化を価値関数推定とそれに続く方策最適化に用います。数値的および理論的な結果は、提案手法が正確な価値および勾配推定を達成し、方策最適化の改善につながることを示しています。</div>
+<article class="digest-article" data-month="2026-04" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="不均衡設定における最適化された委任学習" data-timestamp="1777547737000" data-url="https://arxiv.org/abs/2604.27723v1">
+  <p class="meta">arXiv stat.ML　Thu, 30 Apr 2026 11:15:37 Z</p>
+  <h2 class="article-title">不均衡設定における最適化された委任学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、AIモデルにおける「学習による委任（learning to defer）」というアプローチを、特に専門家間の不均衡が存在する場合に焦点を当てて包括的に研究するものです。<br><br>従来の委任学習では、複雑または不確かな入力を専門家（例えば複数の大規模言語モデル）にルーティングすることで、精度と計算コストのバランスを取りますが、専門家間の性能差やデータ量の偏りがサブオプティマルな結果を招く「専門家不均衡問題」が生じやすいという課題がありました。本研究では、この問題を新たなコスト感受性学習問題として捉え、この設定に特化した新しいマージンベースの損失関数と保証を導出し、コスト感受性学習のためのアルゴリズムを開発しました。<br><br>これらの成果を基に、専門家不均衡設定に特に適した委任アルゴリズムであるMILD（Margin-based Imbalanced Learning to Defer）を設計しました。画像分類タスクおよび大規模言語モデル（LLM）ルーティングの実際のタスクにおける広範な実験により、提案手法が既存のベースライン手法と比較して明確な改善を示すことが実証されました。これは、不均衡な状況下での委任学習の有効性を示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Shijin Gong, Kai Ye, Jin Zhu, Xinyu Zhang, Hongyi Zhou, Chengchun Shi<br>
+        著者：Corinna Cortes, Anqi Mao, Mehryar Mohri, Yutao Zhong<br>
         分類：cs.LG, stat.ML<br>
         分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.28005v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.28005v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="構造を考慮した一貫性による選好学習のギャップ解消" data-timestamp="1777548244000" data-url="https://arxiv.org/abs/2604.27733v1">
-  <p class="meta">arXiv stat.ML　Thu, 30 Apr 2026 11:24:04 Z</p>
-  <h2 class="article-title">構造を考慮した一貫性による選好学習のギャップ解消</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）のアライメントにおける選好学習の課題を扱います。<br><br>従来の選好学習手法は、人間が好む順序を学習するために、直接選好最適化（DPO）などの代理損失を最小化します。しかし、ニューラルネットワークで一般的な連続的な仮説集合においては、これらの代理損失は理論的に一貫性がなく、汎化保証が不十分であることが示されました。<br><br>この問題を解決するため、本研究ではマージンシフトランキングフレームワークを導入し、厳密なH-一貫性バウンドを導出しました。さらに、応答間の意味的な距離に基づいてマージンを適応させる構造認識H-一貫性を提案し、SA-DPOという新しい目的関数を開発しました。これにより、同義語や難しいペアに対処します。<br><br>最後に、マージン容量プロファイルを通じて、一貫性とモデルの限界とのトレードオフを分析し、容量制限のあるモデルでは、DPOで標準的に使用されるロジスティック損失よりも、重尾代理（例：多項式ヒンジファミリー）の方が優れた一貫性保証を提供できることを理論的に証明しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Mehryar Mohri, Yutao Zhong<br>
-        分類：cs.LG, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.27733v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.27733v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-04" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="ツリーベース離散化とILPベースマッチングによる因果推論の計算フレームワーク" data-timestamp="1777513237000" data-url="https://arxiv.org/abs/2604.27307v1">
-  <p class="meta">arXiv stat.ML　Thu, 30 Apr 2026 01:40:37 Z</p>
-  <h2 class="article-title">ツリーベース離散化とILPベースマッチングによる因果推論の計算フレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、観察データから因果関係を明らかにする因果推論の分野において、新しい計算フレームワークを提案します。このフレームワークは、因果推論に特化したツリーベースの離散化技術と、整数線形計画法（ILP）に基づくマッチングアルゴリズムを組み合わせたものです。<br><br>提案手法では、まずツリーベースの離散化により、制御データセット内の層（ストラタ）における関係性を近似的に線形化します。これにより、マッチングの精度が向上します。次に、ILPベースのマッチングアルゴリズムを用いて、全体的なバランスを最適化します。このアプローチは、解釈可能性と計算効率のトレードオフを改善し、より少ないバイアスでATT（Average Treatment Effect on the Treated）推定値を得ることができます。<br><br>経験的な評価により、提案手法が既存の最先端アルゴリズムと比較して、計算効率とATT推定値のバイアスの低減において実用的な利点を持つことが実証されました。これにより、因果推論シナリオにおけるデータ駆動型の意思決定を支援することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Tianyu Yang, Md. Noor-E-Alam<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2604.27307v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.27307v1</a>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2604.27723v1" target="_blank" rel="noopener">https://arxiv.org/abs/2604.27723v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
