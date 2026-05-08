@@ -1180,6 +1180,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG" data-title="ActCam：動画生成のためのゼロショット・カメラと3Dモーション同時制御" data-timestamp="1778176798000" data-url="https://arxiv.org/abs/2605.06667v1">
+  <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:59:58 Z</p>
+  <h2 class="article-title">ActCam：動画生成のためのゼロショット・カメラと3Dモーション同時制御</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、芸術的応用において重要となる、動画生成におけるパフォーマンス（アクターの動き）とシネマトグラフィー（カメラの軌跡）の両方に対するきめ細かな制御を実現する「ActCam」という手法を提案しています。<br><br>ActCamは、ゼロショットで動作し、駆動動画からキャラクターの動きを新しいシーンに転送し、さらにフレームごとの内部および外部カメラパラメータの制御を可能にします。この手法は、シーンの深度とキャラクターのポーズを条件として受け入れる、事前学習済みの画像から動画への拡散モデル上に構築されます。ソース動画とターゲットカメラモーションが与えられると、ActCamはフレーム間で幾何学的に一貫性を保つポーズと深度の条件を生成します。<br><br>単一のサンプリングプロセスは、2段階の条件付けスケジュールで実行されます。初期のノイズ除去ステップでは、シーン構造を強制するためにポーズと疎な深度の両方を条件付け、その後、深度をドロップしてポーズのみのガイダンスで高周波の詳細を洗練させます。複数のベンチマークで評価した結果、ActCamはカメラへの追従性とモーション忠実度を向上させ、特に大きな視点変化の下で人間の評価で好まれました。この研究は、訓練なしで強力なカメラとモーションの同時制御を可能にする、慎重なカメラ整合性条件付けと段階的ガイダンスの有効性を示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Omar El Khalifi, Thomas Rossi, Oscar Fossey, Thibault Fouque, Ulysse Mizrahi, Philip Torr, Ivan Laptev, Fabio Pizzati<br>
+        分類：cs.CV, cs.AI, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06667v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06667v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="Verifier-Backed Hard Problem Generation for Mathematical Reasoning" data-timestamp="1778176712000" data-url="https://arxiv.org/abs/2605.06660v1">
   <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:58:32 Z</p>
   <h2 class="article-title">Verifier-Backed Hard Problem Generation for Mathematical Reasoning</h2>
@@ -1197,6 +1214,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, math.OC" data-title="オプティマイザとモデルの一貫性：事前学習と同じオプティマイザでのフルファインチューニングは忘却が少ない" data-timestamp="1778176622000" data-url="https://arxiv.org/abs/2605.06654v1">
+  <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:57:02 Z</p>
+  <h2 class="article-title">オプティマイザとモデルの一貫性：事前学習と同じオプティマイザでのフルファインチューニングは忘却が少ない</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">math.OC</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の事前学習とファインチューニングにおいて、オプティマイザが果たす役割に注目し、「オプティマイザ・モデル一貫性」という現象を提唱しています。具体的には、事前学習と同じオプティマイザを用いてフルファインチューニングを行うと、他のオプティマイザやLoRAと比較して、新しいタスクでの性能を維持しつつ、事前学習で得た知識の忘却を抑制できるという観察結果を示しています。<br><br>この現象を理解するために、制御された実験と理論的分析を行いました。その結果、1) オプティマイザは、活性化に対する正則化効果を持つことでモデルを形成し、事前学習チェックポイント周辺の異なるランドスケープを生み出すこと、2) この正則化効果に対応して、ファインチューニング時の重み更新は、事前学習知識の忘却を低減するために特定の構造に従う必要があることが示されました。これは、同じオプティマイザを使用することで得られます。<br><br>特に、MuonとAdamWを事前学習とファインチューニングの両方の段階で採用した場合を比較し、Muonが推論タスクのファインチューニングにおいて性能が劣ることを発見しました。これは、Muonが過学習（rote memorization）に強く傾倒する傾向があり、ファインチューニングのような少量のデータでのパターン獲得を妨げる可能性があることを、合成言語モデリング実験で実証しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yuxing Liu, Jianyu Wang, Tong Zhang<br>
+        分類：cs.LG, cs.AI, math.OC<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06654v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06654v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="負のロールアウトを超えて：陰的負勾配を用いた正のみのポリシー最適化" data-timestamp="1778176521000" data-url="https://arxiv.org/abs/2605.06650v1">
+  <p class="meta">arXiv cs.CL　Thu, 07 May 2026 17:55:21 Z</p>
+  <h2 class="article-title">負のロールアウトを超えて：陰的負勾配を用いた正のみのポリシー最適化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、検証可能な報酬を持つ強化学習（RLVR）における新しいフレームワーク「Positive-Only Policy Optimization（POPO）」を提案します。RLVRは、大規模言語モデル（LLM）の推論能力を向上させる上で支配的なパラダイムとなっていますが、既存手法では負のロールアウトが失敗の深刻度の段階を考慮しない可能性や、スパースな二値報酬下で意味のある報酬信号を捉えきれないという課題がありました。<br><br>POPOは、オンラインの正のロールアウトのみを使用して学習を行うことができるフレームワークです。具体的には、正のロールアウトセットに対して有界重要度サンプリングを利用し、勾配誘導のために分離された負のロールアウトを使用しません。正の確率をロールアウトの再分配を通じて強化することにより、陰的な負勾配が自然に現れることを示します。<br><br>さらに、POPOは2つのメカニズムによってポリシー最適化を安定化させます。第一に、安定したポリシー進化のために、モーメンタムベースの適応法則を持つ Siamese ポリシーネットワークを適用します。第二に、Siamese表現空間におけるKLダイバージェンスを、有界類似性ペナルティ項に置き換えます。<br><br>公開されている確立されたテキストLLMモデル（例：Qwenファミリー）を用いて、全レベルの数学的ベンチマークで広範な実験を実施しました。その結果、POPOはGRPOと同等またはそれ以上の性能を達成することが示されました。特に、POPOはQwen-Math-7Bを用いてAIME 2025で36.67%を達成し、GRPOの30.00%を上回りました。アブレーションスタディとスイープスタディは、POPOコンポーネントの必要性と堅牢性をさらに明らかにしました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Mingwei Xu, Hao Fang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06650v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06650v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.IR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.IR, cs.AI, cs.LG" data-title="Superintelligent Retrieval Agent: The Next Frontier of Information Retrieval" data-timestamp="1778176469000" data-url="https://arxiv.org/abs/2605.06647v1">
   <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:54:29 Z</p>
   <h2 class="article-title">Superintelligent Retrieval Agent: The Next Frontier of Information Retrieval</h2>
@@ -1211,6 +1262,40 @@
         分野：cs.IR<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2605.06647v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06647v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG, cs.MM" data-title="マルチモーダル領域汎化の進捗評価：包括的ベンチマーク研究" data-timestamp="1778176276000" data-url="https://arxiv.org/abs/2605.06643v1">
+  <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:51:16 Z</p>
+  <h2 class="article-title">マルチモーダル領域汎化の進捗評価：包括的ベンチマーク研究</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">cs.MM</span></div>
+  <div class="summary">本論文は、マルチモーダル領域汎化（MMDG）における進捗を評価するための包括的なベンチマーク研究について論じています。MMDGはモデルの頑健性を向上させるために広く利用されていますが、その性能向上が真のアルゴリズム的進歩によるものか、評価プロトコルの不一致によるものかは不明確です。<br><br>既存の研究は、データセット、モダリティ構成、実験設定が大きく異なるため、断片的です。また、既存のベンチマークは主にアクション認識に焦点を当てており、入力破損、モダリティ欠損、モデルの信頼性といった現実世界の課題をしばしば無視しています。この標準化の欠如は、分野の進歩を正確に評価することを妨げています。<br><br>これらの課題に対処するため、本研究ではMMDGのための初の統一的かつ包括的なベンチマークであるMMDG-Benchを提案します。これは、アクション認識、機械故障診断、感情分析の3つの多様なタスクにわたる6つのデータセットで評価を標準化します。MMDG-Benchは、6つのモダリティ組み合わせ、9つの代表的な手法、複数の評価設定を含みます。標準的な精度に加え、破損頑健性、モダリティ欠損汎化、誤分類検出、分布外検出を体系的に評価します。<br><br>合計7,402個のニューラルネットワークを95のユニークなクロスドメインタスクで訓練した結果、5つの主要な知見が得られました。1) 公正な比較の下では、最近の専門的なMMDG手法はERMベースラインに対してわずかな改善しか提供しません。2) 単一の手法がデータセットやモダリティ構成全体で一貫して他の手法を上回ることはありません。3) 上限性能との間に大きなギャップがあり、MMDGはまだ解決されていません。4) 3モダリティ融合は、最も強力な2モダリティ構成よりも一貫して優れているわけではありません。5) 評価されたすべて手法は、破損およびモダリティ欠損シナリオで著しく劣化し、一部の手法はモデルの信頼性をさらに損ないます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Hao Dong, Hongzhao Li, Shupan Li, Muhammad Haris Khan, Eleni Chatzi, Olga Fink<br>
+        分類：cs.CV, cs.AI, cs.LG, cs.MM<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06643v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06643v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="StraTA: 戦略的軌跡抽象化によるエージェント型強化学習の促進" data-timestamp="1778176276000" data-url="https://arxiv.org/abs/2605.06642v1">
+  <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:51:16 Z</p>
+  <h2 class="article-title">StraTA: 戦略的軌跡抽象化によるエージェント型強化学習の促進</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）をエージェントとして活用する際の、長期的意思決定の最適化における課題に対処する「StraTA」というフレームワークを提案しています。<br><br>StraTAは、従来の反応的な手法とは異なり、エージェント型強化学習（RL）に明示的な戦略レベルの概念を導入します。初期状態から戦略をサンプリングし、その戦略に基づいて後続のアクションを条件付け、戦略生成とアクション実行を共同で学習します。さらに、階層的なGRPOスタイルのロールアウト設計と、多様な戦略ロールアウト、重要な自己判断によって強化されています。<br><br>ALFWorld、WebShop、SciWorldでの実験により、StraTAは既存の強力なベースライン手法と比較して、サンプル効率と最終的なパフォーマンスの両方を一貫して向上させることが示されました。特に、ALFWorldで93.1%、WebShopで84.2%の成功率を達成し、SciWorldでは63.5%の総合スコアで最先端のクローズドソースモデルを上回りました。この研究は、LLMエージェントの長期的意思決定能力を向上させるための新たな道筋を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Xiangyuan Xue, Yifan Zhou, Zidong Wang, Shengji Tang, Philip Torr, Wanli Ouyang, Lei Bai, Zhenfei Yin<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06642v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06642v1</a>
   </div>
 </article>
 
@@ -1279,6 +1364,23 @@
         分野：cs.AI<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2605.06623v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06623v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CY" data-title="アルゴスピーク：公然と隠れる言葉の、可読性と検出回避のトレードオフ" data-timestamp="1778175241000" data-url="https://arxiv.org/abs/2605.06619v1">
+  <p class="meta">arXiv cs.CL　Thu, 07 May 2026 17:34:01 Z</p>
+  <h2 class="article-title">アルゴスピーク：公然と隠れる言葉の、可読性と検出回避のトレードオフ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）がコンテンツ生成とモデレーションの両方でますます重要な役割を果たす中で、アルゴスピークとして知られる言語的回避戦略が、回避者と検出者の間の共進化を激化させている状況を分析しています。<br><br>研究では、アルゴスピークが増加すると、検出可能性と理解可能性が低下するという、共同行動モデルに基づいた根本的な力学を形式化しています。さらに、「多数派理解可能変調（MUM）」という概念を導入し、追加的な回避的変更が検出者の回避を増加させるが、受信者の多数派にとっては理解を失う変調レベルとして定義しています。<br><br>このトレードオフを実証的に調査するため、既存の分類法に基づき、調整可能な変調レベルを持つ、意味を保持するアルゴスピーク風の変種を作成できる再現可能なフレームワークを導入しました。COVID-19の偽情報という最初の実例設定を使用し、7つの戦略と5つの変調レベルにわたる20の基本文から抽出された700の変調アイテムの参照データセットを構築しました。次に、7つの異なる言語モデルを用いた2つの連動評価を実施しました。1つは意味回復による解釈をテストし、もう1つは分類による偽情報検出をテストしました。変調レベルに対する曲線フィッティングは、MUMしきい値の推定値をもたらし、戦略とモデル全体での感度分析を可能にします。結果は、理解可能性と変調の間の特徴的な関係を明らかにしました。この研究は、アルゴスピークの背後にある力学を理解するための基盤を築き、フレームワーク、データセット、および実験設定を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Jan Fillies, Ronald E. Robertson, Jeffrey Hancock<br>
+        分類：cs.CL, cs.CY<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06619v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06619v1</a>
   </div>
 </article>
 
@@ -1466,108 +1568,6 @@
         分野：cs.CL<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2605.05166v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05166v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="ジオメトリ認識型状態空間モデル：全スライド画像表現のための新パラダイム" data-timestamp="1778088810000" data-url="https://arxiv.org/abs/2605.05164v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:33:30 Z</p>
-  <h2 class="article-title">ジオメトリ認識型状態空間モデル：全スライド画像表現のための新パラダイム</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、病理組織画像の正確な解析が疾患診断と治療計画に不可欠であるという背景のもと、巨大ピクセル解像度で組織標本をデジタル化する全スライド画像（WSI）の表現方法に関する新しいパラダイムを提案します。<br><br>従来のWSI解析手法は、パッチレベルの埋め込みとスライドレベルの予測を分離する多重インスタンス学習（MIL）が主流ですが、多くはパッチ表現を均質なユークリッド空間に暗黙的に埋め込んでおり、病理組織の階層的構造や領域ごとの不均一性を見落としていました。これにより、グローバルな組織構造や微細な細胞形態の捉え方に限界がありました。本研究では、この限界に対処するため、ハイパーボリック・ユークリッドのハイブリッド表現を導入し、WSI特徴量をデュアル幾何空間に埋め込むことで、階層的組織構造と局所的形態の詳細を補完的にモデル化します。<br><br>この定式化に基づき、WSI分類フレームワークであるBatMILを開発しました。BatMILは、両方の幾何空間を活用します。数千のパッチ間の長距離依存性をモデル化するために、構造化状態空間シーケンスモデル（S4）バックボーンを採用し、線形計算量でパッチシーケンスをエンコードします。さらに、領域ごとの不均一性を考慮するため、チャンクレベルのMixture-of-Experts（MoE）モジュールを導入し、パッチを領域にグループ化して専門化されたサブネットワークに動的にルーティングすることで、表現能力を向上させつつ冗長な計算を削減します。7つのWSIデータセット（6種類のがん種）を用いた広範な実験により、BatMILはスライドレベル分類タスクにおいて、最先端のMILアプローチを一貫して上回る性能を示しました。これらの結果は、ジオメトリ認識型表現学習が次世代の計算病理学において有望な方向性であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Enhui Chai, Sicheng Chen, Tianyi Zhang, Chad Wong, Kecheng Huang, Zeyu Liu, Fei Xia<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05164v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05164v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="PSK、SemEval-2026タスク9に参加：合成データ拡張を用いたアンサンブルGemmaモデルによる多言語極性検出" data-timestamp="1778088554000" data-url="https://arxiv.org/abs/2605.05159v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:29:14 Z</p>
-  <h2 class="article-title">PSK、SemEval-2026タスク9に参加：合成データ拡張を用いたアンサンブルGemmaモデルによる多言語極性検出</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、SemEval-2026タスク9「多言語極性検出」におけるPSKチームのシステムについて報告します。このタスクは22言語にわたる二項分類問題です。<br><br>提案手法では、各言語に対してGemmaモデル（12Bおよび27Bパラメータ）をLow-Rank Adaptation（LoRA）を用いてファインチューニングしました。さらに、大規模言語モデル（LLM）によって生成された合成データを用いてデータ拡張を行いました。GPT-4o-miniを使用し、直接生成、言い換え、対照ペア作成の3つの合成データ戦略を採用し、埋め込みベースの重複排除を含む多段階の品質フィルタリングパイプラインを適用しました。<br><br>開発セットでの言語ごとの閾値調整により、再学習なしでF1スコアが2～4%向上することが確認されました。また、12Bおよび27Bモデルの予測を言語ごとに重み付けアンサンブルし、モデル選択を行いました。最終システムは、全22言語で平均マクロF1スコア0.811を達成し、参加チーム中2位となりました。さらに、開発セットで高い性能を示した代替アーキテクチャ（XLM-RoBERTa、Qwen3）がテストセットでF1スコアの大幅な低下を示したことから、汎化性能の重要性が浮き彫りになりました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Srikar Kashyap Pulipaka<br>
-        分類：cs.CL, cs.AI, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05159v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05159v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="3Dガウシアン・スプラッティングにおける美的評価フレームワーク「Aes3D」" data-timestamp="1778088429000" data-url="https://arxiv.org/abs/2605.05155v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:27:09 Z</p>
-  <h2 class="article-title">3Dガウシアン・スプラッティングにおける美的評価フレームワーク「Aes3D」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、3Dガウシアン・スプラッティング（3DGS）を用いた3Dシーンの美的評価を行うための、初の体系的なフレームワーク「Aes3D」を提案します。<br><br>既存の3Dシーン評価手法は、主に再構成精度や知覚的リアリズムに焦点を当てており、構図や調和、視覚的な魅力といった高次の美的属性を見落としていました。これは、美的注釈付きの3DGSデータセットの不在と、3DGSが低次のプリミティブ表現であるため高次の美的特徴を捉えにくいという課題に起因します。<br><br>Aes3Dは、3Dシーンの美的評価に特化した初のデータセット「Aesthetic3D」と、3DGS表現から直接シーンレベルの美的スコアを予測する軽量モデル「Aes3DGSNet」から構成されます。特に、本モデルは3Dガウシアン・プリミティブのみを扱うため、複数視点画像のレンダリングが不要で、計算コストとハードウェア要件を削減できます。<br><br>実験の結果、本手法は軽量な設計を維持しながら高い性能を示し、3Dシーン美的評価の新たなベンチマークを確立しました。この研究は、より視覚的に魅力的な3Dコンテンツ制作に貢献することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Chuanzhi Xu, Boyu Wei, Haoxian Zhou, Xuanhua Yin, Zihan Deng, Haodong Chen, Qiang Qu, Weidong Cai<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05155v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05155v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="時系列予測におけるTransformer表現のメカニズム解明：Superpositionは不要" data-timestamp="1778088207000" data-url="https://arxiv.org/abs/2605.05151v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:23:27 Z</p>
-  <h2 class="article-title">時系列予測におけるTransformer表現のメカニズム解明：Superpositionは不要</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、時系列予測におけるTransformerアーキテクチャの内部表現を、メカニズム的解釈可能性の手法を用いて分析します。<br><br>Transformerは時系列予測で広く採用されていますが、自然言語処理（NLP）で強力とされる表現メカニズムが時系列データでも同様に機能するかは未解明でした。単純な線形モデル（DLinearなど）の競争力が、その理由を説明するメカニズム的な説明を提供せずに議論を呼んでいます。<br><br>本研究では、スパースオートエンコーダー（SAE）を用いてPatchTSTの内部表現を調査しました。その結果、単層かつ狭い次元のTransformerでも、より深い構成と同等の予測性能を達成することが示されました。さらに、SAEを用いた分析では、過剰な辞書サイズ拡張や潜在特徴への介入に対しても、表現はスパースかつ安定しており、大きな影響を与えないことが観察されました。<br><br>これらの結果は、分析されたFFN表現が強力なSuperpositionに依存していないことを示唆しており、標準的な予測ベンチマークにおいてSuperpositionが競争力のある性能に必須ではないことを実証しています。これは、NLPにおけるTransformerの成功を支える豊かな構成的表現が、時系列予測では必ずしも必要とされない可能性を示唆し、単純な線形モデルの競争力を説明する一助となります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Alper Yıldırım<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05151v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05151v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG" data-title="実用的な学習型画像圧縮における重要要素の特定" data-timestamp="1778087871000" data-url="https://arxiv.org/abs/2605.05148v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:17:51 Z</p>
-  <h2 class="article-title">実用的な学習型画像圧縮における重要要素の特定</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本研究は、人間の視覚システムに直接最適化できる学習型コーデックの可能性に着目し、知覚品質と実行速度の両立を目指す実用的な画像圧縮コーデックの実現を目指しています。<br><br>研究では、実用的な学習型画像コーデック設計における主要なモデリング選択肢を包括的に調査し、複数の新規技術を含むアブレーションスタディを実施しました。さらに、パフォーマンスを考慮したニューラルアーキテクチャ探索により、ターゲットとするオンデバイス実行速度を達成しつつ、知覚メトリクスで捉えられる圧縮性能を最大化するモデルを特定しました。<br><br>これらの最適化を組み合わせた新しいコーデックは、速度と知覚品質のトレードオフにおいて大幅な改善を達成しました。主観的なユーザー調査に基づくと、AV1、AV2、VVC、ECM、JPEG-AIと比較して2.3〜3倍、最良の学習型コーデックと比較して20〜40%のビットレート削減を実現しています。同時に、iPhone 17 Pro Maxでは、12MP画像を230ミリ秒でエンコードし、150ミリ秒でデコード可能であり、これはV100 GPUで実行されるほとんどのトップMLベースコーデックよりも高速です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Kedar Tatwawadi, Parisa Rahimzadeh, Zhanghao Sun, Zhiqi Chen, Ziyun Yang, Sanjay Nair, Divija Hasteer, Oren Rippel<br>
-        分類：cs.CV, cs.AI, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05148v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05148v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, math.DS" data-title="Low-Cost Black-Box Detection of LLM Hallucinations via Dynamical System Prediction" data-timestamp="1778087249000" data-url="https://arxiv.org/abs/2605.05134v1">
-  <p class="meta">arXiv cs.LG　Wed, 06 May 2026 17:07:29 Z</p>
-  <h2 class="article-title">Low-Cost Black-Box Detection of LLM Hallucinations via Dynamical System Prediction</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">math.DS</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: Low-Cost Black-Box Detection of LLM Hallucinations via Dynamical System Prediction Authors: Dan Wilson, Mohamed Akrout Categories: cs.LG, math.DS Abstract / Summary: Large Language Models (LLMs) frequently generate plausible but non-factual content, a phenomenon known as hallucination. While existing detection methods typically rely on computationally expensive sampling-based consistency checks or external knowledge retrieval, we propose a new method that treats the LLM as a black-box dynamical system. By projecting LLM responses into a high-dimensional manifold via an embedding model, we characterize the resulting vector sequences as observable realizations of the model's latent state-space dynamics. Leveraging Koopman operator theory, we fit the transition operators for both factual and hallucinated regimes and define a differential resi…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Dan Wilson, Mohamed Akrout<br>
-        分類：cs.LG, math.DS<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05134v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05134v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
