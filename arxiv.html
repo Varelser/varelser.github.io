@@ -1197,6 +1197,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="UniPool: 混合エキスパートモデルのためのグローバル共有エキスパートプール" data-timestamp="1778176784000" data-url="https://arxiv.org/abs/2605.06665v1">
+  <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:59:44 Z</p>
+  <h2 class="article-title">UniPool: 混合エキスパートモデルのためのグローバル共有エキスパートプール</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、混合エキスパート（MoE）モデルにおけるエキスパート容量の割り当て方法に焦点を当てています。<br><br>従来のMoEアーキテクチャでは、各Transformer層が独立したエキスパートセットを持つという固定的なルールが採用されていました。しかし、著者らの分析とルーティングプローブによると、深い層のエキスパート容量は冗長であり、必ずしも各層で独立した容量を必要としないことが示唆されています。<br><br>そこで本研究では、エキスパート容量をグローバルな予算として扱い、層ごとに独立したルーターが単一の共有エキスパートプールにアクセスするUniPoolという新しいアーキテクチャを提案します。学習の安定化とバランス化のため、プールレベルの補助損失と、共有エキスパートプールへのスパースかつスケール安定なルーティングを提供するNormRouterを導入しています。<br><br>複数のLLaMAモデルスケールでの実験により、UniPoolは従来のMoEと比較して検証損失とパープレキシティを一貫して改善し、エキスパートパラメータの予算を削減しながら同等以上の性能を達成しました。これは、エキスパートパラメータが深さに比例して増加する必要がなく、より効率的かつ効果的に利用できる可能性を示唆しています。<br><br>さらに、UniPoolの利点は、より細かいエキスパート分解とも両立することが示されています。この研究は、MoEモデルの設計と効率化に新たな視点を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Minbin Huang, Han Shi, Chuanyang Zheng, Yimeng Wu, Guoxuan Chen, Xintong Yu, Yichun Yin, Hong Cheng<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06665v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06665v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="GUIグラウンディングにおける学習不要なバイアス緩和手法BAMI" data-timestamp="1778176771000" data-url="https://arxiv.org/abs/2605.06664v1">
   <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:59:31 Z</p>
   <h2 class="article-title">GUIグラウンディングにおける学習不要なバイアス緩和手法BAMI</h2>
@@ -1248,6 +1265,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.DM, cs.ET, math.OC" data-title="グローバルLLMリーダーボードの誤謬：異種教師ありMLのための小規模ポートフォリオ" data-timestamp="1778176678000" data-url="https://arxiv.org/abs/2605.06656v1">
+  <p class="meta">arXiv cs.LG　Thu, 07 May 2026 17:57:58 Z</p>
+  <h2 class="article-title">グローバルLLMリーダーボードの誤謬：異種教師ありMLのための小規模ポートフォリオ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.DM</span><span class="tag">cs.ET</span><span class="tag">math.OC</span></div>
+  <div class="summary">本論文は、オープンエンドなタスク（創造的執筆や問題解決など）におけるLLMのランキングを支える、ペアワイズ人間フィードバックに基づく現在のリーダーボードが誤解を招くことを分析する。<br><br>著者らは、116言語、52のLLMにわたる約89,000件の比較データを分析し、最良適合グローバルBradley-Terry（BT）ランキングが誤解を招くことを示す。決定的な投票の約2/3が相殺され、グローバルBTランキングで上位50位に入ったモデルでさえ統計的に区別がつかない（上位50モデル内でのペアワイズ勝率が最大0.53）。この失敗は、言語、タスク、時間を通じた意見の強い構造化された異質性に起因するとされる。<br><br>この異質性に対処するため、本論文は$(λ, ν)$-ポートフォリオのフレームワークを導入する。これは、予測誤差が最大$λ$を達成し、少なくとも$ν$の割合のユーザーを「カバー」するモデルの小さな集合である。この問題は集合被覆問題の変種として定式化され、VC次元を用いた保証が提供される。Arenaデータでは、グローバルランキングによる21%のカバレッジに対し、わずかな$λ$で96%以上の投票をカバーする5つの異なるBTランキングを復元した。また、COMPASデータセットの分類問題に対するポートフォリオも構築し、データ上の盲点を検出できることを示している。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Jai Moondra, Ayela Chughtai, Bhargavi Lanka, Swati Gupta<br>
+        分類：cs.LG, cs.DM, cs.ET, math.OC<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06656v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06656v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, math.OC" data-title="オプティマイザとモデルの一貫性：事前学習と同じオプティマイザでのフルファインチューニングは忘却が少ない" data-timestamp="1778176622000" data-url="https://arxiv.org/abs/2605.06654v1">
   <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:57:02 Z</p>
   <h2 class="article-title">オプティマイザとモデルの一貫性：事前学習と同じオプティマイザでのフルファインチューニングは忘却が少ない</h2>
@@ -1279,6 +1313,23 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2605.06652v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06652v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="AI共同数学者：エージェント型AIによる数学者の加速" data-timestamp="1778176592000" data-url="https://arxiv.org/abs/2605.06651v1">
+  <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:56:32 Z</p>
+  <h2 class="article-title">AI共同数学者：エージェント型AIによる数学者の加速</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、数学者がAIエージェントをインタラクティブに活用して未解決の研究に取り組むためのワークベンチ「AI共同数学者」を紹介する。<br><br>このシステムは、アイデア創出、文献検索、計算による探求、定理証明、理論構築といった、数学者の探求的かつ反復的なワークフローを包括的に支援するように最適化されている。非同期かつステートフルなワークスペースを提供し、不確実性を管理し、ユーザーの意図を洗練させ、失敗した仮説を追跡し、ネイティブな数学的成果物を出力することで、人間の共同作業ワークフローを模倣する。<br><br>初期テストでは、AI共同数学者は研究者が未解決問題の解決、新たな研究方向性の特定、見過ごされていた文献参照の発見を支援した。AI支援による数学的発見のための高度に対話的なパラダイムを示すだけでなく、FrontierMath Tier 4で48%という、評価された全てのAIシステムの中で新たな最高スコアを記録するなど、困難な問題解決ベンチマークにおいても最先端の結果を達成している。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Daniel Zheng, Ingrid von Glehn, Yori Zwols, Iuliya Beloshapka, Lars Buesing, Daniel M. Roy, Martin Wattenberg, Bogdan Georgiev<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06651v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06651v1</a>
   </div>
 </article>
 
@@ -1367,6 +1418,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="ビジョンモデルの挙動に対する概念ベースの帰納的・対照的説明" data-timestamp="1778176273000" data-url="https://arxiv.org/abs/2605.06640v1">
+  <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:51:13 Z</p>
+  <h2 class="article-title">ビジョンモデルの挙動に対する概念ベースの帰納的・対照的説明</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、深層ニューラルネットワークの予測を、人間が理解しやすい高レベルな概念に基づいて説明する「概念ベースの説明」に焦点を当てています。<br><br>既存の手法には、概念とモデル予測の因果関係を確立できない、あるいは単一概念のみに限定されるという限界がありました。一方で、ピクセルなどの低レベル特徴量のみを扱う形式的な帰納的・対照的説明の手法も存在します。本研究では、これらを統合し、モデルの予測に因果的に関連する高レベル概念の最小集合を捉える「概念ベースの帰納的・対照的説明」という概念を提案します。<br><br>提案手法では、概念消去の手順を用いて因果関係を確立し、最小説明を列挙するアルゴリズム群を提示します。これらの説明を適切に集約することで、個々の画像に対するモデル予測だけでなく、モデルが特定の共通した「挙動」を示す画像の集合に対しても説明が可能になります。<br><br>複数のモデル、データセット、挙動に対する評価により、本手法が有用で分かりやすい説明を生成できることが実証されました。この研究は、AIモデルの解釈可能性を高め、その挙動をより深く理解するための強力なツールを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Ronaldo Canizales, Divya Gopinath, Corina Păsăreanu, Ravi Mangal<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06640v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06640v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CV" data-title="セラミック釉薬の物性予測と画像生成のためのベンチマーク「GlazyBench」" data-timestamp="1778176273000" data-url="https://arxiv.org/abs/2605.06641v1">
   <p class="meta">arXiv cs.AI　Thu, 07 May 2026 17:51:13 Z</p>
   <h2 class="article-title">セラミック釉薬の物性予測と画像生成のためのベンチマーク「GlazyBench」</h2>
@@ -1381,6 +1449,23 @@
         分野：cs.AI<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2605.06641v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06641v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL, cs.MA" data-title="再帰的エージェント最適化" data-timestamp="1778176149000" data-url="https://arxiv.org/abs/2605.06639v1">
+  <p class="meta">arXiv cs.LG　Thu, 07 May 2026 17:49:09 Z</p>
+  <h2 class="article-title">再帰的エージェント最適化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.MA</span></div>
+  <div class="summary">本論文は、再帰的なエージェントを訓練するための強化学習アプローチである再帰的エージェント最適化（RAO）を導入する。再帰的エージェントとは、新しいインスタンスを再帰的に生成し、サブタスクを委任できるエージェントのことである。<br><br>再帰的エージェントは、推論時のスケーリングアルゴリズムを実装しており、エージェントがより長いコンテキストに自然にスケールし、分割統治法を通じてより困難な問題に一般化することを可能にする。RAOは、このような再帰的推論を最大限に活用するようにモデルを訓練する方法を提供し、エージェントにいつ、どのように委任し、通信するかを教える。<br><br>この方法で訓練された再帰的エージェントは、より良い訓練効率、モデルのコンテキストウィンドウを超えるタスクへのスケーリング能力、訓練されたタスクよりもはるかに困難なタスクへの一般化、そして単一エージェントシステムと比較して壁時計時間の短縮といった利点を持つことが見出されている。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Apurva Gandhi, Satyaki Chakraborty, Xiangjun Wang, Aviral Kumar, Graham Neubig<br>
+        分類：cs.LG, cs.AI, cs.CL, cs.MA<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06639v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06639v1</a>
   </div>
 </article>
 
@@ -1452,6 +1537,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.ET, stat.ML" data-title="漸進的・突発的なシステム変化下でのオンラインベイズ校正" data-timestamp="1778174958000" data-url="https://arxiv.org/abs/2605.06612v1">
+  <p class="meta">arXiv stat.ML　Thu, 07 May 2026 17:29:18 Z</p>
+  <h2 class="article-title">漸進的・突発的なシステム変化下でのオンラインベイズ校正</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.ET</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、デジタルツインやコンピュータ実験において、モデル出力を現場観測に適合させるための「ベイズモデル校正」のオンライン化に関する研究です。<br><br>従来のベイズ校正は、モデルバイアスをモデル化するために潜在パラメータと不一致関数を導入しますが、パラメータと不一致の混同や、静的なデータ生成を仮定するオフライン手続きという問題点がありました。これらの限界は、システムが時間とともに進化し、漸進的なドリフトや突発的なレジームシフトを示す現代のデジタルツインアプリケーションでは特に制限となります。<br><br>そこで本研究では、シミュレータの不一致と非定常性を考慮したオンラインベイズ校正フレームワーク「BRPC（Bayesian Recursive Projected Calibration）」を提案します。BRPCは、校正パラメータの不一致のない粒子更新と、不一致の条件付きガウス過程更新を分離することで、識別性を維持しつつ、漸進的なシステム進化下でのバイアス認識適応を可能にします。さらに、突発的な変化に対応するため、レジームシフトを検出し校正プロセスをリセットする再起動メカニズムと統合しています。<br><br>理論的保証と、合成データおよびプラントシミュレーションベンチマークでの経験的研究により、BRPCは漸進的な変化下での校正精度を向上させ、再起動機構を統合したBRPCは、突発的なレジームシフト下でのロバスト性と予測性能を、スライディングウィンドウベイズ校正やデータ同化ベースラインと比較してさらに改善することが示されました。この研究は、動的なシステムにおけるAIモデルの信頼性と精度を向上させるための重要な貢献をします。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Yang Xu, Chiwoo Park<br>
+        分類：cs.LG, cs.ET, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.06612v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06612v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Robotics" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, stat.ML" data-title="アテンションシンクの構造的起源：分散不一致、スーパーニューロン、次元の不一致" data-timestamp="1778174935000" data-url="https://arxiv.org/abs/2605.06611v1">
   <p class="meta">arXiv stat.ML　Thu, 07 May 2026 17:28:55 Z</p>
   <h2 class="article-title">アテンションシンクの構造的起源：分散不一致、スーパーニューロン、次元の不一致</h2>
@@ -1466,108 +1568,6 @@
         分野：cs.LG<br>
         ジャンル：Robotics<br>
         原文URL：<a href="https://arxiv.org/abs/2605.06611v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06611v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Machine Learning" data-field="q-fin.CP" data-source="arXiv stat.ML" data-area="AI" data-categories="q-fin.CP, stat.ML" data-title="HaganのSABRインプライドボラティリティ公式に対する幾何学を考慮した残差補正" data-timestamp="1778174559000" data-url="https://arxiv.org/abs/2605.06604v1">
-  <p class="meta">arXiv stat.ML　Thu, 07 May 2026 17:22:39 Z</p>
-  <h2 class="article-title">HaganのSABRインプライドボラティリティ公式に対する幾何学を考慮した残差補正</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">q-fin.CP</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、解析構造と機械学習を組み合わせたハイブリッド手法により、SABR（Stochastic Alpha Beta Rho）インプライドボラティリティの近似精度を向上させることを提案します。このアプローチは、SABRモデルの確率微分方程式から導出される幾何学的特徴をニューラルネットワークの入力表現に付加します。<br><br>このフレームワークは、解析的なバックボーンを維持しつつ、ハイブリダイゼーションを2つの相補的な次元で実行します。第一に、SABRダイナミクスの固有の性質を反映する幾何学を考慮した変数が、ネットワークへの構造化入力として使用されます。第二に、ニューラルネットワークは、インプライドボラティリティそのものではなく、Haganの閉形式近似に対する残差誤差を学習するように訓練されます。これにより、モデルは解析公式に対する構造化された残差補正として機能し、解釈性を維持しながら、漸近展開に含まれない高次の効果を捉えます。<br><br>現実的なパラメータ領域およびストレス環境での数値実験により、この手法は、解析的近似および標準的なニューラルネットワークアプローチと比較して、精度とロバスト性が向上することが示されています。補正は軽量であり、基盤となるモデルと構造的に一貫しているため、このフレームワークは実用的な取引環境におけるリアルタイムの価格設定とキャリブレーションに適しています。公開メタデータ上の要旨情報が限定的であるため、詳細な限界や注意点については、さらなる研究が必要です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Adil Reghai, Lama Tarsissi, Gérard Biau, Alex Lipton<br>
-        分類：q-fin.CP, stat.ML<br>
-        分野：q-fin.CP<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.06604v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.06604v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG" data-title="拡散トランスフォーマーにおける異常トークンの抑制" data-timestamp="1778090382000" data-url="https://arxiv.org/abs/2605.05206v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:59:42 Z</p>
-  <h2 class="article-title">拡散トランスフォーマーにおける異常トークンの抑制</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、画像生成に用いられる拡散トランスフォーマー（DiT）における異常トークンについて考察する。<br><br>先行研究では、Vision Transformer（ViT）が少数の高ノルムトークンを生成し、限定的な局所情報しか持たないにもかかわらず過度な注意を引きつけることが示されているが、生成モデルにおけるその役割は十分に探求されてこなかった。本研究では、この現象が現代の表現オートエンコーダー（RAE）-DiTパイプラインのエンコーダーとデノイザーの両方に現れることを示す。事前学習済みのViTエンコーダーは異常な表現を生成する可能性があり、DiT自体も、特に中間層において内部的な異常トークンを発達させる可能性がある。<br><br>さらに、高ノルムトークンを単純にマスキングしても性能は向上せず、問題は少数の極端な値だけが原因ではなく、破損した局所パッチの意味論により密接に関連していることを示唆している。この問題に対処するため、両方のコンポーネントに対してレジスタベースの介入であるデュアルステージレジスタ（DSR）を導入する。訓練済みのレジスタが利用可能な場合はそれを使用し、そうでない場合は再帰的なテストタイムレジスタ、デノイザーには拡散レジスタを使用する。<br><br>ImageNetおよび大規模テキスト-画像生成タスクにおいて、これらの介入は異常アーティファクトを一貫して削減し、生成品質を向上させる。本研究の結果は、より強力なDiTの構築において異常トークン制御が重要な要素であることを強調している。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Xiaoyu Wu, Yifei Wang, Tsu-Jui Fu, Liang-Chieh Chen, Zhe Gan, Chen Wei<br>
-        分類：cs.CV, cs.AI, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05206v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05206v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="言語モデルにおける文法性の暗黙的表現" data-timestamp="1778090251000" data-url="https://arxiv.org/abs/2605.05197v1">
-  <p class="meta">arXiv cs.CL　Wed, 06 May 2026 17:57:31 Z</p>
-  <h2 class="article-title">言語モデルにおける文法性の暗黙的表現</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が文法性と尤度をどのように区別して学習しているのかを探求します。<br><br>従来のLLMは、コーパスの尤度を最大化するように学習されるため、文法的に正しいテキストを生成し、文法的な誤りを含む文を識別する能力がありますが、その文字列確率は文法性の有無を明確に区別しないことが示唆されています。本研究では、LLMの内部表現に着目し、線形プローブを用いて文法性の有無を学習させることで、尤度とは独立した文法性の暗黙的理解が存在するかどうかを検証します。<br><br>実験の結果、このプローブは人間による文法性判断のベンチマークで高い性能を示し、LLMの確率に基づく判断を上回りました。一方で、意味的な妥当性が問われるタスクでは、プローブの性能は文字列確率よりも劣りました。さらに、英語で学習したプローブが、他の多くの言語の文法性ベンチマークでも良好な汎化性能を示すことが確認されました。これらの結果は、LLMが隠れ層において、文字列確率とはある程度独立した文法性の区別を暗黙的に獲得している可能性を示唆しています。<br><br>本研究は、LLMの内部メカニズムを理解する上で重要な示唆を与えます。文法性の暗黙的表現の存在は、LLMの言語理解能力の深さを示すものであり、今後のモデル開発や応用において、より洗練された言語生成や理解を目指す上で参考となるでしょう。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yingshan Susan Wang, Linlu Qiu, Zhaofeng Wu, Roger P. Levy, Yoon Kim<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05197v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05197v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="math.CA" data-source="arXiv cs.AI" data-area="AI" data-categories="math.CA, cs.AI, math.CO, math.PR" data-title="Lp空間におけるほぼ直交性：Grokを用いた事例研究" data-timestamp="1778090091000" data-url="https://arxiv.org/abs/2605.05192v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:54:51 Z</p>
-  <h2 class="article-title">Lp空間におけるほぼ直交性：Grokを用いた事例研究</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">math.CA</span><span class="tag">cs.AI</span><span class="tag">math.CO</span><span class="tag">math.PR</span></div>
-  <div class="summary">本論文は、Lp空間におけるほぼ直交性に関する研究である。<br><br>まず、任意の$p\ge 2$および有限個の関数列$(f_j)_j\subset L^p$に対して、三角不等式の強化形として提案されている以下の不等式について、 $p>2$の全てのケースで成り立たない反例を構築する。\[ \Big\|\sum_j f_j\Big\|_p \ \le\ \left(\sup_{j} \sum_{k} α_{jk}^{\,c}\right)^{1/p'} \Big(\sum_j \|f_j\|_p^p\Big)^{1/p}, \]ここで、$c=2$、$1/p+1/p'=1$、$α_{jk}=\sqrt{\frac{\|f_{j}f_{k}\|_{p/2}}{\|f_{j}\|_{p}\|f_{k}\|_{p}}}$である。次に、この不等式が成り立つと仮定した場合、指数$c$は$c\le p'$を満たす必要があることを証明する。そして、臨界指数$c=p'$において、全ての整数値$p\ge 2$に対して不等式を確立する。<br><br>次に、論文の後半では、以下のシャープな3関数バウンドを得る。\[ \Big\|\sum_{j=1}^{3} f_j\Big\|_p \ \le\ \left(1+2Γ^{c(p)}\right)^{1/p'} \Big(\sum_{j=1}^{3} \|f_j\|_p^p\Big)^{1/p}, \]ここで、$p \geq 3$、$c(p) = \frac{2\ln(2)}{(p-2)\ln(3)+2\ln(2)}$であり、$Γ=Γ(f_1,f_2,f_3)\in[0,1]$は$f_1,f_2,f_3$間の直交性の度合いを定量化する。指数$c(p)$は最適であり、Carlen、Frank、Liebによって以前に得られたべき乗$r(p) = \frac{6}{5p-4}$を改善する。<br><br>本研究におけるいくつかの補助的な補題や不等式は、大規模言語モデルGrokの支援を受けて探求された。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Ziang Chen, Jaume de Dios Pont, Paata Ivanisvili, Jose Madrid, Haozhu Wang<br>
-        分類：math.CA, cs.AI, math.CO, math.PR<br>
-        分野：math.CA<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05192v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05192v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="LongSeeker：長期間検索エージェントのための柔軟なコンテキストオーケストレーション" data-timestamp="1778090056000" data-url="https://arxiv.org/abs/2605.05191v1">
-  <p class="meta">arXiv cs.AI　Wed, 06 May 2026 17:54:16 Z</p>
-  <h2 class="article-title">LongSeeker：長期間検索エージェントのための柔軟なコンテキストオーケストレーション</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、長期間にわたるタスクを処理するAIエージェントが直面する、作業コンテキストの管理に関する課題を扱います。<br><br>エージェントが推論、ツールの利用、情報観測を行うにつれて作業コンテキストは急速に増大しますが、これを単純に蓄積するとコスト増加やエラーリスクを高めます。本研究では、コンテキスト管理は適応的であるべきだと主張し、タスクへの関連性に応じてコンテキストの各部分を異なる詳細度で保持する「Context-ReAct」というパラダイムを提案します。<br><br>Context-ReActは、Skip、Compress、Rollback、Snippet、Deleteの5つの基本操作を提供し、エージェントが作業コンテキストを動的に整形できるようにします。これにより、重要な証拠を保持し、解決済みの情報を要約し、不要な分岐を破棄し、コンテキストサイズを制御できます。Compress操作は表現的に完全であることが証明されており、他の操作は効率性と忠実性保証を提供し、生成コストと幻覚リスクを低減します。このパラダイムに基づき、Qwen3-30B-A3BをファインチューニングしたLongSeekerを開発し、4つの検索ベンチマークでTongyi DeepResearchやAgentFoldを大幅に上回る性能を示しました。これは、適応的なコンテキスト管理が、より信頼性が高く効率的な長期間推論を可能にすることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Yijun Lu, Rui Ye, Yuwen Du, Jiajun Wang, Songhua Liu, Siheng Chen<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05191v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05191v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv cs.LG" data-area="AI" data-categories="stat.ML, cs.IT, cs.LG" data-title="Sharp Capacity Thresholds in Linear Associative Memory: From Winner-Take-All to Listwise Retrieval" data-timestamp="1778090000000" data-url="https://arxiv.org/abs/2605.05189v1">
-  <p class="meta">arXiv cs.LG　Wed, 06 May 2026 17:53:20 Z</p>
-  <h2 class="article-title">Sharp Capacity Thresholds in Linear Associative Memory: From Winner-Take-All to Listwise Retrieval</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.IT</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: Sharp Capacity Thresholds in Linear Associative Memory: From Winner-Take-All to Listwise Retrieval Authors: Nicholas Barnfield, Juno Kim, Eshaan Nichani, Jason D. Lee, Yue M. Lu Categories: stat.ML, cs.IT, cs.LG Abstract / Summary: How many key-value associations can a $d\times d$ linear memory store? We show that the answer depends not only on the $d^2$ degrees of freedom in the memory matrix, but also on the retrieval criterion. In an isotropic Gaussian model for the stored pairs, we show that top-1 retrieval, where every signal must beat its largest distractor, requires the logarithmic model-size scale $d^2\asymp n\log n$. We prove that the correlation matrix memory construction, which stores associations by superposing key-target outer products, achieves this scale through a sharp phase transition, and that the same scaling is necessar…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Nicholas Barnfield, Juno Kim, Eshaan Nichani, Jason D. Lee, Yue M. Lu<br>
-        分類：stat.ML, cs.IT, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.05189v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.05189v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
