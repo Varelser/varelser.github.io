@@ -1249,6 +1249,74 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="機械学習のための自律的データエンジニアリングを目指すDataMaster" data-timestamp="1778521584000" data-url="https://arxiv.org/abs/2605.10906v1">
+  <p class="meta">arXiv cs.AI　Mon, 11 May 2026 17:46:24 Z</p>
+  <h2 class="article-title">機械学習のための自律的データエンジニアリングを目指すDataMaster</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、機械学習システムにおけるデータエンジニアリングの自動化を目指す「DataMaster」というフレームワークを提案しています。<br><br>従来の機械学習では、モデル、学習方法、計算資源が標準化されるにつれて、性能向上の鍵がデータへと移行しています。しかし、データエンジニアリングは依然として手作業が多く、外部データセットの検索、パイプラインへの適合、下流タスクでの検証、過去の試みからの教訓の活用といったプロセスが繰り返されています。本研究では、学習アルゴリズムを変更せずに、外部データの発見、選択、構成、クリーニング、変換を含むデータ側のみを最適化することで、自律的なエージェントが下流タスクの性能を向上させる「タスク条件付き自律データエンジニアリング」を研究します。<br><br>このアプローチの課題は、探索空間の広さ、分岐依存の洗練、検証の遅延です。これらに対応するため、DataMasterはツリー構造検索、共有候補データ、累積メモリを統合したデータエージェントフレームワークを採用しています。具体的には、代替データエンジニアリングの分岐を整理するDataTree、発見された外部データソースを再利用するためのData Pool、ノードの結果、成果物、再利用可能な知見を記録するGlobal Memoryの3つの主要コンポーネントから構成されます。<br><br>これらのコンポーネントにより、エージェントは候補データを効率的に発見し、実行可能なトレーニング入力を構築し、下流フィードバックを通じて評価し、分岐間で有用な証拠を伝達できます。MLE-Bench LiteとPostTrainBenchの2種類のベンチマークで評価した結果、MLE-Bench Liteではメダル率を32.27%向上させ、PostTrainBenchではGPQAで指示モデルを上回る性能を示しました。この研究は、データエンジニアリングの自動化による機械学習の効率化と性能向上に貢献する可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yaxin Du, Xiyuan Yang, Zhifan Zhou, Wanxu Liu, Zixing Lei, Zimeng Chen, Fenyi Liu, Haotian Wu<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.10906v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.10906v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="検証可能な報酬を超えたメタ強化学習：RubricEM" data-timestamp="1778521238000" data-url="https://arxiv.org/abs/2605.10899v1">
+  <p class="meta">arXiv cs.LG　Mon, 11 May 2026 17:40:38 Z</p>
+  <h2 class="article-title">検証可能な報酬を超えたメタ強化学習：RubricEM</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、検証可能な報酬の範囲を超えた深層研究エージェントの訓練を可能にするための新しいフレームワーク「RubricEM」を提案しています。<br><br>深層研究エージェント、すなわち計画、証拠検索、評価、長文レポートの統合を行うシステムは、強化学習を検証可能な報酬の領域を超えて拡張することを要求します。これらのシステムの出力には正解がなく、実行経路は多くのツール利用による意思決定にまたがり、標準的な訓練後評価では過去の試みから経験を再利用するメカニズムがほとんど提供されません。本研究では、ルーブリック（評価基準）が最終的な回答の評価者としてだけでなく、ポリシー実行、評価者フィードバック、エージェントメモリを構造化する共有インターフェースとして機能すべきであると主張します。<br><br>この見解に基づき、RubricEMは段階的なポリシー分解と反省に基づくメタポリシー進化を組み合わせた、ルーブリック誘導型強化学習フレームワークを導入します。RubricEMはまず、研究軌道を段階認識型にし、計画、証拠収集、レビュー、統合を自己生成ルーブリックに条件付けます。次に、段階的なルーブリック判断を用いて、長期間の最適化のためのより密な意味的フィードバックを提供するStage-Structured GRPOにより、クレジットを割り当てます。並行して、RubricEMは、判断された軌道を将来の試みのための再利用可能なルーブリックに基づいたガイダンスに蒸留する、共有バックボーンの反省メタポリシーを訓練します。<br><br>その結果、RubricEM-8Bは4つの長文研究ベンチマークで強力な性能を達成し、同等のオープンモデルを上回り、商用深層研究システムに迫る性能を示しました。最終的な性能を超えて、RubricEMの重要な要素を理解するための詳細な分析も行われています。この研究は、複雑な研究タスクにおけるAIエージェントの能力向上に貢献する可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Gaotang Li, Bhavana Dalvi Mishra, Zifeng Wang, Jun Yan, Yanfei Chen, Chun-Liang Li, Long T. Le, Rujun Han<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.10899v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.10899v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="V4FinBench: Benchmarking Tabular Foundation Models, LLMs, and Standard Methods on Corporate Bankruptcy Prediction" data-timestamp="1778521097000" data-url="https://arxiv.org/abs/2605.10896v1">
+  <p class="meta">arXiv cs.LG　Mon, 11 May 2026 17:38:17 Z</p>
+  <h2 class="article-title">V4FinBench: Benchmarking Tabular Foundation Models, LLMs, and Standard Methods on Corporate Bankruptcy Prediction</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: V4FinBench: Benchmarking Tabular Foundation Models, LLMs, and Standard Methods on Corporate Bankruptcy Prediction Authors: Marcin Kostrzewa, Sebastian Tomczak, Roman Furman, Anna Poberezhna, Michał Furgała, Oleksii Furman, Maciej Zięba Categories: cs.LG Abstract / Summary: Corporate bankruptcy prediction is a high-stakes financial task characterized by severe class imbalance and multi-horizon forecasting demands. Public datasets supporting it remain scarce and small: widely used free benchmarks contain between 6,000 and 80,000 company-year observations, while larger resources are behind subscription paywalls. To address this gap, we introduce V4FinBench, a benchmark of over one million company-year records from the Visegràd Group (V4) economies (2006-2021), with 131 financial and non-financial features, six prediction horizons, and a compo…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Marcin Kostrzewa, Sebastian Tomczak, Roman Furman, Anna Poberezhna, Michał Furgała, Oleksii Furman, Maciej Zięba<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.10896v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.10896v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="Grounded or Guessing? LVLM Confidence Estimation via Blind-Image Contrastive Ranking" data-timestamp="1778520910000" data-url="https://arxiv.org/abs/2605.10893v1">
+  <p class="meta">arXiv cs.CL　Mon, 11 May 2026 17:35:10 Z</p>
+  <h2 class="article-title">Grounded or Guessing? LVLM Confidence Estimation via Blind-Image Contrastive Ranking</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: Grounded or Guessing? LVLM Confidence Estimation via Blind-Image Contrastive Ranking Authors: Reza Khanmohammadi, Erfan Miahi, Simerjot Kaur, Charese H. Smiley, Ivan Brugere, Kundan Thind, Mohammad M. Ghassemi Categories: cs.CL Abstract / Summary: Large vision-language models suffer from visual ungroundedness: they can produce a fluent, confident, and even correct response driven entirely by language priors, with the image contributing nothing to the prediction. Existing confidence estimation methods cannot detect this, as they observe model behavior under normal inference with no mechanism to determine whether a prediction was shaped by the image or by text alone. We introduce BICR (Blind-Image Contrastive Ranking), a model-agnostic confidence estimation framework that makes this contrast explicit during training by extracting hidden stat…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Reza Khanmohammadi, Erfan Miahi, Simerjot Kaur, Charese H. Smiley, Ivan Brugere, Kundan Thind, Mohammad M. Ghassemi<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.10893v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.10893v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="大規模推薦モデルのための低精度カーネル応用：LoKA" data-timestamp="1778520749000" data-url="https://arxiv.org/abs/2605.10886v1">
   <p class="meta">arXiv cs.AI　Mon, 11 May 2026 17:32:29 Z</p>
   <h2 class="article-title">大規模推薦モデルのための低精度カーネル応用：LoKA</h2>
@@ -1297,6 +1365,40 @@
         分野：cs.LG<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2605.10876v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.10876v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.CL" data-title="Compute Where it Counts: Self Optimizing Language Models" data-timestamp="1778520435000" data-url="https://arxiv.org/abs/2605.10875v1">
+  <p class="meta">arXiv cs.CL　Mon, 11 May 2026 17:27:15 Z</p>
+  <h2 class="article-title">Compute Where it Counts: Self Optimizing Language Models</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: Compute Where it Counts: Self Optimizing Language Models Authors: Yash Akhauri, Mohamed S. Abdelfattah Categories: cs.LG, cs.CL Abstract / Summary: Efficient LLM inference research has largely focused on reducing the cost of each decoding step (e.g., using quantization, pruning, or sparse attention), typically applying a uniform computation budget to every generated token. In practice, token difficulty varies widely, so static compression can over-compute on easy steps and under-compute on hard ones. We study dynamic budget allocation for autoregressive decoding: learning how much computation to spend per token from within a single model. Self-Optimizing Language Models (SOL) pair a frozen LLM with a lightweight policy network that reads the LLM hidden state and selects a discrete efficiency action at each decode step. Actions can jointly …<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Yash Akhauri, Mohamed S. Abdelfattah<br>
+        分類：cs.LG, cs.CL<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.10875v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.10875v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="AI支援CADプログラム生成のためのマルチモーダルベンチマークCADBench" data-timestamp="1778520347000" data-url="https://arxiv.org/abs/2605.10873v1">
+  <p class="meta">arXiv cs.AI　Mon, 11 May 2026 17:25:47 Z</p>
+  <h2 class="article-title">AI支援CADプログラム生成のためのマルチモーダルベンチマークCADBench</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、画像や3Dデータから編集可能なCADプログラムを生成するAI支援設計の分野における進歩を測定するための統一ベンチマーク「CADBench」を提案しています。<br><br>AI支援設計において、画像や3D観測から編集可能なCADプログラムを復元することは中心的な課題ですが、既存の評価はデータセット、モダリティ、メトリクスが断片的であるため、進歩の測定が困難でした。CADBenchは、この課題に対処するため、18,000の評価サンプル、6つのベンチマークファミリー（DeepCAD、Fusion 360、ABC、MCB、Objaverse由来）、5つの入力モダリティ（メッシュ、レンダリング画像）、6つのメトリクス（幾何学的忠実度、実行可能性、プログラムのコンパクトさ）を網羅する統一ベンチマークです。<br><br>CADBenchを用いて11のCAD特化型および汎用的なビジョン・言語システムを評価し、140万以上のCADプログラムを生成しました。理想的な入力条件下では、CAD特化型メッシュ・トゥ・CADモデルは、コード生成を行うビジョン・言語モデル（VLM）を大幅に上回る性能を示しましたが、VLMは依然として信頼性の高いCADプログラム再構築には至っていません。CADBenchは、再構築品質が幾何学的複雑性とともに低下する、CAD特化型モデルがモダリティシフトに対して脆弱である、モデルのランキングがメトリクスによって変化するといった、3つの一般的な失敗モードも明らかにしました。<br><br>これらの結果は、CADBenchが編集可能な3D再構築とマルチモーダルCAD理解における進歩を測定するための診断テストベッドとしての役割を果たすことを示しています。このベンチマークは、この分野の研究開発を加速させるための重要なリソースとなるでしょう。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Anna C. Doris, Jacob Thomas Sony, Ghadi Nehme, Era Syla, Amin Heyrani Nobari, Faez Ahmed<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.10873v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.10873v1</a>
   </div>
 </article>
 
@@ -1467,108 +1569,6 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2605.08075v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.08075v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="EmambaIR: イベント駆動型画像再構成のための効率的な視覚的状態空間モデル" data-timestamp="1778262961000" data-url="https://arxiv.org/abs/2605.08073v1">
-  <p class="meta">arXiv cs.AI　Fri, 08 May 2026 17:56:01 Z</p>
-  <h2 class="article-title">EmambaIR: イベント駆動型画像再構成のための効率的な視覚的状態空間モデル</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、イベントベースの画像再構成における従来の畳み込みニューラルネットワーク（CNN）やVision Transformer（ViT）の限界に対処するため、EmambaIRという新しいフレームワークを提案しています。<br><br>EmambaIRは、イベントストリームの処理に特化した効率的な視覚的状態空間モデル（SSM）であり、クロスモーダルTop-kスパースアテンションモジュール（TSAM）とゲート付き状態空間モジュール（GSSM）という2つの主要コンポーネントを備えています。TSAMはピクセルレベルでの効率的なアテンションにより、豊かな特徴をスパースに融合させ、GSSMは線形計算量でグローバルな文脈依存性を捉えます。<br><br>このモデルは、モーションブラー除去、雨滴除去、高ダイナミックレンジ（HDR）強調といった3つの異なる画像再構成タスクにおいて、従来の最先端手法を大幅に上回る性能を示しました。さらに、メモリ消費量と計算コストの大幅な削減も達成しており、実用性の高さが示唆されます。公開されているソースコードとデータにより、研究の再現性と発展が期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Wei Yu, Yunhang Qian<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.08073v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.08073v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="VecCISC：推論トレースのクラスタリングと候補回答選択による信頼度情報付き自己一貫性の向上" data-timestamp="1778262878000" data-url="https://arxiv.org/abs/2605.08070v1">
-  <p class="meta">arXiv cs.AI　Fri, 08 May 2026 17:54:38 Z</p>
-  <h2 class="article-title">VecCISC：推論トレースのクラスタリングと候補回答選択による信頼度情報付き自己一貫性の向上</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AI推論における標準的な手法である自己一貫性（Self-Consistency）を、信頼度情報付き自己一貫性（CISC）の計算コストを削減する新しいフレームワーク「VecCISC」を提案しています。<br><br>VecCISCは、LLMが生成した複数の回答候補とその推論トレースに対し、意味的類似度を測定することで、冗長または不適切なトレースをフィルタリングします。これにより、信頼度スコアを計算するために必要となる批評LLMの呼び出し回数を大幅に削減します。<br><br>数学、化学、生物学、常識推論、人文科学の5つのデータセットで評価した結果、VecCISCは総トークン使用量を47%削減しつつ、CISCと同等以上の精度を維持または向上させることが示されました。この手法は、推論コストを抑えながらLLMの性能を向上させるための実用的なアプローチを提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：James Petullo, Sonny George, Dylan Cashman, Nianwen Xue<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.08070v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.08070v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="stat.ME" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ME, stat.ML" data-title="経験的ベイズによるバイアス再調整" data-timestamp="1778262797000" data-url="https://arxiv.org/abs/2605.08069v1">
-  <p class="meta">arXiv stat.ML　Fri, 08 May 2026 17:53:17 Z</p>
-  <h2 class="article-title">経験的ベイズによるバイアス再調整</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ME</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、多数のノイズとバイアスを含む推定値と、それらのバイアスのさらにノイズの多い推定値がペアになっている状況における同時解析手法を研究しています。分析の目標は、各パラメータに対して短いキャリブレーションされた区間を構築することです。<br><br>従来のバイアス除去アプローチでは、バイアス推定値を各推定値から差し引くことで分散が増大し、区間が長くなるという問題がありました。本研究では、「経験的ベイズ再調整」という戦略を提案しています。これは、完全にバイアスが除去された推定値から出発し、データからバイアス分布を推定することで、どの程度のバイアスを再導入するかを学習するものです。<br><br>提案手法は、非ノンパラメトリック最尤推定を用いてバイアス分布を推定した場合に、区間のカバレッジの収束率を提供します。さらに、ペアワイズLLM（大規模言語モデル）の勝率評価や、家系ベースのGWAS（全ゲノム関連解析）における直接遺伝効果の推定など、予測駆動型推論における精度の大幅な向上を示すことを実証しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Wanyi Ling, Sida Li, Junming Guan, Nikolaos Ignatiadis<br>
-        分類：stat.ME, stat.ML<br>
-        分野：stat.ME<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.08069v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.08069v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="Flow-OPD：フローマッチングモデルにおけるオンポリシー蒸留" data-timestamp="1778262615000" data-url="https://arxiv.org/abs/2605.08063v1">
-  <p class="meta">arXiv cs.AI　Fri, 08 May 2026 17:50:15 Z</p>
-  <h2 class="article-title">Flow-OPD：フローマッチングモデルにおけるオンポリシー蒸留</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、フローマッチング（FM）を用いたテキスト画像生成モデルにおける、マルチタスク学習時の報酬の希薄さや勾配干渉といった課題に対処するため、「Flow-OPD」という新しいフレームワークを提案しています。<br><br>Flow-OPDは、大規模言語モデル（LLM）分野で成功を収めているオンポリシー蒸留（OPD）をFMモデルに初めて統合したものです。まず、単一報酬で教師モデルをファインチューニングし、次にフローベースのコールドスタートと3段階の蒸留プロセスにより、複数の専門知識を単一の学生モデルに統合します。<br><br>さらに、タスクに依存しない教師モデルを用いて生成を高品質な多様体にアンカーさせる「Manifold Anchor Regularization（MAR）」を導入し、美的劣化を軽減します。Stable Diffusion 3.5 Mediumを基盤とした実験では、GenEvalスコアを63から92、OCR精度を59から94へと大幅に向上させ、従来のGRPOと比較して約10ポイントの改善が見られました。これは、汎用的なテキスト画像モデル構築のためのスケーラブルなアライメントパラダイムを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Zhen Fang, Wenxuan Huang, Yu Zeng, Yiming Zhao, Shuang Chen, Kaituo Feng, Yunlong Lin, Lin Chen<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.08063v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.08063v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="ルーブリックに基づく強化学習：汎用的な推論のための構造化された評価者報酬" data-timestamp="1778262538000" data-url="https://arxiv.org/abs/2605.08061v1">
-  <p class="meta">arXiv cs.AI　Fri, 08 May 2026 17:48:58 Z</p>
-  <h2 class="article-title">ルーブリックに基づく強化学習：汎用的な推論のための構造化された評価者報酬</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、LLMの推論能力向上のため、報酬を複数の検証可能な基準に分解し、構造化された評価者報酬を用いる「ルーブリックに基づく強化学習（Rubric-Grounded RL）」フレームワークを提案しています。<br><br>このフレームワークでは、LLM評価者が複数の基準に基づいて部分的な採点を行うことで、単なる正誤判定ではなく、より詳細な最適化信号を提供します。具体的には、科学技術文書コーパスから導出されたルーブリックを用いて、Llama-3.1-8B-InstructモデルをGroup Relative Policy Optimization（GRPO）で訓練しました。<br><br>その結果、訓練に使用しなかった4つの推論ベンチマーク（GSM8K、MATH、GPQA Main、GPQA Diamond）において、ベースモデルと比較して性能が向上しました。これは、構造化された文書に基づいた報酬が、未知のタスクに対する汎用的な推論能力を向上させる可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Manish Bhattarai, Ismael Boureima, Nishath Rajiv Ranasinghe, Scott Pakin, Dan O&#39;Malley<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.08061v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.08061v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.GT, cs.MA" data-title="記憶の呪い：LLMエージェントにおける協調的意図の侵食" data-timestamp="1778262433000" data-url="https://arxiv.org/abs/2605.08060v1">
-  <p class="meta">arXiv cs.AI　Fri, 08 May 2026 17:47:13 Z</p>
-  <h2 class="article-title">記憶の呪い：LLMエージェントにおける協調的意図の侵食</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.GT</span><span class="tag">cs.MA</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントにおける文脈ウィンドウの拡張が、協調的な行動に予期せぬ悪影響を与える「記憶の呪い」と呼ばれる現象を明らかにします。<br><br>研究では、7つのLLMと4つのゲームを用いて500ラウンド以上の実験を行い、アクセス可能な履歴を拡張することが、多くの設定で協調性を低下させることを発見しました。この現象のメカニズムを解明するため、3つの分析が行われました。第一に、378,000件の推論トレースの分析から、協調性の低下は偏執狂の増加ではなく、将来を見据えた意図の侵食に起因することが示されました。第二に、プロンプト長を固定し、可視的な履歴を合成された協調的記録に置き換える「メモリサンリタイゼーション」により、協調性が大幅に回復し、記憶の内容がトリガーであることが証明されました。<br><br>さらに、連鎖思考（Chain-of-Thought）推論を省略すると、しばしば崩壊が軽減されることが示され、熟考が逆説的に記憶の呪いを増幅することが示唆されました。これらの結果は、記憶がマルチエージェントの行動を能動的に決定する要因であることを再定義し、長い記憶が協調性を安定させるか不安定にするかは、それが引き起こす推論パターンに依存することを示しています。この研究は、LLMエージェントの設計において、記憶の管理が協調行動に不可欠であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Jiayuan Liu, Tianqin Li, Shiyi Du, Xin Luo, Haoxuan Zeng, Emanuel Tewolde, Tai Sing Lee, Tonghan Wang<br>
-        分類：cs.CL, cs.AI, cs.GT, cs.MA<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.08060v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.08060v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
