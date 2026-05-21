@@ -1479,105 +1479,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="最小限のRLVR学習でLLMを外挿：ランク1軌跡による" data-timestamp="1779299600000" data-url="https://arxiv.org/abs/2605.21468v1">
-  <p class="meta">arXiv cs.LG　Wed, 20 May 2026 17:53:20 Z</p>
-  <h2 class="article-title">最小限のRLVR学習でLLMを外挿：ランク1軌跡による</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の推論能力向上に広く用いられている「検証可能な報酬付き強化学習（RLVR）」における、パラメータ軌跡の幾何学的特性に着目します。<br><br>RLVRの重み軌跡は非常に低ランクであり、予測可能であることを実証します。具体的には、下流タスクのパフォーマンス向上の大部分がパラメータ差分のランク1近似によって捉えられ、この射影の大きさが学習ステップ数にほぼ線形に進化することを発見しました。これに基づき、RELEX（REinforcement Learning EXtrapolation）というシンプルで計算効率の良い手法を提案します。これは短い観測ウィンドウからランク1部分空間を推定し、学習モデルを必要とせずに線形回帰によって将来のチェックポイントを外挿します。<br><br>複数のモデル（Qwen2.5-Math-1.5B、Qwen3-4B-Base、Qwen3-8B-Base）で評価した結果、RELEXは、完全なRLVR学習のわずか15%のステップ数で、ドメイン内およびドメイン外のベンチマークにおいてRLVRパフォーマンスに匹敵またはそれを超えるチェックポイントを生成します。特筆すべきは、RELEXは観測ウィンドウをはるかに超えて外挿可能であり、例えば最初の50ステップのみを観測して1000ステップまで外挿してもパフォーマンスが向上し続けることを示しています。アブレーション分析により、RELEXのミニマリストな有効性が確認されており、部分空間ランクの増加や非線形モデリングを用いても、外挿におけるさらなる改善は見られませんでした。最後に、RELEXの成功は「ノイズ除去」効果に起因することを示しており、更新をランク1部分空間に射影することで、外挿中にパフォーマンスを低下させる可能性のある確率的最適化ノイズを破棄します。</div>
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="DelTA：検証可能な報酬からの強化学習における識別的トークン信用割り当て" data-timestamp="1779299589000" data-url="https://arxiv.org/abs/2605.21467v1">
+  <p class="meta">arXiv cs.LG　Wed, 20 May 2026 17:53:09 Z</p>
+  <h2 class="article-title">DelTA：検証可能な報酬からの強化学習における識別的トークン信用割り当て</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AI分野における強化学習（RL）の進展に関する研究です。<br><br>検証可能な報酬からの強化学習（RLVR）は、大規模言語モデルの推論能力を向上させるための中心的な技術として注目されています。しかし、応答レベルの報酬がトークンレベルの確率変化にどのように影響するかは、依然として十分に理解されていません。本研究では、RLVRの更新を識別器として捉えることで、ポリシー勾配の更新方向がトークン勾配ベクトルに対する線形識別器として機能し、学習中にどのトークン確率が増減するかを決定することを示します。<br><br>標準的なシーケンスレベルRLVRでは、この識別器は、トークン勾配ベクトルのアドバンテージ重み付け平均によって形成される正側と負側のセントロイドから構築されます。しかし、このようなセントロイド構築は、フォーマットトークンなどの共有される高頻度パターンに支配されやすく、高報酬応答と低報酬応答をより良く区別する、スパースながらも識別力の高い方向性を希薄化させる可能性があります。この限界に対処するため、本研究では識別的トークン信用割り当て手法である「DelTA」を提案します。DelTAは、側固有のトークン勾配方向を増幅し、共有または弱識別的な方向性をダウンウェイトするためのトークン係数を推定します。これらの係数は自己正規化RLVRサロゲートを再重み付けし、効果的な側ごとのセントロイドをより対照的にすることで、RLVRの更新方向を再形成します。<br><br>7つの数学的ベンチマークにおいて、DelTAはQwen3-8B-BaseおよびQwen3-14B-Baseで、同規模の最良ベースラインをそれぞれ3.26および2.62平均ポイント上回りました。コード生成、異なるバックボーン、およびドメイン外評価での追加結果は、DelTAの汎化能力をさらに実証しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.LG<br>
         サイト：arXiv<br>
-        著者：Zhepei Wei, Xinyu Zhu, Wei-Lin Chen, Chengsong Huang, Jiaxin Huang, Yu Meng<br>
+        著者：Kaiyi Zhang, Wei Wu, Yankai Lin<br>
         分類：cs.LG, cs.CL<br>
         分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21468v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21468v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="文脈に応じた生成による適応的メモリを持つLLMエージェント「Mem-π」" data-timestamp="1779299465000" data-url="https://arxiv.org/abs/2605.21463v1">
-  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:51:05 Z</p>
-  <h2 class="article-title">文脈に応じた生成による適応的メモリを持つLLMエージェント「Mem-π」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントにおける適応的メモリのフレームワーク「Mem-π」を提案します。<br><br>既存のメモリ拡張エージェントは、外部メモリストアからの検索に依存していましたが、文脈との不一致が生じやすいという課題がありました。対照的に、Mem-πは、下流エージェントとは別に、専用の言語モデルまたはビジョン言語モデルを用いて、複雑なタスクのための文脈特化型ガイダンスを生成します。このモデルは、エージェントの現在の文脈に基づいて、いつガイダンスを生成すべきか、そしてどのようなガイダンスを生成すべきかを共同で決定します。<br><br>このモデルは、生成が役立たない場合は生成を控え、有用なガイダンスを簡潔に生成できるように、決定と内容を分離した強化学習（RL）目的で訓練されます。ウェブナビゲーション、ターミナルベースのツール使用、テキストベースの身体的相互作用など、多様なエージェントベンチマークにおいて、Mem-πは検索ベースおよび従来のRL最適化メモリベースラインを常に上回り、ウェブナビゲーションタスクで30%以上の相対的な改善を達成しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Xiaoqiang Wang, Chao Wang, Hadi Nekoei, Christopher Pal, Alexandre Lacoste, Spandana Gella, Bang Liu, Perouz Taslakian<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21463v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21463v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI" data-title="センサー摂動が運転VLAの推論の脆弱性を露呈：Lost in Fog" data-timestamp="1779298442000" data-url="https://arxiv.org/abs/2605.21446v1">
-  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:34:02 Z</p>
-  <h2 class="article-title">センサー摂動が運転VLAの推論の脆弱性を露呈：Lost in Fog</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、自動運転におけるビジョン・言語・アクション（VLA）モデルの頑健性に関する研究です。特に、実世界のセンサー劣化下で、生成される説明（Chain-of-Causation: CoC）が信頼性を維持できるかに焦点を当てています。<br><br>研究では、Alpamayo R1モデルに対し、ガウシアンノイズ、照明条件の変化、霧といった8種類のセンサー摂動を加えて、1,996シナリオで評価を行いました。その結果、CoCの説明の一貫性が、軌道（走行経路）の信頼性を示す高い指標となることが明らかになりました。摂動によってCoCの説明が変化した場合、軌道の逸脱が5.3倍に増加することが観測されました。<br><br>また、CoC生成を有効にすることで、推論設定が一致している場合に、平均11.8%の軌道精度向上が見られました。ノイズレベルの上昇に対しては、劣化がほぼ線形に進行することが示されました。標準的な入力前処理防御策は、限定的な効果しかありませんでした。これらの結果は、CoCの一貫性が計画の安全性を示す定量的な代理指標となり、VLAの安全な展開のための推論ベースの実行時監視を促進することを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Abhinaw Priyadershi, Jelena Frtunikj<br>
-        分類：cs.RO, cs.AI<br>
-        分野：cs.RO<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21446v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21446v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2605.21467v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21467v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルのブラックボックス脱獄のための適応的意味ハイブリダイゼーション：LASH" data-timestamp="1779294420000" data-url="https://arxiv.org/abs/2605.21362v1">
-  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 16:27:00 Z</p>
-  <h2 class="article-title">大規模言語モデルのブラックボックス脱獄のための適応的意味ハイブリダイゼーション：LASH</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の安全性に関する課題、特にアライメントされたモデルの意図された安全な振る舞いと、敵対的なプロンプト下での振る舞いの乖離に着目しています。<br><br>既存の自動化された脱獄手法は、それぞれ単一の攻撃ファミリに依存しており、特定のモデルや危害カテゴリによって最適な手法が変化するという問題がありました。本研究では、複数の基本攻撃からの出力を再利用可能なシードプロンプトとして扱い、各ターゲットリクエストに対してそれらを適応的に組み合わせるブラックボックスフレームワーク「LASH（LLM Adaptive Semantic Hybridization）」を提案します。<br><br>LASHは、シードプロンプトのサブセットと混合重みを選択し、それらを合成して候補プロンプトを生成します。そして、キーワードベースの拒否検出とLLMジャッジによるスコアリングを組み合わせた二段階のフィットネス関数を用いて、ターゲットモデルからのフィードバックに基づいて遺伝的アルゴリズムで重みを最適化します。これにより、平均30回のターゲットクエリで、既存の最先端手法を上回る攻撃成功率を達成しました。さらに、防御機構下でも競争力を維持し、より成功に近い内部表現を誘発することが示されました。これらの結果は、異種脱獄戦略間の適応的な組み合わせが、ブラックボックスのレッドチーミングにおいて有望な方向性であることを示唆しています。</div>
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.SE" data-title="LLMを活用した文法適応：メタモデルと文法の協調進化に関する研究" data-timestamp="1779299511000" data-url="https://arxiv.org/abs/2605.21465v1">
+  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 17:51:51 Z</p>
+  <h2 class="article-title">LLMを活用した文法適応：メタモデルと文法の協調進化に関する研究</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.SE</span></div>
+  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）を用いた文法適応の研究です。<br><br>モデル駆動型エンジニアリングにおいて、メタモデルの進化は一貫性を維持するために対応する文法の適応を必要としますが、これは通常、煩雑な手作業を伴います。既存のルールベースの手法は部分的な自動化を達成できますが、複雑な文法シナリオを扱う際には限界があります。本論文では、LLMベースのアプローチを提案し、以前のバージョンから文法適応を学習することで、進化後の新しい文法に自動的に適応を適用します。<br><br>このアプローチは、6つの実世界のXtextドメイン固有言語（DSL）で評価されました。4つのDSLをトレーニングセットとしてプロンプト戦略を開発し、2つのDSLを検証用のテストセットとして使用し、QVToで縦断的なケーススタディを実施しました。評価では、3つのLLM（Claude Sonnet 4.5、ChatGPT 5.1、Gemini 3）を使用し、文法ルールレベルの適応の一貫性、出力の類似性、およびメタモデル適合性の3つの次元から文法適応の質を測定しました。結果は、テストセットにおいて、3つのLLMすべてが100%の適応一貫性と出力類似性を達成したのに対し、ルールベースのアプローチはDOTで84.21%、Xcoreで62.50%しか達成できなかったことを示しています。QVToの縦断的研究では、LLMベースのアプローチは、手動での文法編集なしに3つの進化ステップすべてで学習した適応を再利用することに成功しましたが、ルールベースのアプローチは3つの遷移のうち2つで手動調整が必要でした。<br><br>しかし、大規模な文法（EAST-ADL、297ルール）では、LLMの適応一貫性は90%をはるかに下回りました。この研究は、複雑な文法シナリオを処理する上でのLLMベースのアプローチの利点を示していますが、大規模な文法適応におけるその限界も明らかにしています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Abdullah Al Nomaan Nafi, Fnu Suya, Swarup Bhunia, Prabuddha Chakraborty<br>
-        分類：cs.CL<br>
+        著者：Weixing Zhang, Bowen Jiang, Rahul Sharma, Regina Hebig, Daniel Strüber<br>
+        分類：cs.CL, cs.SE<br>
         分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21362v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21362v1</a>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21465v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21465v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LLMとソーシャルメディアを対象としたテキスト分析評価フレームワーク" data-timestamp="1779293105000" data-url="https://arxiv.org/abs/2605.21338v1">
-  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 16:05:05 Z</p>
-  <h2 class="article-title">LLMとソーシャルメディアを対象としたテキスト分析評価フレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、LLM（大規模言語モデル）がニュースフィードやソーシャルメディアの投稿のような、長い非構造化文書のシーケンスを処理する際の、実用的なデータ分析シナリオにおける有効性を評価するための、質問ベースの評価フレームワークを導入します。<br><br>このフレームワークは、LLMのセマンティック理解と集約されたテキストデータに対する推論能力を評価するために手動でキュレーションされた470の質問で構成されています。多様なTwitterデータセットにベンチマークを適用し、感情分析、ヘイトスピーチ検出、感情認識などのNLPタスクをカバーします。結果は、パフォーマンスが入力スケールとデータソースの複雑さに大きく依存し、マルチラベルまたはターゲット依存のシナリオでは著しく低下することを示しています。<br><br>さらに、タスクの複雑さが増すと、基本的なセマンティック存在の識別から、比較、カウント、計算といったより要求の厳しい操作へと、パフォーマンスは段階的に低下します。入力サイズが500インスタンスを超えると、特にオープンウェイトモデルにおいて、LLM全体で共通の制限が特定され、パフォーマンスが大幅に低下します。これらの発見は、大規模なテキストコレクションに対する厳密な定量的分析を実行する上での、現在のLLMにおける重要なアーキテクチャ上のボトルネックを浮き彫りにしています。</div>
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="形態的同形が一致誘発に及ぼす言語間効果の定量化" data-timestamp="1779296537000" data-url="https://arxiv.org/abs/2605.21403v1">
+  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 17:02:17 Z</p>
+  <h2 class="article-title">形態的同形が一致誘発に及ぼす言語間効果の定量化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AI分野における自然言語処理（NLP）と計算言語学に関する研究です。<br><br>一致誘発エラー（動詞が文法的な頭ではなく、介在する名詞と誤って一致するエラー）は、一部の言語（英語、ドイツ語、ロシア語）では形態的同形によって増幅されますが、他の言語（トルコ語、アルメニア語）ではそうではありません。この言語間のパターンには、原理的な説明がありません。<br><br>本研究では、大規模言語モデル（LLM）からのサプ゚ライザルと注意エントロピーを処理プロキシとして使用し、4つの言語にわたるこのバリエーションを調査します。LLMから派生した指標は、英語とドイツ語の行動的知見（同形が一致誘発を調節する）を再現し、トルコ語のゼロ結果（調節なし）と一致し、ロシア語のパターンを部分的に捉えています。<br><br>同形が言語間で一致誘発に異なる影響を与える理由をより良く理解するためのさらなる方向性について議論します。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Yuefeng Shi, Nedjma Ousidhoum, Jose Camacho-Collados<br>
+        著者：Utku Turk, Eva Neu<br>
         分類：cs.CL<br>
         分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21338v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21338v1</a>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21403v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21403v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="連合学習によるLLMのFederated LoRAファインチューニング：協調的アライメント" data-timestamp="1779286336000" data-url="https://arxiv.org/abs/2605.21217v1">
-  <p class="meta">arXiv stat.ML　Wed, 20 May 2026 14:12:16 Z</p>
-  <h2 class="article-title">連合学習によるLLMのFederated LoRAファインチューニング：協調的アライメント</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）のパラメータ効率的なファインチューニングのための強力なツールであるLoRA（Low-rank adaptation）を、連合学習（Federated Learning）の設定で研究します。<br><br>特に、クライアントが部分的な構造のみを共有し、かなりのサブセットが汚染されている可能性のある、高度に異質な状況に焦点を当てています。汚染を認識するフレームワーク「CLAIR」（Collaborative Low-rank Alignment and Identifiable Recovery）を提案します。これは、予備的なローカル推定値のみに依存します。CLAIRは、構造化された低ランクプラスブロック疎行列分解を通じて、共有LoRAサブスペースを回復し、汚染されたクライアントを検出します。<br><br>ノイズのないケースでの共有LoRAサブスペースの正確な回復、予備的な推定誤差下での安定した回復、および穏やかな分離条件での協調セットの整合性のある回復を証明します。さらに、CLAIRの改良による利点を定量化します。これは、クロスクライアント平均化を通じてオフサブスペース推定誤差を削減し、共有LoRAサブスペース内のクライアント固有の変動を維持します。これにより、サブスペース推定と良性クライアントの異質性のコストを上回る場合に、ローカルファインチューニングを改善します。経験的には、テキストコピータスクでTransformerアーキテクチャをファインチューニングすることにより、CLAIRの利点を実証します。</div>
+<article class="digest-article" data-month="2026-05" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="言語モデルにおける比喩処理の事後解析：条件付きスケールエントロピーによるアプローチ" data-timestamp="1779295559000" data-url="https://arxiv.org/abs/2605.21391v1">
+  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 16:45:59 Z</p>
+  <h2 class="article-title">言語モデルにおける比喩処理の事後解析：条件付きスケールエントロピーによるアプローチ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、深層学習モデル、特にデコーダーオンリー言語モデルにおける比喩表現の処理メカニズムを解明することを目的としています。<br><br>比喩表現は、単語の文脈的な意味が文字通りの意味から逸脱する際に、言語モデルがその再解釈をどのように行うかという課題を提起します。本研究では、条件付きスケールエントロピー（CSE）という新しい尺度を導入し、各層における計算がどの程度広範囲の周波数スケールにわたって行われるかを測定します。CSEは、更新の大きさに依存せず、更新の構造的なパターンを分離できるという理論的裏付けがあります。<br><br>実験の結果、CSEを用いることで、比喩的な単語は文字通りの単語と比較して、テストされた全てのデコーダーオンリーアーキテクチャ（GPT-2ファミリー、LLaMA-2 7B、GPT-oss 20B）において、連続する層で有意に高いスペクトル幅を示すことが明らかになりました。この効果は、独立した分析とも一致し、意味の複雑さや内容の一致では説明できないことが示されました。これらの結果は、多重スケール協調が比喩言語処理の一貫した特徴であることを示唆しており、CSEがトランスフォーマーモデルの層間構造を特徴づけるための有用なツールとなることを確立します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Lawhori Chakrabarti, Jennifer Johnson-Leung, Bert Baumgaertner, Aleksandar Vakanski, Min Xian, Boyu Zhang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21391v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21391v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Generative Models" data-field="math.ST" data-source="arXiv stat.ML" data-area="AI" data-categories="math.ST, stat.ML" data-title="ワッサースタイン距離上のL^2：最適輸送の統計的解析" data-timestamp="1779294541000" data-url="https://arxiv.org/abs/2605.21365v1">
+  <p class="meta">arXiv stat.ML　Wed, 20 May 2026 16:29:01 Z</p>
+  <h2 class="article-title">ワッサースタイン距離上のL^2：最適輸送の統計的解析</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">math.ST</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、確率測度空間の研究に用いられる最適輸送理論を、統計的な不確実性を考慮した枠組みへと拡張することを目的としています。<br><br>最適輸送は、確率測度空間を幾何学的かつ構造的に捉えるための強力なツールですが、実際の応用では、対象となる測度が正確には知られていないことがほとんどです。この問題に対処するため、本研究では古典的な理論をランダムな確率測度の設定に拡張し、$L^2$ over Wasserstein空間を導入します。この空間は、ワッサースタイン距離空間のリーマン構造を継承し、距離と測地線幾何学を特徴づけることが示されています。これにより、ランダムな勾配流サンプルパスを持つランダムフローが誘導され、ランダム勾配流ダイナミクスを許容するワッサースタイン空間の自然な拡張となります。<br><br>さらに、経験的測度を用いた最適輸送機構の統計的収束結果を、$L^2$ over Wassersteinフレームワーク内で確立します。特に、ベイズ非パラメトリック設定において、シュワルツの一貫性定理をワッサースタイントポロジーにまで洗練させ、同様の機構の事後収束を導出します。このフレームワークは、自己注意フローパスを用いたトランスフォーマーモデルのランダムトークンサンプリングの理論を組み込むことができ、ランダムサンプリングの統計的不確実性下での原理的な推論と生成モデリングに対するランダム最適輸送の統一的な扱いを提供します。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Shuaida He, Liwen Chen, Long Feng<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21217v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21217v1</a>
+        著者：Riccardo Passeggeri, Rohan M. Shenoy, Pengcheng Ye<br>
+        分類：math.ST, stat.ML<br>
+        分野：math.ST<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21365v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21365v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Consciousness / Philosophy" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="「微細な決定は私が行っていない」：共同作業における目標レベルのAI貢献の測定、誘発、および開示" data-timestamp="1779294514000" data-url="https://arxiv.org/abs/2605.21363v1">
+  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 16:28:34 Z</p>
+  <h2 class="article-title">「微細な決定は私が行っていない」：共同作業における目標レベルのAI貢献の測定、誘発、および開示</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Consciousness / Philosophy</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、人間とAIの共同作業において、特に目標設定の段階におけるAIの貢献をどのように測定し、理解するかという問題に取り組んでいます。<br><br>大規模言語モデル（LLM）がユーザーの目標形成、洗練、拡張に影響を与えるにつれて、貢献の帰属を明確にすることは、ユーザーがAIへの依存度を調整し、AI支援作業を評価する上で重要になります。しかし、既存の方法は最終的な成果物に焦点を当てており、目標自体が共同で形成されるプロセスを見落としていました。本研究では、明示的な目標を検証可能な要件に分解し、対話のターンを通じて直接的および間接的な影響を追跡する、目標レベルの貢献フレームワーク「CoTrace」を提案します。<br><br>638件の実際の共同作業ログにCoTraceを適用した結果、モデルは目標形成への貢献の11〜26％しか占めていないものの、より低レベルの具体的な要件の導入において実質的な貢献をし、さまざまな種類の間接的な貢献をしていることがわかりました。制御されたシミュレーションを通じて、インタラクションデザインの選択がモデルの目標形成行動に大きく影響することが示されました。ユーザー調査では、参加者に目標レベルの分析を提示することで、自身のAI支援作業に対する認識が変化することが明らかになり、ユーザーが自身のAI支援作業を理解する方法に体系的な誤った調整があることが示唆されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Eunsu Kim, Jessica R. Mindel, Kyungjin Kim, Sherry Tongshuang Wu<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Consciousness / Philosophy<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21363v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21363v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
