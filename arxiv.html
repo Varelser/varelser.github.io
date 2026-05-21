@@ -1360,6 +1360,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cond-mat.dis-nn, cs.AI, stat.ML" data-title="ハイパーパラメータ転移の定量化と埋め込み層学習率の重要性" data-timestamp="1779299980000" data-url="https://arxiv.org/abs/2605.21486v1">
+  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:59:40 Z</p>
+  <h2 class="article-title">ハイパーパラメータ転移の定量化と埋め込み層学習率の重要性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cond-mat.dis-nn</span><span class="tag">cs.AI</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の学習において、最適化ハイパーパラメータを小規模から大規模へ外挿するハイパーパラメータ転移の定量化フレームワークを提案します。<br><br>提案手法では、スケーリング則の適合度、外挿誤差への頑健性、パラメータ化の選択による漸近損失ペナルティの3つの指標を用いてハイパーパラメータ転移を評価します。また、標準的なパラメータ化（SP）と比較して、Maximal Update（μP）が学習率転移において高い性能を示す理由を、アブレーション研究を通じて詳細に調査します。<br><br>その結果、AdamWを用いた学習において、μPがSPよりも優れている主な理由は、埋め込み層の学習率を最大化することにあることが判明しました。SPでは、埋め込み層の学習率が学習の不安定性を引き起こすボトルネックとなっており、μPに合わせて学習率を幅の係数だけ増加させることで、学習が劇的に安定し、ハイパーパラメータ転移が改善されることが示されました。さらに、重み減衰はスケーリング則の適合度を向上させる一方で、固定トークン・パー・パラメータ設定では外挿の頑健性を損なうことも発見されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Dayal Singh Kalra, Maissam Barkeshli<br>
+        分類：cs.LG, cond-mat.dis-nn, cs.AI, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21486v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21486v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="DeepWeb-Bench: 大規模な証拠収集と長期的推論を必要とする深層研究ベンチマーク" data-timestamp="1779299943000" data-url="https://arxiv.org/abs/2605.21482v1">
   <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:59:03 Z</p>
   <h2 class="article-title">DeepWeb-Bench: 大規模な証拠収集と長期的推論を必要とする深層研究ベンチマーク</h2>
@@ -1391,6 +1408,23 @@
         分野：cs.CV<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2605.21479v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21479v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="Webエージェントの計画・スケジューリングにおける遅延最適化のためのエージェントJITコンパイル" data-timestamp="1779299667000" data-url="https://arxiv.org/abs/2605.21470v1">
+  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:54:27 Z</p>
+  <h2 class="article-title">Webエージェントの計画・スケジューリングにおける遅延最適化のためのエージェントJITコンパイル</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、自然言語で指示されたタスクを自動実行するコンピュータ利用エージェント（CUA）の遅延を削減するための、エージェントJITコンパイルという新しいアプローチを提案します。<br><br>従来のCUAは、画面取得とLLM呼び出しを繰り返す逐次的なループにより、高い遅延と誤ったツール使用による頻繁なエラーが発生していました。提案手法は、タスク記述を直接実行可能なコードにコンパイルすることで、LLM呼び出し、ツール呼び出し、並列化を自由に含まれるようにします。このアプローチは、JIT-Planner、JIT-Scheduler、および不変条件強制ツールプロトコルの3つのコンポーネントから構成されます。<br><br>JIT-Plannerは複数のコードプランを生成し、ツール仕様に対して検証し、最小コストの候補を選択します。JIT-Schedulerは、学習された遅延分布からのモンテカルロコスト推定を通じて並列化戦略を探索します。不変条件強制ツールプロトコルは、前提条件と後条件の状態要件を指定し、誤ったツール使用を含むプラン生成率を低減します。5つのWebアプリケーションでの評価では、JIT-PlannerはBrowser-Useと比較して10.4倍の高速化と28%の精度向上を達成し、JIT-SchedulerはOpenAI CUAと比較して2.4倍の高速化と9%の精度向上を達成しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Caleb Winston, Ron Yifeng Wang, Azalia Mirhoseini, Christos Kozyrakis<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21470v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21470v1</a>
   </div>
 </article>
 
@@ -1428,6 +1462,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.SE" data-title="LLMを活用した文法適応：メタモデルと文法の協調進化の研究" data-timestamp="1779299511000" data-url="https://arxiv.org/abs/2605.21465v1">
+  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 17:51:51 Z</p>
+  <h2 class="article-title">LLMを活用した文法適応：メタモデルと文法の協調進化の研究</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.SE</span></div>
+  <div class="summary">本論文は、モデル駆動型エンジニアリングにおいて、メタモデルの進化に伴う文法の不整合問題を解決するため、大規模言語モデル（LLM）を用いた自動的な文法適応手法を提案します。<br><br>提案手法は、過去のバージョンから文法適応を学習することで、メタモデルの進化後に新しい文法へ自動的に適応を適用します。6つの実世界のXtextドメイン固有言語（DSL）を用いて評価が行われ、3つのLLM（Claude Sonnet 4.5, ChatGPT 5.1, Gemini 3）が使用されました。評価では、文法ルールレベルの適応の一貫性、出力の類似性、メタモデルへの適合性の3つの次元で測定されました。<br><br>テストセットでは、提案手法は既存のルールベースのアプローチよりも高い適応一貫性と出力類似性を達成しましたが、大規模な文法（297ルール）ではLLMの適応一貫性が90%を下回るという限界も示されました。この研究は、LLMベースのアプローチが複雑な文法シナリオに対処する上で利点があることを示していますが、大規模文法適応における限界も明らかにしています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Weixing Zhang, Bowen Jiang, Rahul Sharma, Regina Hebig, Daniel Strüber<br>
+        分類：cs.CL, cs.SE<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21465v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21465v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="Mem-π: いつ、何を生成するかを学習する適応的メモリフレームワーク" data-timestamp="1779299465000" data-url="https://arxiv.org/abs/2605.21463v1">
   <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:51:05 Z</p>
   <h2 class="article-title">Mem-π: いつ、何を生成するかを学習する適応的メモリフレームワーク</h2>
@@ -1442,6 +1493,57 @@
         分野：cs.CL<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2605.21463v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21463v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI" data-title="霧の中の喪失：センサー摂動が運転VLAの推論の脆弱性を露呈" data-timestamp="1779298442000" data-url="https://arxiv.org/abs/2605.21446v1">
+  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:34:02 Z</p>
+  <h2 class="article-title">霧の中の喪失：センサー摂動が運転VLAの推論の脆弱性を露呈</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、自動運転におけるビジョン・言語・アクション（VLA）モデルのロバスト性を、実世界のセンサー劣化条件下での説明の信頼性を評価する制御された摂動研究を通じて調査します。<br><br>Alpamayo R1（10Bパラメータ）を対象に、8種類のセンサー摂動（4段階のガウシアンノイズ、2種類の照明極端条件、2種類の霧レベル）下で1,996シナリオにわたる評価を実施しました。その結果、推論の一貫性が軌道信頼性の高忠実度指標であることが明らかになりました。Chain-of-Causation（CoC）説明が摂動後に変化した場合、軌道偏差は5.3倍に急増し、攻撃タイプ全体で相関係数0.99、サンプルごとで0.53を示しました。<br><br>制御されたアブレーション研究により、CoC生成を有効にすることが、同等の推論設定下で軌道精度を平均11.8%向上させることが示唆されました。テストされたノイズ範囲（σ∈{10, 30, 50, 70}）では、劣化はほぼ線形（R^2=0.957）であり、標準的な入力前処理防御策はわずかな軽減効果しか提供しませんでした。これらの結果は、CoCの一貫性を計画安全性の定量的プロキシとして確立し、より安全なVLA展開のための推論ベースの実行時監視を動機づけます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Abhinaw Priyadershi, Jelena Frtunikj<br>
+        分類：cs.RO, cs.AI<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21446v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21446v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LASH：ブラックボックス越えのための適応的意味ハイブリダイゼーション" data-timestamp="1779294420000" data-url="https://arxiv.org/abs/2605.21362v1">
+  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 16:27:00 Z</p>
+  <h2 class="article-title">LASH：ブラックボックス越えのための適応的意味ハイブリダイゼーション</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の安全性に関する脆弱性を突く「ジェイルブレイク」攻撃に対し、複数の攻撃手法を適応的に組み合わせる新しいブラックボックスフレームワーク「LASH（LLM Adaptive Semantic Hybridization）」を提案します。<br><br>LASHは、複数の基本攻撃から生成された出力を再利用可能なシードプロンプトとして扱い、各ターゲットリクエストに対してそれらを適応的に合成します。シードプールを与えられたLASHは、シードのサブセットとソフトマックス正規化された混合重みについて探索を行います。合成モジュールが単一の候補プロンプトを生成し、導関数フリーの遺伝的オプティマイザーが、キーワードベースの拒否検出とLLMジャッジのスコアリングを組み合わせた2段階のフィットネス関数を用いて、ブラックボックスターゲットフィードバックを使用して重みを更新します。<br><br>100の有害なプロンプトを含むJailbreakBenchデータセットで6つのターゲットモデルを評価した結果、LASHは平均攻撃成功率84.5%（キーワードベース評価）および74.5%（LLMジャッジ評価）を達成し、5つの最先端ベースラインを上回りました。また、LASHは3つの防御メカニズム下でも競争力を維持し、より成功に近い内部表現を誘発することが示されました。これらの結果は、異種ジェイルブレイク戦略間の適応的合成が、ブラックボックスレッドチーミングの有望な方向性であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Abdullah Al Nomaan Nafi, Fnu Suya, Swarup Bhunia, Prabuddha Chakraborty<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21362v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21362v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルのテキスト分析評価フレームワーク：ソーシャルメディアを事例に" data-timestamp="1779293105000" data-url="https://arxiv.org/abs/2605.21338v1">
+  <p class="meta">arXiv cs.CL　Wed, 20 May 2026 16:05:05 Z</p>
+  <h2 class="article-title">大規模言語モデルのテキスト分析評価フレームワーク：ソーシャルメディアを事例に</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）がソーシャルメディアのような長文の非構造化データを処理する際の有効性を評価するための、質問ベースの評価フレームワークを提案します。<br><br>提案手法では、470の質問からなるベンチマークを作成し、LLMのセマンティック理解と推論能力を検証します。感情分析、ヘイトスピーチ検出、感情認識などのタスクでTwitterデータセットを用いて評価した結果、LLMの性能は入力の規模やデータソースの複雑さに大きく依存し、特に複数ラベルやターゲット依存のシナリオでは低下することが明らかになりました。<br><br>タスクの複雑性が増すにつれて、基本的な意味の存在確認から、比較、カウント、計算といったより高度な操作へと性能が段階的に低下します。さらに、500件以上のデータになると、特にオープンウェイトモデルにおいて、性能が著しく低下する限界が確認されました。これらの発見は、大量のテキストコレクションに対する厳密な定量的分析を実行する上での、現在のLLMのアーキテクチャ上のボトルネックを浮き彫りにしています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Yuefeng Shi, Nedjma Ousidhoum, Jose Camacho-Collados<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.21338v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21338v1</a>
   </div>
 </article>
 
@@ -1476,108 +1578,6 @@
         分野：cs.LG<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2605.20182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.20182v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="TIDE：I/Oを考慮したエキスパートオフロードによる効率的かつロスレスなMoE拡散LLM推論" data-timestamp="1779213548000" data-url="https://arxiv.org/abs/2605.20179v1">
-  <p class="meta">arXiv cs.CL　Tue, 19 May 2026 17:59:08 Z</p>
-  <h2 class="article-title">TIDE：I/Oを考慮したエキスパートオフロードによる効率的かつロスレスなMoE拡散LLM推論</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、拡散大規模言語モデル（dLLM）が、並列ブロックレベルデコーディングによるハードウェア利用率と双方向コンテキストの向上を通じて、自己回帰（AR）モデルに代わる競争力のある選択肢として登場していることに着目しています。しかし、MoEアーキテクチャを持つdLLMのスケーリングが進むにつれて、リソース制約のあるデバイスへのデプロイが依然として課題となっています。<br><br>この課題に対し、著者らは、ブロック内の拡散プロセス中のエキスパート活性化の時間的安定性を活用する、新しいリソース効率的な推論システム「TIDE」を提案しています。TIDEは、エキスパートの配置をI/Oを意識した方法で更新する間隔ベースのエキスパートリフレッシュ戦略を導入します。最適なパフォーマンスを確保するため、推論スケジューリングを数学的計画問題として定式化し、I/OトラフィックとCPU計算を最小化する最適な間隔を解いています。<br><br>最も重要な点として、TIDEはモデルトレーニングを必要としないロスレスな最適化であり、dLLM推論の「フリーランチ」加速を提供します。単一のGPU-CPUシステムにおいて、LLaDA2.0-miniおよびLLaDA2.0-flashモデルで、既存手法と比較して最大1.4倍および1.5倍のスループット向上が実証されています。これは、リソース制約下でのdLLM推論の効率化に大きく貢献する技術と言えます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Zhiben Chen, Youpeng Zhao, Yang Sui, Jun Wang, Yuzhang Shang<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.20179v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.20179v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="臨床推論のためのマルチモーダル証拠探索を自動化するClinSeekAgent" data-timestamp="1779213517000" data-url="https://arxiv.org/abs/2605.20176v1">
-  <p class="meta">arXiv cs.CL　Tue, 19 May 2026 17:58:37 Z</p>
-  <h2 class="article-title">臨床推論のためのマルチモーダル証拠探索を自動化するClinSeekAgent</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）とエージェントシステムが臨床意思決定支援に有望であることを示しつつ、既存研究が証拠が既に整備されていることを前提としている点を指摘しています。現実の臨床ワークフローでは、エージェントが異種ソースからマルチモーダルな証拠を能動的に探索し、反復的に計画し、統合する必要があります。<br><br>そこで本研究では、受動的な証拠消費から能動的な証拠獲得へとパラダイムを転換する、動的なマルチモーダル証拠探索のための自動化されたエージェントフレームワーク「ClinSeekAgent」を導入します。臨床クエリと生データソースへのアクセスのみを与えられたClinSeekAgentは、医療知識ベースへの問い合わせ、生EHRのナビゲーション、医療画像ツールの呼び出しを通じて証拠を収集し、新たな情報が出現するにつれて仮説を洗練させ、収集された証拠を根拠のある臨床決定に統合します。<br><br>ClinSeekAgentは、最先端LLMの推論時エージェントとして、また高品質なエージェント軌跡をコンパクトなオープンソースモデルに蒸留するための学習時パイプラインとして機能します。推論時の有効性を検証するため、固定された事前選択された証拠からのキュレーション済み入力推論と、生臨床データに対する自動証拠探索をペアにした「ClinSeek-Bench」を構築しました。テキストのみのEHRタスクでは、ClinSeekAgentはClaude Opus 4.6の全体F1スコアを60.0から63.2に、MiniMax M2.5を43.1から47.3に向上させました。マルチモーダルタスクでは、Claude Opus 4.6のスコアを47.5から62.6に大幅に向上させました。さらに、学習パイプラインとしても検証され、エージェント的証拠探索軌跡を「ClinSeek-35B-A3B」に蒸留し、既存のAgentEHR-Benchで34.0の平均F1を達成しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Juncheng Wu, Letian Zhang, Yuhan Wang, Haoqin Tu, Hardy Chen, Zijun Wang, Cihang Xie, Yuyin Zhou<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.20176v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.20176v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="Multi-axis Analysis of Image Manipulation Localization" data-timestamp="1779213273000" data-url="https://arxiv.org/abs/2605.20174v1">
-  <p class="meta">arXiv cs.LG　Tue, 19 May 2026 17:54:33 Z</p>
-  <h2 class="article-title">Multi-axis Analysis of Image Manipulation Localization</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: Multi-axis Analysis of Image Manipulation Localization Authors: Keanu Nichols, Divya Appapogu, Giscard Biamby, Dina Bashkirova, Anna Rohrbach, Bryan A. Plummer Categories: cs.CV, cs.LG Abstract / Summary: Advanced image editing software enables easy creation of highly convincing image manipulations, which has been made even more accessible in recent years due to advances in generative AI. Manipulated images, while often harmless, could spread misinformation, create false narratives, and influence people's opinions on important issues. Despite this growing threat, there is limited research on detecting advanced manipulations across different visual domains. Thus, we introduce Analysis Under Domain-shifts, qualIty, Type, and Size (AUDITS), a comprehensive benchmark designed for studying axes of analysis in image manipulation detection. AUDIT…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Keanu Nichols, Divya Appapogu, Giscard Biamby, Dina Bashkirova, Anna Rohrbach, Bryan A. Plummer<br>
-        分類：cs.CV, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.20174v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.20174v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.SE" data-title="A Methodology for Selecting and Composing Runtime Architecture Patterns for Production LLM Agents" data-timestamp="1779213261000" data-url="https://arxiv.org/abs/2605.20173v1">
-  <p class="meta">arXiv cs.AI　Tue, 19 May 2026 17:54:21 Z</p>
-  <h2 class="article-title">A Methodology for Selecting and Composing Runtime Architecture Patterns for Production LLM Agents</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.SE</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: A Methodology for Selecting and Composing Runtime Architecture Patterns for Production LLM Agents Authors: Vasundra Srinivasan Categories: cs.AI, cs.SE Abstract / Summary: Production LLM agents combine stochastic model outputs with deterministic software systems, yet the boundary between the two is rarely treated as a first-class architectural object. This paper names that boundary the stochastic-deterministic boundary (SDB): a four-part contract among a proposer, verifier, commit step, and reject signal that specifies how an LLM output becomes a system action. We argue that the SDB is the load-bearing primitive of production agent runtimes. Around this primitive, we organize agent runtime design into three concerns: Coordination, State, and Control. We present a catalog of six runtime patterns that compose the SDB differently across conve…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Vasundra Srinivasan<br>
-        分類：cs.AI, cs.SE<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.20173v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.20173v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LO, cs.AI" data-title="Long-term Power Grid Planning via Answer Set Programming" data-timestamp="1779213255000" data-url="https://arxiv.org/abs/2605.20172v1">
-  <p class="meta">arXiv cs.AI　Tue, 19 May 2026 17:54:15 Z</p>
-  <h2 class="article-title">Long-term Power Grid Planning via Answer Set Programming</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LO</span><span class="tag">cs.AI</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: Long-term Power Grid Planning via Answer Set Programming Authors: Antonio Ielo, Francesco Doria, Sandra Castellanos-Paez, Marco Maratea, Francesco Percassi, Mauro Vallati Categories: cs.LO, cs.AI Abstract / Summary: The Power grid is a critical infrastructure underpinning all aspects of modern society and its services. Maintaining its effectiveness requires continuous adaptations. In particular, addressing sustainability targets, demand patterns, and urbanisation trends requires implementing changes to the network. Actual developments can potentially span over a decade, with supply continuity and service quality that must be preserved throughout by ensuring conformance to several topological and combinatorial invariants. Long-term power grid planning deals with the above process, and although planning languages could be a natural choice, t…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Antonio Ielo, Francesco Doria, Sandra Castellanos-Paez, Marco Maratea, Francesco Percassi, Mauro Vallati<br>
-        分類：cs.LO, cs.AI<br>
-        分野：cs.LO<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.20172v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.20172v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="KoRe: 大規模言語モデルのためのコンパクトな知識表現" data-timestamp="1779213209000" data-url="https://arxiv.org/abs/2605.20170v1">
-  <p class="meta">arXiv cs.CL　Tue, 19 May 2026 17:53:29 Z</p>
-  <h2 class="article-title">KoRe: 大規模言語モデルのためのコンパクトな知識表現</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が世界知識をパラメータ内にエンコードする際の、不透明性、デバッグ・更新の困難さ、幻覚（ハルシネーション）の発生しやすさといった根本的な問題を扱います。<br><br>この問題に対し、人間が読解・編集可能な知識グラフの利点を活かしつつ、既存の統合手法における再学習やファインチューニングの必要性を克服する手法「KoRe」を提案します。KoReは、1ホップのサブグラフをコンパクトな離散知識トークンにエンコードし、LLMバックボーンに注入するものです。<br><br>提案手法を3つの確立されたベンチマークでテストした結果、競争力のある性能を示しつつ、トークン使用量を大幅に削減（最大10倍）できることが確認されました。この結果は、コンパクトな離散知識表現が現代のLLMを効率的かつ効果的に活用できることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Davide Cavicchini, Fausto Giunchiglia, Jacopo Staiano<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.20170v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.20170v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
