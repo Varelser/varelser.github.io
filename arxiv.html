@@ -1378,6 +1378,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="Gated DeltaNet-2: 線形注意における消去と書き込みの分離" data-timestamp="1779385497000" data-url="https://arxiv.org/abs/2605.22791v1">
+  <p class="meta">arXiv cs.AI　Thu, 21 May 2026 17:44:57 Z</p>
+  <h2 class="article-title">Gated DeltaNet-2: 線形注意における消去と書き込みの分離</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、線形注意機構におけるメモリの消去と書き込みの操作を分離する「Gated DeltaNet-2」を提案しています。<br><br>従来の線形注意機構は、過去の情報を固定サイズのメモリに圧縮しますが、そのメモリを更新する際に、古い情報を消去し新しい情報を書き込むという二つの異なる操作を単一のゲートで制御していました。Gated DeltaNet-2は、チャネルごとに異なる消去ゲートと書き込みゲートを導入することで、これらの操作を独立に制御することを可能にします。<br><br>この新しい機構により、従来のGated DeltaNetやKDAといった先行研究の限界を克服し、言語モデリング、常識推論、検索タスクにおいて、特に長文コンテキストの処理能力が向上することが示されました。1.3Bパラメータモデルで100Bトークンを学習させた結果、Mamba-2やMamba-3などの競合モデルを上回る性能を達成しています。この研究は、より効率的で高性能な長文対応AIモデルの開発に貢献する可能性があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Ali Hatamizadeh, Yejin Choi, Jan Kautz<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.22791v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22791v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.ET, cs.LG, cs.MA" data-title="マルチエージェントシステムにおける安全なKV共有のための潜在通信ガード「LCGuard」" data-timestamp="1779385332000" data-url="https://arxiv.org/abs/2605.22786v1">
   <p class="meta">arXiv cs.AI　Thu, 21 May 2026 17:42:12 Z</p>
   <h2 class="article-title">マルチエージェントシステムにおける安全なKV共有のための潜在通信ガード「LCGuard」</h2>
@@ -1395,6 +1412,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.OS" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.OS, cs.AI" data-title="DeltaBox: ミリ秒レベルのサンドボックスチェックポイント/ロールバックによるステートフルAIエージェントのスケーリング" data-timestamp="1779384977000" data-url="https://arxiv.org/abs/2605.22781v1">
+  <p class="meta">arXiv cs.AI　Thu, 21 May 2026 17:36:17 Z</p>
+  <h2 class="article-title">DeltaBox: ミリ秒レベルのサンドボックスチェックポイント/ロールバックによるステートフルAIエージェントのスケーリング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.OS</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、LLMベースのAIエージェントが状態を高速に探索する際のボトルネックとなっていた、サンドボックス状態のチェックポイント（保存）とロールバック（復元）の遅延を大幅に削減する「DeltaBox」を提案しています。<br><br>AIエージェントは、探索の過程で頻繁に状態を保存・復元する必要がありますが、従来の方式では状態全体を複製するため、ミリ秒から秒単位の遅延が発生していました。DeltaBoxは、連続するチェックポイント間の差分のみを保存する「差分ベース」のアプローチを採用しています。これは、OSレベルの新しい抽象化「DeltaState」によって実現され、ファイルシステム用の「DeltaFS」とプロセス状態用の「DeltaCR」という二つの機構が協調して機能します。<br><br>DeltaFSはファイル状態をレイヤー化し、書き込み時にコピーオンライトを利用することで、ファイル更新を差分化します。DeltaCRはプロセス状態の差分ダンプと高速なフォークを利用して、ロールバックを加速します。これにより、DeltaBoxはミリ秒レベル（チェックポイント14ms、ロールバック5ms）の低遅延を実現し、AIエージェントが限られた時間内でより多くの探索を行えるようになります。この技術は、AIエージェントの探索効率を劇的に向上させる可能性を秘めています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yunpeng Dong, Jingkai He, Yuze Hou, Dong Du, Zhonghu Xu, Si Yu, Yubin Xia, Haibo Chen<br>
+        分類：cs.OS, cs.AI<br>
+        分野：cs.OS<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.22781v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22781v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.HC" data-title="MambaGaze：視線追跡データからの認知的負荷評価のための、欠損データモデリングを明示する双方向Mamba" data-timestamp="1779384821000" data-url="https://arxiv.org/abs/2605.22775v1">
   <p class="meta">arXiv cs.AI　Thu, 21 May 2026 17:33:41 Z</p>
   <h2 class="article-title">MambaGaze：視線追跡データからの認知的負荷評価のための、欠損データモデリングを明示する双方向Mamba</h2>
@@ -1409,6 +1443,23 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2605.22775v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22775v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="一貫性トレーニングによる政治的操作の軽減" data-timestamp="1779384760000" data-url="https://arxiv.org/abs/2605.22771v1">
+  <p class="meta">arXiv cs.AI　Thu, 21 May 2026 17:32:40 Z</p>
+  <h2 class="article-title">一貫性トレーニングによる政治的操作の軽減</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）に見られる政治的な偏見、特に異なる政治的立場からのプロンプトに対して非対称な応答を示す「隠れた政治的偏見」を軽減する手法を提案しています。<br><br>研究者たちは、LLMが反対側の政治的トピックに対して、レトリックや応答の深さにおいて一貫性を欠くことを発見しました。これを定量化するために、「感情一貫性」と「有用性一貫性」という二つの指標を定義しました。そして、これらの隠れた偏見を軽減するために、強化学習を用いた「政治的一貫性トレーニング（PCT）」という手法を開発しました。PCTは、感情と有用性の両方の一貫性を高める二つのパラダイムから構成されています。<br><br>実験の結果、PCTはLLMの全体的な有用性を維持しながら、隠れた政治的偏見を大幅に削減し、未知のベンチマークに対しても汎化できることが示されました。この研究は、LLMがより中立的で公平な応答を生成するための重要な一歩であり、政治的な操作や偏見の拡散を防ぐ上で貢献が期待されます。関連情報は公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Long Phan, Devin Kim, Alexander Pan, Alice Blair, Adam Khoja, Dan Hendrycks<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.22771v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22771v1</a>
   </div>
 </article>
 
@@ -1463,6 +1514,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG" data-title="大規模言語モデルにおける累積メッセージ効果（AMEL）" data-timestamp="1779382264000" data-url="https://arxiv.org/abs/2605.22714v1">
+  <p class="meta">arXiv cs.CL　Thu, 21 May 2026 16:51:04 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける累積メッセージ効果（AMEL）</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が自動評価者として利用される際に、過去の会話履歴の極性がその後の判断に影響を与える「累積メッセージ効果（AMEL）」について調査しています。<br><br>75,898件のAPI呼び出しと11のモデルを用いた実験では、同一の評価項目を単独で提示した場合と、肯定または否定的な評価で飽和した履歴の後に提示した場合を比較しました。その結果、モデルは会話の全体的な極性に引き寄せられる傾向が見られました。この効果は、モデルが本来不確実な項目においてより顕著でした。<br><br>文脈の長さはバイアスに影響を与えず、肯定的な履歴よりも否定的な履歴の方が1.62倍強いバイアスを引き起こすという非対称性も確認されました。モデルの規模を大きくしてもこの問題は解決されず、バイアスは軽減されるものの残存しました。分析の結果、トークン確率分布はしきい値ではなく連続的にシフトし、否定的な履歴によるバイアスはトークンレベルと意味論的な両方の要素を持つことが示唆されました。評価パイプラインにおける最も単純な解決策は、項目ごとに新しいコンテキストを使用することです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Sid-ali Temkit<br>
+        分類：cs.AI, cs.CL, cs.LG<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.22714v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22714v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="能力選択的サブスペース投影による自己ポリシー蒸留" data-timestamp="1779380321000" data-url="https://arxiv.org/abs/2605.22675v1">
+  <p class="meta">arXiv cs.CL　Thu, 21 May 2026 16:18:41 Z</p>
+  <h2 class="article-title">能力選択的サブスペース投影による自己ポリシー蒸留</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、外部信号なしで汎用的な能力選択的学習を可能にする「自己ポリシー蒸留（SPD）」を提案しています。従来の自己蒸留手法は、外部信号（正しさのフィルタリング、実行フィードバックなど）に依存するか、全ての生成結果をそのまま利用していましたが、これらはコストが高く、またタスク関連能力とそれ以外の要素が混在してしまうという課題がありました。<br><br>SPDでは、まずモデル自身の勾配から低ランクの能力サブスペースを抽出します。次に、このサブスペースにキー・バリュー（KV）活性化を投影し、その結果得られた生成結果を標準的な次トークン予測損失でファインチューニングします。この手法により、外部信号なしで特定の能力を効率的に向上させることが可能になります。<br><br>コード生成、数学的推論、多肢選択式QAなど、広範な実験において、SPDは既存の自己蒸留手法と比較して最大13%の性能向上を達成しました。特に、ドメイン外の汎化設定においても優れた性能を示し、ベースラインモデルを15%上回りました。この結果は、SPDが外部信号に依存せず、かつ高い汎化能力を持つことを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Guangya Hao, Yitong Shang, Yunbo Long, Zhuokai Zhao, Hanxue Liang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.22675v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22675v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="機械翻訳は道徳的意味論を保持する：道徳的基盤コーパスからのクロスリンガル証拠" data-timestamp="1779379335000" data-url="https://arxiv.org/abs/2605.22660v1">
   <p class="meta">arXiv cs.CL　Thu, 21 May 2026 16:02:15 Z</p>
   <h2 class="article-title">機械翻訳は道徳的意味論を保持する：道徳的基盤コーパスからのクロスリンガル証拠</h2>
@@ -1480,105 +1565,20 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="平衡点推論器：アトラクタ学習によるスケーラブルな推論" data-timestamp="1779299988000" data-url="https://arxiv.org/abs/2605.21488v1">
-  <p class="meta">arXiv cs.LG　Wed, 20 May 2026 17:59:48 Z</p>
-  <h2 class="article-title">平衡点推論器：アトラクタ学習によるスケーラブルな推論</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、潜在状態を反復的に更新することでテスト時の計算量をスケーリングする推論手法に着目し、その汎化能力のメカニズムを解明する。<br><br>汎化可能な推論は、タスク条件付きアトラクタ、すなわち安定した不動点が有効な解に対応する潜在力学系を学習することから生じると仮説を立てる。これを形式化し、外部検証器やタスク固有の事前知識なしにテスト時のスケーリングを可能にする「平衡点推論器（EqR）」を提案する。<br><br>EqRは、反復回数（深さ）と複数初期化からの確率的軌跡の集約（広さ）の2軸でスケーリングする。経験的には、テスト時のスケーリングによる性能向上は、解に整合したアトラクタへの収束と強く相関する。<br><br>このアトラクタの視点により、ニューラルネットワークはタスクの難易度に基づいてテスト時の計算量を適応的に割り当てることができる。単純なケースでは数回の反復で収束するが、より困難なケースでは大規模なテスト時スケーリングが有効である。例えば、Sudoku-Extremeでは、フィードフォワードモデルの2.6%から99%超へと精度が向上する。これらの結果は、学習されたアトラクタランドスケープが、反復潜在モデルにおけるスケーラブルな推論を理解するための有用なメカニズム的レンズを提供することを示唆している。</div>
+<article class="digest-article" data-month="2026-05" data-genre="Robotics" data-field="cs.CL" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.CL, cs.AI, stat.ML" data-title="ハイパーフィッティングは後期段階の幾何学的拡張である" data-timestamp="1779375168000" data-url="https://arxiv.org/abs/2605.22579v1">
+  <p class="meta">arXiv stat.ML　Thu, 21 May 2026 14:52:48 Z</p>
+  <h2 class="article-title">ハイパーフィッティングは後期段階の幾何学的拡張である</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）のファインチューニングにおいて、少量のデータに対してほぼゼロの訓練損失まで最適化する「ハイパーフィッティング」という現象に着目し、そのメカニズムを解明しようとしています。この現象は、生成品質の向上や繰り返し現象の緩和に効果的ですが、その根本的な理由は不明でした。<br><br>実験の結果、ハイパーフィッティングは単純な温度スケーリングとは異なり、分布のシャープ化だけでは再現できない多様性の向上をもたらすことが示されました。また、静的な語彙の重み付け仮説も否定され、ハイパーフィッティングは動的で文脈依存的なランク再順序付けメカニズムに依存していることが明らかになりました。特に、最終層のトランスフォーマーブロックにおける「終端拡張」がこの効果の中心であり、特徴空間の大幅な幾何学的拡張（次元数約+80.8）がディープテールトークンの促進を可能にしています。<br><br>さらに、最終5層のみを更新する「Late-Stage LoRA」というターゲットを絞ったファインチューニング戦略を導入し、最小限のパラメータ更新で堅牢な生成を実現しました。この研究は、ハイパーフィッティングのメカニズムを深く理解し、より効果的なLLMのファインチューニング手法の開発に貢献するものです。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
+        配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Benhao Huang, Zhengyang Geng, Zico Kolter<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21488v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21488v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cond-mat.dis-nn, cs.AI, stat.ML" data-title="ハイパーパラメータ転移の定量化と埋め込み層学習率の重要性" data-timestamp="1779299980000" data-url="https://arxiv.org/abs/2605.21486v1">
-  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:59:40 Z</p>
-  <h2 class="article-title">ハイパーパラメータ転移の定量化と埋め込み層学習率の重要性</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cond-mat.dis-nn</span><span class="tag">cs.AI</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の学習において、最適化ハイパーパラメータを小規模から大規模へ外挿するハイパーパラメータ転移の定量化フレームワークを提案します。<br><br>提案手法では、スケーリング則の適合度、外挿誤差への頑健性、パラメータ化の選択による漸近損失ペナルティの3つの指標を用いてハイパーパラメータ転移を評価します。また、標準的なパラメータ化（SP）と比較して、Maximal Update（μP）が学習率転移において高い性能を示す理由を、アブレーション研究を通じて詳細に調査します。<br><br>その結果、AdamWを用いた学習において、μPがSPよりも優れている主な理由は、埋め込み層の学習率を最大化することにあることが判明しました。SPでは、埋め込み層の学習率が学習の不安定性を引き起こすボトルネックとなっており、μPに合わせて学習率を幅の係数だけ増加させることで、学習が劇的に安定し、ハイパーパラメータ転移が改善されることが示されました。さらに、重み減衰はスケーリング則の適合度を向上させる一方で、固定トークン・パー・パラメータ設定では外挿の頑健性を損なうことも発見されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Dayal Singh Kalra, Maissam Barkeshli<br>
-        分類：cs.LG, cond-mat.dis-nn, cs.AI, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21486v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21486v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="EvoStruct：進化的・構造的バイアスを橋渡しするタンパク質言語モデル適応による抗体CDR設計" data-timestamp="1779299956000" data-url="https://arxiv.org/abs/2605.21485v1">
-  <p class="meta">arXiv cs.LG　Wed, 20 May 2026 17:59:16 Z</p>
-  <h2 class="article-title">EvoStruct：進化的・構造的バイアスを橋渡しするタンパク質言語モデル適応による抗体CDR設計</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、抗体の相補性決定領域（CDR）設計において、既存の等変グラフニューラルネットワーク（GNN）手法が抱える語彙崩壊の問題を解決することを目指す。<br><br>現在の最良のGNN手法は、チロシンやグリシンといった少数のアミノ酸を過剰に予測し、機能的に重要な残基を無視する傾向がある。この失敗の原因は、GNNエンコーダーが限定的な構造データからアミノ酸分布をゼロから学習し、進化データベースにエンコードされた置換パターンを無視することにあると指摘する。<br><br>この問題を解決するため、凍結されたタンパク質言語モデル（PLM）と、E(3)-等変GNNからの3D構造コンテキストをクロスアテンションアダプターを介して橋渡しする「EvoStruct」を提案する。CDR設計に特化した語彙崩壊問題に対し、段階的なPLMの解凍とR-Drop一貫性正則化を用いる。<br><br>CHIMERA-Benchデータセットにおいて、EvoStructは他の抗体設計手法と比較して最高のアミノ酸回収率と最低のパープレキシティを達成した。これは、最良のGNNベースラインと比較して、アミノ酸回収率を16%向上させ、パープレキシティを43%削減し、2.3倍のアミノ酸多様性を回復させ、結合ペア相関も最高値を示した。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Mansoor Ahmed, Sujin Lee, Umar Khayaz, Murray Patterson<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21485v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21485v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="astro-ph.CO" data-source="arXiv cs.LG" data-area="AI" data-categories="astro-ph.CO, cs.LG" data-title="宇宙論的速度再構築のための対称性を破るグラフTransformer：Velocityformer" data-timestamp="1779299945000" data-url="https://arxiv.org/abs/2605.21483v1">
-  <p class="meta">arXiv cs.LG　Wed, 20 May 2026 17:59:05 Z</p>
-  <h2 class="article-title">宇宙論的速度再構築のための対称性を破るグラフTransformer：Velocityformer</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">astro-ph.CO</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、宇宙論における大規模構造のバリオニック物質分布を調査する重要な観測量である運動学的Sunyaev-Zel'dovich（kSZ）効果の測定精度向上を目指しています。kSZ測定の信号対雑音比（SNR）は、再構築された銀河速度と真の速度との相関係数に直接比例するため、正確な速度再構築が不可欠です。<br><br>研究では、観測データの特定の対称性（並進と回転に対する共変性）に合わせたグラフTransformerアーキテクチャ「Velocityformer」を提案しています。物理学的には共変性を持つものの、観測効果によって特定の視線方向が優先されることでこの対称性が破れるという、データの持つ「破れた対称性」にモデルの帰納バイアスを一致させることで、一貫して性能が向上することが示されました。<br><br>Velocityformerは、標準的な線形理論ベースラインと比較して相関係数rを35%向上させ、機械学習ベースラインをも上回りました。また、物理学に基づいた長波長解を条件付けることで、データ効率が高く、少ないシミュレーションで高精度に学習し、入力ジオメトリ、宇宙論的パラメータ、銀河サンプルに対してゼロショットで汎化します。高忠実度シミュレーションカタログでは、物理ベースラインと比較してrが30%向上し、観測データで同等のSNR向上に直接つながります。これは、モデルの帰納バイアスをデータに合わせ、物理的知識を活用することの有効性を示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Tilman Tröster, David Mirkovic, Veronika Oehl, Arne Thomsen<br>
-        分類：astro-ph.CO, cs.LG<br>
-        分野：astro-ph.CO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21483v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21483v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="DeepWeb-Bench: 大規模な証拠収集と長期的推論を必要とする深層研究ベンチマーク" data-timestamp="1779299943000" data-url="https://arxiv.org/abs/2605.21482v1">
-  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:59:03 Z</p>
-  <h2 class="article-title">DeepWeb-Bench: 大規模な証拠収集と長期的推論を必要とする深層研究ベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、最先端の大規模言語モデル（LLM）の応用として注目される深層研究（エージェントがウェブを検索し、証拠を収集し、長期間の推論を経て回答を導き出すこと）に焦点を当てています。<br><br>既存のベンチマークではLLMの能力を十分に評価できないため、本研究では「DeepWeb-Bench」という新しいベンチマークを提案します。このベンチマークは、大量の証拠収集、複数ソースからの情報の照合、長期間にわたる多段階の推論を必要とする点で、既存のものよりも格段に難易度が高いのが特徴です。<br><br>評価の結果、エラーのボトルネックは検索能力ではなく、推論と校正能力にあることが明らかになりました。また、モデルの能力にはドメイン特化の傾向が見られ、モデル間での一致率が低いことも示されました。このベンチマークは、深層研究におけるLLMの真の能力を評価するための重要なツールとなるでしょう。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Sixiong Xie, Zhuofan Shi, Haiyang Shen, Jiuzheng Wang, Siqi Zhong, Mugeng Liu, Chongyang Pan, Peilun Jia<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21482v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21482v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="WikiVQABench: WikipediaとWikidataを活用した知識に基づくVQAベンチマーク" data-timestamp="1779299904000" data-url="https://arxiv.org/abs/2605.21479v1">
-  <p class="meta">arXiv cs.AI　Wed, 20 May 2026 17:58:24 Z</p>
-  <h2 class="article-title">WikiVQABench: WikipediaとWikidataを活用した知識に基づくVQAベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、画像の内容だけでは回答できない、外部知識を必要とするビジュアル質問応答（VQA）タスクに焦点を当てています。<br><br>提案手法では、Wikipediaの画像、関連する記事のキャプション、Wikidataの構造化知識を組み合わせた「WikiVQABench」という新しいベンチマークを構築しました。大規模言語モデル（LLM）を用いて質問と回答の候補を生成し、人間がファクトの正確性、視覚とテキストの一貫性、そして外部知識の必要性を確認・キュレーションしています。<br><br>このベンチマークを用いて15のVLMを評価した結果、モデル間で大きな性能差が見られました。これは、WikiVQABenchが知識集約的な推論能力を効果的に評価できることを示しています。本研究は、より現実世界に近い知識に基づいたVQAタスクの開発に貢献します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Basel Shbita, Pengyuan Li, Anna Lisa Gentile<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.21479v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.21479v1</a>
+        著者：Meimingwei Li, Yuanhao Ding, Esteban Garces Arias, Christian Heumann<br>
+        分類：cs.CL, cs.AI, stat.ML<br>
+        分野：cs.CL<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.22579v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22579v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
