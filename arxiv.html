@@ -1378,6 +1378,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="SkillOpt：自己進化型エージェントスキルのための実行戦略" data-timestamp="1779472790000" data-url="https://arxiv.org/abs/2605.23904v1">
+  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:59:50 Z</p>
+  <h2 class="article-title">SkillOpt：自己進化型エージェントスキルのための実行戦略</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、現在のエージェントスキル開発における課題、すなわち手作業での作成、ワンショット生成、または緩やかに制御された自己修正による進化では、ディープラーニングの最適化手法のように機能せず、フィードバック下で開始点から確実に改善しないという問題点を指摘しています。<br><br>そこで、スキル自体を凍結されたエージェントの外部状態として、重み空間の最適化と同様の規律をもって訓練するというアプローチを提案します。SkillOptは、エージェントスキルのための、制御可能かつ体系的なテキスト空間オプティマイザーです。<br><br>SkillOptでは、個別のオプティマイザーモデルが、スコアリングされたロールアウトを単一のスキル文書に対する境界付きの追加・削除・置換編集に変換します。編集は、検証スコアを厳密に改善した場合にのみ受け入れられます。また、テキストベースの学習率予算、却下された編集バッファ、エポックごとの遅延/メタ更新により、スキル訓練の安定性を確保しつつ、デプロイメント時の推論時間モデル呼び出しをゼロに抑えます。<br><br>6つのベンチマーク、7つのターゲットモデル、3つの実行ハーネス（直接チャット、Codex、Claude Code）にわたる評価では、SkillOptは全ての評価セルで最高または同等の性能を示し、人間、ワンショットLLM、Trace2Skill、TextGrad、GEPA、EvoSkillといった既存手法を上回りました。GPT-5.5では、平均スキルなし精度を大幅に向上させました。さらに、最適化されたスキル成果物は、モデルスケール間、CodexとClaude Codeの実行環境間、および追加最適化なしで近接する数学ベンチマークに移動しても価値を維持することが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yifan Yang, Ziyang Gong, Weiquan Huang, Qihao Yang, Ziwei Zhou, Zisu Huang, Yan Li, Xuemei Gao<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.23904v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23904v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL" data-title="ETCHR：推論を明確化・活用するための編集手法" data-timestamp="1779472708000" data-url="https://arxiv.org/abs/2605.23897v1">
+  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:58:28 Z</p>
+  <h2 class="article-title">ETCHR：推論を明確化・活用するための編集手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）における視覚推論の進展と、純粋なテキストベースの思考連鎖が抱える課題について論じています。<br><br>特に、細かな焦点や視点変換を必要とする質問に対して、既存の「画像で考える」アプローチは、固定されたツールキットに制約されるか、ノイズの多い中間画像を生成するという問題点がありました。本研究では、専用の画像編集モデルと理解モデルを分離するという第三のアプローチを提案します。<br><br>このアプローチの課題として、言語側でのギャップ（質問を適切な視覚的変換にマッピングできない）と生成側でのギャップ（推論の深さが増すにつれて編集の正確性が低下する）を特定しました。これらの課題に対処するため、ETCHR（Editing To Clarify and Harness Reasoning）を開発しました。ETCHRは、質問条件付きで推論を認識する画像編集モデルであり、下流の理解モデルから分離されています。<br><br>ETCHRは、推論の模倣（編集軌跡に対する教師ありファインチューニング）と推論の強化（編集の正確性と下流の推論精度に対するVLM由来の報酬）という2段階のレシピで訓練されます。このモデルは、訓練なしで様々なMLLMに組み込むことが可能です。5つのタスクファミリー（細粒度知覚、チャート理解、論理推論、ジグソーパズル復元、3D理解）において、ETCHRは性能を大幅に向上させました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Beichen Zhang, Yuhong Liu, Jinsong Li, Yuhang Zang, Jiaqi Wang, Dahua Lin<br>
+        分類：cs.CV, cs.AI, cs.CL<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.23897v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23897v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="手続き的に生成されたタスクによるMLLMの視覚的接地能力向上フレームワーク「PGT」" data-timestamp="1779471901000" data-url="https://arxiv.org/abs/2605.23883v1">
+  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:45:01 Z</p>
+  <h2 class="article-title">手続き的に生成されたタスクによるMLLMの視覚的接地能力向上フレームワーク「PGT」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）の細粒度な視覚理解能力を向上させるためのフレームワーク「PGT（Procedurally Generated Tasks）」を提案します。<br><br>PGTは、画像に幾何学的なプリミティブを重ね合わせることで、視覚的接地能力を誘発し、低コストで知覚の失敗源を特定する診断ツールとしても機能します。これにより、視覚的接地能力を意味論的知識から切り離し、より純粋な評価を可能にします。<br><br>広範な実験により、PGTが多様なアーキテクチャにわたって顕著な改善をもたらすことが示されました。PGTデータで拡張されたLLaVA-v1.5-Instructは、What'sUpベンチマークで最大+20%、CV-Bench-2Dで+13.3%の向上を示しました。これらの結果は、PGTが細粒度知覚のボトルネックを効果的に解消し、多くの空間推論の欠陥が不十分な教師信号に起因することを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Rim Assouel, Amir Bar, Michal Drozdzal, Adriana Romero-Soriano<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.23883v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23883v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="長尺動画のキーフレーム検索のためのクエリ分解とツール連携手法" data-timestamp="1779467391000" data-url="https://arxiv.org/abs/2605.23826v1">
+  <p class="meta">arXiv cs.CL　Fri, 22 May 2026 16:29:51 Z</p>
+  <h2 class="article-title">長尺動画のキーフレーム検索のためのクエリ分解とツール連携手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、長尺動画の質問応答（QA）において、検証可能な視覚的証拠を提供する効果的な方法としてキーフレーム選択に焦点を当てています。<br><br>従来のキーフレーム選択手法は、全てのフレームを単一のクエリに対してスコアリングするか、固定スキーマに基づいてクエリを分解し、単一の視覚ツールで評価していました。しかし、クエリの性質によって必要な情報が異なるため、より柔軟なアプローチが求められています。<br><br>本研究では、クエリの分解とツールのマージに基づくキーフレーム検索手法「ToolMerge」を提案します。ToolMergeでは、大規模言語モデル（LLM）ベースのプランナーがクエリをツール呼び出しに分解し、各ツールのランキングをブール演算子を用いてどのようにマージするかを指定します。<br><br>評価のために、全ての質問が特定の時間間隔に紐づけられたベンチマーク「Molmo-2 Moments (M2M)」を構築しました。QA、質問検索、キャプション検索のタスクにおいて、ToolMergeは既存のキーフレーム選択手法と比較して競争力があり、特にキャプション検索では他の手法を5%上回りました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Michal Shlapentokh-Rothman, Prachi Garg, Yu-Xiong Wang, Derek Hoiem<br>
+        分類：cs.CV, cs.CL<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.23826v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23826v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="マルチモーダルLLMによる図表説明の忠実性と洞察力を評価するベンチマーク「ChartFI」" data-timestamp="1779461388000" data-url="https://arxiv.org/abs/2605.23694v1">
+  <p class="meta">arXiv cs.CL　Fri, 22 May 2026 14:49:48 Z</p>
+  <h2 class="article-title">マルチモーダルLLMによる図表説明の忠実性と洞察力を評価するベンチマーク「ChartFI」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）が生成する図表説明の忠実性と洞察力を評価するためのベンチマーク「ChartFI」を提案します。<br><br>従来のベンチマークは、単純な図表と表層的な説明のペアに限定され、説明の質を多角的に捉えきれていませんでした。ChartFIは、事実の正確性、顕著な特徴の強調、ドメイン知識に基づく誘導、図表とテキストの補完性という4つの次元を考慮し、視覚的に複雑で意味的に豊かな説明を含む896の図表・説明ペアからなる高品質なベンチマークを構築しました。<br><br>さらに、これらの次元に沿った4つの評価指標（忠実性、網羅性、情報量、鋭敏性）を設計し、説明の質を体系的に評価します。主要なMLLMに対する実験により、提案フレームワークの有効性が示され、既存モデルの一般的な弱点が明らかになりました。この研究は、MLLMによる図表説明の評価精度向上に貢献します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Fen Wang, Zekai Shao, Qiman Kang, Chunran Hu, Zhixuan Zhang, Lexu Xie, Chao Liu, Siming Chen<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.23694v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23694v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LLMエージェントのオープンなスキルエコシステムを自動監査するフレームワーク「OpenSkillEval」" data-timestamp="1779458981000" data-url="https://arxiv.org/abs/2605.23657v1">
+  <p class="meta">arXiv cs.CL　Fri, 22 May 2026 14:09:41 Z</p>
+  <h2 class="article-title">LLMエージェントのオープンなスキルエコシステムを自動監査するフレームワーク「OpenSkillEval」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、LLMエージェントのパフォーマンス向上に不可欠な「スキル」のエコシステムを自動的に評価するフレームワーク「OpenSkillEval」を提案します。<br><br>OpenSkillEvalは、静的なベンチマークに依存せず、プレゼンテーション生成、ウェブデザイン、データ可視化など、5つの実世界のアプリケーションカテゴリから現実的なタスクインスタンスを動的に構築します。これにより、スキル自体の品質評価と、スキル拡張されたエージェントシステムの評価を可能にします。<br><br>600以上の動的に生成されたタスクインスタンスと30のオープンソーススキルを用いた体系的な評価により、スキルの利用可能性が必ずしも効果的なスキル使用を保証しないこと、スキル拡張の恩恵はモデルとエージェントフレームワークの両方に強く依存すること、そして多くの人気スキルがベースエージェントを常に上回るわけではないことが明らかになりました。これらの発見は、動的でタスクに根差した評価の必要性を強調し、LLMエージェントのためのスキルの設計、選択、展開に関する実践的な洞察を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Jiahao Ying, Boxian Ai, Wei Tang, Siyuan Liu, Yixin Cao<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.23657v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23657v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL, cs.NE" data-title="多様性を訓練することでテスト時の検索を改善するベクトル方策最適化" data-timestamp="1779386366000" data-url="https://arxiv.org/abs/2605.22817v1">
   <p class="meta">arXiv cs.AI　Thu, 21 May 2026 17:59:26 Z</p>
   <h2 class="article-title">多様性を訓練することでテスト時の検索を改善するベクトル方策最適化</h2>
@@ -1477,108 +1579,6 @@
         分野：cs.SE<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2605.22779v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22779v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ChronoMedKG：臨床推論のための時間的根拠を持つ生物医学知識グラフとベンチマーク" data-timestamp="1779383068000" data-url="https://arxiv.org/abs/2605.22734v1">
-  <p class="meta">arXiv cs.CL　Thu, 21 May 2026 17:04:28 Z</p>
-  <h2 class="article-title">ChronoMedKG：臨床推論のための時間的根拠を持つ生物医学知識グラフとベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、臨床推論において重要な時間的情報が欠如している既存の生物医学知識グラフの問題に対処するため、時間的根拠を持つ知識グラフ「ChronoMedKG」を提案します。<br><br>ChronoMedKGは、疾患の関連性がいつ臨床的に重要になるかという時間的要素をエンコードし、PubMedやPMCの文献から抽出された460,497の証拠付きトリプルを含みます。このグラフは、複数のLLMによる自律的な抽出パイプラインを通じて構築され、モデル間のコンセンサスと信頼性フィルタリングを経て厳選されています。<br><br>ChronoMedKGは、既存の知識グラフにはない時間的根拠を多くの疾患に追加し、臨床推論システムに不可欠な時間軸を提供します。また、時間的質問応答ベンチマーク「ChronoTQA」も導入されており、LLMの臨床推論能力を評価し、ChronoMedKGがその性能を向上させることを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Md Shamim Ahmed, Farzaneh Firoozbakht, Lukas Galke Poech, Jan Baumbach, Richard Röttger<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.22734v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22734v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.HC, cs.SD, eess.AS" data-title="政治的スピーチにおける情動認識を超えて：LLMと音響モデルを用いた多角的パトス分析" data-timestamp="1779383017000" data-url="https://arxiv.org/abs/2605.22732v1">
-  <p class="meta">arXiv cs.CL　Thu, 21 May 2026 17:03:37 Z</p>
-  <h2 class="article-title">政治的スピーチにおける情動認識を超えて：LLMと音響モデルを用いた多角的パトス分析</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.HC</span><span class="tag">cs.SD</span></div>
-  <div class="summary">本論文は、政治的スピーチ分析における情動認識モデルが、大規模言語モデル（LLM）を用いたTRUSTパイプラインにおけるパトス次元の代理として機能するかどうかを調査します。<br><br>音響感情認識（SER）モデル、LLM、およびLLMアンサンブルによるパトススコアの3つの分析モダリティを比較しました。その結果、LLMベースの分析は音響モデル単独よりも政治的感情をより良く捉えることが示唆されました。<br><br>標準的なSERベンチマークコーパスには、演技されたスピーチ、文化的な偏り、カテゴリの不一致といった問題があることが明らかになりました。LLMベースの多角的分析は、音響モデル単独よりも意味的に定義された政治的感情を大幅に良く捉えることが示唆されています。今後の研究では、顔の表情や視線を取り入れたビデオベースの分析にこのアプローチを拡張する予定です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Juergen Dietrich<br>
-        分類：cs.AI, cs.CL, cs.HC, cs.SD, eess.AS<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.22732v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22732v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG" data-title="大規模言語モデルにおける累積メッセージ効果（AMEL）" data-timestamp="1779382264000" data-url="https://arxiv.org/abs/2605.22714v1">
-  <p class="meta">arXiv cs.CL　Thu, 21 May 2026 16:51:04 Z</p>
-  <h2 class="article-title">大規模言語モデルにおける累積メッセージ効果（AMEL）</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が自動評価者として利用される際に、過去の会話履歴の極性がその後の判断に影響を与える「累積メッセージ効果（AMEL）」について調査しています。<br><br>75,898件のAPI呼び出しと11のモデルを用いた実験により、LLMは会話の履歴に偏った評価を行うことが示されました。特に、モデルが本来不確実な判断を下す項目において、このバイアスが顕著でした。<br><br>文脈の長さはバイアスに影響を与えず、また、肯定的な履歴よりも否定的な履歴の方がより強いバイアスを生じさせることが明らかになりました。モデルの規模を大きくしても、この問題は完全に解決されませんでした。<br><br>メカニズムの解明に向けた追加実験では、トークン確率分布の連続的な変化や、否定的な履歴によるバイアスの非対称性が示唆されました。位置効果は限定的でした。<br><br>評価パイプラインにおける単純な対策として、項目ごとに新しいコンテキストを使用することが推奨されています。バッチ処理が避けられない場合は、履歴のバランスを取ることが有効です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Sid-ali Temkit<br>
-        分類：cs.AI, cs.CL, cs.LG<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.22714v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22714v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="能力選択的サブスペース投影による自己ポリシー蒸留" data-timestamp="1779380321000" data-url="https://arxiv.org/abs/2605.22675v1">
-  <p class="meta">arXiv cs.CL　Thu, 21 May 2026 16:18:41 Z</p>
-  <h2 class="article-title">能力選択的サブスペース投影による自己ポリシー蒸留</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、外部信号なしで汎用的な能力選択的学習を可能にする「自己ポリシー蒸留（SPD）」を提案しています。従来の自己蒸留手法は、外部信号に依存するか、タスク関連能力以外の信号も混在する生出力を利用するため、汎用性に課題がありました。<br><br>SPDは、モデル自身の勾配から低ランクの能力サブスペースを抽出し、そのサブスペースにキーバリュー（KV）活性化を投影することで、特定の能力を強化します。これにより、タスク関連能力とそれ以外の信号を分離し、学習信号を洗練させます。<br><br>コード生成、数学的推論、多肢選択QAなど、広範な実験において、SPDは既存の自己蒸留手法や事前学習済みベースラインを大幅に上回る性能を示しました。特に、ドメイン外汎化設定においても優れた性能を発揮しました。<br><br>この手法は、外部からのアノテーションや報酬シグナルを必要としないため、最先端のモデルに対しても適用可能であり、計算コストの削減にも貢献します。<br><br>SPDは、LLMの自己学習における汎用性と効率性を向上させるための有望なアプローチであり、今後の研究開発において重要な役割を果たすことが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Guangya Hao, Yitong Shang, Yunbo Long, Zhuokai Zhao, Hanxue Liang<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.22675v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22675v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="機械翻訳は道徳的意味論を保持する：道徳的基盤コーパスからのクロスリンガル証拠" data-timestamp="1779379335000" data-url="https://arxiv.org/abs/2605.22660v1">
-  <p class="meta">arXiv cs.CL　Thu, 21 May 2026 16:02:15 Z</p>
-  <h2 class="article-title">機械翻訳は道徳的意味論を保持する：道徳的基盤コーパスからのクロスリンガル証拠</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、機械翻訳が言語間の道徳的意味論の伝達にどの程度有効かを検証します。特に、英語以外の言語でアノテーション付きの道徳的価値分類コーパスが不足している現状を踏まえ、ポーランド語を対象に調査しました。<br><br>約5万件の道徳的にアノテーションされたソーシャルメディア投稿を用い、クロスリンガル埋め込み類似性、Centred Kernel Alignment (CKA)、LLMによる評価、深層学習分類器のパリティテストという4つの検証方法を適用しました。その結果、スラングや文化的な表現には課題があるものの、直接翻訳によって微妙な道徳的ニュアンスが十分に保持され、クロスリンガル機械学習に活用できることが示されました。<br><br>これらの結果は、機械翻訳が、現在この分野でリソースが不足している言語における道徳的価値の研究にとって、実用的かつ費用対効果の高い道筋であることを示しています。これはポーランド語で実証されましたが、関連する言語にも一般化できると期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Maciej Skorski<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.22660v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22660v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Robotics" data-field="cs.CL" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.CL, cs.AI, stat.ML" data-title="ハイパーフィッティング：後期段階の幾何学的拡張として" data-timestamp="1779375168000" data-url="https://arxiv.org/abs/2605.22579v1">
-  <p class="meta">arXiv stat.ML　Thu, 21 May 2026 14:52:48 Z</p>
-  <h2 class="article-title">ハイパーフィッティング：後期段階の幾何学的拡張として</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、小規模データセットに対する大規模言語モデル（LLM）のファインチューニングにおける「ハイパーフィッティング」現象に着目し、そのメカニズムを解明しようとしています。ハイパーフィッティングは、学習損失をほぼゼロに近づけることで、生成品質の向上や繰り返し現象の緩和をもたらしますが、その理由は不明瞭でした。<br><br>従来の温度スケーリングによる分布シャープ化とは異なり、ハイパーフィッティングは分布のシャープ化だけでは再現できない多様性の向上をもたらすことが示されました。また、静的な語彙重み付け仮説も否定され、動的で文脈依存的なランク再順序付けメカニズムが関与していることが示唆されました。<br><br>層ごとの分析により、この効果は最終トランスフォーマーブロックにおける「終端拡張」に局所化され、特徴空間の大幅な幾何学的拡張（次元数約+80.8）が深いトークンの促進を可能にすることが明らかになりました。<br><br>さらに、最終5層のみを更新する「後期段階LoRA」というターゲットを絞ったファインチューニング戦略が導入され、最小限のパラメータ更新で堅牢な生成を実現することが示されました。<br><br>これらの発見は、ハイパーフィッティングが単なる分布のシャープ化ではなく、モデルの内部表現における幾何学的な変化によって引き起こされることを示唆しており、LLMのファインチューニング戦略に関する新たな洞察を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Meimingwei Li, Yuanhao Ding, Esteban Garces Arias, Christian Heumann<br>
-        分類：cs.CL, cs.AI, stat.ML<br>
-        分野：cs.CL<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.22579v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.22579v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
