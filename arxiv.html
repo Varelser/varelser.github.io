@@ -1378,6 +1378,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="モバイルGUIエージェント研究のための検証可能かつ高並列なシミュレーションプラットフォーム「MobileGym」" data-timestamp="1779731989000" data-url="https://arxiv.org/abs/2605.26114v1">
+  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:59:49 Z</p>
+  <h2 class="article-title">モバイルGUIエージェント研究のための検証可能かつ高並列なシミュレーションプラットフォーム「MobileGym」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文では、モバイルGUIエージェントの研究に特化した、検証可能で高並列なシミュレーションプラットフォーム「MobileGym」を紹介します。<br><br>MobileGymは、ブラウザベースで軽量、かつ完全に制御可能な環境を提供し、日常的なモバイル利用をシミュレートします。プロプライエタリなバックエンドを再現することなく、対話の忠実性を追求しています。このプラットフォームは、構造化されたJSON状態に基づく決定論的な判定による検証可能な結果信号と、低コストの並列ロールアウトによるスケーラブルなオンライン強化学習という、従来は日常的なアプリでは困難であった2つの能力を可能にします。<br><br>環境全体の状態は構造化されたJSONとしてキャプチャ、設定、フォーク、比較が可能であり、単一のサーバーで数百の並列インスタンスをホストできます。レイヤード状態モデルと宣言的なタスク定義フレームワークにより、状態のプログラマビリティとタスク作成が大規模に実用的になります。また、単一のプログラム可能な判定メカニズムが、決定論的な評価判定と密な強化学習報酬の両方を提供します。<br><br>付属のMobileGym-Benchは、28のアプリにわたる416のパラメータ化されたタスクテンプレート（256のテストテンプレートと160のトレーニングテンプレート）を提供します。シミュレーションから実環境へのケーススタディでは、Qwen3-VL-4B-Instructを用いたGRPOがテストセットで性能を向上させ、実デバイス実行でもシミュレーション側のトレーニングゲインの95.1%を維持しました。このプラットフォームは、モバイルインタラクション研究の効率と信頼性を大幅に向上させることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Dingbang Wu, Rui Hao, Haiyang Wang, Shuzhe Wu, Han Xiao, Zhenghong Li, Bojiang Zhou, Zheng Ju<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.26114v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26114v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.LG" data-title="From Model Scaling to System Scaling: Scaling the Harness in Agentic AI" data-timestamp="1779731976000" data-url="https://arxiv.org/abs/2605.26112v1">
   <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:59:36 Z</p>
   <h2 class="article-title">From Model Scaling to System Scaling: Scaling the Harness in Agentic AI</h2>
@@ -1429,6 +1446,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI" data-title="LLMを用いた構造を考慮したコード変更のラベリング" data-timestamp="1779731806000" data-url="https://arxiv.org/abs/2605.26100v1">
+  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:56:46 Z</p>
+  <h2 class="article-title">LLMを用いた構造を考慮したコード変更のラベリング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、ソフトウェア開発におけるコードレビューの効率化を目指し、大規模言語モデル（LLM）を活用してコード変更のタイプを構造的にラベリングする手法を提案しています。<br><br>コードレビューは重要ですが、AIコードアシスタントの普及により、パッチの規模と頻度が増大し、手動レビューは困難になっています。変更タイプ（リネーム、移動、ロジック変更など）を特定できれば、レビューの優先順位付けや自動化に役立ちます。しかし、既存のLLMベースのアプローチは、主に要約やコメント生成に焦点を当てており、構造化されたレビューには未踏の領域でした。<br><br>本研究では、LLMを用いてコードパッチ内の変更箇所（diff hunk）にラベルを割り当て、さらにリネームの伝播や型変更などの構造的関係性や意味属性を捉えるためにラベルを洗練させる2段階のパイプラインを提案しています。このアプローチは、従来の静的解析パイプラインのエンジニアリングオーバーヘッドなしに、少数ショットプロンプティングを用いて言語非依存でカスタマイズ可能なラベルを生成します。<br><br>4つのLLMを複数のコンテキスト設定で評価した結果、最良の設定では再現率84%、適合率81%を達成し、関係性メタデータや属性メタデータの抽出において高い精度を示しました。これらの結果は、LLMベースのラベリングが、柔軟で多言語対応、自動化に適したコードレビューワークフローを可能にすることで、静的解析を効果的に補完できることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Bar Weiss, Antonio Abu-Nassar, Adi Sosnovich, Karen Yorav<br>
+        分類：cs.SE, cs.AI<br>
+        分野：cs.SE<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.26100v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26100v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="Language Models Need Sleep" data-timestamp="1779731739000" data-url="https://arxiv.org/abs/2605.26099v1">
   <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:55:39 Z</p>
   <h2 class="article-title">Language Models Need Sleep</h2>
@@ -1443,6 +1477,23 @@
         分野：cs.CL<br>
         ジャンル：Robotics<br>
         原文URL：<a href="https://arxiv.org/abs/2605.26099v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26099v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="OrpQuant: Transformer量子化のための乗算器不要な2のべき乗量子化" data-timestamp="1779731566000" data-url="https://arxiv.org/abs/2605.26092v1">
+  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:52:46 Z</p>
+  <h2 class="article-title">OrpQuant: Transformer量子化のための乗算器不要な2のべき乗量子化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、エッジデバイスへの大規模言語モデル（LLM）やビジョントランスフォーマー（ViT）の展開におけるメモリ制約と計算ボトルネックに対処することを目的としています。<br><br>特に、超低ビット領域において、従来の乗算・積和演算（MAC）をビットシフトに置き換える2のべき乗（PoT）量子化に着目し、その構造的な欠陥である「低角度分解能」問題を指摘しています。この問題は、特に4ビット未満で顕著になり、高次元特徴量の劣化を引き起こします。<br><br>この問題を解決するため、本研究では「幾何学的直交残差投影（ORP）」というアルゴリズム・ハードウェア協調設計フレームワークを提案しています。ORPは、量子化を双基底幾何投影として定式化し、シフト・加算のみで高分解能な残差格子を適応的に合成します。さらに、解析解法により、計算負荷の高い勾配ベース最適化に代わる実用的な方法を提供し、LLaMA-2-7Bのキャリブレーション時間を約15分に短縮します。<br><br>ORPは、様々なモダリティに適用可能であり、ハードウェア効率も高いことが実証されています。3ビット（W3/A16）制約下では、従来のMACベース手法（AWQなど）に匹負する性能を示し、4ビットシナリオでも競争力のある精度を維持します。また、28nmプロセスでの標準セルRTL合成により、ORPが乗算器ツリーに関連するタイミングボトルネックを効果的に緩和することが示されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Maoyang Xiang, Bo Wang, Tao Luo<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.26092v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26092v1</a>
   </div>
 </article>
 
@@ -1463,6 +1514,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="深層研究エージェントのためのメンタルモデルを進化させるVeriTrace" data-timestamp="1779731217000" data-url="https://arxiv.org/abs/2605.26081v1">
+  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:46:57 Z</p>
+  <h2 class="article-title">深層研究エージェントのためのメンタルモデルを進化させるVeriTrace</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、広大で相互依存的、かつ不確実性の高い情報に直面する深層研究エージェントの課題に対処するため、エージェントの「メンタルモデル」を進化させる新しいフレームワーク「VeriTrace」を提案しています。<br><br>既存の研究では、中間表現の進化に焦点が当てられてきましたが、その進化はLLMの暗黙的な推論に委ねられていました。これにより、中間層が質の悪い情報で汚染され、エラーが伝播する問題が生じ、モデル規模が推論能力の代わりとなる傾向がありました。本研究では、エージェントのメンタルモデルは、タスク理解と現実を継続的に整合させる明示的なフィードバックを通じて進化すべきであると主張しています。<br><br>そのために、解釈的更新、逸脱フィードバック、スキーマ改訂という3つの制御ループを特定し、これらを明示的に実装した認知グラフフレームワーク「VeriTrace」を開発しました。Qwen3.5-27Bバックボーンを用いた実験では、VeriTraceはDeepResearch Bench (DRB) Insightで4.22パーセントポイント、全体で1.49パーセントポイント、DeepConsultで全体勝率5.9パーセントポイント、既存の最良ベースラインを上回りました。Config-DeepSeekでは、DRBで最も強力な再現可能なオープンソース結果を達成しました。<br><br>VeriTraceは、エージェントのメンタルモデルを進化させるための明示的なフィードバックメカニズムを提供することで、深層研究エージェントの信頼性と性能を向上させる可能性を示しています。このアプローチは、将来の研究エージェント開発における重要な示唆を与えるものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Haolang Zhao, Yunbo Long, Lukas Beckenbauer, Alexandra Brintrup<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.26081v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26081v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="AIエージェントおよび大規模言語モデルのための自動ベンチマーク監査フレームワーク" data-timestamp="1779731061000" data-url="https://arxiv.org/abs/2605.26079v1">
   <p class="meta">arXiv cs.CL　Mon, 25 May 2026 17:44:21 Z</p>
   <h2 class="article-title">AIエージェントおよび大規模言語モデルのための自動ベンチマーク監査フレームワーク</h2>
@@ -1480,105 +1548,37 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="SkillOpt：自己進化型エージェントスキルのための実行戦略" data-timestamp="1779472790000" data-url="https://arxiv.org/abs/2605.23904v1">
-  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:59:50 Z</p>
-  <h2 class="article-title">SkillOpt：自己進化型エージェントスキルのための実行戦略</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、現在のエージェントスキル開発における課題、すなわち手作業での作成、ワンショット生成、または緩やかに制御された自己修正による進化では、ディープラーニングの最適化手法のように機能せず、フィードバック下で開始点から確実に改善しないという問題点を指摘しています。<br><br>そこで、スキル自体を凍結されたエージェントの外部状態として、重み空間の最適化と同様の規律をもって訓練するというアプローチを提案します。SkillOptは、エージェントスキルのための、制御可能かつ体系的なテキスト空間オプティマイザーです。<br><br>SkillOptでは、個別のオプティマイザーモデルが、スコアリングされたロールアウトを単一のスキル文書に対する境界付きの追加・削除・置換編集に変換します。編集は、検証スコアを厳密に改善した場合にのみ受け入れられます。また、テキストベースの学習率予算、却下された編集バッファ、エポックごとの遅延/メタ更新により、スキル訓練の安定性を確保しつつ、デプロイメント時の推論時間モデル呼び出しをゼロに抑えます。<br><br>6つのベンチマーク、7つのターゲットモデル、3つの実行ハーネス（直接チャット、Codex、Claude Code）にわたる評価では、SkillOptは全ての評価セルで最高または同等の性能を示し、人間、ワンショットLLM、Trace2Skill、TextGrad、GEPA、EvoSkillといった既存手法を上回りました。GPT-5.5では、平均スキルなし精度を大幅に向上させました。さらに、最適化されたスキル成果物は、モデルスケール間、CodexとClaude Codeの実行環境間、および追加最適化なしで近接する数学ベンチマークに移動しても価値を維持することが示されました。</div>
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, q-fin.GN" data-title="市場コミットメントに基づく言語理解の評価フレームワーク「StakeBench」" data-timestamp="1779730710000" data-url="https://arxiv.org/abs/2605.26074v1">
+  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:38:30 Z</p>
+  <h2 class="article-title">市場コミットメントに基づく言語理解の評価フレームワーク「StakeBench」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">q-fin.GN</span></div>
+  <div class="summary">本論文は、市場におけるコミットメントに基づいた言語理解を評価するための新しいフレームワーク「StakeBench」を提案します。<br><br>従来の金融NLPベンチマークが外部観察者によるラベルに依存し、言語の認識度を測るのに対し、StakeBenchは市場での発言者のコミットメントを直接測定します。具体的には、市場行動から直接監督情報を導き出し、人間のアノテーションの代わりに、ポジション、コメント後の取引行動、市場オッズの軌跡を利用します。<br><br>4つの診断タスクを通じて、モデルが市場コミットメントを検出し、表明されたサイドを特定し、将来の行動を予測し、集団的なオッズ予測を実行できるかをテストします。3つのコミットメント認識指標は、認識された感情ではなく、表明された選好との整合性を測定します。モデルの規模や金融ドメインでのチューニングは、性能向上に必ずしも相関しないことが示されました。<br><br>StakeBenchは、観測可能なコミットメント信号と潜在的な信念、および因果的な市場オッズへの影響を区別するための妥当性監査と明示的な解釈境界を備えています。15のLLMと18のトピックおよびプラットフォーム設定にわたる実験では、モデルは部分的にポジションサイドの信号を回復しましたが、後のタスクでは構造的な失敗を示しました。このフレームワークは、将来の金融NLP研究における、より信頼性の高い評価を促進することが期待されます。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Yifan Yang, Ziyang Gong, Weiquan Huang, Qihao Yang, Ziwei Zhou, Zisu Huang, Yan Li, Xuemei Gao<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.23904v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23904v1</a>
+        著者：Yunhua Pei, Jingyu Hu, Yiwei Shi, Hongnan Ma, Weiru Liu, John Cartlidge<br>
+        分類：cs.CL, cs.AI, q-fin.GN<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.26074v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26074v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.IT" data-title="LLMをノイズチャネルと捉える：モデル容量とスケーリング則のシャノン的考察" data-timestamp="1779472778000" data-url="https://arxiv.org/abs/2605.23901v1">
-  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:59:38 Z</p>
-  <h2 class="article-title">LLMをノイズチャネルと捉える：モデル容量とスケーリング則のシャノン的考察</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.IT</span></div>
-  <div class="summary">本論文は、既存のスケーリング則では説明できないLLMの非単調な現象（性能劣化）を、シャノン・ハートレーの定理に基づいた情報伝送の観点から統一的に説明する「シャノン・スケーリング則」を提案しています。<br><br>モデルパラメータをチャネル帯域幅、学習トークンを信号電力と見なし、信号対雑音比（SNR）の重要性を強調しています。SNRが不十分なままモデルサイズやデータをスケールさせると、ノイズが増幅され、性能が単調に向上するのではなくU字型の劣化を示すという根本的なシャノン容量の存在を明らかにしました。<br><br>提案理論は、PythiaやOLMo2を用いた実験で検証され、古典的なスケーリング則や最近の摂動を考慮した法則よりも優れた予測精度を示しました。特に、従来のアプローチでは捉えきれなかった損失関数の谷を正確に捉えることができました。<br><br>さらに、小規模モデルで学習した理論が、未学習の大規模モデルの性能を高い精度で予測できる外挿能力も示しており、LLMのスケーリング則に関する新たな理解を提供します。</div>
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="異常検知における弱教師あり学習の再考：包括的なベンチマーク「WSADBench」" data-timestamp="1779730378000" data-url="https://arxiv.org/abs/2605.26068v1">
+  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:32:58 Z</p>
+  <h2 class="article-title">異常検知における弱教師あり学習の再考：包括的なベンチマーク「WSADBench」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、異常検知における弱教師あり学習（WSAD）の現状を包括的に評価するためのベンチマーク「WSADBench」を提案します。<br><br>WSADは、不完全、不正確、不十分な教師あり学習という3つの主要な方向で発展してきましたが、これらの方向性は孤立しており、統一的な評価フレームワークが欠如していました。WSADBenchは、これらの異なる弱教師ありシナリオを統一的に評価し、専門的なWSAD手法から高度な表形式基盤モデルまで、多様なアプローチをベンチマークします。ラベルの量、粒度、品質を体系的に変化させる標準化されたプロトコルを確立し、様々な手法の性能限界を明らかにします。<br><br>70万件以上の実験に基づき、WSADBenchは4つの重要な洞察を明らかにしました。第一に、これらの弱教師ありシナリオ間には強い内在相関が存在し、現在の研究方向の孤立性に疑問を投げかけます。第二に、専門的なWSADアルゴリズムはラベルが極端に少ない場合にのみ優位性を示し、教師あり学習が増加したり、OODシナリオでは表形式基盤モデルや一般的な分類手法にすぐに凌駕されます。第三に、ラベルなしデータの有用性は設定によって一貫性がなく、ラベル精緻化と比較して限定的な改善しか見られませんでした。第四に、モデルは異なるタイプのラベルノイズに対して非対称な感度を示します。<br><br>WSADBenchは、今後のWSAD研究を促進するために、コードとデータセットとともにオープンソースのベンチマークとして公開されます。この包括的な評価により、異常検知における弱教師あり学習の理解が深まり、より効果的な手法の開発に貢献することが期待されます。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Xu Ouyang, Deyi Liu, Yuhang Cai, Jing Liu, Yuan Yang, Chen Zheng, Thomas Hartvigsen, Yiyuan Ma<br>
-        分類：cs.LG, cs.AI, cs.IT<br>
+        著者：Xu Yao, Siyuan Zhou, Wu Zhenbo, Chaochuan Hou, Shuang Liang, Shiping wang, Hailiang Huang, Songqiao Han<br>
+        分類：cs.LG, cs.AI<br>
         分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.23901v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23901v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="モデル生成スキル：経験生成から消費までの体系的研究" data-timestamp="1779472752000" data-url="https://arxiv.org/abs/2605.23899v1">
-  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:59:12 Z</p>
-  <h2 class="article-title">モデル生成スキル：経験生成から消費までの体系的研究</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AIエージェントが過去の経験から抽出した「スキル」を再利用することで、ドメイン適応能力を向上させる研究を扱います。特に、ドメイン固有の手続き的知識を構造化し、モデルによって自動生成されるスキルに焦点を当てています。<br><br>従来、スキルの抽出方法は数多く提案されてきましたが、経験の生成、スキルの抽出、そしてスキルの消費というスキルライフサイクル全体を通じた体系的な研究は不足していました。本研究では、このギャップを埋めるため、5つの多様なエージェントタスクドメインにわたる実験フレームワークを構築し、抽出手法とターゲットエージェント間の相互作用を系統的に評価しました。<br><br>その結果、モデル生成スキルは平均的には有益であるものの、非自明な負の転移（スキルが逆効果になること）も観察されました。また、スキルの抽出器と消費者の性能は一様ではなく、モデルの規模やベースラインタスクの強さとは独立してスキルの有用性が変動することが明らかになりました。さらに、経験の構成がスキル品質にどう影響するか、有用なスキルの特性、そしてスキルが異なる消費者にどう転移するかを詳細に分析しました。これらの知見に基づき、スキルの抽出を実際の有用性に関連する特徴量へと導く「メタスキル」を提案し、ドメイン全体でスキル品質を向上させ、負の転移を大幅に削減することに成功しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Zisu Huang, Jingwen Xu, Yifan Yang, Ziyang Gong, Qihao Yang, Muzhao Tian, Xiaohua Wang, Changze Lv<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.23899v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23899v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="SPACENUM：VLMにおける空間的数値理解の再検討" data-timestamp="1779472716000" data-url="https://arxiv.org/abs/2605.23898v1">
-  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:58:36 Z</p>
-  <h2 class="article-title">SPACENUM：VLMにおける空間的数値理解の再検討</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、ロボットなどの実環境で利用されるビジョン・言語モデル（VLM）が、行動の大きさや空間座標といった数値情報を、空間的知覚に基づいてどれだけ正確に理解できているかを検証しています。<br><br>「SpaceNum」という統一的フレームワークを提案し、空間探索における動的な遷移と、空間推論における静的な配置という2つの補完的な設定で、数値と空間の関係性を評価する双方向タスク（Num2Space, Space2Num）を設計しました。実験の結果、現在のVLMは空間における数値の意味を十分に理解できておらず、ランダムに近い精度しか示さないことが明らかになりました。<br><br>エラー分析や介入実験により、VLMは表層的な空間情報に依存し、安定した座標認識能力に欠け、視覚情報から構造化された空間配置を抽象化することが苦手であることが示されました。明示的な推論の導入やファインチューニングによる改善効果は限定的でした。<br><br>この研究は、VLMが実世界の空間的数値情報を真に理解するには、さらなる技術的進歩が必要であることを示唆しており、今後のVLM開発における重要な課題を提示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Jianshu Zhang, Yijiang Li, Huifeixin Chen, Haoran Lu, Letian Xue, Bingyang Wang, Han Liu<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
         ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.23898v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23898v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL" data-title="ETCHR：推論を明確化・活用するための編集手法" data-timestamp="1779472708000" data-url="https://arxiv.org/abs/2605.23897v1">
-  <p class="meta">arXiv cs.AI　Fri, 22 May 2026 17:58:28 Z</p>
-  <h2 class="article-title">ETCHR：推論を明確化・活用するための編集手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）における視覚推論の進展と、純粋なテキストベースの思考連鎖が抱える課題について論じています。<br><br>特に、細かな焦点や視点変換を必要とする質問に対して、既存の「画像で考える」アプローチは、固定されたツールキットに制約されるか、ノイズの多い中間画像を生成するという問題点がありました。本研究では、専用の画像編集モデルと理解モデルを分離するという第三のアプローチを提案します。<br><br>このアプローチの課題として、言語側でのギャップ（質問を適切な視覚的変換にマッピングできない）と生成側でのギャップ（推論の深さが増すにつれて編集の正確性が低下する）を特定しました。これらの課題に対処するため、ETCHR（Editing To Clarify and Harness Reasoning）を開発しました。ETCHRは、質問条件付きで推論を認識する画像編集モデルであり、下流の理解モデルから分離されています。<br><br>ETCHRは、推論の模倣（編集軌跡に対する教師ありファインチューニング）と推論の強化（編集の正確性と下流の推論精度に対するVLM由来の報酬）という2段階のレシピで訓練されます。このモデルは、訓練なしで様々なMLLMに組み込むことが可能です。5つのタスクファミリー（細粒度知覚、チャート理解、論理推論、ジグソーパズル復元、3D理解）において、ETCHRは性能を大幅に向上させました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Beichen Zhang, Yuhong Liu, Jinsong Li, Yuhang Zang, Jiaqi Wang, Dahua Lin<br>
-        分類：cs.CV, cs.AI, cs.CL<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.23897v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23897v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="MoEモデルのための最適なハイパーパラメータ転移とスケーリング：Complete-muEフレームワーク" data-timestamp="1779472573000" data-url="https://arxiv.org/abs/2605.23893v1">
-  <p class="meta">arXiv cs.LG　Fri, 22 May 2026 17:56:13 Z</p>
-  <h2 class="article-title">MoEモデルのための最適なハイパーパラメータ転移とスケーリング：Complete-muEフレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、Transformerブロックにおける密結合FFN（フィードフォワードネットワーク）と任意のMixture-of-Experts（MoE）設定間でのハイパーパラメータ転移を対象としたComplete-muEフレームワークを提案します。<br><br>既存のツールは、MoE設定におけるハイパーパラメータ転移問題、特に密結合からMoEへの転移やMoE総エキスパート数のスケーリングがアーキテクチャとエキスパートあたりのトークン数の両方を変更するため、直接解決できませんでした。Complete-muEは、正規化されたルータースケールを持つアクティブ幅μPと、アクティブエキスパートスケーリングによる2段階のブリッジシステムでこの課題を解決します。<br><br>このフレームワークにより、MoEモデルのハイパーパラメータ最適値が、モデルアーキテクチャやパラメータ数にわたって比較的安定して維持されることが実験で確認されました。これにより、高価なハイパーパラメータ探索なしに、MoEモデルがモデル容量のスケーリング時に密結合モデルよりも高速な収束速度を達成できるようになります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Hongwu Peng, Ohiremen Dibua, Yuanjun Xiong, Yifan Gong, Jianming Zhang, Yan Kang<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.23893v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.23893v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2605.26068v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26068v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
