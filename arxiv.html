@@ -1378,6 +1378,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-05" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="スコア関数からギブスコレクターへ：離散拡散モデルの高速化" data-timestamp="1779817948000" data-url="https://arxiv.org/abs/2605.27352v1">
+  <p class="meta">arXiv stat.ML　Tue, 26 May 2026 17:52:28 Z</p>
+  <h2 class="article-title">スコア関数からギブスコレクターへ：離散拡散モデルの高速化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、テキストやその他のシンボル領域で強力な経験的性能を達成している離散拡散モデルのサンプリング速度向上に関する課題を扱います。<br><br>特に一様レートモデルでは、単一のサンプルを生成するために多くのステップを必要とするという問題があります。既存の高速化手法は、追加の量の学習に依存するか、混合が遅いという問題を抱えています。本研究では、離散拡散モデルのための新しいギブスベースのコレクター「Gibbs-Accelerated Discrete Diffusion (GADD)」を提案します。GADDは、具体的なスコア関数の構造を活用して、標準的なスコア推定以上の追加学習なしに、直接ギブス事後確率尤度を構築します。<br><br>GADDは、一様レート離散拡散モデルの拡散ベースサンプラーにおいて、初めて $\mathcal{O}(\mathrm{polylog} (\varepsilon^{-1}))$ のサンプリング複雑性という理論的保証を達成します。また、合成データ、ゼロショットテキストサンプリング、ゼロショット条件付き音楽生成におけるGADDの実用的な利点を示す数値実験も実施しました。これらの結果は理論を裏付け、GADDが標準的なベースラインと比較して、サンプル品質と実測効率の両方で一貫して改善されることを示しています。さらに、本理論的解析は、離散拡散モデルにおける予測子・修正子法を分析するための新しいフレームワークを導入しており、独立した関心事となる可能性があります。既存のアプローチがGirsanovの測度変更技術に依存しているのに対し、本手法は帰納的推論に基づいており、予測子反復における誤差伝播を追跡し、修正子更新の不正確さを考慮に入れています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Yuchen Liang, Ness Shroff, Yingbin Liang<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.27352v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.27352v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="BASIS: LLM推論のための単一ロールアウト情報共有によるバッチワイズ優位性推定" data-timestamp="1779815201000" data-url="https://arxiv.org/abs/2605.27293v1">
+  <p class="meta">arXiv stat.ML　Tue, 26 May 2026 17:06:41 Z</p>
+  <h2 class="article-title">BASIS: LLM推論のための単一ロールアウト情報共有によるバッチワイズ優位性推定</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論能力向上に用いられる、検証可能な報酬を持つ強化学習アルゴリズムにおける計算効率とサンプル効率のトレードオフを解決する新しいアルゴリズム「BASIS」を提案します。<br><br>BASISは、クリティック（価値関数推定器）を用いないポストトレーニングアルゴリズムです。各オンライン学習ステップでプロンプトごとに1つのロールアウトのみをサンプリングしますが、バッチ全体にわたる豊富な情報を活用して価値関数の推定精度を向上させます。<br><br>実験の結果、BASISは代表的な単一ロールアウトベースラインであるREINFORCE++と比較して、価値関数の推定における平均二乗誤差（MSE）を69%削減しました。さらに、8ロールアウトを使用したグループ平均推定よりも少ないロールアウト数で低いMSEを達成しました。<br><br>この価値推定の改善は、ポリシー最適化の向上につながり、BASISは大幅に少ない学習時間で、マルチロールアウトGRPOタイプベースラインに近い性能を達成し、単一ロールアウトREINFORCEタイプベースラインをしばしば上回りました。これにより、BASISは効率的かつ効果的なLLM推論能力の向上に貢献します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Shijin Gong, Erhan Xu, Kai Ye, Francesco Quinzan, Giulia Livieri, Chengchun Shi<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.27293v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.27293v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="プライバシー監査のための検出可能性と多様性を両立するカナリア生成手法" data-timestamp="1779815174000" data-url="https://arxiv.org/abs/2605.27292v1">
+  <p class="meta">arXiv stat.ML　Tue, 26 May 2026 17:06:14 Z</p>
+  <h2 class="article-title">プライバシー監査のための検出可能性と多様性を両立するカナリア生成手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、機械学習モデルのプライバシー漏洩を実証的に評価し、差分プライバシー（DP）パラメータの下限を導出するプライバシー監査の分野を扱います。<br><br>従来のプライバシー監査はコストが高いという課題がありましたが、近年提案されているワンラン監査手法は、単一の学習実行で複数の「カナリア」点を使用し、その挿入・除外を監査者が検出することで、この課題に対処しています。本研究では、このワンランプライバシー監査のためのカナリア生成を効率化する問題に取り組みます。<br><br>カナリア間の干渉がマルチラン手法と比較して弱い漏洩推定値につながるという最近の理論的洞察に基づき、検出可能でありながら干渉を最小限に抑えるカナリアの最適化を提案します。このアプローチは、影響関数に基づく貪欲法による初期化と、埋め込み空間での多様性を促進しつつ識別性を最大化する二重最適化手順を組み合わせることで、計算効率の良い二重最適化アルゴリズムの使用を可能にします。実験の結果、提案手法は既存のカナリア生成アプローチと比較して、計算コストを抑えつつ、より強力なプライバシー漏洩推定値を得られることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Mathieu Dagréou, Aurélien Bellet<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.27292v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.27292v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, stat.ME" data-title="一般化可能な推薦のための因果的表現学習" data-timestamp="1779803916000" data-url="https://arxiv.org/abs/2605.27043v1">
+  <p class="meta">arXiv stat.ML　Tue, 26 May 2026 13:58:36 Z</p>
+  <h2 class="article-title">一般化可能な推薦のための因果的表現学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">stat.ME</span></div>
+  <div class="summary">本論文は、観察データで学習した予測モデルが、展開時に遭遇する分布への一般化に失敗する問題に対処するため、因果的表現学習（CRL）に着想を得た手法を提案します。特に、推薦システムにおける訓練分布とサービス提供時の候補分布との乖離が、オフライン指標の信頼性を低下させる問題に焦点を当てています。<br><br>提案手法は、情報理論的な分離基準を導入し、その最適値が入力の因果的成分のみに依存することを証明します。さらに、有限の観察データから最適化可能な、実行可能な変分下限を導出します。この手法は、CRLの文献における多くの研究よりも範囲が狭く、分布シフト下での一般化能力の向上を目的としています。<br><br>この狭い目標設定により、既存の混同されたログのみを使用し、標準的な教師ありモデルに適用可能で、推論時の追加コストがない実用的な手法となっています。主要な評価として、Spotifyの数百万ユーザーを対象としたA/Bテストで、パーソナライズされたプレイリスト生成のための本番ランク付けに適用されました。<br><br>結果として、CRLバリアントはオフラインではベースラインと同等の性能を示しましたが、リスナーエンゲージメントにおいて実質的なオンラインでの改善をもたらしました。公開されているKuaiRand推薦データセットおよび既知の因果構造を持つ合成ベンチマークでも同様のパターンが示され、オフラインでの同等性と分布シフト下での改善が見られました。これらの結果は、因果的分離目的関数を追加することで、分布外一般化が有意に改善されることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Yorgos Felekis, Michael O&#39;Riordan, Oriol Corcoll, Ciarán M. Gilligan-Lee<br>
+        分類：stat.ML, cs.LG, stat.ME<br>
+        分野：stat.ML<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.27043v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.27043v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG, stat.ML" data-title="LLMの幻覚に対する不確実性推定の妥当性評価" data-timestamp="1779802494000" data-url="https://arxiv.org/abs/2605.27016v1">
+  <p class="meta">arXiv stat.ML　Tue, 26 May 2026 13:34:54 Z</p>
+  <h2 class="article-title">LLMの幻覚に対する不確実性推定の妥当性評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が生成する幻覚（入力や学習データに裏付けのない発言）に対する不確実性推定（UE）手法の有効性を検証する体系的な実証研究を提示します。<br><br>LLMは幻覚を起こしやすく、その信頼性の高い展開を妨げます。UE手法はモデルの信頼度を定量化するために提案されていますが、その幻覚との関連性は十分に解明されていません。本研究では、情報理論的、サンプリングベース、反射的UEを含む多様な手法を評価し、幻覚設定におけるそれらの挙動を調査します。<br><br>実験では、入力への忠実性の違反（内的幻覚）と学習データに対する裏付けのない主張（外的幻覚）の両方を、RAGTruthやHalluLensを含む4つのベンチマークで検証しました。結果として、UEと幻覚の関連性は、幻覚の種類や評価対象のLLMによって大きく変動し、しばしば弱いことが示されました。<br><br>これらの結果は、幻覚の直接的なシグナルとしてのUEの使用に疑問を投げかけ、それがいつ実行可能な情報を提供するのかを明らかにします。本研究は、LLMの信頼性向上に向けたUEの適切な利用法を理解する上で重要な示唆を与えます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Yedidia Agnimo, Anna Korba, Annabelle Blangero, Nicolas Chesneau, Karteek Alahari<br>
+        分類：cs.CL, cs.AI, cs.LG, stat.ML<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.27016v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.27016v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cond-mat.dis-nn, stat.ML" data-title="拡散モデルのフォワード・バックワードステップ連鎖によるデータサンプリング" data-timestamp="1779801996000" data-url="https://arxiv.org/abs/2605.27006v1">
+  <p class="meta">arXiv stat.ML　Tue, 26 May 2026 13:26:36 Z</p>
+  <h2 class="article-title">拡散モデルのフォワード・バックワードステップ連鎖によるデータサンプリング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cond-mat.dis-nn</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、学習された高次元分布からのサンプリングという、計算科学における基礎的な問題に取り組みます。<br><br>提案手法「U-turn chains」は、拡散モデルの短いフォワード・バックワードステップを反復させることで得られるマルコフ連鎖です。各ステップは、学習されたデータ多様体上に留まる移動を提案し、メトロポリス・ヘイスティングス補正と組み合わせることで、エネルギーが変更されたターゲットからサンプリングします。合成言語を用いた実験では、最小のU-turnダイナミクスがデータ多様体の断片化によって駆動されるエルゴード性の破綻相転移を起こすこと、そして、より大きなU-turnの大きさでエルゴード性が回復することが示されました。<br><br>非エルゴード領域では、低レベルの特徴がより速く緩和される一方、高レベルの特徴はそうではありません。この順序は、十分大きなU-turnの大きさでのみ逆転します。この予測は、自然言語と自然画像の両方でテストされました。両方のモダリティにおいて、最小のU-turnはゆっくりと緩和され、特にCNNやLLMにおける深層表現によって近似される高レベルの特徴で顕著でした。層順序の逆転は、混合が効率的な大きなノイズでのみ現れます。これは、強く制約された、弱く混合する局所ダイナミクスの兆候と一致します。これらの結果は、拡散モデルを用いたサンプリングへの示唆について議論されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Hyunmo Kang, Noam Itzhak Levi, Corinna Elena Wegner, Daniel J. Korchinski, Matthieu Wyart<br>
+        分類：cs.LG, cond-mat.dis-nn, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2605.27006v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.27006v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="モバイルGUIエージェント研究のための検証可能かつ高並列なシミュレーションプラットフォーム「MobileGym」" data-timestamp="1779731989000" data-url="https://arxiv.org/abs/2605.26114v1">
   <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:59:49 Z</p>
   <h2 class="article-title">モバイルGUIエージェント研究のための検証可能かつ高並列なシミュレーションプラットフォーム「MobileGym」</h2>
@@ -1477,108 +1579,6 @@
         分野：cs.SE<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2605.26100v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26100v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="言語モデルにおける「睡眠」メカニズムの提案" data-timestamp="1779731739000" data-url="https://arxiv.org/abs/2605.26099v1">
-  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:55:39 Z</p>
-  <h2 class="article-title">言語モデルにおける「睡眠」メカニズムの提案</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、Transformerベースの大規模言語モデルが長文タスクにおいて注意機構の計算量がコンテキスト長に比例して増大する問題に対処するため、「睡眠」に似たコンテキスト統合メカニズムを提案するものです。<br><br>提案手法では、モデルは定期的に最近のコンテキストを永続的な高速重みへと変換し、その後キー・バリューキャッシュをクリアします。この「睡眠」中に、モデルは蓄積されたコンテキストに対してオフラインで複数回の再帰的処理を行い、状態空間モデル（SSM）ブロックの高速重みを学習された局所的なルールに基づいて更新します。これにより、推論時の計算負荷を睡眠時にシフトさせつつ、通常の予測時のレイテンシを維持します。<br><br>この手法は、セlularオートマタや多段階グラフ検索といった合成タスク、さらには数学的推論タスクにおいて、従来のTransformerやSSM-Attentionハイブリッドモデルが失敗する中で有効性を示しました。睡眠時間を長くするほど性能が向上し、特に深い推論を必要とする例で顕著な改善が見られました。この研究は、言語モデルの長文処理能力向上に新たな道を開く可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Sangyun Lee, Sean McLeish, Tom Goldstein, Giulia Fanti<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.26099v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26099v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="stat.ML" data-source="arXiv cs.LG" data-area="AI" data-categories="stat.ML, cs.LG" data-title="LLMの科学的思考能力を測るベンチマーク「DiscoverPhysics」" data-timestamp="1779731407000" data-url="https://arxiv.org/abs/2605.26087v1">
-  <p class="meta">arXiv cs.LG　Mon, 25 May 2026 17:50:07 Z</p>
-  <h2 class="article-title">LLMの科学的思考能力を測るベンチマーク「DiscoverPhysics」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、最先端の大規模言語モデル（LLM）が物理学の広範な評価で高い性能を示す一方で、それが真の推論能力なのか、それとも既存科学の記憶に過ぎないのかを区別することが困難であるという問題提起から始まります。<br><br>この課題に対処するため、著者は「DiscoverPhysics」というインタラクティブなベンチマークを導入しました。これは、LLMエージェントが、我々の物理法則とは意図的に異なる運動法則を持つシミュレーション世界を対象に、その法則を発見することを目的としています。22種類の異なる物理法則を持つ世界が用意され、エージェントは実験の提案、生データ観測、そして最終的な自然言語による物理法則の説明とPython実装の提出を行います。<br><br>このベンチマークは、実験履歴を通じた長期的推論能力を検証します。評価の結果、最先端のLLMであっても半数程度の世界しか解けず、特に潜在構造の解明が必要な問題で一貫して失敗することが明らかになりました。また、優れた予測精度が必ずしも高い説明品質を保証するわけではなく、概念理解は適切な実験を通じた仮説洗練に依存することが示されました。オープンソースモデルは商用モデルに比べて、実験設計能力とデータからの結論抽出能力の両面で大きく遅れをとっています。この研究は、LLMの科学的発見能力を評価するための重要な一歩となります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Matt L. Wiemann, Lindsay M. Smith, Peter Melchior, Siddharth Mishra-Sharma, Andrew Gordon Wilson, Pavel Izmailov, Carolina Cuesta-Lázaro<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.26087v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26087v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="異常検知における弱教師あり学習の再考：包括的なベンチマーク" data-timestamp="1779730378000" data-url="https://arxiv.org/abs/2605.26068v1">
-  <p class="meta">arXiv cs.AI　Mon, 25 May 2026 17:32:58 Z</p>
-  <h2 class="article-title">異常検知における弱教師あり学習の再考：包括的なベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、不完全、不正確、不的確な教師あり学習という3つの主要な方向で発展してきた弱教師あり異常検知（WSAD）について、これらの方向が独自の課題に対処しているのか、あるいは基本的なメカニズムを共有しているのかを評価するための統一的なフレームワークを欠いているという問題提起から始まります。<br><br>この課題に対応するため、本論文は、異なる弱教師ありシナリオにわたる評価を統合する初のベンチマーク「WSADBench」を導入します。WSADBenchは、専門的なWSAD手法から高度な表形式基盤モデルまで、多様なアプローチをベンチマークします。標準化されたプロトコルにより、ラベルの量、粒度、品質を体系的に変化させながら4つのモダリティにわたる36のアルゴリズムを評価し、様々な手法のパフォーマンス境界を明らかにします。<br><br>70万以上の実験に基づき、WSADBenchは4つの重要な洞察を明らかにします。まず、これらの弱教師ありシナリオ間には強い相関関係が存在し、現在の研究の孤立性を課題とします。次に、専門的なWSADアルゴリズムはラベル希少性の極端な状況でのみ優れていますが、教師あり学習が増加したり、OODシナリオでは、表形式基盤モデルや一般的な分類手法にすぐに支配されます。さらに、ラベルなしデータの有用性は設定間で一貫性がなく、ラベル精緻化と比較してわずかな改善しかありません。最後に、モデルは異なるタイプのラベルノイズに対して非対称な感度を示すことが示されました。WSADBenchは、今後のWSAD研究を促進するために、コードとデータセットを備えたオープンソースベンチマークとして公開されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Xu Yao, Siyuan Zhou, Wu Zhenbo, Chaochuan Hou, Shuang Liang, Shiping wang, Hailiang Huang, Songqiao Han<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.26068v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26068v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG, cs.MA, cs.SE" data-title="LLM評価における多目的プロンプト最適化の勾配衝突問題" data-timestamp="1779728935000" data-url="https://arxiv.org/abs/2605.26046v1">
-  <p class="meta">arXiv cs.CL　Mon, 25 May 2026 17:08:55 Z</p>
-  <h2 class="article-title">LLM評価における多目的プロンプト最適化の勾配衝突問題</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">cs.MA</span></div>
-  <div class="summary">本論文は、特定のタスクやドメインに合わせてLLM評価者をカスタマイズする際に、複数の評価基準を同時に最適化しようとすると発生する問題に焦点を当てています。テキスト勾配法は単一の評価基準に対しては自動化できますが、複数の基準を扱う場合には、従来の多目的学習（PCGrad, MGDA）のようなベクトルベースのツールキットが適用できないという課題があります。<br><br>研究では、テキスト勾配最適化手法の5つの分解モードをテストし、タスク間の情報共有の度合いを変化させました。その結果、10個中6個の設定で、最適化が初期プロンプトから全く改善されないことが観察されました。特に、勾配LLMが複数の基準を共同で処理する場合、勾配の特異性が59%（9.0から3.7へ）低下しました。さらに、タスクごとの指示を単純に単一プロンプトに結合すると、Spearmanの順位相関係数が-5.3%低下することも確認されました。<br><br>これらの結果は、最適化時の勾配希釈と推論時の指示干渉という、2つの独立した失敗モードを特定しました。これらの問題は、テキストフィードバックを用いた多目的LLM評価者のカスタマイズにおける設計空間を制約する可能性があります。この研究は、LLM評価におけるプロンプト最適化の難しさと、その解決に向けた今後の研究の方向性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Parth Darshan, Abhishek Divekar<br>
-        分類：cs.CL, cs.AI, cs.LG, cs.MA, cs.SE<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.26046v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26046v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="CausaLab: AI科学者を目指すインタラクティブ因果発見のためのスケーラブルな環境" data-timestamp="1779728226000" data-url="https://arxiv.org/abs/2605.26029v1">
-  <p class="meta">arXiv cs.CL　Mon, 25 May 2026 16:57:06 Z</p>
-  <h2 class="article-title">CausaLab: AI科学者を目指すインタラクティブ因果発見のためのスケーラブルな環境</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントによるインタラクティブな因果発見の評価を行うためのスケーラブルな環境「CausaLab」を紹介します。<br><br>CausaLabは、エージェントが因果的証拠を用いて問題を解決できるか、そしてその回答が正しい因果メカニズムに関する仮説によって裏付けられているかを評価します。各エピソードでは、エージェントは合成実験室で、過去の測定記録を受け取り、操作用クリスタルに介入し、同じメカニズムによって制御される保持されたリアクタークリスタルの共鳴周波数を予測します。<br><br>隠されたデータ生成プロセスは構造的因果モデル（SCM）であり、成功には因果グラフと構造方程式の両方の回復が必要です。実験では、予測とメカニズム回復の間に持続的なギャップがあることが示されました。混合観測・介入戦略は構造的忠実度を向上させますが、エージェントは情報量の多い介入を設計するのに苦労します。また、早期停止がエージェントの大きな弱点であることが特定され、仮説と過去のデータの整合性を検証するようにモデルに依頼することで、この問題を軽減できることが示されています。CausaLabは、予測の成功と因果的理解を分離し、現在のLLMエージェントの実験的因果推論者としての限界を明らかにします。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Junlin Yang, Dylan Zhang, Xiangchen Song, Qirun Dai, Xiao Liu, Yuen Chen, Aniket Vashishtha, Jing Shi<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.26029v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26029v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-05" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="STORM: Video-Languageモデルにおける空間時間的推論のための内部化されたモデリング" data-timestamp="1779726780000" data-url="https://arxiv.org/abs/2605.26014v1">
-  <p class="meta">arXiv cs.CL　Mon, 25 May 2026 16:33:00 Z</p>
-  <h2 class="article-title">STORM: Video-Languageモデルにおける空間時間的推論のための内部化されたモデリング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、多くのビデオ推論タスクで必要とされる、フレームを横断する動き、時間的順序、および進化する視覚状態の追跡に対応するため、STORM（Spatial-Temporal reasOning via inteRnalized Modeling）という新しいフレームワークを提案します。<br><br>STORMは、明示的なテキスト連鎖思考（CoT）ではなく、境界付けられた連続的な潜在的軌道を通じて推論するように大規模ビジョン言語モデル（LVLM）に学習させる2段階のフレームワークです。ステージIでは、潜在トークンを生成されたビデオから派生した思考ビデオ表現と整合させ、潜在状態を動的な視覚的証拠に接地します。ステージIIでは、モデルは回答のみの監督でさらに訓練され、推論プロセスがステップバイステップのアノテーションなしで内部化されることを奨励します。<br><br>生成された思考ビデオはトレーニング中にのみ使用され、推論時にはSTORMはビデオの再生成、フレームの再挿入、または外部視覚ツールの呼び出しなしに、境界付けられた潜在的ロールアウトを実行します。VideoMME、MVBench、TempCompass、MMVUでの実験により、STORMはビデオ推論精度を向上させ、ツールまたはビデオ生成ベースの推論パイプラインと比較して推論オーバーヘッドを大幅に削減することが示されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yiming Liang, Yixiao Chen, Yiyang Zhou, Yixuan Wang, Shoubin Yu, Andong Deng, Fuxiao Liu, Qin Zhang<br>
-        分類：cs.CV, cs.CL<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2605.26014v1" target="_blank" rel="noopener">https://arxiv.org/abs/2605.26014v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
