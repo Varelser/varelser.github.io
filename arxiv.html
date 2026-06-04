@@ -1288,6 +1288,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.MA" data-title="マルチエージェント推論におけるストリーミング通信の導入" data-timestamp="1780509424000" data-url="https://arxiv.org/abs/2606.05158v1">
+  <p class="meta">arXiv cs.AI　Wed, 03 Jun 2026 17:57:04 Z</p>
+  <h2 class="article-title">マルチエージェント推論におけるストリーミング通信の導入</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.MA</span></div>
+  <div class="summary">本論文は、マルチエージェント推論システムにおける「generate-then-transfer」という従来のパラダイムが抱える、処理の遅延問題を解決する新しいシステム「StreamMA」を提案します。<br><br>StreamMAは、各推論ステップの結果を生成され次第、次のエージェントにストリーミング（逐次送信）することで、エージェント間のパイプライン処理を可能にし、エンドツーエンドの遅延を大幅に削減します。さらに、このストリーミング方式は、推論の有効性も向上させます。なぜなら、推論の初期段階で生成される信頼性の高い情報を活用し、後続のエラーが発生しやすいステップの影響を抑制できるからです。<br><br>研究者たちは、ストリーミング、逐次、単一エージェントのプロトコルに関する初の閉形式解析を行い、それぞれの有効性、速度向上、コスト比を導出しました。数学、科学、コード生成など、8つの異なる推論ベンチマークにおいて、StreamMAは既存の最先端LLM（Claude Opus 4.6、GPT-5.4）を用いた実験で、平均7.3パーセントポイント、最大で22.4パーセントポイントの性能向上を達成しました。<br><br>さらに、「ステップレベルのスケーリング則」という新たな発見も報告されています。これは、エージェントごとのステップ数を増やすことが、有効性と効率の両方を一貫して向上させるというもので、エージェント数によるスケーリングとは異なる次元のスケーリング特性を示しています。この研究は、マルチエージェントシステムの効率と精度を向上させるための新しい方向性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zhen Yang, Xiaogang Xu, Wen Wang, Cong Chen, Xander Xu, Ying-Cong Chen<br>
+        分類：cs.CL, cs.AI, cs.MA<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.05158v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.05158v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG, eess.IV" data-title="Vision Transformerを用いた微細な車両分類のためのオープンソース2段階コンピュータビジョンパイプライン" data-timestamp="1780509213000" data-url="https://arxiv.org/abs/2606.05149v1">
+  <p class="meta">arXiv cs.LG　Wed, 03 Jun 2026 17:53:33 Z</p>
+  <h2 class="article-title">Vision Transformerを用いた微細な車両分類のためのオープンソース2段階コンピュータビジョンパイプライン</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span><span class="tag">eess.IV</span></div>
+  <div class="summary">本論文は、AI分野における自転車乗車中の事故リスク評価に不可欠な、微細な車両分類を行うためのオープンソースの2段階コンピュータビジョンパイプラインを提案しています。<br><br>既存の物体検出技術は「乗用車」「トラック」といった大まかな分類しか提供できず、事故リスクに関連する詳細な車両タイプ（例：SUV、ピックアップトラック、ミニバン、大型バン、商用トラック）を自動で分類するツールは公開されていませんでした。本研究では、まずRT-DETR検出器を用いて車両を局所化し、次にVision Transformer (ViT-Base/16)をファインチューニングして6つの車両ボディタイプを分類する2段階のアプローチを採用しています。<br><br>このパイプラインには、信頼度ベースの棄却メカニズムが組み込まれており、分類の信頼度が低い場合には「不明」ラベルを出力することで、誤分類を防ぎます。実際の道路ビデオデータを用いた評価では、インバリアントデータセットで94%の精度を達成し、クラスごとのF1スコアも0.91から0.97と高い値を示しました。さらに、再トレーニングなしで独立したアウトオブディストリビューションデータセットに対しても89%の精度を維持し、ドメインシフト下でも3つのカテゴリでF1スコアが0.90以上を保ちました。<br><br>このパイプラインは、推論スクリプト、トレーニングコード、評価ユーティリティ、モデルウェイトと共にオープンソースとして公開されており、再現性と再利用性を高め、自転車安全研究の進展に貢献することが期待されます。特にミニバンの分類精度低下は、誤分類ではなく棄却率の上昇によるものであることが確認され、モデルの不確実性を反映していると考えられます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Gandhimathi Padmanaban, Fred Feng<br>
+        分類：cs.CV, cs.LG, eess.IV<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.05149v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.05149v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="LLM駆動エージェントによる効率的かつ証拠に基づいた移動予測" data-timestamp="1780508041000" data-url="https://arxiv.org/abs/2606.05130v1">
+  <p class="meta">arXiv cs.AI　Wed, 03 Jun 2026 17:34:01 Z</p>
+  <h2 class="article-title">LLM駆動エージェントによる効率的かつ証拠に基づいた移動予測</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、AI分野における個人の移動予測の精度と透明性を向上させるための新しいフレームワーク「AgentMob」を提案しています。<br><br>従来の移動予測モデルは高い精度を達成する一方で、タスク固有のトレーニングが必要であり、意思決定の透明性に限界がありました。最近のLLMベースの手法は解釈可能性を向上させましたが、静的なプロンプトと単一パス推論に依存しており、移動シグナルが弱い場合に証拠を探索する能力が限定的でした。AgentMobは、トレーニング不要なLLM駆動エージェントフレームワークであり、次の場所の予測を適応的な証拠制御型意思決定として定式化します。<br><br>AgentMobは、過去の規則性に基づく高速パスで日常的なケースを解決し、曖昧なケースでは最近の移動履歴、過去の行動、滞在・移動の可能性、地理的証拠などを対象に、反復的なツール使用をトリガーします。これにより、曖昧な予測を適応的な証拠収集を通じて解決する能力が向上します。<br><br>3つの移動データセットでの評価では、AgentMobはトレーニング不要なLLMベースの手法の中で最も高い全体性能を達成しました。特に、曖昧な予測を解決する上で、LLMコントローラーは統計的ベースラインと比較して精度を大幅に向上させることが示されました。この研究は、LLMが証拠に基づいた意思決定を行うことで、より効率的で信頼性の高い移動予測を実現できる可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Linyao Chen, Qinlao Zhao, Zechen Li, Mingming Li, Likun Ni, Jinyu Chen, Yuhao Yao, Xuan Song<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.05130v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.05130v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルにおける潜在的な評価者キャリブレーションの引き出し" data-timestamp="1780507636000" data-url="https://arxiv.org/abs/2606.05122v1">
+  <p class="meta">arXiv cs.CL　Wed, 03 Jun 2026 17:27:16 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける潜在的な評価者キャリブレーションの引き出し</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が自身の出力をどのように評価するかという問題に取り組みます。<br><br>研究者たちは、LLMが追加の学習なしに、外部の評価者の採点基準をある程度予測できる能力を持っていることを発見しました。この潜在的な能力を引き出すために、「Self-Evaluation Elicitation (SEE)」という手法を提案しています。これは、少量のデータを用いて、モデルの回答を改善しつつ、評価者の採点を予測する能力を向上させるものです。<br><br>SEEは、従来の強化学習ベースの手法と比較して、はるかに少ないデータで同様のキャリブレーション精度を達成し、回答の質も維持できることを示しました。この自己評価能力は、特定の評価者に依存するものではなく、モデルが持つ汎用的な品質認識に基づいている可能性が示唆されています。<br><br>この研究は、LLMの自己評価能力を「獲得」する問題から「引き出す」問題へと捉え直すことを提案しており、今後のLLMの開発において重要な示唆を与えるものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：XiuYu Zhang, Yi Shan, Junfeng Fang, Zhenkai Liang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.05122v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.05122v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="動的な臨床意思決定における大規模言語モデルの評価：標準化された患者症例を用いたアプローチ" data-timestamp="1780507036000" data-url="https://arxiv.org/abs/2606.05112v1">
+  <p class="meta">arXiv cs.CL　Wed, 03 Jun 2026 17:17:16 Z</p>
+  <h2 class="article-title">動的な臨床意思決定における大規模言語モデルの評価：標準化された患者症例を用いたアプローチ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）の臨床意思決定能力を評価するための新しいベンチマーク「MedSP1000」を提案しています。<br><br>従来の静的な評価方法では、LLMが患者との対話を通じて情報を収集し、治療計画を立て、病状の変化に応じて管理を適応させるという、動的かつ逐次的な臨床プロセスを捉えることができませんでした。この課題に対処するため、標準化された患者（SP）の教育用症例を基にしたインタラクティブな評価フレームワークが開発されました。<br><br>MedSP1000は、1,638のSP症例と24,602の評価ルーブリックを含み、LLMが患者エージェントや環境コントローラーと閉ループで相互作用し、その行動が専門家の基準に基づいて評価されるシミュレーション環境を提供します。このベンチマークを用いた評価では、一般的なLLMおよび医療特化型LLMの性能は、静的なベンチマークでの成績ほど信頼できるものではないことが示されました。GPT-5.5のような最先端モデルでも、専門家定義のルーブリック項目の60.4%しか達成できず、計算リソースを増やしても性能向上は見られませんでした。<br><br>これらの結果は、現在のLLMが実際の臨床現場に安全に統合されるには、まだ信頼性が不十分であることを示唆しています。MedSP1000は、単一ターンのベンチマークでは見逃されがちな、臨床的に関連のある失敗モードを明らかにするプロセスレベルの評価の重要性を示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Cheng Liang, Pengcheng Qiu, Ya Zhang, Yanfeng Wang, Chaoyi Wu, Weidi Xie<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.05112v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.05112v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="グラフ構造を考慮した機械学習のための「グラフカスケード」" data-timestamp="1780502844000" data-url="https://arxiv.org/abs/2606.05046v1">
+  <p class="meta">arXiv stat.ML　Wed, 03 Jun 2026 16:07:24 Z</p>
+  <h2 class="article-title">グラフ構造を考慮した機械学習のための「グラフカスケード」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、グラフニューラルネットワーク（GNN）やグラフ・トランスフォーマー（GT）の性能を向上させる新しい手法「Graph Cascades」を提案します。<br><br>Graph Cascadesは、グラフの局所的な接続だけでなく、中間的なスケールの構造（複数のノードを経由した関係性）を捉えることを目的としています。これは、感染症の伝播のような「伝染」を模倣した拡散プロセスを用いて、ノード間の関係性を再構築することで実現されます。この手法は、計算コストを抑えつつ、グラフの構造情報をより効果的に活用します。<br><br>理論的な分析により、どのような条件下でこの再配線戦略が有効であるかが示され、特に異種グラフや中〜高次の同次グラフにおいて、GNNやGTの性能が向上することが実証されました。一方で、低次グラフや構造的なボトルネックを持つグラフでは効果が限定的であることも明らかにされています。<br><br>この研究は、グラフ構造の理解を深めることで、グラフベースの機械学習モデルの精度向上に貢献する可能性を示唆しています。特に、複雑な関係性を持つデータセットへの応用が期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Meher Chaitanya, My Le, Luana Ruiz<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.05046v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.05046v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL, cs.CV" data-title="ニューロン集団はスケールと共に選択性の分岐を示す" data-timestamp="1780423192000" data-url="https://arxiv.org/abs/2606.03990v1">
   <p class="meta">arXiv cs.LG　Tue, 02 Jun 2026 17:59:52 Z</p>
   <h2 class="article-title">ニューロン集団はスケールと共に選択性の分岐を示す</h2>
@@ -1472,108 +1574,6 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2606.03962v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.03962v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.SD, eess.AS" data-title="存在しない会話を用いた効率的なASR学習" data-timestamp="1780422372000" data-url="https://arxiv.org/abs/2606.03957v1">
-  <p class="meta">arXiv cs.AI　Tue, 02 Jun 2026 17:46:12 Z</p>
-  <h2 class="article-title">存在しない会話を用いた効率的なASR学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.SD</span><span class="tag">eess.AS</span></div>
-  <div class="summary">本論文は、低リソース言語や特定ドメインにおける会話型自動音声認識（ASR）の課題に取り組んでいます。特に、ドメインに適合したマルチスピーカー学習データの不足を克服するための新しいデータ拡張パイプラインを提案しています。<br><br>提案手法では、シナリオレベルの対話を生成し、参加者のメタデータを付与します。さらに、話者の属性をテキスト音声合成（TTS）の音声プロファイルにマッピングし、合成された発話を話者認識可能なシミュレートされた会話に組み立てます。この手法の有効性を検証するため、5つの大規模言語モデル（LLM）ファミリーを評価し、FastConformer-Largeモデルを用いた学習レシピで比較しました。<br><br>ハンガリー語のBEA-Dialogueベンチマークコーパスを用いた包括的な評価の結果、合成された会話データは一貫して音声認識性能を向上させることが示されました。ただし、生成モデルの選択やデータ構成が性能向上に大きく影響することも明らかになりました。特に、67時間の実際の会話データと636時間のシミュレートされたデータのみを用いた最大の学習構成では、2700時間のハンガリー語音声で学習したゼロショットモデルよりも優れた性能を達成しました。これらの発見は、TTSを用いて合成されたLLM生成の会話データが、音声モデル学習のための実際の会話コーパスの実用的な補完となり得ることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Máté Gedeon, Péter Mihajlik<br>
-        分類：cs.CL, cs.AI, cs.SD, eess.AS<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.03957v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.03957v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG, cs.RO" data-title="VLESA：人間活動監視のためのビジョン・言語・身体性安全エージェント" data-timestamp="1780422137000" data-url="https://arxiv.org/abs/2606.03954v1">
-  <p class="meta">arXiv cs.LG　Tue, 02 Jun 2026 17:42:17 Z</p>
-  <h2 class="article-title">VLESA：人間活動監視のためのビジョン・言語・身体性安全エージェント</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span><span class="tag">cs.RO</span></div>
-  <div class="summary">本論文は、AIシステムが物理的なタスクで人間を支援する機会が増えるにつれて、安全性の確保が最重要課題となるという認識から、ビジョン・言語・身体性安全エージェント（VLESA）を提案します。<br><br>VLESAは、一人称視点のビデオから人間の活動を監視し、危険な行動が予測された場合にリアルタイムで安全介入をトリガーするフレームワークです。このシステムは、同一の行動でも文脈によって安全か危険かが変わる、意図依存の安全性に対処します。 egocentricフレームと目標条件付き安全注釈をペアにしたデータセットが導入され、推論された意図に関して行動を評価するGRPO（Goal-conditioned Reward Policy Optimization）で訓練された目標条件付き安全Qフィルタが、再学習なしで機能します。さらに、ビデオから目標と将来の行動を共同で推論する意図・行動予測エージェントが提案されています。<br><br>ASIMOV-2.0ベンチマークにおいて、VLESAはベースラインと比較して、正確なグラウンドトゥルースフレームでより高い介入精度を達成しました。また、GRPOで訓練されたQフィルタは、目標条件付き制約付きデコーディングを通じて、行動安全性を41パーセントポイント以上向上させました。この研究は、物理的な相互作用におけるAIの安全性を高めるための重要な一歩を示しており、コードも公開されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Hanjiang Hu, Yiyuan Pan, Jiaxing Li, Xusheng Luo, Alexander Robey, Na Li, Yebin Wang, Changliu Liu<br>
-        分類：cs.CV, cs.LG, cs.RO<br>
-        分野：cs.CV<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.03954v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.03954v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="ハイパーエポック事前学習のためのプリミティブ：q0" data-timestamp="1780421268000" data-url="https://arxiv.org/abs/2606.03938v1">
-  <p class="meta">arXiv cs.LG　Tue, 02 Jun 2026 17:27:48 Z</p>
-  <h2 class="article-title">ハイパーエポック事前学習のためのプリミティブ：q0</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AI分野における大規模言語モデルの事前学習に関する新しいアプローチ「ハイパーエポック事前学習（q0）」を提案しています。<br><br>従来のマルチエポック学習では、単一モデルの学習が計算資源を使い果たす前に飽和してしまうという課題がありました。これに対し、本研究では単一モデルの洗練ではなく、モデルの集団を探求し、その予測を集約するという概念的な転換を提唱しています。q0は、この考え方を実現するための3つの主要なプリミティブ（要素技術）から構成されます。<br><br>具体的には、学習率と重み減衰を反相関させた周期的スケジュールにより多様なモデルを収集し、連鎖蒸留によってモデルの質を世代ごとに向上させ、学習済み事前分布を用いて推論時に最適なモデルを選択・重み付けします。これにより、計算資源の効率的な利用と、より低い検証損失の達成を目指します。この手法は、データ効率を大幅に向上させ、下流タスクのベンチマークにも有効であることが示されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Bishwas Mandal, Shmuel Berman, Akshay Vegesna, Samip Dahal<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.03938v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.03938v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, physics.geo-ph" data-title="ニューラルオペレーターのスペクトルバイアスを拡散後方サンプリングで補正" data-timestamp="1780421175000" data-url="https://arxiv.org/abs/2606.03936v1">
-  <p class="meta">arXiv cs.LG　Tue, 02 Jun 2026 17:26:15 Z</p>
-  <h2 class="article-title">ニューラルオペレーターのスペクトルバイアスを拡散後方サンプリングで補正</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">physics.geo-ph</span></div>
-  <div class="summary">本論文は、AI分野におけるニューラルオペレーター（NO）のスペクトルバイアスという課題に対処するための新しい手法を提案しています。<br><br>ニューラルオペレーターは、偏微分方程式（PDE）の解を高速に近似できますが、高周波成分が減衰してしまうスペクトルバイアスを持つため、微細な構造が重要な場面での信頼性が制限されます。一方、スパースなセンサー観測は、ドメイン全体をカバーしないものの、点ごとの精度とスペクトル歪みのなさを提供します。本研究では、NOの予測を拡散後方サンプリングフレームワークにおける補助的な観測として扱うアプローチを提案します。<br><br>提案手法FreqNO-DPSは、高忠実度シミュレーションで学習された拡散モデルを、スパースな観測と凍結されたニューラルオペレーターによって条件付けられた拡散後方サンプリングと組み合わせます。単純な統合ではスペクトルバイアスが再導入されるため、周波数依存の精度でNOを重み付けする閉形式のガイダンススコアを導入し、この問題を解決します。この手法は、3D弾性波動場の予測において、従来のサロゲートやセンサーのみの拡散後方サンプリングと比較して、ほぼゼロのスペクトルバイアスを達成し、特に高周波帯域での精度を大幅に向上させます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Niccolò Perrone, Fanny Lehmann, Stefania Fresca, Filippo Gatti<br>
-        分類：cs.LG, physics.geo-ph<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.03936v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.03936v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="マスク拡散言語モデルにおける知識編集" data-timestamp="1780420477000" data-url="https://arxiv.org/abs/2606.03924v1">
-  <p class="meta">arXiv cs.CL　Tue, 02 Jun 2026 17:14:37 Z</p>
-  <h2 class="article-title">マスク拡散言語モデルにおける知識編集</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、AI分野における言語モデルの知識編集に関する研究で、特にマスク拡散モデル（MDM）に焦点を当てています。<br><br>知識編集は、言語モデル内の事実知識を更新または修正することを目的としており、従来は自己回帰モデル（ARM）で主に研究されてきました。本研究では、MDMにおける知識編集の可能性を探求し、ARMとの比較を行っています。MDMはテキストを双方向的にモデル化し、反復的なノイズ除去によって生成するという点でARMとは異なります。<br><br>実験の結果、編集の適用箇所はARMとMDMで共通する傾向があることが示されました。具体的には、対象トークンの初期から中層のMLPが効果的でした。しかし、単一トークンの編集は両者で成功するものの、複数トークンを対象とする場合、MDMでは編集が系統的に劣化する問題が発見されました。これは、編集された事実が部分的にマスクされていない中間状態を経て生成されるため、その状態に対して編集が最適化されていないことが原因です。この診断に基づき、中間状態も考慮して編集を最適化する簡単な修正方法が提案され、複数トークン編集の性能が大幅に回復しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Haewon Park, Yohan Jo<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.03924v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.03924v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Robotics" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="事後確率サンプリングによる共形言語モデリング" data-timestamp="1780411755000" data-url="https://arxiv.org/abs/2606.03731v1">
-  <p class="meta">arXiv stat.ML　Tue, 02 Jun 2026 14:49:15 Z</p>
-  <h2 class="article-title">事後確率サンプリングによる共形言語モデリング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）におけるハルシネーション（幻覚）問題に対処するための新しいアプローチを提案します。既存の共形予測に基づく手法は、生成されたサンプルを事後的にフィルタリングしてハルシネーションを抑制していましたが、生成プロセスとフィルタリングの乖離により、一貫性や尤もらしさを欠くサンプルが生じる可能性がありました。<br><br>この問題を解決するため、本研究では事後確率サンプリングを導入します。これは、LLMの事後分布の近似からサンプリングを行うことで、生成段階からハルシネーションを抑制し、より有用で一貫性のある応答を生成することを目指します。具体的には、条件付き逐次生成の状況に適したキャリブレーション手順を開発し、ターゲットリスク制御を達成します。<br><br>経験的には、オープンエンドな伝記生成と数学的問題解決のケーススタディに本手法を適用しました。先行研究と比較して、同等の統計的保証を得つつ、下流タスクにおける有用性が向上しました。この手法は、生成と検証のプロセスをより緊密に連携させることで、LLMの信頼性と実用性を高める可能性を示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Nicolas Emmenegger, Theo X. Olausson, Armando Solar-Lezama, Chara Podimata<br>
-        分類：cs.LG, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.03731v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.03731v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
