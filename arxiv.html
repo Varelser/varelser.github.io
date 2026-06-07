@@ -1477,105 +1477,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="拡散言語モデルのための自己拡張検索" data-timestamp="1780595787000" data-url="https://arxiv.org/abs/2606.06474v1">
-  <p class="meta">arXiv cs.AI　Thu, 04 Jun 2026 17:56:27 Z</p>
-  <h2 class="article-title">拡散言語モデルのための自己拡張検索</h2>
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="You Only Index Once：共有ルーティングによるクロスレイヤースパースアテンション" data-timestamp="1780595644000" data-url="https://arxiv.org/abs/2606.06467v1">
+  <p class="meta">arXiv cs.AI　Thu, 04 Jun 2026 17:54:04 Z</p>
+  <h2 class="article-title">You Only Index Once：共有ルーティングによるクロスレイヤースパースアテンション</h2>
   <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、離散拡散言語モデルが、応答全体を並列的に反復的にデノイズすることでテキストを生成する仕組みについて論じています。各ステップで、モデルはマスクされた位置ごとに暫定的なトークンを予測し、確信度の高い予測を出力にコミットし、確信度の低いものは破棄します。<br><br>本研究では、この破棄されたトークンが、検索拡張生成（RAG）のための有用な先読み（lookahead）信号となることを示しています。たとえ低確信度のトークンであっても、デノイジングの初期段階で顕著なエンティティを早期に表面化させることができ、出力が最終化される前に、より強力な証拠の検索を可能にします。<br><br>この発見に基づき、デノイジング中に検索をガイドするためにこれらの先読みトークンを利用する動的なRAGフレームワーク「Self-Augmenting Retrieval for Diffusion Language Models (SARDI)」を提案します。SARDIは、トレーニング不要で、リトリーバーに依存せず、推論能力のあるあらゆる離散拡散言語モデルに適用可能です。<br><br>5つのマルチホップQAベンチマークにわたる評価では、SARDIは、最大8倍のスループットで、現在のトレーニング不要の拡散モデルおよび自己回帰モデルのRAGベースラインを上回る性能を示しました。</div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の長文コンテキスト推論における効率と品質のトレードオフを改善する新しいアテンション機構「クロスレイヤースパースアテンション（CLSA）」を提案しています。<br><br>従来のスパースアテンション手法は、効率を重視すると品質が低下し、品質を重視すると速度向上が限定的になるという課題がありました。CLSAは、KVキャッシュだけでなくルーティングインデックスもレイヤー間で共有することで、この問題を解決します。単一のインデクサーがトークンレベルのトップK選択を一度計算し、その結果を全レイヤーで再利用することで、トークンスパースアテンションの選択性を維持しつつ、ルーティングのオーバーヘッドを償却します。<br><br>このアーキテクチャは、プリフィル、KVキャッシュストレージ、長文デコーディングといった推論のボトルネックを同時に改善します。実験では、128Kのコンテキスト長で最大7.6倍のデコーディング速度向上と17.1倍のスループット向上を達成し、モデル品質と推論効率の両方を向上させるソリューションを示しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Paul Jünger, Justin Lovelace, Linxi Zhao, Dongyoung Go, Kilian Q. Weinberger<br>
+        著者：Yutao Sun, Yanqi Zhang, Li Dong, Jianyong Wang, Furu Wei<br>
         分類：cs.CL, cs.AI, cs.LG<br>
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.06474v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06474v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2606.06467v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06467v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="自己進化型機械学習アルゴリズム発見フレームワーク「MLEvolve」" data-timestamp="1780595759000" data-url="https://arxiv.org/abs/2606.06473v1">
-  <p class="meta">arXiv cs.AI　Thu, 04 Jun 2026 17:55:59 Z</p>
-  <h2 class="article-title">自己進化型機械学習アルゴリズム発見フレームワーク「MLEvolve」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、科学的発見や機械学習エンジニアリング（MLE）といった長期タスクへの応用が進む大規模言語モデル（LLM）エージェントの、持続的な自己進化能力に焦点を当てています。<br><br>既存のMLEエージェントは、異なる処理系統間の情報隔離、記憶の欠如、階層的制御の不足といった課題を抱えており、長期的な最適化を妨げていました。これに対し、本研究ではLLMベースの自己進化型マルチエージェントフレームワーク「MLEvolve」を提案し、機械学習アルゴリズムの発見をエンドツーエンドで実現します。<br><br>MLEvolveは、ツリー探索を拡張した「Progressive MCGS」を採用し、グラフベースの参照エッジを通じて系統間の情報フローを可能にします。また、エントロピーに着想を得た段階的なスケジュールにより、探索から集束へと検索を移行させます。さらに、蓄積された経験と共にエージェントを進化させるために、コールドスタートのドメイン知識ベースと動的なグローバルメモリを組み合わせた「Retrospective Memory」を導入し、タスク固有の経験の検索と再利用を促進します。安定した長期反復のために、戦略計画とコード生成を「Adaptive Coding Modes」で分離しています。<br><br>MLE-Benchでの評価では、MLEvolveは12時間の予算内で、平均メダル率や有効提出率など、複数の指標において最先端の性能を達成しました。これは標準的な実行時間の半分です。さらに、数学的アルゴリズム最適化タスクにおいては、専門的なアルゴリズム発見手法であるAlphaEvolveをも上回る性能を示し、強力なドメイン横断的な汎化能力を実証しました。本研究のコードは公開されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Shangheng Du, Xiangchao Yan, Jinxin Shi, Zongsheng Cao, Shiyang Feng, Zichen Liang, Boyuan Sun, Tianshuo Peng<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.06473v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06473v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Robotics" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="LLM事前学習を改善する多項式重み前処理層「PC Layer」" data-timestamp="1780595711000" data-url="https://arxiv.org/abs/2606.06470v1">
-  <p class="meta">arXiv cs.AI　Thu, 04 Jun 2026 17:55:11 Z</p>
-  <h2 class="article-title">LLM事前学習を改善する多項式重み前処理層「PC Layer」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文では、大規模言語モデル（LLM）の事前学習における重みの条件付けを安定させるための新しい手法として、「PC Layer（Polynomial Weight Preconditioning Layer）」を提案しています。<br><br>PC Layerは、低次の多項式前処理を用いて重み行列の特異値スペクトルを整形することで、学習中の重みの条件付けを安定させます。この手法の利点は、学習後に前処理された重みを元のアーキテクチャにマージできるため、推論時のオーバーヘッドが発生しないことです。また、理論的には、各層の特異値を一様に制限することが、特定の深い線形ネットワークにおける勾配降下法の幾何学的収束を保証することを証明し、このスペクトル制御原理を理論的に正当化しています。<br><br>実験では、AdamWおよびMuonオプティマイザの両方において、Llama-1Bの事前学習において標準的なTransformerと比較して、提案されたPC Layerの優位性を示しました。これにより、LLMの学習効率と安定性の向上が期待されます。<br><br>本研究で提案されたPC Layerは、LLMの事前学習プロセスを改善するための効果的な手法であり、推論時の追加コストなしにモデルの性能向上に貢献する可能性があります。コードは公開されており、再現性も確保されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Senmiao Wang, Tiantian Fang, Haoran Zhang, Yushun Zhang, Kunxiang Zhao, Alex Schwing, Ruoyu Sun<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.06470v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06470v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.MM, cs.SI" data-title="LLMによるオンライン議論におけるスタンスシミュレーションの文脈依存性監査" data-timestamp="1780594914000" data-url="https://arxiv.org/abs/2606.06443v1">
-  <p class="meta">arXiv cs.CL　Thu, 04 Jun 2026 17:41:54 Z</p>
-  <h2 class="article-title">LLMによるオンライン議論におけるスタンスシミュレーションの文脈依存性監査</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.MM</span><span class="tag">cs.SI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）がオンライン議論におけるユーザーのスタンスをシミュレートする能力について、文脈の変化に対する感度を評価するフレームワークを提案しています。<br><br>LLMが生成するスタンスが、個々のユーザーの信念を正確に反映しているのか、それとも会話の文脈に過度に依存しているのかを明らかにすることを目的としています。研究では、元の会話文脈を意図的に変更し、その変更がLLMによるスタンス推定にどのような影響を与えるかを分析しました。テキストのみの変更戦略と、ミームなどのマルチモーダル情報を取り入れた変更戦略の両方が評価されました。<br><br>実験の結果、テキストベースおよびマルチモーダルな文脈変更戦略の両方において、スタンスのシフトや遷移が効果的かつ頑健に観察されました。これは、LLMが文脈の変化に敏感に反応することを示唆しています。<br><br>本研究は、LLMによるスタンスシミュレーションの文脈依存性を理解するための評価手法を提供します。さらに、オンラインでの意見形成プロセスをシミュレートする上でのLLMの可能性とリスクの両方を浮き彫りにします。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Xinnong Zhang, Wanting Shan, Hanjia Lyu, Zhongyu Wei, Jiebo Luo<br>
-        分類：cs.CL, cs.MM, cs.SI<br>
-        分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.06443v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06443v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="強化学習による未知言語翻訳の文脈学習" data-timestamp="1780594326000" data-url="https://arxiv.org/abs/2606.06428v1">
-  <p class="meta">arXiv cs.CL　Thu, 04 Jun 2026 17:32:06 Z</p>
-  <h2 class="article-title">強化学習による未知言語翻訳の文脈学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が、強化学習（RL）を用いることで、文脈情報から未知の言語の翻訳能力を獲得できることを示しています。<br><br>従来のLLMを用いた翻訳手法は、特定の言語に過学習しやすく、未知の言語への応用が限定的でした。これに対し、本研究では、LLMが特定の言語を記憶するのではなく、文脈から言語的な知識を抽出・活用するメタスキルを習得することを目指しました。具体的には、表面的な翻訳評価指標（chrF）を報酬とするRLアプローチを提案しています。<br><br>実験の結果、軽量な報酬設定にもかかわらず、RLで学習したモデルは提供された文脈から関連性の高い言語情報を効果的に抽出し、適用できることが確認されました。これにより、教師ありファインチューニングや文脈内学習と比較して、完全に未知の言語に対する翻訳精度が向上しました。<br><br>本研究は、結果に基づいたRLが、数学やコーディングといった従来の推論タスクだけでなく、文脈からの言語学習にも応用可能であることを示唆しています。これは、極めてリソースの少ない言語の翻訳を大規模に行うための新たな道を開く可能性があります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Hanxu Hu, Zdeněk Šnajdr, Pinzhen Chen, Jannis Vamvas, Rico Sennrich<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.06428v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06428v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="希少言語のLLM翻訳評価：コーミ・ヤズヴァ語-ロシア語コーパスと評価プロトコル" data-timestamp="1780593998000" data-url="https://arxiv.org/abs/2606.06420v1">
-  <p class="meta">arXiv cs.CL　Thu, 04 Jun 2026 17:26:38 Z</p>
-  <h2 class="article-title">希少言語のLLM翻訳評価：コーミ・ヤズヴァ語-ロシア語コーパスと評価プロトコル</h2>
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="能動的探索は人間とLLMのどちらに有益か？科学者としての比較" data-timestamp="1780595616000" data-url="https://arxiv.org/abs/2606.06464v1">
+  <p class="meta">arXiv cs.CL　Thu, 04 Jun 2026 17:53:36 Z</p>
+  <h2 class="article-title">能動的探索は人間とLLMのどちらに有益か？科学者としての比較</h2>
   <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、消滅の危機にある極めてリソースの少ない言語であるコーミ・ヤズヴァ語とロシア語間の並列コーパス、およびゼロショット・少数ショットLLM翻訳を評価するための明示的なプロトコルを初めて提案します。<br><br>提案するデータセットは、74の物語テキストから抽出された457の文ペアを含み、出典情報、文単位のアライメント、および漏洩を考慮した評価を可能にするストーリー識別子を備えています。このセットアップを用いて、極度の並列データ不足の状況下で、ゼロショットおよび検索ベースの少数ショット設定における現代の大規模言語モデルのコーミ・ヤズヴァ語からロシア語への翻訳性能を比較します。<br><br>評価プロトコルには、ストーリー単位のクロスバリデーション、少数ショットプロンプティングのための決定論的検索、生成された出力の厳密な検証、参照ベースおよび評価者ベースの補完的な指標、そしてストーリー単位の不確実性推定が含まれます。様々なモデルで、LLMは無視できない翻訳を生成しますが、モデルファミリーやプロンプティング方式によって性能は大きく変動します。検索ベースの少数ショットプロンプティングは、ゼロショットプロンプティングよりも一貫して性能を向上させますが、少量の検索コンテキストを超えた改善は限定的でした。<br><br>結果は、この設定における評価結論が、指標の選択と失敗処理に大きく依存することを示しており、本論文はコーパスをデータセットの貢献としてだけでなく、消滅危機言語の機械翻訳のための再現可能な評価テストベッドとしても位置づけています。</div>
+  <div class="summary">本論文は、人間と大規模言語モデル（LLM）が科学者として能動的探索を行う際に、どちらがより恩恵を受けるかを比較検討するものです。<br><br>従来の因果推論研究では、成人は複数の原因が同時に必要となる連言的因果関係の特定に苦労することが知られていましたが、これは受動的な観察に限定された証拠を用いる実験設定に依存していました。本研究では、能動的探索によって学習者に主体性が与えられた場合に、このバイアスが持続するかどうかを検証します。<br><br>実験の結果、能動的探索は成人の連言的因果推論を大幅に改善することが示されました。しかし、連言的規則の推論には、選言的規則よりも多くのテストが必要であることが明らかになりました。さらに、同じ設定下で人間のパフォーマンスと様々なLLMのパフォーマンスを比較したところ、最先端のモデルの一部は仮説推論の精度において人間レベルに近づきましたが、探索戦略は非効率的であり、連言的・選言的規則間のパフォーマンスギャップは同様に見られました。<br><br>この研究は、能動的探索が因果推論能力、特に連言的規則の理解において、人間とLLMの両方に影響を与えることを示唆しています。LLMの探索戦略の改善や、人間とLLMの協調による科学的発見の可能性を示唆するものです。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Petr Parshakov<br>
+        著者：Mandana Samiei, Eunice Yiu, Anthony GX-Chen, Dongyan Lin, Jocelyn Shen, Blake A. Richards, Alison Gopnik, Doina Precup<br>
         分類：cs.CL<br>
         分野：cs.CL<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.06420v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06420v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2606.06464v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06464v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.SE" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.SE, cs.CL" data-title="足場か、語彙か？Popper的コード生成スキルの制御された二層研究" data-timestamp="1780595340000" data-url="https://arxiv.org/abs/2606.06454v1">
+  <p class="meta">arXiv cs.CL　Thu, 04 Jun 2026 17:49:00 Z</p>
+  <h2 class="article-title">足場か、語彙か？Popper的コード生成スキルの制御された二層研究</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.SE</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）に科学者のように推論させるプロンプトスキル、特にPopper的な反証主義に基づくスキルが、コード生成の改善に寄与するかどうかを検証する研究です。<br><br>従来の評価では、LLMが生成したコードをLLM自身が評価する「LLM-as-a-judge」という手法が用いられてきましたが、この手法にはバイアスが存在することが指摘されています。本研究では、スキルのPopper的な内容自体が効果をもたらすのか、それとも単にプロンプトの構造（足場）が効果をもたらすのかを区別するために、二層構造のアブレーションスタディと複数の対照実験を実施しました。<br><br>実験の結果、最先端のモデルでは、スキルによる顕著な改善は見られませんでした（天井効果による検出限界）。しかし、小規模なモデルでは、構造化されたプロンプト（足場）がコード生成の正答率を大幅に向上させることが示されました。興味深いことに、完全なPopper的スキルと、ヘッダーのみを残して手順を stripped したラベルのみの足場との間に、明確な差は見られませんでした。これは、スキルのPopper的な手続き的コンテンツが、ラベルのみの足場を超える独立した実行正答率の利益をもたらさないことを示唆しています。<br><br>この研究は、プロンプトスキルの効果が、その内容よりも構造に起因する可能性を示唆しています。Popper的な手法の有効性を評価するものではなく、特定のプロンプトスキル群に関する工学的主張の限界を示すものです。また、プロンプトスキルの効果を検証するための再利用可能なプロトコルを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Mehmet Iscan<br>
+        分類：cs.SE, cs.CL<br>
+        分野：cs.SE<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.06454v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06454v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.LG" data-title="正規化フローを用いた潜在的推論" data-timestamp="1780595057000" data-url="https://arxiv.org/abs/2606.06447v1">
+  <p class="meta">arXiv cs.CL　Thu, 04 Jun 2026 17:44:17 Z</p>
+  <h2 class="article-title">正規化フローを用いた潜在的推論</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論能力を向上させるための新しいフレームワーク「NF-CoT」を提案するものです。NF-CoTは、明示的な連鎖思考（Chain-of-Thought, CoT）の重要性を認識しつつ、計算を連続的な潜在空間で行うことで、より高帯域幅な推論を目指します。<br><br>従来のCoTは、推論ステップを離散的かつ逐次的にトークンストリームを通して行うため、各ステップを言語化する必要があり、非効率が生じることがあります。NF-CoTは、正規化フローを用いて連続的な思考をモデル化することで、この問題を解決しようと試みます。これにより、LLMは明示的な言語化を行う前に、コンパクトな連続状態空間で中間計算を実行できます。<br><br>NF-CoTは、正規化フローをLLMのバックボーンに組み込むことで、連続的な思考に対する管理可能な確率モデルを定義します。この設計により、潜在的な思考に対する正確な尤度が得られ、元のKVキャッシュを用いた確率的な左から右へのデコーディングが可能になり、潜在的推論空間での直接的な方策勾配最適化もサポートされます。コード生成ベンチマークでの実験では、NF-CoTは明示的なCoTや既存の潜在的推論ベースラインと比較してパスレートを向上させ、中間推論コストを大幅に削減しました。<br><br>この研究は、LLMにおける潜在的推論の有効性を示し、推論プロセスをより効率的かつ柔軟にする可能性を秘めています。特に、計算コストの削減と推論精度の向上が期待され、今後のLLMの発展に寄与する可能性があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Guancheng Tu, Xiangjun Fu, Suhao Yu, Yao Tang, Haoqiang Kang, Lianhui Qin, Yizhe Zhang, Jiatao Gu<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.06447v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06447v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="eess.AS" data-source="arXiv cs.CL" data-area="AI" data-categories="eess.AS, cs.CL, cs.SD" data-title="USAD 2.0：普遍的音声理解のための表現蒸留のスケーリング" data-timestamp="1780594925000" data-url="https://arxiv.org/abs/2606.06444v1">
+  <p class="meta">arXiv cs.CL　Thu, 04 Jun 2026 17:42:05 Z</p>
+  <h2 class="article-title">USAD 2.0：普遍的音声理解のための表現蒸留のスケーリング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">eess.AS</span><span class="tag">cs.CL</span><span class="tag">cs.SD</span></div>
+  <div class="summary">本論文は、多様な音声入力に対応する普遍的な音声エンコーダ「USAD 2.0」を提案しています。<br><br>従来の自己教師あり学習（SSL）による音声エンコーダは、音声や音楽など特定のドメインに特化していましたが、複数のドメインを統合するアプローチは限定的でした。USAD 2.0は、SSLと教師あり学習の基盤モデルの両方から知識を統合し、ドメイン間の知識蒸留を改善するためにドメイン適応型蒸留を導入しています。<br><br>さらに、音楽ドメインへの適用範囲を拡大し、下流タスクでの利用のために第2段階の教師あり蒸留を追加しています。モデルは深さのスケーリングにより10億パラメータまで拡張され、実験では、プロービングおよびLLMベースの評価において、強力または最先端の性能を達成しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Heng-Jui Chang, Alexander H. Liu, Saurabhchand Bhati, Mrudula Athi, Anton Ratnarajah, Amit Chhetri, James Glass<br>
+        分類：eess.AS, cs.CL, cs.SD<br>
+        分野：eess.AS<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.06444v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06444v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="対称ダイバージェンスと正規化類似度：表現分析のための統一的トポロジカルフレームワーク" data-timestamp="1780589653000" data-url="https://arxiv.org/abs/2606.06342v1">
+  <p class="meta">arXiv stat.ML　Thu, 04 Jun 2026 16:14:13 Z</p>
+  <h2 class="article-title">対称ダイバージェンスと正規化類似度：表現分析のための統一的トポロジカルフレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、ニューラルネットワークの表現を比較・分析するための新しいトポロジカルフレームワークを提案しています。<br><br>既存のトポロジカルダイバージェンスは、非対称性やサンプルサイズに依存する問題があり、信頼性の高いベンチマーキングが困難でした。この課題に対処するため、本研究では対称表現トポロジダイバージェンス（SRTD）と、その効率的なバリアントであるSRTD-liteを開発しました。SRTDは、表現間の構造的な差異を特定し、最適化目標として機能します。<br><br>さらに、異なる設定間での信頼性の高い比較を可能にするために、正規化トポロジカル類似度（NTS）を提案しています。NTSは、階層的マージ順序のランク相関を測定し、-1から1の範囲でスケール不変な指標を提供します。実験により、提案手法が従来の幾何学的尺度では捉えられない機能的シフトを検出し、LLMの系統を頑健にマッピングできることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Yan Wang, Tianyang Hu<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.06342v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.06342v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
