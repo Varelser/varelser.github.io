@@ -1392,6 +1392,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, eess.SY, math.OC" data-title="強化学習におけるエージェンシー移譲による方策改善手法" data-timestamp="1780941579000" data-url="https://arxiv.org/abs/2606.09825v1">
+  <p class="meta">arXiv cs.AI　Mon, 08 Jun 2026 17:59:39 Z</p>
+  <h2 class="article-title">強化学習におけるエージェンシー移譲による方策改善手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">eess.SY</span><span class="tag">math.OC</span></div>
+  <div class="summary">本論文は、強化学習（RL）における方策（ポリシー）の学習効率を高めるための新しい手法を提案しています。<br><br>既存の強化学習では、報酬設計や環境設定、チューニング、計算資源に多くのコストがかかります。しかし、多くの制御問題では、既に機能するものの最適ではない既存の方策が存在します。本手法は、この既存の方策をRLの学習プロセスに組み込むことで、ゼロから学習する手法と比較して学習効率を向上させ、かつ既存の方策よりも優れた学習済み方策を生成します。<br><br>学習プロセスでは、既存の方策と学習中の方策の間で、各ステップにおいてエージェンシー（主体性）を移譲します。初期段階では既存の方策に強く依存し、徐々に学習中の方策へと主体性を移していきます。学習終了時には、学習中の方策は既存の方策のサポートなしで単独で動作するニューラルネットワークとなります。<br><br>本手法は、既存の方策が「目標状態に到達し、そこに高い確率で留まる」という機能を持つことを前提としています。この性質を利用することで、学習開始直後から高い目標到達率を実現します。理論的な分析により、この振る舞いの解釈と、最終的な既存方策フリーの状態における学習済み方策の目標到達確率の下限を導出しています。<br><br>連続制御ベンチマークにおける実証実験では、提案手法が競合手法と同等以上のリターンを達成し、学習中および最終段階においても最も高い目標到達率を維持することを示しました。これは、学習中の方策が既存の方策のサポートなしで動作する最終段階でも同様です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Anton Bolychev, Georgiy Malaniya, Sinan Ibrahim, Pavel Osinenko<br>
+        分類：cs.LG, cs.AI, eess.SY, math.OC<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.09825v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09825v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="LLMの強化学習における発散正則化の再考" data-timestamp="1780941503000" data-url="https://arxiv.org/abs/2606.09821v1">
   <p class="meta">arXiv cs.LG　Mon, 08 Jun 2026 17:58:23 Z</p>
   <h2 class="article-title">LLMの強化学習における発散正則化の再考</h2>
@@ -1406,6 +1423,91 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2606.09821v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09821v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Generative Models" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, math.PR" data-title="周期的な終端法則を用いた多様体認識型拡散モデル「PTL-Diffusion」" data-timestamp="1780941376000" data-url="https://arxiv.org/abs/2606.09816v1">
+  <p class="meta">arXiv cs.AI　Mon, 08 Jun 2026 17:56:16 Z</p>
+  <h2 class="article-title">周期的な終端法則を用いた多様体認識型拡散モデル「PTL-Diffusion」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">math.PR</span></div>
+  <div class="summary">本論文は、標準的な拡散モデルの生成プロセスを拡張し、データが低次元多様体に集中する問題に対応するための新しいフレームワーク「PTL-Diffusion」を提案しています。<br><br>従来の拡散モデルでは、生成の参照分布として単一の、時間的に不変なガウス分布が用いられてきました。これは解析的に扱いやすく、実用的にも有効ですが、データが低次元多様体に集中している場合、分布の異なる領域が異なる幾何学的または意味的な要因に対応している可能性があります。このような場合、逆過程モデルは、構造化されていない終端参照分布から多様体レベルの構造をほぼ完全に復元する必要があります。<br><br>PTL-Diffusionは、順過程のノイズ付加プロセスが、単一の不変法則ではなく、非定常な周期ガウス分布の族に収束するように設計されています。これは、位相条件付きDDPMとは異なり、位相構造が順過程のダイナミクスに直接組み込まれています。提案手法は、周期的に強制されたオルンシュタイン＝ウーレンベック型の順過程を採用しており、これにより閉形式の順過程周辺分布、極限の周期ガウス終端族、および明示的なガウス逆過程の事後分布を導出できます。これにより、標準的なノイズ予測学習が可能になります。<br><br>さらに、位相条件付き逆過程ダイナミクスを平均化された周期参照法則を介して結合する、不変平均正則化項を導入しています。トーラスや円筒形の点群ベンチマーク、およびオリベッティ顔データセットでの実験により、PTL-Diffusionは、位相条件付き誤差、特徴空間共分散誤差、および最近傍多様体距離を削減し、マッチングされたDDPMベースラインと比較して多様体レベルの分布マッチングを改善することが示されました。<br><br>これらの結果は、構造化された終端参照法則が有望な方向性であることを示唆しており、より表現力の高い位相構築や大規模な評価の必要性を動機づけています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Danqi Zhuang, Jisui Huang, Xiaoyue Xi, Andrew Kiggins, Xiaojie Wang, Ke Chen, Yue Wu<br>
+        分類：cs.CV, cs.AI, math.PR<br>
+        分野：cs.CV<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.09816v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09816v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV" data-title="非同期・適応型世界行動モデル「AHA-WAM」" data-timestamp="1780941318000" data-url="https://arxiv.org/abs/2606.09811v1">
+  <p class="meta">arXiv cs.AI　Mon, 08 Jun 2026 17:55:18 Z</p>
+  <h2 class="article-title">非同期・適応型世界行動モデル「AHA-WAM」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、ロボット操作における世界モデルと行動モデルの連携を改善する新しいアプローチ「AHA-WAM」を提案しています。これは、ロボットの視覚的シーンのダイナミクスと行動を共同でモデル化し、物理的な事前知識を方策学習に注入する世界行動モデルのパラダイムに基づいています。<br><br>既存の世界行動モデルは、世界予測と行動実行を同じ時間解像度で結合しており、世界モデルが冗長で情報量の少ない短期的なフレーム変動をモデル化する必要がありました。本研究では、この時間的な非対称性を考慮し、デュアル拡散トランスフォーマー（DiT）アーキテクチャに基づく「AHA-WAM」を提案します。これにより、世界モデルと行動モデルの連携を再編成します。<br><br>具体的には、ビデオDiTを低周波の世界プランナーとしてインスタンス化し、過去の観測値に対するローリングキーバリューメモリを維持します。これにより、長期間のシーン進化をエンコードする再利用可能なレイヤーごとの潜在的コンテキストが提供されます。一方、高周波の行動DiTは、レイヤーごとの共同注意機構を通じてこのコンテキストをクエリすることで、短い行動チャンクをクローズドループで実行します。<br><br>非同期実行をサポートするため、ホライゾン適応オフセットトレーニングと、観測ガイド付きビデオコンテキストルーティング（OVCR）を導入しています。これらを組み合わせることで、行動エキスパートは、ビデオDiTを再実行することなく、長期間の世界コンテキストを活用しつつ、リアルタイムの実行状態に応答できるようになります。<br><br>RoboTwinおよび実際の操作タスクにおける実験では、AHA-WAMはロボットデータによる事前学習なしで最先端のパフォーマンスを達成しました。RoboTwinでは平均成功率92.80%、4つの実世界タスクでは平均成功率78.3%を達成しています。さらに、Fast-WAMと比較して4.59倍の高速化を実現し、24.17 Hzのクローズドループ制御を達成しました。<br><br>これらの結果は、時間的な非対称性を考慮した世界行動モデルが、効率的かつ効果的なロボット操作に貢献できることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jisong Cai, Long Ling, Shiwei Chu, Zhongshan Liu, Jiayue Kang, Zhixuan Liang, Wenjie Xu, Yinan Mao<br>
+        分類：cs.RO, cs.AI, cs.CV<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.09811v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09811v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.GR, cs.LG" data-title="アクション世界モデルにおける記憶の制御研究：Echo-Memory" data-timestamp="1780941250000" data-url="https://arxiv.org/abs/2606.09803v1">
+  <p class="meta">arXiv cs.LG　Mon, 08 Jun 2026 17:54:10 Z</p>
+  <h2 class="article-title">アクション世界モデルにおける記憶の制御研究：Echo-Memory</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.GR</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本研究は、アクション条件付き世界モデルにおける記憶メカニズムの役割を制御された環境下で調査する「Echo-Memory」を提案します。これらのモデルは、最初のフレーム、テキストプロンプト、およびカメラアクションシーケンスから複数セグメントのビデオを生成しますが、しばしば記憶の失敗、特にカメラがシーンから離れて戻ってきた際に、静かに変化してしまうという問題に直面します。<br><br>既存の記憶設計は、バックボーン、トレーニング、検索、評価の違いが混在しており比較が困難でした。Echo-Memoryは、アクションからビデオへのインターフェースを固定し、生成器が履歴をどのように保存し読み取るかのみを変更します。共有ビデオ拡散バックボーン、オプティマイザー、カメラアクション表現、サンプラー、および評価パイプラインの下で、生のコンテキスト、圧縮ベースのメモリ、異なる読み出しパスを持つ空間的要約、および状態空間再帰を比較します。<br><br>この比較により、容量、圧縮、読み出し、再帰という4つの軸を分離できます。また、リプレイ品質、ドメイン内ループ再訪、オープン-ドメイン復帰プローブの3つのブランチを通じて記憶を評価します。これらのブランチはしばしば一致せず、リプレイ忠実度が世界を記憶するための十分な代理ではないことを示しています。生のコンテキストは強力な容量ベースラインであり、リプレイメトリクスよりもオープン-ドメイン復帰を大幅に改善します。コンパクトさは容量の無料代替ではなく、ブロックごとの状態空間再帰は、暗黙的記憶の構造がそれを使用するという決定と同じくらい重要であることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Wayne King, Zeyue Xue, Yuxuan Bian, Jie Huang, Haoran Li, Yaowei Li, Yaofeng Su, Yuming Li<br>
+        分類：cs.CV, cs.GR, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.09803v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09803v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI, cs.MA" data-title="コード品質のための高速適応型意味エントロピーFASE" data-timestamp="1780941185000" data-url="https://arxiv.org/abs/2606.09800v1">
+  <p class="meta">arXiv cs.AI　Mon, 08 Jun 2026 17:53:05 Z</p>
+  <h2 class="article-title">コード品質のための高速適応型意味エントロピーFASE</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span><span class="tag">cs.MA</span></div>
+  <div class="summary">本論文は、AIエージェントによるソフトウェア開発における信頼性向上を目指し、コードの不確実性を定量化する新しい手法「FASE（Fast Adaptive Semantic Entropy）」を提案しています。<br><br>従来の意味エントロピーは、LLM（大規模言語モデル）を用いた等価性チェックに依存するため計算コストが高いという課題がありました。FASEは、構造的・意味的な非類似性グラフの最小全域木を利用することで、この計算コストを大幅に削減しつつ、機能的な正しさを近似します。<br><br>HumanEvalおよびBigCodeBenchでの評価では、FASEは既存手法と比較して優れた性能を示し、特にQwen3-Embedding-8Bモデルを用いた場合、Spearman相関で平均25%、ROC-AUCスコアで19%の改善が見られました。さらに、FASEは従来の意味エントロピー手法と比較して計算オーバーヘッドが約0.3%と非常に少なく、実用的なソリューションとなる可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Shizhe Lin, Ladan Tahvildari<br>
+        分類：cs.SE, cs.AI, cs.MA<br>
+        分野：cs.SE<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.09800v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09800v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="パーソナルAIエージェントのためのベンチマーク：iOSWorld" data-timestamp="1780939633000" data-url="https://arxiv.org/abs/2606.09764v1">
+  <p class="meta">arXiv cs.LG　Mon, 08 Jun 2026 17:27:13 Z</p>
+  <h2 class="article-title">パーソナルAIエージェントのためのベンチマーク：iOSWorld</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、ユーザーの個人情報や履歴に基づいて推論できる「パーソナルAIエージェント」の能力を評価するための新しいベンチマーク「iOSWorld」を提案します。既存のモバイルエージェントベンチマークは、個々の指示に従うことはできても、ユーザー固有の文脈を理解する能力に欠けていました。<br><br>iOSWorldは、26個の新たに構築されたiOSアプリを含む、永続的なユーザーアイデンティティを中心としたインタラクティブなネイティブiOSシミュレーターベンチマークです。これらのアプリには、トランザクション、メッセージ、旅行記録、ソーシャル関係、財務活動などの連携データが含まれています。タスクは、単一アプリタスク、複数アプリタスク、および記憶とパーソナライゼーションタスクの3つのカテゴリに分類され、合計133タスクが含まれます。<br><br>最先端およびオープンソースのコンピュータ利用モデルを、ビジョンのみの設定と、ビジョン+XMLの特権付き設定の両方で評価しました。最良の設定でも全体で52%の達成率ですが、複数アプリタスクでは37%にとどまりました。特権付きビジョン+XMLアクセスは、最先端モデルのパフォーマンスを最大26パーセントポイント向上させましたが、小規模モデルは追加のアクセシビリティツリー入力から恩恵を受けませんでした。iOSWorldは、オープンソースベンチマークとして公開され、アプリ、シードデータ、タスク、評価コードが含まれています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Lawrence Keunho Jang, Mareks Woodside, Geronimo Carom, Andrew Keunwoo Jang, Jing Yu Koh, Ruslan Salakhutdinov<br>
+        分類：cs.LG, cs.CL<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.09764v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09764v1</a>
   </div>
 </article>
 
@@ -1474,108 +1576,6 @@
         分野：cs.CL<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2606.09697v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09697v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="アルツハイマー病の個別化デジタルツインモデリング" data-timestamp="1780934050000" data-url="https://arxiv.org/abs/2606.09671v1">
-  <p class="meta">arXiv cs.AI　Mon, 08 Jun 2026 15:54:10 Z</p>
-  <h2 class="article-title">アルツハイマー病の個別化デジタルツインモデリング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、アルツハイマー病（AD）の進行が不均一であり、スパースかつ不規則な縦断データで観測されるという課題に対応するため、個別化されたデジタルツインフレームワークを提案しています。<br><br>このアプローチは、臨床的遷移と訪問間の時間的依存性を捉えるために、補完的なモデリング戦略を統合します。ADNIデータ（認知評価、臨床変数、MRI由来表現型）を使用し、認知状態と診断カテゴリを予測すると同時に、予測の不確実性を定量化し、患者固有の「もしも」の軌跡分析を可能にします。<br><br>スパースかつ不規則なADNI設定において、隣接する訪問の遷移ベースモデリングは、シーケンスベースの分岐よりも高い予測精度を達成しました。これは、局所的な遷移モデリングがデータ効率的である可能性を示唆しています。シーケンスモデルは不確実性を考慮した軌跡予測に依然として価値がありますが、局所的な遷移モデリングはよりデータ効率的で堅牢な予測戦略を提供します。これらの発見は、時間的モデリング戦略を臨床データの構造に合わせることの重要性を強調しており、遷移ベースのデジタルツイン定式化が神経変性疾患における個別化された疾患予測のための実用的で解釈可能なアプローチを提供する可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Yinyu Huang, Yilin Zhang, Sofia Michopoulou, Christopher Kipps, Rahman Attar<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.09671v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09671v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="インタラクティブな空間推論能力を評価するベンチマーク「SpatialWorld」" data-timestamp="1780933911000" data-url="https://arxiv.org/abs/2606.09669v1">
-  <p class="meta">arXiv cs.AI　Mon, 08 Jun 2026 15:51:51 Z</p>
-  <h2 class="article-title">インタラクティブな空間推論能力を評価するベンチマーク「SpatialWorld」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）が現実世界の複雑なタスクにおいて、インタラクティブな空間推論能力をどの程度有しているかを評価するための新しいベンチマーク「SpatialWorld」を提案します。<br><br>従来の評価手法は、静的な画像質問応答やシミュレーター固有のパイプラインに依存しており、エージェントが能動的に情報を収集し、現実世界で空間的な問題を解決する能力を十分に測ることができませんでした。SpatialWorldは、8つの異なるシミュレーションバックエンドを統合し、760の人間が注釈を付けたタスクを通じて、家庭、旅行、社会的な協調など、多様なドメインにおけるエージェントのインタラクティブな空間理解能力を評価します。<br><br>エージェントは、視覚情報のみに頼り、部分的に観測される環境下で、能動的に視覚的証拠を収集し、MLLMネイティブのテキストベースのインターフェースを通じて意思決定を行う必要があります。各タスクには、人間が検証した初期状態、参照軌跡、および終了状態検証器が含まれており、信頼性の高い評価を可能にします。<br><br>15の先進的なエージェントを評価した結果、最も強力なモデルでもタスク成功率はわずか17.4%であり、空間的なタスク解決能力には依然として大きな課題があることが明らかになりました。特に、能動的な探索と長期間の計画におけるボトルネックが浮き彫りになり、SpatialWorldが将来の空間エージェントのための厳格なテストベッドとなることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Hongcheng Gao, Hailong Qu, Jingyi Tang, Jiahao Wang, Zihao Huang, Hengkang Qiao, Shihong Huang, Junming Yang<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.09669v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09669v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="MuonはAdamより頑健で転移可能な特徴を学習する" data-timestamp="1780933374000" data-url="https://arxiv.org/abs/2606.09658v1">
-  <p class="meta">arXiv cs.AI　Mon, 08 Jun 2026 15:42:54 Z</p>
-  <h2 class="article-title">MuonはAdamより頑健で転移可能な特徴を学習する</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）やビジョン分類器の事前学習における最先端オプティマイザであるMuonの、頑健性（ロバストネス）と転移可能性（トランスファラビリティ）の観点からの特徴学習における優位性を調査しています。<br><br>まず、破損した画像やテキストで事前学習済みモデルを評価した結果、Muonによって学習された特徴は、TransformerやCNNを含む様々なアーキテクチャにおいて、AdamやSGDによって学習された特徴よりも一貫して頑健であることが示されました。さらに、層ごとのプローブを用いた分析により、この頑健性の優位性は、層全体でのより大きなロジットマージンに反映されていることが示されました。<br><br>次に、下流タスクで線形分類器を訓練したり、事前学習済みパラメータからフルモデルをファインチューニングしたりすることで、Muonによって学習された特徴は、AdamやSGDによって学習された特徴よりも効果的に転移することが実証されました。この転移可能性の優位性は、実効ランクによって測定される隠れ状態の多様性によってさらに裏付けられています。最後に、多成分特徴を持つ代表的な分類問題において、MuonはAdamやSGDよりも大きなマージンと高い実効ランクを達成することが理論的に証明され、経験的な発見を理論的に支持しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Tianyu Ruan, Fengzhuo Zhang, Shuche Wang, Shihua Zhang<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.09658v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09658v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CV" data-title="自動運転におけるマルチビューMLLMの視覚的根拠特定能力を評価するベンチマーク" data-timestamp="1780933146000" data-url="https://arxiv.org/abs/2606.09644v1">
-  <p class="meta">arXiv cs.CL　Mon, 08 Jun 2026 15:39:06 Z</p>
-  <h2 class="article-title">自動運転におけるマルチビューMLLMの視覚的根拠特定能力を評価するベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
-  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）が、自動運転の文脈において、質問に答える際にどのカメラビューの視覚的証拠に基づいているかを特定する能力を評価するための新しいベンチマークを提案します。<br><br>MLLMは視覚的質問応答で高い性能を示しますが、回答の正確性だけでは、モデルが正しい視覚的証拠に依拠しているかどうかが不明確です。特に、自動運転で用いられるマルチビューの運転シーンでは、モデルが誤ったカメラビューに基づいてもっともらしい回答を生成する可能性があります。この問題に対処するため、本研究では、6つの同期されたNuScenesビューと質問が与えられた際に、モデルがそれを支持するカメラビューを特定し、質問に答える能力を評価するベンチマークを開発しました。<br><br>このベンチマークは、因果関係、反実仮想推論、意図予測などを網羅する122の対立中心的な質問応答ペアで構成されています。ビューラベルは自動的な対立マイニングパイプラインによって提案され、アノテーターによって手動で検証されています。評価は、カメラビュー選択、正解ビューが与えられた場合のオラクルQA、およびモデルがビューを選択して一度に回答する共同予測の3つの設定で行われました。<br><br>回答は、複数選択形式と自由形式の両方で評価され、構造化された予測には完全一致、自由形式の応答にはLLMジャッジが使用されました。視覚的ソースの特定と回答の正確性を明確に分離することで、このベンチマークは、回答のみの評価では見逃される根拠付けの失敗を明らかにします。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yimu Wang, Yee Man Choi, Barry Zhang, Mozhgan Nasr Azadani, Sean Sedwards, Krzysztof Czarnecki<br>
-        分類：cs.CL, cs.CV<br>
-        分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.09644v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09644v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="推論時アライメントのための勾配誘導型報酬最適化手法「GGRO」" data-timestamp="1780932793000" data-url="https://arxiv.org/abs/2606.09635v1">
-  <p class="meta">arXiv cs.CL　Mon, 08 Jun 2026 15:33:13 Z</p>
-  <h2 class="article-title">推論時アライメントのための勾配誘導型報酬最適化手法「GGRO」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の信頼性を、分布シフト下での推論時適応を通じて確保するための新しい軽量手法「Gradient-Guided Reward Optimization（GGRO）」を提案します。<br><br>既存の推論時アライメント手法は、サンプリングに依存した報酬誘導型探索としてタスクを捉えるため、ベースモデルの生成品質に性能が制限され、不完全な報酬モデルへの依存から報酬ハッキングの影響を受けやすいという2つの限界があります。GGROは、勾配誘導を通じてデコーディング中のターゲットを絞った最小限の介入を実行することで、これらの課題に対処します。<br><br>具体的には、GGROはトークンレベルのエントロピーを監視し、ドリフトやアライメントのずれを示す高不確実性領域を特定します。検出された場合、既存のサンプルを単に再ランク付けするのではなく、オフザシェルフの報酬モデルからの勾配信号を使用して生成軌跡を誘導する「ナッジングトークン」を注入することで応答します。この手法は、計算オーバーヘッドを最小限に抑えながら、安全性、有用性、推論ベンチマーク全体で推論時アライメントを一貫して改善することが実験で示されています。<br><br>さらに、GGROは高品質な応答のカバレッジと報酬ハッキングに対する堅牢性を向上させます。この手法は、推論時のLLMの信頼性と適応性を高めるための有望なアプローチであり、実用的な応用への道を開くものです。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Hankun Lin, Ruqi Zhang<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.09635v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09635v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルによる民事裁判シミュレーション" data-timestamp="1780932649000" data-url="https://arxiv.org/abs/2606.09632v1">
-  <p class="meta">arXiv cs.CL　Mon, 08 Jun 2026 15:30:49 Z</p>
-  <h2 class="article-title">大規模言語モデルによる民事裁判シミュレーション</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）を用いた中国の民事事件を対象としたマルチエージェント裁判シミュレーションフレームワークを提案しています。このフレームワークは、5段階の民事裁判手続きを通じて役割ベースのインタラクションを組織し、長期間の審理をサポートするために記憶モジュールと法令検索機能を統合しています。<br><br>実験の結果、このフレームワークは、特に責任配分と複数項目審理において、信頼性の高い民事判決を生成することが示されました。さらに、記憶の質が下流のシミュレーション品質に大きく影響することが明らかになりました。5層の要因フレームワークを通じて、法的根拠、情報条件、司法能力と役割の方向性、組織的圧力、社会的文脈がフレームワークの信頼性と行動にどのように影響するかを分析しています。<br><br>これらの結果は、提案されたフレームワークが民事裁判シミュレーションに効果的であることを支持しています。この研究は、LLMが裁判シミュレーションの分野でスケーラブルな代替手段を提供する可能性を示唆していますが、特に民事訴訟のような複雑で柔軟性の高いケースにおいては、その能力と限界をさらに探求する必要があります。提供されるデータセットとコードは、研究コミュニティによるさらなる発展に貢献することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yifan Chen, Haitao Li, Kaiyuan Zhang, Yueyue Wu, Qingyao Ai, Yiqun Liu<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.09632v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.09632v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
