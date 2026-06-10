@@ -1477,105 +1477,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="ReasonAlloc：推論モデルのための階層的デコーディング時KVキャッシュ予算配分" data-timestamp="1781027063000" data-url="https://arxiv.org/abs/2606.11164v1">
-  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:44:23 Z</p>
-  <h2 class="article-title">ReasonAlloc：推論モデルのための階層的デコーディング時KVキャッシュ予算配分</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の推論における長鎖連鎖思考（CoT）が、キー・バリュー（KV）キャッシュの急増により深刻な推論ボトルネックを引き起こす問題に対処します。<br><br>従来のデコーディング時圧縮手法はトークン削除でこの問題を緩和しますが、全ての層とヘッドに均一な予算配分を仮定していました。これに対し、既存の非均一予算配分手法は主に静的なプロンプト事前充填フェーズ向けであり、自己回帰的推論の段階的なコンテキスト要求を捉えきれていませんでした。<br><br>このギャップを埋めるため、本研究ではデコーディング時KV圧縮を階層的な予算配分問題として再構築する、学習不要なフレームワーク「ReasonAlloc」を提案します。ReasonAllocは、アーキテクチャ駆動の要求パターンである「推論波」を捉えるオフラインの層別事前配分戦略と、リアルタイムの有用性に基づいて情報豊富なヘッドにリソースを再配分するオンラインのヘッド別戦略の2つのレベルで動作します。<br><br>数学的推論ベンチマーク（MATH-500, AIME 2024）での評価により、ReasonAllocは均一予算のR-KV、SnapKV、Pyramid-RKVを上回る性能を示し、特に小規模予算（128-512トークン）で最大の効果を発揮しました。ReasonAllocは既存のトークン削除ポリシーとプラグアンドプレイで連携し、推論時のオーバーヘッドは無視できる程度です。</div>
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="TRACE：エージェント型強化学習のための統一的ロールアウト予算配分フレームワーク" data-timestamp="1781025363000" data-url="https://arxiv.org/abs/2606.11119v1">
+  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:16:03 Z</p>
+  <h2 class="article-title">TRACE：エージェント型強化学習のための統一的ロールアウト予算配分フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、検証可能な報酬を持つ強化学習（RLVR）が、大規模言語モデルにおける推論とエージェント行動の強化に有望なアプローチであることを示しています。しかし、ロールアウト集約的な方策最適化は、プロンプトが単純すぎたり複雑すぎたりして低分散のフィードバックを生成する場合や、結果のみの報酬が複数ターンのロールアウトにおけるすべての決定に同じ終端評価を割り当てる場合に生じる、不十分な報酬コントラストによってしばしば制限されます。<br><br>過去の研究では、有望なプロンプトに利用可能なロールアウトリソースを割り当てることに焦点が当てられてきましたが、プロンプトレベルでのサンプル情報量のみを利用し、同じロールアウト内のターン間でプレフィックスレベルの情報量の変動を無視していました。本研究は、ReActスタイルの思考・行動・観察の各ターンを意味的に異なるノードとしてモデル化することにより、マルチターンエージェント型強化学習を対象としています。これにより、予算配分をプロンプトのルートから、さらに継続するターンレベルのプレフィックスに拡張でき、自然にツリー構造のロールアウトが形成されます。<br><br>我々は、固定サンプリング予算内で報酬コントラストを強化する統一的ロールアウト配分フレームワークである、Tree Rollout Allocation for Contrastive Exploration（TRACE）を導入します。技術的には、TRACEはプロンプトのルートと、混合終端報酬をもたらす可能性が最も高い中間プレフィックスの両方にロールアウト予算を配分します。共有された一般化可能な予測器が、プレフィックス履歴からこれらのアンカーにおける条件付き成功確率を推定し、この配分をガイドします。<br><br>結果として得られる適応的なツリー構造は、結果のみのフィードバックを豊かにし、方策更新信号を増幅します。経験的には、TRACEは典型的なエージェントベンチマークにおいて、競争力のあるパフォーマンスと効率の向上を達成し、例えば、Qwen3-14B Multi-Hop QAの平均精度を、同等のサンプリングコストで競争力のあるベースラインと比較して2.8ポイント向上させました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Wenhao Liu, Hao Shi, Yunhe Li, Weizhi Fei, Xiangyuan Wang, Mengzhe Ruan, Hanxu Hou, Peisong Wang<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11164v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11164v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CY" data-title="ABC-Bench：バイオセキュリティのためのエージェント型生物能力ベンチマーク" data-timestamp="1781026537000" data-url="https://arxiv.org/abs/2606.11150v1">
-  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:35:37 Z</p>
-  <h2 class="article-title">ABC-Bench：バイオセキュリティのためのエージェント型生物能力ベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CY</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が生物学研究に関連する能力、例えば文献合成や実験データ解釈などを急速に獲得している現状に着目します。<br><br>LLMエージェントは、以前は経験豊富な人間の生物学者を必要としたインシリコ生物学タスクを実行できるようになりつつあります。これらの新たなAI能力は、科学的発見や医学的進歩の機会を提供する一方で、バイオセキュリティリスクの様相も変化させています。<br><br>この課題に対応するため、本研究ではエージェント型のバイオセキュリティ関連能力を測定するタスク群「Agentic Bio-Capabilities Benchmark (ABC-Bench)」を導入します。ABC-Benchは、良性およびデュアルユースの生物タスク（液体処理ロボットを操作するコード作成、インビトロアセンブリのためのDNA断片設計、DNA合成スクリーニング回避など）についてLLMエージェントを評価します。<br><br>これらのタスクは、生物学とソフトウェアの両方の専門知識を必要とします。テストされた全てのLLMエージェントは、3つのタスク全てにおいて、中央値の専門家人間ベースラインを上回りました。公開知識や文書化されたプロトコルを利用するタスクでは高い性能を示しましたが、新規バイオインフォマティクス推論を必要とするタスクでは性能が低下しました。3つのウェットラボ検証実験では、OpenAIのo4-mini-highが生成したスクリプトが、OpenTrons液体処理ロボット上で実行された際に、期待される配列でDNAを正常にアセンブルすることが確認されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Andrew Bo Liu, Samira Nedungadi, Bryce Cai, Alex Kleinman, Harmon Bhasin, Seth Donoughe<br>
-        分類：cs.AI, cs.CY<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11150v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11150v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, q-bio.GN, q-bio.QM, stat.AP" data-title="OncoTraj：EGFR遺伝子変異非小細胞肺癌におけるオシメルチニブ耐性予測のための公開ベンチマーク" data-timestamp="1781026404000" data-url="https://arxiv.org/abs/2606.11144v1">
-  <p class="meta">arXiv cs.LG　Tue, 09 Jun 2026 17:33:24 Z</p>
-  <h2 class="article-title">OncoTraj：EGFR遺伝子変異非小細胞肺癌におけるオシメルチニブ耐性予測のための公開ベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">q-bio.GN</span><span class="tag">q-bio.QM</span><span class="tag">stat.AP</span></div>
-  <div class="summary">本論文は、EGFR遺伝子変異陽性非小細胞肺癌（NSCLC）における一次治療オシメルチニブへの耐性が、治療圧下での予測可能なクローナル進化の典型例であるにもかかわらず、関連する患者の縦断的軌跡を訓練または評価するための公開ベンチマークが存在しないという問題提起から始まります。<br><br>そこで、本研究では813人のEGFR遺伝子変異陽性NSCLC患者からなる公開ベンチマーク「OncoTraj」を導入します。このデータセットは、MSK-CHORD（672人）、AACR Project GENIE BPC NSCLC（34人）、FLAURA分子耐性補足（107人）の3つの実臨床ゲノムソースから調和されています。OncoTrajは、(A) 12ヶ月のランドマーク時点での進行の二値分類、(B) 日単位での無増悪生存期間の回帰、(C) 主要な耐性メカニズムの6クラス分類という3つの固定タスクを定義します。<br><br>調和されたデータセット、漏洩を監査済みの患者レベルの訓練/検証/テスト分割、オープンソースの評価ハーネス、および多数のクラス予測器、ロジスティック回帰、ランダムフォレスト、XGBoost、LSTM、マルチタスクトランスフォーマーを網羅する6つの参照ベースラインを公開します。v1の単一時点スナップショット特徴量では、クリーンなソース内評価でどのタスクも偶然率をクリアできず、これはアルゴリズムではなく入力モダリティ（シリアルctDNAではなく、単一スナップショット組織NGS）の限界を示唆しています。<br><br>ベンチマークは、再現可能な文献整合的な関連性を回復し、モダリティの限界をシリアルctDNA強化型v2の具体的な設計要件に変換します。TP53共変異が12ヶ月の進行率をコホート全体で29%から59%に上昇させることが確認されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Abhijoy Sarkar, Aarchi Singh Thakur<br>
-        分類：cs.LG, q-bio.GN, q-bio.QM, stat.AP<br>
+        著者：Heming Zou, Qi Wang, Yun Qu, Yuhang Jiang, Lizhou Cai, Yixiu Mao, Ru Peng, Xin Xu<br>
+        分類：cs.LG, cs.AI, cs.CL<br>
         分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11144v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11144v1</a>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.11119v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11119v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CV" data-title="モンテカルロパスサーチ：サッカーにおける3Dカウンターファクチュアルパス評価のための軌道生成の活用" data-timestamp="1781025390000" data-url="https://arxiv.org/abs/2606.11120v1">
-  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:16:30 Z</p>
-  <h2 class="article-title">モンテカルロパスサーチ：サッカーにおける3Dカウンターファクチュアルパス評価のための軌道生成の活用</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
-  <div class="summary">本論文は、サッカーにおけるパス評価問題を、モンテカルロ木探索（MCTS）に類似した評価問題として再定式化し、そのための「モンテカルロパスサーチ（MCPS）」を提案しています。<br><br>MCPSは、既存研究で様々な名称で知られる要素（価値モデル、ワールドモデル、カウンターファクチュアル行動のポリシー）を組み合わせています。ブンデスリーガの高忠実度トラッキングデータと3Dボール軌道データに基づき、観測されたパスのキックパラメータを推定し、実行バリアントとオプションバリアントをサンプリングします。各候補について、ボール相互作用が発生するまでボール条件付きワールドモデルでロールアウトし、学習済み価値モデルで結果をスコアリングすることで、得られた価値の分布を得ます。<br><br>この分布により、分析とランキングに使用される2つの補完的な実行サープラススコア（平均ベースとパーセンタイルベース）を用いた、分布認識型の帰属が可能になります。また、ワールドモデルのサンプル効率を高めるために、自動運転分野の離散トークン自己回帰軌道生成器（SMART）を適応させ、下流評価のための完全な仮説的ロールアウトをサポートします。モデルチェックポイントとコードが公開されています。</div>
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.AR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AR, cs.AI, cs.PF" data-title="SECDAを用いたFPGAアクセラレータ生成による自律的アクセラレータ設計" data-timestamp="1781025284000" data-url="https://arxiv.org/abs/2606.11117v1">
+  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:14:44 Z</p>
+  <h2 class="article-title">SECDAを用いたFPGAアクセラレータ生成による自律的アクセラレータ設計</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AR</span><span class="tag">cs.AI</span><span class="tag">cs.PF</span></div>
+  <div class="summary">本論文は、AIワークロード向けのFPGAアクセラレータ設計における、大規模かつ複雑な設計空間の探索を自動化する手法を提案します。<br><br>既存のSECDAフレームワークに大規模言語モデル（LLM）を統合したSECDA-DSEを開発しました。LLMは、リトリーバル拡張生成と連鎖思考プロンプティングを用いた推論ガイドによる探索、およびフィードバックループによる反復的な洗練を行います。<br><br>この手法により、ベクトル乗算、2D畳み込み、行列転置の3つのアクセラレータ設計を生成し、FPGA上での実行に成功しました。LLMによるガイド付き探索は、多様なワークロードに適応し、設計時間と専門知識の必要性を削減する可能性を示しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Andrew Kang, Priya Narasimhan<br>
-        分類：cs.AI, cs.CV<br>
+        著者：Vinamra Sharma, Xingjian Fu, Jude Haris, José Cano<br>
+        分類：cs.AR, cs.AI, cs.PF<br>
+        分野：cs.AR<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.11117v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11117v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CY" data-title="シボレット効果：大規模言語モデルのクロスリンガル分布スキューの監査" data-timestamp="1781023320000" data-url="https://arxiv.org/abs/2606.11082v1">
+  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 16:42:00 Z</p>
+  <h2 class="article-title">シボレット効果：大規模言語モデルのクロスリンガル分布スキューの監査</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span></div>
+  <div class="summary">本研究は、フロンティア大規模言語モデル（LLM）におけるクロスリンガル分布スキュー（シボレット効果）を、持続的な敵対的条件下で調査します。<br><br>東地中海紛争の構造的ダイナミクスを模倣した多エージェント地政学的ウォーゲーム「Cerulean Sea Crisis」を開発しました。6つのLLMを英語とトルコ語でプレイさせ、行動特性を分析しました。結果は異なり、Llama-4はトルコ語で威嚇的なレトリックが増加し、Gemini-3.1-Proは減少しました。<br><br>これらの発見は、クロスリンガル行動スキューがモデルアーキテクチャとトレーニングレジームに依存することを示唆しています。連鎖思考による制度的アンカリングと多言語RLHFアライメントという2つのバッファリングメカニズムを特定し、LLMを外交および危機管理設定に安全に統合するための示唆について議論します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Hakan Mehmetcik<br>
+        分類：cs.CL, cs.CY<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.11082v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11082v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.CV" data-title="コンピュータ利用エージェントのための履歴を考慮した視覚的根拠を持つクリティック" data-timestamp="1781023150000" data-url="https://arxiv.org/abs/2606.11078v1">
+  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 16:39:10 Z</p>
+  <h2 class="article-title">コンピュータ利用エージェントのための履歴を考慮した視覚的根拠を持つクリティック</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
+  <div class="summary">コンピュータ利用エージェント（CUA）のパフォーマンスを、複雑なグラフィカルユーザーインターフェース（GUI）環境における実行前の行動評価を通じて向上させるために、クリティックモデルを含む様々なテスト時介入が開発されてきました。しかし、既存のクリティックは、短期的な意思決定ループに主に焦点を当てている（例：以前の行動を忘れる）こと、および欠陥のある行動（例：間違ったUI要素をクリックする）を検出するために必要な視覚的根拠を欠いているという2つの主要な制限に悩まされています。<br><br>これらの問題に対処するため、本研究では、実際のGUI軌道上で訓練されたマルチモーダルクリティックを中心に構築された、履歴を考慮した視覚的根拠を持つテスト時フレームワークであるHiViGを導入します。このクリティックは、過去のインタラクションをコンパクトな記録に抽象化し、視覚的根拠を持って行動を評価します。テスト時には、HiViGはクリティックをポリシー決定ループに統合し、マクロアクション履歴（ポリシーが完了した成果を要約する）と、視覚的根拠を持つクリティーク（実行座標を現在のスクリーンショットに対して検証し、実行前にエラーを傍受する）を提供します。<br><br>Web、モバイル、デスクトップのベンチマーク全体で、HiViGは既存のスカラーおよび言語クリティックを常に上回り、Qwen3-VL-32Bでは5.8%、Gemini-3-Flashでは9.0%の平均成功率を最も強力なベースラインと比較して向上させ、強力なクロスプラットフォーム汎化能力を示しました。アブレーション研究は、マクロアクション履歴が短期的な計画を緩和し、視覚的根拠を持つクリティークが実行エラーを削減することを示しており、両方のコンポーネントが長期間のGUIタスクにおけるテスト時のスケーリングに不可欠であることが示されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Jaewoo Lee, Zaid Khan, Archiki Prasad, Justin Chih-Yao Chen, Supriyo Chakraborty, Kartik Balasubramaniam, Sambit Sahu, Elias Stengel-Eskin<br>
+        分類：cs.AI, cs.CL, cs.CV<br>
         分野：cs.AI<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11120v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11120v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2606.11078v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11078v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="VISTA: 対話型エージェント評価のための汎用シミュレーションツールキット" data-timestamp="1781023172000" data-url="https://arxiv.org/abs/2606.11079v1">
-  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 16:39:32 Z</p>
-  <h2 class="article-title">VISTA: 対話型エージェント評価のための汎用シミュレーションツールキット</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、対話型エージェント開発における評価のボトルネックに着目し、その解決策としてVISTA（Versatile Interactive User Simulation Toolkit for Agent evaluation）を提案しています。<br><br>従来の評価手法は静的なベンチマークに依存しがちで、エージェントの動的で多段階的な行動や、意味のある失敗モードを捉えきれないという課題がありました。ユーザーシミュレーションに基づく評価は有望ですが、既存のフレームワークはシミュレーションされた対話の質や網羅性を評価するメカニズムが限定的であり、またUI操作のみ、またはAPI操作のみに限定されることが多く、現実的なユーザー行動を完全にモデル化できませんでした。<br><br>VISTAは、これらの限界に対処するため、シミュレーションされた対話の現実性、能力網羅性、対話効果を測定するための6つの指標と、UIベースとAPIベースの操作を統合したハイブリッドユーザーシミュレーターを開発しました。これにより、多様な対話環境において、より現実的で包括的な評価が可能になります。提案手法は、eコマースのショッピングや教育カスタマーサービスの設定で評価され、既存手法よりも優れた評価結果をもたらすことが実証されました。</div>
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="マルチモーダル大規模言語モデルにおける複雑な行動モデリング：複数人格の構成と動的切り替え" data-timestamp="1781022877000" data-url="https://arxiv.org/abs/2606.11074v1">
+  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 16:34:37 Z</p>
+  <h2 class="article-title">マルチモーダル大規模言語モデルにおける複雑な行動モデリング：複数人格の構成と動的切り替え</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）の社会的なインタラクションにおける展開が進む中で、複雑な人格条件下でのその行動を理解し制御することの重要性を論じています。<br><br>研究では、明示的な人格条件付けを導入し、単一・複数人格の誘導、および人格の切り替えを含む体系的な評価フレームワークを確立しました。実験の結果、人格誘導は画像キャプション生成のパフォーマンスを向上させる一方で、視覚的質問応答（VQA）のような精密な推論を必要とするタスクではパフォーマンスを低下させる可能性が示されました。<br><br>複数特性の構成や動的な切り替えにおいては、バランス効果と残差効果が観察され、モデルの行動は過去と現在の両方の性格制約によって共同で変調されることが示唆されています。既存のプロンプトベースの人格誘導手法は、マルチモーダル設定への転移性が限定的であることが明らかになりました。<br><br>本研究は、MLLMにおける人格モデリングの動的かつ複雑な性質を明らかにし、人格誘導と評価のための堅牢でカスタマイズされた手法の必要性を強調しています。コードは論文採択時に公開される予定です。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Yunan Lu, Ryan Shea, Yusen Zhang, Zhou Yu<br>
-        分類：cs.CL<br>
+        著者：Peiqi Jia, Haonan Jia, Ziqi Miao, Linkang Du, Yuntao Wang, Zhou Su<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.11074v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11074v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="T1-Bench：実世界ドメインにおけるマルチシナリオエージェントのベンチマーク" data-timestamp="1781022734000" data-url="https://arxiv.org/abs/2606.11070v1">
+  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 16:32:14 Z</p>
+  <h2 class="article-title">T1-Bench：実世界ドメインにおけるマルチシナリオエージェントのベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）を用いたエージェントシステムの能力を評価するための、高忠実度かつ包括的なベンチマーク「T1-Bench」を提案します。<br><br>既存のベンチマークは、タスクの複雑性、現実性、ドメインの多様性が限定的であり、複数のドメインにまたがる相互作用を捉えきれないという課題がありました。T1-Benchは、25のドメインにわたる複雑なシナリオを特徴とし、マルチターンの対話における構造化された推論を要求します。<br><br>T1-Benchは、エージェントの行動、ツールの利用、会話の質を評価するための再現可能で標準化されたフレームワークを提供します。自動評価に加え、人間の判断も取り入れることで、質的なパフォーマンスの評価を強化しています。このベンチマークは、今後のエージェントシステム研究の促進に貢献します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Genta Indra Winata, Amartya Chakraborty, Yuzhen Lin, Swasthi P Rao, Shikhhar Siingh, Houhan Lu, Nadia Bathaee, Sriharsha Hatwar<br>
+        分類：cs.CL, cs.AI<br>
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11079v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11079v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ハイブリッドLLMにおけるアテンション記憶喪失：CoTファインチューニングが長距離記憶を破壊するメカニズムとその解決策" data-timestamp="1781021839000" data-url="https://arxiv.org/abs/2606.11052v1">
-  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 16:17:19 Z</p>
-  <h2 class="article-title">ハイブリッドLLMにおけるアテンション記憶喪失：CoTファインチューニングが長距離記憶を破壊するメカニズムとその解決策</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、連鎖思考（CoT）を用いたファインチューニング（SFT）が、ハイブリッド線形アテンションモデルにおいて、長距離の記憶能力を系統的に低下させる現象を発見しました。<br><br>HypeNetやJet-Nemotronなどのアーキテクチャにおいて、CoT-SFTの後にNeedle-In-A-Haystack（NIAH）タスクでの検索性能が著しく低下し、特に難易度の高い検索設定や長いコンテキストウィンドウでその傾向が顕著になることが示されました。この原因として、CoT-SFTがアテンション勾配を短距離パターンに偏らせ、長距離ルーティングを担うクエリ-キー射影（$W_Q, W_K$）を妨害することが挙げられています。<br><br>この問題に対処するため、本研究では、SFT前のチェックポイントから$W_Q$と$W_K$のみを復元し、他のSFT後のパラメータはそのまま保持するトレーニング不要な手法「QK-Restore」を提案しています。さらに、ルーティングの維持と推論の適応のバランスを取るためのProcrustes変種も導入しました。この手法により、トレーニングコストゼロで長距離コンテキスト能力を回復しつつ、推論性能を維持できることが実証されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Xinyu Zhou, Boyu Zhu, Yi Xu, Zhiwei Li, Yingfa Chen, Huiming Wang, Zhijiang Guo<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11052v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11052v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2606.11070v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11070v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
