@@ -1375,6 +1375,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV" data-title="実行計画におけるテスト時計算リソースの最適な配分方法" data-timestamp="1781114329000" data-url="https://arxiv.org/abs/2606.12402v1">
+  <p class="meta">arXiv cs.AI　Wed, 10 Jun 2026 17:58:49 Z</p>
+  <h2 class="article-title">実行計画におけるテスト時計算リソースの最適な配分方法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、自律型ロボットなどの実行計画において、テスト時の計算リソースをいつ、どこに配分すべきかという問題に取り組んでいます。<br><br>従来のビジョン・言語モデル（VLM）を用いた実行計画では、計算リソースを単純にスケールアップする戦略が取られてきましたが、これによりレイテンシ、トークン使用量、FLOPsが増加する一方で、成功率は必ずしも線形に向上しないという課題がありました。本研究では、計算リソースの配分を最適化することが、最先端の性能を現実世界に適用する上で重要であると主張しています。<br><br>そこで、マルチモーダルなシーンコンテキストを利用してプロンプトごとの計算リソースを動的に配分するフレームワーク「DIRECT」を提案しています。これにより、固定されたモデル選択よりも成功率とコストのトレードオフを改善します。実験の結果、チェーン・オブ・ソートの深さ、モデルサイズ、メモリ履歴といったスケーリング軸によって、計算リソースの配分がもたらす能力向上の質が異なることが明らかになりました。<br><br>物理的なロボットアームを用いた実験では、DIRECTはより強力なモデルと同等以上の成功率を、平均レイテンシを最大65%削減しながら達成しました。この結果は、単純な計算リソースのスケールアップが非効率的であり、DIRECTがロボットシステムの実行計画において、コストを大幅に削減しつつ最先端レベルの性能を提供できることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jadelynn Dao, Milan Ganai, Yasmina Abukhadra, Ajay Sridhar, Mozhgan Nasr Azadani, Katie Luo, Clark Barrett, Jiajun Wu<br>
+        分類：cs.RO, cs.AI, cs.CV<br>
+        分野：cs.RO<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.12402v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12402v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.IR" data-title="Doc-to-Atom: メモリ原子のコンパイルと合成の学習" data-timestamp="1781114300000" data-url="https://arxiv.org/abs/2606.12400v1">
   <p class="meta">arXiv cs.CL　Wed, 10 Jun 2026 17:58:20 Z</p>
   <h2 class="article-title">Doc-to-Atom: メモリ原子のコンパイルと合成の学習</h2>
@@ -1426,6 +1443,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="エージェント型強化学習における手続き的方策最適化手法" data-timestamp="1781113627000" data-url="https://arxiv.org/abs/2606.12384v1">
+  <p class="meta">arXiv cs.AI　Wed, 10 Jun 2026 17:47:07 Z</p>
+  <h2 class="article-title">エージェント型強化学習における手続き的方策最適化手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントのマルチターンツール利用能力を向上させるための、エージェント型強化学習（RL）における課題を扱っています。<br><br>既存手法では、ツール呼び出しの境界や固定されたワークフローといった粗い単位で報酬を割り当てていたため、どの中間的な意思決定が最終的な成果に影響を与えているかを特定することが困難でした。本研究では、エージェント型RLを「どこで分岐し、分岐後にどのように報酬を割り当てるか」という2つの観点から分析し、影響力のある意思決定ポイントはツール呼び出しに集中するのではなく、シーケンス全体に広く分布していることを発見しました。また、トークンエントロピーだけでは最終成果への影響度を reliably に反映しないことも示されました。<br><br>これらの観察に基づき、分岐と報酬割り当てを粗い相互作用単位からシーケンス内の細かい意思決定ポイントへとシフトさせる「Agentic Procedural Policy Optimization（APPO）」を提案します。APPOは、トークン不確実性と後続の継続に対する方策誘起確率利得を組み合わせた「Branching Score」を用いて分岐位置を選択し、偽の高エントロピー位置をフィルタリングしながら、より的を絞った探索を可能にします。さらに、手続きレベルでのアドバンテージスケーリングを導入し、分岐したロールアウト全体にわたる報酬の分配を改善します。<br><br>13のベンチマークにおける実験の結果、APPOは強力なエージェント型RLベースラインを平均4ポイント近く一貫して改善し、効率的なツール呼び出しを維持しつつ、行動の解釈可能性も保つことが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Xucong Wang, Ziyu Ma, Yong Wang, Yuxiang Ji, Shidong Yang, Guanhua Chen, Pengkun Wang, Xiangxiang Chu<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.12384v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12384v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="検証可能な環境の再帰的合成による推論汎化能力の向上" data-timestamp="1781113181000" data-url="https://arxiv.org/abs/2606.12373v1">
+  <p class="meta">arXiv cs.CL　Wed, 10 Jun 2026 17:39:41 Z</p>
+  <h2 class="article-title">検証可能な環境の再帰的合成による推論汎化能力の向上</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論能力を強化するアプローチとして注目されている、検証可能な環境を用いた強化学習（RL）におけるスケーラビリティの問題に取り組んでいます。<br><br>従来の環境構築手法は、手動または個別に構築されるため、線形的なスケーリング限界に直面し、スケーラブルな推論汎化を妨げていました。本研究では、検証可能な環境を再帰的に組み立て可能な構成要素（レゴブロック）として概念化するフレームワーク「RACES（Recursive Automated Composition for Environment Scaling）」を提案します。このフレームワークの鍵となる洞察は、ある環境の終域（出力型）が別の環境の定義域（入力型）と一致する場合、それらを自動的に融合して新しい検証可能な環境を生成できるという点です。これにより、再帰的な合成が可能になります。<br><br>RACESは300個の個別の環境を用いて実装され、多様な推論パターンを誘発する合成演算子（SEQUENTIAL、PARALLEL、SORT、SELECT）を定義しています。これらの合成環境を用いたRLトレーニングが、推論汎化能力を一貫して向上させることが広範な実験で示されました。具体的には、RACESはDeepSeek-R1-Distill-Qwen-14Bの性能を平均3.1ポイント（48.2から51.3へ）向上させ、Qwen3-14Bの性能を61.1（58.8から）へと向上させました。これらの結果は、トレーニング環境の構築中に seen でなかった6つのベンチマークで達成されています。<br><br>さらに、RACESは50個の基本環境のみを使用して300個の個別環境でトレーニングした場合と同等の性能を達成しており、環境利用の効率性が大幅に向上していることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Hao Xiang, Qiaoyu Tang, Le Yu, Yaojie Lu, Xianpei Han, Ben He, Le Sun, Bowen Yu<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.12373v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12373v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="エントロピー限界の打破：棄却サンプリングを用いたMTPによるRL訓練の加速" data-timestamp="1781113005000" data-url="https://arxiv.org/abs/2606.12370v1">
   <p class="meta">arXiv cs.LG　Wed, 10 Jun 2026 17:36:45 Z</p>
   <h2 class="article-title">エントロピー限界の打破：棄却サンプリングを用いたMTPによるRL訓練の加速</h2>
@@ -1440,6 +1491,23 @@
         分野：cs.LG<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2606.12370v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12370v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="欠損モダリティ下での潜在世界復元によるマルチモーダル学習" data-timestamp="1781112694000" data-url="https://arxiv.org/abs/2606.12362v1">
+  <p class="meta">arXiv cs.AI　Wed, 10 Jun 2026 17:31:34 Z</p>
+  <h2 class="article-title">欠損モダリティ下での潜在世界復元によるマルチモーダル学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、特にバイオサイエンス分野における、決定時に不完全な形でしか利用できないことが多い異種モダリティの学習を対象としています。<br><br>提案手法「Latent World Recovery (LWR)」は、モダリティ固有の埋め込みを共有潜在空間で整列させ、利用可能なモダリティのみを融合して統一表現を構築します。欠損モダリティの補完や固定モダリティセットを必要とせず、観測されたモダリティから直接、利用可能性を考慮した表現学習を行います。<br><br>このアプローチにより、部分的な観測下での頑健なマルチモーダル予測が可能となり、欠損モダリティの明示的な再構築による誤差伝播を回避します。実際の不完全なマルチオミクスデータセットで評価され、がん表現型分類や生存予測などの下流タスクに有効であることが示されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Hui Wang, Tianyu Ren, Joseph Butler, Christopher Baker, Karen Rafferty, Simon McDade<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.12362v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12362v1</a>
   </div>
 </article>
 
@@ -1460,6 +1528,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.LG" data-title="情報利得を用いた多ターン対話における意味的進捗の測定" data-timestamp="1781111099000" data-url="https://arxiv.org/abs/2606.12332v1">
+  <p class="meta">arXiv cs.CL　Wed, 10 Jun 2026 17:04:59 Z</p>
+  <h2 class="article-title">情報利得を用いた多ターン対話における意味的進捗の測定</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、多ターン対話における「意味的進捗」、すなわち会話全体を通して蓄積される新しい、質問に関連し、冗長でない情報の側面に着目します。<br><br>意味的進捗を質問条件付き不確実性削減として定式化し、埋め込み空間でそれを近似する情報理論的指標を提案します。この指標は、対話の各ターンにおける情報利得の単調性、加法性、および冗長な証拠に対する収穫逓減といった望ましい理論的特性を持ちます。<br><br>大規模言語モデル（LLM）を評価者とするアプローチとは異なり、提案手法は評価時に自己回帰的推論を必要とせず、固定された埋め込みモデルで完全に再現可能です。MT-Bench、Chatbot Arena、UltraFeedbackでの実験により、提案指標は意味的進捗のみを対象としながらも、人間の判断との整合性において競争力のある結果を示し、一部のLLMベースの評価者と比較して改善が見られました。軽量な埋め込みモデルでも効果を発揮し、大規模モデルに依存せずに意味的進捗を捉えられる可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Paul He, Shiva Kasiviswanathan, Dominik Janzing<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.12332v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12332v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="誤解を招く医療文脈下でのLLMの認識的耐性の測定" data-timestamp="1781108846000" data-url="https://arxiv.org/abs/2606.12291v1">
   <p class="meta">arXiv cs.CL　Wed, 10 Jun 2026 16:27:26 Z</p>
   <h2 class="article-title">誤解を招く医療文脈下でのLLMの認識的耐性の測定</h2>
@@ -1477,105 +1562,20 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="いつアラインメントし、いつ予測するか：マルチモーダル学習のためのフェーズダイアグラム" data-timestamp="1781027998000" data-url="https://arxiv.org/abs/2606.11190v1">
-  <p class="meta">arXiv cs.LG　Tue, 09 Jun 2026 17:59:58 Z</p>
-  <h2 class="article-title">いつアラインメントし、いつ予測するか：マルチモーダル学習のためのフェーズダイアグラム</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span></div>
-  <div class="summary">クロスモーダルアライメント（CA）とクロスモーダル予測（CP）は、マルチモーダル表現学習の主要なパラダイムですが、それぞれがいつ成功し、いつ失敗し、クロスモーダル学習がいつ役立つのかについての体系的な理解はありません。このギャップにより、特に生物医学や天体物理学などの科学分野では、実践者が標準的な手法が最高の単一モダリティのパフォーマンスを下回る理由を診断できなくなっています。<br><br>本研究では、両方の質問に対処する統一された線形フレームワークを開発します。構造化されたクロスモーダルノイズ相関を持つスパイクド信号プラスノイズモデルの下で、両方の目的のための分離比を導出し、補完的な失敗モードを明らかにします。アライメントは各モダリティをホワイトニングし、ノイズがビュー間で強く相関している場合に失敗します。予測は、片側ホワイトニングを通じてクロス予測可能なものをエンコードし、リカバリはソースモダリティの品質によって制御されます。<br><br>結果として得られるフェーズダイアグラムは、マルチモーダル問題を4つのレジームに分割します：両方、CAのみ、CPのみ、およびどちらでもない。少数のラベル付きサブサンプルを使用して実世界のデータセットをこのダイアグラム上に配置するためのデータ駆動型手順を提示し、クロスモーダル学習を行う前に、好ましい目的と予測方向を特定します。合成データ、ステレオビジョンベンチマーク、画像キャプションペア、および実際の天体物理データでの実験は、非線形レジーム、特にクロスモーダル学習が積極的に有害である「どちらでもない」レジームでの予測を検証します。このフレームワークにより、実践者はマルチモーダル問題を診断し、トレーニングにコミットする前に適切な目的を選択できます。</div>
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="astro-ph.IM" data-source="arXiv stat.ML" data-area="AI" data-categories="astro-ph.IM, stat.ML" data-title="機械学習における時系列解析" data-timestamp="1781076132000" data-url="https://arxiv.org/abs/2606.11746v1">
+  <p class="meta">arXiv stat.ML　Wed, 10 Jun 2026 07:22:12 Z</p>
+  <h2 class="article-title">機械学習における時系列解析</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">astro-ph.IM</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、特に天文学や宇宙論のように時間的データが豊富な分野における機械学習の基本的な構成要素である時系列解析について解説します。<br><br>定常性、自己相関、季節性といった時系列の基本概念、自己回帰モデル、移動平均モデル、ARIMA、指数平滑法、状態空間モデルなどの古典的統計モデル、そして隠れマルコフモデル、ガウス過程、深層学習モデル（RNN、CNN、Transformer）などの現代的な機械学習アプローチについて、機械学習の観点から教育的にレビューします。<br><br>伝統的な統計的手法がどのように基礎を築き、それらが機械学習手法へと発展していくかを説明します。天文学、気象予報、金融などの複数のドメインからの例を用いて、共通の原則を強調し、読者が研究において機械学習技術を時系列解析に適用するための理論的理解と実践的文脈の両方を習得することを目指します。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
+        配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Ilay Kamai, Hugues Van Assel, Aviv Regev, Hagai B. Perets, Randall Balestriero<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11190v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11190v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="実世界における自己改善エージェントのためのテスト時プロンプト学習フレームワークEEVEE" data-timestamp="1781027836000" data-url="https://arxiv.org/abs/2606.11182v1">
-  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:57:16 Z</p>
-  <h2 class="article-title">実世界における自己改善エージェントのためのテスト時プロンプト学習フレームワークEEVEE</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、実世界におけるタスクストリーム下でのテスト時プロンプト学習を可能にする、LLMエージェント向けの初のマルチデータセットテスト時プロンプト学習フレームワーク「EEVEE」を提案します。<br><br>既存の手法は主に単一データセットの設定向けに設計されていますが、実世界の応用では、モデルが複数のデータセット、ドメイン、タスク分布から引き出された異種入力ストリームを処理する必要があります。これを軽減するため、EEVEEはルーターを導入し、入力されたデータをタスククラスターに分割し、適切なプロンプト構成に割り当てます。<br><br>この設計は、ルーターとプロンプトの相互依存性に対処するために、ルーターとプロンプトの協調進化戦略によって最適化されます。複数のデータセットにわたる実験により、このフレームワークが異種データストリーム下でのロバスト性を向上させ、単一ベンチマーク学習能力と効率を維持することが示されています。特に、EEVEEはQwen3-4B-InstructおよびDeepSeek-V3.2と比較して、平均マルチベンチマークスコアを10.38および24.32ポイント向上させ、SOTA手法であるGEPAおよびACEを最大37.2%および48.2%上回りました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Weixian Xu, Shilong Liu, Mengdi Wang<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11182v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL, cs.CY, cs.HC" data-title="データジャーナリストエージェント：データを検証可能なマルチモーダルストーリーに変える" data-timestamp="1781027515000" data-url="https://arxiv.org/abs/2606.11176v1">
-  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 17:51:55 Z</p>
-  <h2 class="article-title">データジャーナリストエージェント：データを検証可能なマルチモーダルストーリーに変える</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span><span class="tag">cs.HC</span></div>
-  <div class="summary">本論文は、データジャーナリストの役割をエンドツーエンドで実行するAIエージェント「Data2Story」を提案しています。データジャーナリストは、生データを専門知識のない読者にも信頼されるストーリーに変える重要な役割を担いますが、従来は多大な時間と労力を要していました。<br><br>Data2Storyは、専門的な役割を持つ複数のエージェントを連携させるマルチエージェントフレームワークを採用しています。本研究の主な貢献は、(i) 提示される全ての数値、分析の切り口、ビジュアルアセットがデータ、コード、または外部参照に紐づけられ、証拠に基づいていること、(ii) インタラクティブな地図や音声などのマルチモーダルツールを駆使し、読者の関心を引くようなストーリーを生成することです。<br><br>18の記事で評価された結果、Data2Storyは専門家による記事と比較して、透明性や監査可能性において高い評価を得ました。特に、証拠の追跡可能性に優れています。一方で、編集上の視点や創造的なデザイン、表現においては人間のジャーナリストが優位性を保っています。本エージェントは、ジャーナリストの共同作業者として、より証拠に基づいた、透明性の高い、検証可能な報道を可能にすることを目指しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Kevin Qinghong Lin, Batu EI, Yuhong Shi, Pan Lu, Philip Torr, James Zou<br>
-        分類：cs.CV, cs.CL, cs.CY, cs.HC<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11176v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11176v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.LG" data-title="自己蒸留におけるフィードバックアライメントの役割" data-timestamp="1781027409000" data-url="https://arxiv.org/abs/2606.11173v1">
-  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:50:09 Z</p>
-  <h2 class="article-title">自己蒸留におけるフィードバックアライメントの役割</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">以前の試みに対するフィードバックなどの追加コンテキストで言語モデルを条件付けることは、通常、その応答を改善します。自己蒸留は、コンテキストが存在しない場合にこの改善を維持するようにモデルをトレーニングします。<br><br>この手法は、質問のみを見る学生モデルと、コンテキストも見る自己教師モデルの2つの設定下でのモデルの出力分布を一致させることで機能します。したがって、モデルが学習することは、自己教師モデルがどのようなコンテキストを受け取るかに依存しますが、このコンテキストの設計はほとんど探求されていません。本研究では、凍結された批評家からのフィードバックでソルバーをトレーニングすることにより、自己蒸留のためのコンテキスト設計を研究します。<br><br>3つの条件を比較します：(i)バイナリ報酬（GRPO）、(ii)参照ソリューション、(iii)ソルバーの推論トレースに合わせたステップごとの批評。ステップアラインド批評は最大の利益をもたらし、GRPOを16.11ポイント、参照ソリューション条件付き自己蒸留を5.27ポイント（Avg@12）上回ります。トークンごとの優位性分析は、その理由を明らかにします。ステップアラインドフィードバックは、推論が失敗したトークンのみを対象とし、正しい動作をそのまま維持します。対照的に、参照ソリューションを条件付けることは、代替の導出が必然的にフレーズとアプローチが異なるため、すべてのトークン（正しいステップでさえ）でモデルの動作を変更するように圧力をかけます。これは、フィードバックとソルバーの推論との間の構造的アライメントが、自己蒸留の効果の重要な推進力であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Semih Kara, Oğuzhan Ersoy<br>
-        分類：cs.AI, cs.LG<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11173v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11173v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, eess.AS" data-title="全二重音声モデルにおける多角的なインタラクティビティ整合" data-timestamp="1781027215000" data-url="https://arxiv.org/abs/2606.11167v1">
-  <p class="meta">arXiv cs.CL　Tue, 09 Jun 2026 17:46:55 Z</p>
-  <h2 class="article-title">全二重音声モデルにおける多角的なインタラクティビティ整合</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">eess.AS</span></div>
-  <div class="summary">本論文は、会話中に発話とリスニングを同時に行える全二重（full-duplex）音声対話モデルのインタラクティビティ（対話性）を向上させるための新しい後処理アライメント手法を提案しています。現在のモデルは、主にトークンレベルの尤度最大化による教師あり学習で訓練されており、対話レベルの振る舞いを直接最適化しないため、過剰な沈黙や不適切なターン交代といったインタラクティビティの問題が生じがちでした。<br><br>提案手法では、強化学習（RL）を用いて、ポーズ処理、ターン交代、バックチャネリング（相槌）、ユーザーの割り込みといった、対話における4つの主要なインタラクティビティの側面を包括的に改善します。各側面に対して、人間同士の会話データから抽出した短い音声セグメントを用い、側面固有の報酬関数でモデルを最適化します。さらに、応答の質を維持するために、大規模言語モデル（LLM）ベースの報酬も追加しています。<br><br>この手法を2つのオープンソースモデル（Moshi、PersonaPlex）に適用した結果、オフライン評価およびリアルタイムのマルチターン対話評価の両方において、一貫したインタラクティビティの向上が確認されました。これにより、より自然で円滑な音声対話システムの実現が期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Atsumoto Ohashi, Neil Zeghidour, Alexandre Défossez, Eugene Kharitonov<br>
-        分類：cs.CL, eess.AS<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11167v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11167v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="stat.OT" data-source="arXiv cs.AI" data-area="AI" data-categories="stat.OT, cs.AI" data-title="大規模言語モデルの自動化に関する言説の欠陥" data-timestamp="1781027170000" data-url="https://arxiv.org/abs/2606.11166v1">
-  <p class="meta">arXiv cs.AI　Tue, 09 Jun 2026 17:46:10 Z</p>
-  <h2 class="article-title">大規模言語モデルの自動化に関する言説の欠陥</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">stat.OT</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が知識経済タスクにおいて人間の専門家レベルのパフォーマンスを発揮するという主張に潜む欠陥を指摘します。<br><br>LLMの能力評価は、標準化されたデータセットにおける平均パフォーマンスを測定するベンチマークタスクに依存していますが、これらのタスクはしばしばLLMの学習データに含まれる内容を直接測定し、応答の信頼性やエラーの大きさを評価しません。しかし、高リスクな状況では、これらの要素が極めて重要となります。<br><br>本研究では、データ分析タスクのためのコンピュータコード作成を要求する新しいLLMベンチマークタスクを用いて、最先端LLMのパフォーマンスを人間の専門家の提出物と比較し、応答のばらつきとエラーの大きさを explicit に測定しました。その結果、人間の専門家は平均して複数の指標でより優れたパフォーマンスを示し、パフォーマンスのばらつきが少ないことが明らかになりました。<br><br>これらの結果は、LLMが人間の専門家レベルで一貫してパフォーマンスを発揮するわけではないことを示唆しており、LLMのベンチマーク評価において、ばらつきの測定とエラーの大きさの評価の重要性を強調しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：George Perrett, Javae Elliott, Jennifer Hill, Marc Scott<br>
-        分類：stat.OT, cs.AI<br>
-        分野：stat.OT<br>
+        著者：Antonio Pagliaro, Anna Anzalone<br>
+        分類：astro-ph.IM, stat.ML<br>
+        分野：astro-ph.IM<br>
         ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11166v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11166v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2606.11746v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11746v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
