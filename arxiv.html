@@ -1375,6 +1375,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="検索拡張型強化学習による類推推論能力の獲得" data-timestamp="1781200792000" data-url="https://arxiv.org/abs/2606.13680v1">
+  <p class="meta">arXiv cs.AI　Thu, 11 Jun 2026 17:59:52 Z</p>
+  <h2 class="article-title">検索拡張型強化学習による類推推論能力の獲得</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が複雑な推論タスクにおいて、類推を通じて学習する能力を獲得するための新しいフレームワークを提案します。<br><br>従来の検索拡張生成（RAG）は、外部知識をLLMに組み込む標準的な手法ですが、単純な類似性に基づく検索では、問題の構造や解決戦略が類似している場合に、適切な知識を引き出すことが困難でした。本研究では、この課題に対処するため、「検索拡張型強化学習ファインチューニング（RA-RFT）」という後処理フレームワークを開発しました。<br><br>RA-RFTは、単なる意味的類似性ではなく、推論に最も役立つコンテキストをランク付けするリトリーバーを訓練します。そして、強化学習の手法を用いて、類推的なデモンストレーションを検索し、モデルのポリシーをファインチューニングします。これにより、モデルは検証可能な報酬の下で、推論トレースを活用することを学習します。<br><br>さらに、検索されるコンテキストの多様性を分析した結果、推論を意識した検索は、個々の問題に対して異なる推論の足場を提供する、補完的な解決戦略を引き出すことがわかりました。このアプローチは、特に数学的推論のような複雑なベンチマークにおいて、標準的な強化学習ファインチューニング手法を上回る性能を示しました。<br><br>本研究は、LLMの推論能力を向上させる上で、類推学習がいかに有効であるかを示しており、特にリトリーバーの設計が推論能力に与える影響を明らかにしています。これは、より高度なAI推論システムの開発に貢献するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zilin Xiao, Qi Ma, Chun-cheng Jason Chen, Xintao Chen, Avinash Atreya, Hanjie Chen, Vicente Ordonez<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.13680v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13680v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="エージェント型空間推論のためのアクションインターフェース再考：SpatialClaw" data-timestamp="1781200776000" data-url="https://arxiv.org/abs/2606.13673v1">
+  <p class="meta">arXiv cs.AI　Thu, 11 Jun 2026 17:59:36 Z</p>
+  <h2 class="article-title">エージェント型空間推論のためのアクションインターフェース再考：SpatialClaw</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、ビジョン・言語モデル（VLM）における空間推論能力の向上を目指し、エージェントが専門的なツールをどのように利用するかという「アクションインターフェース」に着目した新しいフレームワーク「SpatialClaw」を提案します。<br><br>従来のツール拡張型エージェントは、空間推論において限界がありました。単一パスでのコード実行は、中間結果を観察する前に分析戦略を決定してしまう問題があり、構造化されたツール呼び出しインターフェースは、操作の自由な組み合わせやタスクに応じた分析の調整が難しいという柔軟性の欠如がありました。これらはいずれも、オープンエンドで複雑な3D/4D空間推論には不十分でした。<br><br>そこで本研究では、コードをアクションインターフェースとして採用する「SpatialClaw」を開発しました。このフレームワークは、入力フレームと複数の知覚・幾何学プリミティブを備えたステートフルなPythonカーネルを維持します。これにより、VLMベースのエージェントは、各ステップで実行可能なセルを書き、過去のすべての出力を条件として、知覚結果の柔軟な組み合わせや操作、中間的なテキストおよび視覚的観察への適応が可能になります。<br><br>SpatialClawは、静的および動的な3D/4D空間推論タスクを網羅する20の空間推論ベンチマークで評価されました。その結果、平均精度59.9%を達成し、最近の空間エージェントと比較して+11.2ポイントの改善を示しました。これは、ベンチマーク固有の適応なしに、複数のVLMバックボーンで一貫した改善が見られたことを意味します。<br><br>本研究は、アクションインターフェースの設計がエージェントの空間推論能力に与える影響を明らかにし、より柔軟で強力な空間推論を実現するための新たなアプローチを提供します。これは、ロボティクスやコンピュータビジョン分野におけるエージェント開発に重要な示唆を与えるものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Seokju Cho, Ryo Hachiuma, Abhishek Badki, Hang Su, Byung-Kwan Lee, Chan Hee Song, Sifei Liu, Subhashree Radhakrishnan<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.13673v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13673v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="Agents-K1：エージェントネイティブな知識オーケストレーションに向けて" data-timestamp="1781200715000" data-url="https://arxiv.org/abs/2606.13669v1">
+  <p class="meta">arXiv cs.AI　Thu, 11 Jun 2026 17:58:35 Z</p>
+  <h2 class="article-title">Agents-K1：エージェントネイティブな知識オーケストレーションに向けて</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、現在のLLMベースの研究エージェントがエージェントオーケストレーションを進化させているものの、科学的知識のオーケストレーションを大きく見落としていると指摘します。<br><br>既存の研究は、論文を要旨、表面的な言及、および平坦な引用関係に還元しがちですが、科学的推論に不可欠な主要なエンティティ、主張、証拠、メカニズム、および方法論の系統を省略しています。これに対し、本論文は、生データをエージェントネイティブな科学的知識グラフに変換するエンドツーエンドの知識オーケストレーションパイプライン「Agents-K1」を導入します。<br><br>Agents-K1は、単なる要旨だけでなく、論文全体にわたるエンティティ、マルチモーダル証拠、引用、および型付けされたエンティティ間関係をキャプチャする5モジュールスキーマを持つマルチモーダルパーサー、GRPOとルールベース報酬で訓練された4B情報抽出バックボーン、そしてWeb検索、マルチモーダルグラフ検索、クロスドキュメントトラバーサルを統合する3ソースエージェントインターフェースであるgraphanything CLIを統合しています。<br><br>このパイプラインを用いて246万件の科学論文を処理し、「Scholar-KG」を構築しました。このうち100万件のサブセットを公開しています。実験により、Agents-K1が科学情報抽出、知識グラフ構築、およびマルチホップ科学推論において優れた性能を達成することが実証されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zongsheng Cao, Bihao Zhan, Jinxin Shi, Jiong Wang, Fangchen Yu, Zhijie Zhong, Zijie Guo, Tianshuo Peng<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.13669v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13669v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="大規模言語モデルにおける意図性、主体性、および道徳的責任：サンプリングは選択ではない" data-timestamp="1781190228000" data-url="https://arxiv.org/abs/2606.13441v1">
+  <p class="meta">arXiv cs.CL　Thu, 11 Jun 2026 15:03:48 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける意図性、主体性、および道徳的責任：サンプリングは選択ではない</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が主体性や道徳的代理性を有するという主張は誤解であると論じます。<br><br>道徳的責任には、内在的な意図性、自己帰属的な行為、そしてコミットメントを負う能力に基づく主体性が必要であると主張します。LLMは一貫性のある、規範的に評価可能な出力を生成しますが、その動作はデータから学習した確率的な入出力マッピングによって完全に特徴づけられます。<br><br>LLMの表象的な意図性は派生的なものであり、真の意図性ではありません。また、その出力はコミットメントとして所有されることも、理由によって導かれることもありません。確率的サンプリングによって導入される変動は、選択や著作者とはみなされません。<br><br>意図的視点、機能主義、両立論、およびモデル出力における道徳的推論の存在といった反論に対処しますが、それらは真の主体性を確立するには不十分であると結論づけています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Joseph Keshet<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.13441v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13441v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="受動的生成から能動的調査へ：科学論文査読エージェントの進化" data-timestamp="1781185103000" data-url="https://arxiv.org/abs/2606.13349v1">
+  <p class="meta">arXiv cs.CL　Thu, 11 Jun 2026 13:38:23 Z</p>
+  <h2 class="article-title">受動的生成から能動的調査へ：科学論文査読エージェントの進化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AI（特に大規模言語モデル：LLM）を用いた科学論文の自動査読における課題と、その解決策を探求するものです。<br><br>従来のLLMによる査読手法は、具体的な証拠に基づいた詳細なレビューの生成が苦手であるという限界がありました。これは、人間が査読を行う際に、疑わしい箇所を証拠に基づいて能動的に調査する能力がLLMに欠けているためと考えられます。<br><br>本研究では、LLMがこのような能動的な調査を行えるようにするための方法論を提案しています。具体的には、マルコフ決定過程（MDP）として定式化し、構造化されたレビューログをワークスペースとして活用する「ProReviewer」というエージェントを開発しました。このエージェントは、レビュー中の証拠や中間的な発見を追跡し、より深い洞察を得ることを目指します。<br><br>実験の結果、ProReviewerは、より大規模なモデルを用いたプロンプトベースの手法や、ファインチューニングされたベースラインモデルと比較して、5つの品質次元すべてにおいて平均スコアが最も高く、人間による評価でも高い勝率を示しました。これは、能動的な調査能力がLLMによる査読の質を向上させる上で重要であることを示唆しています。<br><br>本研究は、AIによる科学論文査読の精度と信頼性を高めるための新たな方向性を示すものであり、今後の研究開発に貢献することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Haishuo Fang, Yue Feng, Iryna Gurevych<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.13349v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13349v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.HC" data-title="RogueAI：対話におけるAIの意図的な欺瞞を検出する逆チューリングテスト" data-timestamp="1781183222000" data-url="https://arxiv.org/abs/2606.13310v1">
+  <p class="meta">arXiv cs.CL　Thu, 11 Jun 2026 13:07:02 Z</p>
+  <h2 class="article-title">RogueAI：対話におけるAIの意図的な欺瞞を検出する逆チューリングテスト</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.HC</span></div>
+  <div class="summary">本論文は、現代のチューリングテストの変種として、対話相手が人工的かどうかではなく、信頼できるかどうかを問うべきだと主張します。<br><br>この考えに基づき、人間プレイヤーが2つの区別不能なLLMエージェントに質問し、そのうちの1つだけが架空のシナリオ内で欺瞞を許可されていることを知った上で、欺瞞的なエージェントを特定する「RogueAI」というインタラクティブなウェブアプリを提案します。<br><br>さらに、プレイヤーが秘密裏に欺瞞戦略を選択するナレーターエージェントとカスタムシナリオを共同設計できる「AutoRogueAI」という手続き的な拡張も導入します。このアーキテクチャとゲームプレイのループを概説し、LLMの欺瞞、社会的推論ベンチマーク、および議論を通じたスケーラブルな監視に関する最近の研究との関連性を位置づけます。<br><br>パイロット展開の結果、欺瞞エージェントは「差分的な有用性、簡潔さ、曖昧さ」という言語的特徴を持つことが示されましたが、人間のプレイヤーの正答率は56.6%にとどまりました。このギャップは、本アーティファクトのデータ収集、教育ツール、および正直さを訓練したモデルの評価ハーネスとしての利用可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Sara Candussio, Emanuele Ballarin, Lorenzo Bonin, Sandro Junior Della Rovere, Luca Bortolussi<br>
+        分類：cs.CL, cs.HC<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.13310v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13310v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="ビジョン・言語モデルにおける復元可能な視覚トークンルーティング" data-timestamp="1781114397000" data-url="https://arxiv.org/abs/2606.12412v1">
   <p class="meta">arXiv cs.AI　Wed, 10 Jun 2026 17:59:57 Z</p>
   <h2 class="article-title">ビジョン・言語モデルにおける復元可能な視覚トークンルーティング</h2>
@@ -1474,108 +1576,6 @@
         分野：cs.DB<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2606.12387v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12387v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="エントロピー限界の打破：棄却サンプリングを用いたMTPによる強化学習の高速化" data-timestamp="1781113005000" data-url="https://arxiv.org/abs/2606.12370v1">
-  <p class="meta">arXiv cs.LG　Wed, 10 Jun 2026 17:36:45 Z</p>
-  <h2 class="article-title">エントロピー限界の打破：棄却サンプリングを用いたMTPによる強化学習の高速化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の強化学習（RL）トレーニングにおけるボトルネックとなっている推論段階の高速化を目指し、マルチトークン予測（MTP）と棄却サンプリングを組み合わせた新しい手法「Bebop」を提案しています。<br><br>研究者たちは、MTPの受け入れ率がモデルエントロピーの変動によって制限されること、そしてエントロピーの上昇に伴い受け入れ率が低下するという負の相関関係を明らかにしました。この問題に対し、確率的棄却サンプリングがエントロピーの影響を緩和し、さらに新しい「TV損失」関数を導入することで、MTPの受け入れ率を約10%向上させ、最大25%の推論スループット向上を達成しました。<br><br>また、RLトレーニング中にオンラインでMTPを更新するよりも、RL前にTV損失と棄却サンプリングでMTPトレーニングを行う方が、一貫した受け入れ率と高速化が得られることを示しました。この手法は、Qwenモデルを用いた実験で、最大1.8倍のエンドツーエンド加速を実現しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Yucheng Li, Huiqiang Jiang, Yang Xu, Jianxin Yang, Yi Zhang, Yizhong Cao, Yuhao Shen, Fan Zhou<br>
-        分類：cs.LG, cs.CL<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.12370v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12370v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="欠損モダリティ下での潜在世界復元によるマルチモーダル学習" data-timestamp="1781112694000" data-url="https://arxiv.org/abs/2606.12362v1">
-  <p class="meta">arXiv cs.AI　Wed, 10 Jun 2026 17:31:34 Z</p>
-  <h2 class="article-title">欠損モダリティ下での潜在世界復元によるマルチモーダル学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、特にバイオサイエンス分野における、決定時に不完全な形でしか利用できないことが多い異種モダリティの学習を対象としています。<br><br>提案手法「Latent World Recovery (LWR)」は、モダリティ固有の埋め込みを共有潜在空間で整列させ、利用可能なモダリティのみを融合して統一表現を構築します。欠損モダリティの補完や固定モダリティセットを必要とせず、観測されたモダリティから直接、利用可能性を考慮した表現学習を行います。<br><br>このアプローチにより、部分的な観測下での頑健なマルチモーダル予測が可能となり、欠損モダリティの明示的な再構築による誤差伝播を回避できます。実際の不完全なマルチオミクスデータセットで評価され、がん表現型分類や生存予測などの下流タスクに有効であることが示されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Hui Wang, Tianyu Ren, Joseph Butler, Christopher Baker, Karen Rafferty, Simon McDade<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.12362v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12362v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.ET, cs.LG" data-title="ALIGNBEAM：推論時のクロスボキャブラリー対数混合によるアライメント転移" data-timestamp="1781111728000" data-url="https://arxiv.org/abs/2606.12342v1">
-  <p class="meta">arXiv cs.CL　Wed, 10 Jun 2026 17:15:28 Z</p>
-  <h2 class="article-title">ALIGNBEAM：推論時のクロスボキャブラリー対数混合によるアライメント転移</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.ET</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）のドメインファインチューニングが安全性に与える悪影響に対処するための新しい手法「ALIGNBEAM」を提案しています。<br><br>ALIGNBEAMは、推論時に安全なアンカーモデルの対数（logits）をターゲットモデルの語彙に変換することで、異なる語彙を持つモデル間でも安全性を転移させることを可能にします。この手法では、モデルの重みは一切変更されず、デプロイメント時に安全性の調整が可能です。<br><br>実験の結果、ALIGNBEAMは敵対的なベンチマークにおいて有害な指示への応答を大幅に削減しつつ、タスクの精度と推論オーバーヘッドを実用的な範囲内に維持することを示しました。これにより、モデルファミリー間で推論時に安全性を転移できることが証明されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Chirag Chawla, Pratinav Seth, Vinay Kumar Sankarapu<br>
-        分類：cs.CL, cs.AI, cs.ET, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.12342v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12342v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.LG" data-title="情報利得による多ターン対話における意味的進捗の測定" data-timestamp="1781111099000" data-url="https://arxiv.org/abs/2606.12332v1">
-  <p class="meta">arXiv cs.CL　Wed, 10 Jun 2026 17:04:59 Z</p>
-  <h2 class="article-title">情報利得による多ターン対話における意味的進捗の測定</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、多ターン対話の評価における課題、すなわち品質が個々の応答ではなく会話全体を通して現れるという点に着目しています。<br><br>情報探索対話の重要な側面である「意味的進捗」を、会話を通じて蓄積される新しい、質問に関連し、冗長でない情報として定義します。これを質問条件付き不確実性削減として定式化し、埋め込み空間で近似する情報理論的指標を導入しました。<br><br>提案手法は、計算可能なガウス分布の定式化と閉形式更新を利用し、理論的に望ましい単調性や情報利得の加法分解といった特性を持ちます。大規模言語モデル（LLM）を評価者とするアプローチとは異なり、評価時に自己回帰推論を必要とせず、再現性が高いです。MT-Bench、Chatbot Arena、UltraFeedbackでの実験では、意味的進捗のみを対象としながらも、人間の判断との整合性において競争力のある結果を示しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Paul He, Shiva Kasiviswanathan, Dominik Janzing<br>
-        分類：cs.CL, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.12332v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12332v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="誤解を招く医療文脈下でのLLMの認識的耐性の測定" data-timestamp="1781108846000" data-url="https://arxiv.org/abs/2606.12291v1">
-  <p class="meta">arXiv cs.CL　Wed, 10 Jun 2026 16:27:26 Z</p>
-  <h2 class="article-title">誤解を招く医療文脈下でのLLMの認識的耐性の測定</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が医療分野で専門レベルのスコアを達成する一方で、誤解を招く文脈下ではその判断が脆弱になる可能性を指摘しています。<br><br>研究者たちは、LLMが本来正しく回答できる質問に誤った情報が混入された場合、正しい回答から逸脱することを発見しました。この、敵対的な文脈下でも正しい判断を維持する能力を「認識的耐性」と定義し、それを測定するための新しいベンチマーク「MedMisBench」を開発しました。<br><br>MedMisBenchを用いた評価では、LLMの平均精度が大幅に低下し、特に権威付けられた虚偽や例外的な状況を歪曲するような情報注入が効果的であることが示されました。臨床専門家による評価では、深刻な危害につながる可能性のあるケースが多数確認され、既存の評価方法ではLLMの医療判断における構造的な盲点を捉えきれていないことが明らかになりました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Hongjian Zhou, Xinyu Zou, Jinge Wu, Sean Wu, Junchi Yu, Bradley Max Segal, Tobias Erich Niebuhr, Sara Amro<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.12291v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.12291v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="astro-ph.IM" data-source="arXiv stat.ML" data-area="AI" data-categories="astro-ph.IM, stat.ML" data-title="機械学習における時系列分析" data-timestamp="1781076132000" data-url="https://arxiv.org/abs/2606.11746v1">
-  <p class="meta">arXiv stat.ML　Wed, 10 Jun 2026 07:22:12 Z</p>
-  <h2 class="article-title">機械学習における時系列分析</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">astro-ph.IM</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、特に時系列データが豊富な天文学や宇宙論において、機械学習の基本的な構成要素である時系列分析について解説します。<br><br>定常性、自己相関、季節性といった時系列の基本概念、自己回帰モデル、移動平均モデル、ARIMA、指数平滑法、状態空間モデルなどの古典的統計モデル、そして隠れマルコフモデル、ガウス過程、深層学習モデル（RNN、CNN、Transformer）などの現代的な機械学習アプローチについて論じます。<br><br>伝統的な統計的手法がどのように基礎を築き、それらが機械学習手法にどのように発展していくかを説明します。様々なドメインからの例を用いて、共通の原則を強調し、読者が研究で時系列分析に機械学習技術を応用するための理論的理解と実践的文脈の両方を提供することを目的としています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Antonio Pagliaro, Anna Anzalone<br>
-        分類：astro-ph.IM, stat.ML<br>
-        分野：astro-ph.IM<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.11746v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.11746v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
