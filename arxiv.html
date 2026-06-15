@@ -1375,6 +1375,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.CL, cs.LG" data-title="VLMの視線追跡メカニズム：記述対象の画像領域を特定する「視線ヘッド」" data-timestamp="1781287197000" data-url="https://arxiv.org/abs/2606.14703v1">
+  <p class="meta">arXiv cs.LG　Fri, 12 Jun 2026 17:59:57 Z</p>
+  <h2 class="article-title">VLMの視線追跡メカニズム：記述対象の画像領域を特定する「視線ヘッド」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、画像記述タスクにおいて、ビジョン・言語モデル（VLM）がどのように内部的に処理を行っているのかを解明するものです。<br><br>研究者たちは、VLMの言語モデルバックボーン内に存在する、特定の注意機構（アテンションヘッド）に着目しました。これらは「視線ヘッド」と名付けられ、モデルが現在記述している画像領域に注意を向けることが発見されました。このメカニズムは、コミックストリップのような、物語の順序が空間的に配置されたテスト環境を用いて特定されました。<br><br>これらの視線ヘッドは単に記述対象の画像トークンを追跡するだけでなく、その注意を特定の領域に向けることで、VLMにその領域を記述させることが可能です。トップ100の視線ヘッドに対する単一の注意マスク介入により、モデルの応答を83.1%の精度で任意のコミックパネルに誘導できることが示されました。この介入は、モデルサイズやアーキテクチャに依存せず、再学習なしでVLMの振る舞いを制御できる実用的な手法であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Rohit Gandikota, David Bau<br>
+        分類：cs.CV, cs.CL, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.14703v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.14703v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL" data-title="医療用MLLM推論における段階的幻覚診断ベンチマーク「ClinHallu」" data-timestamp="1781287118000" data-url="https://arxiv.org/abs/2606.14697v1">
   <p class="meta">arXiv cs.AI　Fri, 12 Jun 2026 17:58:38 Z</p>
   <h2 class="article-title">医療用MLLM推論における段階的幻覚診断ベンチマーク「ClinHallu」</h2>
@@ -1460,6 +1477,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="知識編集における「書く」と「抑制する」の使い分け：メモリ支援型アダプターによる経路特化" data-timestamp="1781285852000" data-url="https://arxiv.org/abs/2606.14668v1">
+  <p class="meta">arXiv cs.LG　Fri, 12 Jun 2026 17:37:32 Z</p>
+  <h2 class="article-title">知識編集における「書く」と「抑制する」の使い分け：メモリ支援型アダプターによる経路特化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、知識編集システムにおいて、特定の事実を更新しつつ、関連するが不必要な振る舞いを維持することの重要性を論じています。特に、推論時に編集メモリを検索し、パラメータ効率の良いアダプターでモデルのオブジェクト選択を修正するメモリ支援設定に焦点を当てています。<br><br>研究者たちは、知識編集において「どのように編集を書き込むか」だけでなく、「いつ編集を抑制するか」が中心的な設計課題であると主張しています。そこで、「経路特化型デュアルアダプターエディター」である「\method{}」を提案しています。この手法では、まず関連性ルーターがプロンプトが編集メモリを受けるべきかを判断します。編集メモリがルーティングされたプロンプトには編集アダプターが使用され、新しいオブジェクトを優先するように学習されます。一方、ルーティングされないプロンプトには、元のオブジェクトの優先度を維持または回復するように学習された、別のローカリティアダプターが使用されます。<br><br>評価の結果、「\method{}」は複数のベンチマークにおいて最高の確率選好精度を達成しました。ルーターのアブレーション研究では、データセットごとに適切なメモリの境界が異なり、レキシカルニューラルルーターが最も安全である一方、BGE埋め込みルーティングが他のデータセットでより効果的であることが示されました。この手法は、編集の注入とオフルートの抑制を分離することによる効果が大きいことを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Yining Huang<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.14668v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.14668v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="音響振動を用いたコンピュータビジョンへの敵対的攻撃" data-timestamp="1781284973000" data-url="https://arxiv.org/abs/2606.14658v1">
+  <p class="meta">arXiv cs.AI　Fri, 12 Jun 2026 17:22:53 Z</p>
+  <h2 class="article-title">音響振動を用いたコンピュータビジョンへの敵対的攻撃</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、コンピュータビジョン（CV）アプリケーション、特に自動運転車や顔認識などのAIシステムに対する、音響振動を用いた新たな敵対的攻撃手法を提案しています。AIシステムはますます実世界で利用されていますが、その脆弱性は十分に理解されていません。<br><br>研究では、音響振動がカメラの内部手ぶれ補正機構に干渉し、画像にアーティファクトを発生させることで、AIモデルの誤分類やターゲットの見落としを引き起こすことを実証しています。特に、従来の超音波周波数（>20 kHz）を用いた攻撃の短距離という制限を克服するため、可聴周波数帯（<br>実験では、市販のカメラを様々な周波数で共振させ、物体検出モデル（YOLO11）に対する攻撃の有効性を示しました。この結果から、AI CVシステムをこれらの攻撃に対してより脆弱にする要因に関する洞察が得られ、将来的な緩和戦略の開発に役立つことが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Nicole Villavicencio-Garduño, Maksim Ekin Eren, Milo Prisbrey, Ben Migliori, Michael Teti<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.14658v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.14658v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG" data-title="LLMを用いた解釈可能なワークフローへのアクションシーケンス抽象化" data-timestamp="1781284755000" data-url="https://arxiv.org/abs/2606.14654v1">
   <p class="meta">arXiv cs.AI　Fri, 12 Jun 2026 17:19:15 Z</p>
   <h2 class="article-title">LLMを用いた解釈可能なワークフローへのアクションシーケンス抽象化</h2>
@@ -1477,105 +1528,54 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="動的環境における堅牢なLLMエージェントのための記憶進化追跡ベンチマーク「EvoArena」" data-timestamp="1781200799000" data-url="https://arxiv.org/abs/2606.13681v1">
-  <p class="meta">arXiv cs.CL　Thu, 11 Jun 2026 17:59:59 Z</p>
-  <h2 class="article-title">動的環境における堅牢なLLMエージェントのための記憶進化追跡ベンチマーク「EvoArena」</h2>
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.SD" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SD, cs.AI" data-title="Transformerベース音声モデルのためのエントロピー誘導型説明可能性手法" data-timestamp="1781284122000" data-url="https://arxiv.org/abs/2606.14647v1">
+  <p class="meta">arXiv cs.AI　Fri, 12 Jun 2026 17:08:42 Z</p>
+  <h2 class="article-title">Transformerベース音声モデルのためのエントロピー誘導型説明可能性手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.SD</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、WhisperのようなTransformerベースの自動音声認識（ASR）モデルの予測解釈性を向上させるための、モデル固有の説明可能AI（XAI）フレームワーク「LEAF-X」を提案しています。これらのモデルは高い精度を持つ一方で、その予測根拠の解釈は依然として困難です。<br><br>LEAF-Xは、エントロピー誘導型アテンション重み付け、マルチレイヤーアテンションロールアウト、およびオプションの因果的アブレーションを組み合わせることで、低エントロピーで影響力の高いアテンションヘッドとレイヤーを特定し、疎なトークン・フレーム間のアトリビューションを生成します。これは、摂動ベースの説明手法や生の注意マップとは異なり、エンコーダー・デコーダーおよび音声拡張デコーダーオンリーモデルの内部構造を利用して、モデルの計算をより正確に反映する説明を生成します。<br><br>結果として、LEAF-Xは既存手法と比較して、忠実性で32%、局所性/疎性で35-39%の改善を示し、最も安定したアトリビューションを生成することが確認されました。これにより、より透明性が高く監査可能なASRシステムの開発が支援されることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Ravi Ranjan, Utkarsh Grover, Xiaomin Lin, Agoritsa Polyzou<br>
+        分類：cs.SD, cs.AI<br>
+        分野：cs.SD<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.14647v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.14647v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="グループ会話におけるローカル社会規範適応のベンチマーク「LoSoNA」" data-timestamp="1781281380000" data-url="https://arxiv.org/abs/2606.14600v1">
+  <p class="meta">arXiv cs.CL　Fri, 12 Jun 2026 16:23:00 Z</p>
+  <h2 class="article-title">グループ会話におけるローカル社会規範適応のベンチマーク「LoSoNA」</h2>
   <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、動的な環境下で大規模言語モデル（LLM）エージェントが直面する課題に対処するための新しいベンチマークスイート「EvoArena」を提案します。<br><br>従来のLLMエージェントの評価は静的な環境を前提としていますが、現実世界では環境が変化するため、エージェントは知識やスキルを更新し続ける必要があります。EvoArenaは、終端、ソフトウェア、ソーシャルドメインにおける段階的な更新として環境変化をモデル化し、さらに「EvoMem」というパッチベースの記憶パラダイムを導入して、記憶の進化を構造化された更新履歴として記録します。<br><br>実験の結果、既存のエージェントはEvoArenaにおいて平均39.6%の精度しか達成できず、EvoMemは一貫して性能を向上させ、平均1.5%の改善をもたらしました。また、標準的なベンチマークであるGAIAやLoCoMoでも性能が向上しました。EvoMemは、記憶における証拠の取り込みを改善し、進化する環境状態の完全な保存を向上させることが示されました。この研究は、信頼性の高いエージェント展開のために、評価と記憶の両方で進化をモデル化することの重要性を強調しています。</div>
+  <div class="summary">本論文は、オンライングループチャットにおけるローカルな会話規範の認識と適応能力を評価するための新しいベンチマーク「LoSoNA」を提案しています。オンライングループチャットは、明示的に述べられることの少ないローカルな会話規範が存在する社会空間です。<br><br>LoSoNAは、各シナリオで被験者モデルに、非被験者参加者が隠れたローカル規範を示すようにキュレーションされたグループチャットのトランスクリプトが与えられます。その後、最終的なエリシター（誘発者）のターンが、被験者がその規範を推測したかどうかを示す応答を強制します。研究者たちは、8つの最先端およびオープンウェイトモデルを、モデルに事前会話を応答の証拠として扱うように指示する度合いが異なる4つのプロンプト条件で評価しました。<br><br>その結果、ほとんどのモデルでは単純なプロンプトは限定的でしたが、明示的な規範認識プロンプトは、Gemini 3.1 Proが84.2%、Claude Fable 5が81.6%に達するなど、モデルによって効果が異なりました。LoSoNAは、LLMの社会的スキルを評価するという最近の呼びかけに貢献し、モデルが先行事例からローカルな会話規範を推測し、グループチャットの応答で使用できるかどうかをテストします。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Jundong Xu, Qingchuan Li, Jiaying Wu, Yihuai Lan, Shuyue Stella Li, Huichi Zhou, Bowen Jiang, Lei Wang<br>
+        著者：Mateusz Winiarek, Maksymilian Bilski, Mateusz Jacniacki<br>
         分類：cs.CL<br>
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.13681v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13681v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2606.14600v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.14600v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="検索拡張型強化学習による類推推論能力の獲得" data-timestamp="1781200792000" data-url="https://arxiv.org/abs/2606.13680v1">
-  <p class="meta">arXiv cs.AI　Thu, 11 Jun 2026 17:59:52 Z</p>
-  <h2 class="article-title">検索拡張型強化学習による類推推論能力の獲得</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が複雑な推論タスクにおいて、類推を通じて学習する能力を獲得するための新しいフレームワークを提案します。<br><br>従来の検索拡張生成（RAG）は、外部知識をLLMに組み込む標準的な手法ですが、単純な類似性に基づく検索では、問題の構造や解決戦略が類似している場合に、適切な知識を引き出すことが困難でした。本研究では、この課題に対処するため、「検索拡張型強化学習ファインチューニング（RA-RFT）」という後処理フレームワークを開発しました。<br><br>RA-RFTは、単なる意味的類似性ではなく、推論に最も役立つコンテキストをランク付けするリトリーバーを訓練します。そして、強化学習の手法を用いて、類推的なデモンストレーションを検索し、モデルのポリシーをファインチューニングします。これにより、モデルは検証可能な報酬の下で、推論トレースを活用することを学習します。<br><br>さらに、検索されるコンテキストの多様性を分析した結果、推論を意識した検索は、個々の問題に対して異なる推論の足場を提供する、補完的な解決戦略を引き出すことがわかりました。このアプローチは、特に数学的推論のような複雑なベンチマークにおいて、標準的な強化学習ファインチューニング手法を上回る性能を示しました。<br><br>本研究は、LLMの推論能力を向上させる上で、類推学習がいかに有効であるかを示しており、特にリトリーバーの設計が推論能力に与える影響を明らかにしています。これは、より高度なAI推論システムの開発に貢献するものです。</div>
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="math.OC" data-source="arXiv stat.ML" data-area="AI" data-categories="math.OC, cs.LG, stat.ML" data-title="重尾分布における非ユークリッド最適化の理論的優位性" data-timestamp="1781278656000" data-url="https://arxiv.org/abs/2606.14560v1">
+  <p class="meta">arXiv stat.ML　Fri, 12 Jun 2026 15:37:36 Z</p>
+  <h2 class="article-title">重尾分布における非ユークリッド最適化の理論的優位性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">math.OC</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、Transformerモデルの学習において経験的に優れた性能を示す非ユークリッド最適化手法（MuonやScionなど）の理論的優位性を、重尾分布（確率勾配のp乗中心モーメントが$p \in (1,2]$で有界）の非凸領域において解明することを目的としています。<br><br>従来のユークリッド手法と比較して、特定の非ユークリッド手法がより強い定常性尺度の下で最適なサンプル複雑性を達成できることを示しています。これにより、重尾分布ノイズを次元依存性を追加することなく吸収できることが理論的に証明されました。具体的には、Muonは核ノルムにおける$\varepsilon$-定常点を$\mathcal{O}\left(\min\{m, n\} \frac{Δ_1 L}{\varepsilon^2} \left(\frac σ\varepsilon \right)^{\frac p {p-1}}\right)$サンプルで発見できると示されています。<br><br>さらに、このサンプル複雑性が、核ノルム定常性下でのすべての一次手法に対して最適であることが証明されました。大規模言語モデルを用いた実験もこの理論を支持しており、Muonのスペクトル幾何学以外のシャッテン幾何学も特定の状況で競争力のある性能を発揮する可能性が示唆されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
+        配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Zilin Xiao, Qi Ma, Chun-cheng Jason Chen, Xintao Chen, Avinash Atreya, Hanjie Chen, Vicente Ordonez<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.13680v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13680v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="エージェント型空間推論のためのアクションインターフェース再考：SpatialClaw" data-timestamp="1781200776000" data-url="https://arxiv.org/abs/2606.13673v1">
-  <p class="meta">arXiv cs.AI　Thu, 11 Jun 2026 17:59:36 Z</p>
-  <h2 class="article-title">エージェント型空間推論のためのアクションインターフェース再考：SpatialClaw</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、ビジョン・言語モデル（VLM）における空間推論能力の向上を目指し、エージェントが専門的なツールをどのように利用するかという「アクションインターフェース」に着目した新しいフレームワーク「SpatialClaw」を提案します。<br><br>従来のツール拡張型エージェントは、空間推論において限界がありました。単一パスでのコード実行は、中間結果を観察する前に分析戦略を決定してしまう問題があり、構造化されたツール呼び出しインターフェースは、操作の自由な組み合わせやタスクに応じた分析の調整が難しいという柔軟性の欠如がありました。これらはいずれも、オープンエンドで複雑な3D/4D空間推論には不十分でした。<br><br>そこで本研究では、コードをアクションインターフェースとして採用する「SpatialClaw」を開発しました。このフレームワークは、入力フレームと複数の知覚・幾何学プリミティブを備えたステートフルなPythonカーネルを維持します。これにより、VLMベースのエージェントは、各ステップで実行可能なセルを書き、過去のすべての出力を条件として、知覚結果の柔軟な組み合わせや操作、中間的なテキストおよび視覚的観察への適応が可能になります。<br><br>SpatialClawは、静的および動的な3D/4D空間推論タスクを網羅する20の空間推論ベンチマークで評価されました。その結果、平均精度59.9%を達成し、最近の空間エージェントと比較して+11.2ポイントの改善を示しました。これは、ベンチマーク固有の適応なしに、複数のVLMバックボーンで一貫した改善が見られたことを意味します。<br><br>本研究は、アクションインターフェースの設計がエージェントの空間推論能力に与える影響を明らかにし、より柔軟で強力な空間推論を実現するための新たなアプローチを提供します。これは、ロボティクスやコンピュータビジョン分野におけるエージェント開発に重要な示唆を与えるものです。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Seokju Cho, Ryo Hachiuma, Abhishek Badki, Hang Su, Byung-Kwan Lee, Chan Hee Song, Sifei Liu, Subhashree Radhakrishnan<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.13673v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13673v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="大規模言語モデルを用いた社会・行動科学における再現性評価の自動化" data-timestamp="1781200716000" data-url="https://arxiv.org/abs/2606.13670v1">
-  <p class="meta">arXiv cs.AI　Thu, 11 Jun 2026 17:58:36 Z</p>
-  <h2 class="article-title">大規模言語モデルを用いた社会・行動科学における再現性評価の自動化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、社会・行動科学分野における研究の再現性評価を、大規模言語モデル（LLM）を用いて自動化する手法を提案します。<br><br>従来、再現性評価は独立した研究者によるデータ再解析に依存しており、多くのリソースと時間を要していました。本研究では、LLMがこのプロセスを自動化できる可能性を示します。76件の行動・社会科学分野の公表研究を対象に、LLMによる分析結果と、元の研究および人間による再解析結果を比較しました。<br><br>その結果、LLMは多くのケースで元の研究の効果量推定値や結論を高い精度で再現できることがわかりました。特に、結論の質的再現性においては、人間による再解析を上回るケースも見られました。これらの結果は、LLMが研究の再現性評価のためのスケーラブルなツールとして機能し、実証結果の体系的な監査基盤を提供できる可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Tobias Holtdirk, Pietro Marcolongo, Anna Steinberg Schulten, Felix Henninger, Stefan Rose, Sarah Ball, Bolei Ma, Frauke Kreuter<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.13670v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13670v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="Agents-K1：エージェントネイティブな知識オーケストレーションに向けて" data-timestamp="1781200715000" data-url="https://arxiv.org/abs/2606.13669v1">
-  <p class="meta">arXiv cs.AI　Thu, 11 Jun 2026 17:58:35 Z</p>
-  <h2 class="article-title">Agents-K1：エージェントネイティブな知識オーケストレーションに向けて</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、現在のLLMベースの研究エージェントがエージェントオーケストレーションを進化させているものの、科学的知識のオーケストレーションを大きく見落としていると指摘します。<br><br>既存の研究は、論文を要旨、表面的な言及、および平坦な引用関係に還元しがちですが、科学的推論に不可欠な主要なエンティティ、主張、証拠、メカニズム、および方法論の系統を省略しています。これに対し、本論文は、生データをエージェントネイティブな科学的知識グラフに変換するエンドツーエンドの知識オーケストレーションパイプライン「Agents-K1」を導入します。<br><br>Agents-K1は、単なる要旨だけでなく、論文全体にわたるエンティティ、マルチモーダル証拠、引用、および型付けされたエンティティ間関係をキャプチャする5モジュールスキーマを持つマルチモーダルパーサー、GRPOとルールベース報酬で訓練された4B情報抽出バックボーン、そしてWeb検索、マルチモーダルグラフ検索、クロスドキュメントトラバーサルを統合する3ソースエージェントインターフェースであるgraphanything CLIを統合しています。<br><br>このパイプラインを用いて246万件の科学論文を処理し、「Scholar-KG」を構築しました。このうち100万件のサブセットを公開しています。実験により、Agents-K1が科学情報抽出、知識グラフ構築、およびマルチホップ科学推論において優れた性能を達成することが実証されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Zongsheng Cao, Bihao Zhan, Jinxin Shi, Jiong Wang, Fangchen Yu, Zhijie Zhong, Zijie Guo, Tianshuo Peng<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.13669v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13669v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="デコーダーの勾配影響ランキングをエンコーダーに蒸留するデータ属性手法Influcoder" data-timestamp="1781200713000" data-url="https://arxiv.org/abs/2606.13668v1">
-  <p class="meta">arXiv cs.CL　Thu, 11 Jun 2026 17:58:33 Z</p>
-  <h2 class="article-title">デコーダーの勾配影響ランキングをエンコーダーに蒸留するデータ属性手法Influcoder</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の能力向上に伴い、訓練データセットの品質向上のためのサンプルフィルタリングへの関心が高まっている背景を踏まえ、データ属性（DA）手法に関する新しいアプローチを提案します。<br><br>データ属性（DA）手法は、訓練データセットの個々のサンプルが、モデルが特定の出力を生成するのをどの程度条件付けるかを推定することを目的としています。例えば、LLM訓練後に有害な挙動の原因となりうるデータサンプルを特定したい場合などが考えられます。この種の多くの手法は、影響関数（influence functions）のパラダイムを通じてこの条件付けを定量化します。<br><br>しかし、影響関数に基づく従来の手法は、大規模データセットへの実用的な実装に必要な処理速度とストレージのコンパクトさが欠けていました。そこで本研究では、Influcoderという手法を提案します。これは、大規模データセットにおける影響ベースのデータ属性（DA）を、迅速かつ費用対効果の高いアプローチで実現するものです。<br><br>Influcoderは、デコーダーの勾配影響ランキングをエンコーダーに蒸留することで、効率的なデータ属性評価を可能にします。これにより、大規模LLMのデータキュレーションプロセスを大幅に改善することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Dimitri Kachler, Damien Sileo, Pascal Denis<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
+        著者：Florian Hübler, Thomas Pethick, Suvrit Sra<br>
+        分類：math.OC, cs.LG, stat.ML<br>
+        分野：math.OC<br>
         ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.13668v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.13668v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2606.14560v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.14560v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
