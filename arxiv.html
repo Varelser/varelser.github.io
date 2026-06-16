@@ -1392,6 +1392,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CV, stat.ML" data-title="線形逆問題を解くための正確な事後分布スコア推定" data-timestamp="1781546302000" data-url="https://arxiv.org/abs/2606.17048v1">
+  <p class="meta">arXiv cs.LG　Mon, 15 Jun 2026 17:58:22 Z</p>
+  <h2 class="article-title">線形逆問題を解くための正確な事後分布スコア推定</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.CV</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、拡散モデルやフローベースモデルが学習する強力なデータ事前分布を利用して線形逆問題を解くための、新しい手法を提案します。<br><br>これらのモデルは、ガウスノイズを逆転させるデノイザーを学習することでデータ事前分布を捉えますが、線形逆問題を解く際には、条件付き分布ではなく、条件なしの事前分布のスコアしか提供しません。既存手法は、近似的な測定マッチング補正で固定されたデノイザーを誘導するか、デノイジング構造を放棄した条件付き復元モデルを学習していました。<br><br>本研究では、一般的なガウス補間下で、線形ガウス逆問題に対する事後分布スコアを閉形式で導出しました。これにより、事後分布サンプリングが、演算子依存のシフトされたピボットにおけるデノイジング問題に帰着することが示されました。この発見に基づき、標準的な事前学習の入出力構造を維持し、事前学習済みデノイザーからスクラッチで学習またはファインチューニング可能な、デノイジング学習目標であるExact Posterior Score (EPS) を開発しました。<br><br>推論時には、EPSは勾配ベースの事後分布サンプラーよりも大幅に少ないデノイザー評価回数で、忠実度、知覚品質、分布メトリクスにおいて、学習不要および学習ベースのベースラインを上回る性能を示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Abbas Mammadov, Ozgur Kara, Kaan Oktay, Iskander Azangulov, Adil Kaan Akan, Hyungjin Chung, James Matthew Rehg, Yee Whye Teh<br>
+        分類：cs.LG, cs.CV, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.17048v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.17048v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.IR" data-title="大規模言語モデルエージェントによるメタアナリシス論文のベンチマーキング" data-timestamp="1781546201000" data-url="https://arxiv.org/abs/2606.17041v1">
   <p class="meta">arXiv cs.CL　Mon, 15 Jun 2026 17:56:41 Z</p>
   <h2 class="article-title">大規模言語モデルエージェントによるメタアナリシス論文のベンチマーキング</h2>
@@ -1423,6 +1440,74 @@
         分野：cs.CL<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2606.17029v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.17029v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.AR" data-title="長期間予測のための受動的光シーケンス混合：HAMON" data-timestamp="1781545910000" data-url="https://arxiv.org/abs/2606.17028v1">
+  <p class="meta">arXiv cs.AI　Mon, 15 Jun 2026 17:51:50 Z</p>
+  <h2 class="article-title">長期間予測のための受動的光シーケンス混合：HAMON</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.AR</span></div>
+  <div class="summary">本論文は、長期間の時系列予測において、単純な線形モデルや周波数領域モデルが依然として高い競争力を持つという事実に基づき、新しいアプローチを提案します。従来のトランスフォーマーが強力とされる密な重ね合わせ表現を必要としない可能性に着目し、基盤レベルでの問いを投げかけます。<br><br>提案手法「HAMON」は、受動的な回折光学予測コアであり、過去の値は光学開口部にエンコードされ、未来の位置は暗く保たれます。カスケードされた訓練可能な位相マスクと自由空間回折により、出力フィールドに直接予測が形成されます。推論時には、訓練可能なデジタルシーケンス混合層なしで、単一の受動的光伝搬パスで予測が実行されます。<br><br>標準的なベンチマークにおいて、HAMONはETTm2では全てのホライゾンで、ETTh2では最長ホライゾン以外で、最も強力なデジタルベースラインを上回る性能を示しました。MSEを最大14%改善し、ホライゾン全体で一貫して良好な結果を得ています。この手法は、光学ハードウェアおよび受動的光シーケンス混合の具体的なターゲットを定義します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Alper Yıldırım<br>
+        分類：cs.LG, cs.AI, cs.AR<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.17028v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.17028v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="FusionRS：デュアルモーダル画像言語基盤モデルのための大規模RGB-赤外線リモートセンシングデータセット" data-timestamp="1781545774000" data-url="https://arxiv.org/abs/2606.17020v1">
+  <p class="meta">arXiv cs.AI　Mon, 15 Jun 2026 17:49:34 Z</p>
+  <h2 class="article-title">FusionRS：デュアルモーダル画像言語基盤モデルのための大規模RGB-赤外線リモートセンシングデータセット</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、リモートセンシングにおける地球観測理解を進展させる画像言語モデルの分野において、RGB画像に偏りがちな既存研究に対し、赤外線データの補完的な情報を活用する重要性を指摘します。赤外線画像は、熱強度構造、物体境界、照明に依存しないシーン特徴など、RGB画像だけでは捉えきれない独自の情報を持ちます。<br><br>しかし、リモートセンシングにおける大規模なRGB-赤外線-テキストデータセットが存在しないというギャップを埋めるため、本論文では「FusionRS」という、リモートセンシングにおけるデュアルモーダル画像言語学習のための初の大規模RGB-赤外線-テキストデータセットを導入します。FusionRSは、多様な公開RGBリモートセンシング画像を赤外線風の画像に変換し、アラインされたRGB-IR画像ペアを形成します。各ペアには、従来のシーンキャプションと、赤外線特有の視覚的特性を明示的に記述しつつ意味内容を保持するIR対応キャプションが関連付けられています。<br><br>FusionRSに基づき、RGB-IRの共同理解のためのデュアルモーダル画像言語基盤モデルを訓練します。CLIPスタイルのモデルを訓練し、次に生成的なVLMsをファインチューニングしてデュアルモーダルRGB-IRキャプション生成を行います。実験の結果、FusionRSはRGBのみの訓練設定や非IR対応の訓練設定と比較して、RGB-IRアラインメント、赤外線からテキストへの検索、デュアルモーダルキャプション生成を改善することが示されました。特に、IR対応キャプションが赤外線と言語のアラインメントを強化する上で重要であることが確認され、よりスケーラブルなRGB-赤外線リモートセンシング画像言語表現学習のためのモダリティ固有のテキスト監視の重要性が強調されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jiaju Han, Ben Zhang, Xuemeng Sun, Qike Zhang, Yuxian Dong, Chengyin Hu, Fengyu Zhang, Yiwei Wei<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.17020v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.17020v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG, cs.MA" data-title="TokenPilot：LLMエージェント向けキャッシュ効率的なコンテキスト管理" data-timestamp="1781545610000" data-url="https://arxiv.org/abs/2606.17016v1">
+  <p class="meta">arXiv cs.AI　Mon, 15 Jun 2026 17:46:50 Z</p>
+  <h2 class="article-title">TokenPilot：LLMエージェント向けキャッシュ効率的なコンテキスト管理</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">cs.MA</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントが長期間のセッションで運用される際に発生する、推論コストの増大という課題に取り組みます。<br><br>既存のアプローチは、テキストのプルーニングや動的なメモリ削除によりトークン数を削減しようとしますが、これらの手法はシーケンスを無秩序に変更し、プレフィックスの不一致やキャッシュの無効化を引き起こすという問題がありました。本研究では、このテキストの疎性（sparsity）とプロンプトキャッシュの連続性との間のトレードオフを解決するため、TokenPilotという二重粒度のコンテキスト管理フレームワークを提案します。<br><br>TokenPilotは、グローバルな「取り込み認識型圧縮」により、プロンプトのプレフィックスを安定させ、取り込み時に環境ノイズを排除します。ローカルでは、「ライフサイクル認識型削除」により、コンテキストセグメントの残存ユーティリティを監視し、タスク関連性が失われた場合にのみコンテンツセグメントをオフロードする、保守的なバッチターン・スケジュールを適用します。<br><br>実験の結果、TokenPilotは既存システムと比較して、パフォーマンスを維持しつつ、コストを大幅に削減できることが示されました。この技術は、LightMem2に統合されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Buqiang Xu, Zirui Xue, Dianmou Chen, Chenyang Fu, Chiyu Wu, Caiying Huang, Chen Jiang, Jizhan Fang<br>
+        分類：cs.CL, cs.AI, cs.LG, cs.MA<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.17016v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.17016v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.SD" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SD, cs.AI, cs.LG, cs.MM, eess.AS" data-title="TuneJury：音楽生成における嗜好整合性を向上させるオープンな評価指標" data-timestamp="1781545170000" data-url="https://arxiv.org/abs/2606.17006v1">
+  <p class="meta">arXiv cs.AI　Mon, 15 Jun 2026 17:39:30 Z</p>
+  <h2 class="article-title">TuneJury：音楽生成における嗜好整合性を向上させるオープンな評価指標</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.SD</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">cs.MM</span></div>
+  <div class="summary">本論文では、テキストから音楽を生成する際のユーザーの嗜好との整合性を向上させるための、オープンな評価指標「TuneJury」を提案します。<br><br>TuneJuryは、テキストプロンプトとオーディオクリップから音楽の嗜好スコアを予測する、インスタンスレベルのペアワイズ報酬モデルです。公開されている人間の嗜好ラベル（アリーナ形式の投票、メトリクス整合性ペア、クラウドソーシングによるペア比較、専門家による美的評価）を用いて学習されています。<br><br>提案されたスコアのマージンは、テストデータセットにおいて良好にキャリブレーションされており、単純なスコア閾値によるデータフィルタリングを可能にします。TuneJuryは、未知のテストペアや分布外のベンチマークに対しても汎化性能を示し、既存手法と比較して競争力のある結果を得ています。<br><br>さらに、生成モデルのリリース後には、アンカーキャリブレーションという後処理手法を導入し、データ効率を大幅に向上させながら、システムごとの合意を回復させます。この評価指標は、推論時のベストN選択、潜在空間最適化、専門家イテレーションによる事後学習といった、3つの下流アプリケーションにおいて一貫した改善をもたらします。TuneJuryは公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yonghyun Kim, Junwon Lee, Haiwen Xia, Yinghao Ma, Junghyun Koo, Koichi Saito, Yuki Mitsufuji, Chris Donahue<br>
+        分類：cs.SD, cs.AI, cs.LG, cs.MM, eess.AS<br>
+        分野：cs.SD<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.17006v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.17006v1</a>
   </div>
 </article>
 
@@ -1460,6 +1545,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-06" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, stat.AP, stat.ME, stat.ML" data-title="合成データ監査のための因果的フレームワーク：ファントムと開示" data-timestamp="1781542442000" data-url="https://arxiv.org/abs/2606.16952v1">
+  <p class="meta">arXiv stat.ML　Mon, 15 Jun 2026 16:54:02 Z</p>
+  <h2 class="article-title">合成データ監査のための因果的フレームワーク：ファントムと開示</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">stat.AP</span><span class="tag">stat.ME</span></div>
+  <div class="summary">本論文は、生成AIや大規模言語モデル（LLM）の普及に伴い、プライバシー保護の代替手段として注目される合成データにおける情報漏洩のリスクに対処するための、因果的フレームワークを提案します。<br><br>提案手法は、システムがユーザー情報を直接再現する「真の開示」と、偶然にユーザーデータを生成する「ファントム開示」を区別するメカニズムを導入します。訓練データとホールドアウトセットに分割し、厳密な統計的仮説検定を適用することで、観測された開示がゼロ学習や差分プライバシー（DP）境界などの厳格なプライバシーベースラインと一致するかどうかを判断します。<br><br>このアプローチは、モデルへのアクセス、カナリア挿入、参照モデルの訓練を必要とせず、合成出力とホールドアウト制御セットのみで機能します。このフレームワークは、メンバーシップ推論攻撃として機能し、既存のデータベース監査手法よりもタイトなプライバシー漏洩の経験的下限を提供します。モデルに依存せず、あらゆる合成データ生成メカニズムに適用可能で、計算リソースも大幅に削減できます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Kareem Amin, Rudrajit Das, Alessandro Epasto, Adel Javanmard, Dennis Kraft, Mónica Ribero, Sergei Vassilvitskii<br>
+        分類：cs.LG, cs.AI, stat.AP, stat.ME, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2606.16952v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16952v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-06" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="大規模言語モデル解釈のためのスケーラブルな回路学習" data-timestamp="1781541643000" data-url="https://arxiv.org/abs/2606.16939v1">
   <p class="meta">arXiv cs.LG　Mon, 15 Jun 2026 16:40:43 Z</p>
   <h2 class="article-title">大規模言語モデル解釈のためのスケーラブルな回路学習</h2>
@@ -1474,108 +1576,6 @@
         分野：cs.LG<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2606.16939v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16939v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="コードインタプリタによる効果的な推論のための外因性・内因性特性の探求" data-timestamp="1781541240000" data-url="https://arxiv.org/abs/2606.16934v1">
-  <p class="meta">arXiv cs.LG　Mon, 15 Jun 2026 16:34:00 Z</p>
-  <h2 class="article-title">コードインタプリタによる効果的な推論のための外因性・内因性特性の探求</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、AI分野におけるコードインタプリタ（CI）を用いた大規模言語モデル（LLM）の推論能力向上に関する研究です。<br><br>CIは、実行可能な計算と反復的な検証を通じてLLMの推論能力を高める効果的なパラダイムですが、その行動特性は十分に探求されていませんでした。本研究では、重要なトークン（外因性特性）とコード固有の認知的行動（内因性特性）の2つの観点からCI推論を調査しました。<br><br>その結果、より強力なCI推論モデルは、重要なトークンと、特に検証、後退、後方連鎖といった認知的行動の出現頻度が高いことがわかりました。これらの特性を推論時および学習時に活用することで、パフォーマンスが向上することが示されました。特に、これらの行動は不正確な応答における過剰な思考を減らし、トークン効率を改善しますが、モデルによっては効果が限定的であることも明らかになりました。本研究は、CIを用いた効果的な推論の体系的な特徴付けを提供し、その改善の可能性と限界を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Patomporn Payoungkhamdee, Napat Laosaengpha, Jenta Wonglertsakul, Pittawat Taveekitworachai, Pume Tuchinda, Panjapong Poobanchuen, Ekapol Chuangsuwanich, Can Udomcharoenchaikit<br>
-        分類：cs.CL, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.16934v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16934v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="拡散言語モデルにおける相互安定性サンプリング：LESSはより良い" data-timestamp="1781540145000" data-url="https://arxiv.org/abs/2606.16908v1">
-  <p class="meta">arXiv cs.CL　Mon, 15 Jun 2026 16:15:45 Z</p>
-  <h2 class="article-title">拡散言語モデルにおける相互安定性サンプリング：LESSはより良い</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、AI分野における拡散言語モデル（dLLMs）のサンプリング効率向上を目指す研究です。<br><br>dLLMsは、マスクされたシーケンスを反復的に洗練させることで、並列トークン更新と双方向条件付けを可能にする有望な代替手法ですが、サンプリング手順に課題がありました。本研究では、トレーニング不要でモデルに依存しない適応型サンプラーである「LESS」を提案します。これは、トークンコミットメントをオンライン停止問題として扱います。<br><br>LESSは、マスクされた位置が、トップ1予測の信頼度が高く、トップ1トークンが最近のリバースステップで維持され、予測分布がトップK JSDで安定している場合にのみ解除可能となる、共同安定性ルールを実装しています。7つのベンチマークで評価した結果、LESSは固定予算デコーディングよりも大幅に少ないリバースステップで、既存の適応型サンプラーを上回る精度向上を示しました。これにより、推論計算量とレイテンシの削減が期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Amr Mohamed, Guokan Shang, Michalis Vazirgiannis<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.16908v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16908v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="科学の言語を話す：自然科学のための汎用生成基盤モデルに向けて" data-timestamp="1781540093000" data-url="https://arxiv.org/abs/2606.16905v1">
-  <p class="meta">arXiv cs.CL　Mon, 15 Jun 2026 16:14:53 Z</p>
-  <h2 class="article-title">科学の言語を話す：自然科学のための汎用生成基盤モデルに向けて</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、AI分野における自然科学全般を対象とした、汎用的な生成基盤モデル「LOGOS」の開発に関する研究です。<br><br>LOGOSは、共有された科学的文法に基づいた単一の自己回帰フレームワーク内で、異種タスクを統一します。多様な科学的オブジェクトとその空間的相互作用を、共通語彙上のトークンシーケンスとしてエンコードします。空間的接触と制約パターンを離散トークンとして表現することで、明示的な座標や幾何学的ニューラルネットワークに依存せず、複雑な構造的相互作用を捉えます。<br><br>この統一された表現により、多様な下流タスクを同じ文法空間での次のトークン予測として一貫して定式化でき、マルチドメイン事前学習と下流タスク目標との強力な整合性が生まれます。LOGOSは、ドメイン固有のベースラインに匹敵またはそれを超える性能を示し、自然科学における「1つのモデルですべてに対応」の可能性を示唆しています。モデルサイズと性能の一貫した正の相関関係は、AI for Science（AI4S）の将来が、LLMと分離された独立した技術スタックではなく、共有アーキテクチャ、トレーニングパラダイム、推論インフラストラクチャを通じて、科学基盤モデルをLLMと深く整合させることにかかっている可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Mingyang Li, Yurou Liu, Jieping Ye, Bing Su, Ji-Rong Wen, Zheng Wang<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.16905v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16905v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="対照差CKAが言語モデルアーキテクチャ間の概念固有の構造的整合性を明らかにする" data-timestamp="1781539630000" data-url="https://arxiv.org/abs/2606.16897v1">
-  <p class="meta">arXiv cs.CL　Mon, 15 Jun 2026 16:07:10 Z</p>
-  <h2 class="article-title">対照差CKAが言語モデルアーキテクチャ間の概念固有の構造的整合性を明らかにする</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、異なる大規模言語モデル（LLM）アーキテクチャが、高レベルの概念を構造的に互換性のある方法でエンコードしているかどうかを調査しています。<br><br>研究では、幾何学的機能的普遍性の乖離が体系的に特徴づけられました。複数の概念ドメインとアーキテクチャファミリーにわたって、中程度の幾何学的収束とほぼ完全な機能的転移が共存することが示されました。対照差CKA（CKA_Delta）という、トレーニング不要の診断手法を用いて、サンプルごとの対照差に対するカーネルアラインメントを計算することで、概念固有の収束を一般的な類似性から分離することに成功しました。この手法は、標準的なCKAでは困難な識別を達成します。<br><br>この乖離は、テストした6つの概念ドメインすべて（5つはp <= 0.017の幾何学的識別を示し、安全性は収束的機能的傾向を示した）で再現されました。これには、システムプロンプトなしで検証された2つの非指示概念（コード対自然言語、推論対想起）も含まれます。単一の70B-70Bペアからの観察結果は、普遍性がスケールとともに強化される可能性を示唆していますが、さらなる70B以上のモデルでの複製が必要です。CKA_Deltaは、絶対的な転移精度予測因子ではなく、実用的なレジーム分類子およびアーキテクチャ外れ値検出器（Gemma: d = 1.08, AUC = 0.79）として位置づけられ、アーキテクチャ間の概念監視のためのトレーニング不要の診断を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Xueping Gao<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.16897v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16897v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="アンカートークンを用いた拡散LLMの復元デコーディングをナビゲートする潜在ロードマップ" data-timestamp="1781537027000" data-url="https://arxiv.org/abs/2606.16847v1">
-  <p class="meta">arXiv cs.CL　Mon, 15 Jun 2026 15:23:47 Z</p>
-  <h2 class="article-title">アンカートークンを用いた拡散LLMの復元デコーディングをナビゲートする潜在ロードマップ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AI分野における拡散大規模言語モデル（dLLM）の復元デコーディングにおける課題に対処する新しいフレームワーク「ASRD（Anchor Supervised Revocable Decoding）」を提案しています。<br><br>dLLMは並列生成に有望ですが、デコーディング速度と品質のトレードオフが存在します。復元デコーディングはエラー修正を試みますが、エラー伝播や局所的エラー増幅といった問題が生じます。ASRDは、これらの課題を解決するため、埋め込み空間で動作する学習不要のフレームワークです。信頼できる「アンカー」トークンと不確かな候補トークンを明示的に分離します。<br><br>ASRDは、動的なアンカー・トークン・キャッシュを活用し、「アンカー誘導生成」と「アンカー摂動検証」の2つのメカニズムを導入します。これにより、信頼できるグローバルな骨格への注意を暗黙的に誘導し、局所的な合意に依存するエラーを不安定化・再マスクします。数学とコーディングのベンチマークにおける広範な実験により、ASRDは最新の再マスクベースラインを上回り、精度を最大6.4%向上させ、推論スループットを最大7.2倍加速させることが示されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yizhen Yao, Qinglin Zhu, Runcong Zhao, Xiangxiang Dai, Yanzheng Xiang, Yulan He, Lin Gui<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.16847v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16847v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-06" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="ソーシャルメディアテキストの皮肉検出におけるロバストなデュアルシグナル融合：圧縮連鎖思考洗練によるハイブリッドニューロシンボリックゲーティング" data-timestamp="1781536957000" data-url="https://arxiv.org/abs/2606.16845v1">
-  <p class="meta">arXiv cs.CL　Mon, 15 Jun 2026 15:22:37 Z</p>
-  <h2 class="article-title">ソーシャルメディアテキストの皮肉検出におけるロバストなデュアルシグナル融合：圧縮連鎖思考洗練によるハイブリッドニューロシンボリックゲーティング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AI分野におけるソーシャルメディアテキストの皮肉検出における課題に取り組む「RDS（Robust Dual-Signal）Fusion」フレームワークを提案しています。大規模言語モデル（LLM）は文字通りの意味解釈に偏るため、ゼロショットでの皮肉検出が困難です。<br><br>RDS Fusionは、教師なしファインチューニング（SFT）なしで連鎖思考（CoT）推論軌跡を圧縮するハイブリッドニューロシンボリックアーキテクチャです。TweetEvalテストセット（N=734）で評価した結果、RDSは78.1%の精度と0.777のマクロF1を達成し、ファインチューニングされたBERTweetの絶対性能上限に匹負する結果を示しました。<br><br>さらに、iSarcasmデータセットでは、凍結CoTパイプラインが分布外の幻覚を22.5%フィルタリングし、ゼロショットで0.6726のマクロF1と0.4821のアイロニックF1を達成し、複数の教師ありSemEvalトランスフォーマーアンサンブルを上回りました。統計的アブレーションにより、シンボリックな事前知識とCoTパイプラインをニューラルベースラインに段階的に追加しても、有意な改善は見られず、3つの信号の完全かつ同時な融合のみが統計的に検証された改善を達成することが確認されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Ankit Bhattacharjee, Krityapriya Bhaumik<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2606.16845v1" target="_blank" rel="noopener">https://arxiv.org/abs/2606.16845v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
