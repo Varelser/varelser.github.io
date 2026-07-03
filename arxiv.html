@@ -1321,6 +1321,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="LLMの知識消去における局所化精度の評価用テストベッド「LACUNA」" data-timestamp="1783015192000" data-url="https://arxiv.org/abs/2607.02513v1">
+  <p class="meta">arXiv cs.AI　Thu, 02 Jul 2026 17:59:52 Z</p>
+  <h2 class="article-title">LLMの知識消去における局所化精度の評価用テストベッド「LACUNA」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が学習データに含まれる個人情報（PII）などの機密情報を記憶してしまう問題に対処するため、後から情報を削除する「アンラーニング」技術の評価に焦点を当てています。<br><br>従来のアンラーニング評価は出力レベルに限定されており、知識がモデルのパラメータから本当に消去されたのか、それとも単に隠蔽されただけなのかが不明確でした。このギャップを埋めるため、本研究では「LACUNA」という、グラウンドトゥルース（正解）付きのパラメータレベルでの局所化評価を可能にする初のテストベッドを提案します。<br><br>LACUNAは、合成個人のPIIをOLMoベースのモデルの特定のパラメータに注入し、アンラーニングが知識を記憶する重みを正確に標的としているかを直接評価できるようにします。このテストベッドを用いて既存の最先端アンラーニング手法を評価した結果、出力レベルでは良好な性能を示しても、パラメータレベルでの局所化精度が低く、情報の再出現攻撃に弱いことが明らかになりました。<br><br>さらに、局所化が成功した場合、単純な勾配ベースのアンラーニング手法でも高い消去率と再出現攻撃への耐性を達成できることを示しました。これは、正確な局所化の重要性を強調するものです。LACUNAは、行動評価を補完し、堅牢で局所化に基づいたアンラーニングのさらなる進歩を促進するために公開されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Matteo Boglioni, Thibault Rousset, Siva Reddy, Marius Mosbach, Verna Dankers<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.02513v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02513v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="「プログラム＝重み」によるファジー関数プログラミングの新パラダイム" data-timestamp="1783015190000" data-url="https://arxiv.org/abs/2607.02512v1">
   <p class="meta">arXiv cs.AI　Thu, 02 Jul 2026 17:59:50 Z</p>
   <h2 class="article-title">「プログラム＝重み」によるファジー関数プログラミングの新パラダイム</h2>
@@ -1335,6 +1352,23 @@
         分野：cs.LG<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2607.02512v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02512v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG, stat.AP, stat.ML" data-title="LLMのオンライン安全性モニタリング手法" data-timestamp="1783015183000" data-url="https://arxiv.org/abs/2607.02510v1">
+  <p class="meta">arXiv cs.AI　Thu, 02 Jul 2026 17:59:43 Z</p>
+  <h2 class="article-title">LLMのオンライン安全性モニタリング手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span><span class="tag">stat.AP</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）がアライメント（整合性）トレーニングを経ても、デプロイ時に安全でない出力を生成する可能性があるという課題に取り組みます。<br><br>この問題に対処するため、本研究ではオンラインで出力を監視し、安全性が保証できなくなった場合にアラームを発するモニタリング手法を提案します。具体的には、外部モデルからの検証者信号を単純な閾値処理によってアラーム決定に変換し、リスク管理を通じて閾値を調整するリアルタイムモニタを検討します。<br><br>数学的推論とレッドチーミングのデータセットを用いた実験により、この単純な設計が、逐次仮説検定に基づくより高度なモニターと比較しても競争力のある性能を示すことが示されました。この研究は、LLMの安全性をオンラインで効果的に監視するための実用的かつ効率的なアプローチを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Mona Schirmer, Metod Jazbec, Alexander Timans, Christian Naesseth, Maja Waldron, Eric Nalisnick<br>
+        分類：cs.AI, cs.CL, cs.LG, stat.AP, stat.ML<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.02510v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02510v1</a>
   </div>
 </article>
 
@@ -1406,6 +1440,57 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="Towards Robustness against Typographic Attack with Training-free Concept Localization" data-timestamp="1783014924000" data-url="https://arxiv.org/abs/2607.02494v1">
+  <p class="meta">arXiv cs.CL　Thu, 02 Jul 2026 17:55:24 Z</p>
+  <h2 class="article-title">Towards Robustness against Typographic Attack with Training-free Concept Localization</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: Towards Robustness against Typographic Attack with Training-free Concept Localization Authors: Bohan Liu, Wenqian Ye, Guangzhi Xiong, Zhenghao He, Sanchit Sinha, Aidong Zhang Categories: cs.CV, cs.CL Abstract / Summary: Models trained via Contrastive Language-Image Pretraining (CLIP) serve as the foundational vision encoders for most modern Large Vision Language Models (LVLMs). Despite their widespread adoption, CLIP models exhibit a critical yet underexplored failure mode: irrelevant text appearing within images confounds visual representations, biasing them toward lexical meaning rather than true visual semantics. This robustness issue, commonly described as a Typographic Attack (TA), exposes a vulnerability that poses a significant risk to safety-critical applications such as autonomous driving. To achieve interpretable and effective ro…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Bohan Liu, Wenqian Ye, Guangzhi Xiong, Zhenghao He, Sanchit Sinha, Aidong Zhang<br>
+        分類：cs.CV, cs.CL<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.02494v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02494v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CV" data-title="Visually Grounded Self-Reflection for Vision-Language Models via Reinforcement Learning" data-timestamp="1783014795000" data-url="https://arxiv.org/abs/2607.02490v1">
+  <p class="meta">arXiv cs.CL　Thu, 02 Jul 2026 17:53:15 Z</p>
+  <h2 class="article-title">Visually Grounded Self-Reflection for Vision-Language Models via Reinforcement Learning</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: Visually Grounded Self-Reflection for Vision-Language Models via Reinforcement Learning Authors: Liyan Tang, Fangcong Yin, Greg Durrett Categories: cs.CL, cs.CV Abstract / Summary: Large vision-language models can reason over multimodal inputs by generating textual chains of thought (CoT). A key capability exhibited in CoT reasoning is self-reflection: revisiting earlier decisions and correcting previous errors. However, existing LVLMs often fail to properly attend to visual inputs during reflection, limiting their ability to translate feedback into grounded corrections, especially for out-of-distribution images. To address this issue, we propose a novel reinforcement learning training framework VRRL, with two components explicitly designed to elicit visually grounded self-reflection. First, we randomly mask trajectory prefixes during trai…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Liyan Tang, Fangcong Yin, Greg Durrett<br>
+        分類：cs.CL, cs.CV<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.02490v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02490v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI, cs.CL" data-title="テストとコードの共進化のための実行可能でライブなベンチマーク「TestEvo-Bench」" data-timestamp="1783013720000" data-url="https://arxiv.org/abs/2607.02469v1">
+  <p class="meta">arXiv cs.AI　Thu, 02 Jul 2026 17:35:20 Z</p>
+  <h2 class="article-title">テストとコードの共進化のための実行可能でライブなベンチマーク「TestEvo-Bench」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、ソフトウェアテストとコードが共に進化するという性質に着目し、その評価のための新しいベンチマーク「TestEvo-Bench」を提案します。ソフトウェアのコードが変更された際には、新しいソフトウェアの挙動を記録するために、新しいテストの作成や既存テストの更新が必要です。<br><br>しかし、既存のテスト生成・更新ベンチマークは、テストとコードの変更をしばしば切り離して扱い、テストが実行可能であるか、またはコード変更と意味的に関連しているかを検証しない静的なメタデータに依存していました。これにより、テスト自動化エージェントがコード変更をテストスイートにどのように反映させるべきかを理解しているかを評価することが困難でした。<br><br>TestEvo-Benchは、ソフトウェアリポジトリからマイニングされたテストとコードの共進化タスクからなるベンチマークであり、テスト生成とテスト更新の2つのトラックがあります。各タスクは実際のコミット履歴に紐づけられ、実行可能性、カバレッジ、ミューテーションスコアなどの実行結果に基づいたメトリクスをサポートする環境設定と共にパッケージ化されています。さらに、TestEvo-Benchはライブベンチマークでもあり、タスクはテストとコードの変更タイムスタンプを記録し、自動パイプラインによって定期的に新しいタスクがマイニングされるため、モデルのトレーニングカットオフ以降のタスクに評価を限定することでデータリークのリスクを低減できます。<br><br>現在のスナップショットには、152のオープンソースJavaプロジェクトからキュレーションされた746のテスト生成タスクと509のテスト更新タスクが含まれています。強力な基盤モデル（Claude Opus 4.7およびGemini 3.1 Pro）と組み合わせた4つの最先端エージェント（Claude Code、Gemini CLI、SWE-Agent）を用いた実験では、テスト生成で最大77.5%、テスト更新で最大74.6%の成功率が達成されました。しかし、最新のベンチマークタスクでは成功率が大幅に低下し、タスクあたりのコストが制限されるとさらに顕著に低下することが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jiale Amber Wang, Kaiyuan Wang, Pengyu Nie<br>
+        分類：cs.SE, cs.AI, cs.CL<br>
+        分野：cs.SE<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.02469v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02469v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルによる社会シミュレーションはスケーリングで向上するか？" data-timestamp="1783013438000" data-url="https://arxiv.org/abs/2607.02464v1">
   <p class="meta">arXiv cs.CL　Thu, 02 Jul 2026 17:30:38 Z</p>
   <h2 class="article-title">大規模言語モデルによる社会シミュレーションはスケーリングで向上するか？</h2>
@@ -1420,6 +1505,23 @@
         分野：cs.CL<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2607.02464v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02464v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="Neuron-Aware Data Selection for Annotation-Free LLM Self-Distillation" data-timestamp="1783013244000" data-url="https://arxiv.org/abs/2607.02460v1">
+  <p class="meta">arXiv cs.LG　Thu, 02 Jul 2026 17:27:24 Z</p>
+  <h2 class="article-title">Neuron-Aware Data Selection for Annotation-Free LLM Self-Distillation</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: Neuron-Aware Data Selection for Annotation-Free LLM Self-Distillation Authors: Zhuowei Chen, Xiang Lorraine Li Categories: cs.LG, cs.AI Abstract / Summary: Post-training large language models (LLMs) without real-world interaction feedback or human-labeled supervision remains challenging, particularly in specialized domains where expert annotations are costly to obtain. Recent annotation-free self-evolution methods address this by using the model's own outputs as supervision signals, constructing a teacher via additional context and aggregating predictions across multiple rollouts through majority voting to produce pseudo-labels. However, these approaches are not without drawbacks: SFT- and GRPO-based variants suffer out-of-domain performance degradation, while reward-based on-policy RL inflates calibration error. In this paper, we propose …<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Zhuowei Chen, Xiang Lorraine Li<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.02460v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02460v1</a>
   </div>
 </article>
 
@@ -1471,108 +1573,6 @@
         分野：cs.LG<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2607.01225v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.01225v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.MA" data-title="AutoMem: Automated Learning of Memory as a Cognitive Skill" data-timestamp="1782928623000" data-url="https://arxiv.org/abs/2607.01224v1">
-  <p class="meta">arXiv cs.AI　Wed, 01 Jul 2026 17:57:03 Z</p>
-  <h2 class="article-title">AutoMem: Automated Learning of Memory as a Cognitive Skill</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.MA</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: AutoMem: Automated Learning of Memory as a Cognitive Skill Authors: Shengguang Wu, Hao Zhu, Yuhui Zhang, Xiaohan Wang, Serena Yeung-Levy Categories: cs.AI, cs.CL, cs.MA Abstract / Summary: Memory expertise is a learned skill: knowing what to encode, when to retrieve, and how to organize knowledge--a capacity known in cognitive science as metamemory. We bring this perspective to LLMs by treating memory management as a trainable skill. We promote file-system operations to first-class memory actions alongside task actions, letting the model itself decide how to manage its memory. This memory skill improves along two axes: the structure that supports it (prompts, file schemas, action vocabulary), and the proficiency of the model exercising it. Both axes resist manual optimization: episodes in long-horizon tasks run for thousands of steps, and …<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Shengguang Wu, Hao Zhu, Yuhui Zhang, Xiaohan Wang, Serena Yeung-Levy<br>
-        分類：cs.AI, cs.CL, cs.MA<br>
-        分野：cs.AI<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.01224v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.01224v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG, cs.LO, cs.SE" data-title="Theoria: Rewrite-Acceptability Verification over Informal Reasoning States" data-timestamp="1782928602000" data-url="https://arxiv.org/abs/2607.01223v1">
-  <p class="meta">arXiv cs.AI　Wed, 01 Jul 2026 17:56:42 Z</p>
-  <h2 class="article-title">Theoria: Rewrite-Acceptability Verification over Informal Reasoning States</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span><span class="tag">cs.LO</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: Theoria: Rewrite-Acceptability Verification over Informal Reasoning States Authors: Ben Slivinski, Michael Saldivar Categories: cs.AI, cs.CL, cs.LG, cs.LO, cs.SE Abstract / Summary: When should an AI system's answer be trusted? Formal proof assistants offer certainty but cannot reach most of the problem distribution; scalar LLM judges offer coverage but produce opaque scores that cannot be audited after the fact and are subject to the same coherence issues as any LLM. We present Theoria, a verification architecture that closes this gap. A candidate solution is rewritten into a sequence of typed state transitions, each licensed by an explicit justification, whether that be a citation, computation, or problem-given fact, and every transition is independently auditable. The foundational invariant is completeness of change: every difference be…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Ben Slivinski, Michael Saldivar<br>
-        分類：cs.AI, cs.CL, cs.LG, cs.LO, cs.SE<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.01223v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.01223v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="The State-Prediction Separation Hypothesis" data-timestamp="1782928509000" data-url="https://arxiv.org/abs/2607.01218v1">
-  <p class="meta">arXiv cs.AI　Wed, 01 Jul 2026 17:55:09 Z</p>
-  <h2 class="article-title">The State-Prediction Separation Hypothesis</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: The State-Prediction Separation Hypothesis Authors: Giovanni Monea, Nathan Godey, Kianté Brantley, Yoav Artzi Categories: cs.CL, cs.AI, cs.LG Abstract / Summary: Transformers use the same forward computation stream to both predict the next token and store useful state for future token predictions. We formulate the \emph{state-prediction separation hypothesis}: disentangling the two roles yields better language modeling performance. We design a Transformer variant that uses two computation streams to separate the two functions, and conduct pretraining experiments across various scales. Our experiments show that state-prediction separation consistently offers better data and compute efficiencies, improving validation loss and outperforming standard Transformers by 2--3 percentage points on average on downstream tasks. We also conduct extensi…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Giovanni Monea, Nathan Godey, Kianté Brantley, Yoav Artzi<br>
-        分類：cs.CL, cs.AI, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.01218v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.01218v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI" data-title="FurnitureVLA: Learning Long-Horizon Bimanual Furniture Assembly with Vision-Language-Action Model" data-timestamp="1782928281000" data-url="https://arxiv.org/abs/2607.01212v1">
-  <p class="meta">arXiv cs.AI　Wed, 01 Jul 2026 17:51:21 Z</p>
-  <h2 class="article-title">FurnitureVLA: Learning Long-Horizon Bimanual Furniture Assembly with Vision-Language-Action Model</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: FurnitureVLA: Learning Long-Horizon Bimanual Furniture Assembly with Vision-Language-Action Model Authors: Chenyang Ma, Yue Yang, Radu Corcodel, Siddarth Jain, Andrew Wu, Chiori Hori, Diego Romeres Categories: cs.RO, cs.AI Abstract / Summary: Current work on robot furniture assembly mostly focuses on toy-scale settings or single-arm manipulation. We introduce FurnitureVLA, the first systematic study of real-scale bimanual furniture assembly using Vision-Language-Action models (VLAs). We formalize the task, develop a scalable simulation pipeline for expert data generation and evaluation, and build a VR teleoperation system for single-operator bimanual control to collect high-quality real-world demonstrations. To address extreme long-horizon assembly with up to 7 subtasks and 1550 control steps, we propose a progress-enhanced VLA, finetuned …<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Chenyang Ma, Yue Yang, Radu Corcodel, Siddarth Jain, Andrew Wu, Chiori Hori, Diego Romeres<br>
-        分類：cs.RO, cs.AI<br>
-        分野：cs.RO<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.01212v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.01212v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI" data-title="Are Performance-Optimization Benchmarks Reliably Measuring Coding Agents?" data-timestamp="1782928248000" data-url="https://arxiv.org/abs/2607.01211v1">
-  <p class="meta">arXiv cs.AI　Wed, 01 Jul 2026 17:50:48 Z</p>
-  <h2 class="article-title">Are Performance-Optimization Benchmarks Reliably Measuring Coding Agents?</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: Are Performance-Optimization Benchmarks Reliably Measuring Coding Agents? Authors: Zhi Chen, Zhensu Sun, Yuling Shi, David Lo, Lingxiao Jiang Categories: cs.SE, cs.AI Abstract / Summary: Repository-level performance-optimization benchmarks such as GSO, SWE-Perf and SWE-fficiency evaluate coding agents by applying patches to real repositories and comparing runtime against unoptimized baselines and official reference patches. Their leaderboard scores are increasingly used as evidence of coding-agent progress, but those scores can conflate runtime instability, benchmark-specific scoring rules, and how many tasks are already solved by at least one public submission. We audit these issues across the three benchmarks. First, we replay the official reference patches for 740 code optimization tasks across four common types of Google Cloud machines…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Zhi Chen, Zhensu Sun, Yuling Shi, David Lo, Lingxiao Jiang<br>
-        分類：cs.SE, cs.AI<br>
-        分野：cs.SE<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.01211v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.01211v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="Distill to Detect: Exposing Stealth Biases in LLMs through Cartridge Distillation" data-timestamp="1782927993000" data-url="https://arxiv.org/abs/2607.01208v1">
-  <p class="meta">arXiv cs.AI　Wed, 01 Jul 2026 17:46:33 Z</p>
-  <h2 class="article-title">Distill to Detect: Exposing Stealth Biases in LLMs through Cartridge Distillation</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: Distill to Detect: Exposing Stealth Biases in LLMs through Cartridge Distillation Authors: Shayan Talaei, Abhinav Chinta, Devvrit Khatri, Amin Karbasi, Azalia Mirhoseini, Amin Saberi Categories: cs.CL, cs.AI, cs.LG Abstract / Summary: Language models deployed in high-stakes roles can potentially favor certain entities, brands, or viewpoints, steering user decisions at scale. Such preferential biases can be introduced by any actor in the model's supply chain and are most dangerous when the model reveals its preference only on the relevant topic while behaving identically to its unmodified base on all other inputs. Recent work has shown that these biases can transfer through context distillation on semantically unrelated data, with the signal residing entirely in the soft logit distribution and remaining invisible to text-based inspection. H…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Shayan Talaei, Abhinav Chinta, Devvrit Khatri, Amin Karbasi, Azalia Mirhoseini, Amin Saberi<br>
-        分類：cs.CL, cs.AI, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.01208v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.01208v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
