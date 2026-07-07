@@ -1321,6 +1321,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG, cs.MA, cs.RO" data-title="LLM-as-a-Verifier：汎用的な検証フレームワーク" data-timestamp="1783360775000" data-url="https://arxiv.org/abs/2607.05391v1">
+  <p class="meta">arXiv cs.AI　Mon, 06 Jul 2026 17:59:35 Z</p>
+  <h2 class="article-title">LLM-as-a-Verifier：汎用的な検証フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span><span class="tag">cs.MA</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の能力向上における新たなスケーリング軸として「検証能力」に着目し、LLM-as-a-Verifierという汎用的な検証フレームワークを提案しています。<br><br>このフレームワークは、追加の学習を必要とせずに、エージェントタスクに対してきめ細やかなフィードバックを提供します。従来のLLMジャッジが離散的なスコアを生成するのに対し、LLM-as-a-Verifierはスコアリングトークンロジットの分布に対する期待値を計算することで連続的なスコアを生成します。この確率的定式化により、スコアの粒度、繰り返し評価、基準分解といった複数の次元で検証をスケーリングすることが可能になります。<br><br>特に、スコアの粒度をスケーリングすることで、肯定的な解と否定的な解の分離が改善され、より校正された比較が可能になることが示されています。さらに、繰り返し評価と基準分解のスケーリングは、分散と複雑性の削減を通じて検証精度を継続的に向上させます。また、検証器の連続スコアを使用して候補の中から最良の解を選択するためのコスト効率の高いランキングアルゴリズムも導入されています。LLM-as-a-Verifierは、Terminal-Bench V2、SWE-Bench Verified、RoboRewardBench、MedAgentBenchといったベンチマークで最先端の性能を達成しています。検証以外にも、LLM-as-a-Verifierからのきめ細やかな信号は、タスクの進捗を推定するためのプロキシとしても機能します。Claude Codeの拡張機能として開発者が自身のシステムを監視・改善できるようにし、さらにRLのサンプル効率を向上させるための密なフィードバックを提供できることも示されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jacky Kwok, Shulu Li, Pranav Atreya, Yuejiang Liu, Yixing Jiang, Chelsea Finn, Marco Pavone, Ion Stoica<br>
+        分類：cs.AI, cs.CL, cs.LG, cs.MA, cs.RO<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.05391v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.05391v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV" data-title="Cortex：長期的操作のための双方向アライメントを備えた自律エージェントフレームワーク" data-timestamp="1783360505000" data-url="https://arxiv.org/abs/2607.05377v1">
+  <p class="meta">arXiv cs.AI　Mon, 06 Jul 2026 17:55:05 Z</p>
+  <h2 class="article-title">Cortex：長期的操作のための双方向アライメントを備えた自律エージェントフレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文では、長期間にわたる操作タスクにおいて、現在の観測のみに依存するMarkovianな性質から生じる課題に対処するため、Cortexという双方向アライメントを備えた自律エージェントフレームワークを提案しています。<br><br>Cortexは、高レベルの計画意味論と低レベルの実行運動論の間のギャップを埋める、カスタマイズされた計画インターフェースを備えています。具体的には、操作サブタスクを32個の標準的なスキルプリミティブに標準化し、データ生成パイプラインに代表的なオブジェクト属性や改善された軌道到達可能性といったトラクタビリティ原則を注入しています。これにより、4,000時間以上のオープンソース動画データと30時間のシミュレーションデータの自動アノテーションと生成が可能になりました。<br><br>さらに、サブタスク遷移中の計画の曖昧さをより良く処理するために、イベントバランスサンプリング戦略と、タスクコンテキストからスキル制約までのハーネスエンジニアリングを設計し、フレームワークのファインチューニングを行っています。オープンループVLAとクローズドループシステムの評価の両方でCortexの有効性が実証されており、Libero-longで3.1%、RoboTwinで4.1%の性能向上を達成しています。特に、Cortexの汎用的なVLMは、複数の化学実験のような、VLAのファインチューニングだけでは実現不可能な、未知の現実世界の長期的タスクのゼロショット完了を可能にします。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jiaqi Peng, Xiqian Yu, Delin Feng, Yuqiang Yang, Wenzhe Cai, Jing Xiong, Ganlin Yang, Jinliang Zheng<br>
+        分類：cs.RO, cs.AI, cs.CV<br>
+        分野：cs.RO<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.05377v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.05377v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CL, cs.LG" data-title="GaP：変分自動化タスクのためのグラフベースポリシーのマルチエージェント自己学習ハーネス" data-timestamp="1783360051000" data-url="https://arxiv.org/abs/2607.05369v1">
+  <p class="meta">arXiv cs.AI　Mon, 06 Jul 2026 17:47:31 Z</p>
+  <h2 class="article-title">GaP：変分自動化タスクのためのグラフベースポリシーのマルチエージェント自己学習ハーネス</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、商業および産業用途でロボットが信頼性高く動作するために、エージェントコーディングシステムの最近の進歩と、モデルフリーポリシーのオープンワールド適応性を組み合わせる可能性を探求しています。特に、固定自動化よりもオブジェクトの形状や姿勢のばらつきが大きい「変分自動化」（VA）と呼ばれるタスククラスに焦点を当てています。<br><br>モデルフリーポリシーはVAタスクの信頼性ギャップを埋めるのに苦労することが多いですが、本研究では、タスクおよびモーションプランニング（TAMP）とロボットオペレーティングシステム（ROS）の先行研究に着想を得て、Graph-as-Policy（GaP）というマルチエージェントコーディングハーネスを導入しています。GaPは、モジュラーオープンロボットスキルライブラリ（MORSL）から、知覚、計画、制御ノードを含む計算グラフを生成します。<br><br>GaPは内部シミュレーション環境を生成し、異なるグラフでタスクインスタンスを並列にリハーサルすることで、グラフ構造とパラメータを反復的に洗練させ、成功率とスループットを向上させます。4つのシミュレーションおよび4つの実世界の新しいオープンVAタスクベンチマークでの評価により、GaPはベースラインを大幅に上回る成功率を達成できることが示唆されています。詳細、コード、データはオンラインで入手可能です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Kaiyuan Chen, Shuangyu Xie, Letian Fu, Justin Yu, William Pacini, Sandeep Bajamahal, Hudson Kim, Jaimyn Drake<br>
+        分類：cs.RO, cs.AI, cs.CL, cs.LG<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.05369v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.05369v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, eess.AS" data-title="SPEARBench: A Benchmark for Naturalness Evaluation in Streaming Speech-to-Speech Language Models" data-timestamp="1783359779000" data-url="https://arxiv.org/abs/2607.05365v1">
+  <p class="meta">arXiv cs.AI　Mon, 06 Jul 2026 17:42:59 Z</p>
+  <h2 class="article-title">SPEARBench: A Benchmark for Naturalness Evaluation in Streaming Speech-to-Speech Language Models</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">eess.AS</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: SPEARBench: A Benchmark for Naturalness Evaluation in Streaming Speech-to-Speech Language Models Authors: Thomas Thebaud, Yuzhe Wang, Hao Zhang, Sathvik Manikantan Napa Ugandhar, Ashish Hallur, Georgi Tinchev, Venkatesh Ravichandran, Laureano Moro-Velazquez Categories: cs.CL, cs.AI, eess.AS Abstract / Summary: Streaming speech-to-speech language models aim to answer spoken queries directly with synthetic speech. However, standard speech and text benchmarks do not capture whether these systems behave naturally in conversations, where timing, turn-taking, prosody, interpersonal stance, language and dialect consistency, and relationship-aware appropriateness jointly shape perceived quality. We introduce SPEARBench, a benchmark for evaluating naturalness in speech-to-speech language models from question-answer interactions. SPEARBench construc…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Thomas Thebaud, Yuzhe Wang, Hao Zhang, Sathvik Manikantan Napa Ugandhar, Ashish Hallur, Georgi Tinchev, Venkatesh Ravichandran, Laureano Moro-Velazquez<br>
+        分類：cs.CL, cs.AI, eess.AS<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.05365v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.05365v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="SovereignPA-Bench: Evaluating User-Owned Personal Agents under Evolving Intent, Platform Mediation, and Consent Constraints" data-timestamp="1783359545000" data-url="https://arxiv.org/abs/2607.05363v1">
+  <p class="meta">arXiv cs.AI　Mon, 06 Jul 2026 17:39:05 Z</p>
+  <h2 class="article-title">SovereignPA-Bench: Evaluating User-Owned Personal Agents under Evolving Intent, Platform Mediation, and Consent Constraints</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: SovereignPA-Bench: Evaluating User-Owned Personal Agents under Evolving Intent, Platform Mediation, and Consent Constraints Authors: Dylan Zongmin Liu Categories: cs.AI Abstract / Summary: Personal agents are becoming persistent user-owned intermediaries: they remember preferences, filter platform-mediated information, use tools, and negotiate with services. Existing benchmarks evaluate tool use, web navigation, desktop control, personalization, recommendation, and evolving context, but rarely ask whether an agent preserves user sovereignty: advancing the user's current interests while respecting privacy, consent, evidence, user burden, and resistance to manipulative incentives. We introduce SovereignPA-Bench, an executable benchmark for evaluating user-owned personal agents under evolving intent, platform mediation, privacy boundaries, co…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Dylan Zongmin Liu<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.05363v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.05363v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.LG" data-title="How Much is Left? LLMs Linearly Encode Their Remaining Output Length" data-timestamp="1783356964000" data-url="https://arxiv.org/abs/2607.05316v1">
+  <p class="meta">arXiv cs.CL　Mon, 06 Jul 2026 16:56:04 Z</p>
+  <h2 class="article-title">How Much is Left? LLMs Linearly Encode Their Remaining Output Length</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: How Much is Left? LLMs Linearly Encode Their Remaining Output Length Authors: Mohamed Amine Merzouk, Dmitri Carpov, Mirko Bronzi, Damiano Fornasiere, Adam Oberman Categories: cs.CL, cs.LG Abstract / Summary: Large language models generate one token at a time, yet their responses show remarkably consistent length structure: step-by-step solutions converge in predictable token counts, retrievals stop after a few sentences, retractions extend responses by measurable amounts. We ask whether the model carries an internal estimate of how much response remains. Training minimal-capacity linear probes on frozen hidden states of three open-weight 7-8B models across seven completion-style datasets, we find three converging pieces of evidence. First, total response length is linearly decodable from the prompt's last hidden state alone, before any out…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Mohamed Amine Merzouk, Dmitri Carpov, Mirko Bronzi, Damiano Fornasiere, Adam Oberman<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.05316v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.05316v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="Distributed Attacks in Persistent-State AI Control" data-timestamp="1783015196000" data-url="https://arxiv.org/abs/2607.02514v1">
   <p class="meta">arXiv cs.AI　Thu, 02 Jul 2026 17:59:56 Z</p>
   <h2 class="article-title">Distributed Attacks in Persistent-State AI Control</h2>
@@ -1471,108 +1573,6 @@
         分野：cs.LG<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2607.02499v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02499v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.RO" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.RO, cs.LG" data-title="Controllable Sim Agents with Behavior Latents" data-timestamp="1783014939000" data-url="https://arxiv.org/abs/2607.02496v1">
-  <p class="meta">arXiv cs.LG　Thu, 02 Jul 2026 17:55:39 Z</p>
-  <h2 class="article-title">Controllable Sim Agents with Behavior Latents</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.RO</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: Controllable Sim Agents with Behavior Latents Authors: Juanwu Lu, Junyu Zhu, Ziran Wang Categories: cs.RO, cs.LG Abstract / Summary: Realistic traffic simulation requires agents that imitate logged behavior and can also be steered along interpretable axes. Such controllability enables engineers to isolate variables, reproduce specific edge cases, and test autonomous systems without real-world risk. We introduce Controllable Neural Variational Agents (CNeVA), a controllable simulated-agent framework that learns to infer a per-agent Gaussian behavior latent from per-channel discounted returns via a closed-form conjugate variational update, conditioning a rectified-flow trajectory generator trained on a mixed channel-mask curriculum for classifier-free guidance. To tackle scarcity in reward signals, we propose soft eligibility gates that repl…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Juanwu Lu, Junyu Zhu, Ziran Wang<br>
-        分類：cs.RO, cs.LG<br>
-        分野：cs.RO<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.02496v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02496v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="G-RRM: Guiding Symbolic Solvers with Recurrent Reasoning Models" data-timestamp="1783014811000" data-url="https://arxiv.org/abs/2607.02491v1">
-  <p class="meta">arXiv cs.AI　Thu, 02 Jul 2026 17:53:31 Z</p>
-  <h2 class="article-title">G-RRM: Guiding Symbolic Solvers with Recurrent Reasoning Models</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: G-RRM: Guiding Symbolic Solvers with Recurrent Reasoning Models Authors: Timo Bertram, Sidhant Bhavnani, Richard Freinschlag, Erich Kobler, Andreas Mayr, Günter Klambauer Categories: cs.AI Abstract / Summary: In this work, we focus on SE-RRMs, a symbol-equivariant instantiation of RRMs that exhibits improved extrapolation to larger problem sizes. We propose a neuro-symbolic approach, ``Guiding with Recurrent Reasoning Models'' (G-RRM), which integrates SE-RRMs with symbolic solvers for constraint satisfaction problems. SE-RRMs act as neural solvers that generate full solution proposals and guide classical symbolic solvers, such as backtracking or SAT-based methods like Glucose 4.1 and CaDiCaL 3.0.0, that produce globally correct solutions. Centrally, we investigate when neural guidance with G-RRM improves the search efficiency of symbolic …<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Timo Bertram, Sidhant Bhavnani, Richard Freinschlag, Erich Kobler, Andreas Mayr, Günter Klambauer<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.02491v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02491v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI, cs.CL" data-title="テストとコードの共進化のための実行可能かつライブなベンチマーク「TestEvo-Bench」" data-timestamp="1783013720000" data-url="https://arxiv.org/abs/2607.02469v1">
-  <p class="meta">arXiv cs.AI　Thu, 02 Jul 2026 17:35:20 Z</p>
-  <h2 class="article-title">テストとコードの共進化のための実行可能かつライブなベンチマーク「TestEvo-Bench」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、ソフトウェアテストとコードが共に進化するという事実に基づき、テスト生成と更新のベンチマークにおける課題を解決する「TestEvo-Bench」を提案します。既存のベンチマークはテストとコード変更を分離し、テストの実行可能性やコード変更との意味的な関連性を検証しない静的なメタデータに依存していました。<br><br>TestEvo-Benchは、ソフトウェアリポジトリからマイニングされたテストとコードの共進化タスクのベンチマークであり、テスト生成（新しいソフトウェア動作を捉える新しいテストの作成）とテスト更新（変更されたソフトウェア動作に合わせて失敗した既存テストの適応）の2つのトラックがあります。各タスクは実際のコミット履歴に紐づけられ、実行可能性に基づいた評価指標（合格率、カバレッジ、ミューテーションスコアなど）をサポートする環境設定と共にパッケージ化されています。<br><br>さらに、TestEvo-Benchはライブベンチマークでもあり、各タスクはテストとコード変更のタイムスタンプを記録し、新しいタスクが定期的に自動パイプラインによってマイニングされるため、モデルのトレーニングカットオフ以降のタスクに評価を限定することでデータリークのリスクを低減できます。現在のスナップショットには、152のオープンソースJavaプロジェクトからキュレーションされた746のテスト生成タスクと509のテスト更新タスクが含まれています。<br><br>4つの最先端エージェントを用いた実験では、テスト生成で最大77.5%、テスト更新で最大74.6%の成功率を達成しました。しかし、最新のベンチマークタスクでは成功率が大幅に低下し、タスクあたりのコストが制限されるとさらに低下することが示されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Jiale Amber Wang, Kaiyuan Wang, Pengyu Nie<br>
-        分類：cs.SE, cs.AI, cs.CL<br>
-        分野：cs.SE<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.02469v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02469v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルによる社会シミュレーションの進化可能性" data-timestamp="1783013438000" data-url="https://arxiv.org/abs/2607.02464v1">
-  <p class="meta">arXiv cs.CL　Thu, 02 Jul 2026 17:30:38 Z</p>
-  <h2 class="article-title">大規模言語モデルによる社会シミュレーションの進化可能性</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）を用いた社会シミュレーションの精度向上について、現在のスケーリングパラダイムがそのギャップを埋めるのに役立つか、あるいはシミュレーションの忠実性が汎用的な能力とは独立しており、より多くの研究を必要とするかを探求するものです。<br><br>著者らは、LLMの計算規模、汎用的な能力ベンチマーク、そして意見モデリング、行動シミュレーション、長期予測の3つの代表的なサブドメインにおける社会シミュレーションの忠実性の関係をスケーリング則を用いて研究しました。その結果、計算規模の拡大に伴い、特に英語のウェブコーパスによく代表される集団を扱う場合に、行動および意見シミュレーションタスクの多くが急速に改善することが明らかになりました。<br><br>しかし、長期予測や、一般知識・推論ベンチマークとの相関が低い意見の予測は、より緩やかにしか改善しませんでした。また、行動シミュレーションにおいては、リスク回避のような人間の認知バイアスや、関連タスクから相関報酬を学習するような人間のヒューリスティックに対するモデルのキャリブレーションは、スケーリングによって改善されませんでした。<br><br>これらの結果から、著者らは、ほとんどの設定においてスケーリングが社会シミュレーションを改善するものの、例外が存在し、特にリソースの少ないドメインでは改善がより信頼性に欠ける可能性があると結論付けています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Caleb Ziems, William Held, Su Doga Karaca, David Grusky, Tatsunori Hashimoto, Diyi Yang<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.02464v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02464v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="ニューロン活性を考慮したアノテーションフリーLLM自己蒸留用データ選択手法" data-timestamp="1783013244000" data-url="https://arxiv.org/abs/2607.02460v1">
-  <p class="meta">arXiv cs.LG　Thu, 02 Jul 2026 17:27:24 Z</p>
-  <h2 class="article-title">ニューロン活性を考慮したアノテーションフリーLLM自己蒸留用データ選択手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、専門ドメインにおいて高コストな専門家によるアノテーションなしに、大規模言語モデル（LLM）をポストトレーニングする際の課題に取り組むものです。既存のアノテーションフリー自己進化手法は、モデル自身の出力を教師信号として利用しますが、ドメイン外の性能低下やキャリブレーション誤差の増大といった問題があります。<br><br>提案手法であるNeuron On-Policy Self-Distillation（Neuron-OPSD）は、内部ニューロンの活性化を利用して、トレーニングデータの選択と教師コンテキストの構築の両方をガイドするデータ中心のフレームワークです。モデルは、いかなる段階でもグラウンドトゥルースラベルを必要としない、教師分布からのオンポリシー蒸留を通じてトレーニングされます。<br><br>専門ドメインのベンチマークにおいて、Neuron-OPSDはドメイン内タスクのパフォーマンスを向上させ、ドメイン間汎化を維持し、既存のアノテーションフリーベースラインと比較してキャリブレーション崩壊を軽減することが示されました。<br><br>このフレームワークは、オンラインインタラクションや外部からの監視が困難または実行不可能な設定に特に適しており、ログ記録された報酬ラベル付き軌道に依存するオフラインRLアプローチとは概念的に異なります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Zhuowei Chen, Xiang Lorraine Li<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.02460v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02460v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.AI, cs.LG, math.DG" data-title="The Dual Nature of LLM Persona: Aggregated Tendencies and Frame-Dependent Geometry" data-timestamp="1783008704000" data-url="https://arxiv.org/abs/2607.02368v1">
-  <p class="meta">arXiv stat.ML　Thu, 02 Jul 2026 16:11:44 Z</p>
-  <h2 class="article-title">The Dual Nature of LLM Persona: Aggregated Tendencies and Frame-Dependent Geometry</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">math.DG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv stat.ML Site: arXiv Title: The Dual Nature of LLM Persona: Aggregated Tendencies and Frame-Dependent Geometry Authors: Yuan Yuan Categories: stat.ML, cs.AI, cs.LG, math.DG Abstract / Summary: Evaluations of LLM personas via psychometric questionnaires typically rely on aggregate scores, discarding within-instance correlation structure. We test whether this geometric structure is intrinsic or frame-dependent. Constructing within-instance correlation matrices from IPIP-50 responses, we analyze geometry on SPD manifolds under manipulated question orderings in GPT-4o simulating American and Chinese-American personas. We find that persona expression comprises two dissociable components: aggregated features (Big Five scores) degrade under randomization (21% drop) but are frame-robust; geometric features (SPD manifold) collapse under frame misalignment (42% drop) but rec…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Yuan Yuan<br>
-        分類：stat.ML, cs.AI, cs.LG, math.DG<br>
-        分野：stat.ML<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.02368v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.02368v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
