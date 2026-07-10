@@ -1321,6 +1321,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.DS, cs.HC" data-title="次元削減とネットワーク科学の融合：UMAPのkNNグラフを用いたデータ理解" data-timestamp="1783619228000" data-url="https://arxiv.org/abs/2607.08746v1">
+  <p class="meta">arXiv cs.AI　Thu, 09 Jul 2026 17:47:08 Z</p>
+  <h2 class="article-title">次元削減とネットワーク科学の融合：UMAPのkNNグラフを用いたデータ理解</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.DS</span><span class="tag">cs.HC</span></div>
+  <div class="summary">本論文は、高次元データの探索に広く用いられているUMAP（Uniform Manifold Approximation and Projection）が内部で構築するk近傍（kNN）グラフの活用に着目します。UMAPの埋め込み表現だけでなく、このkNNグラフが元の高次元空間におけるデータの多様体構造を保持していることに注目し、その潜在的な可能性を明らかにします。<br><br>研究では、UMAPのkNNグラフに対して標準的なグラフアルゴリズムを適用することで、データ理解を深化させる手法を提案しています。具体的には、PageRankアルゴリズムを用いて代表的なデータ点を特定し、k-core分解によってデータの密な中心領域と疎な周辺領域を識別し、さらにクラスタリング係数を用いて密接に結合した類似データ点群を検出します。<br><br>MNISTおよびFashion MNISTデータセットを用いた定量的・定性的な評価により、これらのグラフベースの分析が実用的であるだけでなく、exemplar選択のためのk-medoidsや密度ベースクラスタリングのためのHDBSCANといった専用手法と同等または補完的な結果をもたらすことが示されました。これにより、UMAPの内部表現であるkNNグラフが、データの本質的な構造を理解するための強力なツールとなりうることが示唆されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Duen Horng Chau, Donghao Ren, Fred Hohman, Dominik Moritz<br>
+        分類：cs.LG, cs.AI, cs.DS, cs.HC<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.08746v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08746v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CV" data-title="事故中心のドライブレコーダー映像理解のためのビジョン・言語モデル評価ベンチマーク「AUTOPILOT VQA」" data-timestamp="1783619184000" data-url="https://arxiv.org/abs/2607.08745v1">
   <p class="meta">arXiv cs.AI　Thu, 09 Jul 2026 17:46:24 Z</p>
   <h2 class="article-title">事故中心のドライブレコーダー映像理解のためのビジョン・言語モデル評価ベンチマーク「AUTOPILOT VQA」</h2>
@@ -1474,105 +1491,88 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI, cs.IR" data-title="ProjAgent：リポジトリレベルのコード生成のための手続き的類似性検索" data-timestamp="1783615854000" data-url="https://arxiv.org/abs/2607.08691v1">
-  <p class="meta">arXiv cs.AI　Thu, 09 Jul 2026 16:50:54 Z</p>
-  <h2 class="article-title">ProjAgent：リポジトリレベルのコード生成のための手続き的類似性検索</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、リポジトリレベルのコード生成における課題、すなわち、複雑なファイル間依存関係やプロジェクト固有の規約を考慮しながらターゲット関数を実装することに焦点を当てています。<br><br>既存の検索手法は主に辞書的、構造的、または意味的な類似性に依存していましたが、識別子や応用ドメインが異なっていても同様の手続き的ロジックを実装しているリポジトリ関数を見落とすことがありました。そこで、本研究では「手続き的類似性」を明示的な検索シグナルとして導入するProjAgentを提案します。<br><br>ProjAgentは、ターゲット関数を中間的な推論ステップに分解し、エージェントワークフローを用いて各ステップで同様の手続き的振る舞いを示すリポジトリ関数を検索します。検索された手続き的コンテキストは、従来の意味的検索と統合され、よりリッチなリポジトリコンテキストをコード生成のために構築します。さらに、コンパイラと静的解析のフィードバックを用いて生成されたコードを反復的に修正する保守的な静的解析フィードバックループも組み込まれています。REPOCODでの評価では、ProjAgentは41.14%のPass@1を達成し、既存の検索ベースのベースラインを上回りました。これらの結果は、手続き的類似性がリポジトリレベルのコード生成において効果的で、これまで未踏の検索次元であることを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：QiHong Chen, Aaron Imani, Iftekhar Ahmed<br>
-        分類：cs.SE, cs.AI, cs.IR<br>
-        分野：cs.SE<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.08691v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08691v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Robotics" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="学習フリー緩和型推論的デコーディングの実践的調査" data-timestamp="1783615841000" data-url="https://arxiv.org/abs/2607.08690v1">
-  <p class="meta">arXiv cs.LG　Thu, 09 Jul 2026 16:50:41 Z</p>
-  <h2 class="article-title">学習フリー緩和型推論的デコーディングの実践的調査</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、学習フリー緩和型推論的デコーディング技術について実践的に調査するものです。<br><br>推論的デコーディングは、より高速な補助モデルを用いてトークンをドラフトし、それをLLMが並列検証することで、自己回帰型LLMからのサンプリングを高速化します。標準的な推論的デコーディングは、その拒否および再サンプリングステップがLLMのサンプリング分布を正確に保存するため、ロスレスです。しかし、最近の研究では、この厳密な保証を緩和することで、さらなる高速化、制御可能な能力・速度のトレードオフ、あるいは能力の向上が得られる可能性があると主張されています。<br><br>本研究では、既存のアプローチを共通のフレームワークに統合し、現代的な設定でベンチマークを行い、実務者向けの教訓と経験的知見を抽出します。重要な教訓として、緩和型デコーディングは、ロスレス推論的デコーディングとは異なり、かなりの能力評価を必要とする場合があること、また多くの緩和型アプローチは優れた言語モデルであるドラフターに依存しており、軽量な専用マルチトークン予測ドラフターには不向きであることが挙げられます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Guoxuan Xia, Luka Ribar, Paul Balanca<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.08690v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08690v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.MA" data-title="WebSwarm: Recursive Multi-Agent Orchestration for Deep-and-Wide Web Search" data-timestamp="1783614529000" data-url="https://arxiv.org/abs/2607.08662v1">
-  <p class="meta">arXiv cs.CL　Thu, 09 Jul 2026 16:28:49 Z</p>
-  <h2 class="article-title">WebSwarm: Recursive Multi-Agent Orchestration for Deep-and-Wide Web Search</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.MA</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: WebSwarm: Recursive Multi-Agent Orchestration for Deep-and-Wide Web Search Authors: Xiaoshuai Song, Liancheng Zhang, Kangzhi Zhao, Yutao Zhu, Zhongyuan Wang, Guanting Dong, Jinghan Yang, Han Li, Kun Gai, Ji-Rong Wen, Zhicheng Dou Categories: cs.CL, cs.AI, cs.MA Abstract / Summary: Large language model (LLM)-based web search agents are transforming information seeking from simple factoid question answering into complex, deep-and-wide search and research-oriented tasks. A single ReAct-style agent is constrained by one long trajectory and limited context, making it difficult to handle depth and coverage simultaneously. Existing multi-agent systems improve search coverage through parallel execution and aggregation, but still exhibit clear limitations in recursive depth, collaboration adaptability, and evidence-grounded expansion. We propose We…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="引用検証におけるフロンティアモデルの必要性：深層研究ソース帰属のためのLLMベンチマーク" data-timestamp="1783616500000" data-url="https://arxiv.org/abs/2607.08700v1">
+  <p class="meta">arXiv cs.CL　Thu, 09 Jul 2026 17:01:40 Z</p>
+  <h2 class="article-title">引用検証におけるフロンティアモデルの必要性：深層研究ソース帰属のためのLLMベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、深層研究システムにおける引用の質を評価するタスクに焦点を当て、そのために最先端のLLM（大規模言語モデル）が必要かどうかを検証します。深層研究システムでは、LLMが生成する主張に対して、引用元ソースの妥当性や事実に基づいた裏付けが求められます。<br><br>研究では、引用の質を評価するための構造化されたルーブリックタスクにおいて、8つの市販LLMを評価しました。これらのLLMは、検索結果に基づいたLLMが生成した各主張に対して、ソースの関連性と事実の裏付けという2つの次元で評価されました。特に、人間によるレビューを経た1,248のルーブリック判断と、判断の不一致から生じた378の困難なケースが分析対象となりました。<br><br>実験の結果、より安価なLLMでも引用の質評価において競争力があることが示されました。特にGPT-5-miniは、ソース関連性において0.908のF1スコアを達成しました。事実の裏付けに関しては、評価されたLLM間で統計的に有意な差は見られませんでした。しかし、同等のF1スコアであっても、パス率のドリフト、偽陽性率、偽陰性率には大きな違いがあり、これらの方向性バイアスは単純なF1スコアでは隠されてしまいます。したがって、引用ルーブリックを報酬信号として使用する前に、LLMのキャリブレーションが不可欠であることが示唆されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Xiaoshuai Song, Liancheng Zhang, Kangzhi Zhao, Yutao Zhu, Zhongyuan Wang, Guanting Dong, Jinghan Yang, Han Li<br>
-        分類：cs.CL, cs.AI, cs.MA<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.08662v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08662v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="UltraX: Refining Pre-Training Data at Scale with Adaptive Programmatic Editing" data-timestamp="1783613887000" data-url="https://arxiv.org/abs/2607.08646v1">
-  <p class="meta">arXiv cs.CL　Thu, 09 Jul 2026 16:18:07 Z</p>
-  <h2 class="article-title">UltraX: Refining Pre-Training Data at Scale with Adaptive Programmatic Editing</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: UltraX: Refining Pre-Training Data at Scale with Adaptive Programmatic Editing Authors: Xinlong Zhao, Dongsheng Liu, Hengyu Zhao, Zixuan Fu, Zheng Wang, Jie Cai, Jie Zhou, Qiang Ma, Xuanhe Zhou, Xu Han, Yudong Wang, Zhiyuan Liu Categories: cs.CL, cs.AI Abstract / Summary: As available training data approaches its physical limit, gains from Scaling Laws have begun to diminish. Consequently, improving Large Language Models (LLMs) now depends less on data expansion and more on higher-quality data utilization. However, in the context of large-scale corpora, existing refinement methodologies face significant limitations in quality, efficiency, and reliability: Rule-based approaches are constrained by fixed heuristics and struggle with instance-level variations; LLM-based approaches improve quality but fail to meet the efficiency and reliability…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Xinlong Zhao, Dongsheng Liu, Hengyu Zhao, Zixuan Fu, Zheng Wang, Jie Cai, Jie Zhou, Qiang Ma<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.08646v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08646v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="DominoTree: 推論的デコーディングのためのDominoを用いた条件付き木構造ドラフティング" data-timestamp="1783613795000" data-url="https://arxiv.org/abs/2607.08642v1">
-  <p class="meta">arXiv cs.CL　Thu, 09 Jul 2026 16:16:35 Z</p>
-  <h2 class="article-title">DominoTree: 推論的デコーディングのためのDominoを用いた条件付き木構造ドラフティング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、推論的デコーディングを高速化する新しい手法であるDominoTreeを提案します。<br><br>推論的デコーディングは、複数のトークンをドラフトし、それらを並列検証することでLLMの推論を高速化します。DFlashのようなブロック拡散ドラフターは一度にブロックを生成しますが、位置ごとの周辺分布のみをモデル化します。DDTreeのようなベストファーストツリー手法は、それらの周辺分布から候補ツリーを展開します。今回リリースされたDominoドラフターは、GRUベースの因果補正を追加し、各ドラフトトークンの分布パスを依存させますが、DDTreeの因子分解された定式化ではこれを表現できません。<br><br>DominoTreeは、Dominoの条件付き非因子分解補正を各ルートからノードへのパスに沿って適用することでスコアリングされる、学習フリーのベストファーストドラフトツリーを導入します。これは、ノードごとの補正を候補トップMに制限することで実用的になります。Qwen3-4Bを8つのベンチマークで評価した結果、DominoTreeは自己回帰デコーディングと比較して最大6.6倍の高速化を達成し、テストした全ての温度で、1ラウンドあたり最大10.7トークンという、評価された手法の中で最も高い平均受理長を示しました。さらに、GPUネイティブなCUDAグラフビルダーを用いてツリーを構築することで、計算コストを抑えつつ、Domino decoderやDDTree/CaDDTreeを上回るスループットを実現しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Saw S. Lin, Jyh-Shing Roger Jang<br>
+        著者：Ethan Leung, Elias Lumer, Corey Feld, Austin Huber, Vamse Kumar Subbiah, Kevin Paul<br>
         分類：cs.CL<br>
         分野：cs.CL<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.08642v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08642v1</a>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.08700v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08700v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="Statistical Efficiency and Inference of Quantile Distributional Reinforcement Learning" data-timestamp="1783602367000" data-url="https://arxiv.org/abs/2607.08444v1">
-  <p class="meta">arXiv stat.ML　Thu, 09 Jul 2026 13:06:07 Z</p>
-  <h2 class="article-title">Statistical Efficiency and Inference of Quantile Distributional Reinforcement Learning</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv stat.ML Site: arXiv Title: Statistical Efficiency and Inference of Quantile Distributional Reinforcement Learning Authors: Zijie Cheng, Yang Peng, Zhihua Zhang Categories: stat.ML, cs.LG Abstract / Summary: In this paper, we study quantile-based distributional reinforcement learning from the perspective of statistical efficiency. We focus on distributional policy evaluation, whose goal is to characterize the return distribution, namely the distribution of discounted cumulative rewards under a given policy. To obtain a finite-dimensional representation of the return distribution, we consider the quantile fixed point $η_m$ induced by the quantile-projected distributional Bellman equation. Assuming access to a generative model, we construct an estimator $η_m^{(n)}$ based on an empirical Markov decision process. For a fixed number of quantiles $m$, we establish a non-…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="患者中心型対話型AIの複雑性" data-timestamp="1783612615000" data-url="https://arxiv.org/abs/2607.08625v1">
+  <p class="meta">arXiv cs.CL　Thu, 09 Jul 2026 15:56:55 Z</p>
+  <h2 class="article-title">患者中心型対話型AIの複雑性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、患者中心の対話型人工知能（AI）における複雑性について論じています。特に、大規模言語モデル（LLM）を搭載した健康相談チャットボットが、症状評価に広く利用されるようになってきた背景を踏まえ、その開発と評価における課題を指摘しています。<br><br>従来のチャットボット開発では、協力的で明瞭な、シミュレートされた患者が用いられることが一般的でした。しかし、本研究では2,053件の実際の患者とチャットボットの対話データを分析し、ユーザー間のコミュニケーションパターンや感情表現には大きなばらつきがあることを明らかにしました。この分析に基づき、臨床内容、感情状態、対話戦略、コミュニケーションスタイルを個別にモデル化する患者シミュレーターを開発しました。<br><br>開発された患者シミュレーターを用いたチューリングテスト風の評価では、人間による評価者の正答率は55%にとどまり、シミュレートされた対話と実際の対話はほとんど区別がつかないレベルでした。さらに、5つの異なる患者ペルソナを用いて1,164件の臨床症例を評価した結果、コミュニケーションスタイルが緊急度評価の結果に大きく影響することが判明しました。このことから、患者中心の対話型AIは、コミュニケーションの多様性に対応する必要があり、理想化された相互作用のために設計されたシステムは、現実世界での展開において性能不足や健康格差の増幅を招くリスクがあることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：João Matos, Olivia Buege, Donny Cheung, Gary S. Collins, Paula Dhiman, Nan Li, Bingyu Mao, Benjamin W. Nelson<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.08625v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08625v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="MAESTROによる不良エキスパートの枝刈り" data-timestamp="1783611174000" data-url="https://arxiv.org/abs/2607.08601v1">
+  <p class="meta">arXiv cs.CL　Thu, 09 Jul 2026 15:32:54 Z</p>
+  <h2 class="article-title">MAESTROによる不良エキスパートの枝刈り</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、スパース活性化型混合エキスパート（MoE）言語モデルにおけるデプロイメントのボトルネックとなっている、メモリ上に常駐するエキスパートバンクの削減を目指し、不良エキスパートを効率的に枝刈りするフレームワーク「MAESTRO」を提案しています。<br><br>既存の構造的枝刈り手法は、主に密なTransformer向けに設計されており、MoEルーティングの相互依存性を考慮しない局所的なヒューリスティクスを用いてエキスパートの重要性を評価していました。これに対し、MAESTROは、autoregressiveなエキスパート活性化軌道をエルゴードマルコフ連鎖としてモデル化し、その定常分布が層間の依存性をエンコードすることで、グローバルな視点での重要性ヒューリスティックを提供します。<br><br>安全性、バイアス、倫理を含む5つの多様なドメインで評価した結果、MAESTROは50%の圧縮率という厳しい条件下で、平均性能維持率において最先端のベースラインを最大10.61%上回りました。また、タスク間の分散が大幅に低減したことから、グローバルでルーティングに整合した枝刈りは、異種タスク間でより一貫して汎化するモデルを生み出すことを示唆しています。この手法は、MoEアーキテクチャに特化した構造的枝刈りの新たな方向性を示すものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Palaash Goel, Ayush Maheshwari, Tanmoy Chakraborty<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.08601v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08601v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="BERTモデル間の特徴量の普遍性を高めるためのProcrustes条件付きSAE" data-timestamp="1783605548000" data-url="https://arxiv.org/abs/2607.08499v1">
+  <p class="meta">arXiv cs.CL　Thu, 09 Jul 2026 13:59:08 Z</p>
+  <h2 class="article-title">BERTモデル間の特徴量の普遍性を高めるためのProcrustes条件付きSAE</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、独立して学習されたBERTモデル群から、クロスシード（異なる学習シード）で普遍的な特徴量を抽出するためのProcrustes条件付きJoint End-to-end Top-K Sparse Autoencoder（SAE）を提案します。<br><br>独立学習されたネットワークでは、特徴量空間の配置がランダム初期化によってずれるため、同一に見える特徴量が実際には異なるという問題が生じます。本研究では、この課題に対処するため、SAEの共同学習前に、各シードの活性化空間間で直交Procrustes回転を計算します。さらに、Top-Kスパース性、エンドツーエンドの下流タスク最適化、および先行研究に基づく補助的なデッド特徴量再生損失を組み合わせています。<br><br>5つの独立したシードペア（計10個のBERTモデル）と3つのベンチマークデータセット（SST-2、Stanford Politeness、TweetEval Emotion）を用いて評価した結果、提案手法は、後処理アライメント手法と比較して、すべてのデータセットでより普遍的な特徴量（シード間でピアソン相関係数 r ≧ 0.70）を生成することを示しました。また、最小限の質的分析により、高い普遍性を持つ特徴量が解釈可能な社会言語学的パターンをエンコードしていることが確認されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Bendegúz Váradi, Zoltán Kmetty<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.08499v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08499v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="誤差逆伝播法を超えて：モンテカルロ法による深層ニューラルネットワークの訓練" data-timestamp="1783600264000" data-url="https://arxiv.org/abs/2607.08406v1">
+  <p class="meta">arXiv stat.ML　Thu, 09 Jul 2026 12:31:04 Z</p>
+  <h2 class="article-title">誤差逆伝播法を超えて：モンテカルロ法による深層ニューラルネットワークの訓練</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、深層学習の訓練において主流となっている誤差逆伝播法（BP）が抱える勾配消失・爆発といった問題に対し、モンテカルロ法を用いた勾配フリーな訓練手法を提案しています。<br><br>提案手法は、GPU上で単純なモンテカルロアルゴリズムを実装し、パラメータをランダムに変化させ、損失が減少した場合にのみその変更を保持するという、極めてシンプルな勾配フリーな方法です。この手法は、バッチ正規化や残差接続といった一般的なテクニックを必要とせず、十分に深いネットワークを直接訓練できることを示しています。<br><br>さらに、この手法は純粋なプルーニング訓練を可能にし、離散的な重みをサポートし、ガウス関数のような非従来的な活性化関数にも対応できる柔軟性を持っています。また、深層ネットワークにおける実質的な冗長性も明らかにしました。10層以上の深層ネットワーク、16,384個の隠れニューロンを持つ単一隠れ層の広帯域ネットワーク、さらには画像分類（MNIST）および文字レベル言語モデリング（Tiny Shakespeare）で訓練された単純なTransformerアーキテクチャでもその有効性が実証されています。このシンプルな勾配フリー手法は、ニューラルネットワークの自己組織化と学習メカニズムを理解するための補完的な視点を提供し、物理学的に着想を得た深層学習システムの構築に新たな道を開く可能性を示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Zijie Cheng, Yang Peng, Zhihua Zhang<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.08444v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08444v1</a>
+        著者：Hong Zhao<br>
+        分類：cs.LG, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.08406v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.08406v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
