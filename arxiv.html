@@ -1356,6 +1356,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.AR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AR, cs.AI, cs.DC" data-title="MDTransformer：逆設計コヒーレントクロスバーを用いたモード分割フォトニックトランスフォーマーアクセラレータのハードウェア・ソフトウェア協調設計" data-timestamp="1785259669000" data-url="https://arxiv.org/abs/2607.26016v1">
+  <p class="meta">arXiv cs.AI　Tue, 28 Jul 2026 17:27:49 Z</p>
+  <h2 class="article-title">MDTransformer：逆設計コヒーレントクロスバーを用いたモード分割フォトニックトランスフォーマーアクセラレータのハードウェア・ソフトウェア協調設計</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AR</span><span class="tag">cs.AI</span><span class="tag">cs.DC</span></div>
+  <div class="summary">本論文は、トランスフォーマー推論を高速化するためのフォトニックトランスフォーマーアクセラレータ（PTA）に関する研究です。従来のPTAは、高価な多波長光源と大規模なドット積演算ユニットに依存しており、非効率的で実用的ではありませんでした。<br><br>本研究では、モード分割光データフローと演算に基づいた新しいハードウェア・ソフトウェア協調設計であるMDTransformerを提案します。MDTransformerは、逆設計されたマルチモードカプラ、クロスオーバー、およびマッハツェンダーIQ変調器を活用し、空間モード干渉を用いて複雑な行列演算を実行します。これにより、コンパクトなモード分割フォトニックテンソルコア（MPTC）が実現され、光ドメインでの行列乗算が可能になります。<br><br>各ガイドモードが独立した計算レーンとして機能することで、スペクトルフィルタリングや自由スペクトル範囲の制限なしに、波長あたり4倍の並列処理が可能になります。また、コヒーレント検出とIQ変調を組み合わせることで、振幅と位相をエンコードし、トランスフォーマーにおける全範囲演算のための複素数演算を実現します。MDTransformerは、サブ4ビットの実効精度と-30dB未満のモード間クロストークを持つアナログ乗算を提供します。逆設計アプローチは、1550nmでの単一レーザー連続波動作とのスケーラブルで完全な互換性も提供します。<br><br>実験結果によると、MDTransformerは、最先端のPTAと比較して、面積を40.4%削減し、消費電力を63.6%、エネルギーを40.6%節約し、同等のレイテンシを実現しました。これらの結果は、MDTransformerが高性能でエネルギー効率の高いトランスフォーマーベースのシステムに実用的なソリューションを提供することを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Solomon Micheal Serunjogi, Rachmad Vidya Wicaksana Putra, Ayat Taha, Muhammad Shafique, Mahmoud Rasras<br>
+        分類：cs.AR, cs.AI, cs.DC<br>
+        分野：cs.AR<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.26016v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.26016v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="指示チューニングされたモデルは人間よりも局所的に構文を再利用する" data-timestamp="1785259667000" data-url="https://arxiv.org/abs/2607.26015v1">
+  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 17:27:47 Z</p>
+  <h2 class="article-title">指示チューニングされたモデルは人間よりも局所的に構文を再利用する</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、人間の対話における「統語的収束」、すなわち話者が相手の文法プロファイルに言語を適応させる傾向について調査します。これは通常、無意識下で起こると考えられています。<br><br>大規模言語モデル（LLM）が、人間と比較して、また広範な統語構造にわたって、人間ユーザーに対して同様の統語的収束を示すかどうかは未解決の問題でした。本研究では、既存の人間の対話にモデルの応答を置き換える置換パラダイムデータを使用し、16のオープンウェイトLlamaおよびGemmaモデル（1B-70B、事前学習済みおよび指示チューニング済み）について、文脈自由文法（CFG）ルールのターン隣接再利用を測定しました。<br><br>すべてのモデルで、前の人間のターンとのCFGルール重複が、無関係な人間のプライムとの重複よりも大きいことが示されました。また、指示チューニングされた各モデルは、置換した人間の応答よりも実際のプライムとの重複が大きく、すべての8つのアーキテクチャペアで指示チューニング後に重複が増加しました。しかし、事前学習済みモデルと比較して、指示チューニングされたモデルは無関係なプライムとの重複が大きく、実際のランダム差が小さく、ターゲットルールセットサイズを一定に保った場合の条件付きルール再利用オッズが低いという結果も得られました。探索的な分析では、各モデルは、対応する人間の応答よりも前のターンとの平均語彙的および意味的類似性が大きいことが示されました。指示チューニングされたモデルは、語彙的類似性の結果がより異質であったのに対し、8つのアーキテクチャペアすべてで事前学習済みモデルよりも平均意味的類似性が高い応答を生成しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zandi Eberstadt<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.26015v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.26015v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="高速な画像・動画生成のための並列デコーディング蒸留手法" data-timestamp="1785259200000" data-url="https://arxiv.org/abs/2607.26004v1">
   <p class="meta">arXiv cs.LG　Tue, 28 Jul 2026 17:20:00 Z</p>
   <h2 class="article-title">高速な画像・動画生成のための並列デコーディング蒸留手法</h2>
@@ -1370,6 +1404,23 @@
         分野：cs.CV<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2607.26004v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.26004v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="表形式基盤モデルの分布外性能に関する経験的評価" data-timestamp="1785258961000" data-url="https://arxiv.org/abs/2607.26000v1">
+  <p class="meta">arXiv cs.AI　Tue, 28 Jul 2026 17:16:01 Z</p>
+  <h2 class="article-title">表形式基盤モデルの分布外性能に関する経験的評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、表形式データに対する基盤モデル（TFM）の分布外（OOD）性能に関する経験的評価を行います。TFMは表形式予測タスクにおいて高い性能を示していますが、実世界のシナリオでは分布シフトが発生し、モデルのロバスト性が損なわれる可能性があります。<br><br>本研究では、9つのTFMについて、異なる事前学習戦略とアーキテクチャを網羅したOOD性能を評価しました。HELOC、Voting、Childhood Leadの3つの実世界のデータセットを使用し、ラベルシフト、社会経済的シフト、地理的シフトの各タイプを考慮しました。評価の結果、すべてのTFMは分布シフト下で系統的に性能が低下することが示されました。シフトのタイプによって、性能低下の度合いは0.003から0.060の範囲でした。<br><br>インディストリビューション（ID）とOODの予測性能の関係は、古典的な表形式モデルで確認されたものと同様に、TFMにも当てはまることが明らかになりました。また、高性能なモデルは標準的なデプロイメントインフラストラクチャではサポートできないほどのメモリと計算リソースを要求するというスケーラビリティのギャップも特定されました。<br><br>この研究は、表形式データにおけるOODの既存のベンチマークを拡張し、構造的な分布シフトを特徴とするハイステークスドメインでのTFMの採用を支持する証拠を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Malena Loza, David Chushig-Muzo, Eva Milara, Luis Bote-Curiel, Luis Estrada-Petrocelli, Felipe Grijalva<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.26000v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.26000v1</a>
   </div>
 </article>
 
@@ -1404,6 +1455,40 @@
         分野：cs.DB<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2607.25992v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25992v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.NI" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.NI, cs.LG, cs.RO" data-title="自己駆動型ネットワークにおけるマルチインテント障害の予兆検知と根本原因の曖昧さ解消" data-timestamp="1785258384000" data-url="https://arxiv.org/abs/2607.25989v1">
+  <p class="meta">arXiv cs.LG　Tue, 28 Jul 2026 17:06:24 Z</p>
+  <h2 class="article-title">自己駆動型ネットワークにおけるマルチインテント障害の予兆検知と根本原因の曖昧さ解消</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.NI</span><span class="tag">cs.LG</span><span class="tag">cs.RO</span></div>
+  <div class="summary">本論文は、自己駆動型ネットワークの実現に向けた、モニタリング、分析、アクチュエーションの3つの運用上のマクロインテント（意図）の健全性に関する研究です。これらのインテントは相互に因果関係があり、一つのインテント内の単一障害が「コ・ドリフト」として伝播し、他のインテントに連鎖的かつ症候的な異常を引き起こす可能性があります。<br><br>この曖昧さにより、既存の受動的なアプローチでは真の根本原因インテントと症候的な被害インテントを区別することが困難であり、閾値超過検出に依存しているため、プロアクティブな是正措置のための時間が不足します。本研究では、インテント保証を受動的なドリフト検出から能動的な障害予測へと再定式化する新しいフレームワーク「MILD」を提案します。<br><br>MILDは、自己駆動型制御ループの3つのマクロインテントの定式化に基づき、教師拡張型Mixture-of-Expertsアーキテクチャと、インテント障害予測および根本原因帰属を共同で最適化するハイブリッド目的関数を採用しています。MILDは、SHAP説明可能性によるKPIレベルの診断と、マルチホライゾンモデリングによる動的なインテント障害緊急度推定を可能にします。<br><br>3つの環境（統計ベンチマーク、マイクロサービスアプリケーション、SDNベースのエッジ・トゥ・クラウド・テストベッド）での広範な評価により、MILDは高い障害検出率、強力な是正リードタイム、および正確なインテントレベルの根本原因曖昧さ解消を実現することが実証されました。これにより、MILDは次世代の自律ネットワークにおけるクローズドループ保証の実用的な実現手段となります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Md. Kamrul Hossain, Walid Aljoby<br>
+        分類：cs.NI, cs.LG, cs.RO<br>
+        分野：cs.NI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25989v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25989v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="シーン運動の確率的表現と予測" data-timestamp="1785258339000" data-url="https://arxiv.org/abs/2607.25984v1">
+  <p class="meta">arXiv cs.LG　Tue, 28 Jul 2026 17:05:39 Z</p>
+  <h2 class="article-title">シーン運動の確率的表現と予測</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、部分的な観測からシーンがどのように進化するかを予測するために、単一の軌道に限定せず、複数の可能な未来を推論する必要があるという問題に取り組みます。<br><br>既存のアプローチは、外観中心のビデオ予測を生成するか、運動の分布を明示的にモデル化せずに少数の軌道をサンプリングするかのいずれかでした。本研究では、GARFIELD（Goal-Aware Representations of Future kInEmatic Latent Distributions）という確率的モデルを提案します。これは、画像とオプションの時空間的に疎な制約が与えられた場合に、可能な未来の分布の構造化された時空間潜在表現を学習します。<br><br>この同じ潜在表現により、すべての軌道の同時サンプリングと、効率的な決定論的密度デコーダーを介した基盤となる運動分布への直接アクセスが可能になります。これにより、将来の運動に関する不確実性を特定のシーン要素とタイムステップに局在化させ、追加の制約を通じて段階的に洗練させることができます。実験では、ビデオ生成モデルに匹敵する強力な運動計画性能を示しつつ、軌道を97倍高速にサンプリングできることが実証されました。さらに、運動生成モデルからのモンテカルロサンプリングよりも2桁高速に運動密度を推定できるため、対話的な探索と不確実性を考慮した計画が可能になります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Timy Phan, Jannik Wiese, Björn Ommer<br>
+        分類：cs.CV, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25984v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25984v1</a>
   </div>
 </article>
 
@@ -1475,105 +1560,20 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="実臨床症例におけるマルチターンのマルチモーダル診断推論の評価" data-timestamp="1785255543000" data-url="https://arxiv.org/abs/2607.25933v1">
-  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 16:19:03 Z</p>
-  <h2 class="article-title">実臨床症例におけるマルチターンのマルチモーダル診断推論の評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、実臨床における診断推論の複雑さを評価するため、大規模なマルチターン・マルチモーダル臨床診断ベンチマーク「ClinMM-Bench」を開発しました。<br><br>従来のマルチモーダル大規模言語モデル（MLLM）の評価は、単一ターンや孤立したタスクに依存しており、臨床現場での情報開示の進行性、診断仮説の動的な更新、推論の継続的な洗練といった現実の臨床実践を十分に捉えられていませんでした。ClinMM-Benchは、1,089件の挑戦的な実臨床症例と3,760枚の医療画像を含み、8つの専門分野を網羅しています。<br><br>15の代表的なMLLMを評価した結果、プロプライエタリモデルが最も高い診断精度を示しましたが、完全な正答率は全モデルで限定的でした。診断推論の質に関しては、現在のモデルは妥当な診断方向を特定できるものの、信頼性の高い診断推論の生成には依然として大きな限界があります。エラー分析からは、情報統合の失敗、知識マッピングエラー、知覚エラー、早期確定、視覚的幻覚といった5つの代表的な失敗モードが特定されました。これは、MLLMの臨床診断能力の向上に向けた重要な課題を示しています。</div>
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CR" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CR, cs.AI, cs.CL" data-title="Stemma：誘導決定領域がLLMの来歴を明らかにする" data-timestamp="1785253373000" data-url="https://arxiv.org/abs/2607.25880v1">
+  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 15:42:53 Z</p>
+  <h2 class="article-title">Stemma：誘導決定領域がLLMの来歴を明らかにする</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CR</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、LLMの来歴テスト、すなわち疑わしいLLMがあるソースと同じ系統に属するかどうかを判定する問題に取り組みます。既存のブラックボックス手法は、主に応答レベルの特徴から関係を推測しますが、これらの特徴は、意味が変わらなくても適応やデプロイメントの下で変化する可能性があり、来歴証拠の信頼性を弱めます。<br><br>この限界に対処するため、本研究では「誘導決定領域」を導入します。これは、オープンエンドの出力を有限の決定空間にマッピングすることで、表面的な形式の変動を抽象化し、来歴テストを決定領域の継承の測定として再構築するものです。経験的分析により、関連するモデルでは無関係なモデルよりもソースの誘導領域が強く保持されることが示されました。<br><br>この信号に基づいて、実用的なブラックボックスLLMフィンガープリンティング手法であるStemmaを提案します。Stemmaは、安定性、堅牢性、特異性を補完的なプローブ選択原則として運用し、誘導決定領域の継承を確実に推定します。56の公開チェックポイントから抽出され、多様なモデル重み変換にまたがる770のソース・疑わしいペアで、Stemmaは0.967のAUCと1%のFPRで87.8%のTPRを達成し、4つの代表的なベースラインを大幅に上回りました。さらに、91のデプロイメントインスタンスをカバーする1,260ペアで0.995のAUCと1%のFPRで93.5%のTPRを達成し、多様な推論時間デプロイメント設定に対する堅牢性を示しました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Rui Yang, Weihao Xuan, Yi Lin, Zhuhan Bao, Jonathan Chong Kai Liew, Matthew Yu Heng Wong, Nicolás Lescano, Nikita R. Paripati<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.25933v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25933v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="大規模言語モデルにおける評価認識潜在変数の入力のみによる抑制" data-timestamp="1785254508000" data-url="https://arxiv.org/abs/2607.25907v1">
-  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 16:01:48 Z</p>
-  <h2 class="article-title">大規模言語モデルにおける評価認識潜在変数の入力のみによる抑制</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の内部状態を操作する「アクティベーション・ステアリング」という技術に着目し、その逆のアプローチとして、推論時にモデルにアクセスすることなく、流暢なプロンプトを最適化することで特定の内部状態（潜在変数）をゼロに近づける手法を提案しています。<br><br>特に、モデルがテストされていることを検知した場合に挙動が変わる可能性のある「評価認識」と呼ばれる潜在変数を標的とします。この潜在変数を抑制するために、既存のプロンプト最適化手法に否定的な特徴項を追加し、流暢さの正則化項と組み合わせて、Llama-3.2-3BおよびLlama-3.1-8Bモデルで実験を行いました。<br><br>実験の結果、標的とする潜在変数は頑健に抑制できることが示されました。しかし、評価認識に関連する方向性での抑制は、かえってモデルの挙動評価を低下させるという注意すべき結果も得られました。これは、アクティベーションの読み取り可能性が必ずしも行動の制御可能性を意味しないことを示唆しています。また、単一のMLPニューロンが評価と相関しているものの因果関係はないこと、自然テキストの中から最適化に匹敵する内部方向が見つかることも発見されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Deepanshu Mody, Samarth Agarwal, Utkarsh Mittal, Dipesh Mahato<br>
-        分類：cs.LG, cs.AI, cs.CL<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.25907v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25907v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.SE" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.SE, cs.CL" data-title="再帰的自己改善のためのデータ中心研究ベンチマーク：RSIBench-Data" data-timestamp="1785253601000" data-url="https://arxiv.org/abs/2607.25886v1">
-  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 15:46:41 Z</p>
-  <h2 class="article-title">再帰的自己改善のためのデータ中心研究ベンチマーク：RSIBench-Data</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.SE</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントが、モデルの失敗例を改善されたモデルへと転換する「再帰的自己改善」のループを自動化できるかを探求しています。特に、データ中心のアプローチ、すなわちモデルの能力ギャップを診断し、トレーニングデータ戦略を設計・検証し、チェックポイントからのフィードバックを学習するプロセスに焦点を当てています。<br><br>既存のベンチマークは、研究判断と最適化、サービング、評価、システム実装が混在しており、エージェントの研究能力を評価することが困難でした。そこで、本研究では、固定されたポストトレーニングスタックを持つデータ中心の研究者としてのLLMエージェントを評価するための、制御されたベンチマーク「RSIBench-Data」を導入しました。エージェントは固定されたターゲットモデルに対してトレーニングデータ戦略を反復的に改訂し、トレーニングとサービングはTinkerバックエンドサービスを使用し、評価はHarborおよびE2Bサンドボックスを通じて行われます。<br><br>4つの最先端エージェントを、ソフトウェアエンジニアリング、ターミナル操作、科学的質問応答、数学の6つのベンチマークで評価した結果、エージェントは基本的なデータ中心の研究能力を示すものの、その改善は一貫性に欠けることが明らかになりました。多くのケースで、初期の良好な結果をさらに追求した探索が、最終的にはスコアを低下させる結果に至ることが観察されました。これは、現在のエージェントが有用な発見をする能力はあるものの、フィードバックを一貫した改善に結びつけるには至っていないことを示唆しています。RSIBench-Dataは、再帰的自己改善に必要な研究能力を測定・監査可能なテストベッドを提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Fanqing Meng, Lingxiao Du, Qiguang Chen, Ziqi Zhao, Haocheng Lu, Mengkang Hu, Michael Qizhe Shieh<br>
-        分類：cs.SE, cs.CL<br>
-        分野：cs.SE<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.25886v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25886v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, astro-ph.CO, astro-ph.IM, cs.HC, gr-qc" data-title="物理学・天文学・宇宙論における科学研究支援におけるAIの能力：プロジェクト計画と提案評価" data-timestamp="1785253381000" data-url="https://arxiv.org/abs/2607.25881v1">
-  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 15:43:01 Z</p>
-  <h2 class="article-title">物理学・天文学・宇宙論における科学研究支援におけるAIの能力：プロジェクト計画と提案評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">astro-ph.CO</span><span class="tag">astro-ph.IM</span><span class="tag">cs.HC</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が科学プロジェクトの計画立案と提案評価をどの程度支援できるかを調査します。物理学、天文学、宇宙論における8つの専門家考案の研究プロジェクトについて、人間と3つのLLM（ChatGPT、Claude、DeepSeek）がそれぞれ1ページのプロジェクト計画を作成しました。これらの32の提案は、4人の人間のレビュアーと2つの新しいフロンティアLLM（Claude Opus 4.8、ChatGPT Pro 5.5）によって、4つの側面評価ルーブリックを用いて評価されました。<br><br>レビュアーは、各提案が人間またはAIによって書かれたものかを特定するようにも求められました。人間のレビュアーは、人間とAIが書いた提案を全体的に同様に評価しましたが、AIレビュアーはAIが書いた提案を人間が書いた提案よりも約1ポイント高く評価しました（5点満点）。人間のレビュアーは、人間とAIが書いた提案をそれぞれ72%、79%の確率で正しく識別しましたが、AIレビュアーは32件すべての提案を100%正しく分類しました。<br><br>これらの結果は、現在のLLMが人間のレビュアーの目には人間が書いたものと同等のプロジェクト計画を作成できることを示唆していますが、AIレビュアーはAI生成提案に対して体系的な好意を示しました。本研究の結果は、提案の準備と評価にLLMを広く展開する際には注意が必要であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Jia Liu, Veena Krishnaraj, Kateryna Vovk, Kosuke Aizawa, Adrian E. Bayer, Linda Blot, Jessica Cowell, Suyog Garg<br>
-        分類：cs.CL, astro-ph.CO, astro-ph.IM, cs.HC, gr-qc<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.25881v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25881v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CV" data-title="Shieldstral：大規模モデルに匹敵するマルチモーダル安全分類器" data-timestamp="1785252473000" data-url="https://arxiv.org/abs/2607.25857v1">
-  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 15:27:53 Z</p>
-  <h2 class="article-title">Shieldstral：大規模モデルに匹敵するマルチモーダル安全分類器</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
-  <div class="summary">本論文は、Shieldstralと名付けられた、30億パラメータのポリシー適応型マルチモーダル安全分類器を紹介します。<br><br>このモデルは、テキストの安全性に関するベンチマークにおいて、そのサイズのおよそ7倍のモデルに匹敵するかそれを上回る性能を示し、マルチモーダル安全分類においては新たな最先端技術を確立しました。Shieldstralは、コンテンツモデレーションを二値の質問応答タスクとして定式化しています。<br><br>この単純な定式化により、多様なモデレーションタスクを単一の「はい/いいえ」の問題に統合することが可能となり、異なる分類体系を持つ異種の安全データセットを一つのトレーニングフレームワークの下で統合できます。本研究では、約5410万サンプルのキュレーションと生成、およびポリシー適応性を評価するための詳細な評価セットを含む、データ構築のレシピを提示しています。これにより、小さな適応型モデルがはるかに大きなモデルに匹敵する性能を発揮できるようになります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Antonia Calvi, Avinash Sooriyarachchi, Giada Pistilli, Guillaume Lample, Maarten Buyl, Maximilian Augustin, Maximilian Müller, Pierre Stock<br>
-        分類：cs.CL, cs.CV<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.25857v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25857v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL" data-title="医療画像理解のためのビジョン中心マルチモーダルLLMシステム「ClinFusion」" data-timestamp="1785175189000" data-url="https://arxiv.org/abs/2607.24743v1">
-  <p class="meta">arXiv cs.AI　Mon, 27 Jul 2026 17:59:49 Z</p>
-  <h2 class="article-title">医療画像理解のためのビジョン中心マルチモーダルLLMシステム「ClinFusion」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、医療分野におけるマルチモーダル大規模言語モデル（MLLM）の活用を目指し、特に画像理解に焦点を当てた「ClinFusion」システムを提案しています。<br><br>ClinFusionは、2Dおよび3Dの多様な医療画像を統合的に理解するための、構成的かつカスケード型のビジョンエンコーダアーキテクチャを採用しています。これにより、異なる種類の医療画像データを単一のエンコーダで処理することが可能になります。また、放射線科医の臨床実践に沿った、正確で詳細な評価を行うためのビジョンに基づいた評価フレームワークも導入されています。<br><br>このシステムは、視覚的質問応答、レポート生成、指示追従といった様々なタスクにおいて、既存のオープンソース医療MLLMや一部の商用モデルを上回る性能を示しました。さらに、エージェントによるツール利用を拡張することで、検索拡張やツール支援型の臨床ワークフローへの応用も期待されます。専門医による評価でも高い評価を得ており、提案された評価指標が専門家の判断との相関が最も高いことが確認されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Hangjie Yuan, Yichen Qian, Zhiwei Tang, Xianzhe Xu, Lirong Wu, Sicheng Yang, Jinwang Wang, Pengju Wang<br>
-        分類：cs.CV, cs.AI, cs.CL<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.24743v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24743v1</a>
+        著者：Keyu Zhang, Vadim Safronov, Andrew Martin<br>
+        分類：cs.CR, cs.AI, cs.CL<br>
+        分野：cs.CR<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25880v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25880v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
