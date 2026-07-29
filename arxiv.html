@@ -1254,6 +1254,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CV" data-title="Desktop-Delta Bench：コンピュータ利用モデルはデスクトップGUI遷移を理解できるか？" data-timestamp="1785260991000" data-url="https://arxiv.org/abs/2607.26041v1">
+  <p class="meta">arXiv cs.AI　Tue, 28 Jul 2026 17:49:51 Z</p>
+  <h2 class="article-title">Desktop-Delta Bench：コンピュータ利用モデルはデスクトップGUI遷移を理解できるか？</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、コンピュータ利用エージェント（CUA）がデスクトップGUIを通じて長期的なタスクを実行する能力を評価するためのベンチマーク「Desktop-Delta Bench（DDB）」を提案します。現在のベンチマークは主にタスク完了成功率や単一フレームのグラウンディングを測定しますが、モデルがアクションによって生成された因果的でタスク関連の遷移を再構築できるかどうかを分離しません。これは、推論、リモート入力、アプリレンダリング、スクリーンショットキャプチャが非同期であるため、次の観測が遅延、隠蔽、一時的、または無関係である可能性があり、進捗と誤読され、後続の計画に持ち込まれる可能性があるため困難です。<br><br>DDBは、約15のアプリケーションと50のタスクドメインにわたる新しいマルチアプリLinux軌跡から得られた2,013の人間検証済みインスタンスを持つオフラインステップレベルベンチマークです。DDB軌跡は、状態検証、ソース追跡、コンテキスト認識制御の3つの失敗次元をターゲットとしており、2つの補完的なタスク（クロス軌跡デコイを含む463の3フレーム時間順序付けインスタンスと、5つのアクション+そのペイロードからラベル付けされた1,550の前後ペア）を通じて評価されます。<br><br>8つのクローズドおよびオープンソースモデルファミリーを32の順序付け設定と16の単一アクション設定で評価した結果、一貫したギャップが観察されました。順序付けはまだ飽和しておらず、最良のデコイなしおよびデコイ付き正確一致率はそれぞれ65.1%、65.7%でした。タスクコンテキストはデコイ識別を6.9パーセントポイント改善しましたが、デコイなし正確一致率は2.2ポイント低下しました。単一アクションの結果は、アクションファミリーの推測がそれを特定することよりも難しいことを示しています（クリックF1は0.96対ドラッグの0.76）。DDBは、GUIグラウンディングと最終的なタスク成功の間の欠落している診断レイヤーを埋めることにより、エンドツーエンドベンチマークを補完し、デスクトップCUAの検証、信頼性、および回復のターゲットを絞った改善を可能にします。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Abhishek Pillai, Samir Kumar Nayak, Yuan Chen<br>
+        分類：cs.AI, cs.CV<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.26041v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.26041v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.DB" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.DB, cs.AI" data-title="LLMエージェント向け価値認識型メモリ管理システム「MemLens」" data-timestamp="1785258536000" data-url="https://arxiv.org/abs/2607.25992v1">
+  <p class="meta">arXiv cs.AI　Tue, 28 Jul 2026 17:08:56 Z</p>
+  <h2 class="article-title">LLMエージェント向け価値認識型メモリ管理システム「MemLens」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.DB</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、LLMエージェントの長期推論、パーソナライズされた応答、知識再利用に不可欠なメモリ管理の課題に対処するため、価値認識型のメモリ管理システム「MemLens」を提案します。<br><br>既存のLLMメモリシステムは、ユーザーとLLMの相互作用記録を均一に扱う粗粒度（ユーティリティ非依存）なアプローチを採用しており、冗長で影響の少ない記録がメモリリポジトリに残り続けるという問題がありました。MemLensは、メモリ記録をファーストクラスのデータオブジェクトとして扱うことで、この課題を解決します。<br><br>MemLensは、メモリのシャプレー値に基づく評価、価値認識型ストレージ、メモリ支援応答を含むメモリライフサイクルの全体像を公開する、エンドツーエンドのインタラクティブ分析ダッシュボードを提供します。これにより、ユーザーはメモリの価値を検査し、階層的なメモリ構造を可視化し、応答品質、検索レイテンシ、トークン消費の観点から様々なメモリ管理戦略を比較できます。このシステムは、LLMベースのエージェントにとって、効率的で解釈可能、かつパーソナライズされた長期メモリ管理システムとして機能することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Shuyue Wei, Chang Liu, Zimu Zhou, Yongxin Tong, Lizhen Cui<br>
+        分類：cs.DB, cs.AI<br>
+        分野：cs.DB<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25992v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25992v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="動画レベルの曖昧さとためらいを認識するための知識誘導型マルチモーダル推論" data-timestamp="1785257078000" data-url="https://arxiv.org/abs/2607.25961v1">
+  <p class="meta">arXiv cs.AI　Tue, 28 Jul 2026 16:44:38 Z</p>
+  <h2 class="article-title">動画レベルの曖昧さとためらいを認識するための知識誘導型マルチモーダル推論</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、動画レベルでの曖昧さとためらい（A/H）の認識を扱います。A/Hは健康行動変容の遅延や放棄に先行する相反する感情状態であり、顔、音声、言語、身体といった複数のモダリティ間の不一致から生じ、個人差も大きいため、動画レベルでの認識は困難です。<br><br>提案手法PRISM-AHは、A/Hを時間とともに展開するマルチモーダルな対立として捉えます。凍結されたビジョン、音声、テキストエンコーダーを短い時間窓に整列させ、モダリティ間の不協和音をスコアリングし、ためらいの驚き信号を明らかにする軽量ストリーミングモデルに渡します。さらに、参加者のメタデータに基づいて行動プロトタイプを発見し、密なウィンドウレベルの注釈を補助目的でモデルに与え、マクロF1のために決定閾値を調整します。<br><br>知識誘導型大規模言語モデルがデータセットの専門家キュー分類法を用いて構造化された証拠を推論し、検証性能が向上した場合にのみ、その判断を遅延させて融合します。公開テストパーティションの525本の動画において、PRISM-AHは報告されているゼロショットベースラインの0.2827と比較して、0.6133のマクロF1を達成しました。推論による改善は、検証からより大きなテストパーティションへの転移が検証されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Podakanti Satyajith Chary, Barath Parthiban, Pranesh Velmurugan, Adeeba Khan, Nagarajan Ganapathy<br>
+        分類：cs.CV, cs.AI<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25961v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25961v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="臨床タイムシリーズQAのための費用対効果の高いマルチモーダルLLM推論フレームワーク" data-timestamp="1785256421000" data-url="https://arxiv.org/abs/2607.25947v1">
+  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 16:33:41 Z</p>
+  <h2 class="article-title">臨床タイムシリーズQAのための費用対効果の高いマルチモーダルLLM推論フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、不規則な臨床タイムシリーズ（ICTS）データに対する質問応答（QA）のための、費用対効果の高いマルチモーダルLLM推論フレームワーク「ClinPRISM」を提案します。<br><br>ICTSデータは、そのスパース性、非同期性、不規則なサンプリングパターンといった臨床特有の課題を抱えています。ClinPRISMは、これらの課題に対応するため、不規則性を考慮したマルチスケールエンコーダーと、異なるスケールの表現を統合しLLMトークンに圧縮するテンポラルエビデンスディスティラーを開発しました。さらに、不規則な軌跡をLLMのテキスト埋め込み空間に段階的にアラインするプログレッシブアラインメント戦略も導入しています。<br><br>本研究では、30,000件の臨床タイムシリーズとマルチスケール記述、41,000件の指示チューニングインスタンスを構築し、40億パラメータのLLMバックボーンを用いて評価しました。その結果、ClinPRISMは、わずか16のタイムシリーズトークンを使用し、平均推論レイテンシ0.15秒で、最先端の性能を達成しました。これは、医療応用におけるICTSデータのQA能力を大幅に向上させる可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Frank Nie, Ethan B Liu, Yuan Zhu, Wei Fan, Jindong Han<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25947v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25947v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="実臨床症例におけるマルチターンのマルチモーダル診断推論の評価" data-timestamp="1785255543000" data-url="https://arxiv.org/abs/2607.25933v1">
+  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 16:19:03 Z</p>
+  <h2 class="article-title">実臨床症例におけるマルチターンのマルチモーダル診断推論の評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、実臨床における診断推論の複雑さを評価するため、大規模なマルチターン・マルチモーダル臨床診断ベンチマーク「ClinMM-Bench」を開発しました。<br><br>従来のマルチモーダル大規模言語モデル（MLLM）の評価は、単一ターンや孤立したタスクに依存しており、臨床現場での情報開示の進行性、診断仮説の動的な更新、推論の継続的な洗練といった現実の臨床実践を十分に捉えられていませんでした。ClinMM-Benchは、1,089件の挑戦的な実臨床症例と3,760枚の医療画像を含み、8つの専門分野を網羅しています。<br><br>15の代表的なMLLMを評価した結果、プロプライエタリモデルが最も高い診断精度を示しましたが、完全な正答率は全モデルで限定的でした。診断推論の質に関しては、現在のモデルは妥当な診断方向を特定できるものの、信頼性の高い診断推論の生成には依然として大きな限界があります。エラー分析からは、情報統合の失敗、知識マッピングエラー、知覚エラー、早期確定、視覚的幻覚といった5つの代表的な失敗モードが特定されました。これは、MLLMの臨床診断能力の向上に向けた重要な課題を示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Rui Yang, Weihao Xuan, Yi Lin, Zhuhan Bao, Jonathan Chong Kai Liew, Matthew Yu Heng Wong, Nicolás Lescano, Nikita R. Paripati<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25933v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25933v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, astro-ph.CO, astro-ph.IM, cs.HC, gr-qc" data-title="物理学・天文学・宇宙論における科学研究支援におけるAIの能力：プロジェクト計画と提案評価" data-timestamp="1785253381000" data-url="https://arxiv.org/abs/2607.25881v1">
+  <p class="meta">arXiv cs.CL　Tue, 28 Jul 2026 15:43:01 Z</p>
+  <h2 class="article-title">物理学・天文学・宇宙論における科学研究支援におけるAIの能力：プロジェクト計画と提案評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">astro-ph.CO</span><span class="tag">astro-ph.IM</span><span class="tag">cs.HC</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が科学プロジェクトの計画立案と提案評価をどの程度支援できるかを調査します。物理学、天文学、宇宙論における8つの専門家考案の研究プロジェクトについて、人間と3つのLLM（ChatGPT、Claude、DeepSeek）がそれぞれ1ページのプロジェクト計画を作成しました。これらの32の提案は、4人の人間のレビュアーと2つの新しいフロンティアLLM（Claude Opus 4.8、ChatGPT Pro 5.5）によって、4つの側面評価ルーブリックを用いて評価されました。<br><br>レビュアーは、各提案が人間またはAIによって書かれたものかを特定するようにも求められました。人間のレビュアーは、人間とAIが書いた提案を全体的に同様に評価しましたが、AIレビュアーはAIが書いた提案を人間が書いた提案よりも約1ポイント高く評価しました（5点満点）。人間のレビュアーは、人間とAIが書いた提案をそれぞれ72%、79%の確率で正しく識別しましたが、AIレビュアーは32件すべての提案を100%正しく分類しました。<br><br>これらの結果は、現在のLLMが人間のレビュアーの目には人間が書いたものと同等のプロジェクト計画を作成できることを示唆していますが、AIレビュアーはAI生成提案に対して体系的な好意を示しました。本研究の結果は、提案の準備と評価にLLMを広く展開する際には注意が必要であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Jia Liu, Veena Krishnaraj, Kateryna Vovk, Kosuke Aizawa, Adrian E. Bayer, Linda Blot, Jessica Cowell, Suyog Garg<br>
+        分類：cs.CL, astro-ph.CO, astro-ph.IM, cs.HC, gr-qc<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.25881v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.25881v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL" data-title="医療画像理解のためのビジョン中心マルチモーダルLLMシステム「ClinFusion」" data-timestamp="1785175189000" data-url="https://arxiv.org/abs/2607.24743v1">
   <p class="meta">arXiv cs.AI　Mon, 27 Jul 2026 17:59:49 Z</p>
   <h2 class="article-title">医療画像理解のためのビジョン中心マルチモーダルLLMシステム「ClinFusion」</h2>
@@ -1472,108 +1574,6 @@
         分野：cs.AI<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2607.24667v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24667v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Generative Models" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.GR, cs.LG" data-title="MMOE：効率的なエキスパート設計による拡散トランスフォーマーの近代化" data-timestamp="1785171904000" data-url="https://arxiv.org/abs/2607.24665v1">
-  <p class="meta">arXiv cs.LG　Mon, 27 Jul 2026 17:05:04 Z</p>
-  <h2 class="article-title">MMOE：効率的なエキスパート設計による拡散トランスフォーマーの近代化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CV</span><span class="tag">cs.GR</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、AI生成コンテンツ（AIGC）の基盤モデル、特に拡散トランスフォーマーにおける効率的なエキスパート設計について論じています。<br><br>従来のAI生成モデルは、大規模言語モデル（LLM）のスケーリングで成功した効率化メカニズムを取り入れずに、パラメータ数やスパース性のみを増大させる傾向がありました。本研究では、LLMのスケーリング原則をAIGCに適応させる「ModernMOE（MMOE）」を提案し、ルーティングエキスパート、共有・軽量エキスパート、ゲート・残差ルーティング、アテンション・残差情報再利用といった現代的なエキスパートコンポーネントが、収束性、効率性、生成品質にどのように影響するかを体系的に調査しています。<br><br>MMOEは、限られた計算資源（単一8GPU H100ノード、400kステップ）で訓練されたにもかかわらず、既存のモデルよりも高速に収束し、優れた品質とコストのバランスを実現しました。ルーティング分析からは、エキスパートの安定した専門化と効率的な利用が示唆されています。これらの結果は、AIGCモデルもLLMと同様に、パラメータ数やスパース性だけでなく、効率化設計を取り入れることでバランスの取れたスケーリングパスをたどれる可能性を示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Yanhao Jia, Jiepeng Wang, Haibin Huang, Chi Zhang, Erik Cambria, Xuelong Li<br>
-        分類：cs.CV, cs.GR, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.24665v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24665v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="physics.acc-ph" data-source="arXiv cs.AI" data-area="AI" data-categories="physics.acc-ph, cs.AI, cs.IR" data-title="科学施設向け補正エージェント型ハイブリッドRAGと運用に根差した評価" data-timestamp="1785171690000" data-url="https://arxiv.org/abs/2607.24663v1">
-  <p class="meta">arXiv cs.AI　Mon, 27 Jul 2026 17:01:30 Z</p>
-  <h2 class="article-title">科学施設向け補正エージェント型ハイブリッドRAGと運用に根差した評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">physics.acc-ph</span><span class="tag">cs.AI</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、科学ユーザー施設に蓄積された膨大な運用知識（ログブック、技術文書、チャット履歴など）を自然言語でアクセス可能にするためのプラットフォーム「APS-RAG」と、その評価手法について述べています。<br><br>APS-RAGは、高度な光子源（APS）の知識にスタッフがアクセスできるように設計されており、検索エンジンは、デンス、スパース、知識グラフ（KG）の3つのチャネルを統合し、クエリタイプに適応する逆ランク融合を採用しています。さらに、補正エージェントループとネイティブツール実行機能も組み込まれています。評価のために、検証可能な正解を持つ50件の質問応答（QA）データセット「APS-Bench」が構築されました。<br><br>実験の結果、APS-RAGの各バリアントは、従来のBM25ベースラインを上回る検索精度を示し、特に補正エージェント型グラフRAGは高い精度を達成しました。クロスエンコーダー再ランクラーが回答品質に大きく貢献することが確認されました。グラフチャネルと補正ループも性能向上に寄与しましたが、その効果は限定的でした。また、オープンソースとクローズドソースのLLMの性能比較も行われました。本研究で開発されたプラットフォームと評価手法は、他の大規模科学機器における信頼性の高いAI支援のワークフローとして応用可能であると考えられます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Rajat Sainju, Dariusz Jarosz, Hairong Shang, Michael Prince, Ryan M. Aydelott, Mathew J. Cherukara, Yine Sun, Michael D. Borland<br>
-        分類：physics.acc-ph, cs.AI, cs.IR<br>
-        分野：physics.acc-ph<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.24663v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24663v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ELMOD：モバイル推論のための効率的なドイツ語中心2.7B言語モデル" data-timestamp="1785167501000" data-url="https://arxiv.org/abs/2607.24585v1">
-  <p class="meta">arXiv cs.CL　Mon, 27 Jul 2026 15:51:41 Z</p>
-  <h2 class="article-title">ELMOD：モバイル推論のための効率的なドイツ語中心2.7B言語モデル</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文では、リソースが制約されたモバイルデバイスでの効率的な推論に特化した、コンパクト（2.7Bパラメータ）なドイツ語言語モデル「ELMOD」を紹介しています。<br><br>ELMODは、限られた計算予算（55k H100 GPU時間）で、公開されているデータのみを使用してトレーニングされました。特に、ドイツ語の形態学的変化、複合語、正書法規則に対応するため、英語中心とは異なる独自のデータ前処理パイプラインが開発されました。さらに、品質フィルタリングとリフレーズ（言い換え）ステップを導入することで、データの指示品質を向上させ、性能改善と計算要件の削減を達成しました。<br><br>これらのアーキテクチャとデータ選択の工夫により、ELMODは2.7Bパラメータクラスにおいて最高の性能を示し、ドイツ語タスクにおいては7Bパラメータモデルに匹敵する性能を達成しました。これは、効率的なモデル設計と、言語特性に合わせたデータ処理の重要性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Darina Gold, Alexander Schwirjow, Viktor Haag, Viktor Hangya, Joel Schlotthauer, Fabian Küch, Luzian Hahn<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.24585v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24585v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="econ.EM" data-source="arXiv stat.ML" data-area="AI" data-categories="econ.EM, math.ST, stat.ME, stat.ML" data-title="偏りなき機械学習：識別、推定、および形状制約" data-timestamp="1785161295000" data-url="https://arxiv.org/abs/2607.24472v1">
-  <p class="meta">arXiv stat.ML　Mon, 27 Jul 2026 14:08:15 Z</p>
-  <h2 class="article-title">偏りなき機械学習：識別、推定、および形状制約</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">econ.EM</span><span class="tag">math.ST</span><span class="tag">stat.ME</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、パラメータの興味 $θ_0$ が、高次元となりうる迷惑変数 $γ_0$ を含むモーメント条件によって識別される、偏りなき機械学習（DML）の識別と推定のための一般的なフレームワークを開発するものです。<br><br>DMLは、機械学習を用いて $γ_0$ を推定し、同時に正則化や過学習によるバイアスを補正します。これにより、$θ_0$ の推定におけるバイアス伝播を防ぎます。本研究では、Riesz表現 $α_0$ が識別される条件を確立し、$α_0$ が二次汎関数を一意に最適化する場合に識別が生じることを示します。<br><br>この特性により、内生性を持つモデルやディープニューラルネットワークなどの現代的なアーキテクチャを含む、一般的な $γ_0$ を許容する $α_0$ の一般的な推定手順を開発できます。推定精度を向上させ、次元の呪いを軽減するために、形状制約を $γ_0$ に組み込み、それを非線形パラメータ空間に埋め込みます。シミュレーションと実証的応用を通じて推定手順を実証します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Qihui Chen, Ka Yan Cheng, Zheng Fang<br>
-        分類：econ.EM, math.ST, stat.ME, stat.ML<br>
-        分野：econ.EM<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.24472v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24472v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="周波数ベースのリカレントニューラルネットワーク" data-timestamp="1785159193000" data-url="https://arxiv.org/abs/2607.24420v1">
-  <p class="meta">arXiv stat.ML　Mon, 27 Jul 2026 13:33:13 Z</p>
-  <h2 class="article-title">周波数ベースのリカレントニューラルネットワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、リカレントニューラルネットワーク（Reservoir Computing）の効率的な機械学習フレームワークを提案するものです。これは、力学系によって生成される時系列データの予測に有効です。<br><br>リカレントニューラルネットワークは、出力層のみを線形回帰で訓練し、リカレント層は訓練しないという特徴があります。この単純さにより、訓練が容易になり、実験への適用性が向上します。しかし、現在のリカレントニューラルネットワークはランダムに接続されたノードのネットワークで構成されており、多数のハイパーパラメータの最適化が必要なため、その動作原理を正確に説明し、最適化する方法に関するフレームワークが不足しています。<br><br>本研究では、脳の振動ダイナミクスと時間スケールの階層構造に着想を得た、周波数ベースのリカレントニューラルネットワークを提案します。これは、入力の周波数成分の一部を処理する独立した振動ユニットのアンサンブルとして解釈できます。これにより、リカレントニューラルネットワークの内部動作を、外部入力によって駆動される単一ユニットとしてモデル化することで理解できます。非線形振動子の理論を応用し、周波数ベースのリカレントニューラルネットワークのユニットが特定の入力周波数を選択的に増幅・記憶し、それを予測に利用することを発見しました。提案手法は、ランダムなリカレントニューラルネットワークと同等以上の性能を示し、特に短期予測の改善に有効です。さらに、複雑な時空間ダイナミクスの予測も可能であることを示します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Arthur S Powanwe<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.24420v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24420v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Robotics" data-field="stat.ME" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ME, q-bio.QM, stat.AP, stat.CO, stat.ML" data-title="高次元時空間データのためのベイズ特徴抽出：ガウス分布と拡散ガンマ事前分布" data-timestamp="1785156899000" data-url="https://arxiv.org/abs/2607.24378v1">
-  <p class="meta">arXiv stat.ML　Mon, 27 Jul 2026 12:54:59 Z</p>
-  <h2 class="article-title">高次元時空間データのためのベイズ特徴抽出：ガウス分布と拡散ガンマ事前分布</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">stat.ME</span><span class="tag">q-bio.QM</span><span class="tag">stat.AP</span><span class="tag">stat.CO</span></div>
-  <div class="summary">本論文は、多くの科学分野で見られる、疎な構造と時空間的依存性を持つ高次元データに対応するベイズ特徴抽出フレームワークを開発するものです。ガウス分布と拡散ガンマ事前分布を用いて構造化されたスパース性を誘導します。<br><br>モデルフレームワークは、Bregmanダイバージェンスを介して一般的な尤度を指定し、様々な損失関数や測定モデルとの互換性を可能にします。事後分布の計算はマルコフ連鎖モンテカルロ法（MCMC）を用いて行われ、事後サンプルに基づいた2段階の特徴抽出手順を導入し、空間と時間における選択を安定化させます。<br><br>多被験者脳波（EEG）のケーススタディを用いて手法を実証します。このケーススタディでは、慢性的なアルコール曝露と異なる脳領域の活動との関係を調査します。まず、各時点での二値分類モデルを適合させ、次に偽発見率制御スクリーニングとそれに続く2段階の特徴抽出パイプラインでのクラスタリングを使用して、活動している脳領域を特定します。提案する事前分布が、疎な特徴の回復を改善し、時空間的依存性がある場合の解釈性を高めることを分析により示します。このフレームワークは、正確な特徴選択と推論が必要とされる高次元で構造化された問題に広く適用可能です。モデル実装のためのコードはGitHubで公開されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Garrett Frady, Dipak K. Dey, Shariq Mohammed<br>
-        分類：stat.ME, q-bio.QM, stat.AP, stat.CO, stat.ML<br>
-        分野：stat.ME<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.24378v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.24378v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
