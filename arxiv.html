@@ -1474,105 +1474,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="トークンコスト同等で自己修正・反省より繰り返しサンプリングが優位" data-timestamp="1785433103000" data-url="https://arxiv.org/abs/2607.28576v1">
-  <p class="meta">arXiv cs.AI　Thu, 30 Jul 2026 17:38:23 Z</p>
-  <h2 class="article-title">トークンコスト同等で自己修正・反省より繰り返しサンプリングが優位</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本研究は、大規模言語モデル（LLM）における自己修正や反省といった高度な推論手法の効果を、単純な繰り返しサンプリングと比較評価したものです。従来の自己修正手法は、モデルに計画、批判、書き直し、反省、複数試行からの選択、あるいは自己との議論などを実行させるため、単一の思考連鎖よりも多くのテキストを生成します。この追加生成が精度向上に寄与するのか、手法自体のアイデアが有効なのかが不明確でした。<br><br>本研究では、7つの手法と1.5Bから7Bパラメータのオープンモデルを使用し、2つの数学ベンチマークで比較実験を行いました。各手法が生成する全トークン数をカウントし、同等のトークンコストで繰り返しサンプリングと比較しました。その結果、同等のコストにおいては、どの手法も繰り返しサンプリングに対して統計的に有意な優位性を示しませんでした。特に、自己出力を検査する手法（Self-RefineやReflexionなど）は、繰り返しサンプリングよりも信頼性をもって劣ることが示されました。<br><br>さらに、モデルサイズが大きくなるにつれて、自己修正手法の効果が低下する傾向が見られました。例えば、Best-of-N（N個の中から最良を選択）は、小規模モデルでは繰り返しサンプリングを上回っていましたが、大規模モデルではその差はほぼ消失しました。また、Reflexionは、小規模モデルでは自己判断で再試行がトリガーされず、単一の思考連鎖として機能してしまう場合があることも報告されています。本研究は、トークンコストを考慮した場合、単純な繰り返しサンプリングが依然として強力なベースラインであり、高度な自己修正手法が必ずしも優位とは限らないことを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Iliya Mirzaei<br>
-        分類：cs.CL, cs.AI, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.28576v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28576v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="ローカルコンピューター利用エージェントにおける推論時スケーリングの再考：失敗モードと計算コストのトレードオフ" data-timestamp="1785432996000" data-url="https://arxiv.org/abs/2607.28573v1">
-  <p class="meta">arXiv cs.AI　Thu, 30 Jul 2026 17:36:36 Z</p>
-  <h2 class="article-title">ローカルコンピューター利用エージェントにおける推論時スケーリングの再考：失敗モードと計算コストのトレードオフ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AI分野におけるローカルコンピューター利用エージェント（CUA）の性能向上に関する研究です。<br><br>プライバシー、コスト効率、実用性の観点から、自律的なCUAをローカル環境に展開することは重要ですが、厳格なハードウェア制約下での性能向上は依然として課題です。近年の研究では、推論時のスケーリング（追加計算）がエージェントの性能を向上させることが示されていますが、リソースが限られたローカルモデルにおけるその有効性は十分に理解されていません。本研究では、コンテキスト、時間、構造、並列の各次元にわたるローカルCUAにおける推論時スケーリングの体系的な経験的研究を行いました。<br><br>Qwen3-VL-8B/30B-A3B、UI-TARS-1.5-7B、OpenCUA-7BをOSWorldベンチマークで評価した結果、追加計算はしばしば収穫逓減をもたらし、同時に失敗モードを変化させることが示されました。コンテキストスケーリングは、履歴的な根拠を提供し、軌道の安定性とタスク精度を向上させますが、トークンコストが増加するにつれてその利得は飽和し、失敗は繰り返しや停滞から早期の誤った成功へと移行します。時間スケーリングも同様に最大ステップの停滞を減少させますが、タスク成功率を大幅に改善せず、長いホライズンが誤った軌道を修正するのではなく、むしろ拡張してしまうことを示唆しています。さらに、構造的な分解はローカルの2段階エージェントにおいて計画とフォーマットのオーバーヘッドを導入する可能性があり、並列スケーリングはかなりの計算コストをかけてこれらの失敗を部分的に緩和することがわかりました。全体として、効率的なローカルCUAには、選択的な計算割り当て、失敗を考慮した制御メカニズム、およびローカルモデルの能力と限界に基づいて設計されたエージェントフレームワークが必要であることが示唆されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Woongkyu Lee, Jungwook Choi<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.28573v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28573v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="Frontis-MA1：機械学習エンジニアリングにおける再帰的自己改善を目指したAI4AIモデルの訓練" data-timestamp="1785432841000" data-url="https://arxiv.org/abs/2607.28568v1">
-  <p class="meta">arXiv cs.CL　Thu, 30 Jul 2026 17:34:01 Z</p>
-  <h2 class="article-title">Frontis-MA1：機械学習エンジニアリングにおける再帰的自己改善を目指したAI4AIモデルの訓練</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、AI分野における機械学習エンジニアリング（MLE）の自動化と自己改善に関する研究です。<br><br>再帰的自己改善（RSI）を実現するには、AIシステム自体がAI構築プロセスを改善する能力（AI4AI）を持つ必要があります。本研究では、MLEをその具体的なテストベッドとして捉え、RSI研究のためのオープンなフルスタックシステム「OpenMLE」を提案しています。OpenMLEは、実行フィードバックを備えた検証可能なタスク環境（OpenMLE-Gym）、オペレーター学習（OpenMLE-RL）、および長期間探索（OpenMLE-Evo）を網羅しています。<br><br>このスタック上で、4つの基本的なプログラム進化オペレーター（Draft、Improve、Debug、Crossover）を中心に、メタ進化エージェントとして「Frontis-MA1」（35B）をポストトレーニングしました。これらのオペレーターは、実行に基づいたSFT（Supervised Fine-Tuning）とRL（Reinforcement Learning）によって訓練され、評価ベンチマーク全体から重複排除されたデータを使用しています。そして、これらのオペレーターを長期間探索に組み合わせることで、学習と進化を単一のループで結合させています。MLE-Bench Lite（12時間/タスク、RTX 4090 12GB VRAM上限）での評価では、Frontis-MA1（35B）はOpenMLE-Evoを使用することで、ベースモデルの39.39%から60.61%にメダル平均を向上させ、OpenMLE-Evo-Max（ベンチマーク非依存の経験事前知識と非同期探索）を使用すると71.21%に達し、GPT-5.5 + Codexを上回り、GPT-5.6 Solや2.8T Kimi K3に迫る性能を示しました。さらに、未評価のNatureBench Liteでも、フレームワークを固定してモデルを交換するとMatch-SOTAが50%から70%に向上し、モデルを固定してOpenMLE-Evoを導入すると20%から50%に向上しました。本研究では、モデルの重みとOpenMLEスタック全体を公開し、RSIに向けた実行可能なAI4AIに関する再現可能な研究を可能にします。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Junlin Yang, Che Jiang, Yu Fu, Tianwei Luo, Can Ren, Weizhi Wang, Kaikai Zhao, Hongyi Liu<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.28568v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28568v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.MA" data-title="原子系3D構造予測のための教師なし原子ポリシー最適化" data-timestamp="1785432118000" data-url="https://arxiv.org/abs/2607.28553v1">
-  <p class="meta">arXiv cs.AI　Thu, 30 Jul 2026 17:21:58 Z</p>
-  <h2 class="article-title">原子系3D構造予測のための教師なし原子ポリシー最適化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.MA</span></div>
-  <div class="summary">本論文は、原子系（結晶やタンパク質など）の3D構造予測における新たなアプローチ「APO（Atomic Policy Optimization）」を提案します。材料科学や創薬分野において、原子系の3D構造予測は極めて重要ですが、特に新規な結晶相や新規タンパク質の実験的ラベルの取得は高コストであり、データが不足している状況での構造モデリングのボトルネックとなっています。<br><br>APOは、教師ありの選好学習に依存する従来のフローマッチングモデルとは異なり、教師なしで構造予測を行うフレームワークです。これは、グループ相対ポリシー最適化を3D原子環境に適応させ、「構造モード強化報酬」と「熱力学的安定性強制報酬」という新しい二重報酬メカニズムを採用しています。これにより、モデルはサンプリングされたグループ内で物理的に妥当な配置を特定し、自己修正することが可能になります。<br><br>この手法は、結晶構造予測および抗体構造予測のベンチマークにおいて、教師ありベースラインを常に上回り、マッチ率と構造忠実度において新たな最先端を達成しました。さらに、APOは確率パスを効果的に直線化し、推論効率を大幅に向上させることが示されています。本研究は、物理的な整合性が、ノイズの多い教師あり座標マッチングよりも優れたアライメントガイドとなり得ることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Shentong Mo, Yatao Bian<br>
-        分類：cs.LG, cs.AI, cs.MA<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.28553v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28553v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.SE" data-title="ORCA-bench：オンコール業務における言語モデルエージェントの準備状況" data-timestamp="1785431647000" data-url="https://arxiv.org/abs/2607.28545v1">
-  <p class="meta">arXiv cs.CL　Thu, 30 Jul 2026 17:14:07 Z</p>
-  <h2 class="article-title">ORCA-bench：オンコール業務における言語モデルエージェントの準備状況</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.SE</span></div>
-  <div class="summary">本論文は、AI分野におけるオンコール業務の課題に焦点を当てています。<br><br>大規模言語モデルはコードの生成や修正、検索が可能ですが、オンコール業務における根本原因分析（RCA）には、曖昧なユーザー報告から始まり、インシデント発生から数時間後にノイズの多いメトリクス、ログ、トレース、ソースコードを横断して推論する能力が求められます。そこで、汎用的なコーディングエージェントを実運用に近いオンコール環境で評価するためのベンチマーク「ORCA-bench」が導入されました。<br><br>ORCA-benchは、実際のテレメトリインターフェース（Prometheus、Jaeger、OpenSearch）と完全なソースコードへのアクセスを提供するマイクロサービスシステムと、1,079件のRCAタスクを組み合わせたものです。タスクは、報告の具体性、検出までの時間、併発する障害シナリオなどを体系的に変化させています。専門のSRE（Site Reliability Engineer）が検証したグランドトゥルース症状に基づき、LLMによる評価は人間によって独立して再採点されています。5つの最先端エージェントを評価した結果、最も難易度の低いタスク（現実的な入力設定）で25.3%、最も難しいタスクで10.0%のRCA精度しか達成できませんでした。これは、Claude Fable 5を使用しても残るギャップです。最も性能の低いモデルは、インシデント報告の40%でありえない根本原因を幻視し、ソースコードへのアクセスを削除すると全ての指標が悪化しました。これらの結果は、最先端のコーディングエージェントが実運用信頼性を安全に担当できるようになる前に必要なエンジニアリング投資の下限を示唆しています。本研究で公開されるデータセットは、https://hub.harborframework.com/datasets/orca-bench/ORCA-bench で入手可能です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Albert Gong, Kyuseong Choi, Abhineet Agarwal, Jason Schechner, Ryan Huang, Raj Agrawal, Anish Agarwal, Raaz Dwivedi<br>
-        分類：cs.CL, cs.AI, cs.SE<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.28545v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28545v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="LLM生成臨床特徴プログラムによるデータ効率的な瘢痕分類" data-timestamp="1785431120000" data-url="https://arxiv.org/abs/2607.28538v1">
-  <p class="meta">arXiv cs.LG　Thu, 30 Jul 2026 17:05:20 Z</p>
-  <h2 class="article-title">LLM生成臨床特徴プログラムによるデータ効率的な瘢痕分類</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、臨床写真から病的な瘢痕を分類する手法「ScaFE（Scar Feature Engineering）」を提案するものです。特に、ケロイドと肥厚性瘢痕の鑑別において、専門家によるラベル付きデータが限られ、病院間での取得条件のばらつきが大きいという課題に対応します。<br><br>ScaFEは、大規模言語モデル（LLM）から臨床的知識を抽出し、直接的な画像診断ではなく、決定論的かつ実行可能な特徴プログラムに変換します。LLMは臨床的証拠を収集し、視覚的に評価可能な瘢痕属性を測定するプログラムを合成します。これらのプログラムは、ローカル環境で実行され、生画像や患者ごとの出力はローカルに留められたまま、検証統計と特徴レベルのSHAP要約のみが返されます。その後、軽量なランダムフォレストモデルがこの構造化された表現を用いて分析を行います。<br><br>このアプローチにより、データ効率が高く、病院間での画像分類が可能になります。実際の評価では、3つの病院からの600枚の写真を用いて、サイトごとのマクロ平均正解率で81.0%を達成し、既存の最良ベースラインを10.0パーセンテージポイント上回りました。さらに、開発データの10%のみを使用した場合でも、ScaFEは72.0%の正解率を維持し、11.8ポイントの差をつけました。この手法は、LLMの知識を活用し、ローカルで監査可能な特徴プログラムを通じて、データ効率と再現性の高い医療画像分類を実現する可能性を示しています。</div>
+<article class="digest-article" data-month="2026-07" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv cs.LG" data-area="AI" data-categories="stat.ML, cs.LG, stat.AP, stat.CO, stat.ME" data-title="不規則な履歴を持つ縦断的因果推論のための二重頑健関数表現学習" data-timestamp="1785432822000" data-url="https://arxiv.org/abs/2607.28567v1">
+  <p class="meta">arXiv cs.LG　Thu, 30 Jul 2026 17:33:42 Z</p>
+  <h2 class="article-title">不規則な履歴を持つ縦断的因果推論のための二重頑健関数表現学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">stat.AP</span><span class="tag">stat.CO</span></div>
+  <div class="summary">本論文は、不規則な関数的断片として記録されることが多い縦断的因果研究における、履歴データの扱いに関する新しい手法を提案します。<br><br>標準的な二重頑健推定量はスカラー要約を必要とすることが多いですが、シーケンス学習者は予測損失を最適化します。本研究では、Doubly Robust Functional Representation Learning（DR-FRL）というクロスフィッティングワークフローを提案し、不規則な履歴を観測履歴レジームのための推定対象指向状態に変換します。関数的および時間的エンコーダが点群と過去の履歴を状態にマッピングし、ナイーブヘッドが結果、処置、および打ち切り関数を推定します。<br><br>EIF（Efficient Influence Function）をターゲットとした検証、キャリブレーション、オーバーラップ、テール、アブレーション診断により、状態が推定方程式をサポートするかどうかを評価します。選択された状態がナイーブ情報に必要なナイーブ情報を保持する場合、表現誤差は通常のナイーブ誤差と同じ二次積剰余項に入り、平均推定量は明示的なレート、オーバーラップ、キャリブレーション、および安定性の条件下で漸近的に線形になります。シミュレーションでは、関数的交絡が高次元である場合、測定が情報的である場合、サポートが弱い場合、または擬似結果がヘビーテイルである場合に利点が見られました。VitalDB監査では、DR-FRLが不規則な実験室点群を使用でき、有用な負の発見を提供することが示されました。このICU退院エンドポイントでは、スカラー実験室要約がすでに多くのエンドポイント関連情報を含んでいることが示唆されました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.LG<br>
         サイト：arXiv<br>
-        著者：Ruman Wang, Hangting Ye<br>
-        分類：cs.CV, cs.LG<br>
-        分野：cs.CV<br>
+        著者：Mengfei Ran, Yifeng Shen, Ruijie Guan<br>
+        分類：stat.ML, cs.LG, stat.AP, stat.CO, stat.ME<br>
+        分野：stat.ML<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.28567v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28567v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Machine Learning" data-field="cond-mat.str-el" data-source="arXiv cs.LG" data-area="AI" data-categories="cond-mat.str-el, cs.LG, physics.comp-ph" data-title="金属磁性体におけるスピンダイナミクスのためのグラフニューラルネットワーク力場" data-timestamp="1785431096000" data-url="https://arxiv.org/abs/2607.28537v1">
+  <p class="meta">arXiv cs.LG　Thu, 30 Jul 2026 17:04:56 Z</p>
+  <h2 class="article-title">金属磁性体におけるスピンダイナミクスのためのグラフニューラルネットワーク力場</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cond-mat.str-el</span><span class="tag">cs.LG</span><span class="tag">physics.comp-ph</span></div>
+  <div class="summary">本論文は、金属磁性体における複雑なスピンダイナミクスを扱うための新しいアプローチを提案するものです。<br><br>電子計算による相互作用によって支配されるスピンダイナミクスは、予測シミュレーションにおいて計算上のボトルネックとなります。本研究では、グラフニューラルネットワーク（GNN）を用いた磁気力場フレームワークを導入し、電子計算から直接、スピンダイナミクスを学習します。<br><br>このフレームワークは、機械学習された原子間ポテンシャルに類似しており、電子によって生成される非線形かつ空間的に広がる相互作用を捉えながら、スピン力の効率的な評価を可能にします。様々な磁気秩序を示す金属磁性体システムで検証した結果、学習された力場は電子生成スピン力を正確に再現し、直接的な電子シミュレーションと一致する非平衡スピンダイナミクスを示しました。これにより、GNNが機械学習磁気力場のための強力なフレームワークであることが確立され、複数の空間的・時間的スケールにわたる非平衡磁性の予測的大規模シミュレーションへの道が開かれます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Ali Rayat, Yunhao Fan, Gia-Wei Chern<br>
+        分類：cond-mat.str-el, cs.LG, physics.comp-ph<br>
+        分野：cond-mat.str-el<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.28537v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28537v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Generative Models" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="AIシステムと言語イデオロギーの再生産：世界英語における標準化の考察" data-timestamp="1785430918000" data-url="https://arxiv.org/abs/2607.28528v1">
+  <p class="meta">arXiv cs.CL　Thu, 30 Jul 2026 17:01:58 Z</p>
+  <h2 class="article-title">AIシステムと言語イデオロギーの再生産：世界英語における標準化の考察</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AIシステム、特に大規模言語モデル（LLM）が、世界英語（World Englishes）における標準的な言語イデオロギーをどのように反映、強化、あるいは時に挑戦するかを考察します。<br><br>AI技術は、その訓練データ、設計プロトコル、評価基準、ユーザーフィードバック、そして公の議論といった様々なレベルで、英語の「標準」規範を重視し、非支配的な英語を周縁化する傾向があります。これは、特にグローバルサウスの英語話者の英語規範に対する、グローバルノース話者による「delve」という単語への固執に見られる論争によって示唆されます。<br><br>AIは英語を均質化する一方で、多様なコーパスへの露出やグローバルサウスのユーザーによるアノテーション作業を通じて英語を多様化させる可能性も指摘されています。この研究は、AIシステムが言語イデオロギーを再生産する場であることを示し、英語の多様性を認識した、より包括的な設計アプローチの必要性を訴えています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Kingsley Ugwuanyi<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.28528v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28528v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, math.ST, stat.ML" data-title="大規模行動空間におけるオンポリシー・オフポリシー学習" data-timestamp="1785426971000" data-url="https://arxiv.org/abs/2607.28408v1">
+  <p class="meta">arXiv stat.ML　Thu, 30 Jul 2026 15:56:11 Z</p>
+  <h2 class="article-title">大規模行動空間におけるオンポリシー・オフポリシー学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">math.ST</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、エージェントがコンテキストを観測し、非常に大きな行動集合から行動を選択し、部分的なフィードバックを受け取るインタラクティブシステムにおけるポリシー学習を研究します。<br><br>主なフレームワークはコンテクスチュアルバンディットであり、オンポリシー学習（エージェントが環境と逐次的に相互作用し、後悔を最小化する）とオフポリシー学習（ログデータから学習する）の2つのパラダイムを扱います。大規模行動空間では、非効率的な探索、データカバレッジの希薄さ、高い分散の重要度重み、外挿バイアス、困難な最適化ランドスケープといった課題に直面します。<br><br>前半では、オンポリシー学習のための構造化ベイズ手法を開発し、Thompsonサンプリングの拡張であるmeTSと、拡散に触発された事前分布を利用するdTSを導入します。これらの手法は行動間で情報を共有し、実効的な行動数に依存する後悔保証をもたらします。後半では、オフポリシー学習に取り組み、潜在変数に基づく構造化直接法であるsDMを提案し、大規模行動空間では最適化誤差が推定誤差を支配しうることを示し、凹状で効率的に最適化可能なポリシー重み付き対数尤度目的関数を導入します。最後に、指数平滑化とPAC-Bayesian限界に基づく微分可能な悲観的手法を開発し、正則化された重要度サンプリング推定量のバイアス・バリアンストレードオフを制御します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Imad Aouali<br>
+        分類：cs.LG, cs.AI, math.ST, stat.ML<br>
+        分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.28538v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28538v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2607.28408v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28408v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="信頼性の高い深層学習のための不確実性定量化：手法と指標" data-timestamp="1785420631000" data-url="https://arxiv.org/abs/2607.28248v1">
+  <p class="meta">arXiv stat.ML　Thu, 30 Jul 2026 14:10:31 Z</p>
+  <h2 class="article-title">信頼性の高い深層学習のための不確実性定量化：手法と指標</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、安全性が重視される領域での深層学習（DL）の展開に不可欠な、予測の信頼性に関する推定値を提供するための不確実性定量化（UQ）手法と指標について、構造化された批判的レビューを行います。<br><br>特に、アンサンブルベースおよび近似ベイズアプローチに焦点を当て、既存のレビューにはない、効率的なアンサンブル近似と単一パス手法に関する詳細な検討、および予測分布を生成する手法と不確実性を要約する指標を分離した統一的な扱いを提供します。<br><br>ベイジアンニューラルネットワーク、モンテカルロ・ドロップアウト、深層アンサンブル、効率的なアンサンブル近似、最終層または単一パスアプローチといった手法群を分類し、それぞれの理論的根拠、実装、経験的性能、限界を検証します。さらに、不確実性指標とその分解についても論じ、特にエントロピー分解とペアワイズ発散指標を対比させ、評価方法論を統合します。最後に、大規模言語モデルにおける不確実性について簡潔に触れ、今後の研究課題を提示します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：H. Martin Gillis, Thomas Trappenberg<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.28248v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28248v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.AI, cs.LG" data-title="回帰問題における関連特徴部分集合と部分空間の同時学習" data-timestamp="1785412289000" data-url="https://arxiv.org/abs/2607.28080v1">
+  <p class="meta">arXiv stat.ML　Thu, 30 Jul 2026 11:51:29 Z</p>
+  <h2 class="article-title">回帰問題における関連特徴部分集合と部分空間の同時学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">stat.ML</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、非定常かつ非線形な回帰問題において、関連特徴の部分集合と部分空間を同時に特定することを可能にする、新しい「エントロピー最適多様体回帰（EOMR）」手法を提案します。<br><br>この手法は、線形的な計算コストとメモリ効率でロバストな学習を実現します。提案手法は、カオス力学や流体ダイナミクスといった非常に挑戦的な問題において、既存の最先端AI・機械学習ツールと比較評価されます。<br><br>その結果、EOMRは、ロレンツ96システムやトカマクプラズマのハセガワ・ワカタニモデルといった複雑な問題において、勾配ブーステッドランダムフォレスト、深層ニューラルネットワーク、TransformerベースのAIツールと比較して、数桁小さい予測誤差と数桁小さいモデル複雑性を達成することが示されました。特にハセガワ・ワカタニモデルの例では、EOMRはわずか8つのパラメータで記述される、シンプルで高精度な主要な本質的直交関数（EOF）のダイナミクスを抽出しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Illia Horenko<br>
+        分類：stat.ML, cs.AI, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.28080v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.28080v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
