@@ -1236,6 +1236,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.DC, cs.PF" data-title="エージェントLLMサービングのための正確なステートフル・トークン化サービス「TokTier」" data-timestamp="1785520590000" data-url="https://arxiv.org/abs/2607.29678v1">
+  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 17:56:30 Z</p>
+  <h2 class="article-title">エージェントLLMサービングのための正確なステートフル・トークン化サービス「TokTier」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.DC</span><span class="tag">cs.PF</span></div>
+  <div class="summary">本論文は、エージェント型LLMサービングにおけるトークン化の課題に対処する「TokTier」というステートフル・トークン化サービスを提案します。<br><br>LLMサービングシステムはプロンプトのKV状態をキャッシュしますが、多くのフロントエンドは依然としてすべての呼び出しでリクエストテキスト全体を再トークン化しています。このコストはコーディングエージェントにのしかかり、短いツール結果の後に長いトランスクリプトを再送信し、以前のシーケンスの終端近くのトークン境界を変更する可能性があるため、再利用が困難になります。2つのエージェントエコシステムからの153,951回の呼び出し全体で、中央値は約1.4K文字を追加し、セッションを開始または再構築するのはわずか1.0〜3.6%です。<br><br>TokTierは、発行されたトークンIDが常にリクエストテキストの完全な参照トークン化と同一であるという1つの契約を持つステートフル・トークン化サービスです。セッション継続のために、追加の周囲の小さなウィンドウを再トークン化し、リクエストごとの安定境界チェック後にのみスプライスします。GPUでの正確な事前トークン化とBPEを実行します。サンプリングされたシャドウ検証者がライブトラフィックを再チェックします。17のトークナイザーファミリー全体で、差分キャンペーンは1.5x10^10の分割チェックをカバーし、12.4TBのリアルテキストコーパスと93,000以上のリプレイされたエージェントステップで、ゼロの分岐を達成しました。インクリメンタルリペアは、100Kから3M文字まで0.5〜1.1ミリ秒かかり、HFトークン化よりも最大437倍高速です。GPUフルトークン化は、0.87ミリ秒で1M文字リクエストをエンコードし、HFよりも最大491倍高速です。vLLMを使用すると、中央値の最初のトークンまでの時間が16〜34%減少し、P99は23%減少します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zhenyu Zhang, Zhichao Cao<br>
+        分類：cs.CL, cs.DC, cs.PF<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.29678v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29678v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction" data-timestamp="1785520558000" data-url="https://arxiv.org/abs/2607.29677v1">
   <p class="meta">arXiv cs.AI　Fri, 31 Jul 2026 17:55:58 Z</p>
   <h2 class="article-title">ExtractBench: A Benchmark for Schema-Guided Enterprise Document Extraction</h2>
@@ -1372,6 +1389,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.RO, cs.CL, cs.CV" data-title="ビジョン・言語・アクション強化学習のためのワールドクリティックモデル「WCM」" data-timestamp="1785516525000" data-url="https://arxiv.org/abs/2607.29613v1">
+  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 16:48:45 Z</p>
+  <h2 class="article-title">ビジョン・言語・アクション強化学習のためのワールドクリティックモデル「WCM」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、ロボット操作におけるビジョン・言語・アクション（VLA）モデルの強化学習（RL）後処理のための「ワールドクリティックモデル（WCM）」を提案します。<br><br>RL手法の中でも、クリティックベースのアプローチは、主に単一フレームの観測または単一フレームのVLMバックボーン潜在変数で動作する値推定器に依存していますが、これはロボット制御の部分観測可能な性質とは根本的に一致しません。観測履歴をクリティックに組み込む単純なアプローチは、高次元の視覚空間では指数関数的な複雑さを招き、純粋なスカラーリターン回帰はクロス時間ダイナミクスの学習に不十分な教師信号を提供するため、依然として失敗します。<br><br>その根本原因は状態近似問題にあると特定しました。明示的な世界モデリング目標なしでは、クリティックの表現は正確な値推定に必要な時間的構造を捉えることができません。これを解決するために、軽量LeJEPAアーキテクチャ上に構築されたWCMを提案します。WCMは将来の潜在状態を共同で予測し、値を推定するため、クリティックの表現はスカラーリターンの単なる回帰ではなく、時間的ダイナミクスを捉えるように明示的にトレーニングされます。WCMは、オンポリシーおよびオフポリシーのトレーニングパイプラインにシームレスに統合され、Pi0、Pi0.5、OpenVLA-OFTなどの最先端のVLAバックボーンと互換性があります。4つのベンチマークにわたる149のタスクでの広範な実験により、WCMは分布内および分布外の両方の設定で一貫して最先端のパフォーマンスを達成し、特に強力な汎化ゲインを示しています。さらに、OpenVLA-OFTおよびPi0.5とオフポリシーRLを使用した7つの実世界の操作タスクでWCMを検証し、多様な設定で安定した展開を確認しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Senyu Fei, Xiaopeng Yu, Siyin Wang, Xianzhong Zhao, Jingjing Gong, Xipeng Qiu<br>
+        分類：cs.RO, cs.CL, cs.CV<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.29613v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29613v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.IR" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.IR, cs.LG" data-title="QASP: Query-Adaptive Robust Vector Search Policy" data-timestamp="1785515927000" data-url="https://arxiv.org/abs/2607.29606v1">
   <p class="meta">arXiv cs.LG　Fri, 31 Jul 2026 16:38:47 Z</p>
   <h2 class="article-title">QASP: Query-Adaptive Robust Vector Search Policy</h2>
@@ -1474,105 +1508,71 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-08" data-genre="AI / Research" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.RO" data-title="LEMUR: Learning to Align with Multi-Objective Reinforcement Learning from Preference Feedback" data-timestamp="1785513029000" data-url="https://arxiv.org/abs/2607.29559v1">
-  <p class="meta">arXiv cs.AI　Fri, 31 Jul 2026 15:50:29 Z</p>
-  <h2 class="article-title">LEMUR: Learning to Align with Multi-Objective Reinforcement Learning from Preference Feedback</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">AI / Research</span><span class="tag">cs.AI</span><span class="tag">cs.RO</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: LEMUR: Learning to Align with Multi-Objective Reinforcement Learning from Preference Feedback Authors: Manith Adikari, Bei Peng, Samuele Vinanzi, Angelo Cangelosi Categories: cs.AI, cs.RO Abstract / Summary: Reinforcement Learning (RL) systems are typically trained using a single, well-specified scalar reward function. However, real-world decision-making tasks often involve multiple, competing objectives, such as performance versus efficiency, where ground-truth reward functions are difficult to specify or inaccessible. While Multi-Objective RL (MORL) addresses such trade-offs by modeling rewards as vectors, existing approaches typically assume access to a well-specified reward function for each objective, inheriting the same challenges faced by single-objective RL. Meanwhile, Preference-based RL (PbRL) has shown great potential in solving…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Manith Adikari, Bei Peng, Samuele Vinanzi, Angelo Cangelosi<br>
-        分類：cs.AI, cs.RO<br>
-        分野：cs.AI<br>
-        ジャンル：AI / Research<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.29559v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29559v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="AIテキスト検出器評価のためのマッチングされた著者書き換えベンチマークデータセットARB" data-timestamp="1785512157000" data-url="https://arxiv.org/abs/2607.29539v1">
-  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 15:35:57 Z</p>
-  <h2 class="article-title">AIテキスト検出器評価のためのマッチングされた著者書き換えベンチマークデータセットARB</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AIによって生成されたテキストを検出する技術の評価におけるギャップを埋めることを目的としています。従来のベンチマークは、人間が書いたテキストと大規模言語モデル（LLM）が直接生成したテキストを比較しますが、人間が書いたテキストをLLMが書き換えた場合の検出器の性能については不明な点が多くありました。<br><br>このギャップに対処するため、著者らは「Authorship-Rewriting Benchmark (ARB)」を導入します。ARBは、XSum、WritingPrompts、OpenWebTextから収集された1,800の人間作成ソーステキストと、4つのオープンウェイト生成モデル（Llama-3.2-3B、Qwen2.5-7B、Mistral-7B、Gemma-2-9B）を用いて構築されました。各ソースアイテムからは、人間作成（HUMAN）、直接LLM生成（Free-LLM）、LLMによる人間テキストの書き換え（H2L）、および同一ジェネレーターによるLLMテキストの書き換え（LLM2L）の4つのマッチングされたバリアントが生成されます。<br><br>5つの検出器（FastDetectGPT、Binoculars-falcon-7b、RADAR、BERT-Defense、RoBERTa-Defense）を厳格な1%の偽陽性率（TPR@1%FPR）の運用点で評価した結果、FastDetectGPTとBinoculars-falcon-7bは、直接LLMテキストの91.2%および93.5%を検出しましたが、人間が書いたテキストをLLMが書き換えたものに対しては30.8%および15.1%しか検出できず、60〜78パーセントポイントの低下が見られました。同一モデルによるLLMテキストの書き換えでは、これらの検出器の再現率は78.3%および83.0%を維持し、低下は10〜13ポイントと大幅に小さくなりました。RADARも同様のパターンを示しましたが、BERT-DefenseとRoBERTa-Defenseはすべての条件下で3%未満の再現率にとどまりました。これらの結果は、従来の人間対LLMベンチマークで測定された検出器の性能が、LLMによって改変された人間作成テキストに対しては予測できないことを示しており、LLMのみによる書き換えに対しては検出器が大部分堅牢性を維持していることとは対照的です。</div>
+<article class="digest-article" data-month="2026-07" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.PF" data-title="Studying quantization trade-offs for efficient inference deployment in machine translation" data-timestamp="1785503711000" data-url="https://arxiv.org/abs/2607.29397v1">
+  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 13:15:11 Z</p>
+  <h2 class="article-title">Studying quantization trade-offs for efficient inference deployment in machine translation</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span><span class="tag">cs.PF</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: Studying quantization trade-offs for efficient inference deployment in machine translation Authors: Jim Zhao, Sohir Maskey, Koen Oostermeijer, Douglas Orr, Teryn Jones Categories: cs.CL, cs.PF Abstract / Summary: Deploying large language models in realistic server environments poses challenges, as the system needs to provide high-quality responses with low latency. Quantization is a common approach to reduce the memory footprint and improve inference efficiency, yet its impact on latency and throughput is rarely evaluated under controlled, orchestration-level workloads. In this work we study the quantization trade-offs of two translation model families, EuroLLM \citep{martins2025eurollm} and Hy-MT2 \citep{zheng2026hy} across five models ranging from 1.7B to 22B for efficient deployment on a single A100 or H100 GPU. We demonstrate that comb…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Gaetano Perrone, Simon Pietro Romano<br>
-        分類：cs.CL, cs.AI<br>
+        著者：Jim Zhao, Sohir Maskey, Koen Oostermeijer, Douglas Orr, Teryn Jones<br>
+        分類：cs.CL, cs.PF<br>
         分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.29539v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29539v1</a>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.29397v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29397v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.LG" data-title="証拠タイプの競合：介入データは言語モデルに因果の方向性をいつ教えられるか？" data-timestamp="1785509358000" data-url="https://arxiv.org/abs/2607.29484v1">
-  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 14:49:18 Z</p>
-  <h2 class="article-title">証拠タイプの競合：介入データは言語モデルに因果の方向性をいつ教えられるか？</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、介入データが因果推論を教える上で最良とされる仮説を、合成環境で検証します。その結果、観察相関と因果効果が系統的に反対の符号を持つ「シンプソンのパラドックス」の世界では、事前学習における介入サンプルの割合を増やしても因果の方向性が改善されないことが示されました。<br><br>モデルのdo()-応答の大きさは増加しますが、その符号は観察的文脈からコピーされる傾向があります。介入的証拠がどのように利用されるかを決定するのは、学習混合比率ではなく、推論時に文脈に存在する証拠のタイプであることが明らかになりました。<br><br>同一の学習レシピの下で、純粋に観察的な文脈は29/50の世界で系統的な符号反転を引き起こしましたが、混合文脈では19/50、介入プローブのみでは41/50が正しく予測されました。文脈から観察的証拠を削除すると、抑制されていた因果補間能力が即座に解放されます。この抑制は、学習シード間で安定しており、パラメータ数0.93Bで頑健であることが定量化されました。<br><br>外部監査により、2層構造を持つ学習済みの正効果事前分布が特定されました。符号ランダム化再学習は、分布内ではこの事前分布を除去しますが、分布外では除去しません。結論として、因果推論の能力はモデルの重みに存在しますが、その切り替えは文脈に依存し、活性化パッチングによって中間層の観察的行に局在することが示されました。さらに、プローブベースの因果評価のサンプリングノイズフロアと、符号エラーを26%から9%に削減する証拠平均化プロトコルが定量化されています。</div>
+<article class="digest-article" data-month="2026-07" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.LG" data-title="PTP: Previous-Token Prediction based LLM Inversion for Near-Exact Prompt Reconstruction" data-timestamp="1785502903000" data-url="https://arxiv.org/abs/2607.29378v1">
+  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 13:01:43 Z</p>
+  <h2 class="article-title">PTP: Previous-Token Prediction based LLM Inversion for Near-Exact Prompt Reconstruction</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: PTP: Previous-Token Prediction based LLM Inversion for Near-Exact Prompt Reconstruction Authors: Pirzada Suhail, Nagasai Saketh Naidu, Atanu R Sinha, Amit Sethi Categories: cs.CL, cs.LG Abstract / Summary: Large language models (LLMs) generate text by auto-regressively sampling the next token. This inherently leads to a many-to-many mapping between prompts and responses, complicating the task of inferring prompts from observed outputs. Prior work on LLM inversion frames prompt recovery as a semantic reconstruction task. They rely on fine-tuning pretrained sequence-to-sequence models on large external datasets--and requiring access to model weights or logits--to generate semantically plausible prompts. In contrast, we present a functional approach to inverting a given LLM in a black-box setting, without auxiliary aids. We train an explicit …<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Xining Xun<br>
+        著者：Pirzada Suhail, Nagasai Saketh Naidu, Atanu R Sinha, Amit Sethi<br>
         分類：cs.CL, cs.LG<br>
         分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.29484v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29484v1</a>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2607.29378v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29378v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-07" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, stat.AP" data-title="Analytical and Bootstrap Confidence Intervals of Double Machine Learning: Simulation studies and an application to rural-urban difference in obesity prevalence" data-timestamp="1785507753000" data-url="https://arxiv.org/abs/2607.29456v1">
-  <p class="meta">arXiv stat.ML　Fri, 31 Jul 2026 14:22:33 Z</p>
-  <h2 class="article-title">Analytical and Bootstrap Confidence Intervals of Double Machine Learning: Simulation studies and an application to rural-urban difference in obesity prevalence</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">stat.AP</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv stat.ML Site: arXiv Title: Analytical and Bootstrap Confidence Intervals of Double Machine Learning: Simulation studies and an application to rural-urban difference in obesity prevalence Authors: Haozheng Xu, Siyuan Ma, Qingyan Xiang Categories: stat.ML, cs.LG, stat.AP Abstract / Summary: Double Machine Learning (DML) is a popular approach for treatment effect estimation in various settings, which allows a wide range of flexible machine learning methods to be used for nuisance parameter estimation while preserving valid inference. In practice, however, applied researchers must choose among many machine learning algorithms for nuisance models, and the impact of this choice on the variance estimation of DML is not well characterized. We conduct a comprehensive simulation study to compare the coverage probability of DML confidence intervals across different machine l…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+<article class="digest-article" data-month="2026-07" data-genre="Machine Learning" data-field="cs.AI" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.AI, stat.ML" data-title="A Generalized-Bayes Perspective on Counterfactual Explanations: Posterior-Based Decision-Making and Evaluation" data-timestamp="1785480982000" data-url="https://arxiv.org/abs/2607.29077v1">
+  <p class="meta">arXiv stat.ML　Fri, 31 Jul 2026 06:56:22 Z</p>
+  <h2 class="article-title">A Generalized-Bayes Perspective on Counterfactual Explanations: Posterior-Based Decision-Making and Evaluation</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.AI</span><span class="tag">stat.ML</span></div>
+  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv stat.ML Site: arXiv Title: A Generalized-Bayes Perspective on Counterfactual Explanations: Posterior-Based Decision-Making and Evaluation Authors: Keita Kinjo Categories: cs.AI, stat.ML Abstract / Summary: Counterfactual explanations (CEs) enhance the interpretability of machine learning models by identifying the smallest change to an input required to obtain a desired output. Although CEs are conventionally formulated as a distance-minimization problem, the theoretical basis of this formulation has received limited attention. We show that a distance-minimization-based CE is mathematically equivalent to the maximum a posteriori (MAP) estimate of a Gibbs posterior within the generalized Bayes framework, specifically when a distance-based prior is used. We call this formulation the Distance-Prior Generalized Bayes CE (DP-GBCE). Building on this posterior perspective…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Haozheng Xu, Siyuan Ma, Qingyan Xiang<br>
-        分類：stat.ML, cs.LG, stat.AP<br>
-        分野：stat.ML<br>
+        著者：Keita Kinjo<br>
+        分類：cs.AI, stat.ML<br>
+        分野：cs.AI<br>
         ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.29456v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29456v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2607.29077v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29077v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-07" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="LLMパーソナライゼーションにおける記憶利用の調査" data-timestamp="1785506241000" data-url="https://arxiv.org/abs/2607.29433v1">
-  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 13:57:21 Z</p>
-  <h2 class="article-title">LLMパーソナライゼーションにおける記憶利用の調査</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントがパーソナライズされたコンパニオンへと進化する中で、記憶能力の重要性を探求しています。<br><br>LLMは、関連するユーザーの好みがコンテキスト内に存在する場合でも、それに基づいて行動できないという知識利用の問題に直面します。この問題に対処するため、本研究では、同じユーザーの好みに対して「知っているか（Know）」と「行動できるか（Act）」のペアテストを実施する、分離評価パラダイムを導入しました。<br><br>16のシステムと5つの記憶アーキテクチャにわたる大規模実験の結果、エージェントはユーザーの好みを記憶しているにもかかわらず、実際の行動に反映できないという大きなギャップが明らかになりました。特に健康やセラピー関連の好みにおいては、行動への反映が弱く、失敗した場合の現実世界への影響が大きいことが示唆されています。<br><br>この研究は、LLMのパーソナライゼーションにおける記憶の利用可能性と実際の行動との間の乖離を浮き彫りにし、今後のエージェント開発における重要な課題を提示しています。</div>
+<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="トポロジーに基づくAIアライメントテストと意味空間特性評価フレームワーク「Persistent Convolution」" data-timestamp="1785471141000" data-url="https://arxiv.org/abs/2607.29008v1">
+  <p class="meta">arXiv stat.ML　Fri, 31 Jul 2026 04:12:21 Z</p>
+  <h2 class="article-title">トポロジーに基づくAIアライメントテストと意味空間特性評価フレームワーク「Persistent Convolution」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、AIアライメントのテストと意味空間の特性評価のためのトポロジーに基づくフレームワーク「Persistent Convolution」を提案します。<br><br>現代の不透明なAIモデルは、解釈可能性よりも性能を重視する傾向があり、テストを困難にしています。しかし、モデルの埋め込み空間で実施される形式的な統計テストは、意味構造、概念分離、知識グラフのアライメントを堅牢に特徴づけることができます。モデル開発者は、人間のキュレーションによる知識構造を活用してアライメントをテストするモデル比較技術から恩恵を受けるでしょう。<br><br>本研究では、トポロジーベースのマルチモーダルアライメントテストを開発・実証し、不透明モデルのデプロイメント、選択、比較をより解釈しやすくします。これらの手法は、可能性理論との直感的なつながりを提供し、データからデプロイメントまでの統一的な決定理論的フレームワークを提供します。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
+        配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Zhaoxin Feng, Jianfei Ma, Emmanuele Chersoni<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.29433v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29433v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-07" data-genre="Ethics / Safety" data-field="cs.IR" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.IR, cs.CL" data-title="RAGにおける質問と回答のギャップを埋める：仮想プロンプト埋め込み" data-timestamp="1785504131000" data-url="https://arxiv.org/abs/2607.29402v1">
-  <p class="meta">arXiv cs.CL　Fri, 31 Jul 2026 13:22:11 Z</p>
-  <h2 class="article-title">RAGにおける質問と回答のギャップを埋める：仮想プロンプト埋め込み</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.IR</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、検索拡張生成（RAG）システムにおける、ユーザーの質問と文書テキスト内の関連情報との間のスタイルギャップを埋めるための新しいフレームワーク「Hypothetical Prompt Embeddings（HyPE）」を提案しています。<br><br>従来のRAGシステムでは、このギャップを埋めるために、クエリ時に仮想文書埋め込み（HyDE）のようなランタイムソリューションが用いられてきましたが、これは追加の計算オーバーヘッドを招きます。HyPEは、仮想コンテンツの生成をクエリ時からインデックス作成フェーズに移行させることで、この課題に対処します。<br><br>具体的には、データチャンクごとに複数の仮想プロンプトを事前計算し、プロンプトの代わりにチャンクを埋め込むことで、検索を質問-質問マッチングタスクに変換します。これにより、ランタイムでの合成回答生成の必要性がなくなり、レイテンシが増加しないだけでなく、クエリと関連コンテキストの間の整合性が強化されます。<br><br>6つの一般的なデータセットでの実験結果は、HyPEが標準的なアプローチと比較して、検索コンテキストの精度を最大42パーセントポイント、取得したリコールの精度を最大45パーセントポイント向上させることができることを示しています。さらに、HyPEはリランキング、マルチベクトル検索、クエリ分解などの他のRAGの進歩とも互換性があります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Domen Vake, Jernej Vičič, Aleksandar Tošić<br>
-        分類：cs.IR, cs.CL<br>
-        分野：cs.IR<br>
+        著者：Tyler Ashoff, Jordan Rodu<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2607.29402v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29402v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2607.29008v1" target="_blank" rel="noopener">https://arxiv.org/abs/2607.29008v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
