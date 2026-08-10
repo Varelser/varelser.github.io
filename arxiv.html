@@ -1144,6 +1144,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="SkillProx：近接テキスト勾配降下法によるエージェントスキルの自己進化" data-timestamp="1786124433000" data-url="https://arxiv.org/abs/2608.07449v1">
+  <p class="meta">arXiv cs.AI　Fri, 07 Aug 2026 17:40:33 Z</p>
+  <h2 class="article-title">SkillProx：近接テキスト勾配降下法によるエージェントスキルの自己進化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、LLMエージェントがタスク遂行を通じて獲得した知識を「スキル」として蓄積し、それを自己進化させる新しいフレームワーク「SkillProx」を提案しています。<br><br>既存の手法では、スキルは軽量で再利用可能なテキストアーティファクトとして扱われ、重み更新なしでエージェントのコンテキストにロードされます。これらのスキルは、反復的なタスク実行、失敗診断、軌跡誘導テキスト空間更新を通じて洗練されますが、明示的な診断-結果フィードバックが欠如しており、削除操作も知識の統合というより一般的な編集操作として扱われていました。SkillProxは、この課題に対処するため、閉ループ診断進化とユーティリティを考慮した近接洗練を組み合わせた、近接勾配法に着想を得たフォワード-バックワードフレームワークを導入しています。<br><br>このフレームワークは、タスク損失とスキル複雑性のバランスを取る複合目的関数に基づいており、フォワード段階では診断駆動型編集を同じタスクバッチに再実行し、後退をロールバックし、測定された結果を後続の診断にフィードします。バックワード段階では、スキルを監査可能な知識単位に分解し、凍結されたleave-one-outユーティリティ監査を使用して貢献度を推定し、検証ゲート付きの統合、降格、または削除を適用します。<br><br>複数のバックボーンLLMにわたるインディストリビューションおよびアウトオブディストリビューションベンチマークでの実験により、SkillProxは最先端の勾配ベースベースラインと比較して平均精度を3.0パーセントポイント向上させることが示されました。コンポーネントの剥離実験は、閉ループ診断と近接洗練の相補的な効果を実証しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Mingxuan Zheng, Yujin Zhou, Chuxue Cao, Boqin Yin, Yuyao Zhang, Jiapeng Sun, Shuaishuai Gong, Sirui Han<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.07449v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07449v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI, cs.CY" data-title="オープンソースAIリスク軽減ツールの分類学的分析" data-timestamp="1786123989000" data-url="https://arxiv.org/abs/2608.07446v1">
   <p class="meta">arXiv cs.AI　Fri, 07 Aug 2026 17:33:09 Z</p>
   <h2 class="article-title">オープンソースAIリスク軽減ツールの分類学的分析</h2>
@@ -1158,6 +1175,23 @@
         分野：cs.SE<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2608.07446v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07446v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="Blast Radius：エージェントコーディングにおけるトークン消費を削減する予測的メモリ管理" data-timestamp="1786123433000" data-url="https://arxiv.org/abs/2608.07440v1">
+  <p class="meta">arXiv cs.AI　Fri, 07 Aug 2026 17:23:53 Z</p>
+  <h2 class="article-title">Blast Radius：エージェントコーディングにおけるトークン消費を削減する予測的メモリ管理</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、エージェントコーディングにおけるコストとトークンの無駄遣いという増大する問題に対処するため、「Blast Radius」という予測的メモリ管理レイヤーを提案しています。<br><br>Blast Radiusは、入力プロンプトがコンテキストとコードチャネルを通じて到達する範囲を推定する機能を持っています。これにより、不要なコンテキストの処理を削減し、トークン消費を最適化します。このシステムは、NECROPHORESISという機能により、不要になったコンテキストをアーカイブすることで可逆的なエビクション（除外）を可能にし、またRecurring Dead Matter (RDM) という機能で繰り返し出現するトランスクリプトを特定し、アーカイブします。<br><br>研究では、可逆的なコンテキストエビクションをポーランドのコンテキスト空間上で定式化し、保持、繰り返し、エビクションのための測定可能な基盤を提供するとともに、コンテキストエントロピーと復活確率を結びつけています。7つのOpenAIモデルを用いた実験では、Blast Radiusはトークン消費を17-26%削減し、テストされたポリシーの中で最も低いオーバーフロー率を達成し、バイト単位で可逆性を維持しました。450個の埋められたデータのうち、378個が繰り返し発生する不要なデータであり、呼び戻されたものはありませんでした。<br><br>Blast Radiusは、どのレコードを埋め、入力プロンプトがコードベースのどこまで到達するかを決定するHCRCの下で動作します。この研究は、大規模言語モデルとエージェントコーディングをより再利用可能で持続可能なものにするという、Algosophyのより広範な目標に貢献するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：MY Pitsane, Hope Mogale<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.07440v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07440v1</a>
   </div>
 </article>
 
@@ -1195,6 +1229,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="拡散モデルLLMのメカニズム的安全性の脆弱性とその悪用" data-timestamp="1786123038000" data-url="https://arxiv.org/abs/2608.07430v1">
+  <p class="meta">arXiv cs.AI　Fri, 07 Aug 2026 17:17:18 Z</p>
+  <h2 class="article-title">拡散モデルLLMのメカニズム的安全性の脆弱性とその悪用</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、拡散モデル大規模言語モデル（DLLM）における安全性のメカニズムに焦点を当て、それらを標的および敵対者として分析します。<br><br>研究では、DLLMの安全対策が限定的であり、異なるアーキテクチャ間でも転移可能であることを明らかにしました。特に、自己プルーニングや既存のモデルからの転移プルーニングによって、攻撃成功率が大幅に向上することが示されました。<br><br>これらの知見に基づき、オフラインで動作する新しい脱獄フレームワーク「SN-Guided Diffusion」を提案しています。これは、拡散プロセスを安全でない領域から逸らすことで、高い精度でプロンプトを分離します。<br><br>提案手法は、複数のモデルに対して高い転移攻撃成功率を達成しつつ、従来のフレームワークと比較して生成コストを大幅に削減できることを実証しました。この研究は、DLLMの安全性と悪用可能性に関する理解を深めるものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Elena Dumitrescu, Gert Lek, Lydia Y. Chen, Jérémie Decouchant<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.07430v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07430v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="LLMのキャリブレーションを改善する二重最適化手法" data-timestamp="1786122310000" data-url="https://arxiv.org/abs/2608.07419v1">
+  <p class="meta">arXiv cs.LG　Fri, 07 Aug 2026 17:05:10 Z</p>
+  <h2 class="article-title">LLMのキャリブレーションを改善する二重最適化手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）がしばしば過度に確信的になり、キャリブレーションが不十分になる問題に対処します。従来のポストホック温度スケーリングはドメイン依存性が高く、汎化性能に限界がありました。<br><br>研究では、モデルのパラメータを訓練中に変更することでキャリブレーションを改善する新しいアプローチを提案しています。具体的には、予測分布のエントロピーを最大化することをキャリブレーション目標とし、二重最適化の枠組みを用いてこれを実現します。<br><br>提案手法は、下位レベルでモデルを訓練し、上位レベルで損失ハイパーパラメータを選択することで、過度な確信を抑制します。LLMスケールでの実用性を考慮し、効率的な一次近似を採用しています。<br><br>実験の結果、提案手法はドメイン外の汎化において特に優位性を示し、よくキャリブレートされたLLMを生成できることを実証しました。これは、LLMの信頼性向上に貢献する重要な進展です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Ruochen Jin, Zhanliang Wang, Zongyu Dai, Jiancong Xiao, Bojian Hou<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.07419v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07419v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="ResidencyRL：シミュレーション臨床環境における強化学習" data-timestamp="1786122281000" data-url="https://arxiv.org/abs/2608.07418v1">
   <p class="meta">arXiv cs.CL　Fri, 07 Aug 2026 17:04:41 Z</p>
   <h2 class="article-title">ResidencyRL：シミュレーション臨床環境における強化学習</h2>
@@ -1209,6 +1277,40 @@
         分野：cs.AI<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2608.07418v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07418v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.AI, cs.CL, cs.IR, cs.LG" data-title="地理関連タスクにおけるLLM評価のための包括的ベンチマーク「GeoBenchLLM」" data-timestamp="1786121884000" data-url="https://arxiv.org/abs/2608.07411v1">
+  <p class="meta">arXiv cs.LG　Fri, 07 Aug 2026 16:58:04 Z</p>
+  <h2 class="article-title">地理関連タスクにおけるLLM評価のための包括的ベンチマーク「GeoBenchLLM」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IR</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、地理空間データに関連するタスクにおいて、大規模言語モデル（LLM）の汎化能力を評価するための包括的なベンチマーク「GeoBenchLLM」を提案します。<br><br>研究では、多様な地理関連タスクとドメインから厳選された12の公開データセットを利用し、複数のLLMの地理空間および時間的理解能力を評価しました。その結果、推論能力とモデルサイズが全体的なパフォーマンスに強く影響することが示されました。<br><br>GeoBenchLLMは、LLMの地理情報処理能力を体系的に評価するための標準化された手法を提供します。これにより、今後のLLM開発における地理関連タスクへの適応性向上に貢献することが期待されます。<br><br>このベンチマークは、地理情報科学と自然言語処理の分野における研究を促進するためのリソースとして公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Rodrigo Ferreira Rodrigues, Karim Radouane, Jose G Moreno, Lynda Tamine<br>
+        分類：cs.AI, cs.CL, cs.IR, cs.LG<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.07411v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07411v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.IR, cs.LG" data-title="大規模言語モデルにおける地理空間概念のプローブ：抽象化、構成性、およびグラウンディング" data-timestamp="1786117598000" data-url="https://arxiv.org/abs/2608.07353v1">
+  <p class="meta">arXiv cs.CL　Fri, 07 Aug 2026 15:46:38 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける地理空間概念のプローブ：抽象化、構成性、およびグラウンディング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.IR</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が地理空間概念をどの程度理解しているかを評価する手法について論じています。<br><br>従来のLLMの概念理解の評価は、自然言語のベンチマークや限定的な合成タスクに依存していましたが、これらの手法は複数のスキルを混同したり、概念の特性を正確に制御できなかったりする問題がありました。本研究では、抽象化、構成性、グラウンディングといった概念の核となる特性に焦点を当てたテストを設計し、LLMの概念理解を精密にプローブすることを目指しています。<br><br>具体的には、方向、距離、トポロジーなどの空間概念とその組み合わせを対象とした、概念中心のベンチマークを構築し、質問応答タスクをその代理として用いています。様々なLLMアーキテクチャと学習レジームにわたる広範な実験を通じて、モデルのスケールと設計が概念理解にどのように影響するかを分析しました。結果として、現在のLLMには明確な限界があることが明らかになり、構造化された概念を獲得し、それらを組み合わせる能力を形成する要因についての洞察が得られました。<br><br>この研究は、概念に基づいたLLMを情報アクセスと知識管理の向上に向けて再設計する方法についての示唆を提供します。コードはGitHubで公開される予定です。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Karim Radouane, Jose G Moreno, Lynda Tamine<br>
+        分類：cs.CL, cs.AI, cs.IR, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.07353v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.07353v1</a>
   </div>
 </article>
 
@@ -1465,108 +1567,6 @@ eq 1$ で $Θ((d/n)\log(n/d))$ となります。これらの収束率は、Litt
         分野：cs.DB<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2608.06331v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.06331v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="ベンチマークのベンチマーク：対話エージェントのベンチマーク評価" data-timestamp="1786037961000" data-url="https://arxiv.org/abs/2608.06329v1">
-  <p class="meta">arXiv cs.AI　Thu, 06 Aug 2026 17:39:21 Z</p>
-  <h2 class="article-title">ベンチマークのベンチマーク：対話エージェントのベンチマーク評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、タスク指向型対話エージェントの評価に用いられるベンチマークの品質を評価するためのフレームワークを提案しています。<br><br>既存のベンチマークは、タスクの一貫性、シナリオの単純さ、ポリシーカバレッジの限界といった問題を含んでいる可能性があり、評価の信頼性を低下させる恐れがあります。本研究では、LLMを評価者として用いることで、ベンチマークの一貫性、複雑性、ポリシーカバレッジを評価し、弱点に関する診断情報を提供する参照不要のフレームワークを開発しました。<br><br>提案されたフレームワークは、人間によるアノテーションとの一致や、LLMの能力差、品質劣化させたベンチマークの評価を通じて検証されました。その結果、提案された指標は、ベンチマークの品質レベルを一貫して区別できることが示されました。また、手動でキュレーションされたベンチマークにも適用可能であることが実証されています。<br><br>このフレームワークは、合成データおよび手動キュレーションされた対話エージェントのベンチマークを評価するための実用的なアプローチを提供します。これにより、より信頼性の高い対話エージェントの開発と評価が可能になると期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Noam Koren, Roy Bar-Haim, Abigail Goldsteen<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.06329v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.06329v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="Benchmarking and Enhancing LLMs for Rule-Intensive Review of National Standard Documents" data-timestamp="1786037243000" data-url="https://arxiv.org/abs/2608.06312v1">
-  <p class="meta">arXiv cs.CL　Thu, 06 Aug 2026 17:27:23 Z</p>
-  <h2 class="article-title">Benchmarking and Enhancing LLMs for Rule-Intensive Review of National Standard Documents</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.CL Site: arXiv Title: Benchmarking and Enhancing LLMs for Rule-Intensive Review of National Standard Documents Authors: Tao Wang, Qihao Yang, Rongjiao Liang, Lianghong Lin, Haitao Wang, Xinyu Cao, Tianyong Hao Categories: cs.CL Abstract / Summary: Large language models (LLMs) increasingly support complex professional tasks, yet their capabilities in rule-intensive document review remain insufficiently evaluated. National standard documents, such as China GB/T standards, offer a representative testbed: they are lengthy, highly structured, and governed by explicit rules for scope, terminology, normative wording, and cross-section consistency. Existing benchmarks focus on domain knowledge and question answering, largely overlooking intrinsic quality review for professional documents. Such reviews rely heavily on human experts, making them costly and difficult to s…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Tao Wang, Qihao Yang, Rongjiao Liang, Lianghong Lin, Haitao Wang, Xinyu Cao, Tianyong Hao<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.06312v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.06312v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI" data-title="FLAIR超解像は小さな白質病変を消去または幻視するか？" data-timestamp="1786037161000" data-url="https://arxiv.org/abs/2608.06311v1">
-  <p class="meta">arXiv cs.AI　Thu, 06 Aug 2026 17:26:01 Z</p>
-  <h2 class="article-title">FLAIR超解像は小さな白質病変を消去または幻視するか？</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AI技術である超解像（SR）が、脳MRI画像における白質病変の検出に与える影響を調査します。<br><br>特に、FLAIR画像における白質病変の超解像処理が、実際の病変を消去してしまうか、あるいは存在しない病変を生成（幻視）してしまうのかという問題に着目し、その影響を評価します。<br><br>実験の結果、超解像処理は小さな病変を消去する傾向が強いことが示されました。しかし、全ての再構成画像は、元の厚いスライス画像よりも病変検出能力を向上させました。特に、ECLAREという手法が最も効果的に小さな病変の信号を回復させました。この研究は、医療画像解析における超解像技術の適用に関する重要な知見を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Zahra Khodakarami, Yue Li, Pulkit Khandelwal, John Detre, Sandhitsu Das, Christopher Brown, David Wolk, Paul Yushkevich<br>
-        分類：cs.CV, cs.AI<br>
-        分野：cs.CV<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.06311v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.06311v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="RRC：ランキングに基づく報酬構築によるLLM強化学習における生成報酬モデルの活用" data-timestamp="1786037076000" data-url="https://arxiv.org/abs/2608.06310v1">
-  <p class="meta">arXiv cs.LG　Thu, 06 Aug 2026 17:24:36 Z</p>
-  <h2 class="article-title">RRC：ランキングに基づく報酬構築によるLLM強化学習における生成報酬モデルの活用</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の強化学習（RL）において、生成報酬モデルの潜在能力を引き出すための新しいアプローチ「RRC（Ranking-based Reward Construction）」を提案します。<br><br>従来の強化学習アルゴリズムは、生成報酬モデルの持つ比較に基づく評価能力を十分に活かせていませんでした。RRCは、このギャップを埋めるため、応答のランキング情報から報酬を構築する手法を導入します。具体的には、自己競合ランキングとアンカー誘導ランキングの2つの戦略を用いて、より効果的な学習シグナルを提供します。<br><br>実験の結果、RRCは生成報酬モデルを用いたRLトレーニングを大幅に改善し、既存の手法を上回る性能を示しました。この研究は、LLMの強化学習における報酬設計の新たな方向性を示唆するものです。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Chenglong Wang, Ziming Zhu, Yifu Huo, Bei Li, Qiaozhi He, Yan Ding, Xiaoyang Hao, Yuxin Gao<br>
-        分類：cs.LG, cs.CL<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.06310v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.06310v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.IR" data-title="Top-K検索を超えて：解釈可能なエージェント操作によるブラックボックス検索の代替" data-timestamp="1786036993000" data-url="https://arxiv.org/abs/2608.06305v1">
-  <p class="meta">arXiv cs.CL　Thu, 06 Aug 2026 17:23:13 Z</p>
-  <h2 class="article-title">Top-K検索を超えて：解釈可能なエージェント操作によるブラックボックス検索の代替</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、長文ドキュメントに対する検索拡張生成（Retrieval-Augmented Generation）において支配的な設計である、テキストのチャンク化、埋め込み、そしてクエリとの類似度上位k件の検索という手法に疑問を呈しています。<br><br>特に、金融報告書や監査報告書などの特定の文書群においては、この設計が構造的に不適切であると主張し、その問題を定量的に示しています。例えば、780ページに及ぶ政府の財務報告書では、内容の86.8%が表形式の行であり、数千もの類似した数値データが埋め込み空間で競合し、数値がその単位（例：ラッカまたはクロア）をヘッダーから分離されることで、桁違いの誤差が生じる可能性を指摘しています。<br><br>この問題に対処するため、表を考慮したチャンカーを開発しましたが、それでも数値チャンクの27-30%で年度ヘッダーが見つからないという課題が残りました。そこで、本研究ではREAD（Reliable Embedding-free Agentic Document-search）という、埋め込みに依存しないエージェントベースの文書検索システムを提案しています。READは、正規化された語彙検索、構造的ナビゲーション、境界付きスパン読み取りという3つの決定論的な操作を通じて、生文書を読み取ります。これにより、検索プロセスは不透明な類似度スコアではなく、再現可能な監査証跡として記録されます。<br><br>READは、51の検証済み質問に対して58.8%の正答率を達成し、これは従来の密検索の15.7%を大きく上回ります。さらに、エージェントに同様のループを与えつつ上位k件ツールを使用した場合でも、27.5%に留まることから、その効果はインターフェースの改善にあることが示唆されます。本研究結果は、埋め込みベースの検索と埋め込みフリーの検索を分離するものであり、エージェント検索と語彙検索の比較に新たな視点を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Sagar Tamang, Ayush Vyas, Tabarakul Hazarika<br>
-        分類：cs.AI, cs.CL, cs.IR<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.06305v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.06305v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG" data-title="LLMのハーネス最適化能力を評価するベンチマーク「HarnessOpt-Bench」" data-timestamp="1786036865000" data-url="https://arxiv.org/abs/2608.06301v1">
-  <p class="meta">arXiv cs.LG　Thu, 06 Aug 2026 17:21:05 Z</p>
-  <h2 class="article-title">LLMのハーネス最適化能力を評価するベンチマーク「HarnessOpt-Bench」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）がエージェントシステム内で利用される際に、モデルの性能だけでなく、プロンプト、ツール、制御フロー、メモリ、オーケストレーションコードといった「ハーネス」の最適化能力が重要になるという課題に着目しています。<br><br>このハーネス最適化を自動化し、AIシステム自体の能力向上を目指す試みですが、その性能を測る共通の評価プロトコルがコミュニティに存在しないことを指摘しています。そこで、高コストかつ確率的な評価下でのエンドツーエンドのハーネス最適化を評価するためのベンチマーク「HarnessOpt-Bench」を提案しています。<br><br>HarnessOpt-Benchは、LLMをオプティマイザーとして用い、指定された評価予算内でハーネスを編集させ、最終的な候補を評価します。このベンチマークを用いて5つの最先端LLMを評価した結果、オプティマイザーモデル間の性能差がハーネス自体の差よりも大きいこと、ネイティブハーネスが常に優れているわけではないこと、そしてタスクやシード設定によって性能が大きく変動することが示されました。<br><br>これらの結果は、ハーネス最適化が測定可能で識別性の高い能力であり、改善の余地が大きいことを示唆しています。本研究は、LLMの応用範囲を広げる上で重要な、ハーネス最適化能力の評価手法を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Varun Ursekar, Apaar Shanker, Yash Maurya, Shehab Yasser, Vijay S. Kalmath, Veronica Chatrath, Yuan Xue<br>
-        分類：cs.AI, cs.CL, cs.LG<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.06301v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.06301v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
