@@ -1128,6 +1128,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-08" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="DARTree: 自己回帰的ドラフトツリーを用いた投機的拡散デコーディング" data-timestamp="1786643024000" data-url="https://arxiv.org/abs/2608.13524v1">
+  <p class="meta">arXiv cs.LG　Thu, 13 Aug 2026 17:43:44 Z</p>
+  <h2 class="article-title">DARTree: 自己回帰的ドラフトツリーを用いた投機的拡散デコーディング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、自己回帰型言語モデルの生成速度を向上させるための新しい投機的デコーディング手法を提案しています。<br><br>投機的デコーディングは、複数のドラフトトークンを並列に検証することで、自己回帰型言語モデルをロスレスに加速します。拡散ベースのドラフターは、トークンブロック全体を並列に予測することで提案レイテンシをさらに削減しますが、その位置ごとの分布は、各ドラフトパスに沿って選択されたトークンに条件付けられるのではなく、周辺的なものです。既存の再帰的補正は、単一のドラフトチェーンに沿って因果情報を取り込みますが、拡散ベースのツリー構築は、個々のブランチに沿ってこの補正を伝達することなく、候補の範囲を広げます。<br><br>本論文では、学習不要な投機的デコーディング手法であるDARTreeを紹介します。これは、事前学習済みのAR補正ヘッドをチェーンからツリーに拡張するものです。DARTreeはまず、単一のバッチで各深度のすべてのノードを展開およびスコアリングすることにより、固定幅の候補ツリーを構築し、その後、ベストファーストプルーニングのみを適用して検証ツリーを選択します。これにより、ARヘッド推論と逐次ヒープ操作が分離されます。7つの数学、コード、チャットベンチマーク全体で、DARTreeはすべての4つのモデル-温度構成において最高の平均受け入れ長とスピードアップを達成し、同じ設定でDFlashよりも98.6%、Dominoよりも27.9%多いトークンを検証ラウンドごとに受け入れ、ローカルで測定された自己回帰デコーディングに対して最大9.73倍のロスレススピードアップを達成します。この研究は、LLMの生成効率を大幅に改善する可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Tianyi Li, Yaxin Luo, Xinyi Shang, Zhiqiang Shen<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.13524v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.13524v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="DFM Mimir v1: 10億パラメータで最先端性能を実現するオープンなHRM" data-timestamp="1786642673000" data-url="https://arxiv.org/abs/2608.13517v1">
+  <p class="meta">arXiv cs.AI　Thu, 13 Aug 2026 17:37:53 Z</p>
+  <h2 class="article-title">DFM Mimir v1: 10億パラメータで最先端性能を実現するオープンなHRM</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）開発の現状と、その課題について論じています。<br><br>現在のLLM開発は、膨大かつしばしば許諾を得ていないデータセットに依存しており、オープンソースと倫理的に調達されたデータにコミットする研究者にとって高い参入障壁となっています。本論文では、階層的推論モデル（HRM）アーキテクチャに基づいた10億パラメータの言語モデル「Mimir v1」を紹介します。これは、スクラッチから学習され、許諾可能な後学習データのみを使用して、英語において非常に競争力のある性能を発揮し、デンマーク語においては新たな最先端を記録します。<br><br>Mimir v1は161のデータセットの混合で学習され、元のHRM-Text 1Bを上回り、Qwen 3.5 4BやGemma 4 E2Bといったより大きな最先端モデルと競合します。このモデルは、英語、数学・コード、デンマーク語の20のベンチマークでテストされました。この研究は、倫理的なデータソースを用いた高性能LLM開発の可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Peter Schneider-Kamp, Jacob Nielsen, Gianluca Barmina, Kenneth Enevoldsen, Lukas Galke Poech<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.13517v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.13517v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="自己組織化マップに基づく表形式データから画像へのエンコーディング手法「TabSOM」" data-timestamp="1786642537000" data-url="https://arxiv.org/abs/2608.13513v1">
+  <p class="meta">arXiv cs.LG　Thu, 13 Aug 2026 17:35:37 Z</p>
+  <h2 class="article-title">自己組織化マップに基づく表形式データから画像へのエンコーディング手法「TabSOM」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、表形式データを画像表現に変換する「表形式から画像への手法」が、畳み込みニューラルネットワークやビジョントランスフォーマーの高い予測性能を活用する新たなアプローチとして注目されていることを紹介しています。これらの手法は、次元削減法（t-SNE、UMAP、PCAなど）から導出される固定ピクセル位置に各特徴量をマッピングしますが、各特徴量の周辺値のみをエンコードし、特徴量間の関係情報は失われてしまうという課題があります。<br><br>そこで提案された「TabSOM」は、自己組織化マップ（SOM）に基づいた表形式データから画像へのエンコーディング手法です。TabSOMは、(i) 各入力特徴量が衝突のないハンガリアン割り当てによって導出されるコンポーネントプレーンから固定キャンバス位置を占める空間レイアウト、および (ii) SOMコンポーネントプレーンから導出されるペアワイズ特徴量関係を捉えるグラフを提供します。結果として得られる画像は、特徴量の値を固定スケールでエンコードするチャネルと、関連特徴量間の空間的接続としてペアワイズ特徴量相互作用をエンコードするチャネルの2つのマルチスケールノードチャネルをスタックします。<br><br>TabSOMは、12の既存の表形式から画像への手法と比較して、すべてのデータセットで1位または2位を獲得し、評価された手法の中で最も低い分散を達成しました。また、TabSOMで得られた解釈性は、Random Forest、XGBoost、SHAPと比較検証され、クラス分離スコアは確立されたベースラインと上位ランクの特徴量において合理的な一致を示しつつ、入力データからの補完的な構造情報を捉えています。これらの結果は、TabSOMが表形式データへの深層学習アーキテクチャの適用において、効果的かつ解釈可能なアプローチを提供し、この領域における性能と解釈性のギャップを埋めることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：David Chushig-Muzo, María Ángeles Rodríguez de Cara, Eva Milara, Francisco J. Lara-Abelenda, Luis Zhinin-Vera, Diego H. Peluffo-Ordóñez<br>
+        分類：cs.CV, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.13513v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.13513v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.CL, cs.CV" data-title="科学的エージェント基盤モデル「Intern-S2-Preview」" data-timestamp="1786642288000" data-url="https://arxiv.org/abs/2608.13505v1">
+  <p class="meta">arXiv cs.CL　Thu, 13 Aug 2026 17:31:28 Z</p>
+  <h2 class="article-title">科学的エージェント基盤モデル「Intern-S2-Preview」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、科学的発見において、異種モダリティの科学的証拠を推論し、科学ツールや環境と対話し、長期間にわたるタスクで進歩を維持できるAIシステムの必要性が高まっていることを述べています。<br><br>そこで、科学的なマルチモーダル理解、推論、生成、および長期間タスクをサポートするために設計された科学的エージェント基盤モデルのシリーズ「Intern-S2-Preview」を発表しています。このトレーニングパイプラインは、科学的なマルチモーダル事前学習から始まり、レンダリングされた科学文書、インターリーブされた画像・テキストデータ、多様な科学コーパスを対象としています。事前学習済みチェックポイントから、教師ありファインチューニング、スケーラブルなマルチタスク強化学習（RL）、ブラックボックスおよびホワイトボックスエージェントRL、オンポリシー蒸留からなる統一ポストトレーニングパイプラインを適用しています。<br><br>このパイプラインは、部分的なロールアウトとオフポリシー補正、適応的な長さ正規化、オンライン推論デコーディング、堅牢なマルチタスク最適化、エージェントタスクのためのトレース認識経験アセンブリなどの実用的な技術によってサポートされています。アーキテクチャレベルでは、「Intern-S2-Preview-397B」は時系列モデリングを効率的な長系列理解から数値予測まで拡張し、「Memory Decoder」は凍結された397Bバックボーンを変更せずに迅速な科学的専門化のための独立したメモリ拡張パスとして研究されています。科学、マルチモーダル、エージェント、および汎用ベンチマーク全体での評価により、「Intern-S2-Preview-397B」は複数の設定で競争力のある、または最先端の結果を達成しています。時系列モジュールはSciTSにおける科学的信号理解と予測を改善し、独立した「Intern-MemDec-4B」拡張は凍結された397Bバックボーンを変更せずに「Biology-Instructions」の平均スコアを56.92から60.32に向上させています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Lei Bai, Jiaqi Cao, Chiyu Chen, Guanzhou Chen, Kai Chen, Guangran Cheng, Erfei Cui, Xuanlang Dai<br>
+        分類：cs.LG, cs.CL, cs.CV<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.13505v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.13505v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="MARC v1: 臨床AI推論と調整のためのオープンソースマルチエージェントフレームワーク" data-timestamp="1786640408000" data-url="https://arxiv.org/abs/2608.13476v1">
+  <p class="meta">arXiv cs.AI　Thu, 13 Aug 2026 17:00:08 Z</p>
+  <h2 class="article-title">MARC v1: 臨床AI推論と調整のためのオープンソースマルチエージェントフレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、臨床AIの分野における推論と調整の課題に対処するための新しいアプローチを提案しています。<br><br>MARC（Multi-Agent Reasoning and Coordination）は、モノリシックなLLMプロンプティングを、決定論的なマルチエージェントオーケストレーションに置き換えるオープンソースフレームワークです。MARCは、抽出、推論、回答生成、評価のために役割を専門とするエージェントを調整し、明示的なコンテキスト渡しと追跡可能な中間出力を備えているため、段階的な障害の原因究明が可能になります。<br><br>さらに、プレーンな言語の説明からタスク固有のエージェントプロンプトを生成するDecomposerモジュールを導入し、手動でのプロンプトエンジニアリングを不要にします。このフレームワークは、APIベースおよびローカルCPU互換のデプロイメントをサポートし、YAMLを介してコード変更なしで完全に設定可能です。MARCは、モデルに依存せず、解釈可能で、プログラミングの専門知識を持たない臨床ドメインの専門家にもアクセスしやすいように設計されています。この研究は、臨床AIにおける解釈可能性とアクセシビリティの向上に貢献する可能性を秘めています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Saisha Shetty, Satvik Tripathi, Austin Lin, Colin Zhao, Theodore Kim, Don Enwerem, Jacinta Arnold, Shahriar Faghani<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.13476v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.13476v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL, cs.LG" data-title="MLLMによる異種アンサンブルルーティングを用いた頑健なクロスデータセット画像分類" data-timestamp="1786639524000" data-url="https://arxiv.org/abs/2608.13463v1">
+  <p class="meta">arXiv cs.CL　Thu, 13 Aug 2026 16:45:24 Z</p>
+  <h2 class="article-title">MLLMによる異種アンサンブルルーティングを用いた頑健なクロスデータセット画像分類</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、現代の画像分類モデルが単一タスクデータセットでは高い性能を発揮するものの、ドメインや難易度の違いを跨いだ汎化性能に課題がある点を指摘しています。<br><br>そこで、マルチモーダル大規模言語モデル（MLLM）エージェントを用いて各画像を最も適したビジョンバックボーンに動的にルーティングする適応型ルーター「ARMDIL」を提案しています。このアンサンブルは、畳み込みニューラルネットワーク（ResNets）、自己教師あり表現学習（SSL）、ビジョン言語モデル（VLMs）といった多様なモデルを採用し、複数の画像データセットから構築された統一ラベル空間で学習されています。<br><br>実験評価により、各アーキテクチャが異なる視覚ドメインで持つ独自の能力と脆弱性が明らかになりました。ARMDILはこれらのトレードオフを効果的に管理し、専門的な学習ベースのルーターと同等の性能を示しました。さらに、プロンプトの簡単な変更による新しい情報の統合や、自然言語による推論トレースを通じた解釈性の向上が可能となり、適応性が大幅に向上しました。これらの進歩は、AIアシスタントや自律ロボットのような、より信頼性の高い汎用的なビジョンシステムの実現に貢献します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Daniel Perkins, John Squires, Janou Milligan, Chandra Raskoti, Linda Ungerboeck<br>
+        分類：cs.CV, cs.AI, cs.CL, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.13463v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.13463v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="AVA-Encoder：エージェントネイティブなビデオ表現学習に向けたアプローチ" data-timestamp="1786557482000" data-url="https://arxiv.org/abs/2608.12313v1">
   <p class="meta">arXiv cs.CL　Wed, 12 Aug 2026 17:58:02 Z</p>
   <h2 class="article-title">AVA-Encoder：エージェントネイティブなビデオ表現学習に向けたアプローチ</h2>
@@ -1465,108 +1567,6 @@
         分野：cs.CL<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2608.12218v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.12218v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.RO, cs.AI, cs.LG" data-title="学習ベースのビヘイビアプランニングの自動運転への統合と展開" data-timestamp="1786549938000" data-url="https://arxiv.org/abs/2608.12198v1">
-  <p class="meta">arXiv cs.LG　Wed, 12 Aug 2026 15:52:18 Z</p>
-  <h2 class="article-title">学習ベースのビヘイビアプランニングの自動運転への統合と展開</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、自動運転車のビヘイビアプランニングにおける学習ベースのアプローチの可能性と課題について論じています。特に、複雑な環境での運転挙動の改善が期待される一方で、その複雑さと透明性の欠如が説明可能性や信頼性、安全性の確保を困難にするという課題に焦点を当てています。<br><br>これらの課題に対処するため、本研究では機械学習の利点と、古典的なアプローチの検証可能性および決定論を組み合わせたハイブリッドプランニングアーキテクチャを提案しています。具体的には、深層ニューラルネットワークを用いて複雑な交通シーンを解釈し、運転行動を提案するとともに、最適化ベースの監視レイヤーがこの提案を検証し、明示的な走行可能性と安全制約を強制します。<br><br>提案手法は、実世界の都市部データを用いたオープンループ研究で評価され、安定したクローズドループ運用に向けたシステム統合の側面も議論されています。さらに、研究車両「karl」での実世界展開における結果も報告されており、学習ベースのアプローチを実用的な自動運転システムに統合する上での具体的な進展と課題が示されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Jean-Pierre Busch, Guido Linden, Jan Bergmann, Lutz Eckstein<br>
-        分類：cs.RO, cs.AI, cs.LG<br>
-        分野：cs.RO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.12198v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.12198v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Robotics" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.AI" data-title="Kolmogorov-Arnold Networksのためのハイパボリック動的表現アーキテクチャHYDRA" data-timestamp="1786549716000" data-url="https://arxiv.org/abs/2608.12194v1">
-  <p class="meta">arXiv cs.LG　Wed, 12 Aug 2026 15:48:36 Z</p>
-  <h2 class="article-title">Kolmogorov-Arnold Networksのためのハイパボリック動的表現アーキテクチャHYDRA</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、Kolmogorov-Arnold Networks (KANs) がスカラー重みを学習可能な単変数関数に置き換えることで非線形関数近似を強化する一方で、全ての接続に独立した関数を割り当てることによるパラメータの冗長性がスケーラビリティと効率性を制限するという課題に対処します。<br><br>この課題を解決するため、パラメータ効率の良いハイパボリック拡張であるHYDRA (Hyperbolic Dynamic Representation Architecture) を提案します。HYDRAは、スプラインベースの関数学習とPoincaréボール内の表現を組み合わせます。ベクトル値入力を有界なハイパボリック潜在空間にマッピングし、接空間でKANスタイルの更新を実行し、低ランクプロトタイプブロックを用いて隠れ次元全体で関数変換を共有します。これにより、ハイパボリック表現は解釈のための構造化された半径座標を提供し、半径制御は境界飽和を防ぐことで訓練安定性を向上させます。<br><br>8つのベンチマークデータセットにおける広範な実験により、HYDRAはパラメータ効率と表現の解釈可能性を向上させながら、一貫して競争力のある、あるいはそれを上回る予測性能を達成することが実証されました。このアーキテクチャは、KANの冗長性を削減し、より効率的で解釈可能なモデル構築を可能にする点で重要性があります。ただし、ハイパボリック空間の特性や潜在空間の次元設定などが、実際の応用における性能に影響を与える可能性があります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Zhao Su, Yuxin Xia, Haoran Li, Jun Shen, Qi Zhu, Qingguo Zhou, Binbin Yong<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.12194v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.12194v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ハイブリッド線形注意機構を用いた大規模言語モデルにおける巨大活性化の解析" data-timestamp="1786547478000" data-url="https://arxiv.org/abs/2608.12149v1">
-  <p class="meta">arXiv cs.CL　Wed, 12 Aug 2026 15:11:18 Z</p>
-  <h2 class="article-title">ハイブリッド線形注意機構を用いた大規模言語モデルにおける巨大活性化の解析</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、層間交差型ハイブリッド線形注意機構（HLA）大規模言語モデル（LLM）における巨大活性化（MA）について、体系的な初の研究を行った。<br><br>その結果、MAは完全注意層の直前にスパイク状に現れる「事前注意スパイク（PAS）」と、その後の線形注意層を通過して持続する「スパイク間プラトー（ISP）」という、アーキテクチャに起因する2つの形態を持つことが明らかになった。完全注意層が密になるにつれて、PASはISPを通じて接続され、最終的に完全注意LLMの安定したMA形態を回復する。<br><br>この組織化は、5つの線形注意アーキテクチャ、6つのハイブリッド構成、5つのデータドメイン、および1.2Bから397Bパラメータのオープンソースハイブリッドモデル全体で一貫して確認された。GDNベースのハイブリッドモデルを最大1.3Bスケールで制御下で事前学習した結果、両形態は早期に出現し、出力ゲーティングに対して非対称に応答することが示された。完全注意出力ゲーティングは絶対的な大きさを強く減衰させるが、層ごとの組織化は排除しない。一方、GDNゲートを除去すると、比較的穏やかな増幅が得られた。<br><br>メカニズムとしては、MAキャンセルのタイミングによって支配される共通のライフサイクル説明が支持される。PASは局所的な書き込み・シンク・キャンセルプロセスに従い、ISPの持続は遅延キャンセルと一致する。完全注意の極限では、この説明は完全注意LLMの特徴である安定したMA形態を回復する。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Zunhai Su, Bohan Sun, Xialie Zhuang, Shuibai Zhang, He Xiao, Jing Xiong, Hengyuan Zhang, Zhongzhu Zhou<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.12149v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.12149v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.HC, cs.IR, cs.LG" data-title="臨床特化型RAGシステム、HealthBenchで最新LLMに匹敵・凌駕" data-timestamp="1786546546000" data-url="https://arxiv.org/abs/2608.12138v1">
-  <p class="meta">arXiv cs.CL　Wed, 12 Aug 2026 14:55:46 Z</p>
-  <h2 class="article-title">臨床特化型RAGシステム、HealthBenchで最新LLMに匹敵・凌駕</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.HC</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、インドなどの低・中所得国（LMIC）向けに開発された、文脈に応じた知識検索に特化した検索拡張生成（RAG）システム「VITA」を評価するものです。<br><br>VITAは、疾患別ガイドライン、インド特有の薬剤耐性データ、国家処方集の制約、資源制約下でのケアプロトコルなどをキュレーションしたコーパスから情報を検索します。そのアーキテクチャとコーパスは非公開ですが、ベンチマーク、医師が作成したルーブリック、および回答と採点結果は公開されており、独立した検証が可能です。<br><br>HealthBenchの4,023の英語質問（ベンチマークの80.5%）において、GPT-4.1を判定に使用した場合、VITAは51.9%のルーブリックポイントを獲得し、GPT-5.4（46.1%）、o4-mini（44.3%）、Gemini 3.1 Pro（42.6%）、Claude Sonnet 4.6（37.3%）を上回り、45.4%の質問で最高得点を記録しました。最新モデルに対する堅牢性をテストするため、500質問のサブセットを現在のモデル（GPT-5.5、Claude Opus 4.8、Gemini 3.5 Pro、Grok 4.3）で再実行し、中立的なオープンウェイト判定モデル（DeepSeek-V4-Pro）で評価しました。この場合、VITAとGPT-5.5の平均質問スコアは統計的に区別できないレベルになりましたが、VITAはポイント加重スコアでリードし、最多質問を獲得しました。<br><br>VITAの精度と網羅性における優位性は中立判定モデルの下でも持続しましたが、コミュニケーションスコアは低い結果となりました。これらの結果は、特定のコーパスに特化したRAGシステムが、最新のLLMと比較して、オープンベンチマーク上で競争力があることを示唆しています。これは、コーパスの特異性が、コミュニケーションの洗練性を犠牲にする代わりに、根拠付けを改善する設計変数となりうることを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Praveen Reddy, Charuta Mandke, Suvrankar Datta, Sarah Khan, Siddharth Reddy Anthireddy, Shitij Arora, Vishal Singh<br>
-        分類：cs.CL, cs.AI, cs.HC, cs.IR, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.12138v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.12138v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="SQL-RAG：クエリ時に動的ハイパーエッジを持つSQL-検索拡張生成" data-timestamp="1786546180000" data-url="https://arxiv.org/abs/2608.12129v1">
-  <p class="meta">arXiv cs.CL　Wed, 12 Aug 2026 14:49:40 Z</p>
-  <h2 class="article-title">SQL-RAG：クエリ時に動的ハイパーエッジを持つSQL-検索拡張生成</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、LLMに外部知識へのアクセスを提供する検索拡張生成（RAG）の効果を認めつつも、従来の密検索実装が構造化された制約やマルチホップ推論の扱いに限界があることを指摘しています。<br><br>知識グラフをオフラインで構築するグラフベースの手法は、意味の断片化、高いメンテナンスコスト、増分更新の複雑さといった問題があります。そこで本研究では、グローバルな知識グラフを構築せずに、ドキュメントをイベント・エンティティインデックスに整理する構造化検索アーキテクチャ「SAG」（SQL-Retrieval Augmented Generation）を提案します。<br><br>SAGは、各チャンクをエンティティを持つ意味的に完全なイベントとして表現し、n項関係をトリプルに分解することなく潜在的なハイパーエッジを形成します。クエリ時には、共有エンティティを結合キーとして扱い、関連するチャンクを動的に接続します。これにより、クエリにスコープされたイベントの近傍が動的に生成されますが、各証拠は元のチャンクのままです。<br><br>HotpotQA、2WikiMultiHopQA、MuSiQueでの実験により、SAGはすべてのベンチマークで最高の検索およびエンドツーエンドQAパフォーマンスを達成し、推論チェーンの複雑さが増すにつれてその効果は拡大することが示されました。特に、マルチホップ証拠連鎖が最も要求されるMuSiQueでは、SAGはRecall@5で80.36%を達成し、最強のベースラインを11.52ポイント上回りました。この研究は、LLMエージェントが継続的に成長する組織的知識を検索および推論できるようにする知識インフラストラクチャへの道を開くものです。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yuchao Wu, Junqin Li, XingCheng Liang, Yongjie Chen, Yinghao Liang, Linyuan Mo, Guanxian Li<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.12129v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.12129v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, math.ST, stat.ML" data-title="多入力・多出力オペレーター学習のためのカーネル法" data-timestamp="1786526120000" data-url="https://arxiv.org/abs/2608.11831v1">
-  <p class="meta">arXiv stat.ML　Wed, 12 Aug 2026 09:15:20 Z</p>
-  <h2 class="article-title">多入力・多出力オペレーター学習のためのカーネル法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">math.ST</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、科学的機械学習における中心的な課題である無限次元オブジェクト間のマッピング学習に対し、観測、表現、学習、再構築を分離する、一般的なカーネルベースのエンコーダー・デコーダーフレームワークを導入します。<br><br>このフレームワークは、オペレーターが潜在的に異なる関数空間の積にマッピングする、多入力・多出力オペレーター学習のために開発されました。近似理論によれば、入力と出力の数が増加しても、収束率は全体の問題次元ではなく、最も困難な構成要素の近似問題によって決定されます。このフレームワークは、数学的な扱いやすさと計算効率を組み合わせた、閉形式の学習と推論が可能な実用的なカーネル法につながります。<br><br>さらに、オペレーター値と積空間の定式化を補完するカーネル法「KernelMO」を導入し、複数オペレーター学習に特化させます。5つのパラメトリック偏微分方程式のファミリーにわたる実験では、提案手法は、ニューラルオペレーターアーキテクチャやディープラーニングベースのモデルと比較して、学習および推論コストを削減しながら、競争力のある、あるいは最先端の予測精度を達成しました。これは、効率的で軽量な代替手段を提供します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Adrien Weihs, Chunyang Liao, Jingmin Sun, Hayden Schaeffer<br>
-        分類：cs.LG, math.ST, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.11831v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.11831v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
