@@ -1146,6 +1146,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV" data-title="BATON：サブタスク探索と遷移を考慮した記憶による長期的ロボット操作" data-timestamp="1786989597000" data-url="https://arxiv.org/abs/2608.16889v1">
+  <p class="meta">arXiv cs.AI　Mon, 17 Aug 2026 17:59:57 Z</p>
+  <h2 class="article-title">BATON：サブタスク探索と遷移を考慮した記憶による長期的ロボット操作</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、複数の接触を伴うスキルを連鎖させる長期間にわたるロボット操作タスクにおける課題を扱います。<br><br>個々のスキルは視覚言語行動（VLA）モデルによって習得されつつありますが、エラーの累積やサブタスク間の連携不足により、長期的タスク全体での成功率は低下します。VLAモデルを固定し、LLMエージェントが言語で計画し、解析プリミティブで移動し、接触を伴う部分のみVLAを呼び出すアプローチが提案されていますが、テスト時における全タスク探索のコスト増大や、サブタスク間の遷移条件の欠如といった問題があります。<br><br>本研究では、BATON（Don't Drop the BATON）というフレームワークを提案します。BATONは、サブタスクを探索単位とし、各サブタスクの解法を記憶に保存することで、長期的タスクの探索コストをT*K（T:サブタスクあたりのエピソード数、K:サブタスク数）に削減します。また、遷移を考慮した記憶機構により、サブタスク間の連携を強化します。具体的には、手首の視覚情報でシーンの状態を確認する検証エージェントや、前タスクの残渣を補正するハンドオフ遷移、後続タスクが引き継げる結果を選択するルックアヘッド遷移を導入します。これにより、パラメータ更新なしで、RoboMemArenaベンチマークにおいてタスク成功率を11.6%、累積成功率を14.9%向上させました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Bingxin Xu, Yuzhang Shang, Emilio Ferrara<br>
+        分類：cs.RO, cs.AI, cs.CV<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.16889v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.16889v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="計算上のプロビナンスに向けて：生成テキストにおける因果状態証拠の伝達" data-timestamp="1786989004000" data-url="https://arxiv.org/abs/2608.16868v1">
+  <p class="meta">arXiv cs.AI　Mon, 17 Aug 2026 17:50:04 Z</p>
+  <h2 class="article-title">計算上のプロビナンスに向けて：生成テキストにおける因果状態証拠の伝達</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、言語モデルの出力が、その生成プロセスにおける内部計算の検証可能な証拠を提供しないという問題点を扱います。<br><br>研究者らは「計算上のプロビナンス」、すなわち生成されたテキストが、因果的に関連する内部状態の証拠を検出可能に保持できるかという可能性を探求します。この概念を検証するため、モジュール型フィードフォワードニューラルネットワークとTransformerベースのモデルという2つの制御されたアーキテクチャを用いて実験が行われました。<br><br>両アーキテクチャは、同じ算術タスクに対して、2つの離散的な中間状態を経由する必須経路を持つように訓練されました。研究者らは意図的にこれらの経路を切り替え、実際に使用された状態を認証し、その認証された状態が生成テキストに微妙な統計的パターンを決定するようにしました。このパターンは後で検出可能です。その結果、フィードフォワードおよびTransformerシステムは、公開および保護された評価の両方で、認証された内部状態に関連する信号を回復することに成功しました。さらに、5つの独立して訓練されたフィードフォワードモデルと3つの独立して訓練されたTransformerモデルで、必要な因果計算が再現されました。ただし、別の回答のみのTransformer実験では、線形プローブは自然に学習された中間状態を回復しませんでした。これらの結果は、答えが変わらない場合でも、検証された因果的に関連する内部状態に関する情報が生成テキストに保持されうることを示す、制御された概念実証を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Benjamin Belay<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.16868v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.16868v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="Proteus: 長文モデリングのための増分メモリ活性化" data-timestamp="1786987843000" data-url="https://arxiv.org/abs/2608.16844v1">
+  <p class="meta">arXiv cs.AI　Mon, 17 Aug 2026 17:30:43 Z</p>
+  <h2 class="article-title">Proteus: 長文モデリングのための増分メモリ活性化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、長文脈を扱うシーケンスモデリングにおける計算コストの問題に対処するため、文脈が長くなるにつれてメモリ容量を段階的に拡張する「増分メモリ活性化」という新しいパラダイムを提案します。<br><br>従来のメモリモデルでは、初期のトークンが過剰な自由度を持ちメモリ状態を「汚染」し、後続のコンテキストのための容量を圧迫する問題がありました。本研究では、初期段階でボトルネックを課すことで、モデルに履歴をより効果的に圧縮させ、時間とともに新しい容量を解放することで干渉を減らし、後続コンテキストの保持を改善します。<br><br>このパラダイムを「Proteus」として実装し、既存の最先端モデルに組み込んだ結果、言語モデリング、推論、長文脈検索・理解タスクにおいて一貫した改善が見られました。特に、文脈長が長くなるほど効果が増大しました。これは、静的なメモリが最適ではなく、効果的な容量のスケジューリングがシーケンスモデリングのためのシンプルかつ汎用的なツールであることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Reza Bayat, Ali Behrouz, Vahab Mirrokni, Aaron Courville<br>
+        分類：cs.LG, cs.AI, cs.CL<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.16844v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.16844v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI" data-title="LLM駆動型身体エージェントにおける状態遷移の攻撃表面化：状態意味論的注入" data-timestamp="1786986127000" data-url="https://arxiv.org/abs/2608.16806v1">
+  <p class="meta">arXiv cs.AI　Mon, 17 Aug 2026 17:02:07 Z</p>
+  <h2 class="article-title">LLM駆動型身体エージェントにおける状態遷移の攻撃表面化：状態意味論的注入</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）がテキスト生成を超えて、環境認識、ツール利用、タスク実行が可能なエージェントの中核へと進化する現状を扱います。<br><br>従来のLLMエージェントが外部情報源から情報を取得し、タスクを実行するのに対し、本研究ではLLMをロボットシステムに統合し、タスク理解、高レベル計画、行動意思決定を担わせるアプローチを探求します。特に、ロボットのスキルとLLMのタスク推論能力を組み合わせるSayCanや、ロボットタスク計画を生成するCode as Policies、ProgPrompt、さらには言語・視覚・ロボットアクションの連携を強化するPaLM-E、RT-2、GR00T N1といった先行研究に言及しています。<br><br>LLM駆動型身体エージェントにおいては、ユーザー指示の理解に加え、シーンの状態、オブジェクトの属性、空間関係、実行フィードバックを統合してタスクの具体化を行う必要があり、生成されたアクションプランはスキルライブラリやモーションプランナー、コントローラーに渡されます。このプロセスにおいて、エージェントの状態情報が攻撃対象となりうる「状態意味論的注入」という新たな攻撃手法の可能性が示唆されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jiawei Liu, Jiacheng Guo, Tian Zhang, Yiwei Xu, Juan Wang, Jinlin Fan, Bowen Xiao, Chi Guo<br>
+        分類：cs.RO, cs.AI<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.16806v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.16806v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="セマンティックバンディット：文脈内探索・活用における意味的先行バイアス" data-timestamp="1786980318000" data-url="https://arxiv.org/abs/2608.16707v1">
+  <p class="meta">arXiv cs.CL　Mon, 17 Aug 2026 15:25:18 Z</p>
+  <h2 class="article-title">セマンティックバンディット：文脈内探索・活用における意味的先行バイアス</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が意思決定エージェントとして環境探索を行う際の、言語情報に起因するバイアスに着目し、「セマンティックバンディット」という概念を導入します。<br><br>LLMはタスク構造に形式的な対応を持たない意味情報に触れることで、古典的なエージェントとは異なる探索・活用バランスを示します。本研究では、行動に付与されたテキストラベルがLLMの探索行動にどのように影響するかを調査しました。その結果、意味的に情報量の多いラベルは、報酬構造と一致する場合は性能を向上させる一方、不一致の場合は性能を著しく低下させることが明らかになりました。<br><br>さらに、負の報酬は同等の正の報酬よりも大幅に多くの探索を引き起こすことが示されました。これは、LLMの事前学習データに共通する報酬慣習によって誘発される期待値スケールバイアスと一致すると考えられます。言語による環境と報酬の定義は、単語の共起に基づいて学習されたモデルの性質上、避けられないバイアスを導入し、実世界でのLLMエージェントの信頼性と堅牢性に影響を与える可能性があります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：David Eric Austin, Kaheer Suleman, Jackie Chi Kit Cheung<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.16707v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.16707v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.HC" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.HC, cs.CL, cs.RO" data-title="感情ループの閉鎖：マルチモーダル話者・リスナー感情ダイナミクスを考慮した共感的ソーシャルロボット" data-timestamp="1786979318000" data-url="https://arxiv.org/abs/2608.16686v1">
+  <p class="meta">arXiv cs.CL　Mon, 17 Aug 2026 15:08:38 Z</p>
+  <h2 class="article-title">感情ループの閉鎖：マルチモーダル話者・リスナー感情ダイナミクスを考慮した共感的ソーシャルロボット</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.HC</span><span class="tag">cs.CL</span><span class="tag">cs.RO</span></div>
+  <div class="summary">本論文は、ユーザーとの対話において、感情の動的な変化を捉え、共感的な応答を生成するマルチモーダルなソーシャルロボットシステム「AffectLoop」を提案します。<br><br>既存の共感的対話システムはテキスト中心で、共感を一方的なマッピングと見なしがちであり、話者とリスナー間の感情的な交換を捉える能力に限界がありました。AffectLoopは、話者の言語的・顔面の感情ダイナミクスを追跡し、ロボットリスナー自身の感情状態を推定し、それらをLLMベースの応答生成に条件付けます。さらに、感情的に一致した身体的振る舞いを伴う短い音声応答を生成することで、話者・リスナー間の感情ループを閉じます。<br><br>パイロット研究では、提案システムは、感情的応答とユーザー満足度において、話者・リスナーの感情状態入力を省略したベースラインシステムよりも高い評価を得ました。予備的な結果は、話者の感情ダイナミクスとリスナーの感情状態を明示的にモデル化することが、身体性を伴う共感的な対話を改善する可能性を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zi Haur Pang, Casey Kennington, Tatsuya Kawahara<br>
+        分類：cs.HC, cs.CL, cs.RO<br>
+        分野：cs.HC<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.16686v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.16686v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-08" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG" data-title="先史時代のハンドステンシルの性別推定における不確実性を考慮した深層学習フレームワーク" data-timestamp="1786729890000" data-url="https://arxiv.org/abs/2608.14539v1">
   <p class="meta">arXiv cs.AI　Fri, 14 Aug 2026 17:51:30 Z</p>
   <h2 class="article-title">先史時代のハンドステンシルの性別推定における不確実性を考慮した深層学習フレームワーク</h2>
@@ -1466,108 +1568,6 @@
         分野：cs.CY<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2608.14399v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.14399v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="大規模言語モデルは「飛躍」にコストを払わない" data-timestamp="1786721795000" data-url="https://arxiv.org/abs/2608.14397v1">
-  <p class="meta">arXiv cs.CL　Fri, 14 Aug 2026 15:36:35 Z</p>
-  <h2 class="article-title">大規模言語モデルは「飛躍」にコストを払わない</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）がアブダクション（仮説形成）における「飛躍」を実行できないという主張に対し、身体性の欠如が原因ではない可能性を論じます。<br><br>アインシュタインの等価原理のような飛躍的発見は、身体的シミュレーションなしでも可能であるという先行研究に触れつつ、マックス・プランクの黒体放射問題解決を例に挙げます。プランクのE = hνという発見は、数学的帰結と物理的コストの結びつきによって動機づけられたと主張します。<br><br>この結びつきは、従来のLLMの推論では欠けている要素であり、モデルの規模に関わらず、出力エントロピーは因果的難易度が上昇してもほとんど変化しないという実証結果とも一致します。したがって、機械的アブダクションに欠けているのは身体性よりも深い、エピステミックエラー（認識論的誤り）が修正を強制するほどコスト高になる物理的メカニズムであると論じます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Paras Balani, Subhrakanta Panda<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.14397v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.14397v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="言語モデル表現における幾何学的複雑性の局所的・大域的レジーム" data-timestamp="1786719684000" data-url="https://arxiv.org/abs/2608.14361v1">
-  <p class="meta">arXiv cs.CL　Fri, 14 Aug 2026 15:01:24 Z</p>
-  <h2 class="article-title">言語モデル表現における幾何学的複雑性の局所的・大域的レジーム</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、言語モデルの内部表現における「幾何学的複雑性」と、データセットの「語彙的多様性」との関係性を探求しています。<br><br>内在次元（ID）は、言語モデルの表現能力を測る指標として用いられますが、その値が言語自体の特性を反映するのか、データセット構築のアーティファクトなのかは不明瞭でした。本研究では、特にデータセットの最後のトークンに現れるユニークな単語の数（語彙的多様性）がID推定に与える影響に焦点を当てています。<br><br>その結果、語彙的多様性が低い領域では、ユニークな単語が少ないほどIDが高くなる一方、語彙的多様性が高い領域では、ユニークな単語が多いほどIDが高くなるという、二つの異なるレジーム（状態）間のスケール依存的な遷移を発見しました。この遷移点が起こる正確な数式も導出されており、実験結果と一致しています。<br><br>この発見は、内在次元を単純な複雑性の指標として解釈する際の注意を促すとともに、言語データが大規模言語モデル内でどのように組織化されているかについての新たな原理を示唆しています。これは、モデルの内部的な多様体構造を理解する上で重要な知見となります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Arwa Osman, Marco Baroni, Iuri Macocco<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.14361v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.14361v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CR" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CR, cs.AI, cs.CL, cs.CY, cs.LG" data-title="原則ベース規制におけるLLM評価のための4軸信頼性ベンチマーク" data-timestamp="1786717238000" data-url="https://arxiv.org/abs/2608.14329v1">
-  <p class="meta">arXiv cs.CL　Fri, 14 Aug 2026 14:20:38 Z</p>
-  <h2 class="article-title">原則ベース規制におけるLLM評価のための4軸信頼性ベンチマーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CR</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span></div>
-  <div class="summary">本論文は、原則ベース規制における「LLM-as-Judge」の信頼性を評価するための「Principle-Bench」という新しいベンチマークを提案しています。<br><br>原則ベース規制は、「公正、明確、誤解を招かない」といった評価基準を含み、二値述語に還元できません。LLM-as-Judgeが代替として利用されることが増えていますが、その評価は4つの軸（精度、言い換えロバスト性、敵対的ロバスト性、キャリブレーション）で行うべきだと主張しています。Principle-Benchは、英国金融行動監視機構（FCA）の2つの原則にマッピングされた168の仮想資産金融プロモーションシナリオを含み、これら4軸すべてをカバーする初のベンチマークです。<br><br>さらに、キャリブレーションされ、監査可能な評価器であるCeca（Calibrated Exemplar-Cluster Assessment）も導入されています。実験の結果、どの手法も4軸すべてで優位性を示すことはなく、特にLLM-as-Judgeは、入力のわずかな変更や敵対的な操作に対して脆弱であることが示されました。例えば、ある大規模LLMは、通常の入力では高い精度を示しましたが、敵対的な入力では精度が大幅に低下しました。<br><br>この研究は、原則ベース規制におけるLLM-as-Judgeの展開には、精度だけでなく、敵対的欺瞞や事後キャリブレーションに関する報告が不可欠であることを示唆しています。公開メタデータ上の要旨情報が限定的であるため、具体的なモデルの性能や限界についての詳細な分析は推測に留まります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Dipankar Sarkar<br>
-        分類：cs.CR, cs.AI, cs.CL, cs.CY, cs.LG<br>
-        分野：cs.CR<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.14329v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.14329v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="LLMにおけるアンカリング効果のベンチマーク：AnchorBench" data-timestamp="1786716282000" data-url="https://arxiv.org/abs/2608.14320v1">
-  <p class="meta">arXiv cs.CL　Fri, 14 Aug 2026 14:04:42 Z</p>
-  <h2 class="article-title">LLMにおけるアンカリング効果のベンチマーク：AnchorBench</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）におけるアンカリング効果を評価するための新しいベンチマーク「AnchorBench」を提案しています。<br><br>アンカリング効果とは、初期参照値がその後の判断をその値に引き寄せる認知バイアスであり、人間においては確立されていますが、LLMにおいても同様の振る舞いが示唆されています。しかし、既存研究は限られたアンカー経路しか評価しておらず、無関係なアンカーと妥当なアンカーを区別していませんでした。AnchorBenchは、アンカーの関連性という軸を明確にし、複数のアンカー経路を評価します。<br><br>14のモデル（オープンウェイトモデル10種、APIモデル4種）を対象とした実験の結果、アンカリング効果は経路に強く依存すること、妥当なアンカーは無関係なアンカーよりも大きな影響を与えること、アンカーの影響は証拠に基づく回答から離れるほど弱まること、そして高いタスク精度を持つモデルでも妥当なアンカーの影響を受けやすいことが明らかになりました。<br><br>この研究は、LLMの判断におけるバイアスを理解し、より信頼性の高いモデル開発に貢献するものです。ただし、評価されたモデルの範囲やアンカーの種類には限界がある可能性があります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yiderigun Borjigin, Alexander Hermann, Christian Cyron, Roland Aydin<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.14320v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.14320v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="エネルギーベース異常検知の再検討：エネルギーと再構成は相補的" data-timestamp="1786705442000" data-url="https://arxiv.org/abs/2608.14186v1">
-  <p class="meta">arXiv stat.ML　Fri, 14 Aug 2026 11:04:02 Z</p>
-  <h2 class="article-title">エネルギーベース異常検知の再検討：エネルギーと再構成は相補的</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、表形式データにおける異常検知タスクにおいて、エネルギーベースモデル（EBM）と再構成ベースモデルの組み合わせの有効性を検証しています。<br><br>従来の表形式異常検知は、密度ベースの手法や再構成ベースの手法が主流であり、明示的なエネルギーベースモデルはほとんど利用されていませんでした。本研究では、古典的なDeep Boltzmann Machine（DBM）を異常検知に適用し、その平均場エネルギーが再構成ベースのスコアと組み合わせることで、単独のモデルよりも効果的であると仮説を立てています。<br><br>UCI Bank MarketingとNSL-KDDの2つのベンチマークデータセットを用いた評価の結果、DBMの平均場エネルギーは、既存の最良のベースラインに匹敵し、多くの手法を統計的に上回る性能を示しました。さらに、DBMエネルギーとAutoencoderの再構成スコアを組み合わせた場合、両データセットともに統計的に有意な性能向上が見られました。これは、エネルギーと再構成が相補的な情報を提供することを示唆しています。<br><br>この研究は、古典的なEBMが表形式異常検知のツールキットに含めるべき価値があることを示しており、現在の主流である再構成ベースの手法に対する非冗長な補完的視点を提供します。ただし、評価されたDBMのアーキテクチャやデータセットの範囲には限界がある可能性があります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Junichiro Niimi<br>
-        分類：cs.LG, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.14186v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.14186v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Robotics" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.CL, stat.ML" data-title="QUASAR: 量子化学習における損失下限の低減と損失認識再構成" data-timestamp="1786685398000" data-url="https://arxiv.org/abs/2608.13966v1">
-  <p class="meta">arXiv stat.ML　Fri, 14 Aug 2026 05:29:58 Z</p>
-  <h2 class="article-title">QUASAR: 量子化学習における損失下限の低減と損失認識再構成</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、大規模言語モデルの推論における量子化学習（QAT）の課題に取り組む手法「QUASAR」を提案しています。<br><br>従来のQATでは、量子化された重みによる再構成誤差と、更新される元の重みとの間に不一致が生じ、学習の最適性を損なうことがありました。QUASARは、学習ループ内で軽量な「損失認識再構成」を継続的に行うことで、この不一致を解消し、損失下限を低減します。<br><br>具体的には、勾配の指数移動平均をサリエンシー（重要度）推定に利用し、クリッピング範囲の探索と、サリエンシー重み付き最小二乗法によるアフィン逆量子化器のフィッティングを行います。この損失認識再構成誤差が、QATの収束限界において損失に直接影響する唯一の再構成依存項であることが理論的に示されており、QUASARの目的が原理的な最適化ターゲットであることが裏付けられています。<br><br>QUASARは推論時のオーバーヘッドなしに、整数量子化やNVFP4などの標準的なデプロイメント形式をサポートします。Qwen3およびLlama-3.1モデルを用いた実験では、2、3、4ビットの量子化において、既存のQAT手法と比較して最低のKLダイバージェンスを達成し、特に2ビットでは精度が大幅に向上しました。これは、量子化されたモデルの性能を向上させる上で、QUASARが有効なアプローチであることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Vincent Counathe, Ben Athiwaratkun, Christopher De Sa, Tianyi Zhang<br>
-        分類：cs.LG, cs.CL, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.13966v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.13966v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
