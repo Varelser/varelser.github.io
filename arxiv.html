@@ -1471,105 +1471,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.CR" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CR, cs.CL" data-title="LLMのジェイルブレイク攻撃に対する自己進化型マルチエージェントフレームワーク防御" data-timestamp="1787763126000" data-url="https://arxiv.org/abs/2608.26008v1">
-  <p class="meta">arXiv cs.CL　Wed, 26 Aug 2026 16:52:06 Z</p>
-  <h2 class="article-title">LLMのジェイルブレイク攻撃に対する自己進化型マルチエージェントフレームワーク防御</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CR</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が依然としてジェイルブレイク攻撃に対して脆弱であるという問題点を扱います。これらの攻撃は、ロールプレイング、難読化、コード変換、多段階の間接化などの手法を悪用し、有害な出力を引き出します。攻撃手法が進化し続ける中で、防御策も増加していますが、その多くは静的であり、展開後に安全挙動が固定されるため、防御経験を蓄積したり、未知の戦略に適応したりすることができません。<br><br>本研究では、永続的なクロスインタラクションルールメモリを中心に構築された、テストタイムでの自己進化型防御を提案します。攻撃が成功した場合、フレームワークはその失敗を、有害なトピックではなく構造的な攻撃ラッパーを捉えるメソッドレベルのルールに抽象化し、将来の入力に対して再利用します。ルールはメソッドレベルであるため、1つの誘導されたルールが攻撃ファミリー全体に一般化し、新しいラッパーが出現するとラベル空間が拡大します。<br><br>このメカニズムは外部メモリとプロンプティングのみで動作し、パラメータ更新は一切行いません。オープンウェイトモデルとブラックボックスAPIモデルの両方に適用可能です。4つの協力モジュールとして実装されていますが、貢献はモジュール分解ではなく、メモリベースの適応メカニズムにあります。4つのブラックボックスジェイルブレイクファミリーと複数のモデルにわたる実験では、提案手法は攻撃成功率を大幅に低下させつつ、無害なユーティリティを維持しました。また、適応的な複合ラッパー攻撃に対しても堅牢であり、メモリが増加しても過剰拒否が増加しないことが示されました。<br><br>本研究の重要性は、LLMのセキュリティを向上させる動的な防御メカニズムを提案した点にあります。限界としては、攻撃の成功を前提としたルール生成プロセスが挙げられます。制作・研究・実務への示唆として、LLMの安全性研究における新たな方向性を示唆しています。</div>
+<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="読解と大規模言語モデルにおける概念的・指示的破壊のダイナミクスの違い" data-timestamp="1787762868000" data-url="https://arxiv.org/abs/2608.25999v1">
+  <p class="meta">arXiv cs.CL　Wed, 26 Aug 2026 16:47:48 Z</p>
+  <h2 class="article-title">読解と大規模言語モデルにおける概念的・指示的破壊のダイナミクスの違い</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、人間の読解と大規模言語モデル（LLM）における意味理解の二つの側面、すなわち概念的情報と指示的情報（参照情報）の処理ダイナミクスを比較分析するものです。<br><br>研究では、物語文中の概念情報または指示的情報を選択的に操作し、それが人間の読解速度やLLMの予測・表現処理に与える影響を追跡しました。人間の場合、概念情報の破壊は局所的かつ強い処理コストを生じさせ、指示情報の破壊はより広範囲に影響し、文境界の影響を受けやすいことが示されました。<br><br>LLMにおいても、概念情報と指示情報の破壊は異なる処理パターンを示すことが明らかになりました。特に、文脈モデルのサプライズは人間の読解パターンと類似し、概念破壊は局所的で急速に減衰する効果、指示破壊はより緩やかで下流に影響する効果を示しました。出力層の表現では、指示破壊が初期の大きな変動を引き起こし、両者ともにその後べき乗則的な減衰を示すパターンが観察されました。これらの結果は、概念情報が局所的な統合コストを、指示情報がより分散的なプロセスを要求するという、意味の二つの次元における処理ダイナミクスの違いを示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Tongyan Hu, Bryan Hooi<br>
-        分類：cs.CR, cs.CL<br>
-        分野：cs.CR<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.26008v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.26008v1</a>
+        著者：Rui He, Nihal Altay, Wolfram Hinzen<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.25999v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25999v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="エージェント型LLM向け文脈非対称型推論デコーディング：AsymSpec" data-timestamp="1787763002000" data-url="https://arxiv.org/abs/2608.26004v1">
-  <p class="meta">arXiv cs.CL　Wed, 26 Aug 2026 16:50:02 Z</p>
-  <h2 class="article-title">エージェント型LLM向け文脈非対称型推論デコーディング：AsymSpec</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、エージェント型大規模言語モデル（LLM）の推論コストと精度低下という課題に対処するため、新しい推論デコーディング手法「AsymSpec」を提案します。<br><br>エージェント型LLMでは、コンテキストの蓄積に伴い推論コストが増大しますが、入力圧縮は精度を低下させます。従来の推論デコーディングは、ドラフターと検証者のコンテキストが同一であることを前提としており、このトレードオフを解決できませんでした。AsymSpecは、軽量なドラフターが完全なコンテキストを読み込み、大規模な検証者が圧縮されたコンテキストで動作する非対称なフレームワークを採用しています。<br><br>ドラフターは対照的なロジットのδ-フュージョンを通じて検証者を誘導し、発散を考慮した受け入れゲートが安定性と高い受け入れ率を維持します。この手法により、エージェントの能力やエンドツーエンドのベンチマークにおいて、完全コンテキスト精度のおよそ90%を達成しつつ、計算コストを大幅に削減しながらスループットを向上させることが実証されました。<br><br>AsymSpecは、コンテキスト圧縮によって失われる重要な推論信号がある場合に、計算効率と精度を両立させる有効な手段となり、エージェント型LLMの応用範囲を広げる可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Sheng Liang, Yongyue Zhang, Nathanael Brian, Hang Lv, Hao Wang, Chen Zhang, Yong Liu<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.26004v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.26004v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="最近傍探索を用いた高情報量射影の効率的推定" data-timestamp="1787756515000" data-url="https://arxiv.org/abs/2608.25887v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 15:01:55 Z</p>
-  <h2 class="article-title">最近傍探索を用いた高情報量射影の効率的推定</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、多変量データの興味深い射影を見つけるのに非常に効果的な、直感的な次元削減手法を提案するものです。<br><br>提案手法は、データ内の最近傍関係を強化することに基づいています。提案する射影は、データの局所的な共分散構造をエンコードするように設計された行列のスペクトル分解から生じます。ここで、各点における局所的な共分散は、その最近傍ペアによって捉えられます。標準的な正則性条件下では、この行列が「密度情報行列」（DIM）の一貫性のある推定値となることを示します。DIMは、フィッシャー情報行列のノンパラメトリックな類推です。<br><br>DIMのスペクトル分解は、独立成分分析（ICA）や、教師あり学習における十分次元削減（SDR）といった重要な問題に関連することが示されています。しかし、既存のDIM推定値は計算コストが高く、真の確率密度関数の二乗に比例する代理確率密度関数のDIMのみを対象としています。さらに、クラスタ分析や外れ値検出といった下流タスクを支援する本手法の実用的な有用性についても探求します。</div>
+<article class="digest-article" data-month="2026-08" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, eess.SY, stat.ML" data-title="量子着想による運転行動モデリング" data-timestamp="1787757882000" data-url="https://arxiv.org/abs/2608.25907v1">
+  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 15:24:42 Z</p>
+  <h2 class="article-title">量子着想による運転行動モデリング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">eess.SY</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、運転行動の複雑さと多様性を捉えるための新しいアプローチとして、量子着想のモデリングフレームワークを提案します。従来のモデルでは捉えきれなかった、運転行動の連続性、確率性、文脈依存性、履歴依存性、および変数間の相互作用を統一的に表現することを目指しています。<br><br>提案手法では、各ドライバーを時間とともに進化する密度行列として表現します。これにより、行動の不確実性、時間的変化、文脈に応じた行動の変動を統一的に扱うことが可能になります。このフレームワークを教師なし学習でI-24 MOTIONデータセットに適用した結果、自由流、遷移、混雑という3つの解釈可能な運転プロファイルが抽出されました。これらのプロファイルは、データ内の行動範囲と、状況変化に伴うドライバーの滑らかな遷移を捉えています。<br><br>さらに、このモデルは交通流のマクロ現象（基本図やヒステリシスループなど）も再現することが示されました。実用面では、文脈依存的なパラメータを古典的な車間距離モデルに供給したり、自動運転車が周囲のドライバーの行動をリアルタイムで把握し、短期的な動きを予測したりするのに役立ちます。このフレームワークは、解釈可能で信頼性の高い交通流モデルの構築に向けた道筋を示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：David P. Hofmeyr<br>
+        著者：Mohammad Elayan, Omid Armantalab, Wissam Kontar<br>
+        分類：cs.LG, eess.SY, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.25907v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25907v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="線形等式制約下における物理場の多出力ガウス過程予測" data-timestamp="1787747205000" data-url="https://arxiv.org/abs/2608.25709v1">
+  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 12:26:45 Z</p>
+  <h2 class="article-title">線形等式制約下における物理場の多出力ガウス過程予測</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、物理学の機械学習分野で頻繁に現れる、線形等式制約を受ける複数の高次元物理場の同時予測問題に取り組みます。ガウス過程（GP）回帰は、少ないサンプルで高い精度と不確実性定量化を提供する強力な手法ですが、この設定では高次元性と物理的制約の厳密な適用という二つの課題があります。<br><br>従来、制約を満たすために一つの出力を他の出力から演繹する手法が用いられてきましたが、どの出力を演繹するかという任意性に依存し、予測精度や不確実性定量化に影響を与えることがベンチマーク実験で示されました。そのため、全ての場を対称的に扱い、物理法則を厳密に尊重するアプローチが求められています。<br><br>本研究では、この課題に対処するため、制約付き多出力GPのための堅牢なフレームワークを提案します。まず、制約を潜在空間で保持する「行ごとのPCA（row-wise PCA）」と呼ばれる特殊なPCA手法を導入します。次に、この潜在空間上で、特定のカーネルパラメータ化に基づく線形制約付き多出力GPモデルを学習させます。提案手法は、集団動力学問題と、非圧縮性制約下でのレイノルズ応力テンソル成分の予測を含む工業CFD応用において検証されました。このアプローチは、物理的制約を考慮した高精度な場予測を可能にします。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Mahamat Hamdan Nassouradine, Clément Gauchy, Pierre-Emmanuel Angeli, Sébastien da Veiga<br>
         分類：stat.ML, cs.LG<br>
         分野：stat.ML<br>
         ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25887v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25887v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2608.25709v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25709v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-08" data-genre="Robotics" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="幾何学制約付きコルモゴロフ・アーノルドネットワーク：バナッハ双対によるエッジ幾何学の学習" data-timestamp="1787752393000" data-url="https://arxiv.org/abs/2608.25807v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 13:53:13 Z</p>
-  <h2 class="article-title">幾何学制約付きコルモゴロフ・アーノルドネットワーク：バナッハ双対によるエッジ幾何学の学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、深層学習アーキテクチャにおける固定された活性化関数を学習可能な単変数エッジ関数に置き換えるコルモゴロフ・アーノルドネットワーク（KAN）において、エッジのパラメータ化の選択が中心的な役割を果たすことを指摘しています。<br><br>既存のKANは、スプライン、多項式、フーリエ特徴量などの固定基底に依存しており、データが観測される前に関数空間の幾何学を課しています。本研究では、幾何学自体がスカラー指数 $p > 1$ を介して学習される、バナッハ双対写像から導出されるエッジ活性化関数のファミリである幾何学制約付きKANを導入します。<br><br>この指数は、サブユークリッド値が $\ell_1$（LASSO）幾何学を彷彿とさせるシャープで閾値のような挙動を生成し、$p = 2$ が線形領域を回復し、より大きな値が原点の近くでより平坦な応答を生成するなど、質的な応答を制御します。50の記号回帰ターゲット（AI Feynmanベンチマークから40、合成ストレステストから10）全体で、幾何学制約付きKANは、中央値NRMSEにおいて、すべての固定基底ベースラインに匹敵するか、それを上回ります。特に、測定ノイズ下での明らかな利点が見られ、学習された指数は、解釈可能で相対的な信号を提供します。</div>
+<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="近似事後分布を用いたベイズオンライン学習の高速収束率" data-timestamp="1787747119000" data-url="https://arxiv.org/abs/2608.25706v1">
+  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 12:25:19 Z</p>
+  <h2 class="article-title">近似事後分布を用いたベイズオンライン学習の高速収束率</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、ベイズオンライン学習において、事後分布の計算を近似した場合でも、統計的な保証が維持される条件を探求する。<br><br>事後分布の正確な更新や表現はオンライン学習では計算コストが高いため、近似手法が用いられることが多い。本研究では、事後分布の近似による累積的な計算コストが、正確なギブス事後分布の収縮半径と近似事後分布および正確な事後分布間のワッサースタイン距離の相互作用によって制御されることを示す。<br><br>提案手法は、正確なベイズ予測が高速な後悔（regret）バウンドを達成する場合、十分な精度で正確な事後分布を追跡する近似事後分布法も、近似誤差によって決定される加算項を除いて、同じ高速な後悔を引き継ぐことを一般定理として示す。線形モデル、無限次元指数族系列モデル、ガウス過程回帰の3つのオンライン学習例で検証し、それぞれ計算コストを大幅に削減しつつ、理論的な後悔バウンドを達成することを確認した。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：K S Sesh Kumar<br>
-        分類：cs.LG, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25807v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25807v1</a>
+        著者：Ilsang Ohn<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.25706v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25706v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, math.ST, stat.ML" data-title="破損した制約付き学習問題の比較" data-timestamp="1787748893000" data-url="https://arxiv.org/abs/2608.25745v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 12:54:53 Z</p>
-  <h2 class="article-title">破損した制約付き学習問題の比較</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">math.ST</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、統計学における重要な結果であるデータ処理不等式が、機械学習における制約付き学習問題では必ずしも成り立たないことを示しています。これは、モデルクラスがすべての可測関数を含まないという制約があるためです。<br><br>古典的なデータ処理不等式が制約付き設定で失敗する単純な反例を提示し、制約付きベイズリスクが確率的に変更された分布上の制約付きベイズリスクを下限することを要求する一般化されたデータ処理不等式を定式化します。この不等式は、損失とモデルクラスによって誘導される特定の関数セット、すなわちスーパー予測セットに対する集合包含条件と同等であることを示します。<br><br>最後に、この包含のための十分条件を導出します。この研究は、情報ボトルネック原理や一部の特徴学習技術などの機械学習における応用において、データ処理不等式の適用範囲と限界を理解する上で重要です。</div>
+<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, math.OC, math.ST, stat.ML" data-title="最適収束率を超える確率的最適化：軌道適応型停止規則" data-timestamp="1787734966000" data-url="https://arxiv.org/abs/2608.25551v1">
+  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 09:02:46 Z</p>
+  <h2 class="article-title">最適収束率を超える確率的最適化：軌道適応型停止規則</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">math.OC</span><span class="tag">math.ST</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、確率的勾配降下法（SGD）の停止規則に関する問題に取り組む。<br><br>従来のSGDの解析では、アルゴリズム実行前に決定される固定された計算ステップ数（決定論的ホライゾン）が用いられることが多いが、実際の運用ではアルゴリズムの進行状況（軌道）を観察して適応的に停止点が決定される。このミスマッチにより、固定時間保証がデータ依存の停止時間では無効になる、あるいは決定論的ホライゾンが過度に保守的になるという問題が生じる。本研究では、強凸性を持つ確率的最適化問題に対し、最適解からの距離と平均化された解の劣最適性を評価する、完全に観測可能で軌道適応的な上限信頼系列を構築する。<br><br>提案手法は、同時に時間を通じて有効なバウンドを提供し、最悪の場合でも対数因子を除いて最適な $1/t$ の減衰率を達成する。さらに、実現された確率的勾配に適応するため、所定の精度が保証され次第、統計的妥当性を損なうことなくSGDを停止させることが可能になる。このアプローチは、SGDの軌道を逐次実験とみなし、観測値が未知の最適化誤差に関する証拠を提供するという視点に基づいている。数値実験では、提案する停止規則が、自然な決定論的ホライゾンと比較して桁違いに少ない反復回数で済むことが示されている。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Laura Iacovissi, Rabanus Derr, Robert C. Williamson<br>
-        分類：cs.LG, math.ST, stat.ML<br>
+        著者：Liviu Aolaritei, Lucas Lévy, Francis Bach, Michael I. Jordan<br>
+        分類：cs.LG, math.OC, math.ST, stat.ML<br>
         分野：cs.LG<br>
         ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25745v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25745v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2608.25551v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25551v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-08" data-genre="Robotics" data-field="cond-mat.stat-mech" data-source="arXiv stat.ML" data-area="AI" data-categories="cond-mat.stat-mech, cond-mat.dis-nn, stat.ML" data-title="単純排除過程の非平衡ダイナミクス完全解明" data-timestamp="1787739874000" data-url="https://arxiv.org/abs/2608.25606v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 10:24:34 Z</p>
-  <h2 class="article-title">単純排除過程の非平衡ダイナミクス完全解明</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cond-mat.stat-mech</span><span class="tag">cond-mat.dis-nn</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、非平衡輸送の代表的なモデルである単純排除過程（SEP）の、時間依存する結合分布のダイナミクスを解析する手法を提案するものです。<br><br>従来、指数関数的に増大する状態空間におけるSEPのダイナミクスは解析が困難でしたが、本研究では変分オートレグレッシブネットワーク（VARN）を用いることで、1次元から3次元までの対称（SSEP）、非対称（ASEP）、完全非対称（TASEP）なケースを系統的に特徴づけることに成功しました。<br><br>1次元SSEPの有限時間結果や2次元SSEPの長時間テンソルネットワーク結果を再現し、さらに1次元および2次元のSSEP、ASEP、TASEPのより詳細な有限時間ダイナミクス、そして3次元での新たな有限時間解析を提供します。特に1次元では、有限時間のダイナミカル・アクティビティマップがTASEPの定常状態の3相構造と直接対応すること、長時間極限では境界効果とバルク効果が輸送の拡散的振る舞いから弾道的振る舞いへの遷移を支配することが明らかになりました。2次元では、ニューラルネットワーク計算によって支持される平均場方向密度基準を確立し、長時間における境界効果とバルク効果が1次元と同様の振る舞いをすることが示されました。3次元では、SSEPの活性-不活性相転移に関する新しい有限時間スケーリング関係を発見し、相転移点のシステムサイズに対するスケーリング指数が次元によらず一貫していることを示唆しています。これにより、本研究は代表的な輸送システムの非平衡ダイナミクスを特徴づけるための統一的な枠組みを確立しました。</div>
+<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="ランダム特徴量のための適応的正則化：オラクル率保証付き近傍早期停止規則" data-timestamp="1787732644000" data-url="https://arxiv.org/abs/2608.25513v1">
+  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 08:24:04 Z</p>
+  <h2 class="article-title">ランダム特徴量のための適応的正則化：オラクル率保証付き近傍早期停止規則</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、カーネルリッジ回帰（KRR）のランダム特徴量近似（KRR-RF）における正則化パラメータの選択問題を扱う。<br><br>ランダム特徴量法はKRRのスケーラブルな近似を提供するが、最適な学習率をもたらす正則化パラメータは、未知の滑らかさや容量パラメータに依存する。本研究では、KRR-RFのための適応的な正則化手法として、近傍早期停止規則を提案する。この手法は、逆正則化率に関して一様なグリッドを使用し、隣接する推定値を比較するだけで済むため、標準的な全ペア比較手法と比較して比較回数を削減できる。<br><br>提案手法では、近傍の不一致度とその経験的複雑性項を、正確なカーネルグラム行列を構築することなく、ランダム特徴量空間で直接計算できる。高確率での比較バウンドを示し、適切なグリッドとランダム特徴量の予算条件の下で、選択された推定値が対数因子を除いてオラクル多項式学習率を達成することを示す。この結果は、ソースと容量の指数に関する事前知識なしに正則化パラメータを選択することを可能にし、適切に指定された場合と部分的に誤って指定された場合のレジームの両方をカバーする。シミュレーションと実データ実験により、提案手法の予測性能と計算効率が、標準的なチューニング手順と比較して実証されている。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Zhimao Liu, Jing Liu, Pan Zhang, Ying Tang<br>
-        分類：cond-mat.stat-mech, cond-mat.dis-nn, stat.ML<br>
-        分野：cond-mat.stat-mech<br>
-        ジャンル：Robotics<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25606v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25606v1</a>
+        著者：Caixing Wang, Zhibo Chen, Yue Wang<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.25513v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25513v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
