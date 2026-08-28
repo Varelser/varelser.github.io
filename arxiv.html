@@ -1131,6 +1131,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="小規模言語モデルの失敗モードから推論時に汎化するCritICL" data-timestamp="1787853570000" data-url="https://arxiv.org/abs/2608.27455v1">
+  <p class="meta">arXiv cs.CL　Thu, 27 Aug 2026 17:59:30 Z</p>
+  <h2 class="article-title">小規模言語モデルの失敗モードから推論時に汎化するCritICL</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論性能を効率的に向上させる新しいフレームワークを提案します。<br><br>近年の推論時スケーリング技術はLLMの推論性能を大幅に向上させていますが、多くの場合、繰り返し生成や外部検証に依存するため、効率性に課題がありました。本研究では、この限界に対処するため、「CritICL」という新しい推論時フレームワークを導入します。CritICLの鍵となる洞察は、LLMの失敗モードがモデルファミリー内ではスケール間で構造化されたパターンを示すという点です。本手法では、失敗を単なる望ましくない出力として扱うのではなく、ガイダンスの源として活用します。<br><br>具体的には、より弱いモデルから導出された失敗モードを利用し、クリティーク（批判）ベースのインコンテキスト例を通じて推論に組み込みます。本研究では、入力固有の失敗モードを適応的に予測しクリティークを取得する「CritICL-dynamic」と、グローバルな失敗モードプロファイルを使用して安定したガイダンスを提供する「CritICL-static」の2つのバリアントを提案しています。実験の結果、CritICLは標準的なインコンテキスト学習を常に上回り、テスト時スケーリング手法に匹敵またはそれを超える性能を達成しました。さらに、必要な生成回数とトークンコストを大幅に削減しています。<br><br>この手法は、LLMの推論能力を効率的に向上させる可能性を示しており、特にリソースが限られている状況での応用が期待されます。GitHubでコードが公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Yufan Wu, Yinghui He, Zhengyi Hu, Lang Wei, Ruichen Li, Qifan Yang, Ting Zhu<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.27455v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.27455v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI, cs.CL" data-title="実世界のコードレビューを評価するMCR-Benchの提案" data-timestamp="1787853384000" data-url="https://arxiv.org/abs/2608.27442v1">
+  <p class="meta">arXiv cs.AI　Thu, 27 Aug 2026 17:56:24 Z</p>
+  <h2 class="article-title">実世界のコードレビューを評価するMCR-Benchの提案</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、実世界のソフトウェア開発におけるコードレビューの課題を扱います。<br><br>従来の自動コードレビュー研究は、コードレビューを単一ラウンドの静的なタスクと見なしていましたが、現実の開発では複数ラウンドの対話や複雑な問題解決プロセスが不可欠です。このギャップを埋めるため、本研究では「MCR-Bench」という、現実的な複数ラウンドのコードレビューを評価するための、欠陥状態を考慮したベンチマークを提案します。<br><br>MCR-Benchは5つの一般的なプログラミング言語をカバーし、2,269件の実際の複数ラウンドのコードレビュータスクを含みます。各タスクには、欠陥に関する詳細な情報（説明、種類、深刻度）と、ラウンド間の状態ラベルが付与されており、欠陥が複数ラウンドを通じてどのように進化するかを捉えています。このベンチマークを用いた実験により、主流のLLMは欠陥検出やライフサイクル状態追跡において全体的な能力が限定的であり、特にラウンド数が増加すると性能が著しく低下することが明らかになりました。<br><br>さらに、LLMの性能は欠陥の種類や深刻度によって大きく異なり、意味的に複雑な欠陥や重要度の低い欠陥は見逃されやすい傾向があります。詳細なエラー分析からは、ラウンド間の時間的ずれや不十分な長期記憶といった、根本的な弱点が浮き彫りになりました。これらの結果は、LLMを用いたコードレビューシステムの開発における今後の課題を示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Dewu Zheng, Yanlin Wang, Xiwen Wang, Kefeng Duan, Hongyu Zhang, Xilin Liu, Yuchi Ma, Zibin Zheng<br>
+        分類：cs.SE, cs.AI, cs.CL<br>
+        分野：cs.SE<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.27442v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.27442v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.CR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CR, cs.AI" data-title="経験駆動でスキルを進化させる自動レッドチーミングエージェントRedEvoAgent" data-timestamp="1787853333000" data-url="https://arxiv.org/abs/2608.27439v1">
+  <p class="meta">arXiv cs.AI　Thu, 27 Aug 2026 17:55:33 Z</p>
+  <h2 class="article-title">経験駆動でスキルを進化させる自動レッドチーミングエージェントRedEvoAgent</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CR</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、LLMベースのエージェントが製品レベルで実行される際のセキュリティリスクに対処する方法を扱います。<br><br>LLMエージェントは、悪意のあるツールの使用や永続的な状態変化を引き起こす可能性があり、単なる安全でないテキスト生成以上のリスクをもたらします。既存の自動レッドチーミング手法は固定的な攻撃に依存しがちですが、最近のエージェント型攻撃者は複数のジャイルブレイクツールを連携させ、軌跡ベースの検索を通じてより強力な攻撃を示します。しかし、このような検索は検索バイアスやツールの貢献度が不明確なために誤解を招く経験を再利用する可能性があり、完全な軌跡はコンテキストのオーバーヘッドを増加させ解釈性を低下させます。<br><br>そこで本研究では、ブラックボックスのレッドチーミングエージェント「RedEvoAgent」を提案します。これは、ケースをまたいだ攻撃軌跡を、簡潔で人間が読める攻撃スキルへと蒸留します。攻撃スキルは、ツールの有効性プロファイリングとスキルの更新のためのツールの決定的属性、および検証パフォーマンスを向上させる更新のみを保持する検証ラチェットを通じて適応的に進化します。<br><br>複数のベンチマーク、ターゲットモデル、ターゲット実行ハーネスでの実験により、RedEvoAgentは固定およびエージェントベースのベースラインを上回り、ツールの効率を向上させ、攻撃者モデルやターゲット実行ハーネスを横断して転移することが示されました。これは、LLMエージェントの安全性評価における新たなアプローチを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Junjie Zhang, Hui Liu, Kecheng Chen, Xianbo Mo, Changsheng Chen, Haoliang Li<br>
+        分類：cs.CR, cs.AI<br>
+        分野：cs.CR<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.27439v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.27439v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI" data-title="LLMエージェントのペルソナと実行の分離アーキテクチャ" data-timestamp="1787853007000" data-url="https://arxiv.org/abs/2608.27427v1">
+  <p class="meta">arXiv cs.AI　Thu, 27 Aug 2026 17:50:07 Z</p>
+  <h2 class="article-title">LLMエージェントのペルソナと実行の分離アーキテクチャ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、組織内で運用される大規模言語モデル（LLM）エージェントにおけるペルソナ（指示、口調、自己提示）の自由な進化と、実行（状態管理、監査ログ付き作業）の追跡可能性を両立させるためのアーキテクチャパターン「ペルソナ・実行分離（PES）」を提案します。<br><br>PESでは、ペルソナと実行を異なる信頼ドメインに配置し、契約ブリッジを介して接続します。ペルソナは単一ドメインに留まり変化する可能性がありますが、実行は「顔のない」状態を保ち、監査されます。状態要約は返されますが、データ本体は厳格なドメイン内に留まり、例外的なデータ損失防止（DLP）措置のみが許可されます。承認マトリクス、DLP、監査がドメイン間の連携を保証します。<br><br>このパターンは、自由な変化、実行の追跡可能性、および分離という3つの目標から導かれます。LLMの表現上の区別がつかない性質を考慮すると、これらすべてを満たす単一ドメインのメカニズムは、型付き変更オブジェクト、外部ゲート、安定した監査アンカーを再導入する必要があり、PESはより高い結合コストでこれを再構築します。規制されたデジタル従業員プラットフォームでの開発・パイロットケースでは、5つの決定が1ヶ月かけて記録され、それぞれに却下された代替案が存在しました。出荷された実装のメカニズムチェックでは、ペルソナの摂動（5つのモデル構成）による実行側の再検証がなく、ハードアサートされたフィールドに対するペルソナのフィンガープリントも検出されませんでした。分離前のビルドの調査では、監査可能な実行パスがペルソナから構築ではなく省略によって分離されていることが判明しました。後の配線変更でこの分離を逆転させる可能性がありましたが、PESはこれを監査可能なアーキテクチャルールとしています。このパターンは、マルチユーザー展開、実行監査、および予想されるペルソナの変更が同時に発生する場合に適用されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yisen Xi<br>
+        分類：cs.SE, cs.AI<br>
+        分野：cs.SE<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.27427v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.27427v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="言語モデルにおける道徳的知識の構造化" data-timestamp="1787851830000" data-url="https://arxiv.org/abs/2608.27402v1">
+  <p class="meta">arXiv cs.AI　Thu, 27 Aug 2026 17:30:30 Z</p>
+  <h2 class="article-title">言語モデルにおける道徳的知識の構造化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本研究は、大規模言語モデル（LLM）が道徳的知識をどのように組織化し、構造化しているのかを探求します。モデルは道徳的コンテンツを広範に検出しますが、その検出能力を超えて、道徳的基盤を区別し、それらの関係性を幾何学的に整理しているのかを検証します。<br><br>6つの独立した線形プローブをオープンウェイト言語モデルに学習させ、道徳的基盤理論（MFT）の各カテゴリ（ケア/危害、公正/不正、自由/抑圧、忠誠/裏切り、権威/服従、神聖/堕落）に対応させ、表現空間における方向性の関係性を調べます。結果として、方向性は単一の道徳検出器に収束せず、また互いに孤立もしないことがわかりました。むしろ、それらは正の共通成分を共有しながら、ほぼ最大の独立次元をスパンしています。<br><br>この共通成分は統合の署名であり、同一の方法で構築された非道徳的概念バッテリーと比較して、道徳特有のものであることが示されました（平均ペアワイズコサイン0.26対0.013）。この幾何学的構造は、アーキテクチャやスケールを超えて一貫しており、プローブ精度が飽和するずっと前に、事前学習の早い段階で統合領域に達します。モデルが発見した構造には、MFTによって予測される個人化/結合の区別（候補パーティションは20個のみで、検出力が低いテスト）の証拠はなく、むしろコーパス統計を反映しています。道徳的ジレンマに拡張すると、各ジレンマの方向性は、その構成要素となる基盤から部分的に合成され、不一致ペアのベースラインの2.7倍の合成度を示し、その分散の大部分は対立特有の構造をエンコードしています。モデルは、事前に解決された判断ではなく、道徳的緊張そのものを表現していると考えられます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Orion Reblitz-Richardson<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.27402v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.27402v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="臨床言語モデルの監査可能性向上：概念誘導ファインチューニングによる頑健な予測" data-timestamp="1787851715000" data-url="https://arxiv.org/abs/2608.27397v1">
+  <p class="meta">arXiv cs.AI　Thu, 27 Aug 2026 17:28:35 Z</p>
+  <h2 class="article-title">臨床言語モデルの監査可能性向上：概念誘導ファインチューニングによる頑健な予測</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">臨床言語モデルは、院内での高い精度を達成できる一方で、患者の状態を反映しないノート固有のアーティファクト（テンプレート、区切り文字、定型文など）を利用してしまうため、展開シフト下で失敗することがあります。本論文では、監査可能な臨床テキスト分類のためのSAEベースのフレームワーク「CAST（Concept-guided Artifact Suppression Tuning）」を提案します。<br><br>CASTは、スパースオートエンコーダー（SAE）を使用して、Transformerの活性化から人間の監査が可能なスパースな特徴を露出させます。SAEの潜在変数をLLM支援解釈パイプラインとICD-10検索制約を用いてラベル付けし、検証されたアーティファクト潜在変数をファインチューニング中の残差減算によって抑制します。さらに、予測を支持する臨床概念と、トレーニング中に抑制されたアーティファクト概念の、事後的な概念ごとの属性を提供します。<br><br>MIMIC-IV退院サマリーノートの死亡率予測タスクにおいて、CASTは対応するファインチューニング済みエンコーダーベースラインを上回り、強力なLLMベースラインと競争力のある性能を示しました。同時に、各予測を支持する臨床概念と、トレーニング中に抑制されたアーティファクト概念の、特徴レベルの監査証跡を生成します。このアプローチは、臨床言語モデルの信頼性と解釈可能性を高め、実際の医療現場での安全な展開に貢献することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jin Mu, Guanhua Chen<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.27397v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.27397v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-08" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG, cs.MM, cs.RO" data-title="スケーラブルで検証可能なネイティブ視覚推論スイート：VBVR-Pro" data-timestamp="1787767191000" data-url="https://arxiv.org/abs/2608.26105v1">
   <p class="meta">arXiv cs.AI　Wed, 26 Aug 2026 17:59:51 Z</p>
   <h2 class="article-title">スケーラブルで検証可能なネイティブ視覚推論スイート：VBVR-Pro</h2>
@@ -1468,108 +1570,6 @@
         分野：cs.CL<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2608.26013v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.26013v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="読解と大規模言語モデルにおける概念的・指示的破壊のダイナミクスの違い" data-timestamp="1787762868000" data-url="https://arxiv.org/abs/2608.25999v1">
-  <p class="meta">arXiv cs.CL　Wed, 26 Aug 2026 16:47:48 Z</p>
-  <h2 class="article-title">読解と大規模言語モデルにおける概念的・指示的破壊のダイナミクスの違い</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、人間の読解と大規模言語モデル（LLM）における意味理解の二つの側面、すなわち概念的情報と指示的情報（参照情報）の処理ダイナミクスを比較分析するものです。<br><br>研究では、物語文中の概念情報または指示的情報を選択的に操作し、それが人間の読解速度やLLMの予測・表現処理に与える影響を追跡しました。人間の場合、概念情報の破壊は局所的かつ強い処理コストを生じさせ、指示情報の破壊はより広範囲に影響し、文境界の影響を受けやすいことが示されました。<br><br>LLMにおいても、概念情報と指示情報の破壊は異なる処理パターンを示すことが明らかになりました。特に、文脈モデルのサプライズは人間の読解パターンと類似し、概念破壊は局所的で急速に減衰する効果、指示破壊はより緩やかで下流に影響する効果を示しました。出力層の表現では、指示破壊が初期の大きな変動を引き起こし、両者ともにその後べき乗則的な減衰を示すパターンが観察されました。これらの結果は、概念情報が局所的な統合コストを、指示情報がより分散的なプロセスを要求するという、意味の二つの次元における処理ダイナミクスの違いを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Rui He, Nihal Altay, Wolfram Hinzen<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25999v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25999v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, eess.SY, stat.ML" data-title="量子着想による運転行動モデリング" data-timestamp="1787757882000" data-url="https://arxiv.org/abs/2608.25907v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 15:24:42 Z</p>
-  <h2 class="article-title">量子着想による運転行動モデリング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">eess.SY</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、運転行動の複雑さと多様性を捉えるための新しいアプローチとして、量子着想のモデリングフレームワークを提案します。従来のモデルでは捉えきれなかった、運転行動の連続性、確率性、文脈依存性、履歴依存性、および変数間の相互作用を統一的に表現することを目指しています。<br><br>提案手法では、各ドライバーを時間とともに進化する密度行列として表現します。これにより、行動の不確実性、時間的変化、文脈に応じた行動の変動を統一的に扱うことが可能になります。このフレームワークを教師なし学習でI-24 MOTIONデータセットに適用した結果、自由流、遷移、混雑という3つの解釈可能な運転プロファイルが抽出されました。これらのプロファイルは、データ内の行動範囲と、状況変化に伴うドライバーの滑らかな遷移を捉えています。<br><br>さらに、このモデルは交通流のマクロ現象（基本図やヒステリシスループなど）も再現することが示されました。実用面では、文脈依存的なパラメータを古典的な車間距離モデルに供給したり、自動運転車が周囲のドライバーの行動をリアルタイムで把握し、短期的な動きを予測したりするのに役立ちます。このフレームワークは、解釈可能で信頼性の高い交通流モデルの構築に向けた道筋を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Mohammad Elayan, Omid Armantalab, Wissam Kontar<br>
-        分類：cs.LG, eess.SY, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25907v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25907v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="線形等式制約下における物理場の多出力ガウス過程予測" data-timestamp="1787747205000" data-url="https://arxiv.org/abs/2608.25709v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 12:26:45 Z</p>
-  <h2 class="article-title">線形等式制約下における物理場の多出力ガウス過程予測</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、物理学の機械学習分野で頻繁に現れる、線形等式制約を受ける複数の高次元物理場の同時予測問題に取り組みます。ガウス過程（GP）回帰は、少ないサンプルで高い精度と不確実性定量化を提供する強力な手法ですが、この設定では高次元性と物理的制約の厳密な適用という二つの課題があります。<br><br>従来、制約を満たすために一つの出力を他の出力から演繹する手法が用いられてきましたが、どの出力を演繹するかという任意性に依存し、予測精度や不確実性定量化に影響を与えることがベンチマーク実験で示されました。そのため、全ての場を対称的に扱い、物理法則を厳密に尊重するアプローチが求められています。<br><br>本研究では、この課題に対処するため、制約付き多出力GPのための堅牢なフレームワークを提案します。まず、制約を潜在空間で保持する「行ごとのPCA（row-wise PCA）」と呼ばれる特殊なPCA手法を導入します。次に、この潜在空間上で、特定のカーネルパラメータ化に基づく線形制約付き多出力GPモデルを学習させます。提案手法は、集団動力学問題と、非圧縮性制約下でのレイノルズ応力テンソル成分の予測を含む工業CFD応用において検証されました。このアプローチは、物理的制約を考慮した高精度な場予測を可能にします。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Mahamat Hamdan Nassouradine, Clément Gauchy, Pierre-Emmanuel Angeli, Sébastien da Veiga<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25709v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25709v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="近似事後分布を用いたベイズオンライン学習の高速収束率" data-timestamp="1787747119000" data-url="https://arxiv.org/abs/2608.25706v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 12:25:19 Z</p>
-  <h2 class="article-title">近似事後分布を用いたベイズオンライン学習の高速収束率</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、ベイズオンライン学習において、事後分布の計算を近似した場合でも、統計的な保証が維持される条件を探求する。<br><br>事後分布の正確な更新や表現はオンライン学習では計算コストが高いため、近似手法が用いられることが多い。本研究では、事後分布の近似による累積的な計算コストが、正確なギブス事後分布の収縮半径と近似事後分布および正確な事後分布間のワッサースタイン距離の相互作用によって制御されることを示す。<br><br>提案手法は、正確なベイズ予測が高速な後悔（regret）バウンドを達成する場合、十分な精度で正確な事後分布を追跡する近似事後分布法も、近似誤差によって決定される加算項を除いて、同じ高速な後悔を引き継ぐことを一般定理として示す。線形モデル、無限次元指数族系列モデル、ガウス過程回帰の3つのオンライン学習例で検証し、それぞれ計算コストを大幅に削減しつつ、理論的な後悔バウンドを達成することを確認した。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Ilsang Ohn<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25706v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25706v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, math.OC, math.ST, stat.ML" data-title="最適収束率を超える確率的最適化：軌道適応型停止規則" data-timestamp="1787734966000" data-url="https://arxiv.org/abs/2608.25551v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 09:02:46 Z</p>
-  <h2 class="article-title">最適収束率を超える確率的最適化：軌道適応型停止規則</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">math.OC</span><span class="tag">math.ST</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、確率的勾配降下法（SGD）の停止規則に関する問題に取り組む。<br><br>従来のSGDの解析では、アルゴリズム実行前に決定される固定された計算ステップ数（決定論的ホライゾン）が用いられることが多いが、実際の運用ではアルゴリズムの進行状況（軌道）を観察して適応的に停止点が決定される。このミスマッチにより、固定時間保証がデータ依存の停止時間では無効になる、あるいは決定論的ホライゾンが過度に保守的になるという問題が生じる。本研究では、強凸性を持つ確率的最適化問題に対し、最適解からの距離と平均化された解の劣最適性を評価する、完全に観測可能で軌道適応的な上限信頼系列を構築する。<br><br>提案手法は、同時に時間を通じて有効なバウンドを提供し、最悪の場合でも対数因子を除いて最適な $1/t$ の減衰率を達成する。さらに、実現された確率的勾配に適応するため、所定の精度が保証され次第、統計的妥当性を損なうことなくSGDを停止させることが可能になる。このアプローチは、SGDの軌道を逐次実験とみなし、観測値が未知の最適化誤差に関する証拠を提供するという視点に基づいている。数値実験では、提案する停止規則が、自然な決定論的ホライゾンと比較して桁違いに少ない反復回数で済むことが示されている。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Liviu Aolaritei, Lucas Lévy, Francis Bach, Michael I. Jordan<br>
-        分類：cs.LG, math.OC, math.ST, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25551v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25551v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="ランダム特徴量のための適応的正則化：オラクル率保証付き近傍早期停止規則" data-timestamp="1787732644000" data-url="https://arxiv.org/abs/2608.25513v1">
-  <p class="meta">arXiv stat.ML　Wed, 26 Aug 2026 08:24:04 Z</p>
-  <h2 class="article-title">ランダム特徴量のための適応的正則化：オラクル率保証付き近傍早期停止規則</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、カーネルリッジ回帰（KRR）のランダム特徴量近似（KRR-RF）における正則化パラメータの選択問題を扱う。<br><br>ランダム特徴量法はKRRのスケーラブルな近似を提供するが、最適な学習率をもたらす正則化パラメータは、未知の滑らかさや容量パラメータに依存する。本研究では、KRR-RFのための適応的な正則化手法として、近傍早期停止規則を提案する。この手法は、逆正則化率に関して一様なグリッドを使用し、隣接する推定値を比較するだけで済むため、標準的な全ペア比較手法と比較して比較回数を削減できる。<br><br>提案手法では、近傍の不一致度とその経験的複雑性項を、正確なカーネルグラム行列を構築することなく、ランダム特徴量空間で直接計算できる。高確率での比較バウンドを示し、適切なグリッドとランダム特徴量の予算条件の下で、選択された推定値が対数因子を除いてオラクル多項式学習率を達成することを示す。この結果は、ソースと容量の指数に関する事前知識なしに正則化パラメータを選択することを可能にし、適切に指定された場合と部分的に誤って指定された場合のレジームの両方をカバーする。シミュレーションと実データ実験により、提案手法の予測性能と計算効率が、標準的なチューニング手順と比較して実証されている。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Caixing Wang, Zhibo Chen, Yue Wang<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.25513v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.25513v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
