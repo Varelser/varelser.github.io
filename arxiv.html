@@ -1454,6 +1454,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-09" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="最初のトークンは手がかり：J-lensによる複数トークン概念の言語化" data-timestamp="1788195380000" data-url="https://arxiv.org/abs/2608.31084v1">
+  <p class="meta">arXiv cs.CL　Mon, 31 Aug 2026 16:56:20 Z</p>
+  <h2 class="article-title">最初のトークンは手がかり：J-lensによる複数トークン概念の言語化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の解釈ツールである「ジャコビアンレンズ（J-lens）」の応用に関する研究です。<br><br>J-lensは、隠れ状態を語彙トークンのランク付けリストとして読み取りますが、複数トークンからなる概念（例：「人工知能」）を独自の表現として扱うことができませんでした。従来のJ-lensの研究では、固定されたフレーズ語彙のベクトルを事前に計算する「テンプレートレンズ」や、フレーズを提案しベクトルを再構築するためにコンポーネントをファインチューニングする「オラクルレンズ」が提案されてきました。本研究では、複数トークン概念とそのベクトルを、J-lensと固定されたモデルから直接回復できるかを探求しています。<br><br>研究の結果、複数トークン概念の最初のトークンは、単一トークン概念と同様に読み取り可能であることがわかりました。正しい最初のトークンとソースプロンプトが与えられれば、固定モデルは88.3%のケースで2トークン目のトークンを正しく回復します。さらに、後続の隠れ状態から、単一のフォワードパスで完全な概念のベクトルを回復できることが示されました。この発見に基づき、J-lensを用いて最初のトークンを提案し、固定モデルに候補概念を完成させます。その後、各候補のベクトルを回復し、完全な語彙とともにスコアリングします。<br><br>Gemma-3-12B-IT、Llama-3.1-8B、Qwen3-14Bの496のマルチホップ穴埋め問題を用いた実験では、提案手法は平均Rank@10で43.1%を達成し、テンプレートレンズの27.6%を上回りました。J-lensの手がかりなしでは、パフォーマンスは21.6%に低下し、最初のトークンが読み取りを大幅に改善することが示されました。回復されたベクトルを用いた因果的概念置換では、同じ介入下でテンプレートレンズの26.2%に対し、平均succ@10で61.4%を達成しました。これらの結果は、最初のトークンが複数トークン概念の回復を導き、後続の隠れ状態が読み取りと介入のためのベクトルを提供することを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Xijie Gong, Tonghan Wang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.31084v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31084v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.DB" data-title="非構造化データのアダプティブ構造化によるトークン効率的なデータ推論エージェント" data-timestamp="1788195225000" data-url="https://arxiv.org/abs/2608.31082v1">
   <p class="meta">arXiv cs.CL　Mon, 31 Aug 2026 16:53:45 Z</p>
   <h2 class="article-title">非構造化データのアダプティブ構造化によるトークン効率的なデータ推論エージェント</h2>
@@ -1471,105 +1488,88 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="Sycophantic Agreement Transfers with Neutral Data via Contrastive Preference Optimization" data-timestamp="1788195177000" data-url="https://arxiv.org/abs/2608.31079v1">
-  <p class="meta">arXiv cs.LG　Mon, 31 Aug 2026 16:52:57 Z</p>
-  <h2 class="article-title">Sycophantic Agreement Transfers with Neutral Data via Contrastive Preference Optimization</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: Sycophantic Agreement Transfers with Neutral Data via Contrastive Preference Optimization Authors: Camila Blank, Zhuofan Ying, Christopher Potts, Peter Hase, Jing Huang Categories: cs.LG Abstract / Summary: Sycophantic agreement refers to a behavior in which language models excessively affirm the user, often at the cost of factual accuracy. Although sycophantic agreement is a well-known failure of model alignment, there is limited understanding of how it emerges from model training. In this work, we demonstrate that sycophantic agreement can emerge as an unintended consequence of widely used contrastive preference optimization objectives. Using the OLMo 3 post-training pipeline, we show that, for various pairs of teacher models across three families, there is a strong correlation between the log-ratio of the teacher model sycophantic agree…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="ヘッドを持たない、多くの思考を持つモデル" data-timestamp="1788194741000" data-url="https://arxiv.org/abs/2608.31069v1">
+  <p class="meta">arXiv cs.LG　Mon, 31 Aug 2026 16:45:41 Z</p>
+  <h2 class="article-title">ヘッドを持たない、多くの思考を持つモデル</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論における計算コストと離散トークンへの依存という課題に対処する新しい手法「Soft Latent Thinking」を提案します。<br><br>この手法は、LLMの推論時に使用されるヘッドを軽量なプロジェクターに置き換えることで、埋め込み空間での連続的な推論ステップを可能にします。これにより、推論プロセスが離散的なトークン化から解放されます。<br><br>実験では、Soft Latent ThinkingがChain-of-Thought推論におけるpass@k指標を向上させ、ステップあたりの計算量を削減することが示されました。特に、連続空間での推論が離散トークン生成なしで効果的に行えることを実証しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.LG<br>
         サイト：arXiv<br>
-        著者：Camila Blank, Zhuofan Ying, Christopher Potts, Peter Hase, Jing Huang<br>
-        分類：cs.LG<br>
+        著者：Nikita Koriagin, Yaroslav Aksenov, George Bredis, Gleb Gerasimov, Nikita Balagansky, Daniil Gavrilov<br>
+        分類：cs.LG, cs.CL<br>
         分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.31079v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31079v1</a>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.31069v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31069v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="Reconciling Process Supervision with Outcome-Based Credit in Agentic Policy Optimization" data-timestamp="1788195110000" data-url="https://arxiv.org/abs/2608.31077v1">
-  <p class="meta">arXiv cs.AI　Mon, 31 Aug 2026 16:51:50 Z</p>
-  <h2 class="article-title">Reconciling Process Supervision with Outcome-Based Credit in Agentic Policy Optimization</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.AI Site: arXiv Title: Reconciling Process Supervision with Outcome-Based Credit in Agentic Policy Optimization Authors: Jingxiao Yang, Wangjie Gan, Yingxuan Zhuang, Wenqi Zhang, Jintao Chen, Xuhong Zhang Categories: cs.AI Abstract / Summary: Outcome-based reinforcement learning provides verified feedback for language-model agents, but assigns trajectory-level advantage uniformly to all decisions, yielding coarse credit over long-horizon interactions. On-policy self-distillation offers finer supervision by re-evaluating sampled behavior with privileged information (PI) available only during training. However, fine-grained supervision is not necessarily fine-grained credit: PI-induced likelihood changes describe how additional information alters policy preference, but do not directly determine how an executable action should inherit the verified task outcome. Thi…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="思考の連鎖における各トークンの重要性をモデル内部から抽出する手法" data-timestamp="1788194474000" data-url="https://arxiv.org/abs/2608.31066v1">
+  <p class="meta">arXiv cs.CL　Mon, 31 Aug 2026 16:41:14 Z</p>
+  <h2 class="article-title">思考の連鎖における各トークンの重要性をモデル内部から抽出する手法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、Chain-of-Thought（CoT）推論のコスト削減を目指し、推論過程を圧縮するための新しいアプローチ「MIST（Model-Internal Saliency for Token-level CoT compression）」を提案します。<br><br>MISTは、モデルの内部状態（残差ストリーム）に着目し、各推論トークンが回答計算にどれだけ貢献したかを「必要性」と「十分性」という2つの軸で評価します。これにより、トークンの重要度をモデル内部の視点から捉えます。<br><br>この手法は、複数のベンチマークとモデルで評価され、既存手法を上回る性能を示しました。モデル内部の重要度を捉えることが、推論トークンの圧縮において効果的な代理指標となることを示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Jingxiao Yang, Wangjie Gan, Yingxuan Zhuang, Wenqi Zhang, Jintao Chen, Xuhong Zhang<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.31077v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31077v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.IR, cs.LG, cs.MA, cs.SE" data-title="改善前に評価する：自動研究エージェントのためのルーブリック自動誘導" data-timestamp="1788194931000" data-url="https://arxiv.org/abs/2608.31076v1">
-  <p class="meta">arXiv cs.AI　Mon, 31 Aug 2026 16:48:51 Z</p>
-  <h2 class="article-title">改善前に評価する：自動研究エージェントのためのルーブリック自動誘導</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.IR</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、自動化された科学研究エージェントが、不明確な指示や成功基準に直面した場合の課題に対処するため、「評価ファースト」のアプローチを提案する「AutoSciRub」フレームワークを紹介します。<br><br>このフレームワークは、研究実行前にタスク固有の実行可能なルーブリックを自動的に誘導し、それを研究の実行、基準レベルの検証、および反復的な改訂のガイドとして使用します。AutoSciRubは、不明確な指示を原子的な科学的目標に分解し、それらを関連文献やタスクから見えるデータに結びつけ、具体的で実行可能かつ検証可能な基準を合成します。<br><br>誘導されたルーブリックは、暗黙的な実験的および証拠的な要件を明示化し、実験や分析の指針を提供します。改訂プロセス中には、ルーブリックによる検証が満たされていない基準を特定し、研究報告とその支援成果物のターゲットを絞った洗練を可能にします。<br><br>ResearchClawBenchでの評価では、AutoSciRubは、3つのバックボーンLLMで平均2.08ポイント、3つのエージェントハーネスで平均2.95ポイントの改善を達成しました。AstaBench E2E Discoveryのランダムにサンプリングされた20タスクサブセットでは、平均16.8ポイントの改善を達成し、成功裏に完了したタスク数を維持または増加させました。これらの結果は、評価ファーストのガイダンスが、自律的な科学研究のための効果的で一般化可能な制御メカニズムを提供することを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Xuehai Wang, Haowei Qin, Tongxin Liu, Junkai Li, Buqiang Xu, Jintian Zhang, Yijun Chen, Zirui Xue<br>
-        分類：cs.CL, cs.AI, cs.IR, cs.LG, cs.MA, cs.SE<br>
+        著者：Tianyi Zhao, Yinhan He, Wendy Zheng, Chen Chen<br>
+        分類：cs.CL<br>
         分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.31076v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31076v1</a>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.31066v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31066v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="人間による監督を超えた大規模推論モデルのスケーリング：超知能への道" data-timestamp="1788194928000" data-url="https://arxiv.org/abs/2608.31075v1">
-  <p class="meta">arXiv cs.AI　Mon, 31 Aug 2026 16:48:48 Z</p>
-  <h2 class="article-title">人間による監督を超えた大規模推論モデルのスケーリング：超知能への道</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模推論モデル（LRM）が人間による監督なしでどのように進化し続けるかを探求し、超知能への道筋を考察しています。<br><br>特に、数学やコードのような結果が自動的にチェックできる領域では、検証可能な報酬による強化学習（RLVR）が推論能力を大幅に向上させることが示されています。しかし、オープンエンドなタスクやエージェント的なタスクへの拡張は、信頼性の高い報酬の獲得が困難であり、人間の監督がモデル生成経験の規模と複雑さに追いつけないため、依然として困難です。<br><br>本研究では、報酬軸と経験軸の2つの次元からこの問題を分析します。報酬軸は、インスタンスごとの人間の判断から、人間のフィードバックなしでも機能する再利用可能な検証ツールや報酬への発展を追跡します。経験軸は、人間がキュレーションしたタスクや環境から、自己生成カリキュラム、構築された環境、および自律的な共進化へと学習が進む様子を調査します。<br><br>これらの次元を、学習プロセスのどの部分が人間の制御下にあるかを特定するL0からL4までの5段階のラダーで結びつけています。さらに、自律性の高まりに伴うリスク（報酬ハッキング、フィードバックドリフト、カリキュラム崩壊、環境エラーなど）を強調し、ポリシー能力、フィードバック忠実度、経験の質の3つの補完的なオブジェクトに関する評価を提供しています。この分析は、人間による監督を超えてLRMをスケーリングするための現在の取り組みと、超知能に向けた自己持続学習システムを開発する上での未解決の問題についての構造化された説明を提供します。</div>
+<article class="digest-article" data-month="2026-09" data-genre="Generative Models" data-field="econ.EM" data-source="arXiv stat.ML" data-area="AI" data-categories="econ.EM, cs.CL, stat.ML" data-title="埋め込み空間での作業可能性とテキスト埋め込みの保存内容" data-timestamp="1788194154000" data-url="https://arxiv.org/abs/2608.31059v1">
+  <p class="meta">arXiv stat.ML　Mon, 31 Aug 2026 16:35:54 Z</p>
+  <h2 class="article-title">埋め込み空間での作業可能性とテキスト埋め込みの保存内容</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">econ.EM</span><span class="tag">cs.CL</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、テキスト埋め込みを経験的分析の入力として使用する際の妥当性とその保存内容について考察しています。<br><br>テキスト埋め込みを低次元のベクトルに置き換えても、分析において失われるものが少ないという仮定が、その利用の根拠となっています。本研究では、文書が潜在トピックの混合物である生成モデルの下で、この仮定を精密に定義します。特に、埋め込み空間でのクラスタリングと、高次元テキストの制御という2つの利用法に焦点を当てています。<br><br>埋め込みのクラスタは、類似したトピック混合物を持つ文書の集合と定義されます。また、埋め込みによる制御は、トピック混合物による制御と同等であり、その妥当性は、その混合物が交絡因子を捉えているかどうかに還元されます。この理論的枠組みに基づき、363の米国大都市圏を対象とした応用研究が行われました。<br><br>その結果、LLMによって生成された経済記述の埋め込みに基づくクラスタは、解釈可能な経済的アーキタイプを回復し、モデル残差や、キュレーションされた産業・人口統計学的共変量に基づくクラスタリングよりも、局所的な雇用動態をより鮮明に分離することが示されました。この研究は、テキスト埋め込みが、特にトピック混合物の観点から、文書の重要な特徴を捉え、経験的分析において有効なツールとなり得ることを示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
+        配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Zhiqin Yang, Jingwen Fu, Yuhan Liu, Hengyu Liu, Yonggang Zhang, Kainan Cao, Zizhuo Zhang, Chenxin Li<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
+        著者：Simon Freyaldenhoven<br>
+        分類：econ.EM, cs.CL, stat.ML<br>
+        分野：econ.EM<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.31059v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31059v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="訓練分布における帰納的バイアスを用いた許容可能な仮説の幾何学の学習" data-timestamp="1788192581000" data-url="https://arxiv.org/abs/2608.31028v1">
+  <p class="meta">arXiv stat.ML　Mon, 31 Aug 2026 16:09:41 Z</p>
+  <h2 class="article-title">訓練分布における帰納的バイアスを用いた許容可能な仮説の幾何学の学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、科学的発見における仮説推論の課題、特に混合変数や組み合わせ仮説空間における確率的表現の構築困難性に対処するフレームワークを提案します。<br><br>このフレームワークでは、科学的帰納的バイアス（スパース性、論理的依存性、物理的許容性など）を訓練分布に直接埋め込むことで、許容可能な偏微分方程式（PDE）の連続的な潜在表現を学習します。ゲート付き変分オートエンコーダーが、構造化された仮説分布から連続的な潜在多様体を学習します。<br><br>実験結果は、学習された11次元表現が多様なPDEを正確に再構築し、方程式ファミリー内およびファミリー間で滑らかな幾何学的遷移を示すことを示しました。科学的バイアスの導入が、方程式形式の構造的誤分類とパラメータ推定誤差を削減することを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：James Crowley, Faez Ahmed, Anton van Beek<br>
+        分類：stat.ML, cs.LG<br>
+        分野：stat.ML<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.31075v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31075v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2608.31028v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.31028v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ME, stat.ML" data-title="When the Martingale Never Stops Firing: Anytime-Valid Gating on Real Forecast Streams" data-timestamp="1788168731000" data-url="https://arxiv.org/abs/2608.30502v1">
-  <p class="meta">arXiv stat.ML　Mon, 31 Aug 2026 09:32:11 Z</p>
-  <h2 class="article-title">When the Martingale Never Stops Firing: Anytime-Valid Gating on Real Forecast Streams</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">stat.ME</span><span class="tag">stat.ML</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv stat.ML Site: arXiv Title: When the Martingale Never Stops Firing: Anytime-Valid Gating on Real Forecast Streams Authors: Weijia Han, Lisha Qu Categories: cs.LG, stat.ME, stat.ML Abstract / Summary: Machine learning systems are increasingly corrected while they run, and the decision of when to intervene is increasingly delegated to statistical monitors. Anytime-valid inference promises evidence that can be acted on at any moment, exactly the guarantee this setting needs, and it is moving from theory into deployed monitoring. Conformal test martingales are the change-detection instrument, and Ville's inequality caps their false-alarm probability on exchangeable data. The guarantee is conditional. A deployment inherits it only if the stream it monitors behaves exchangeably. The premise is hardest to satisfy where these monitors are most useful, on dependent data and…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
+<article class="digest-article" data-month="2026-08" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.AP, stat.ML" data-title="選択を考慮した対話型エージェントのストレステスト" data-timestamp="1788188284000" data-url="https://arxiv.org/abs/2608.30916v1">
+  <p class="meta">arXiv stat.ML　Mon, 31 Aug 2026 14:58:04 Z</p>
+  <h2 class="article-title">選択を考慮した対話型エージェントのストレステスト</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">stat.AP</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、対話型AIエージェントの評価手法に関する研究です。<br><br>従来の評価では、単一のベンチマークを用いてワークフローを選択し、その優位性が低下するタスクタイプを探索していました。しかし、この方法では、結論の導出とタスクの選択が同じデータから行われるため、偏りが生じる可能性があります。本研究では、この問題に対処するため、「選択を考慮した意味的ストレステスト（SASST）」という新しいプロトコルを提案しています。<br><br>SASSTは、発見タスクにおける実行前特徴量からタスクの再重み付けを学習し、確認タスクで同様のペア比較評価を行います。このプロトコルは、サポートと安定性を検証し、計画された全ての主張に対して共同の信頼区間を使用します。また、主張がないという結果を返すことも可能です。さらに、特定のクラスタリング仮定の下で、条件付き漸近妥当性が証明されています。<br><br>実証実験では、40クラスタの監査により、ガウス分布の被覆率の不足と、保守的なBonferroni t値の境界が明らかになりました。また、480エピソードのτ-bench研究では、発見タスクで得られた3.75ポイントの利得が、確認タスクでは消失することが確認されました。第二のモデル研究でも同様に、ワークフローの利点も安定したストレスルールも確認されませんでした。この研究は、エージェント評価における選択バイアスを軽減し、より信頼性の高い評価を目指すものです。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv stat.ML<br>
         サイト：arXiv<br>
-        著者：Weijia Han, Lisha Qu<br>
-        分類：cs.LG, stat.ME, stat.ML<br>
+        著者：Yang Xu, Chenang Li, Jiefu Zhang, Haixiang Sun, Zhou Li, Vaneet Aggarwal<br>
+        分類：cs.LG, stat.AP, stat.ML<br>
         分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.30502v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.30502v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-08" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="Learning PDE Time-Stepping with Neural Cellular Automata" data-timestamp="1788158784000" data-url="https://arxiv.org/abs/2608.30328v1">
-  <p class="meta">arXiv stat.ML　Mon, 31 Aug 2026 06:46:24 Z</p>
-  <h2 class="article-title">Learning PDE Time-Stepping with Neural Cellular Automata</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv stat.ML Site: arXiv Title: Learning PDE Time-Stepping with Neural Cellular Automata Authors: Esha Saha, Hao Wang Categories: cs.LG, stat.ML Abstract / Summary: Classical numerical solvers for partial differential equations (PDEs) are computationally expensive to solve repeatedly across varying initial conditions, motivating the need for learned surrogates. In this paper, we propose a trainable Neural Cellular Automata (NCA) based surrogate model for learning long time PDE dynamics. Rather than mapping an entire initial field to a full trajectory in one shot, our proposed model learns a small, local, homogeneous update rule that is applied identically and repeatedly at every grid cell, mirroring the locality of differential operators. We benchmark this framework against three baselines: PDE - Net, a modified physics-informed neural network (PINN), and a Fourier Neu…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Esha Saha, Hao Wang<br>
-        分類：cs.LG, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2608.30328v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.30328v1</a>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2608.30916v1" target="_blank" rel="noopener">https://arxiv.org/abs/2608.30916v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
