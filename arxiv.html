@@ -1023,6 +1023,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="ConvMem：長文コンテキスト推論のための畳み込みメモリ" data-timestamp="1788972782000" data-url="https://arxiv.org/abs/2609.10441v1">
+  <p class="meta">arXiv cs.AI　Wed, 09 Sep 2026 16:53:02 Z</p>
+  <h2 class="article-title">ConvMem：長文コンテキスト推論のための畳み込みメモリ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が極めて長いコンテキストを扱う際の課題に対処するための新しいフレームワーク「ConvMem」を提案します。従来の逐次的なアプローチは、高レイテンシと高コストな強化学習（RL）トレーニングを必要とし、特定のデータセットへの過学習を引き起こす可能性があります。<br><br>提案するConvMemは、トレーニング不要で高度に並列化可能なフレームワークであり、長文コンテキスト推論を階層的な畳み込みとして再定式化します。畳み込みニューラルネットワーク（CNN）に着想を得て、LLMを特定のクエリでプロンプトされた畳み込みカーネルとして扱います。このカーネルはテキストセグメントを階層的に要約し、推論パスを線形チェーンから対数的なツリーに短縮します。<br><br>具体的には、ConvMemは「設定可能なストライド」と「スキップ接続」を統合して、堅牢な証拠のキャプチャと伝播を保証し、「マルチカーネル畳み込み」を採用して複雑なクエリを分離されたセマンティックチャネルに分解します。この設計は、エラーの蓄積を軽減するだけでなく、テキストセグメントと推論スレッドの両方にわたる大規模な並列化を可能にします。RULER-HotpotQAおよびRULER-2WikiMultiHopQAでの実験により、ConvMemはトレーニング不要のベースラインを上回り、RLトレーニング済みモデルでしばしば観察される、分布外タスクでのパラメトリックプライヤーへの過学習のリスクを回避することが実証されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Hongming Zhang, Zhaozhen Gu, Fengshuo Bai, Ming Hao, Qingyang Zhang, Yuanyuan Wang, Shiyang Tang, Yanna Wang<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.10441v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.10441v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="重要な情報のみを選択的に忘却する：堅牢なLLMに向けた層選択的忘却" data-timestamp="1788972641000" data-url="https://arxiv.org/abs/2609.10439v1">
+  <p class="meta">arXiv cs.AI　Wed, 09 Sep 2026 16:50:41 Z</p>
+  <h2 class="article-title">重要な情報のみを選択的に忘却する：堅牢なLLMに向けた層選択的忘却</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が学習データに含まれる機密情報や著作権で保護された情報などを記憶・再現してしまう問題に対処するための「忘却のみが重要」という層選択的忘却フレームワーク（FOM-UL）を提案しています。<br><br>FOM-ULは、忘却セットへの影響度と保持セットへの感度を評価する「忘却・保持重要度スコア」を用いて、トランスフォーマー層を選択します。これにより、忘却に最も効果的な層に更新処理を集中させ、モデルの大部分は変更しないようにします。<br><br>この標的型更新戦略は、忘却と有用性のトレードオフを改善し、特に量子化による忘却知識の再出現を防ぐことで、量子化耐性のある忘却への実証的な道を開きます。実験では、FOM-ULは既存のベースライン手法と比較して、残存する記憶を削減しつつ、保持セットの有用性をバニラモデルに近いレベルで維持しました。さらに、8ビットおよび4ビットの量子化後でも、競合手法よりも優れた記憶抑制と有用性維持を示し、敵対的プロンプト評価においても忘却されたコンテンツの回復が低いことが示されました。全体として、FOM-ULは正式な消去保証を主張することなく、標的型忘却、有用性維持、および展開の堅牢性を向上させる効率的な忘却戦略を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Ravi Ranjan, Olivera Kotevska, Agoritsa Polyzou<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.10439v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.10439v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="LLM / NLP" data-field="cs.CY" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CY, cs.AI" data-title="救急部再診の質レビューにおけるスクリーニング：人間の意思決定とAIサポートの探求" data-timestamp="1788971855000" data-url="https://arxiv.org/abs/2609.10421v1">
+  <p class="meta">arXiv cs.AI　Wed, 09 Sep 2026 16:37:35 Z</p>
+  <h2 class="article-title">救急部再診の質レビューにおけるスクリーニング：人間の意思決定とAIサポートの探求</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CY</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、救急部（ED）の再診が質保証のために一般的にレビューされるものの、その範囲はしばしば限定的であり、見落とされる質改善の機会が生じる可能性があるという背景に基づいています。<br><br>本研究では、1日から14日以内に同一医療システム内のEDに再診した患者のランダムに選択されたED受診記録を対象とした、探索的・後向き研究を実施しました。診断ペアの特徴、特に「ターゲット」（さらなる評価に値するかどうか）を評価するために、2〜3名の臨床医とGPT-4大規模言語モデル（LLM）が評価者として参加しました。評価者応答の分析に基づき、LLMで構築された知識グラフ（KGA）を活用したアルゴリズムが、潜在的に懸念される診断ペアを自動的にスクリーニングし、予備評価を行うために作成されました。<br><br>結果として、99の診断ペアが分析対象となりました。GPT-4の応答は臨床医の評価者との相関が低く、ほとんどのペア（94%）をフォローアップに値すると評価しました（臨床医の4.4〜13.3倍）。しかし、プロンプトエンジニアリングは最小限でした。臨床医の間では、再診の医学的重症度がターゲットと一貫して有意に関連していましたが、鑑別診断/合併症複合は未調整分析では有意でしたが、調整後分析では有意ではありませんでした。KGAは、少なくとも1名の臨床医が診断ペアに基づいてさらなる評価が必要と判断した場合、83〜100%の陽性的中率を達成しました。これらの結果は、ChatGPTのようなLLMを用いたスクリーニングの改善に向けた次のステップに情報を提供できます。KGAがレビュー担当者のワークロードを大幅に増加させることなく、スクリーニングの範囲と収率を向上させる可能性があるという本予備研究の発見を検証するためには、さらなる研究が保証されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Jonathan A. Handler, Marlene I. Robles-Granda, Jacob E. Mefford, Jeremy S. McGarvey, Gregory S. Podolej, Colleen J. Klein, Matthew D. Dalstrom, William F. Bond<br>
+        分類：cs.CY, cs.AI<br>
+        分野：cs.CY<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.10421v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.10421v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL, cs.MM" data-title="なぜ動画は依然として高コストなのか？動画・視聴覚LLMにおける推論効率化メカニズムのサーベイ" data-timestamp="1788969039000" data-url="https://arxiv.org/abs/2609.10355v1">
+  <p class="meta">arXiv cs.CL　Wed, 09 Sep 2026 15:50:39 Z</p>
+  <h2 class="article-title">なぜ動画は依然として高コストなのか？動画・視聴覚LLMにおける推論効率化メカニズムのサーベイ</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span><span class="tag">cs.MM</span></div>
+  <div class="summary">本論文は、動画理解の分野で急速に進化している動画大規模言語モデル（VideoLLM）に焦点を当てています。VideoLLMは、動画表現と事前学習済み大規模言語モデルを組み合わせ、テキストプロンプトに基づいて生成を行うシステムです。キャプション生成、質問応答、検索、時間的グラウンディングなどのタスクで高い性能を示しますが、フレーム数やコンテキスト長に応じて計算量とメモリコストが増大するため、リアルタイム、モバイル、リソース制約のある環境での展開が制限されています。<br><br>このサーベイでは、パラメータ数、FLOPs、レイテンシ、メモリ使用量、または動画・音声トークン数を具体的に削減する、視覚および視聴覚VideoLLMの推論効率化メカニズムを網羅的に調査します。フレームサンプリング、モダリティエンコーディング、コネクタレベルのトークン削減、LLMのプレフィリングとデコーディングにおけるボトルネックを分析します。<br><br>手法をパイプラインのステージごとに整理し、2022年後半以降に開発されたVideoLLMに加え、現在のパイプラインの構成要素であり続ける初期のフレームサンプリングおよびビジョンエンコーダーメカニズムもカバーします。可能な限り共有ホストモデルと入力プロトコル下での精度とコストの比較を文献から集約し、異種クロス論文の証拠と区別します。また、視聴覚効率と標準化された評価におけるギャップを特定します。関連リポジトリは https://github.com/momentslab/awesome-efficient-videollm で維持されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Killian Steunou, Yannis Tevissen, Mounîm A. El Yacoubi<br>
+        分類：cs.CV, cs.CL, cs.MM<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.10355v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.10355v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="記号的知覚から論理的演繹へ：言語モデルを幾何学推論で導くフレームワーク" data-timestamp="1788968005000" data-url="https://arxiv.org/abs/2609.10335v1">
+  <p class="meta">arXiv cs.CL　Wed, 09 Sep 2026 15:33:25 Z</p>
+  <h2 class="article-title">記号的知覚から論理的演繹へ：言語モデルを幾何学推論で導くフレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AIにおける平面幾何学の課題に取り組み、視覚的知覚と数学的推論の統合を目指すものです。<br><br>従来のマルチモーダルモデル（LMM）は計算コストが高く不透明であるのに対し、本研究では、特殊なモジュールを備えた純粋な大規模言語モデル（LLM）が、複雑な幾何学問題において最先端のLMMに匹敵する性能を発揮できることを示します。提案するフレームワークは、図を記号形式に変換する幾何視覚パーサーと、形式的演繹を行う記号ソルバーを統合し、ハルシネーションを軽減し、解釈可能な推論を促進します。<br><br>厳密な評価のため、2025年の中国中考（中学卒業試験）からの難問を集めたベンチマークを構築し、データの新規性と深い演繹的スキルをテストします。実験の結果、提案手法はGemini 2.5 Proに匹敵する性能を達成しつつ、より明確で人間のような解答を提供することが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Weichen Dai, Rafael Medeiros Cabral, Ziyi Shou, Yan Cao, Xin Shen, Dongcai Lu, Yi Zhou<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.10335v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.10335v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, q-fin.RM, stat.ML" data-title="表形式信用スコアリングのための敵対的学習：P2P融資における多重攻撃に対する堅牢性評価" data-timestamp="1788946544000" data-url="https://arxiv.org/abs/2609.09945v1">
+  <p class="meta">arXiv stat.ML　Wed, 09 Sep 2026 09:35:44 Z</p>
+  <h2 class="article-title">表形式信用スコアリングのための敵対的学習：P2P融資における多重攻撃に対する堅牢性評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">q-fin.RM</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、ピアツーピア（P2P）融資における機械学習ベースの信用スコアリングが、申請者が有利な決定を得るために自己申告入力を戦略的に変更する敵対的操作に対してどの程度耐性があるかを調査しています。<br><br>画像やテキスト領域で得られた敵対的堅牢性の証拠の多くは、単一の攻撃とそれに対応する防御策を評価しており、表形式信用データにおける攻撃タイプ間の防御策の汎化性についてはほとんどガイダンスを提供していません。本研究では、大規模なLending Clubデータセットのサブセットを用いて、3つのモデルファミリー（ロジスティック回帰、フィードフォワードニューラルネットワーク、表形式データ用トランスフォーマー）と、申請者が変更可能な特徴量に限定した4つの攻撃（FGSM、PGD、Salt-and-Pepperノイズ、DeepFool）、および混合攻撃シナリオを網羅する体系的な訓練・テスト堅牢性ベンチマークを実施しました。<br><br>評価の結果、敵対的学習は訓練された攻撃に対して堅牢性を大幅に向上させ、勾配ベースのファミリー内では良好に転移しましたが、非勾配の破損に対しては弱く転移しました。したがって、単一攻撃防御策は現実世界での耐性を過大評価する可能性があります。混合学習は、異種攻撃に対して最もバランスの取れた堅牢性を実現し、クリーンテストパフォーマンスを維持しました。これは、信用モデルガバナンスにおける多重攻撃ストレステストを支持するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Gijs A. F. Niewzwaag, Marijn G. S. Veth, Manuele Massei, Marcos R. Machado<br>
+        分類：cs.LG, q-fin.RM, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.09945v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.09945v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI" data-title="人間型ロボットの混雑環境ナビゲーション：全身の視覚・言語・行動モデル「TANGO」" data-timestamp="1788890395000" data-url="https://arxiv.org/abs/2609.09158v1">
   <p class="meta">arXiv cs.AI　Tue, 08 Sep 2026 17:59:55 Z</p>
   <h2 class="article-title">人間型ロボットの混雑環境ナビゲーション：全身の視覚・言語・行動モデル「TANGO」</h2>
@@ -1462,108 +1564,6 @@
         分野：cs.LG<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2609.09059v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.09059v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.HC" data-title="LLMの出力を人間が評価する際に、推論表現は役立つか？" data-timestamp="1788887037000" data-url="https://arxiv.org/abs/2609.09038v1">
-  <p class="meta">arXiv cs.LG　Tue, 08 Sep 2026 17:03:57 Z</p>
-  <h2 class="article-title">LLMの出力を人間が評価する際に、推論表現は役立つか？</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.HC</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の出力に対する説明として、推論表現が人間による評価をどの程度支援するかを検証するものです。<br><br>従来の推論表現の評価は、モデル中心の基準（正解率や忠実性など）で行われてきましたが、人間がLLMの応答を評価する上で実際に役立つかについては不明瞭でした。本研究では、推論表現をモデルの推論能力の代理ではなく、人間向けのインターフェースとして捉え、6種類の推論形式について、タスクの複雑性が異なる状況下での人間による評価を、ウェブベースのフレームワークを用いて実施しました。<br><br>実験では、構造的理解、エラー検出・特定、信頼度キャリブレーションといった詳細な評価項目を収集しました。その結果、人間が好む推論形式と、評価を支援するのに有効な形式との間に乖離があることが明らかになりました。具体的には、計画や分解に基づく表現が好まれましたが、単純な連鎖思考（Chain-of-Thought）のトレースの方が、検証、信頼度、解釈可能性の点でより効果的でした。さらに、好まれる表現は、正しいトレースに対する誤検知の増加や、検証意欲が低いにもかかわらず高い信頼度を示すといった、キャリブレーションのリスクも伴うことが示唆されました。<br><br>この研究は、LLMの推論表現を設計する際に、モデルの性能だけでなく、人間の評価プロセスをどのように支援するかという視点が重要であることを示唆しています。特に、人間がLLMの出力をより正確かつ効率的に評価できるよう、表現形式の選択と設計には注意が必要です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Jaewoo Lim, Sungbok Shin, Sanghyun Hong<br>
-        分類：cs.LG, cs.HC<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.09038v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.09038v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.IT, cs.LG" data-title="LLMの推論を確率的ダイナミクスの視点から捉える：回答分布軌跡" data-timestamp="1788886720000" data-url="https://arxiv.org/abs/2609.09030v1">
-  <p class="meta">arXiv cs.AI　Tue, 08 Sep 2026 16:58:40 Z</p>
-  <h2 class="article-title">LLMの推論を確率的ダイナミクスの視点から捉える：回答分布軌跡</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IT</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の推論過程における「回答分布軌跡」という新しい表現方法を提案します。これは、推論が進むにつれてモデルが生成する回答の予測分布を追跡するものです。<br><br>従来の評価では、最終的な回答の精度や推論過程の不確実性（エントロピー）のみが注目されてきましたが、本研究では、推論の動的な側面、すなわち探索、修正、移動、コミットメントといった過程を捉えることを目指します。これにより、同じ最終回答や類似のエントロピープロファイルを持つ推論でも、その動的なメカニズムが大きく異なることを明らかにします。<br><br>16のオープンソースLLMと4つの推論ベンチマークを用いた実験により、回答分布軌跡が推論の成功と失敗のメカニズムを区別する上で有効であることが示されました。また、モデルやタスクによって推論の動的な特性にばらつきがあり、学習や推論の選択がこれらのプロファイルを系統的に変化させることが確認されました。<br><br>本研究は、LLMの推論過程をより深く理解するための新たなフレームワークを提供し、モデルの評価と改善に新たな視点をもたらします。このアプローチは、LLMの信頼性と解釈可能性の向上に寄与することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Mar Gonzàlez I Català, Haitz Sáez de Ocáriz Borde, Davide Murari, Carola-Bibiane Schönlieb, Pietro Liò, George Montañez<br>
-        分類：cs.AI, cs.CL, cs.IT, cs.LG<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.09030v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.09030v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="大規模言語モデルにおける文脈理解の評価" data-timestamp="1788885710000" data-url="https://arxiv.org/abs/2609.09004v1">
-  <p class="meta">arXiv cs.LG　Tue, 08 Sep 2026 16:41:50 Z</p>
-  <h2 class="article-title">大規模言語モデルにおける文脈理解の評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が文脈情報をどの程度理解しているかを評価するための新しいフレームワークを提案します。<br><br>LLMは多様な自然言語処理タスクで高い性能を示していますが、真の文脈理解能力については不明確な点が残っています。従来の評価指標（パープレキシティ、BLEU、表面的な正解率など）は、LLMが文脈情報を抽出し、統合し、推論する能力を十分に明らかにできません。これは、特に質問応答タスクにおいて、モデルが記憶された関連性ではなく、文脈に基づいた知識と応答を一致させる必要があるため、重要な課題です。<br><br>本研究では、知識グラフ（KG）に基づいた新しい評価フレームワークを導入します。このフレームワークは、構造的類似性と意味的類似性を統合したハイブリッド類似度尺度である「KGのための意味的構造的類似性（S3KG）」を提案し、連続的な評価スコアを提供します。さらに、推論エラーを分類するための診断フレームワークも開発しました。このパイプラインの有効性を検証するため、キュレーションされた質問応答（QA）ベンチマークに対してS3KGを既存の指標と比較評価し、LLM生成応答の正しさ、忠実性、解釈可能性を測定する上での有効性を示しました。<br><br>提案されたS3KGフレームワークは、LLMの文脈理解能力をより深く、かつ定量的に評価するための強力なツールとなり得ます。これにより、LLMの開発者は、モデルの弱点を特定し、文脈理解能力の向上に繋げることが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Subavarshana Arumugam, Mamta Nallaretnam, Kithuni Wickramasinghe, Chamath Gunapala, Pragatheeswaran Vipulanandan, Uthayasanker Thayasivam, Kamal Premaratne<br>
-        分類：cs.CL, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.09004v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.09004v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Machine Learning" data-field="stat.ME" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ME, stat.AP, stat.ML" data-title="外傷性脳損傷患者のクラスタリングにおける不安定性：CENTER-TBIコホートにおける教師なしクラスタリングの多宇宙解析" data-timestamp="1788865979000" data-url="https://arxiv.org/abs/2609.08577v1">
-  <p class="meta">arXiv stat.ML　Tue, 08 Sep 2026 11:12:59 Z</p>
-  <h2 class="article-title">外傷性脳損傷患者のクラスタリングにおける不安定性：CENTER-TBIコホートにおける教師なしクラスタリングの多宇宙解析</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ME</span><span class="tag">stat.AP</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、外傷性脳損傷（TBI）患者の予後モデリング改善に不可欠な患者の異質性の理解を深めることを目的としています。<br><br>教師なしクラスタリングは、患者群を定義しうる特性のパターンを探るために広く用いられていますが、アルゴリズム選択、距離尺度、クラスター数決定方法など、多くの選択肢が存在します。本研究では、これらの選択が結果のクラスタリング解にどのように影響するかを調査しました。<br><br>CENTER-TBI研究に参加した4,509人の患者データを分析し、K-medoids、階層的クラスタリング、スペクトラルクラスタリングを、ユークリッド距離またはGower距離、シルエットスコアまたはギャップ統計量と組み合わせて、3x2x2の要因計画で適用しました。クラスタリング解の一致度をUpSet Plotsで、安定性を調整ランド指数で評価しました。結果は、分析の選択によって大きく異なり、提案されるクラスター数も1から25まで幅広く変動しました。調整ランド指数は、手法間の低い一致度を確認しました。<br><br>さらに、クラスタリング解のいずれも、患者の回復を分類する教師ありロジスティック回帰モデルに匹敵する識別性能を示さず、この目的におけるクラスタリングの有用性が限定的であることが示唆されました。クラスタリング結果の高い不安定性は解釈を損なうため、これらの解を盲目的に基盤構造として解釈すべきではないことが強調されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Sean R E A Bagcik, Aneeta Merlin Chacko, Ewout W Steyerberg, Maarten van Smeden, Andrew I R Maas, Erik van Zwet, Nicole S Erler<br>
-        分類：stat.ME, stat.AP, stat.ML<br>
-        分野：stat.ME<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.08577v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.08577v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.IT, cs.LG, math.ST" data-title="非適応型1ビット平均推定：ミニマックスレートとサンプル・区間トレードオフ" data-timestamp="1788864772000" data-url="https://arxiv.org/abs/2609.08564v1">
-  <p class="meta">arXiv stat.ML　Tue, 08 Sep 2026 10:52:52 Z</p>
-  <h2 class="article-title">非適応型1ビット平均推定：ミニマックスレートとサンプル・区間トレードオフ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">stat.ML</span><span class="tag">cs.IT</span><span class="tag">cs.LG</span><span class="tag">math.ST</span></div>
-  <div class="summary">本研究では、1ビット通信制約下での分散型1次元平均推定について考察します。<br><br>各エージェントは未知の分布から独立にサンプリングされた1つの観測値を受け取り、中央学習者が選択するクエリ $Q: \mathbb{R}\to\{0,1\}$ に対して1ビットの応答を返します。分布の平均は $[-λ,λ]$ の範囲にあり、固定の $k>1$ に対して $k$ 次中心モーメントは $σ^k$ 以下であると仮定します。LauとScarlettによる順序最適化された2段階プロトコルは、第1バッチの応答を用いて第2バッチのクエリを選択しますが、この単一回の相互作用が必要かどうかという疑問が生じます。<br><br>本論文では、この疑問に対して否定的な回答を与えます。すなわち、全ての $k>1$ に対して、非適応型プロトコルが適応型1ビットミニマックスレートを達成することを示します（同時期の研究でも異なる戦略で同様の結論が得られています）。さらに、各 $Q^{-1}(1)$ が高々 $s$ 個の区間の和に制限される場合の、非適応型1ビット推定におけるミニマックスサンプル複雑度を決定します。制約のない非適応型1ビットクエリと比較して、この制約は $(λσ/(s\varepsilon^2))\log(1/δ)$ のオーダーの項を追加し、サンプル複雑度と区間複雑度の間の完全なトレードオフを $k$ に依存する定数倍の範囲内で示します。<br><br>その系として、制約のない1ビットミニマックスサンプルレートを維持するために必要な最小区間予算を、オーダーで特定します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Ivan Lau, Jonathan Scarlett<br>
-        分類：stat.ML, cs.IT, cs.LG, math.ST<br>
-        分野：stat.ML<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.08564v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.08564v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, stat.ME" data-title="変化点数の分布フリー推論" data-timestamp="1788841614000" data-url="https://arxiv.org/abs/2609.08234v1">
-  <p class="meta">arXiv stat.ML　Tue, 08 Sep 2026 04:26:54 Z</p>
-  <h2 class="article-title">変化点数の分布フリー推論</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">stat.ME</span></div>
-  <div class="summary">本論文では、未知の回数 $K \geq 0$ の変化点を持つ、独立なデータの順序付き系列が与えられた場合に、 $K$ に関する分布フリー推論を行う問題に取り組みます。<br><br>まず、分布フリーの上側信頼限界は自明で情報量のないものでなければならないという不可能性の結果を示します。次に、共役 $p$-値を用い、変化点によって誘導されるデータセグメントが（それらの中で）交換可能であり、相互に独立であるという仮定のみの下で、 $K$ に関する有限サンプルで有効な下側信頼限界を構築します。これを共役変化点数下限（CLOCC）と呼びます。<br><br>CLOCCは、述べられた仮定の下で $K$ の下限を提供する唯一の実行可能な方法であり、その普遍性という特性を示します。効率的でタイトな下限をもたらすスコア関数の選択に関する実践的なガイドラインを提供します。CLOCCをいくつかの合成データおよび実データ実験で評価し、情報量の多い $K$ の下限を提供することで、その実用的な適用性を示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Rohan Hore, Aaditya Ramdas<br>
-        分類：stat.ML, cs.LG, stat.ME<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.08234v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.08234v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
