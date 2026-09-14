@@ -1270,6 +1270,74 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="コンテキストランキングの終端最適化による単純なアテンション疎化手法SAS" data-timestamp="1789149486000" data-url="https://arxiv.org/abs/2609.13141v1">
+  <p class="meta">arXiv cs.CL　Fri, 11 Sep 2026 17:58:06 Z</p>
+  <h2 class="article-title">コンテキストランキングの終端最適化による単純なアテンション疎化手法SAS</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、事前学習済みTransformerの二次累積アテンションコストを削減する「Simple Attention Sparsification（SAS）」という、終端最適化による単純なアテンション疎化手法を提案します。<br><br>既存の手法は、コンテキストユニットのスコアリングとTop-K選択に依存しますが、勾配が言語モデリング損失からブロックされるため、予測への影響が少ないユニットに予算を浪費する可能性があります。SASは、セレクターの連続スコアをアテンションロジットに注入し、損失を通じてセレクターを更新することで、この問題を解決します。具体的には、ゲートをアテンションソフトマックスの対数形式で配置し、正規化ソフトマックスゲートを使用して現在のブロックに対する履歴コンテキストを調整し、連続的なセレクタースコアを維持することが重要です。<br><br>SASは、推論、長コンテキスト理解、エージェンティックタスクにおいて、特に厳しい予算の下で、既存の学習可能疎アテンションベースラインを上回る性能を示しました。これは、SASが下流タスクに対してより効果的なコンテキストランキングを実現することを示しています。メモリ効率の良いTritonカーネルも実装されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zhiwei Li, Lei Zhu, Hao Gu, Xiang Hu, Yan Wang, Haitao Mi, Sirui Han, Leo Liang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.13141v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13141v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="サブ二次アテンションのための異種システム分離の再考" data-timestamp="1789149345000" data-url="https://arxiv.org/abs/2609.13134v1">
+  <p class="meta">arXiv cs.AI　Fri, 11 Sep 2026 17:55:45 Z</p>
+  <h2 class="article-title">サブ二次アテンションのための異種システム分離の再考</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、最先端の大規模言語モデル（LLM）におけるサブ二次アテンションの効率的な推論に焦点を当て、異種システムにおける推論の分離方法を再考します。<br><br>既存のシステムは、密なアテンション中心の分離サービス決定を行いますが、本研究では、サブ二次アテンションLLMのユニークな算術強度とメモリフットプリントを中心に推論を分離することで、DRAMベースおよびSRAMのみの異種システムにおいて、スループットとエネルギー効率の大幅な向上が達成できることを示します。提案手法「SQD（SubQuadratic Disaggregation）」は、演算子タイプではなく、二次およびサブ二次アテンションによってデコードを分割する、きめ細かな異種分離スキームです。<br><br>スパースアテンションLLMの場合、デコードをKV全体をインデックスする必要があるトップk選択と、静的なメモリフットプリントを持つトップkアテンションおよびFFNに分離します。線形およびスライディングウィンドウアテンションLLMの場合、デコードを密なアテンション層とサブ二次アテンション層およびFFNに分離します。8xB200異種システムプロキシでの実験では、GLM 5.2で平均53%、Nemotron 3 Ultraで31%、Gemma 4 31Bで56%のトークン/J改善が観測されました。<br><br>分析モデルでは、アテンション-FFN分離の最良ベースラインと比較して、1.2倍から1.5倍タイトなレイテンシと最大3.6倍高いスループットが観測されました。さらに、本研究は、サブ二次アテンションをサービスする次世代異種システムのためのチップおよび相互接続プロビジョニングに関するアーキテクチャ上の洞察も明らかにしています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Arya Tschand, Yaosheng Fu, Vikram Sharma Mailthody, Nicolai Oswald, Po-An Tsai, Ritchie Zhao, Oreste Villa, Vijay Janapa Reddi<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.13134v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13134v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI" data-title="言語誘導型ニューラル運動学MPCによる関節追跡ロボットの自律走行フレームワーク" data-timestamp="1789147072000" data-url="https://arxiv.org/abs/2609.13083v1">
+  <p class="meta">arXiv cs.AI　Fri, 11 Sep 2026 17:17:52 Z</p>
+  <h2 class="article-title">言語誘導型ニューラル運動学MPCによる関節追跡ロボットの自律走行フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、都市捜索救助などの現場で求められる、階段や瓦礫のある屋内環境を走行する関節追跡ロボット（ATR）のための自律走行フレームワーク「ASTRIL-MPC」を提案します。<br><br>ASTRIL-MPCは、ロボットと地形の相互作用（RTI）が不連続で、フリッパーとトラックの協調制御が解析的にモデル化しにくいという課題に対し、学習された運動学モデル、多目的コストと厳密な実現可能性制約を持つ神経運動学モデル予測制御（NMPC）、そして大規模言語モデル（LLM）による安全チェック付きの重みと境界の更新を組み合わせます。これにより、100ミリ秒以内の制御サイクルを実現します。<br><br>3つの走行タスクと多段差汎化設定での評価では、ASTRIL-MPCは非適応型NMPCやPPOベースラインと比較して、総合的な走行品質スコアを最大71%向上させ、降下時の衝突影響を排除しました。この結果は、学習された運動学、最適化ベースの計画、言語誘導による再調整を組み合わせることで、データ効率が高く堅牢な自律走行が実現できることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zhenfeng Gan, Yanbo Chen, Lirong Che, Junbo Tan, Xueqian Wang<br>
+        分類：cs.RO, cs.AI<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.13083v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13083v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="エージェントによる閉ループ制御を用いた身体性ベンチマーク構築ワークフロー" data-timestamp="1789146961000" data-url="https://arxiv.org/abs/2609.13082v1">
+  <p class="meta">arXiv cs.AI　Fri, 11 Sep 2026 17:16:01 Z</p>
+  <h2 class="article-title">エージェントによる閉ループ制御を用いた身体性ベンチマーク構築ワークフロー</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、エージェントシステムを用いて身体性ベンチマーク構築を自動化する「Embodied-BenchForge」というフレームワークを提案しています。<br><br>従来のシステムでは、構築プロセスが断片的であったり、特定の環境やタスクに限定されがちでした。また、多段階の構築プロセスで生成される中間成果物の検証が不十分で、局所的な欠陥が最終的なベンチマークに伝播する問題がありました。Embodied-BenchForgeは、ユーザーの評価意図を完全な身体性ベンチマーク成果物に変換する閉ループベンチマーク合成を提唱します。<br><br>このフレームワークは、前向きの成果物合成と、後向きの検証・修正を統合しています。スキルを組み合わせた成果物合成では、型付けされ再利用可能なスキルを実行可能なワークフローに組み立て、成果物の依存関係グラフが中間出力を記録します。要件に基づいた検証と修正は、構築全体を通じて成果物固有の契約を適用し、検証失敗時には局所的な再実行や上流へのロールバックをトリガーします。<br><br>本研究により、多様な身体性シナリオをカバーする6つのベンチマークと、220の実行可能なタスクを含むインタラクティブなベンチマークが構築されました。代表的な多モーダル大規模言語モデル（MLLM）と身体性エージェントの評価により、構築されたベンチマークがモデルの能力を区別できることが示されました。品質評価とアブレーション分析は、ベンチマークの品質と検証・修正の効果を検証し、効率的な局所回復とクロスベンチマークの再利用性を示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Baoyang Jiang, Fengchun Zhang, Leyuan Wang, Haotian Li, Yida Wang, Zhe Ji, Jinshan Lai, Xi Ren<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.13082v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13082v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.AI, cs.IR, cs.LG" data-title="オープンエンド問題に対する自律的研究：通信チケット検索の事例研究" data-timestamp="1789146555000" data-url="https://arxiv.org/abs/2609.13073v1">
   <p class="meta">arXiv cs.LG　Fri, 11 Sep 2026 17:09:15 Z</p>
   <h2 class="article-title">オープンエンド問題に対する自律的研究：通信チケット検索の事例研究</h2>
@@ -1301,6 +1369,23 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2609.13072v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13072v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="UIDを保持したマルチモーダル再構成とソースに基づく裁定による臨床イベントの時間的固定" data-timestamp="1789146070000" data-url="https://arxiv.org/abs/2609.13062v1">
+  <p class="meta">arXiv cs.AI　Fri, 11 Sep 2026 17:01:10 Z</p>
+  <h2 class="article-title">UIDを保持したマルチモーダル再構成とソースに基づく裁定による臨床イベントの時間的固定</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、臨床イベントの時系列を正確に把握するためのUID（ユニークID）を保持するフレームワークを提案しています。<br><br>臨床タイムラインは治療ウィンドウ分析やリークのないモデリングに役立ちますが、退院サマリーでは年代記が不明瞭になりがちで、構造化された電子カルテ（EHR）テーブルは患者の経過の一部しか記述しません。本研究では、各物語イベントの発生源スパンにリンクし、テキストのみの推定、構造化証拠の検索、タイムスタンプ付きソース行への紐付け、および共同改訂を通じてそのIDを保持するUID保持フレームワークを提案します。<br><br>さらに、物語記録と構造化記録に対して2つのUIDアラインメントタイムラインを比較するLLMジャッジ「GAVEL」を開発し、既存のマッチングおよび時間的評価を補強します。6つのオープンウェイトモデルと40の混合重症ケアサマリーにわたる評価では、テキストのみのバリアントと比較して、GLM 5.2マルチモーダル改訂がイベント回復を低下させることなく時間的合意を改善し、臨床医の注釈と競争力のあるパフォーマンスを示しました。<br><br>UIDは主にイベント保持を維持し、ソース行リンケージは時間的配置をサポートすることが示されました。ブラインド人間レビューはほとんどのGAVELの発見を支持し、管理された裁定はマルチモーダルがテキストのみよりも優れていると判断しましたが、一部のモデルではそうではありませんでした。UIDとジャッジパイプラインの開発により、イベント回復率の43%向上、臨床医の注釈に匹敵するフレームワーク、および再構成と評価の両方で発生レベルのプロビナンスを持つシステムが実証されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Sayantan Kumar, Nicolas Grimaldi, Jack Cummins, Jeremy C. Weiss<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.13062v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13062v1</a>
   </div>
 </article>
 
@@ -1369,6 +1454,23 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2609.13044v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13044v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="大規模言語モデルの長距離手続き推論能力のギャップを明らかにするタスクベンチマーク" data-timestamp="1789142640000" data-url="https://arxiv.org/abs/2609.13005v1">
+  <p class="meta">arXiv cs.CL　Fri, 11 Sep 2026 16:04:00 Z</p>
+  <h2 class="article-title">大規模言語モデルの長距離手続き推論能力のギャップを明らかにするタスクベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の長距離手続き推論能力を評価するための新しいベンチマーク「Tasks over Application Manuals（TAM）」を提案します。<br><br>TAMは、ICD-10-CM臨床コーディングと米国連邦量刑ガイドラインという2つの実世界のドメインから、数万の規則を含む権威あるマニュアルに従い、複数の依存ステップを実行して正確な回答を導き出すタスクで構成されています。GPT-5を用いた評価では、検索拡張生成やReActスタイルのプロンプティングなどの一般的な手法を用いても、正解率は臨床コーディングで1%、量刑タスクで15.5%と極めて低い結果となりました。<br><br>この結果は、既存のベンチマークがLLMの推論能力を過大評価しており、長距離の規則ベースの手続きを確実に実行するという重要な課題を見落としている可能性を示唆しています。本研究は、LLMの現実世界における応用における推論能力の限界を浮き彫りにし、今後の研究開発の方向性を示すものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Utkarsh Soni, Syed Shariyar Murtaza, Yifan Nie, Sachin Chandrasekhar, Eugene Wen<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.13005v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.13005v1</a>
   </div>
 </article>
 
@@ -1471,108 +1573,6 @@
         分野：cs.CL<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2609.11913v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.11913v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="人工ID：エージェント型AIにおけるドライブと永続的アラインメント" data-timestamp="1789063001000" data-url="https://arxiv.org/abs/2609.11911v1">
-  <p class="meta">arXiv cs.AI　Thu, 10 Sep 2026 17:56:41 Z</p>
-  <h2 class="article-title">人工ID：エージェント型AIにおけるドライブと永続的アラインメント</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、タスク境界を越えて状態を維持し、適応し続けるエージェント型AIの制御問題に対処するため、「人工ID」という概念を提案しています。<br><br>人工IDは、行動を継続、停止、または変更するかどうかを決定するための適応的な内部ドライブとして機能します。最小限の実験では、明示的な目的が与えられていないコントローラーが、差分的永続性を通じて有用な制御を獲得することが示されました。このメカニズムは、環境の変化に応じて学習したセンサーマッピングを置き換えることも可能です。<br><br>この適応的な方向性は、明示的に目的として指定されなくても出現する可能性がありますが、同時に、アラインメントのずれや意図しない行動が永続化するリスクも伴います。スケーラブルな人工IDは、エージェントシステム全体にわたる永続的なアラインメント境界を必要とし、信頼できる観測、結果チャネル、永続状態、権威、アイデンティティ、来歴、およびハード制約の確立が重要となります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Yakov Pyotr Shkolnikov<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.11911v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.11911v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="AIの責任ある導入：ガバナンスと制度的課題" data-timestamp="1789062996000" data-url="https://arxiv.org/abs/2609.11910v1">
-  <p class="meta">arXiv cs.LG　Thu, 10 Sep 2026 17:56:36 Z</p>
-  <h2 class="article-title">AIの責任ある導入：ガバナンスと制度的課題</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、人工知能（AI）が単なるガバナンスの問題に留まらず、既存の制度が応答性、帰属意識、ケア、説明責任を提供できなかった領域を明らかにすることに着目しています。<br><br>AIは導入されると、これらの状況に対する介入となり、既存の失敗を修復、増幅、代替、または隠蔽する可能性があります。そのため、責任あるAIは、システム自体と、それが導入される制度的な断絶の両方を評価する必要があります。原則からプロトコルへの移行はEU AI法、NIST AI RMF、ISO/IEC 42001などで進んでいますが、これらのプロトコルが実際に何を確立し、誰の権力を維持し、どこまで測定が必要かという問いが残ります。<br><br>本研究では、教皇レオ14世の「Magnifica Humanitas」が示す尊厳、技術力、公共善を中心としたより広範な道徳的枠組みを参照し、制度的ベースラインとシステム評価を結びつける「断絶テスト」を開発しました。これにより、実際に評価された範囲に主張を限定する「証拠に制約された展開」と、好ましい証拠では覆せない制約を記録する「測定に制約されたガバナンス」を区別します。これらの限界内で、責任、包摂性、安全性、エンパワーメントに関する証拠に基づいた限定的な主張を行うためのアーキテクチャ「RISE AI」を提供します。責任あるAIには、より良いエンジニアリング、制度的修復、継続的な道徳的・政治的判断が必要です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Nitesh V. Chawla, Paulo Benanti<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.11910v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.11910v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="TART: A Modular Tool for Technique-Aware Audio-to-Tablature Guitar Transcription" data-timestamp="1789062912000" data-url="https://arxiv.org/abs/2609.11904v1">
-  <p class="meta">arXiv cs.LG　Thu, 10 Sep 2026 17:55:12 Z</p>
-  <h2 class="article-title">TART: A Modular Tool for Technique-Aware Audio-to-Tablature Guitar Transcription</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: TART: A Modular Tool for Technique-Aware Audio-to-Tablature Guitar Transcription Authors: Akshaj Gupta, Hwi Joo Park, Andrea Guzman, Shamak Gowda, Samhita Konduri, Jiachen Lian, Robin Netzorg, Gopala Anumanchipalli Categories: cs.LG Abstract / Summary: Automatic Music Transcription (AMT) for guitar remains limited by three challenges: existing systems often fail to capture expressive techniques such as slides, bends, and percussive hits; they often assign notes to incorrect string-fret combinations; and they are typically trained on clean recordings, limiting their generalization to noisy real-world audio. To address these challenges, we propose TART, a modular four-stage audio-to-tablature pipeline consisting of (1) an audio-to-MIDI transcription model, (2) an expressive technique classifier, (3) an audio-conditioned T5 encoder-decoder fo…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Akshaj Gupta, Hwi Joo Park, Andrea Guzman, Shamak Gowda, Samhita Konduri, Jiachen Lian, Robin Netzorg, Gopala Anumanchipalli<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.11904v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.11904v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.CV" data-title="基盤モデルは位相空間で推論できるか？ MindTopoによる評価" data-timestamp="1789062872000" data-url="https://arxiv.org/abs/2609.11900v1">
-  <p class="meta">arXiv cs.AI　Thu, 10 Sep 2026 17:54:32 Z</p>
-  <h2 class="article-title">基盤モデルは位相空間で推論できるか？ MindTopoによる評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CV</span></div>
-  <div class="summary">本論文は、空間的推論における位相的関係の重要性に焦点を当て、基盤モデルの能力を評価する新しいベンチマーク「MindTopo」を提案します。<br><br>従来の評価が距離や角度といった計量的性質に偏りがちであったのに対し、MindTopoは連続変形に対して不変な位相的性質（連続性、分離性、順序性、包有性、結び目）を認知科学的・形式的位相幾何学的に定義し、5つの性質を2つの認知レベル（推論と計画）で評価します。<br><br>MindTopoは13種類のタスクタイプで11,030のインスタンスを含み、14の多言語基盤モデル（MLLM）を評価しました。結果として、全てのMLLMは推論タスクよりも計画タスクで性能が劣り、最良のモデルでも人間のパフォーマンスには遠く及びませんでした。特に、生成された観測は局所的な手がかりを保持するものの、環境のダイナミクスに従わず、位相を維持できないことが示されました。<br><br>この研究は、基盤モデルの空間的推論能力、特に位相的理解の限界を明らかにし、今後のモデル開発における新たな方向性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Yunfei Ge, Anbang Liu, Qineng Wang, Johnalbert Garnica, Jianwen Lyu, Zihan Wang, Reuben Tan, Jianfeng Gao<br>
-        分類：cs.AI, cs.CL, cs.CV<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.11900v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.11900v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="基盤モデル時代の因果発見をベンチマークする「CausalArena」" data-timestamp="1789062795000" data-url="https://arxiv.org/abs/2609.11897v1">
-  <p class="meta">arXiv cs.LG　Thu, 10 Sep 2026 17:53:15 Z</p>
-  <h2 class="article-title">基盤モデル時代の因果発見をベンチマークする「CausalArena」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、科学的推論や介入ベースの意思決定の根幹をなす因果発見の評価を統一し、進化可能にするベンチマーク「CausalArena」を導入します。<br><br>従来の因果発見の研究は、構造的因果モデル（SCM）の選択や評価プロトコルにばらつきがありました。また、因果発見基盤モデル（CDFM）の登場により、性能が因果発見能力だけでなく、事前学習環境とテストSCMの重複にも依存するため、結果の解釈が困難になっています。CausalArenaは、合成SCM、人間が検証可能な意味論的運用SCM、数式に基づいたSCM、そして公開実世界データセットを提供します。<br><br>古典的、ニューラル、事前学習済み手法を用いた実験では、SCMファミリーやプロトコル間で性能ランキングに大きな変動が見られ、単一ベンチマークでの高い性能が他の領域に必ずしも転移しないことが明らかになりました。これは、基盤モデル時代の因果発見の評価において、ベンチマークの多様性と事前学習・評価の重複が中心的な課題であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Zi-Rong Li, Si-Yang Liu, Tian-Zuo Wang, Han-Jia Ye<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.11897v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.11897v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.GR, cs.LG, eess.SP" data-title="3Dポイントスプラッティングによるミリ波レーダーの新規視点合成" data-timestamp="1789062737000" data-url="https://arxiv.org/abs/2609.11894v1">
-  <p class="meta">arXiv cs.LG　Thu, 10 Sep 2026 17:52:17 Z</p>
-  <h2 class="article-title">3Dポイントスプラッティングによるミリ波レーダーの新規視点合成</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.GR</span><span class="tag">cs.LG</span><span class="tag">eess.SP</span></div>
-  <div class="summary">本研究は、ミリ波（mmWave）レーダーデータを用いて、新たな視点からの画像を生成する新規視点合成（NVS）のための新しいレンダリング手法「3Dポイントスプラッティング（3DPS）」を提案しています。<br><br>従来のNVS手法は、レーダーデータの物理的な特性（複素数、多視点対応）を忠実に再現することが困難でした。光学分野のNeRFや3Dガウシアンなどは高速ですが、レーダー特有の位相情報や物理モデルを扱えません。3DPSは、レーダー方程式に基づいた微分可能なポイントレンダラーであり、各点に物理モデルを組み込むことで、複素数出力を可能にします。<br><br>3DPSは、単一のシーン表現からADC、複素数レンジプロファイル（CRP）、レンジ・アジマス（RA）画像など、複数のレーダー出力形式を生成できます。これにより、異なるフォーマットのために再学習する必要がなくなります。実験の結果、6つの屋外シーンにおいて、既存の光学NVSベースライン手法と比較して1.7倍から5.2倍高い相関精度を達成しました。また、単一のGPUで約3分という高速な学習時間を実現しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Adnan Armouti, Yixuan Gao, Rajalakshmi Nandakumar<br>
-        分類：cs.CV, cs.GR, cs.LG, eess.SP<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.11894v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.11894v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
