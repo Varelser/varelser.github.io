@@ -1360,6 +1360,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="あらゆる計算予算に対応するテレスコピック言語モデル" data-timestamp="1790618393000" data-url="https://arxiv.org/abs/2609.35769v1">
+  <p class="meta">arXiv cs.AI　Mon, 28 Sep 2026 17:59:53 Z</p>
+  <h2 class="article-title">あらゆる計算予算に対応するテレスコピック言語モデル</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、単一の展開済み言語モデルが多くの計算予算に対応する必要がある一方で、各予算に対応するために別個のトレーニングまたは圧縮実行が必要となる現状の問題を解決します。<br><br>本研究では、テレスコピック言語モデル（TLM）を提案します。これは、ネストされた容量を持つTransformerであり、完全なアンカーと共に確率的プレフィックス監視によって監視されます。各ステップで、容量軸のランダムに切り取られたプレフィックスが、完全な次のトークンターゲットと共にトレーニングされます。これにより、トレーニングされたアーティファクトは、すべての深さで有効な言語モデルとなります。ステップごとに2回のフォワード・バックワードパスのみが必要で、アーキテクチャの変更や推論時の追加コストは発生しません。<br><br>固定出口スイート（Matryoshka Language Model Suitesなど）はこの設計空間の一点に位置しますが、その監視方法にはコストが伴います。少数の固定出口のみを監視すると、ネストされたモデルは他のすべての箇所で偶然レベル（ベースラインではパープレキシティ10^2～10^5）になります。2億パラメータのプロキシスイート（200億トークンのFineWeb-Edu、すべての手法で同一のデータストリーム）では、単一のTLM実行は、パープレキシティとパープレキシティに敏感な下流タスクにおいて、その20個のレイヤープレフィックスのすべてで有効な言語モデルとなります。これにより、固定出口スイートと比較して、品質・予算曲線下の面積が43～44%削減され、完全な容量でそれらに匹敵し、実行あたりのGPUコストは約12%低減されます。プレフィックスサンプリング密度は調整可能であり、少数の深度に集中させることで、連続体のコストで固定出口の品質を回復できます。これらの結果は、モデルの弾力性を決定するのは、ネスト自体ではなく、トレーニング目標であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zhilin Guo, Boqiao Zhang, Hakan Aktas, Kyle Fogarty, Nursena Koprucu Aslan, Wenzhao Li, Canberk Baykal, Albert Miao<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.35769v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.35769v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.SE" data-title="LLMエージェント実行時のトークン消費量を予測するTokenCast" data-timestamp="1790618349000" data-url="https://arxiv.org/abs/2609.35760v1">
+  <p class="meta">arXiv cs.AI　Mon, 28 Sep 2026 17:59:09 Z</p>
+  <h2 class="article-title">LLMエージェント実行時のトークン消費量を予測するTokenCast</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.SE</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントが同じタスクを実行する際に、実行ごとにトークン消費量が1桁以上変動する問題に対処します。<br><br>エージェントはツールのフィードバックと中間結果に基づいて次のステップを選択しますが、コンテキストの増加により後続の呼び出しの入力サイズが着実に増大します。そのため、タスクの総消費量を実行前に正確に予測することは困難であり、実行中に予測を更新する必要があります。本研究では、各実行セグメントに対して、自身の消費量とそれが導入するコンテキストの成長を記録する、 composable なコスト表現を学習するTokenCastを提案します。<br><br>隣接するセグメントを composable することで、以前のセグメントのコンテキストが後続のすべての呼び出しで再読み込みされることによって発生する追加の入力コストを捉える累積推定値が得られます。実行が進むにつれて、新たに観測された証拠が予測を更新し、追加のLLM呼び出しを必要とせず、SWE-bench Verifiedで実行あたり平均32.8msの累積予測時間を実現します。6つのエージェントモデルと4つのタスクスイートにわたる実験では、TokenCastは最も強力な比較対象に対して、評価された96の組み合わせ全体で平均14.5%の平均絶対誤差削減を達成しました。オフライン予算制御リプレイでは、TokenCastは同等のトレース完了率で固定予算ポリシーよりも平均21.3%少ないトークンを使用しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Chaoqian Ouyang, Ling Yue, Libin Zheng, Huanghui Guo, Shengxiang Xu, YiShu Wang, Ran Li, Jian Yin<br>
+        分類：cs.LG, cs.AI, cs.SE<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.35760v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.35760v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Robotics" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, math.NA" data-title="ニューラル調和測度演算子：可変形状領域における偏微分方程式のニューラルソルバー" data-timestamp="1790618293000" data-url="https://arxiv.org/abs/2609.35752v1">
+  <p class="meta">arXiv cs.LG　Mon, 28 Sep 2026 17:58:13 Z</p>
+  <h2 class="article-title">ニューラル調和測度演算子：可変形状領域における偏微分方程式のニューラルソルバー</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">math.NA</span></div>
+  <div class="summary">本論文では、可変形状領域における楕円型偏微分方程式（PDE）問題のためのニューラルソルバー「ニューラル調和測度演算子（NHMO）」を導入しています。<br><br>調和測度は、境界データに依存せず、領域の幾何学的形状のみに依存する境界確率分布です。NHMOは、この測度の密度をTransformerベースの境界カーネルとしてパラメータ化し、Walk-on-Spheresの終了サンプルで教師あり学習を行います。これにより、一度学習したカーネルは、再学習なしに様々な形状の境界値に対応できます。<br><br>ポアソン方程式に対しては、古典的な分解を拡張し、補助ネットワークを用いてソース誘起の補正を学習することで、特異な体積積分を回避します。推論時には、新しい境界値やソースに対しても、学習済みカーネルとリフトを用いて再積分することでPDE解が得られ、再学習は不要です。<br><br>NHMOは、3D可変形状ポアソンベンチマークにおいて、5つのカテゴリすべてで既存のベースラインを上回り、2Dテストベッドでは主要なニューラルオペレーターベースラインと競争力のある結果を示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Jinjin He, Sinan Wang, Yuchen Sun, Bo Zhu<br>
+        分類：cs.LG, math.NA<br>
+        分野：cs.LG<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.35752v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.35752v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="ScAn-Bench：スケーリング分析手法の評価ベンチマーク" data-timestamp="1790617451000" data-url="https://arxiv.org/abs/2609.35707v1">
+  <p class="meta">arXiv cs.LG　Mon, 28 Sep 2026 17:44:11 Z</p>
+  <h2 class="article-title">ScAn-Bench：スケーリング分析手法の評価ベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、機械学習におけるスケーリング則と最適なスケーリング処方を見つけるための手法を体系的に評価するベンチマーク「ScAn-Bench」を提案しています。<br><br>近年、大規模基盤モデルの進歩はスケーリング則に大きく依存していますが、そのスケーリング則を得るための方法論自体は体系的に研究されていませんでした。この研究の盲点を解消するため、言語モデル（ScAn-Bench-LLM）とビジョン言語モデル（ScAn-Bench-VLM）の4524および8024のチェックポイントに基づいたサロゲートベンチマークを構築しました。<br><br>これらのベンチマークを用いて、異なるデータモダリティにわたるスケーリング分析のためのデータ取得方法論と外挿方法論の最初の体系的な評価を実施しました。<br><br>本研究は、スケーリング分析の分野における将来の研究を促進し、より信頼性の高いスケーリング則の導出に貢献することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Artin Sermaxhaj, Nastaran Alipour, Donat Sinani, Johannes Hog, Neeratyoy Mallik, Jenia Jitsev, Danny Stoll<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.35707v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.35707v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="AIナイトサイエンティスト：科学的発想におけるエージェント的創造性の強化" data-timestamp="1790617432000" data-url="https://arxiv.org/abs/2609.35706v1">
+  <p class="meta">arXiv cs.AI　Mon, 28 Sep 2026 17:43:52 Z</p>
+  <h2 class="article-title">AIナイトサイエンティスト：科学的発想におけるエージェント的創造性の強化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の創造性を強化するための「AIナイトサイエンティスト」というエージェントフレームワークを提案しています。<br><br>LLMは構造化されたタスクに優れる一方、創造性の低い出力に偏りがちです。本研究では、認知科学に基づき、行動、プロセス、結果の3軸で創造性をモデル化し、強化学習（GRPO）を用いて、予測可能な推論からいつ、どのように逸脱するかを学習させます。<br><br>この手法により、提案される科学的アイデアの多様性が27.8%、貢献タイプの多様性が14.9%向上しました。さらに、引用影響力を最大32.0%、独創性を66.2%改善しました。これは単なるデコーディング温度の調整ではなく、どのような種類の創造性を追求すべきかという意味的なガイダンスが重要であることが示唆されています。<br><br>本研究は、創造性が学習可能で多層的な能力であり、LLMが通常探求しないようなアイデアに到達するのを助けるために形成できることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Priyanka Kargupta, Silviu Cucerzan, Shweti Mahajan, Allen Herring, Jiawei Han, Ryen W. White, Sujay Kumar Jauhar<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.35706v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.35706v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.CL" data-title="ファクタライズされたランキングモデルによるテスト時アライメントでパーソナライズ生成を再考" data-timestamp="1790617133000" data-url="https://arxiv.org/abs/2609.35695v1">
+  <p class="meta">arXiv cs.CL　Mon, 28 Sep 2026 17:38:53 Z</p>
+  <h2 class="article-title">ファクタライズされたランキングモデルによるテスト時アライメントでパーソナライズ生成を再考</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、多様なユーザーの嗜好に大規模言語モデル（LLM）を適合させる際の課題に取り組みます。標準的なアライメント手法は、単一のユーザーを最適化するため、パーソナライズされた生成には限界があります。<br><br>本研究では、テスト時アライメントを通じてパーソナライズされた生成における大規模な未開拓のパフォーマンス向上の可能性を実証します。パーソナライズされた生成は、候補マッチング問題として捉えることができ、テスト時スケーリング手法であるBest-of-N（BoN）に特に適していることを示します。報酬モデルは原理的にはこの可能性を活用できますが、パーソナライゼーションには校正が悪く、大規模な候補プールをスコアリングするにはコストがかかりすぎます。<br><br>この限界を克服するため、パラメータ効率の良いフレームワークとして、数百万パラメータ規模の多層パーセプトロン（MLP）ランキングモデルを提案します。提案するパーソナライズされたランキングモデルは、ベースジェネレーターの内部埋め込みを最小限のオーバーヘッドで再利用します。きめ細かなパーソナライズされた嗜好を提供するトレーニング時データをスケーリングすることで、この数百万パラメータのランキングモデルは大規模な候補プールを正確にスコアリングし、生成をシームレスにガイドしてN個の候補を具体化するコストを削減できます。9つのデータセットにわたる3つのパーソナライズされた生成設定での広範な実験により、提案モデルは、パラメータ数の0.4%未満で、スコアリングレイテンシが4桁低いにもかかわらず、すべてのデータセットで数十億パラメータの汎用報酬モデルを上回る性能を発揮することが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Qiyao Ma, Junshan Zhang, Zhe Zhao<br>
+        分類：cs.LG, cs.CL<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.35695v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.35695v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="Large Language Models for Structured Clinical Data Analysis: Dual-Agent Grounding and Validation" data-timestamp="1790553771000" data-url="https://arxiv.org/abs/2609.34039v1">
   <p class="meta">arXiv cs.AI　Mon, 28 Sep 2026 00:02:51 Z</p>
   <h2 class="article-title">Large Language Models for Structured Clinical Data Analysis: Dual-Agent Grounding and Validation</h2>
@@ -1476,108 +1578,6 @@
         分野：cs.AI<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2609.31619v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.31619v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL" data-title="User Model Extraction via Belief Self-Distillation" data-timestamp="1790358872000" data-url="https://arxiv.org/abs/2609.31603v1">
-  <p class="meta">arXiv cs.LG　Fri, 25 Sep 2026 17:54:32 Z</p>
-  <h2 class="article-title">User Model Extraction via Belief Self-Distillation</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: User Model Extraction via Belief Self-Distillation Authors: Ali Holmov, Yiran Huang, Kirill Bykov, Zeynep Akata Categories: cs.LG, cs.CL Abstract / Summary: Large language models (LLMs) implicitly infer attributes of their users and adapt their behavior accordingly, yet these beliefs remain difficult to inspect and causally manipulate. We introduce Belief Self-Distillation (BSD), a unified read-write framework that bridges linear and causal probing by learning a compact user representation that can be both decoded and written back into the model. The frozen LLM acts as its own teacher, distilling beliefs from natural conversations without external annotations. Unlike conventional probing, BSD isolates not only information present in activations, but a state whose causal role can be directly tested. Across multiple model families, BSD faith…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Ali Holmov, Yiran Huang, Kirill Bykov, Zeynep Akata<br>
-        分類：cs.LG, cs.CL<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.31603v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.31603v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="新しいLoRAスキルは読み込み専用に：書き込みを避けることで干渉を防ぐ" data-timestamp="1790358841000" data-url="https://arxiv.org/abs/2609.31600v1">
-  <p class="meta">arXiv cs.LG　Fri, 25 Sep 2026 17:54:01 Z</p>
-  <h2 class="article-title">新しいLoRAスキルは読み込み専用に：書き込みを避けることで干渉を防ぐ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、複数の独立して学習されたLow-Rank Adaptation（LoRA）アダプターを一つのモデルに統合する際の課題、すなわち重み空間での干渉や再学習のコストに着目し、新しいアプローチ「READ」を提案しています。<br><br>READは、アダプターの統合における二つの選択肢、すなわちアダプターの等価な分解の選択と、スキル間の結合の方向性を固定することで、この課題を解決します。具体的には、各アダプターをその更新を正確に保存する標準形に書き換え、スキル間の結合は一方向のみに成長させることで、新しいスキルが既存のスキルの入力部分空間を読み取ることはできても、出力部分空間に書き込むことはできないようにします。<br><br>このアプローチにより、新しいスキルの追加時に学習が必要なのは結合行列の新しい行のみとなり、統合された更新は推論コストやルーティング、タスク固有のルールなしにベースの重みに組み込まれます。複数のベンチマークとモデルファミリーでの評価により、READは既存のベースラインを大幅に上回る性能を示し、特にSuperGLUEやドメイン固有のタスクで顕著な改善が見られました。これは、アダプターの組み合わせにおける「読み込み専用」の原則が、スキルの共存と性能維持に不可欠であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Zeyan Li, Panqi Yang, Qirong Guo, Shengda Zhuo, SIyuan Qiu, Hu Xu, Chun Li, Jianfeng Xu<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.31600v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.31600v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.SE" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.SE, cs.AI, cs.CL" data-title="コーディングエージェント向けコンパクトドキュメント：ベンチマーク、最適化、および転移しない理由" data-timestamp="1790358142000" data-url="https://arxiv.org/abs/2609.31587v1">
-  <p class="meta">arXiv cs.AI　Fri, 25 Sep 2026 17:42:22 Z</p>
-  <h2 class="article-title">コーディングエージェント向けコンパクトドキュメント：ベンチマーク、最適化、および転移しない理由</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.SE</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本研究では、自然言語によるドキュメントがコーディングエージェントによるソフトウェア問題の解決に役立つかを調査し、そのためのツールを開発しました。<br><br>コード記述の忠実度を評価するラウンドトリップベンチマークを導入し、コード記述の完全性が長さよりも重要であることを示しました。このベンチマークを最適化シグナルとして使用し、完全な忠実度を達成し、未知のファイルにも汎化する記述生成プロンプトを発見しました。<br><br>しかし、実際のレポジトリにおける問題解決へのドキュメントの効果を検証したところ、2つのモデルファミリーと10のレポジトリにわたる実験では、ソースコードが存在する場合、静的なコンパクトドキュメントも取得されたコンテキストも、問題文のみの場合を上回らないという否定的な結果が得られました。この結果は、ベンチマークと最適化ツールと共に報告され、ドキュメントが役立つ境界が特徴づけられています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Md Shohel Arman, Igor Molybog<br>
-        分類：cs.SE, cs.AI, cs.CL<br>
-        分野：cs.SE<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.31587v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.31587v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="自己教師あり学習のための戦略的多様性サンプリング" data-timestamp="1790357705000" data-url="https://arxiv.org/abs/2609.31571v1">
-  <p class="meta">arXiv cs.CL　Fri, 25 Sep 2026 17:35:05 Z</p>
-  <h2 class="article-title">自己教師あり学習のための戦略的多様性サンプリング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）の自己教師あり学習（Self-Training）のデータ構築手法について論じています。多くのLLMの学習や推論手法は、応答の繰り返しサンプリングに依存しますが、その応答が意味的に異なる場合にのみ効果を発揮します。<br><br>従来の自己教師あり学習では、同一独立分布（IID）でサンプリングされた応答から正しさのみをフィルタリングするため、モデルが既に得意とする戦略が過剰に表現される傾向がありました。本研究では、この問題に対し、問題へのアプローチにおける実質的なバリエーションである「戦略的多様性」を、自己教師あり学習データの構築原則として提案します。GROOT（階層的なアプローチツリーを構築し、異なるパスをサンプリングする新手法）とVerbalized Sampling（VS）を用いて、戦略的に多様なデータを生成します。<br><br>競技プログラミングとNext-Chapter Predictionのドメインにおいて、戦略的にサンプリングされたデータで学習したモデルは、IID学習モデルよりも困難なタスクで優れた性能を示し、強化学習やテスト時スケーリングのための強力な初期化を提供します。特に注目すべきは、Qwen3-4Bの戦略的に多様だが不正確なトレースを用いた自己教師あり学習が、235Bの教師からのIID蒸留を上回ったことです。これらの結果は、有用な自己教師あり学習データに関する既存の仮定に疑問を投げかけ、アプローチの多様性が、正しさや教師の規模よりも重要である可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Alexander Gurung, Esmeralda S. Whitammer, Mirella Lapata<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.31571v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.31571v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv cs.LG" data-area="AI" data-categories="stat.ML, cs.LG, stat.AP, stat.CO, stat.OT" data-title="Uncertainty and Explainability in Deep Rough Volatility: A Neural Information-Theoretic Posterior Approach" data-timestamp="1790357696000" data-url="https://arxiv.org/abs/2609.31570v1">
-  <p class="meta">arXiv cs.LG　Fri, 25 Sep 2026 17:34:56 Z</p>
-  <h2 class="article-title">Uncertainty and Explainability in Deep Rough Volatility: A Neural Information-Theoretic Posterior Approach</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">stat.AP</span><span class="tag">stat.CO</span></div>
-  <div class="summary">Gemini 無料枠または一時エラーのため、今回は簡易要約で更新しています。<br><br>Area: AI Source: arXiv cs.LG Site: arXiv Title: Uncertainty and Explainability in Deep Rough Volatility: A Neural Information-Theoretic Posterior Approach Authors: Damiano Brigo, Raphaël Huser, Dan Leonte Categories: stat.ML, cs.LG, stat.AP, stat.CO, stat.OT Abstract / Summary: Deep learning has substantially accelerated the calibration of complex stochastic-volatility models, but neural point calibration alone does not capture the uncertainty remaining after an implied-volatility (IV) surface has been observed. We develop a simulation-based inference framework for rough Heston (rHeston) calibration that learns the posterior distribution of the model parameters conditional on an IV surface. Using neural ratio estimation, we obtain calibrated posterior samples that can be propagated through heteroscedastic neural surrogate pricers for path-dependent exotic options. The resulting posterio…<br><br>示唆としては、抄録や原文リンクを確認し、研究目的・方法・限界を一次情報で再確認してから引用や紹介に使うのが安全です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Damiano Brigo, Raphaël Huser, Dan Leonte<br>
-        分類：stat.ML, cs.LG, stat.AP, stat.CO, stat.OT<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.31570v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.31570v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="ベトナム教育向け、効率的でスケーラブルなエージェント型LLM「DeepEdu-v1」" data-timestamp="1790357621000" data-url="https://arxiv.org/abs/2609.31568v1">
-  <p class="meta">arXiv cs.AI　Fri, 25 Sep 2026 17:33:41 Z</p>
-  <h2 class="article-title">ベトナム教育向け、効率的でスケーラブルなエージェント型LLM「DeepEdu-v1」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、ベトナムの教育分野におけるAIチューターシステムの開発について論じています。<br><br>従来のクラウドベースのAIチューターは、ベトナムのデータ主権に関する法律に抵触する可能性や、西洋中心の学習データに基づくためベトナムのカリキュラムに沿った知識が不足しているという課題がありました。一方、オープンソースモデルをローカルでホストする場合でも、推論時のメモリ不足や応答速度の遅延、地域固有の知識に関する不正確さが問題となっていました。<br><br>これらの課題に対し、本研究では「SCALE（Self-improving Context-Aware Learning Engine）」というフレームワークを提案しています。SCALEは、長文コンテキスト推論エンジンと自己改善型エージェント層の2つの革新的な技術を備えています。長文コンテキスト推論エンジンは、トークン選択の粒度を細かくすることで、検索呼び出し回数を大幅に削減し、推論遅延を短縮します。自己改善型エージェント層は、過去の対話から検証済みのプレイブックを継続的にキュレーションすることで、地域固有の知識の蓄積を促進し、言語的バイアスへの依存を減らすことを目指しています。<br><br>DeepEdu-v1は、標準的なvLLMと比較して約2倍の推論速度向上を達成し、複雑なタスクにおけるエージェントの精度を70.0%から79.5%に向上させました。特に、金融推論やインタラクティブエージェントのベンチマークで顕著な改善が見られました。このシステムは、ベトナムの教育現場におけるAIチューターの有効性と効率性を高める可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Quang Nguyen, Hieu Nguyen, Hien Hoang, Toan Pham, Cong Tran, Nam Vu<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.31568v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.31568v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
