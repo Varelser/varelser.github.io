@@ -1394,6 +1394,57 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, q-bio.NC" data-title="タイミングのショートカット除去による非侵襲的ブレイン・トゥ・テキストの精度向上" data-timestamp="1790791192000" data-url="https://arxiv.org/abs/2609.40359v1">
+  <p class="meta">arXiv cs.LG　Wed, 30 Sep 2026 17:59:52 Z</p>
+  <h2 class="article-title">タイミングのショートカット除去による非侵襲的ブレイン・トゥ・テキストの精度向上</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">q-bio.NC</span></div>
+  <div class="summary">本研究は、非侵襲的な脳活動記録からの単語デコーディングにおける主要な改善報告の多くが、脳データなしでも再現可能であることを発見しました。<br><br>先行研究では、連続音声を知覚している被験者の脳活動時系列を、各単語開始時に固定長のウィンドウでセグメント化していました。ニューラルネットワークは、文中のすべての単語をまとめて予測します。隣接するウィンドウは部分的に重複するため、単語間の間隔が暗黙的に明らかになります。これらの間隔は発話された単語の持続時間を示し、単語の持続時間は異なるため（例：「the」は「supercalifragilisticexpialidocious」よりはるかに短い）、ニューラルネットワークは実際の脳活動に依存せずに単語の予測を改善できます。この発見に基づき、本研究では、単一のシンプルな変更を加えて、この「タイミングのショートカット」を防ぎます。<br><br>具体的には、文中のすべてのウィンドウを共同でエンコードする代わりに、各ウィンドウを独立して処理します。その結果、ニューラルネットワークは脳記録から単語固有の情報を学習することで、より良いパフォーマンスを達成します。これにより、既存の2つの戦略が以前よりもはるかに効果的になります。同じ単語に対する異なるニューラル応答からの予測を集約することと、言語的プライアとして事前学習済みLLMを使用することの両方が、結果を大幅に改善します。本研究の結果は、ブレイン・トゥ・テキストデコーディングにおける重要なショートカットを露呈し、それを除去することでシンプルかつ大幅に効果的な戦略につながることを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Dulhan Jayalath, Oiwi Parker Jones<br>
+        分類：cs.LG, q-bio.NC<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40359v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40359v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="DP-SGD下におけるデコーダーオンリーLLMの重み共有の有効性" data-timestamp="1790791063000" data-url="https://arxiv.org/abs/2609.40335v1">
+  <p class="meta">arXiv cs.LG　Wed, 30 Sep 2026 17:57:43 Z</p>
+  <h2 class="article-title">DP-SGD下におけるデコーダーオンリーLLMの重み共有の有効性</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、プライバシー保護ファインチューニングにおける主要なアプローチである差分プライバシー確率的勾配降下法（DP-SGD）において、デコーダーオンリーLLMにおける重み共有（weight tying）の役割を調査します。<br><br>多くのデコーダーオンリーLLMは、非プライベート設定でのパラメータ効率と性能向上のために導入された、入力と出力埋め込み間の重み共有を採用しています。しかし、差分プライベートトレーニング下での重み共有の影響はほとんど探求されていません。本研究では、GPT2とDistilGPT2を代表的なデコーダーオンリーアーキテクチャとして使用し、DP設定における重み共有の役割を調査します。<br><br>興味深いことに、重み共有を行わない（untied）埋め込みがDP-SGD下で一貫して優れた性能を発揮し、SST-2、QNLI、QQPの精度で最大4.74%ポイントの向上が見られました。さらに、重み共有を行わないことで、メモリ効率の高いゴーストクリッピングをDP-SGDに適用できるようになります。対照的に、重み共有は共有パラメータの相互作用を導入し、標準的なゴーストノルム計算を複雑にし、その計算上の利点をほとんど無効にします。結果として、重み共有を行わないモデルは、ゴーストクリッピングの利点を維持しながら、60%以上のメモリ使用量削減を達成します。これらの結果は、重み共有を行わない埋め込みが、差分プライベートトレーニングにおいてより効果的でスケーラブルな設計を提供することを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Razan El Mais, Ali Chehab, Ibrahim Issa, Razane Tajeddine<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40335v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40335v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="インスタンス適応型ハーネス最適化「Turbo Harness」" data-timestamp="1790790969000" data-url="https://arxiv.org/abs/2609.40330v1">
+  <p class="meta">arXiv cs.AI　Wed, 30 Sep 2026 17:56:09 Z</p>
+  <h2 class="article-title">インスタンス適応型ハーネス最適化「Turbo Harness」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、AIエージェントが再帰的に自己改善を行うための重要なステップである、効果的なハーネスの探索を自動化する「Turbo Harness」フレームワークを提案します。<br><br>従来のハーネス最適化手法は、タスクインスタンス全体に均一に適用される単一のグローバルハーネスを生成することが一般的でした。しかし、平均的には良好でも、個々のインスタンスに最適とは限りません。Turbo Harnessは、グローバル最適化プロセス中に生成された情報を再利用することで、グローバルに最適化されたハーネスを各インスタンスに適応させます。<br><br>具体的には、完了したグローバルハーネス最適化実行中に生成されたアーティファクトを再利用し、構造化されたプレイブックに要約します。そして、ハーネスエディタを訓練し、この過去の最適化経験を活用してインスタンス固有のパッチを生成します。推論時には、エディタはインスタンスとプレイブックを使用して、実行モデルが動作するテーラードハーネスを構築します。実験により、Turbo Harnessは7つのベンチマークすべてにおいて、既存のハーネス最適化ベースラインを consistently に上回ることが示されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Tunyu Zhang, Hao Wang, Kai Xu, Dimitris N. Metaxas<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40330v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40330v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="WorldAuditBench：3D仮想世界におけるマルチモーダルエージェントによる対話型監査ベンチマーク" data-timestamp="1790790929000" data-url="https://arxiv.org/abs/2609.40325v1">
   <p class="meta">arXiv cs.AI　Wed, 30 Sep 2026 17:55:29 Z</p>
   <h2 class="article-title">WorldAuditBench：3D仮想世界におけるマルチモーダルエージェントによる対話型監査ベンチマーク</h2>
@@ -1425,6 +1476,40 @@
         分野：cs.CV<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2609.40322v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40322v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="Looped Mixture of Expertsにおけるスケーリング則" data-timestamp="1790790827000" data-url="https://arxiv.org/abs/2609.40316v1">
+  <p class="meta">arXiv cs.AI　Wed, 30 Sep 2026 17:53:47 Z</p>
+  <h2 class="article-title">Looped Mixture of Expertsにおけるスケーリング則</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、Transformerのループ構造とMixture-of-Experts（MoE）のスパース性を統合的に扱う、初のスケーリング則「Loop Scaling Laws」を提案します。<br><br>このスケーリング則は、ループ構造による計算深度の増加と、MoEによる計算容量の拡大を同時にモデル化し、モデルサイズやデータ量との関係性を明らかにします。特に、スパース性を条件としたループ構造が、実効パラメータゲインをどのように向上させるかを特徴づけています。<br><br>提案手法は、既存のモデルよりもループ構造を持つモデルの損失を正確に予測し、通常の密モデルやMoEモデルのスケーリング則を特殊なケースとして包含します。これにより、計算量やメモリ容量の制約下でのLooped MoEモデル設計に原理的な基盤を提供します。さらに、推論能力に関するベンチマーク評価では、スパース性がアクティブパラメータ効率を約3倍、ループ構造が総パラメータ効率を約2倍向上させ、両者を組み合わせることで性能がさらに向上することを示しました。この効果は、1兆トークン規模のデータセットでも確認されており、同等の学習計算量で、ループ構造を持たないMoEモデルの約2倍のサイズに相当する性能を達成しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Yanbei Chen, Anirudh Goyal, Raghuraman Krishnamoorthi<br>
+        分類：cs.LG, cs.AI, cs.CL<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40316v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40316v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.LG" data-title="自己進化ロボットエージェントのための動的物理ハーネス「DynaHarness」" data-timestamp="1790790729000" data-url="https://arxiv.org/abs/2609.40306v1">
+  <p class="meta">arXiv cs.AI　Wed, 30 Sep 2026 17:52:09 Z</p>
+  <h2 class="article-title">自己進化ロボットエージェントのための動的物理ハーネス「DynaHarness」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、事前学習済みロボットポリシーの限界を克服し、長期的な操作タスクにおける意味論的推論と物理的実行の協調を強化する「DynaHarness」を提案します。<br><br>DynaHarnessは、意味論的推論（スローブレイン）と物理的実行監視（ファストブレイン）を、共有される実行契約を通じて動的に連携させます。スローブレインは能力とシンボリックな引数を提案し、ファストブレインはそれらを具体化し、実行を監視します。実行中に問題が発生した場合、ファストブレインは未解決の行動を拒否し、能力の代替や再計画を要求します。<br><br>実行契約は、各コマンドの実行証拠を分析スキル、回復スキル、および固定された視覚言語行動（VLA）にわたって記録します。失敗の帰属分析により、これらの記録から障害箇所を特定し、再利用可能な能力や実行メカニズムのターゲットを絞った改訂を指示します。ペア回帰チェックによる承認・拒否メカニズムが自己進化ループを閉じます。LIBERO-Proベンチマークでは、DynaHarnessは凍結ポリシーと比較して大幅な性能向上を達成し、動的な実行制御が既存能力の具体化、監視、協調において重要であることを実証しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Haoyuan Deng, Jiebin Liu, Tengxiao Zhang, Langning Yan, Hongye Cao, Ziwei Wang<br>
+        分類：cs.RO, cs.AI, cs.LG<br>
+        分野：cs.RO<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40306v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40306v1</a>
   </div>
 </article>
 
@@ -1462,6 +1547,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="物理制約下でのワンステップ生成のための前処理付き多様体マッチング「PMosFM」" data-timestamp="1790790501000" data-url="https://arxiv.org/abs/2609.40287v1">
+  <p class="meta">arXiv cs.LG　Wed, 30 Sep 2026 17:48:21 Z</p>
+  <h2 class="article-title">物理制約下でのワンステップ生成のための前処理付き多様体マッチング「PMosFM」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、物理制約を満たす物理場生成モデルにおけるサンプリングコストの増大という課題に対し、「PMosFM（Preconditioned Manifold one-step Flow Matching）」という前処理付き多様体マッチングフレームワークを提案します。<br><br>PMosFMは、制約を多様体デコーダにエンコードすることで、個別の残差損失や反復補正なしに、本質的な座標での輸送を学習します。幾何学的プリコンディショナーがデコーダによって誘導される計量を用いて座標を再スケーリングし、正則化された共分散変換が補間状態の入力を近似的にホワイト化します。有限区間目的関数は、速度の監督と物理空間におけるデコードされた端点の間の整合性を結合します。<br><br>この手法は、学習とサンプリングの両方の時間を大幅に削減しつつ、同等の物理的および分布的忠実度を達成します。推論時には、1回のニューラル輸送評価とそれに続く物理デコーディングのみを使用します。実験により、PMosFMが従来のマルチステップベースラインよりも効率的であることが示されており、物理制約下での生成タスクにおける計算コスト削減に貢献する可能性が示唆されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Zhangyong Liang, Haibin Ling<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40287v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40287v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.LG" data-title="スキル空間シューティングによる自律ロボットのポリシー改善" data-timestamp="1790704795000" data-url="https://arxiv.org/abs/2609.38178v1">
   <p class="meta">arXiv cs.AI　Tue, 29 Sep 2026 17:59:55 Z</p>
   <h2 class="article-title">スキル空間シューティングによる自律ロボットのポリシー改善</h2>
@@ -1476,108 +1578,6 @@
         分野：cs.RO<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2609.38178v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38178v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="Imagine3D-LLM: MLLMが回答前に3Dシーンを想像する能力を学習" data-timestamp="1790704792000" data-url="https://arxiv.org/abs/2609.38177v1">
-  <p class="meta">arXiv cs.CL　Tue, 29 Sep 2026 17:59:52 Z</p>
-  <h2 class="article-title">Imagine3D-LLM: MLLMが回答前に3Dシーンを想像する能力を学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）が複数視点画像から3D世界を推論する際の課題に取り組みます。<br><br>現在のMLLMは単一画像には対応できても、複数視点からの情報を統合して一貫した3D理解を行うことが苦手です。既存研究では、ピクセルレベルでの視点間対応の強化や、3D幾何学基盤モデルからの特徴量融合などが試みられてきましたが、人間のような推論能力にはまだ隔たりがあります。本研究では、人間の空間推論に着想を得て、MLLMがシーンのコンパクトな3D表現を組み立て、その表現に基づいて回答を生成する「Imagine3D-LLM」を提案します。<br><br>具体的には、画像トークンの後に学習可能な要約トークンを追加し、これをフォトメトリック再構成損失で教師あり学習させ、コンパクトな3Dガウシアン・スプラッティング表現にデコードします。この学習により、要約トークンだけでなく、LLMの画像特徴量全体にも3Dを意識した信号が伝播することが示唆されました。結果として、Imagine3D-LLMは複数の空間推論および3D理解ベンチマークで既存手法を上回り、シーンを「想像する」ことがピクセル単位の幾何学情報を与えられるよりも効果的であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Jaewoo Jung, Hyeonseo Yu, Honggyu An, Jisang Han, Mungyeom Kim, Minkyeong Jeon, Heeseong Shin, Wonjun Moon<br>
-        分類：cs.CV, cs.CL<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.38177v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38177v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="LeapQuant: 量子化されたリカレント状態を用いた効率的な線形アテンション" data-timestamp="1790704774000" data-url="https://arxiv.org/abs/2609.38166v1">
-  <p class="meta">arXiv cs.AI　Tue, 29 Sep 2026 17:59:34 Z</p>
-  <h2 class="article-title">LeapQuant: 量子化されたリカレント状態を用いた効率的な線形アテンション</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）における推論のボトルネックとなっている、固定サイズのリカレント状態の読み書きコストを削減するための新しい量子化手法「LeapQuant」を提案します。<br><br>LeapQuantは、量子化による性能低下を最小限に抑えつつ、推論時のメモリと計算コストを大幅に削減します。具体的には、ウィンドウごとに量子化を行う「パーウィンドウ量子化」と、状態の大きな外れ値を保持する「コンペンセータートークン」を導入することで、誤差の蓄積と量子化エラーを抑制します。<br><br>Qwen、Kimi、GLMといった複数のモデルファミリーを用いた実験では、LeapQuantがFP32ベースラインと同等の精度を維持しながら、カーネルレベルで平均2.05～3.70倍、エンドツーエンド推論で1.47倍の高速化を達成しました。これにより、効率的な長文脈処理が可能になります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Yi Pan, Haocheng Xi, Kan Zhu, Xingyang Li, Yibo Wu, Mayank Mishra, Hongtao Zhang, William X. Zheng<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.38166v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38166v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.DM" data-title="LLMグラフ再構築における歪みのスペクトル理論：シャープバウンドと経験的特性評価" data-timestamp="1790704756000" data-url="https://arxiv.org/abs/2609.38161v1">
-  <p class="meta">arXiv cs.LG　Tue, 29 Sep 2026 17:59:16 Z</p>
-  <h2 class="article-title">LLMグラフ再構築における歪みのスペクトル理論：シャープバウンドと経験的特性評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.DM</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）によるグラフ再構築の評価手法に新たな視点を提供します。従来の評価では、元のグラフと再構築されたグラフ間の単一の集約距離が用いられてきました。<br><br>本研究では、ラプラシアンスペクトルのワッサースタイン距離に着目し、その距離が頂点数nに対して、辺数の変化量と対称差のそれぞれ2/n倍で挟まれることを理論的に証明しました。この境界はシャープであり、再構築が辺の追加のみ、または削除のみを行う場合に両端が一致します。この場合、距離は辺数の変化率に比例し、どの辺が変化したかは不明瞭になります。<br><br>さらに、この境界の差分が、辺の追加と削除が同時に発生した場合にのみ正の値をとることを示し、報告された要約情報から計算可能な「混合編集」の証明として利用できることを明らかにしました。3つのオープンウェイトモデルを用いた135件の再構築実験では、77件が片側編集、29件が混合編集であり、辺数が保存されていても19件の辺が同時に生成・消失するケースも観測されました。これにより、モデルごとの編集方針の違いが、集約距離だけでは捉えきれないことが示唆されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Jianru Shen<br>
-        分類：cs.LG, cs.DM<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.38161v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38161v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL, cs.IR, cs.LG" data-title="長尺動画の記憶を実体履歴で拡張する" data-timestamp="1790704741000" data-url="https://arxiv.org/abs/2609.38155v1">
-  <p class="meta">arXiv cs.AI　Tue, 29 Sep 2026 17:59:01 Z</p>
-  <h2 class="article-title">長尺動画の記憶を実体履歴で拡張する</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、長尺動画における質問応答の課題に取り組むものです。<br><br>従来の動画記憶フレームワークでは、時間経過やテキスト情報のみに依存するため、同一の物体であっても異なるイベントで観測された場合に、その物理的な同一性を追跡することが困難でした。本研究では、この課題を解決するために「実体履歴（Grounded Entity Biographies: GEB）」という新しい長尺動画記憶フレームワークを提案します。<br><br>GEBは、動画内の同一物理インスタンスの観測を、各瞬間の文脈を保持しながら、検索可能な履歴としてグループ化します。これにより、質問応答時に、エピソード的な証拠とともに実体履歴を検索し、同一性リンクを通じて実体を追跡することが可能になります。4つのベンチマークでの評価では、従来の記憶フレームワークと比較して、多肢選択式および自由形式の質問応答の両方で改善が見られました。特にEgoLifeQAでは、過去最高の性能を4.4パーセントポイント上回る72.0%の精度を達成しました。<br><br>この成果は、実体に基づいた同一性関連付けと履歴読解の両方が、単なる追加の説明だけでは達成できない性能向上に貢献していることを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Hui Ren, Lei Fan, Henry Pao, Han Guo, Zeeshan Zia, Ying Chen, Alexander Schwing, Gang Hua<br>
-        分類：cs.CV, cs.AI, cs.CL, cs.IR, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.38155v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38155v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="教師あり学習による潜在情報フィードバックTransformerの事前学習" data-timestamp="1790704660000" data-url="https://arxiv.org/abs/2609.38149v1">
-  <p class="meta">arXiv cs.CL　Tue, 29 Sep 2026 17:57:40 Z</p>
-  <h2 class="article-title">教師あり学習による潜在情報フィードバックTransformerの事前学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、Transformer言語モデルにおける情報伝達のボトルネックを解消する新しいアーキテクチャ「LIFT（Latent Information Feedback Transformer）」を提案しています。<br><br>従来のTransformerは情報が一方通行であるため、中間結果の再計算や代替案の破棄が生じます。LIFTは、生成ステップ間で状態を伝播させることでこの問題を解決します。具体的には、再帰的な状態学習を教師強制予測問題として捉え、入力トークンに次のトークン分布から得られる情報密度の高い状態をペアにして学習させます。<br><br>この手法により、事前学習は位置ごとに完全に並列化可能であり、推論時にはモデル自身の予測状態をフィードバックすることで、計算オーバーヘッドを最小限に抑えます。実験では、様々なパラメータ規模のモデルで標準Transformerを上回り、言語モデリング、下流タスク、手続きタスクにおいて優れた性能を示しました。特に、状態追跡タスクでは、わずかなLIFTモデルが、失敗したTransformerの状態を用いて学習した同サイズのTransformerよりも高い性能を示し、深層から浅層へのフィードバックの有効性を実証しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Dor Tirosh, Ido Amos, Mor Geva<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.38149v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38149v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-09" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="思考前の思考：メタ推論によるエージェント推論のスケーリング" data-timestamp="1790704645000" data-url="https://arxiv.org/abs/2609.38147v1">
-  <p class="meta">arXiv cs.AI　Tue, 29 Sep 2026 17:57:25 Z</p>
-  <h2 class="article-title">思考前の思考：メタ推論によるエージェント推論のスケーリング</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、AIエージェントが複雑な問題を解決する際、その実行プロセスを制御するための「エージェント型メタ推論」という新しいアプローチを提案します。<br><br>この手法では、タスクを実行する「ワーカー」と、その実行を管理する「コントローラー」が分かれます。コントローラーは、現在の状況を把握し、次に取るべき行動（どの部分的な作業を基盤にするか、最初からやり直すか、いつ終了するかなど）を推論プロセスとして明示的に決定します。これにより、エージェントは限られた計算資源内で、より効率的かつ効果的に意思決定を行うことができます。<br><br>メタ推論は、特に長期間にわたる複雑なタスクにおいて、直接的な制御手法と比較して大幅な性能向上を示しました。プログラム生成タスクであるProgramBenchでは、GPT-5.5を用いた場合、従来のCodexを上回る71.5%の精度を達成しました。また、他の複数のベンチマークでも、最先端モデルにおいて平均3.6〜4.2ポイントの改善が見られました。計算予算が増加するにつれてその効果は顕著になりますが、予算が小さい場合にはオーバーヘッドが影響する可能性も指摘されています。この研究は、エージェントの能力がスケールするにつれて、構造化された制御に計算資源を割り当てることの重要性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Paras Dahal, Anton Bakhtin, Taco Cohen, Zhengxing Chen, Carole-Jean Wu, Rob Fergus, Scott Yih, Gabriel Synnaeve<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.38147v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38147v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
