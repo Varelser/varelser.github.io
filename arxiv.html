@@ -1411,6 +1411,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="科学的発見のためのウェブ検索とタスク解決の二重進化手法「EvoDuet」" data-timestamp="1790791108000" data-url="https://arxiv.org/abs/2609.40340v1">
+  <p class="meta">arXiv cs.CL　Wed, 30 Sep 2026 17:58:28 Z</p>
+  <h2 class="article-title">科学的発見のためのウェブ検索とタスク解決の二重進化手法「EvoDuet」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、科学的発見を目的としたタスク解決において、ウェブ検索とタスク解決プロセスを同時に進化させる新しい手法「EvoDuet」を提案します。<br><br>従来の進化計算手法では、大規模言語モデル（LLM）が外部知識の不足により停滞する課題がありました。EvoDuetは、固定されたモデルパラメータを用いて、解と検索クエリを二重に最適化します。各イテレーションで、リトリーバルゲートがLLMの知識ギャップを評価し、新しい文書の検索、既存文書の再利用、または文書なしでの処理を選択します。<br><br>内側のループでは、クエリを洗練し、予測される解のスコアに基づいて文書をランク付けします。外側のループでは、これらの文書から並列に候補を生成し、後続の検索のために評価結果を記録します。GPT-5.6-LunaとGemini-3.8-Flashを用いた21の最適化タスクにおいて、EvoDuetはOpenEvolveの正規化発見ゲインを向上させました。特に、Qwen3.5-9Bでは顕著な改善は見られませんでしたが、他のモデルでは性能向上が確認されました。<br><br>本手法は、8つのタスクで過去最高のスコアを上回り、3つのタスクで同等以上の性能を示しました。また、他のスキャフォールド（Top-K、EvoXなど）とも組み合わせて使用でき、進化探索スキャフォールド全体への適用可能性を示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Young-Jun Lee, Jinheon Baek, Soyeong Jeong, Minki Kang, Seungyeon Jwa, Jonghyun Choi, Seungho Han, Dongyeop Kang<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40340v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40340v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="DP-SGD下におけるデコーダーオンリーLLMの重み共有の有効性" data-timestamp="1790791063000" data-url="https://arxiv.org/abs/2609.40335v1">
   <p class="meta">arXiv cs.LG　Wed, 30 Sep 2026 17:57:43 Z</p>
   <h2 class="article-title">DP-SGD下におけるデコーダーオンリーLLMの重み共有の有効性</h2>
@@ -1479,105 +1496,88 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="Looped Mixture of Expertsにおけるスケーリング則" data-timestamp="1790790827000" data-url="https://arxiv.org/abs/2609.40316v1">
-  <p class="meta">arXiv cs.AI　Wed, 30 Sep 2026 17:53:47 Z</p>
-  <h2 class="article-title">Looped Mixture of Expertsにおけるスケーリング則</h2>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="コンピュータ利用エージェントの速度を標準化ベンチマークする「cua-speedrun」" data-timestamp="1790790486000" data-url="https://arxiv.org/abs/2609.40284v1">
+  <p class="meta">arXiv cs.CL　Wed, 30 Sep 2026 17:48:06 Z</p>
+  <h2 class="article-title">コンピュータ利用エージェントの速度を標準化ベンチマークする「cua-speedrun」</h2>
   <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、Transformerのループ構造とMixture-of-Experts（MoE）のスパース性を統合的に扱う、初のスケーリング則「Loop Scaling Laws」を提案します。<br><br>このスケーリング則は、ループ構造による計算深度の増加と、MoEによる計算容量の拡大を同時にモデル化し、モデルサイズやデータ量との関係性を明らかにします。特に、スパース性を条件としたループ構造が、実効パラメータゲインをどのように向上させるかを特徴づけています。<br><br>提案手法は、既存のモデルよりもループ構造を持つモデルの損失を正確に予測し、通常の密モデルやMoEモデルのスケーリング則を特殊なケースとして包含します。これにより、計算量やメモリ容量の制約下でのLooped MoEモデル設計に原理的な基盤を提供します。さらに、推論能力に関するベンチマーク評価では、スパース性がアクティブパラメータ効率を約3倍、ループ構造が総パラメータ効率を約2倍向上させ、両者を組み合わせることで性能がさらに向上することを示しました。この効果は、1兆トークン規模のデータセットでも確認されており、同等の学習計算量で、ループ構造を持たないMoEモデルの約2倍のサイズに相当する性能を達成しました。</div>
+  <div class="summary">本論文は、コンピュータ利用エージェント（CUA）の速度と効率を評価するための標準化されたベンチマークフレームワーク「cua-speedrun」を提案します。<br><br>CUAはGUIを用いてコンピュータ上でタスクを完了する能力を持ち、多くのベンチマークで人間を超える性能を示していますが、その速度とコストが実用化への大きな障壁となっています。しかし、既存のCUAベンチマークは、マシンやコンテナ構成のばらつきにより、実行速度の評価に再現性の問題がありました。<br><br>cua-speedrunは、統一された仮想マシンセットアップと実行パイプライン、および共通のエージェントインターフェースを採用し、異なるベンチマーク間で単一エージェント実装がシームレスに動作できるようにします。4つの異なるCUAベンチマークにおいて、推論努力、エージェントハーネス、環境レイテンシがパフォーマンス、速度、コストにどのように影響するかを評価しました。<br><br>その結果、単一のモデルファミリーがすべてに最適ではなく、オープンウェイトモデルは最先端ではないことが示されました。また、直感に反して、モデルによっては推論努力を増やすことがタスク完了を速める場合がある一方、環境の入出力が速いと全体のタスク完了時間が遅くなることも発見しました。さらに、評価タスクセットを削減しても全体的な統計的検出力を損なわないことを実証し、より効率的なベンチマークと比較を可能にします。このフレームワークは、高速で効率的なCUAに向けた構造化された進歩を可能にし、新しい実世界のユースケースとアプリケーションを開拓すると期待されます。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Yanbei Chen, Anirudh Goyal, Raghuraman Krishnamoorthi<br>
+        著者：Pranjal Aggarwal, Lawrence Keunho Jang, Sean Welleck, Daniel Fried, Ruslan Salakhutdinov, Jing Yu Koh<br>
         分類：cs.LG, cs.AI, cs.CL<br>
         分野：cs.LG<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.40316v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40316v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2609.40284v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40284v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.LG" data-title="自己進化ロボットエージェントのための動的物理ハーネス「DynaHarness」" data-timestamp="1790790729000" data-url="https://arxiv.org/abs/2609.40306v1">
-  <p class="meta">arXiv cs.AI　Wed, 30 Sep 2026 17:52:09 Z</p>
-  <h2 class="article-title">自己進化ロボットエージェントのための動的物理ハーネス「DynaHarness」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、事前学習済みロボットポリシーの限界を克服し、長期的な操作タスクにおける意味論的推論と物理的実行の協調を強化する「DynaHarness」を提案します。<br><br>DynaHarnessは、意味論的推論（スローブレイン）と物理的実行監視（ファストブレイン）を、共有される実行契約を通じて動的に連携させます。スローブレインは能力とシンボリックな引数を提案し、ファストブレインはそれらを具体化し、実行を監視します。実行中に問題が発生した場合、ファストブレインは未解決の行動を拒否し、能力の代替や再計画を要求します。<br><br>実行契約は、各コマンドの実行証拠を分析スキル、回復スキル、および固定された視覚言語行動（VLA）にわたって記録します。失敗の帰属分析により、これらの記録から障害箇所を特定し、再利用可能な能力や実行メカニズムのターゲットを絞った改訂を指示します。ペア回帰チェックによる承認・拒否メカニズムが自己進化ループを閉じます。LIBERO-Proベンチマークでは、DynaHarnessは凍結ポリシーと比較して大幅な性能向上を達成し、動的な実行制御が既存能力の具体化、監視、協調において重要であることを実証しました。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Robotics" data-field="cs.IR" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.IR, cs.CL" data-title="意思決定指向型レコメンデーション再ランキング：Jevの経験的研究" data-timestamp="1790789623000" data-url="https://arxiv.org/abs/2609.40241v1">
+  <p class="meta">arXiv cs.CL　Wed, 30 Sep 2026 17:33:43 Z</p>
+  <h2 class="article-title">意思決定指向型レコメンデーション再ランキング：Jevの経験的研究</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.IR</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AI分野におけるレコメンデーション再ランキングタスクに焦点を当てています。<br><br>特に、大規模言語モデル（LLM）の活用がレコメンデーションの質とサービング効率のトレードオフをもたらすという課題に対し、意思決定指向型モデルであるJevを、従来のレコメンデーション特化モデルやポイントワイズ/リストワイズQwen再ランキングモデルと比較検討しています。<br><br>実験の結果、Jevは高いレコメンデーション効果を維持しつつ、Qwenモデルと比較してレイテンシの増加が緩やかであることが示されました。しかし、レコメンデーション特化モデルよりはサービングレイテンシが高いという結果も得られています。この特性は、Jevが独自の品質・レイテンシ特性を持つことを示唆しており、意思決定指向型モデルのレコメンデーションや構造化された出力空間を持つ他のランキングタスクへの応用可能性を示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Haoyuan Deng, Jiebin Liu, Tengxiao Zhang, Langning Yan, Hongye Cao, Ziwei Wang<br>
-        分類：cs.RO, cs.AI, cs.LG<br>
-        分野：cs.RO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.40306v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40306v1</a>
+        著者：Hanjia Lyu, Yinglong Xia<br>
+        分類：cs.IR, cs.CL<br>
+        分野：cs.IR<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40241v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40241v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CV, cs.LG" data-title="計算深度を深めるLooped Diffusion Transformer" data-timestamp="1790790728000" data-url="https://arxiv.org/abs/2609.40305v1">
-  <p class="meta">arXiv cs.LG　Wed, 30 Sep 2026 17:52:08 Z</p>
-  <h2 class="article-title">計算深度を深めるLooped Diffusion Transformer</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、テキストから画像を生成するモデルの性能向上において、モデルサイズやノイズ除去ステップ数の増加に代わる新たなアプローチとして、Transformerブロックの繰り返し実行による計算深度の深化を提案します。<br><br>この「ループ計算」により、パラメータ数を一定に保ちながら、各ノイズ除去ステップ内で内部表現を反復的に洗練させることが可能になります。しかし、単純な繰り返しでは性能向上が見られないため、本研究では中間ループにおける弱い教師信号と、局所情報を徐々に失わせる注意機構の不安定性を課題として特定しました。これらの課題に対処するため、本研究では「Looped Diffusion Transformer（Looped-DiT）」を提案します。これは、中間ループにおける深い教師信号と、ループ特徴更新を安定させる自己変調注意機構を組み合わせたものです。<br><br>実験の結果、Looped-DiTは同程度のパラメータ数および計算量を持つ非ループモデルを大幅に上回る性能を示しました。特に、パラメータ数が6.5倍大きいモデルを、パラメータ数260MのLooped-DiTがしのぐ結果が得られました。さらに、ループ深度を増やすことで、固定された推論予算内ではノイズ除去ステップ数を増やすよりも大きな性能向上が見られることがわかりました。また、深いループは初期段階での誤りを修正する潜在的な推論能力を示唆しており、視覚生成モデルのスケーリングにおける有望な手法であることが示唆されています。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.CL, stat.ML" data-title="連続拡散言語モデルのための分布マッチング蒸留" data-timestamp="1790789525000" data-url="https://arxiv.org/abs/2609.40235v1">
+  <p class="meta">arXiv cs.CL　Wed, 30 Sep 2026 17:32:05 Z</p>
+  <h2 class="article-title">連続拡散言語モデルのための分布マッチング蒸留</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、AI分野における連続拡散言語モデルの生成効率向上に関する研究です。<br><br>連続拡散言語モデルは全トークンを並列生成しますが、高品質な生成には多数のネットワーク評価（NFE）が必要となるという課題があります。本研究では、分布マッチング蒸留を用いることで、学生モデルの確率的トークン出力を活用し、このコストを削減する方法を提案しています。<br><br>提案手法は、学生モデルの出力パラメータ化と勾配推定器の関係を統一的に捉え、Simplex-DMDとReinforce-DMDという2つの手法を導出しました。OpenWebTextデータセットを用いた実験では、Simplex-DMDは少ないNFEで高い生成パープレキシティを達成し、既存の拡散ベースラインと比較して大幅な改善が見られました。Reinforce-DMDも、より大きな予算において性能を向上させ、同様の比較プロトコル下でベースラインを削減しました。これらの結果は、分布マッチング蒸留が連続拡散言語モデルの効率を改善する有効な手段であることを示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Yong Xien Chng, Tianyi Chen, Wenwen Tong, Haiwen Diao, Zhongang Cai, Lei Yang, Ziwei Liu, Lewei Lu<br>
-        分類：cs.CV, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.40305v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40305v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="強力なエージェントは自律的なMLエンジニアリングにどの程度のハーネスを必要とするか？" data-timestamp="1790790690000" data-url="https://arxiv.org/abs/2609.40303v1">
-  <p class="meta">arXiv cs.AI　Wed, 30 Sep 2026 17:51:30 Z</p>
-  <h2 class="article-title">強力なエージェントは自律的なMLエンジニアリングにどの程度のハーネスを必要とするか？</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、自律的な機械学習エンジニアリング（MLE）エージェントの進歩と、その複雑化する機械装置について論じています。<br><br>特に、LLMが実行環境に直接アクセスできる、より原始的だが改良されたコーディングエージェントの使用に焦点を当て、高度なハーネス（複数のエージェントオーケストレーター、検索サブエージェントなど）の必要性を検証しています。<br><br>実験の結果、同等の時間予算と同一の最先端LLMバックボーンを使用した場合、オープンソースの最先端ハーネスは、最小限のハーネスを持つコーディングエージェントの単一セッションと比較して、性能上の利点がないことが示されました。これは、バックボーンが性能の主要な要因であることを示唆しています。<br><br>大規模な系統的アブレーション研究を通じて、コーディングエージェントの設定では、機械装置のレイヤーは冗長であると主張しています。現在のMLEベンチマークにおいては、強力なモデルの周りに手作業で作成されたハーネスを精巧にすることに費やされる労力は、わずかなリターンしか生み出さないと結論付けています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Kirill Brilliantov, Alejandro Hernández-Cano, Emmanuel Abbé<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.40303v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40303v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="物理制約下でのワンステップ生成のための前処理付き多様体マッチング「PMosFM」" data-timestamp="1790790501000" data-url="https://arxiv.org/abs/2609.40287v1">
-  <p class="meta">arXiv cs.LG　Wed, 30 Sep 2026 17:48:21 Z</p>
-  <h2 class="article-title">物理制約下でのワンステップ生成のための前処理付き多様体マッチング「PMosFM」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、物理制約を満たす物理場生成モデルにおけるサンプリングコストの増大という課題に対し、「PMosFM（Preconditioned Manifold one-step Flow Matching）」という前処理付き多様体マッチングフレームワークを提案します。<br><br>PMosFMは、制約を多様体デコーダにエンコードすることで、個別の残差損失や反復補正なしに、本質的な座標での輸送を学習します。幾何学的プリコンディショナーがデコーダによって誘導される計量を用いて座標を再スケーリングし、正則化された共分散変換が補間状態の入力を近似的にホワイト化します。有限区間目的関数は、速度の監督と物理空間におけるデコードされた端点の間の整合性を結合します。<br><br>この手法は、学習とサンプリングの両方の時間を大幅に削減しつつ、同等の物理的および分布的忠実度を達成します。推論時には、1回のニューラル輸送評価とそれに続く物理デコーディングのみを使用します。実験により、PMosFMが従来のマルチステップベースラインよりも効率的であることが示されており、物理制約下での生成タスクにおける計算コスト削減に貢献する可能性が示唆されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Zhangyong Liang, Haibin Ling<br>
-        分類：cs.LG<br>
+        著者：Paul Le Van Kiem, Dario Shariatian, Umut Simsekli, Alain Durmus<br>
+        分類：cs.LG, cs.CL, stat.ML<br>
         分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.40287v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40287v1</a>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40235v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40235v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-09" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.LG" data-title="スキル空間シューティングによる自律ロボットのポリシー改善" data-timestamp="1790704795000" data-url="https://arxiv.org/abs/2609.38178v1">
-  <p class="meta">arXiv cs.AI　Tue, 29 Sep 2026 17:59:55 Z</p>
-  <h2 class="article-title">スキル空間シューティングによる自律ロボットのポリシー改善</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、実世界で展開されるロボットが、新たな状況や失敗に直面した際に、人間の介入を最小限に抑えつつ自律的に改善していくための手法「スキル空間シューティング」を提案します。<br><br>この手法は、財団モデル（Foundation Model）を活用して、再利用可能な「スキル」を通じてポリシーの改善策を探索します。スキルとは、タスク間で共通して現れる短い行動であり、財団モデルがシーンから理解できるものです。成功した試行はポリシー改善のための学習データとして利用されます。<br><br>実世界での実験により、スキル空間シューティングがロボットのポリシーを継続的に改善し、新しいタスクにおける改善に必要な学習コストを削減できることが示されました。このアプローチは、スケーラブルで汎用的なポリシー改善を可能にします。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="PhantomEnvironments：架空世界でのLLMエージェント訓練" data-timestamp="1790789217000" data-url="https://arxiv.org/abs/2609.40221v1">
+  <p class="meta">arXiv cs.CL　Wed, 30 Sep 2026 17:26:57 Z</p>
+  <h2 class="article-title">PhantomEnvironments：架空世界でのLLMエージェント訓練</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、AI分野におけるLLMエージェントの訓練方法に関する新しいアプローチを提案しています。<br><br>従来の強化学習（RL）によるLLMエージェント訓練は、環境の構築コストやスケーラビリティ、検証可能性といった課題に直面していました。本研究では、LLMを生成に用いず、ルールベースで生成される「PhantomEnvironments」という架空の多ターンRL環境を提案しています。これらの環境は、テンプレート化された記事のコーパスから多段階の質問に回答するためにエージェントが探索を行うというものです。<br><br>驚くべきことに、現実世界とは全く異なる事実を共有しないこれらの単純な環境で訓練されたエージェントが、現実世界の多段階検索ベンチマークに転移し、しばしば新しいベンチマークで現実世界の訓練データよりも優れた性能を発揮することが示されました。訓練されたエージェントは未知の架空世界にも汎化し、質問の難易度に応じて検索予算を線形にスケールさせる傾向が見られました。環境の複雑性を分析した結果、ホップ数（段階数）が転移を促進する主要因であり、ルール生成環境が汎用的なLLMエージェント訓練のための効果的かつ無料のリソースとなる可能性が示唆されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Zihang Rui, Renhao Wang, Haoxu Huang, Yang Gao<br>
-        分類：cs.RO, cs.AI, cs.LG<br>
-        分野：cs.RO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2609.38178v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.38178v1</a>
+        著者：Anmol Kabra, Swathi Saravana Selvam, Albert Gong, Chao Wan, Christian Belardi, Dongyoung Go, Katie Z. Luo, Kilian Q. Weinberger<br>
+        分類：cs.LG, cs.AI, cs.CL<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.40221v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.40221v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-09" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.AI, cs.LG, stat.ME" data-title="ベイズ生成モデリングによるニューラル密度推定「BayesNDE」" data-timestamp="1790779033000" data-url="https://arxiv.org/abs/2609.39843v1">
+  <p class="meta">arXiv stat.ML　Wed, 30 Sep 2026 14:37:13 Z</p>
+  <h2 class="article-title">ベイズ生成モデリングによるニューラル密度推定「BayesNDE」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">stat.ME</span></div>
+  <div class="summary">本論文では、ベイズ生成モデリングに基づいた新しいニューラル密度推定器「BayesNDE」を提案します。<br><br>BayesNDEは、可逆ネットワークやヤコビアン行列式計算を必要とせずに、ベイズ生成モデルを学習し、その密度を評価します。各観測に対して、サンプル固有の潜在事後分布を推論し、密度への寄与が最も大きい領域に計算を集中させる適応型提案分布を構築します。その後、ブリッジサンプリングを用いて、この提案分布からのサンプルと個別の事後サンプルを組み合わせて密度を推定します。<br><br>非線形および多峰性の合成データセットでの実験では、最先端のニューラル密度推定器と比較して、密度値の推定精度が向上し、密度構造の復元能力が高まることが示されました。実世界のデータセットへの応用でも、異常検知性能の向上が実証されています。<br><br>これらの結果は、BayesNDEが柔軟かつ効果的なニューラル密度推定器であり、事後分布推論が生成モデルを密度推定のためのツールに転換できることを示しています。本手法は、統計学および機械学習における基本的な問題である密度推定に対して、新たなアプローチを提供するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Chenglin Li, Qiao Liu<br>
+        分類：stat.ML, cs.AI, cs.LG, stat.ME<br>
+        分野：stat.ML<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2609.39843v1" target="_blank" rel="noopener">https://arxiv.org/abs/2609.39843v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
