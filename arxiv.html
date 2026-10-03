@@ -1373,6 +1373,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.LG" data-title="SILSA：トポロジーを保持する高解像度3D生成のためのスライディングウィンドウ・スライス潜在変数" data-timestamp="1790877586000" data-url="https://arxiv.org/abs/2610.02201v1">
+  <p class="meta">arXiv cs.AI　Thu, 01 Oct 2026 17:59:46 Z</p>
+  <h2 class="article-title">SILSA：トポロジーを保持する高解像度3D生成のためのスライディングウィンドウ・スライス潜在変数</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、高解像度の3D生成における課題、特にボクセル潜在変数とマルチステージパイプラインが連続的な表面を多くの局所トークンに断片化し、生成コストを増大させ、特に薄い形状や高度に接続された形状のトポロジー的一貫性を弱めるという問題に対処します。この課題に対し、SILSAという新しいトポロジー認識型3D生成フレームワークを提案します。<br><br>SILSAは、コンパクトなスライディングウィンドウ・スライス潜在変数を用いて形状を表現します。高コストなボクセルトークンを生成する代わりに、SILSAは3つの標準軸に沿った固定セットのオーバーラップするスライスを使用します。各トークンは局所的な深度ウィンドウを要約し、断片間の連続性を維持し、単一段階のレクティファイドフロー生成をサポートします。Slice VAEは、向き付けられた表面サンプルをマルチアキシャルスライス潜在変数にエンコードし、スパースな体積デコーダーで再構築します。また、Volumetric Anchor Latticeが共有3Dワークスペースを通じて方向性スライスストリームを調整します。構造的な正確さを維持するために、隣接するスライス間でパーシステンス図を一致させ、ベッティ遷移を整列させるスライスレベルのトポロジー監視を導入しています。<br><br>実験の結果、SILSAは構造的忠実度を向上させつつ、生成コストを大幅に削減することが示されました。具体的には、PSNRが8.7%、カバレッジが5.96絶対ポイント、ベッティ誤差が9.2%改善しました。さらに、トークン数は次点のコンパクトなベースラインと比較して70.0%少なく、スパースまたは階層的なトークナイザーと比較して98%以上削減され、トレーニングメモリを40.4%、推論時間を58.5%削減しました。定性的な結果では、薄い構造、繰り返しコンポーネント、長距離接続性の保持が改善されていることが示されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Tianjiao Yu, Xinzhuo Li, Yifan Shen, Ying Shen, Kiet A. Nguyen, Adheesh Sunil Juvekar, Ismini Lourentzou<br>
+        分類：cs.CV, cs.AI, cs.LG<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02201v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02201v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CV" data-title="VISTA：インタラクティブな世界における推論のためのビジュアルハーネス" data-timestamp="1790877585000" data-url="https://arxiv.org/abs/2610.02200v1">
   <p class="meta">arXiv cs.AI　Thu, 01 Oct 2026 17:59:45 Z</p>
   <h2 class="article-title">VISTA：インタラクティブな世界における推論のためのビジュアルハーネス</h2>
@@ -1475,105 +1492,88 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="Looped Transformerのデコーディングをほぼ無料で改善する「LoopCD」" data-timestamp="1790877518000" data-url="https://arxiv.org/abs/2610.02185v1">
-  <p class="meta">arXiv cs.LG　Thu, 01 Oct 2026 17:58:38 Z</p>
-  <h2 class="article-title">Looped Transformerのデコーディングをほぼ無料で改善する「LoopCD」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、Looped Transformerのデコーディング性能を、追加のモデルや外部トレーニングなしで向上させる「LoopCD」というフレームワークを提案します。<br><br>Looped Transformerは、共有ブロックを繰り返し実行することでパラメータ効率を実現しますが、標準的なデコーディングでは早期の計算状態が破棄されていました。LoopCDは、この繰り返し構造を利用し、最終的な予測と早期の再帰的パスとの対比（コントラスティブ）を通じてトークン選択をガイドします。これは、ロジット空間での追加出力パス（LoopCD-Logits）または隠れ状態空間でのオーバーヘッドなし（LoopCD-Hidden）で実現されます。<br><br>LoopCDは、複数のLooped Transformerファミリーにおいて、一貫して大幅な性能向上をもたらしました。例えば、LoopCD-Logitsは特定のモデルのAIME 2024パス@1を61.88%から73.33%に向上させました。さらに重要なのは、これらの性能向上により、再帰ループの数を半減させても、ガイドなしのベースラインと同等以上の性能を達成できることです。これにより、フォワードFLOPsが22.5%から48.2%削減されます。LoopCDは、中間再帰状態を効果的なガイダンス信号に変換することで、推論計算を大幅に削減しながら、優れたデコーディング品質を実現します。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="SoftServe：深層学習のためのスケーラブルな準ニュートン法" data-timestamp="1790877504000" data-url="https://arxiv.org/abs/2610.02182v1">
+  <p class="meta">arXiv cs.AI　Thu, 01 Oct 2026 17:58:24 Z</p>
+  <h2 class="article-title">SoftServe：深層学習のためのスケーラブルな準ニュートン法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、深層学習における最適化手法として、スケーラブルな準ニュートン（QN）法ファミリー「SoftServe」を提案しています。<br><br>従来のQNメソッドは、大規模な凸最適化には有効でしたが、深層学習における非凸性や膨大なパラメータサイズという課題に直面していました。SoftServeは、ラインサーチや場当たり的な曲率補正なしに、これらの課題を克服するように設計されています。具体的には、Berglundらの変分目的から正定値曲率推定値を導出し、負の曲率が存在する場合でも対応可能です。<br><br>SoftServeは、対角およびクローンカー因子分解のバリアントを開発し、正定値性を構造的に維持しつつ、大規模ニューラルネットワークへのスケーリングを可能にします。さらに、計算コストの高い行列分解をGPUフレンドリーな行列乗算に置き換える、安定した連動ニュートン・シュルツ反復を利用しています。SoftServeは、リカレントニューラルネットワーク、深層オートエンコーダー、物理情報ニューラルネットワーク、および1億3600万パラメータの物理情報拡散モデルを含む、深刻な病状のタスクにおいて、Adam、Muon、SOAPなどの既存手法よりも低い損失を達成し、優れた性能を示しました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
+        配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Weihao Liu, Huangjie Zheng, Tianrong Chen, Rohit Dilip, Richard He Bai, Yizhu Jiao, Yuyang Wang, Ruixiang Zhang<br>
-        分類：cs.LG<br>
+        著者：Joohwan Ko, Tetiana Parshakova, Diana Cai, Robert M. Gower<br>
+        分類：cs.LG, cs.AI<br>
         分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02185v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02185v1</a>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02182v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="長期間のコーディングエージェントにおけるコンテキスト圧縮のタイミングを学習する「AutoCompact」" data-timestamp="1790877274000" data-url="https://arxiv.org/abs/2610.02163v1">
-  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:54:34 Z</p>
-  <h2 class="article-title">長期間のコーディングエージェントにおけるコンテキスト圧縮のタイミングを学習する「AutoCompact」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、リポジトリレベルのソフトウェアエンジニアリングタスクを解決するコーディングエージェントにおいて、コンテキスト管理の課題に対処するための「AutoCompact」を提案します。<br><br>コーディングエージェントは、タスクが進むにつれて古い探索情報を管理し、コンテキストのオーバーフローを回避する必要があります。AutoCompactは、エージェントがコンテキストをいつ圧縮するか、どの作業状態を保持するか、そしてそこからどのように継続するかをポリシーの一部として決定するように学習させます。トレーニングデータ収集のため、ベースエージェントをコーディングタスクで実行し、コンパクション決定、要約、アクションをジャッジがレビューします。誤った出力は修正され、環境で実行されるため、各軌跡は修正された決定から継続されます。<br><br>このデータを用いて教師ありファインチューニングを行い、その後、タスク成功報酬を用いた強化学習によってコーディングとコンパクションを共同で最適化します。SWE-bench VerifiedおよびSWE-PolyBench Verifiedでの実験では、AutoCompactはベースモデルと比較してパス率をそれぞれ絶対9.2%および5.0%向上させました。これらの改善は、評価されたすべての推論予算で持続し、コンテキストウィンドウがオーバーフローしない256Kの場合でも、オーバーフローが発生した場合にフォールバックコンパクションをトリガーする16Kの場合でも有効です。これにより、コーディングエージェントはコンテキスト管理を効率化し、長期間のタスクにおけるパフォーマンスを向上させることができます。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="ソース学習によるLLMエージェントのソース固有能力開発" data-timestamp="1790877016000" data-url="https://arxiv.org/abs/2610.02150v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:50:16 Z</p>
+  <h2 class="article-title">ソース学習によるLLMエージェントのソース固有能力開発</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントが、永続的な外部ソースから知識を獲得する能力を向上させる「ソース学習」という概念を提案しています。<br><br>従来のLLMエージェントは、外部ソースへのアクセスや知識の整理に焦点を当ててきましたが、同じソースを繰り返し利用する際に、そのソース自体の理解を深めるという点には限界がありました。本研究では、ソース固有の能力を、ソースの構造、解釈、応用方法を捉える「ソースモデル」として表現し、これを継続的に洗練させるアプローチを開発しました。<br><br>提案手法「SourceLearn」は、「自己主導型ソース学習」と「タスク主導型ソース学習」という2つの補完的な学習メカニズムを組み合わせます。これにより、理解が不十分な部分を特定し、ソースを適応的に再訪したり、下流タスクでの経験を通じて知識の局所的な表現ギャップを明らかにしたりします。この手法は、5つのベンチマークと3つのLLMバックエンドにおいて、15の設定中13で最高のパフォーマンスを達成し、既存手法に対して大幅な改善を示しました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Xuan Zhang, Longtao Zheng, Cunxiao Du, Bo An, Xin Dong<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02163v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02163v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="小規模言語モデルのツール使用能力評価におけるキーワード照合の限界と安価な診断手法" data-timestamp="1790876798000" data-url="https://arxiv.org/abs/2610.02142v1">
-  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:46:38 Z</p>
-  <h2 class="article-title">小規模言語モデルのツール使用能力評価におけるキーワード照合の限界と安価な診断手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、小規模言語モデル（LLM）のツール使用能力を評価する際に、キーワード照合に基づくベンチマークが、実際にはツールを使用していないモデルに誤って高い評価を与えてしまう問題点を指摘しています。<br><br>特に、スペイン語のセキュリティタスクに特化した2つのLLMペアを比較し、同一のアーキテクチャを持ちながらも、一方のモデル（6億6160万パラメータ）は汎用的なツール呼び出しを正しく実行できたのに対し、もう一方のモデル（11億900万パラメータ）は、ウェブデータ中心の学習フェーズでツール使用に必要な情報が失われていることを明らかにしました。<br><br>この問題に対処するため、著者らは厳格かつ安価な診断手法の階層を提案しています。この手法は、数分程度のCPU時間で実行可能であり、小規模モデルのツール使用能力に関する主張を検証するためのゲートとして機能することを目指しています。また、モデルの性能改善には、多様なコーパスと高い学習率を用いたターゲットを絞ったファインチューニングが有効であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Juan S. Santillana<br>
-        分類：cs.CL<br>
+        著者：Lucheng Fu, Kejing Xia, Yiyang Wang, Yiqiao Jin, Jinjin He, Xiyuan Yang, Haoxin Liu, Ye Yu<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02142v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02142v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.02150v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02150v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL, cs.LG" data-title="合成シーンを用いたMLLMの空間誘導型オンポリシー自己蒸留手法「Where-OPD」" data-timestamp="1790876050000" data-url="https://arxiv.org/abs/2610.02117v1">
-  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:34:10 Z</p>
-  <h2 class="article-title">合成シーンを用いたMLLMの空間誘導型オンポリシー自己蒸留手法「Where-OPD」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）の推論能力を向上させるための新しいオンポリシー自己蒸留手法「Where-OPD」を提案します。<br><br>従来の自己蒸留手法は、特権的な視覚情報（例：質問に対応する画像の一部）を利用して細粒度の知覚能力を向上させますが、人間によるアノテーションや外部教師モデルが必要でした。Where-OPDは、教師モデルにテキストベースの空間的ガイダンスを提供し、質問に関連する視覚要素を特定します。このガイダンスは、自動的にオブジェクトのIDと空間座標が利用可能な手続き的に生成されたシーンを用いて学習されるため、スケーラブルでアノテーション不要なポストトレーニングが可能です。<br><br>教師モデルはこの空間的ガイダンスを利用して複数の関連画像領域から証拠を特定し、生徒モデルは画像と質問のみからその振る舞いを再現するように学習します。このアプローチは、カウント、文書、チャート理解のベンチマークにおいて一貫して性能を向上させます。さらに、合成シーンのみでポストトレーニングを行ったにもかかわらず、その改善は実世界の知覚ベンチマークにも転移し、複数のベンチマークで平均性能が3.23ポイント向上しました。これは、空間的に誘導された特権情報が、オンポリシー自己蒸留を通じてより広範な知覚能力を誘導し、ポストトレーニングで使用されたタスクやデータ分布を超えた実質的な合成から実世界への転移を可能にすることを示しています。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.DB" data-title="Argo-Bench：エンタープライズ規模ワークフローにおけるデータエージェント評価" data-timestamp="1790876144000" data-url="https://arxiv.org/abs/2610.02122v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:35:44 Z</p>
+  <h2 class="article-title">Argo-Bench：エンタープライズ規模ワークフローにおけるデータエージェント評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.DB</span></div>
+  <div class="summary">本論文は、エンタープライズ規模のデータサイエンスおよび分析ワークフローにおけるデータエージェントの能力を評価するための新しいフレームワーク「Argo-Bench」を提案しています。<br><br>既存のテキスト・トゥ・SQLベンチマークは、クエリ生成のみを評価し、その正解データにも誤りが含まれることが指摘されていました。また、実際のエンタープライズデータは機密性が高く、公開が困難なため、これまでのベンチマークは単一テーブルに収まる公開データセットに基づいていました。Argo-Benchは、公開データ、業界文献、規制開示情報に基づき、ニューヨーク市のフードデリバリープラットフォームをシミュレートし、235テーブル、75億行のERPデータウェアハウスを構築しました。<br><br>Argo-Benchは、単なるテキスト・トゥ・SQLを超え、エージェントが不正アカウントの禁止、インセンティブ予算の配分、バックペイの発行といったアクションを実行し、その結果をシミュレーター内で評価します。このフレームワークは、データエージェントが実際のデータ環境を理解し、ナビゲートし、行動する能力の進歩を促進することを目指しています。現在、最も強力なモデルでもタスクの約3分の1しか達成できず、平均スコアは59.5点にとどまっています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Sophia Sirko-Galouchenko, Monika Wysoczanska, Andrei Bursuc, Nicolas Thome, Spyros Gidaris<br>
-        分類：cs.CV, cs.AI, cs.CL, cs.LG<br>
-        分野：cs.CV<br>
+        著者：Gabriel Tomitsuka, Arman Raayatsanati, Emma Xing, Duke Gand, Joseph J Ma<br>
+        分類：cs.CL, cs.AI, cs.DB<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02122v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02122v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="DeBERTa-v3のゼロショット医療抄録分類における説明可能性の比較フレームワーク" data-timestamp="1790876042000" data-url="https://arxiv.org/abs/2610.02116v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:34:02 Z</p>
+  <h2 class="article-title">DeBERTa-v3のゼロショット医療抄録分類における説明可能性の比較フレームワーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、ゼロショット分類タスクにおけるDeBERTa-v3モデルの解釈可能性を比較評価するためのフレームワークを提案します。特に、説明可能なAI（XAI）における「不一致問題」、すなわち同じ入力と予測に対して異なる説明手法が異なる解釈を生み出すという課題に取り組みます。<br><br>提案手法では、医療抄録コーパスに対し、5つの拡張された仮説を持つ自然言語推論エンジンを実装し、診断カテゴリごとに1000件のバランスの取れたテキストサンプルを使用します。SHAP、LIME、occlusion、Input x Gradient、Attention x Gradientといった5つの異なる説明手法を比較し、Jaccard係数を用いてそれらの説明の一致度を定量化します。<br><br>実験の結果、明確に定義された臨床ドメインでは高い予測精度が達成される一方、意味的な曖昧性が高い場合には性能が低下することが示されました。説明の安定性は予測の確実性と直接的に連動し、単価カテゴリでは強い収束を示しますが、診断の不確実性下では顕著な低下が見られました。さらに、質的なエラー分析により、語彙の過敏性、意味の重複、属性の一貫性の喪失という3つの体系的な失敗メカニズムが明らかになりました。これらの結果は、医療テキスト分類におけるTransformerベースのモデルを監査する際に、複数の説明手法と定量的な一致度指標を組み合わせて使用することを支持します。また、広範な診断ラベルよりも特定の臨床オントロジーを優先することを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Javier Diaz Esteban-Herreros, David Muñoz-Valero, Raquel Martínez-España, Jose M. Juarez, Juan Moreno-Garcia<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02116v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02116v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="データ選択のためのスケーラブルで転移可能なメタネットワークは異なる損失関数を必要とする（そして明白な選択肢がなぜ問題なのか）" data-timestamp="1790875409000" data-url="https://arxiv.org/abs/2610.02092v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:23:29 Z</p>
+  <h2 class="article-title">データ選択のためのスケーラブルで転移可能なメタネットワークは異なる損失関数を必要とする（そして明白な選択肢がなぜ問題なのか）</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の学習において、大規模かつ異種混合のコーパスからのデータ選択が極めて重要であるという問題提起から始まります。メタ学習による学習データ選択は、データ重みをターゲット検証目的から学習するという原理的なアプローチですが、既存手法は、詳細な評価と未知のデータへの転移可能性との間でトレードオフが存在するという課題を抱えています。<br><br>この課題に対し、本研究では、サンプルごとの重み付けではなく選択ネットワークを導入することを自然な解決策と考えました。しかし、既存のメタ学習によるデータ選択（MTS）の目的関数にこのようなネットワークを直接組み込むと、重み抑制や学習しやすい特徴への持続的な依存により、最適化の不安定化と汎化性能の低下を引き起こすことが判明しました。そこで、本研究では、Pointwise Value Matching（PVM）目的関数に基づいた、スケーラブルなデータ選択フレームワークであるTransferable Example Scoring and Selection（TESS）を提案します。<br><br>LLMの安全性とターゲット指示チューニングに関する実験では、TESSがデータセット間、サブセットからフルコーパス、そして小規模から大規模モデルへの強力な転移性を示すことが実証されました。この結果は、データ選択における損失関数の選択が、モデルの性能と汎化能力に大きく影響することを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zilin Du, Bowen Yang, Boyang Albert Li<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02117v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02117v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, math-ph, math.DS, math.PR, math.SP" data-title="多峰性分布サンプリングにおけるWasserstein勾配流と拡散モデルの限界" data-timestamp="1790875007000" data-url="https://arxiv.org/abs/2610.02081v1">
-  <p class="meta">arXiv stat.ML　Thu, 01 Oct 2026 17:16:47 Z</p>
-  <h2 class="article-title">多峰性分布サンプリングにおけるWasserstein勾配流と拡散モデルの限界</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">math-ph</span><span class="tag">math.DS</span></div>
-  <div class="summary">本論文は、Wasserstein勾配流（WGF）およびフォワードオンリー拡散プロセス（FODP）に基づくサンプリングアルゴリズムが、多峰性（複数のピークを持つ）分布からの効率的なサンプリングにおいて根本的な限界を持つことを論じています。<br><br>これらのアルゴリズムは、しばしば指数関数的な収束速度の理論的保証を伴いますが、著者らは、これらの保証が多峰性分布のサンプリング効率を誤解させる可能性があると主張しています。WGFとフォワード拡散は、非平衡統計物理学で知られるメタステービリティや混合時間の遅延といった現象を共有しており、特にモード間の移動に時間がかかることが問題となります。<br><br>本研究では、スペクトル解析と平均第一通過時間（MFPT）解析を用いて、モード間の距離が離れている場合に指数関数的に長い混合時間が生じることを示しました。これは、局所的な勾配駆動メカニズムでは、モード間を効率的に移動させるために指数関数的に長い時間が必要となるという構造的な限界を示唆しています。したがって、多峰性分布を効率的にサンプリングするためには、根本的に非局所的なメカニズムを持つ新しいアプローチが必要であると結論付けています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Daniel McBride, Pratik Khandagale, Cristina Garcia-Cardona, Yen Ting Lin<br>
-        分類：stat.ML, cs.LG, math-ph, math.DS, math.PR, math.SP<br>
-        分野：stat.ML<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02081v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02081v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="econ.EM" data-source="arXiv stat.ML" data-area="AI" data-categories="econ.EM, stat.ML" data-title="AI学習表現を用いた実用的な因果推論フレームワーク" data-timestamp="1790870718000" data-url="https://arxiv.org/abs/2610.01935v1">
-  <p class="meta">arXiv stat.ML　Thu, 01 Oct 2026 16:05:18 Z</p>
-  <h2 class="article-title">AI学習表現を用いた実用的な因果推論フレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">econ.EM</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、テキストや画像などのリッチな共変量をAIによって学習された表現（埋め込みベクトルなど）に圧縮し、それらを因果推論における制御変数として使用するアプローチの有効性を検討し、実用的なフレームワークを開発しています。<br><br>著者らは、不完全な表現が、結果回帰とバランスウェイト（またはリース表現）の2つの表現誤差の積によって、ターゲットとなる因果パラメータを歪めることを示しました。この分析に基づき、クロスフィッティングされたダブルマシンラーニング（DML）が、表現に依存するターゲットに対して有効なWald推論を提供できることを示しています。また、表現誤差が小さい場合には、効率性の限界を達成できる可能性も示唆しています。<br><br>さらに、フォールドワイズ表現学習（またはファインチューニング）がDML推論と両立可能であることを示し、表現誤差が大きい場合には、解釈可能な感度領域とそれらの端点に対するルートn推論を提供できることを提案しています。実際の需要推定の応用例では、提案手法が価格弾性に対する頑健な結果を示しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Andres Aradillas Fernandez, Victor Chernozhukov, Carlos Cinelli, Sven Klaassen, Whitney Newey, Martin Spindler, Jan Teichert-Kluge, Suhas Vijaykumar<br>
-        分類：econ.EM, stat.ML<br>
-        分野：econ.EM<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.01935v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.01935v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.02092v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02092v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
