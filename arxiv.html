@@ -1475,105 +1475,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="ループトランスフォーマーのデコーディングをほぼ無料で改善する手法" data-timestamp="1790877518000" data-url="https://arxiv.org/abs/2610.02185v1">
-  <p class="meta">arXiv cs.LG　Thu, 01 Oct 2026 17:58:38 Z</p>
-  <h2 class="article-title">ループトランスフォーマーのデコーディングをほぼ無料で改善する手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、ループトランスフォーマーの効率的なパラメータ利用を維持しつつ、デコーディング性能を向上させるための新しいフレームワーク「LoopCD」を提案します。<br><br>ループトランスフォーマーは、共有ブロックを繰り返し実行することでパラメータ効率を実現しますが、標準的なデコーディングでは早期の計算状態が破棄されてしまいます。本研究では、この早期の計算状態を、追加のモデルや外部トレーニングなしに、効果的なガイダンス信号として活用します。LoopCDは、訓練不要な対照的デコーディングフレームワークであり、最終的な予測と早期の再帰的パスの出力を対比させることでトークン選択を誘導します。これは、ロジット空間で1回の追加出力パスを用いる「LoopCD-Logits」と、隠れ状態空間で追加出力オーバーヘッドゼロの「LoopCD-Hidden」の2つのバリエーションで実現されます。<br><br>LoopCDは、複数のループトランスフォーマーファミリーにおいて、完全な再帰深度で一貫して大幅な性能向上をもたらしました。例えば、LoopCD-Logitsは、あるモデルのAIME 2024タスクにおけるpass@1精度を61.88%から73.33%に向上させました。さらに重要な点として、これらの性能向上により、再帰ループの数を半減させても、ガイドなしのベースラインと同等以上の性能を達成可能となり、フォワードFLOPsを22.5%から48.2%削減できます。LoopCDは、中間的な再帰状態を効果的なガイダンス信号に変換することで、推論計算量を大幅に削減しながら、優れたデコーディング品質を実現します。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="化学のための生成モデルおよび基盤モデルにおける高次分子文法" data-timestamp="1790877525000" data-url="https://arxiv.org/abs/2610.02186v1">
+  <p class="meta">arXiv cs.AI　Thu, 01 Oct 2026 17:58:45 Z</p>
+  <h2 class="article-title">化学のための生成モデルおよび基盤モデルにおける高次分子文法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、化学分野における分子表現と生成モデルの性能向上を目指し、高次トポロジーを明示的にエンコードする新しいフレームワーク「Higher-order Grammar Representation（HGR）」を提案しています。<br><br>従来の逐次的およびグラフベースの表現では、環構造や繰り返しモチーフといった高次トポロジーを明示的に捉えることが困難でした。既存の高次表現はこれらの構造を直接捉えられますが、計算コストが高く、有効な分子へのデコードが難しいという課題がありました。HGRは、分子を組み合わせ複体（combinatorial complex）にリフトし、各複体を文脈自由高次文法の下での生産規則のコンパクトなシーケンスに解析することで、この問題を解決します。<br><br>HGRは、高次トポロジーを規則シーケンスにシリアル化することで、標準的なシーケンスモデルとの互換性を直接的に実現し、明示的な高次エンコーディングの計算オーバーヘッドを回避しつつ、トポロジー的な表現力を維持します。また、環構造の多様性を定量化する指標「Ring Diversity Index（RDI）」を導入し、環構造が豊富なベンチマークデータセット「RingDiv」を構築しました。分子生成タスクでは、HGRベースのモデルは100%の妥当性を持ち、生成ベンチマーク全てで最先端の分布整合性を達成しました。表現学習タスクでは、HGR-FMは7つのMoleculeNetベンチマーク全てで最高の平均AUCを達成し、既存の最良ベースラインを大幅に上回りました。<br><br>これらの結果は、HGRが分子生成および転移可能な表現学習のための効率的な高次表現であることを確立し、化学分野における深層学習モデルの性能向上に大きく貢献する可能性を示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
+        配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Weihao Liu, Huangjie Zheng, Tianrong Chen, Rohit Dilip, Richard He Bai, Yizhu Jiao, Yuyang Wang, Ruixiang Zhang<br>
-        分類：cs.LG<br>
+        著者：Yiming Huang, Yujie Zeng, Vijay Prakash Dwivedi, Simone Foti, Jianmin Wang, Jure Leskovec, Tolga Birdal<br>
+        分類：cs.LG, cs.AI<br>
         分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02185v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02185v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="長期間のコーディングエージェントにおけるコンテキスト圧縮のタイミング学習" data-timestamp="1790877274000" data-url="https://arxiv.org/abs/2610.02163v1">
-  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:54:34 Z</p>
-  <h2 class="article-title">長期間のコーディングエージェントにおけるコンテキスト圧縮のタイミング学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、リポジトリレベルのソフトウェアエンジニアリングタスクを、コードの検査、検索、編集、テストといった長期間の軌跡を通じて解決するコーディングエージェントに関する研究です。<br><br>タスクが進むにつれて、初期の探索情報は古くなるため、コンテキストの管理は単にオーバーフローを回避するだけでなく、いつコンテキストを圧縮するか、どの作業状態を保持するか、そしてそこからどのように継続するかをエージェントが決定する必要があります。本研究では、これらの決定をポリシーの一部として学習するAutoCompactを提案します。<br><br>学習データの収集のため、ベースエージェントをコーディングタスクで実行し、ジャッジが圧縮決定、要約、圧縮後のアクションをレビューします。誤った出力は修正されたものに置き換えられ、環境で実行されるため、各軌跡は修正された決定から継続されます。これらの軌跡を用いて教師ありファインチューニングを行い、その後、タスク成功報酬を用いた強化学習によりコーディングと圧縮を共同で最適化します。<br><br>SWE-bench VerifiedおよびSWE-PolyBench Verifiedでの実験により、AutoCompactはベースモデルと比較して、それぞれ絶対値で9.2%および5.0%のパス率向上を達成しました。この改善は、評価されたすべての推論予算で維持され、256Kのコンテキストウィンドウではオーバーフローせず、16Kのウィンドウではオーバーフロー時にフォールバック圧縮がトリガーされました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Xuan Zhang, Longtao Zheng, Cunxiao Du, Bo An, Xin Dong<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02163v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02163v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.02186v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02186v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="小規模言語モデルにおけるツール使用主張の安価な診断ラダー：キーワードハーネスの脆弱性" data-timestamp="1790876798000" data-url="https://arxiv.org/abs/2610.02142v1">
-  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:46:38 Z</p>
-  <h2 class="article-title">小規模言語モデルにおけるツール使用主張の安価な診断ラダー：キーワードハーネスの脆弱性</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、キーワードマッチングベンチマークが、小規模言語モデルが実際には実行していないツール使用を評価してしまう可能性を指摘しています。<br><br>特に、スペイン語のセキュリティ言語モデルのペアにおいて、このような偽陽性が確認されました。そこで、ツール使用の主張を厳密に診断するための、安価で段階的な診断方法を提案します。具体的には、6億6160万パラメータモデルと11億900万パラメータモデルを比較し、両モデルは leninent なツール使用メトリクスではほぼ同等のスコアを示しましたが、訓練データの再現性チェックでは、一方のモデルは有効なツール呼び出しを生成できたのに対し、もう一方は失敗しました。<br><br>この失敗の原因は、訓練フェーズにおけるウェブデータ中心の学習により、ツール呼び出しトークンに対する事前確率が失われたことにあると特定されました。この問題に対し、より多様なコーパスと高い学習率を用いたターゲットを絞ったSFT（教師ありファインチューニング）レシピにより、わずかな計算コストでモデルの性能を大幅に改善できることを示しました。<br><br>さらに、修正されたモデルは、元のモデルよりも高い精度でツール呼び出しを行うようになり、特に未知のプロンプトに対して顕著な改善が見られました。この診断ラダーは、数分間のCPU時間で実行可能であり、小規模モデルのツール使用能力に関する主張を検証するためのゲートとして機能することが期待されます。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="SoftServe：深層学習のためのスケーラブルな準ニュートン法" data-timestamp="1790877504000" data-url="https://arxiv.org/abs/2610.02182v1">
+  <p class="meta">arXiv cs.AI　Thu, 01 Oct 2026 17:58:24 Z</p>
+  <h2 class="article-title">SoftServe：深層学習のためのスケーラブルな準ニュートン法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、深層学習における最適化手法として、スケーラブルな準ニュートン（QN）法ファミリー「SoftServe」を提案します。<br><br>従来のQNメソッドは、大規模な凸最適化には効果的でしたが、深層学習における非凸性や膨大なパラメータサイズという課題に直面していました。SoftServeは、ラインサーチや場当たり的な曲率補正なしにこれらの課題を克服するように設計されています。SoftServeは、負の曲率が存在する場合でも、変分目的から正定値の曲率推定値を導出します。<br><br>さらに、対角およびクローンカー因子化されたバリアントを開発し、正定性を構築によって維持し、大規模なニューラルネットワークにスケールさせます。SoftServeは、必要な行列演算に安定した結合ニュートン・シュルツ反復を使用し、コストのかかる行列分解をGPUフレンドリーな行列乗算に置き換えます。<br><br>SoftServeは、リカレントニューラルネットワーク、ディープオートエンコーダー、物理情報ニューラルネットワーク、および1億3600万パラメータの物理情報拡散モデルを含む、深刻な病状のタスクにおいて優れた性能を発揮し、Adam、Muon、SOAPなどの既存のベースラインよりも低い損失を達成することがよくあります。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Joohwan Ko, Tetiana Parshakova, Diana Cai, Robert M. Gower<br>
+        分類：cs.LG, cs.AI<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02182v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="ソース学習によるLLMエージェントのソース固有能力開発" data-timestamp="1790877016000" data-url="https://arxiv.org/abs/2610.02150v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:50:16 Z</p>
+  <h2 class="article-title">ソース学習によるLLMエージェントのソース固有能力開発</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントが、永続的な外部ソースから知識を獲得するだけでなく、そのソース自体に対する理解を深める「ソース学習」という概念を提案します。<br><br>従来のLLMエージェントは、外部ソースへのアクセスや知識の整理に焦点を当てていましたが、同じソースを繰り返し利用する際に、単なる再アクセスではなく、ソース固有の能力を段階的に向上させる機会として捉えることはありませんでした。本研究では、ソース固有の能力を、ソースの知識構造、解釈、応用方法を捉える永続的なソースモデルとして表現します。<br><br>このソースモデルを構築・洗練するために、自己主導型ソース学習とタスク主導型ソース学習という2つの補完的な学習メカニズムを組み合わせた「SourceLearn」を提案します。自己主導型ソース学習は、理解が不十分な部分を特定し、ソースを適応的に再訪します。一方、タスク主導型ソース学習は、下流タスクでの経験を通じて、局所的な表現のギャップやソース知識の整理方法に関する繰り返し発生するニーズを明らかにします。<br><br>SourceLearnは、5つのベンチマークと3つのLLMバックエンドを用いた評価において、15の設定中13で最高のパフォーマンスを達成し、ハイブリッドRAGと比較して最大22.6ポイントの向上を示しました。これは、静的なソース表現や経験ベースのメモリベースラインと比較しても大幅な改善です。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Juan S. Santillana<br>
-        分類：cs.CL<br>
+        著者：Lucheng Fu, Kejing Xia, Yiyang Wang, Yiqiao Jin, Jinjin He, Xiyuan Yang, Haoxin Liu, Ye Yu<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02142v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02142v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.02150v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02150v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Generative Models" data-field="math.ST" data-source="arXiv stat.ML" data-area="AI" data-categories="math.ST, cs.LG, stat.ML" data-title="離散拡散モデルを用いたカテゴリカルマルコフ確率場におけるサンプル複雑性の上界導出" data-timestamp="1790876421000" data-url="https://arxiv.org/abs/2610.02128v1">
-  <p class="meta">arXiv stat.ML　Thu, 01 Oct 2026 17:40:21 Z</p>
-  <h2 class="article-title">離散拡散モデルを用いたカテゴリカルマルコフ確率場におけるサンプル複雑性の上界導出</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">math.ST</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、統計学、経済学、物理学など多岐にわたる分野で重要となる、局所的な依存構造を持つ高次元カテゴリカル分布からのサンプリング問題に取り組みます。<br><br>近年、離散拡散モデルがこのようなデータのサンプリングにおいて柔軟性と高い経験的性能を示すアプローチとして注目されています。本研究では、局所依存性を低次のマルコフ確率場（MRF）としてモデル化し、一様なノイズ下での離散拡散における学習手法について、エンドツーエンドのサンプル複雑性の上界を導出します。重要な技術的洞察として、離散スコアの新しい「ピニング分解」を示し、これにより時間依存性とターゲットへの依存性が乗法的に分離されることを明らかにしました。<br><br>この分解に基づき、重み共有ニューラルスコア学習器を提案し、τ-leapingと組み合わせてエンドツーエンドのサンプリング手順を構築します。既存のサンプリング解析で一般的な、スコア学習誤差をブラックボックスとして扱うのではなく、有限データからのスコア学習誤差を詳細に解析し、語彙サイズ、MRFの相互作用次数、およびサンプルサイズへの依存性を明示した最適なサンプリング保証を得ます。さらに、提案手法は一様なノイズレベル全体で単一のスコアネットワークを訓練し、サンプリングの離散化は推論時に選択可能です。これにより、同じ訓練済みモデルが推論時の予算に応じて精度と計算コストをトレードオフできます。数値実験では、重み共有スコアネットワークが、長いシーケンスのサンプリングにおいて、全結合ネットワークよりも優れた性能を示すことが確認されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Shivam Kumar, Nabarun Deb<br>
-        分類：math.ST, cs.LG, stat.ML<br>
-        分野：math.ST<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02128v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02128v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.AI, cs.CL, cs.LG" data-title="合成シーンを用いた空間誘導型オンポリシー自己蒸留によるMLLMの性能向上" data-timestamp="1790876050000" data-url="https://arxiv.org/abs/2610.02117v1">
-  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:34:10 Z</p>
-  <h2 class="article-title">合成シーンを用いた空間誘導型オンポリシー自己蒸留によるMLLMの性能向上</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、マルチモーダル大規模言語モデル（MLLM）の推論能力を向上させるための新しいオンポリシー自己蒸留手法を提案します。<br><br>従来の自己蒸留手法は、特権的な視覚情報（例：質問に対応する画像の一部）を利用して微細な知覚能力を向上させてきましたが、人間によるアノテーションや外部教師モデルが必要でした。本研究では、テキストベースの空間的ガイダンスを用いて、MLLMの教師モデルに画像内の関連視覚要素を特定させます。このガイダンスは、自動的にオブジェクトの識別情報と空間座標が得られる手続き的に生成されたシーンを利用することで、アノテーション不要でスケーラブルな後処理学習を可能にします。<br><br>提案手法は、教師モデルが複数の関連画像領域から証拠を特定し統合するのを助け、生徒モデルは画像と質問のみからその振る舞いを再現することを学習します。このアプローチは、複数のモデルにおいて、カウント、文書、およびチャート理解のベンチマークで一貫して性能を向上させました。特に、合成シーンのみで後処理学習を行ったにもかかわらず、その改善は実世界の知覚ベンチマークにも転移し、複数のベンチマークで平均性能が3.23ポイント向上しました。これは、空間的に誘導された特権情報が、オンポリシー自己蒸留を通じてより広範な知覚能力を引き出し、後処理学習に使用されたタスクやデータ分布を超えた実質的な合成から実世界への転移を可能にすることを示しています。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.DB" data-title="Argo-Bench：エンタープライズ規模ワークフローにおけるデータエージェント評価" data-timestamp="1790876144000" data-url="https://arxiv.org/abs/2610.02122v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:35:44 Z</p>
+  <h2 class="article-title">Argo-Bench：エンタープライズ規模ワークフローにおけるデータエージェント評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.DB</span></div>
+  <div class="summary">本論文は、現実世界のエンタープライズデータサイエンスおよび分析ワークフローを評価するための新しいフレームワーク「Argo-Bench」を提案します。<br><br>従来のText-to-SQLベンチマークは、クエリ生成のみを評価し、その回答キーの誤りが指摘されていました。また、実際のエンタープライズデータウェアハウスは機密性が高く公開できないため、これらのベンチマークは単一テーブルに収まる公開データセットに基づいて構築されていました。Argo-Benchは、210のデータサイエンスおよび分析タスクから構成され、ニューヨーク市のフードデリバリープラットフォームをシミュレートし、235テーブル、75億行のERPウェアハウスにエクスポートします。<br><br>このフレームワークでは、エージェントはウェアハウスをナビゲートして事実を再構築し、不正アカウントの禁止、クーポンのインセンティブ予算の配分、バックペイの発行などのアクションを実行する必要があります。Argo-BenchはText-to-SQLを超え、エージェントの行動の結果をシミュレーターで採点します。各タスクには、ウェアハウスのみを使用して解決可能であることを示す実行可能な参照ソリューションがあります。<br><br>現在、14の最先端モデルのうち最も強力なモデルでも、タスクの34.8%しか95点以上を獲得できず、平均点は59.5点にとどまっています。Argo-Benchは、実際のデータ環境を理解し、ナビゲートし、行動できるエージェントの開発を促進することを目指しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Sophia Sirko-Galouchenko, Monika Wysoczanska, Andrei Bursuc, Nicolas Thome, Spyros Gidaris<br>
-        分類：cs.CV, cs.AI, cs.CL, cs.LG<br>
-        分野：cs.CV<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02117v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02117v1</a>
+        著者：Gabriel Tomitsuka, Arman Raayatsanati, Emma Xing, Duke Gand, Joseph J Ma<br>
+        分類：cs.CL, cs.AI, cs.DB<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02122v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02122v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, math-ph, math.DS, math.PR, math.SP" data-title="多峰性サンプリングにおけるWasserstein勾配流と前方拡散だけでは不十分" data-timestamp="1790875007000" data-url="https://arxiv.org/abs/2610.02081v1">
-  <p class="meta">arXiv stat.ML　Thu, 01 Oct 2026 17:16:47 Z</p>
-  <h2 class="article-title">多峰性サンプリングにおけるWasserstein勾配流と前方拡散だけでは不十分</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">math-ph</span><span class="tag">math.DS</span></div>
-  <div class="summary">本論文は、Wasserstein勾配流（WGF）および前方拡散プロセス（FODP）に基づくサンプリングアルゴリズムが、多峰性分布の効率的なサンプリングを可能にするという一般的な解釈に疑問を呈しています。<br><br>これらのアルゴリズムは、しばしばターゲット分布への指数関数的な収束保証とともに提示されますが、本研究では、これらの保証が誤解を招く可能性があると主張します。JKOスキームとOtto calculusを用いることで、標準的なWGFサンプリングダイナミクスと過減衰前方拡散は同じ密度進化を共有し、非平衡統計物理学で知られるメタステービリティと低速混合現象を継承することを示します。<br><br>スペクトル解析と平均第一通過時間（MFPT）解析という2つの補完的なツールを用いて、これらのサンプラーを分析した結果、よく分離された多峰性は、小さなスペクトルギャップとまれなモード間遷移に関連する指数関数的に長い混合時間を引き起こす可能性があることが明らかになりました。特に、一般的に採用されている対数線形アニーリングスケジュールでは、中間分布の導入が総輸送時間の指数関数的なスケーリングを排除しないことが示されました。<br><br>この限界は実装固有のものではなく、根本的な構造に起因します。純粋に局所的な勾配駆動輸送メカニズムは、分離されたモード間で確率質量を輸送するために指数関数的に長い時間を必要とする可能性があります。これは、標準的なWGFおよびFODPベースのサンプリングにおける根本的な限界であり、効率的な多峰性サンプリングのための根本的に非局所的なメカニズムの開発を促すものです。</div>
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="DeBERTa-v3のゼロショット医療抄録分類における説明可能性フレームワークの比較" data-timestamp="1790876042000" data-url="https://arxiv.org/abs/2610.02116v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:34:02 Z</p>
+  <h2 class="article-title">DeBERTa-v3のゼロショット医療抄録分類における説明可能性フレームワークの比較</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、ゼロショット分類タスクにおけるDeBERTa-v3モデルの解釈可能性を比較評価するためのフレームワークを提案しています。<br><br>特に、説明可能なAI（XAI）分野における「不一致問題」、すなわち同じ入力と予測に対して異なる説明手法が異なる解釈を生み出すという課題に着目し、自然言語推論エンジンを用いて医療抄録コーパス上で5つの異なる説明手法（SHAP、LIME、occlusion、Input x Gradient、Attention x Gradient）を比較評価しています。<br><br>その結果、明確に定義された臨床領域では高い予測精度が得られる一方、意味的な曖昧さが増すと性能が低下することが示されました。説明の安定性は予測の確実性と直接的に相関し、単価カテゴリでは収束性が高いものの、診断の不確実性下では顕著な低下が見られました。さらに、語彙への過敏性、意味の重複、帰属の一貫性の喪失という3つの体系的な失敗メカニズムが特定されました。<br><br>これらの結果は、医療テキスト分類におけるTransformerベースのモデルを監査する際には、複数の説明手法と定量的合意指標の併用が有効であることを支持しており、広範な診断ラベルよりも特定の臨床オントロジーを優先することを示唆しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Daniel McBride, Pratik Khandagale, Cristina Garcia-Cardona, Yen Ting Lin<br>
-        分類：stat.ML, cs.LG, math-ph, math.DS, math.PR, math.SP<br>
-        分野：stat.ML<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.02081v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02081v1</a>
+        著者：Javier Diaz Esteban-Herreros, David Muñoz-Valero, Raquel Martínez-España, Jose M. Juarez, Juan Moreno-Garcia<br>
+        分類：cs.AI, cs.CL<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02116v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02116v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="データ選択のためのスケーラブルで転移可能なメタネットワークは異なる損失関数を必要とする（そして明白な選択肢がなぜ問題なのか）" data-timestamp="1790875409000" data-url="https://arxiv.org/abs/2610.02092v1">
+  <p class="meta">arXiv cs.CL　Thu, 01 Oct 2026 17:23:29 Z</p>
+  <h2 class="article-title">データ選択のためのスケーラブルで転移可能なメタネットワークは異なる損失関数を必要とする（そして明白な選択肢がなぜ問題なのか）</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の学習におけるデータ選択の重要性と、既存手法の課題について論じています。<br><br>データ選択は、大規模かつ異種混合のコーパスからLLMを学習させる上で極めて重要です。メタ学習による学習データ選択は、データ重みをターゲット検証目的から学習するという点で、ヒューリスティックなスコアリングに代わる原理的なアプローチを提供しますが、既存手法は、詳細な評価と未知のデータへの転移可能性との間でトレードオフが存在します。この課題に対し、本研究では、サンプルごとの重み付けではなく選択ネットワークを導入するアプローチを検討しましたが、最適化の不安定性と汎化性能の低下を引き起こすことが判明しました。<br><br>これらの問題に対処するため、本研究では「Transferable Example Scoring and Selection（TESS）」という、Pointwise Value Matching（PVM）目的関数に基づいたスケーラブルなデータ選択フレームワークを提案しています。このフレームワークは、データ重み付けの代わりに、各データポイントの価値を直接学習することで、より安定した最適化と優れた汎化性能を実現します。<br><br>LLMの安全性および指示チューニングに関する実験では、データセット間、サブセットからフルコーパス、小規模から大規模モデルへの強力な転移性能が実証されました。これは、提案手法がデータ選択タスクにおいて、より効率的かつ効果的なアプローチであることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Zilin Du, Bowen Yang, Boyang Albert Li<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.02092v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.02092v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
