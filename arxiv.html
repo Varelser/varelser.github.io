@@ -1476,105 +1476,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.SE" data-title="トレーニング後コーディングエージェントのパフォーマンスをベースモデルから予測する手法" data-timestamp="1791394639000" data-url="https://arxiv.org/abs/2610.10478v1">
-  <p class="meta">arXiv cs.AI　Wed, 07 Oct 2026 17:37:19 Z</p>
-  <h2 class="article-title">トレーニング後コーディングエージェントのパフォーマンスをベースモデルから予測する手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.SE</span></div>
-  <div class="summary">本論文は、高コストなエージェント的ポストトレーニングのラウンドに値するベースチェックポイントをどのように予測できるかという問題に取り組みます。<br><br>エンドツーエンドのpass@Kテストは、ベースモデルの分布に成功した動作が既に現れているかどうかを検証しますが、エージェント的コーディングには不向きです。多くのベースチェックポイントは、タスクを完了するために必要な、整形式のツール呼び出しを確実に生成できません。単発または短期間のタスクは、マルチステップのやり取りを固定プロンプトと単一のパッチに折りたたむことでこれらのツール呼び出しの失敗を回避しますが、私たちが関心のある中核的な能力、すなわちリポジトリが進化するにつれて多くのツール使用ステップにわたって一貫した状態を維持するという能力を迂回します。<br><br>このギャップを埋めるために、本研究では、ポストトレーニングされたエージェントの軌跡をベースモデルの潜在能力のルックアヘッド信号として扱います。各軌跡を再生し、コード変更ステップごとにテストを再実行することで、決定的なステップを特定します。これは、累積パッチがリポジトリを失敗から合格に反転させる最初のステップであり、記録されたアクションが先行コンテキストを与えられたタスクを解決することを証明します。エージェント的トレースのカバレッジ原則に着想を得て、ベースチェックポイントがハーネスをコールドスタートから駆動する必要のない、このステップで3つのスクリーニングを構築します。(i) 決定アクションBPB（bits per byte）は、認定アクション上の確率質量を測定します。(ii) パッチMCQは、同じ検証者によって拒否された代替アクションと認定アクションの間のチェックポイントの選択をテストします。(iii) プレフィックス条件付きpass@Kは、機能的に正しい生成のサポートを評価し、テストが受け入れる任意の継続にクレジットを与えます。10組の公開ベースモデルとポストトレーニングモデルにわたって、3つのスクリーニングすべてが、ポストトレーニングされたSWE-bench Verified pass@1と密接に一致してコホートをランク付けします。私たちの手法は、ベンチマークの成功した軌跡とその検証者のみを必要とするため、将来のエージェント的コーディングベンチマークをベースモデル評価に変換するために適用できます。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, econ.GN" data-title="真値なしでの妥当性評価：言語モデル評価に示唆を与える選好経済学" data-timestamp="1791395467000" data-url="https://arxiv.org/abs/2610.10506v1">
+  <p class="meta">arXiv cs.AI　Wed, 07 Oct 2026 17:51:07 Z</p>
+  <h2 class="article-title">真値なしでの妥当性評価：言語モデル評価に示唆を与える選好経済学</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">econ.GN</span></div>
+  <div class="summary">本論文は、言語モデルの評価において、特に正解が存在しない質問に対するモデルの応答の妥当性を評価するための新たな視点を提供します。<br><br>政策の価値、ユーザーの選択肢、競合する価値の重み付けなど、多くの質問には唯一の正解がありません。選好経済学は、長年にわたりこの問題に取り組んできました。真の価値を知ることなく、妥当性（内容妥当性、構成概念妥当性、基準関連妥当性）、信頼性、インセンティブ適合性、結果性といった概念の枠組みを通じて、調査回答を評価してきました。本研究では、この枠組みが言語モデルの評価にも一般的に適用可能であると主張し、各概念がLLM評価において何を意味するかを解説します。<br><br>このアプローチを実証するため、6つのLLMに適用された、水質に関する選好経済学的な評価調査（Vossler et al. 2023）のデータを使用しました。この経済学的な応用において、妥当性テストは経済理論からの予測として現れます。例えば、需要曲線は右下がりであるべきであり、支払意思額は財の範囲や所得に応答すべきです。これらのテストはモデルを明確に分離しました。2つの古いモデルは、世帯所得75,000ドルのレベルで最も基本的なテストに失敗しましたが、最新の2つのモデルは、スコアリング可能な理論的妥当性のすべてのテストに合格しました。ただし、収束的妥当性においては両モデルで差異が見られました。<br><br>妥当性テストに合格することは、モデルの回答が一貫していることを示しますが、それが正しいことを保証するものではありません。この研究は、真の正解がない状況下でも、モデルの応答の質を評価するための経済学的な手法の有効性を示しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Tan Yu, Alexander Bukharin, Khushi Bhardwaj, Jennifer Williams, Zirui Liu, Jonathan Lingjie Li, Soumye Singhal, Joseph Jennings<br>
-        分類：cs.AI, cs.SE<br>
+        著者：Daniel Robert Kling Alexander, Catherine Louise Kling<br>
+        分類：cs.AI, cs.CL, econ.GN<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.10506v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10506v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="仮説駆動型共進化によるロボットの能動的継続学習システムEmbodiedRSI" data-timestamp="1791395282000" data-url="https://arxiv.org/abs/2610.10498v1">
+  <p class="meta">arXiv cs.AI　Wed, 07 Oct 2026 17:48:02 Z</p>
+  <h2 class="article-title">仮説駆動型共進化によるロボットの能動的継続学習システムEmbodiedRSI</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、ロボットの視覚運動制御における性能低下に対処するための新しいシステム「EmbodiedRSI」を提案するものです。<br><br>既存のロボット学習手法では、オブジェクトの位置やタスク指示の変化に対応するために追加のデータ収集が必要となり、コストがかかるという課題がありました。EmbodiedRSIは、自律的に探索すべき場所を決定し、その物理的相互作用をコードとスキルの改善に繋げる、自己進化型のエージェントハーネスです。<br><br>このシステムは、Fast-Slowデュアルシステムアーキテクチャを採用し、仮説グラフ内で競合するコードとスキルの仮説を維持します。情報価値実験選択により、これらの仮説を区別するための物理実験が選択され、その結果がコードとスキルの共進化を導きます。さらに、Slow Systemは階層的メモリを構築し、Reward-Grounded Memory Learningは、後続のFast Systemの改善における価値に基づいて効果的なメモリを選択します。これにより、ロボットの学習効率と適応能力が大幅に向上することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Python Song, Zhixuan Liang, Kelsey Fu, Mengdi Wang, Junfeng Yang, Shilong Liu<br>
+        分類：cs.AI<br>
         分野：cs.AI<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.10478v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10478v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.10498v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10498v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.MA" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.MA, cs.AI" data-title="研究者社会：自律的リサーチエージェント群のための制度設計" data-timestamp="1791394245000" data-url="https://arxiv.org/abs/2610.10468v1">
-  <p class="meta">arXiv cs.AI　Wed, 07 Oct 2026 17:30:45 Z</p>
-  <h2 class="article-title">研究者社会：自律的リサーチエージェント群のための制度設計</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.MA</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、数千規模の自律的リサーチエージェント群が共通の計算資源を共有する環境において、効果的な組織化と制度設計の必要性を論じます。<br><br>既存システムは単一プロジェクト単位か、群衆のまま組織化されていませんが、著者は、設計者が意図的に制度を提供しない場合でも、エージェント群は自律的に組織化されると主張します。そこで、多エージェントシステムの知見を活用し、「研究者社会」という、明確な制度の下で永続的に存在するエージェント群を提案します。<br><br>この社会は、プリンシパルインベスティゲーターが提案依頼、独立審査、助成金を通じて計算資源を競合し、人間が任命した「市長」が資源配分を行うという6つの原則に基づいています。市長はタスクを割り当てません。<br><br>1万人の研究者からなる社会で言語モデルの事前学習改善を目的とした実験では、ある研究室が約30%の計算資源削減で同等の品質を達成する方法を報告しました。この結果はまだ他の研究室間で合意されていません。本論文は、エージェントコミュニティに向けた6つの未解決問題も提示しています。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Robotics" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="差分可能で制御を考慮したスケーラブルな建築エネルギーモデリングエミュレータNeuralBES" data-timestamp="1791394040000" data-url="https://arxiv.org/abs/2610.10459v1">
+  <p class="meta">arXiv cs.LG　Wed, 07 Oct 2026 17:27:20 Z</p>
+  <h2 class="article-title">差分可能で制御を考慮したスケーラブルな建築エネルギーモデリングエミュレータNeuralBES</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模な建築物群のエネルギー消費をスケーラブルにモデリングするための新しいエミュレータ「NeuralBES」を提案します。<br><br>従来の建築エネルギーモデリングでは、高精度な物理シミュレータは計算コストが高く、データ駆動型モデルは物理的構造を無視するため信頼性に欠けるというトレードオフがありました。NeuralBESは、抵抗-容量（RC）ベースの熱モデルを、共有ニューラルエンコーダでパラメータ化することにより、このトレードオフを解消します。静的な建築メタデータ（床面積、築年数、HVACタイプなど）は、物理的に制約された容量、コンダクタンス、および機器係数にマッピングされ、これらがスカラー線形再帰の係数となります。<br><br>このモデルは、複数の気候帯にわたるResStockデータセットで訓練され、単一の訓練済みエンコーダ内で異種建築様式、築年数、気候帯を扱います。その結果、NeuralBESは物理的に妥当でありながら、高い精度を達成し、従来のモデルと比較して計算効率も大幅に向上します。これは、需要側柔軟性の向上に不可欠な、信頼性の高い建築エネルギー予測に貢献します。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
+        配信元：arXiv cs.LG<br>
         サイト：arXiv<br>
-        著者：Ali Asaria, Deep Gandhi, Tony Salomone<br>
-        分類：cs.MA, cs.AI<br>
-        分野：cs.MA<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.10468v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10468v1</a>
+        著者：Ting-Yu Dai, Takuya Kurihana, Wing Yee Au, Hon Yung Wong<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.10459v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10459v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI" data-title="FoldBack：長期間の衣類折り畳みタスクにおける自己修正型マスク生成ポリシー" data-timestamp="1791394112000" data-url="https://arxiv.org/abs/2610.10462v1">
-  <p class="meta">arXiv cs.AI　Wed, 07 Oct 2026 17:28:32 Z</p>
-  <h2 class="article-title">FoldBack：長期間の衣類折り畳みタスクにおける自己修正型マスク生成ポリシー</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、長期間にわたる衣類折り畳みタスクにおいて、失敗からの回復を可能にする「FoldBack」という自己修正型マスク生成ポリシーを提案します。<br><br>従来の長軌跡ポリシーでは、衣類が意図した状態に達していなくても、掴み損ねや滑りが発生した場合に処理を続行してしまう問題がありました。FoldBackは、この問題に対処するため、推論時に「いつ洗練・検証するか」「どのようにロールバックするか」「どこでどのように再試行するか」という3つの意思決定メカニズムを組み込んでいます。<br><br>具体的には、FoldBackは洗練と掴み検証をピック＆プレイスイベントと連携させ、成功した掴みは維持しつつロボットを再試行可能な掴み前の構成に戻します。そして、失敗したセグメントと一部の将来のアクションを選択的に再生成しますが、過去の失敗した掴み位置は避けます。これにより、失敗したインタラクションを検出し、実行を継続する前に取り消し、修復することが可能になります。<br><br>FoldBackは、回復デモンストレーションやベースポリシーの再学習なしに、これらの意思決定を統合する初の編集可能なフル軌跡ポリシーです。6つのカテゴリにわたる33着の実際の衣類を用いた実験では、FoldBackは75.2%の最終折り畳み成功率と0.837の最終マスクIoUを達成し、先行する最良のベースラインの45.7%と0.689を大幅に上回りました。これは、ロボットによる複雑な操作タスクにおける汎用性とロバスト性を向上させる重要な進歩です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Lipeng Zhuang, Shiyu Fan, Yingdong Ru, Zhuo He, Florent P. Audonnet, Paul Henderson, Gerardo Aragon Camarasa<br>
-        分類：cs.RO, cs.AI<br>
-        分野：cs.RO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.10462v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10462v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="大規模言語モデルにおける幻覚後の推論行動評価ベンチマーク「PHRBench」" data-timestamp="1791393923000" data-url="https://arxiv.org/abs/2610.10455v1">
-  <p class="meta">arXiv cs.CL　Wed, 07 Oct 2026 17:25:23 Z</p>
-  <h2 class="article-title">大規模言語モデルにおける幻覚後の推論行動評価ベンチマーク「PHRBench」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）システムにおいて、幻覚（ハルシネーション）によって生成された情報が後続の推論の文脈に取り込まれ、最終的な結果に影響を与える問題に対処します。<br><br>既存の研究では、幻覚後の推論（PHR）が最終結果や推論ダイナミクスに与える影響が主に分析されてきましたが、応答レベルで幻覚された前提をモデルがどのように解決するかについては十分に理解されていませんでした。本研究では、4つのドメインと18のLLMを対象とした、行動構造化されたPHRのための制御されたベンチマーク「PHRBench」を導入します。<br><br>PHRBenchは、「幻覚コンプライアンス」「幻覚回避」「ヒューリスティック修正」を通じて、最終的な正しさとは独立に各推論軌跡を特徴づけ、洞察力のある軌跡を正しい答えに最終的に到達する成功した修正と定義します。4820の制御されたインスタンスを分析した結果、成功した回復は比較的まれであり、推論軌跡に沿ったより頻繁な信念更新と関連していることがわかりました。さらに、幻覚プロンプトの特性が成功した回復の予測信号を大幅に含んでおり、軽量な予測器が0.847のAUROCを達成することも発見しました。これらの発見は、LLMが誤った文脈をどのように解決し、いつ成功した回復が起こりやすいかを特徴づける、PHRの行動的視点を提供します。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ハーネスとモデルの共進化による終端エージェント訓練のためのデータレシピCoTrace" data-timestamp="1791392819000" data-url="https://arxiv.org/abs/2610.10426v1">
+  <p class="meta">arXiv cs.CL　Wed, 07 Oct 2026 17:06:59 Z</p>
+  <h2 class="article-title">ハーネスとモデルの共進化による終端エージェント訓練のためのデータレシピCoTrace</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、終端エージェントの能力向上に不可欠な、プロンプトのフォーマット、ツールのバインディング、エラー回復を担うランタイムハーネスとモデルの協調的な進化を促進する新しいフレームワークとデータレシピ「CoTrace」を提案します。<br><br>既存のハーネスとモデルの共進化アプローチでは、ハーネス探索中に生成された軌跡を単純なリプレイバッファとして扱っていましたが、本研究では、軌跡の価値が生成されたハーネスに依存するという点を重視しています。CoTraceは、軌跡ルーティング、プロビナンスマッチング、カリキュラム更新を明示的に管理するハーネス認識型データレシピです。<br><br>このフレームワークでは、交互の共進化により、ハーネス探索とポリシー訓練が分離されます。CoTraceの下では、繰り返し発生する実行失敗がハーネス合成を導き、ポリシー訓練は、教師ありファインチューニング（SFT）または強化学習（RL）のためのオンラインインタラクションにマッチングされた検証済みロールアウトに厳密に条件付けられます。これにより、計算コストを大幅に削減しながら、モデルの性能を安定的に向上させることが示されました。また、訓練と評価時のランタイムの一貫性を維持することが、評価時の手続き的実行の失敗を防ぐ上で重要であることが示唆されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Linghao Meng, Feng He, Xuan Yang, Junyuan Mao, Pinze Ren, Deqing Mu, Hesen Yang, Qiankun Li<br>
-        分類：cs.CL, cs.AI<br>
+        著者：Jixuan Chen, Jiaxin Zhang, Qinyuan Ye, Yada Pruksachatkun, Haoxiang Zhang, Jingming Zhuo, Yifan Zhang, Yutong Dai<br>
+        分類：cs.CL<br>
         分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.10455v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10455v1</a>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.10426v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10426v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="RunningTab: 環境側タブによる直接的なワークスペース操作" data-timestamp="1791393416000" data-url="https://arxiv.org/abs/2610.10444v1">
-  <p class="meta">arXiv cs.CL　Wed, 07 Oct 2026 17:16:56 Z</p>
-  <h2 class="article-title">RunningTab: 環境側タブによる直接的なワークスペース操作</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、AIエージェントがファイル群を直接操作して成果物を生成する「直接ワークスペースインタラクション（DWI）」における課題を解決するフレームワーク「RunningTab」を提案します。<br><br>DWIでは、エージェントがファイルにアクセスできても、タスクの要求、読み込み済み、未読ファイルなどの進捗管理が難しく、コンテキストウィンドウの制約から情報が失われがちでした。RunningTabは、タスクごとに環境側で進捗を記録する「タブ」を導入し、エージェントの要求と環境の記録を同期させます。<br><br>エージェントは要求をタブに追加し、環境は読み込んだファイルの出所情報と共に記録し、未読ファイルは候補として記録します。これにより、エージェントは要求とそれに合致する内容を照合し、解決または理由を付けて保留できます。未解決の要求があるまま終了しようとすると、警告が表示されます。<br><br>3つのベンチマークと3つのLLMを用いた検証では、RunningTabは単純なDWIやモデル内で記録を管理する手法よりも一貫して優れた性能を示し、成果物に必要な情報を含めることができました。これは、知識集約的な作業におけるAIエージェントの効率と信頼性を向上させる可能性を示唆しています。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="大規模言語モデルにおける意図的な虚偽応答時の推論トークン数の変動" data-timestamp="1791391991000" data-url="https://arxiv.org/abs/2610.10405v1">
+  <p class="meta">arXiv cs.CL　Wed, 07 Oct 2026 16:53:11 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける意図的な虚偽応答時の推論トークン数の変動</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論過程を監視する手法として、生成される推論トークン数に着目する研究です。<br><br>従来の推論過程の監視は、その内容の可読性や忠実性に依存していましたが、LLMの応答が不誠実になるにつれて、これらの監視手法は限界を迎える可能性があります。本研究では、推論過程の内容にアクセスできない状況でも利用可能な、より低帯域幅の信号として、生成される推論トークンの数に着目しました。<br><br>3つの推論能力を持つLLMに対し、分析的、記述的、規範的な推論、および道徳的・非道徳的なドメインを含む210の多肢選択問題について、真実、虚偽、または真実に関係なく応答するよう指示を与えて実験を行いました。その結果、真実を指向した応答では、虚偽または真実無関心な応答と比較して、生成される推論トークン数が少なくなることが示されました。<br><br>これらの発見は、明示的に指示された虚偽応答ポリシーが、テスト時の推論トークン使用量において堅牢なグループレベルの違いを生み出すことを示しています。現時点では、推論トークン数の増加が自発的な欺瞞や一般的な不整合の検出器として確立されたわけではありませんが、生の推論トレースが利用できない、または信頼できない場合に、虚偽応答と真実応答を区別するためのシンプルで内容に依存しない候補信号として機能する可能性が示唆されました。今後の研究では、インスタンスレベルでの検出率、分布外一般化、学習された欺瞞ポリシー、隠された目的、および敵対的圧力下での堅牢性をテストする必要があります。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Jinheon Baek, Soyeong Jeong, Yumin Choi, Dongsu Han, Sung Ju Hwang<br>
+        著者：Maverick Morales, Tomáš Dominik, Vermut Gao, Katrina Shirey, Paulius Rimkevičius, Aaron Schurger, Uri Maoz<br>
         分類：cs.AI, cs.CL<br>
         分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.10444v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10444v1</a>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.10405v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10405v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL, stat.ML" data-title="期待デコーディングラウンドを直接最小化する並列投機的ドラフトモデルの学習" data-timestamp="1791392189000" data-url="https://arxiv.org/abs/2610.10411v1">
-  <p class="meta">arXiv cs.CL　Wed, 07 Oct 2026 16:56:29 Z</p>
-  <h2 class="article-title">期待デコーディングラウンドを直接最小化する並列投機的ドラフトモデルの学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、低コストのドラフトモデルを使用してトークンを提案し、フルサイズのターゲットモデルがそれらを並列検証することで、大規模言語モデル（LLM）の推論を高速化する投機的デコーディングに焦点を当てています。<br><br>並列および半自己回帰（semi-AR）ドラフターは、単一のフォワードパスでブロック全体を提案することでドラフト効率を向上させますが、その学習には新たな課題があります。各位置のドラフト分布はデコーディングラウンドの開始位置に依存し、ラウンドの開始位置は前のラウンドで受け入れられたトークン数に依存します。既存の学習目的は、このラウンド間の結合を無視するブロック局所的な代理モデルに依存しており、グローバルなデコーディング効率を直接最適化していません。<br><br>本研究では、投機的デコーディングをマルコフ報酬プロセスとして表現することにより、これらのドラフターの学習と評価のための理論的枠組みを開発しました。この定式化により、「期待デコーディングラウンド（EDR）」目的関数が得られます。これは、局所的な拒否コストを状態占有率で重み付けし、デコーディングラウンドの期待値に正確に等しくなります。先行する代理目的とは異なり、EDRは補助的なハイパーパラメータを導入しません。さらに、ターゲットモデルのロールアウトからバイアスのない確率的最適化をサポートする正確な時間差勾配を導出しました。同じフレームワークは、ラウンド数を正確にオフライン評価するための評価器も提供し、共有ターゲットロールアウト上でペア化されたドラフター比較を、投機的デコーディングを実行せずに可能にします。EDRで2つの最先端ドラフター（DSparkとDFly）をファインチューニングした結果、平均受け入れ長が一貫して改善され、数学的推論、コード生成、チャットを網羅する9つのベンチマーク全体で既存の学習目的を上回りました。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルを用いたエストニア語の文書レベルテキスト単純化" data-timestamp="1791391106000" data-url="https://arxiv.org/abs/2610.10378v1">
+  <p class="meta">arXiv cs.CL　Wed, 07 Oct 2026 16:38:26 Z</p>
+  <h2 class="article-title">大規模言語モデルを用いたエストニア語の文書レベルテキスト単純化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本研究は、エストニア語における文書レベルのテキスト単純化に焦点を当て、最先端の大規模言語モデル（LLM）の評価を行います。<br><br>文書レベルのテキスト単純化は、文脈の一貫性、照応解析、段落間の整合性を考慮した、文を超えた変換を伴います。高リソース言語では進展が見られるものの、形態論的に豊かで低リソース言語であるエストニア語における文書レベルの単純化は、ほとんど探求されていませんでした。本研究では、5つの多言語LLMに対し、シングルパス生成、モジュラーエージェントを用いたパイプライン、ガイドライン拡張パイプラインの3つのプロンプト戦略を適用し、その有効性を評価しました。<br><br>評価フレームワークは、読みやすさ、意味の保持、文脈の一貫性を評価する自動評価指標と、構造化された手動アノテーションプロトコルを統合しました。評価の結果、Gemini-2.0とLLaMA-3.3は、ネイティブに近い流暢さと強力な意味の保持を持つ出力を生成しましたが、他のモデルは文法的および意味的な限界を示しました。<br><br>本研究は、文書レベルの文脈の一貫性に関する新しい評価指標、証拠に基づいたプロンプト戦略、および再現性のための公開リソースを提供します。これは、低リソース言語におけるテキスト単純化の分野に貢献するものです。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Yunxiao Zhao, Changxiao Cai<br>
-        分類：cs.LG, cs.AI, cs.CL, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.10411v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10411v1</a>
+        著者：Meeri-Ly Muru, Eduard Barbu<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.10378v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.10378v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
