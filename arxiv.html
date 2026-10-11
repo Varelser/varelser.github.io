@@ -1476,105 +1476,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, math.DS, stat.ML" data-title="カーネル法を用いたKoopman埋め込み学習のための二重最適化" data-timestamp="1791480623000" data-url="https://arxiv.org/abs/2610.12370v1">
-  <p class="meta">arXiv stat.ML　Thu, 08 Oct 2026 17:30:23 Z</p>
-  <h2 class="article-title">カーネル法を用いたKoopman埋め込み学習のための二重最適化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">math.DS</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、非線形力学系を線形フレームワークで解析するKoopman作用素理論に基づき、データ駆動型モデリングに貢献する手法を提案しています。<br><br>従来のEDMDなどの手法では、辞書を事前に指定する必要がありましたが、本研究ではカーネル法を用いた辞書学習（EDMD-kDL）を導入し、データから直接、有限次元のKoopman埋め込みを学習することを可能にしました。これは、コロケーション法と二重最適化のアイデアを組み合わせ、カーネル辞書とKoopman近似を同時に学習するものです。<br><br>提案手法は、人工ニューラルネットワーク（ANN）ベースの手法と比較して、同等以上の性能を示しました。特に、大規模データセットへのスケーラビリティが設計上確保されており、カーネル行列のサイズが訓練データセットのサイズではなく、コロケーション点の数に依存する点が特徴です。これにより、実用的なデータ駆動型モデリングへの応用が期待されます。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV" data-title="LeWAM: JEPA世界行動モデルと拡散ステアリングベースMPC" data-timestamp="1791481563000" data-url="https://arxiv.org/abs/2610.12407v1">
+  <p class="meta">arXiv cs.AI　Thu, 08 Oct 2026 17:46:03 Z</p>
+  <h2 class="article-title">LeWAM: JEPA世界行動モデルと拡散ステアリングベースMPC</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、再構成ベースの表現から生じるノイズや冗長な情報が下流予測を複雑にするという課題に対処するため、LeWAMという新しい双方向トランスフォーマーを提案しています。<br><br>LeWAMは、デコーダーフリーのJEPA潜在空間上で、順方向・逆方向・逆動力学および方策予測をエンドツーエンドで学習します。これにより、ロボットや物体の状態をより良く読み取れるようになり、視覚的な妨害要素を無視する能力も向上します。<br><br>閉ループ評価では、LeWAMは同サイズのフローマッチング方策と同等の性能を示しつつ、世界モデルとしての機能も提供します。また、MPC（モデル予測制御）において、拡散モデルのノイズ空間での計画が性能向上に寄与することが示唆されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
+        配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Joel-Pascal Ntwali N&#39;konzi, Feliks Nüske, Stefan Klus<br>
-        分類：cs.LG, math.DS, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.12370v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12370v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="蒸留すべきスキルは何か？ モデルとスキルの協調進化のためのコンパクトなスキルバンク選択手法" data-timestamp="1791480473000" data-url="https://arxiv.org/abs/2610.12367v1">
-  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:27:53 Z</p>
-  <h2 class="article-title">蒸留すべきスキルは何か？ モデルとスキルの協調進化のためのコンパクトなスキルバンク選択手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の性能向上に寄与する「スキル」を、推論時に効率的に活用するための新しい手法「SGUID」を提案しています。スキルとは、特定のタスクを実行するための手順的なガイダンスであり、既存の研究では意味的な関連性に基づいてスキルバンクから取得されてきました。<br><br>しかし、従来のスキル取得方法では、実際にモデルの学習に有効な信号を提供するスキルは少数であることが示されました。SGUIDは、学習中に一貫して有効な学習信号を提供するスキルのみを選択し、それらを蒸留に用いることで、よりコンパクトで効果的なスキルバンクを構築します。これにより、モデルの性能を維持または向上させつつ、必要なスキルの数を大幅に削減することが可能になります。<br><br>実験では、複数のLLMファミリーにおいて、少数の選択されたスキルを用いた蒸留が、フルバンクを用いた蒸留と同等以上の性能を示すことが確認されました。さらに、SGUIDはモデルとスキルの安定した協調進化をサポートします。蒸留ラウンド後に更新されたモデルの実行結果から新しい候補スキルバンクをキュレーションし、次に取り込むべきスキルを選択するループを回すことで、継続的な性能向上が実現されます。このスキル選択プロセスは、無差別にスキルを追加した場合に性能が低下するリスクを防ぐ上で不可欠であることが示されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Yuhan Liu, Xiyao Ma, Zhongkai Sun, Xu Han, Chengyuan Ma, Benjamin Z. Yao, Chenlei Guo<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
+        著者：Shashank Hegde, Alexander Popov, Elie Aljalbout, Nikolai Smolyanskiy<br>
+        分類：cs.RO, cs.AI, cs.CV<br>
+        分野：cs.RO<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.12367v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12367v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.12407v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12407v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.CY" data-title="法的推論における引用と参照の乖離：大規模言語モデルの忠実性監査" data-timestamp="1791480377000" data-url="https://arxiv.org/abs/2610.12361v1">
-  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:26:17 Z</p>
-  <h2 class="article-title">法的推論における引用と参照の乖離：大規模言語モデルの忠実性監査</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が法的決定を正当化する際に、判決の根拠として法律や判例を引用するものの、実際にその根拠に依拠しているか否かを検証する手法を提案しています。<br><br>具体的には、判例の事実関係を固定したまま、モデルが引用する法的根拠を無関係なものに置き換えた場合に、モデルの判断がどのように変化するかを追跡調査しました。7つのオープンソースモデルと4つのベンチマークデータセットを用いて実験を行った結果、モデルは指示された法的根拠を引用する能力は高いものの、その根拠が変更された場合に判断が変わる一貫性は低いことが明らかになりました。<br><br>この結果は、モデルの規模や、法律推論に特化したモデルであっても同様の傾向が見られることを示しています。さらに、敵対的な指示に対するモデルの応答性は、法的根拠の変更に対する感度よりも高いことが判明しました。これは、LLMが生成する法的説明が、コンプライアンスや監査の証拠として利用される際の信頼性に疑問を投げかけるものです。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="進化する視覚ネイティブスキルによるVLMエージェントの強化：ViSkill" data-timestamp="1791481459000" data-url="https://arxiv.org/abs/2610.12403v1">
+  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:44:19 Z</p>
+  <h2 class="article-title">進化する視覚ネイティブスキルによるVLMエージェントの強化：ViSkill</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、スキル拡張エージェントのサンプル効率を向上させるために、成功した軌跡を再利用可能な戦略に蒸留する既存のアプローチが、テキスト中心であり、空間的レイアウトや行動・状態の対応関係を言語に線形化することで重要な幾何学的構造を失うという課題を解決します。<br><br>提案手法「ViSkill」は、成功した相互作用をVLMエージェントが直接アクセスできる複合的な視覚スキルカードとしてエンコードする、視覚ネイティブなスキル学習フレームワークです。取得されたスキルは推論と報酬形成の両方をガイドし、成功した軌跡はスキルライブラリに蒸留され、スキル蓄積とポリシー改善が互いを強化する閉じたフィードバックループを形成します。<br><br>オプションのコールドスタートメカニズムは、初期段階の学習をさらに加速させます。Sokoban、FrozenLake、PrimitiveSkillで評価した結果、ViSkillは全体で0.89の成功率を達成し、コールドスタート初期化では0.91に上昇しました。これは評価されたすべてのプロプライエタリおよびオープンソースベースラインを上回り、標準的なPPOよりも速く収束しました。<br><br>本研究は、視覚情報を活用したスキル学習とエージェントのポリシー最適化を統合することで、エージェントの学習効率と性能を大幅に向上させる可能性を示唆しています。コードは公開されており、今後の研究や実務への応用が期待されます。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Saisab Sadhu, Shreeyans Arora, Pratinav Seth<br>
-        分類：cs.AI, cs.CL, cs.CY<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.12361v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12361v1</a>
+        著者：Hongxing Li, Dingming Li, Yixin Li, Yong Du, Wenqi Zhang, Weiming Lu, Jun Xiao, Yueting Zhuang<br>
+        分類：cs.CV, cs.CL<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.12403v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12403v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL" data-title="知識の衝突下におけるLLMエージェントの認識的謙虚さの評価" data-timestamp="1791480306000" data-url="https://arxiv.org/abs/2610.12360v1">
-  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:25:06 Z</p>
-  <h2 class="article-title">知識の衝突下におけるLLMエージェントの認識的謙虚さの評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）エージェントが、自身の事前知識と外部から得られた情報との間に矛盾が生じた場合に、どのように不確実性を認識し、対応するかという「認識的謙虚さ（epistemic humility）」を評価する手法を提案しています。<br><br>従来の評価がタスクの成功率に偏っていたのに対し、本研究では、エージェントが不確実性を特定し、解決し、エスカレートする能力を「ISE」という3つの次元で測定します。知識の衝突は、モデルの内部知識と外部情報が矛盾する場合や、複数の情報源が互いに矛盾する場合に発生します。これらを制御された状況と、実際のマルチステップ実行中に自然に発生する状況の両方で評価しました。<br><br>実験の結果、タスクの精度が高いエージェントほど認識的謙虚さが高いとは限らないことが示されました。一部のエージェントは実行中に矛盾を検出しても、最終的な誤った回答において不確実性を表明しないことがありました。また、エージェントは実行の初期段階で矛盾を検出しても、後続のステップでそれを維持または解決できない場合が多いことが明らかになりました。モデルレベルの介入は認識的謙虚さを向上させる可能性がありますが、タスク精度とのトレードオフが生じる場合があることも示唆されています。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="SpaceCast-Bench: Vision-Languageモデルにおける予測的空間推論の評価" data-timestamp="1791481457000" data-url="https://arxiv.org/abs/2610.12402v1">
+  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:44:17 Z</p>
+  <h2 class="article-title">SpaceCast-Bench: Vision-Languageモデルにおける予測的空間推論の評価</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、既存の空間推論ベンチマークが主に視覚的知覚を評価するのに対し、実際の知能には予測的空間推論、すなわちシーンの構築、介入による変化の予測、未観測結果の推論が必要であると指摘しています。<br><br>そこで、この能力を直接的かつ診断的に評価する初のベンチマーク「SpaceCast-Bench」を提案します。このベンチマークは、観察・変換・推論のフレームワークに基づき、182の現実世界のシーンから3,862の質問を生成し、静的知覚、局所的予測、大域的予測の3レベルで16種類のタスクを網羅しています。<br><br>21のモデルを評価した結果、最良のモデルでも人間性能に大きく及ばないことが明らかになりました。また、橋渡しビューが分散した観測の統合に重要であり、明示的な3D証拠がモデルにより確実に利益をもたらすことが示されました。プログラム生成データによるファインチューニングは、Qwen3-VL-4Bの性能を大幅に向上させ、複数のドメイン外ベンチマークでも改善が見られました。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Kaiser Sun, Bernal Jimenez Gutierrez, Hongjun Liu, Jingyu Zhang, Jie Gao, Mark Dredze, Daniel Khashabi<br>
-        分類：cs.AI, cs.CL<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.12360v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12360v1</a>
+        著者：Hongxing Li, Jinyue Su, Dingming Li, Wenqi Zhang, Weiming Lu, Jun Xiao, Yueting Zhuang, Yongliang Shen<br>
+        分類：cs.CV, cs.CL<br>
+        分野：cs.CV<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.12402v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12402v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Machine Learning" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="INLA-SPDEアプローチによる対数ガウスCox過程モデルを用いたスケーラブルな時空間ベイズ最適化" data-timestamp="1791475297000" data-url="https://arxiv.org/abs/2610.12213v1">
-  <p class="meta">arXiv stat.ML　Thu, 08 Oct 2026 16:01:37 Z</p>
-  <h2 class="article-title">INLA-SPDEアプローチによる対数ガウスCox過程モデルを用いたスケーラブルな時空間ベイズ最適化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、高価なブラックボックス目的関数を効率的に最適化するベイズ最適化（BO）の分野において、特に時空間データにおけるスケーラビリティの問題に対処する新しいフレームワークISBOを提案しています。<br><br>ISBOは、対数強度を対数ガウスCox過程（LGCP）でモデル化し、統合ネストラプラス近似および確率偏微分方程式（INLA-SPDE）アプローチを通じて推論を行います。これにより、メッシュ上のマテーン場がスパースなガウスマルコフ確率場を生成し、INLAが逐次最適化全体で高速かつ正確な事後推論を提供します。<br><br>実験の結果、ISBOは合成データおよび実世界の時空間データセットにおいて、高強度領域と潜在強度のピークを最小限の評価回数で安定して特定できることが示されました。また、時間変化する上限信頼度獲得関数とペナルティ複雑性事前分布により、再訪の回避と早期ラウンドの正則化が実現されています。これにより、点過程データを扱うBOにおいて、ISBOは実用的な選択肢となります。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Robotics" data-field="cs.LG" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.LG, cs.CL" data-title="LLMガイドによるブロック単位特徴量エンジニアリング：実行可能プログラム検索を用いた長文からの予測特徴量生成" data-timestamp="1791481151000" data-url="https://arxiv.org/abs/2610.12390v1">
+  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:39:11 Z</p>
+  <h2 class="article-title">LLMガイドによるブロック単位特徴量エンジニアリング：実行可能プログラム検索を用いた長文からの予測特徴量生成</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、産業リスク管理システムにおいて、構造化データモデルの予測効率と、非構造化長文に埋め込まれた情報抽出の課題に取り組んでいます。手動での特徴量エンジニアリングは労力がかかり、大規模言語モデル（LLM）によるリアルタイム処理は実用上の要件を満たせない場合があります。<br><br>この課題に対処するため、LLM-BlockFEというオフライン特徴量構築フレームワークを提案します。これは、長文をLLMの呼び出しなしで実行可能な特徴量プログラムに変換し、オンライン推論時のLLM依存を回避します。特徴量プログラムは、不変のコードブロックを段階的に追加し、下流モデルで候補特徴量を評価することで構築されます。<br><br>従来の貪欲探索の局所最適解への陥りやすさを克服するため、ブロックレベルのロールバック機構と、複数の独立した探索軌道を交互に実行する手法を導入しています。これにより、探索の冗長性を削減します。最終的に生成されたプログラムは固定され、下流予測モデルのための構造化特徴量抽出に展開されます。複数のデータセットでの評価では、既存のベースラインを上回るAUC改善を達成し、実際の金融リスク管理アプリケーションでの展開後モニタリングでも、手動設計戦略を上回るKS改善が示されています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Kaichuang Yang, Håvard Rue, Jakob Zeitler<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.12213v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12213v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="高価なシミュレータのベイズ推論における勾配情報の活用" data-timestamp="1791471173000" data-url="https://arxiv.org/abs/2610.12076v1">
-  <p class="meta">arXiv stat.ML　Thu, 08 Oct 2026 14:52:53 Z</p>
-  <h2 class="article-title">高価なシミュレータのベイズ推論における勾配情報の活用</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、科学技術分野で広く用いられる微分方程式に基づくシミュレータを用いたベイズ推論において、計算コストが高いという課題に取り組んでいます。特に、シミュレータの出力に関する勾配情報が利用可能であるにもかかわらず、これまで十分に活用されてこなかった点に着目しています。<br><br>提案手法では、ガウス過程サロゲートモデルを用いたベイズ最適化ベースのアクティブラーニングアプローチに勾配情報を組み込むことで、限られたシミュレーション予算内での推論を加速します。これにより、特にパラメータ数が出力次元を超える場合に、逆モード微分を用いることで、推論効率の大幅な向上が見られました。<br><br>結果として、勾配情報を活用することで収束速度が有意に改善されることが示されました。逆モード微分では、追加の計算コストを考慮しても推論効率の向上が維持されました。一方、順モード微分では、計算コストが速度向上を上回る場合があることが示唆されました。これは、勾配情報が、特にパラメータ数が多い場合に、シミュレーションベース推論のサンプル効率を向上させる上で有効であることを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Šimon Soldát, Václav Šmídl<br>
-        分類：cs.LG, stat.ML<br>
+        著者：Ziming Dai, Dabiao Ma, Ziheng Guo, Jack Dong, Zimu Zhou<br>
+        分類：cs.LG, cs.CL<br>
         分野：cs.LG<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.12076v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12076v1</a>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.12390v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12390v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.CY, cs.LG" data-title="ストリーミング構造認識最適輸送によるLLMエージェント軌跡のリアルタイム監視と介入：OnTrack" data-timestamp="1791480728000" data-url="https://arxiv.org/abs/2610.12375v1">
+  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:32:08 Z</p>
+  <h2 class="article-title">ストリーミング構造認識最適輸送によるLLMエージェント軌跡のリアルタイム監視と介入：OnTrack</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、LLMエージェントが自律的に動作する際に発生するコストや安全性の問題、特に不可逆的なアクションによるリスクに対処するため、リアルタイムでの監視と介入を可能にする新しいメカニズムを提案します。<br><br>提案手法「OnTrack」は、エージェントのステップと依存関係を記録された成功した実行と比較することで、ミリ秒単位で監視を行い、ユーザーに警告したりエージェントをブロックしたりするストリーミング監視メカニズムです。参照アクセス（履歴実行とツールスキーマ）、中間アクセス（ツールスキーマのみ）、事前知識なし（生成されたステップログのみ）の3つのレジームでこの問題を研究します。<br><br>データアクセスが減少するにつれて、OnTrackの監視能力の期待値は低下しますが、計画違反の検出からループ、停止、ツールの繰り返し呼び出しの特定まで対応可能です。SWE-bench軌跡を用いた評価では、最初の8ステップに基づいて、失敗した軌跡を成功した軌跡よりも（+0.057 AUROC）うまくランク付けしました。<br><br>さらに、中止ポリシーを適用することで、失敗した実行に費やされる計算リソースを約18%節約でき、中断された実行の83%が実際に失敗に向かっていたことが確認されました（6件中5件の中止が正しかった）。この研究は、LLMエージェントの信頼性と安全性を向上させるための実用的なソリューションを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Babak Barazandeh, Connor Swanson, Chinmay Kulkarni, Nikhil Mungel<br>
+        分類：cs.AI, cs.CL, cs.CY, cs.LG<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.12375v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12375v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG" data-title="長尾分布下における教師ありファインチューニングの事前障壁克服" data-timestamp="1791479805000" data-url="https://arxiv.org/abs/2610.12345v1">
+  <p class="meta">arXiv cs.CL　Thu, 08 Oct 2026 17:16:45 Z</p>
+  <h2 class="article-title">長尾分布下における教師ありファインチューニングの事前障壁克服</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の教師ありファインチューニング（SFT）において、事前学習されたモデルが持つ概念間のサポートレベルのばらつき、特に頻度の低い概念（テール概念）に対するサポート不足という課題に対処することを目的としています。<br><br>提案手法では、「事前障壁（prior barrier）」という新たな概念を導入し、事前学習モデルが競合する概念に対してターゲット概念をどれだけ強くサポートしているかを定量化します。この事前障壁が長尾分布に従うことを観察し、頻度の高い概念（ヘッド概念）とテール概念ではSFTの開始点が異なり、テール概念はより高い事前障壁を克服するために追加の指示が必要であることを示します。<br><br>理論的分析に基づき、事前障壁とSFTで蓄積された証拠が予測性能を共同で決定する予測リスク限界を導出します。この事前障壁に依存した需要に着想を得て、参照から派生した概念を構築し、各指示が提供する区別可能な証拠を推定し、現在の選択で十分にカバーされていない概念に選択予算を適応的に割り当てる「PASS」という適応的SFT指示選択手法を提案します。<br><br>実験の結果、PASSは4つのバックボーン・予算設定において、7つの最先端の指示選択手法よりも一貫して優れた性能を示しました。アブレーション研究では、PASSの適応的割り当てが均一割り当てよりも一貫して改善されることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Haohui Wang, Jiahao Xu, Wangzhi Zhan, Tong Zeng, Dongqi Fu, Hong Li, Swastik Roy, Naren Ramakrishnan<br>
+        分類：cs.AI, cs.CL, cs.LG<br>
+        分野：cs.AI<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.12345v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.12345v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
