@@ -1342,6 +1342,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="グループを導くための自己学習：マルチパーティタスクにおけるLLMファシリテーションの自己学習" data-timestamp="1791785313000" data-url="https://arxiv.org/abs/2610.16231v1">
+  <p class="meta">arXiv cs.AI　Mon, 12 Oct 2026 06:08:33 Z</p>
+  <h2 class="article-title">グループを導くための自己学習：マルチパーティタスクにおけるLLMファシリテーションの自己学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）の活用に関する研究です。特に、複数の参加者が関わるタスクにおいて、LLMがどのようにファシリテーターとして機能し、グループダイナミクスを調整できるかに焦点を当てています。<br><br>従来のLLMファシリテーターは特定のタスクに特化してファインチューニングされることが多かったのに対し、本研究では、様々なタスクや多様なグループダイナミクスに適応できる汎用的なLLMベースのファシリテーション手法の開発を目指しています。そのために、GUIDE（Generalized Unified Intervention for Dynamic Exchanges）というフレームワークを提案し、客観的なタスク成果と、心理的安全性や知覚される摩擦といった主観的な指標の両方を評価します。<br><br>本研究では、LLMがオフラインで汎用的なファシリテーション戦略を自己学習し、リアルタイムの介入に活かせるかを検証します。まず、タスク固有の専門LLMファシリテーターによってガイドされたマルチパーティ人間の対話データを収集し、LLMが戦略的なプレイブックを学習し、人間のアノテーターと整合性の取れたLLMジャッジからのフィードバックを用いてそれを洗練させる自己学習手法を採用しました。これにより、3つのタスク固有の専門ファシリテーターを上回る単一の汎用ファシリテーターを開発しました。さらに、オンラインでの実証実験では、自己学習された汎用ファシリテーターが、ファシリテーターのパフォーマンスとグループの生産性を維持しつつ、発言の快適性を向上させ、人間関係の摩擦を軽減することが示されました。これは、LLMがタスク固有の人間のやり取りから、多様なグループ設定において汎用的な社会的ファシリテーションを学習できることを実証するものです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Ziyi Liu, Tzu-Sheng Kuo, Jiale Liu, Deqing Fu, Nithum Thain, Crystal Qian<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.16231v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.16231v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="ラベル中心の知識検索によるゼロショットテキスト分類" data-timestamp="1791781256000" data-url="https://arxiv.org/abs/2610.16182v1">
+  <p class="meta">arXiv cs.AI　Mon, 12 Oct 2026 05:00:56 Z</p>
+  <h2 class="article-title">ラベル中心の知識検索によるゼロショットテキスト分類</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、AI分野におけるゼロショットテキスト分類に関する研究です。<br><br>大規模言語モデル（LLM）は強力な知識と推論能力を持ちますが、推論コストと遅延が大きいため、大規模データラベリングへの応用が制限されています。本研究では、タスク固有のラベル付きデータや分類器のフィードバックなしに、意味的に明確なラベルとタスク説明を用いたゼロショットテキスト分類を扱います。提案手法「SLKR」（Semantic Label Knowledge Retrieval）は、オフラインでの知識構築と軽量なオンライン推論を分離する、ラベル中心の検索拡張生成フレームワークです。<br><br>オフラインでは、フラッグシップLLMがラベル定義、検索キーワード、混同しやすいラベルペア間の境界ルールを独立して生成し、再利用可能なラベル知識ストアを形成します。この構築は入力コーパスではなくラベル空間に対して行われるため、一度のフラッグシップコストを大規模推論に償却できます。オンラインでは、ハイブリッドな意味的・辞書的検索により上位K個の候補ラベルを特定し、次に候補ラベルペアを結びつける入力関連境界ルールを最大M個選択します。軽量LLMが、取得した定義とルールを用いて単一の呼び出しで最終的な分類を行います。<br><br>3つの公開ベンチマークと実世界の多言語書籍分類データセット全体で、SLKRはQwen3.5-4Bでは全4データセットで、Ministral-3-3Bでは4データセット中3つで最高の性能を達成しました。コンパクトな入力コンテキストを使用し、タスク固有のラベル付きデータは使用していません。境界ルールの削減実験では、少数の入力関連ルールを取得することで、全てのルールを使用した場合に近い性能を維持しつつ、コンテキストを大幅に削減できることが示され、軽量分類のためのフラッグシップ生成ラベル知識の効率的な再利用を支持しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Daoping Wu, Dong Wang, Siyu Liu, Chen Liang, Jian Geng, Ziqi Li, Shuguang Xiong, Ying Zhang<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.16182v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.16182v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="ProCARE：プロファイルに基づいた証拠契約による実世界研究の自動化" data-timestamp="1791780624000" data-url="https://arxiv.org/abs/2610.16175v1">
+  <p class="meta">arXiv cs.AI　Mon, 12 Oct 2026 04:50:24 Z</p>
+  <h2 class="article-title">ProCARE：プロファイルに基づいた証拠契約による実世界研究の自動化</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、AI分野における実世界研究（RWS）の自動化に関する研究です。<br><br>実世界研究（RWS）は、電子健康記録や保険請求などの日常的に収集される医療データを分析し、ランダム化試験外で治療効果の推定、安全性モニタリング、リスク因子の特定を行います。大規模言語モデルエージェントによるRWSの自動化は魅力的ですが、脆弱です。有効な分析は、インデックス日付、フォローアップ期間、患者/イベント単位、結果の境界など、観察データにしばしば暗黙的に含まれるデータセット固有の臨床的意味に依存します。これにより、スキーマの不一致、時間的エラー、分析粒度の不整合、および裏付けのない臨床的主張が生じます。<br><br>本研究では、RWS自動化を制約付きコンパイルとして再定式化するプロファイルベースのフレームワーク「ProCARE」を提案します。ProCAREは、異種データプロファイルを、利用可能な変数、時間属性、分布、および証拠の限界を指定する証拠契約に変換します。また、研究目的を、変数、時間関係、分析単位、および統計タスクの型指定された中間表現であるRWS-IRにコンパイルします。決定論的な検証と局所的な修正により、スキーママッピング、コホート構築、変数導出、分析、および解釈にわたる生成ワークフローをチェックおよび修正します。<br><br>36のEHRベースのベンチマークタスクにおいて、ProCAREは、コード実行可能性、意味的一貫性、および結論の追跡可能性において、強力なLLMエージェントベースラインを上回りました。自動化された違反診断は、盲検化された専門家レビューと中程度から実質的な一致を示しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Zhaoyu Fan, Bowen Han, Jincheng Ou, Yanwei Ren, Zehua He, Kaiyu Huang, Pengcheng He, Shanshan Ni<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.16175v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.16175v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CV" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CV, cs.AI, cs.MM" data-title="EventLens：イベント構造強化学習による動画理解" data-timestamp="1791780364000" data-url="https://arxiv.org/abs/2610.16172v1">
+  <p class="meta">arXiv cs.AI　Mon, 12 Oct 2026 04:46:04 Z</p>
+  <h2 class="article-title">EventLens：イベント構造強化学習による動画理解</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CV</span><span class="tag">cs.AI</span><span class="tag">cs.MM</span></div>
+  <div class="summary">本論文は、AI分野における動画理解に関する研究です。<br><br>最近のマルチモーダル大規模言語モデル（MLLM）は動画質問応答で高い性能を示していますが、動画の一貫性を保つ時間構造の復元にしばしば失敗します。隣接するイベントの統合、単一イベントの進行の欠落、イベント間のありえない関係の推論などが起こり得ます。本研究では、イベント境界、単一イベントの進行、複数イベントの関係を含む、イベント構造の復元を通じた構造化時間理解を扱います。このギャップは、現在のポストトレーニング目的と時間的推論との間の不一致に起因すると考えられます。キャプション形式の教師学習は、モデルが視覚的時間的根拠ではなく言語的なショートカットに依存することを許容するためです。<br><br>この問題に対処するため、イベント構造復元を通じた動画理解を学習する、ビジョン中心の強化学習フレームワーク「EventLens」を提案します。EventLensは、キャプションの再構築ではなく、制御された摂動下で時間構造を復元するようにモデルをトレーニングします。摂動には、時間的粒度の変更、進行方向の反転、イベント順序のシャッフルなどが含まれます。このフレームワークを3レベルの時間的階層構造で具体化し、3つの検証可能なタスクファミリー（イベントセグメンテーション、進行識別、複数イベント関係推論）を導出します。これらのタスクは決定論的な報酬を許容し、人間による選好ラベルや学習済み報酬モデルなしで、タスク特化型のGRPOトレーニングを可能にします。<br><br>さらに、マルチティーチャーオンポリシー蒸留（MT-OPD）を導入し、専門化されたポリシーを統一モデルに統合します。Qwen3-VLバックボーンを用いた実験では、時間的根拠付けとイベントに敏感な推論ベンチマークで一貫した改善が見られ、一般的な動画QA性能も維持されました。学習曲線は、EventLensが直接的な混合RL最適化と比較して、トレーニングコストを大幅に削減しながら、同等の下流タスクへの転移を達成することを示しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Guowen Zhang, Boshen Xu, Zihao Yue, Ziheng Wang, Xiaokun Liu, Xin Tao, Wenyu Qin, Pengfei Wan<br>
+        分類：cs.CV, cs.AI, cs.MM<br>
+        分野：cs.CV<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.16172v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.16172v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="アンカーによる拡散言語モデルの制御性と推論能力の向上" data-timestamp="1791656099000" data-url="https://arxiv.org/abs/2610.15097v1">
+  <p class="meta">arXiv cs.LG　Sat, 10 Oct 2026 18:14:59 Z</p>
+  <h2 class="article-title">アンカーによる拡散言語モデルの制御性と推論能力の向上</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、AI分野における拡散言語モデル（DLM）の制御性向上に関する研究です。DLMは、テキスト生成において新たな可能性をもたらしますが、タスクの制約を満たしながら元の能力を維持する「制御性」については、まだ十分に探求されていません。<br><br>DLMの双方向注意機構は、出力シーケンスの任意の場所から制御トークンで生成をガイドすることを可能にしますが、効果的なガイドは、制御トークンの内容と配置の互換性に依存します。この課題に対処するため、本研究ではAnchorDLMというフレームワークを提案します。AnchorDLMでは、アンカー生成器が、短い出力フラグメントとその位置からなる「アンカー」を各クエリに対して生成します。このアンカーは、指定された位置に制御トークンとして配置され、凍結されたDLMの出力シーケンスを初期化し、後続のノイズ除去をガイドします。<br><br>アンカー生成器は、DLMの生成出力から計算される報酬（回答の正しさや制約の充足度）を用いて、アンカーの内容と配置を共同で最適化するように強化学習（RL）で訓練されます。さらに、離散フローマッチング（DFM）の観点から、アンカー配置は生成をガイドする初期速度場を整形するのに役立つと解釈されます。コード生成と数学的推論に関する5つのDLMバックボーンを用いた実験では、AnchorDLMが制御性を向上させ、さらに多様なベンチマークにおいて推論性能の向上をもたらすことが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Feiyu Qu, Zheng Huang, Andrea Zanette<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.15097v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.15097v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="Swarm Telepathy：ファミリーを超えたKVキャッシュのプリフィル不要転送" data-timestamp="1791655759000" data-url="https://arxiv.org/abs/2610.15095v1">
+  <p class="meta">arXiv cs.LG　Sat, 10 Oct 2026 18:09:19 Z</p>
+  <h2 class="article-title">Swarm Telepathy：ファミリーを超えたKVキャッシュのプリフィル不要転送</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、AI分野における大規模言語モデル（LLM）のマルチエージェントシステムにおけるコミュニケーション効率化に関する研究です。LLMマルチエージェントシステムでは、エージェント間でテキストを介して通信を行いますが、これは離散的なトークンに制約され、冗長な計算コストがかかるため、帯域幅とシステム能力を制限します。<br><br>最近の研究では、LLM間のKVキャッシュ転送が示されていますが、同一ファミリー内のLLMに限られるか、コンテキストを超えて機能しないため、受信側でのプリフィル（事前入力）が必要でした。本研究では、SwaT（Swarm Telepathy）を提案します。これは、ファミリーを超えたKVキャッシュ転送を可能にする初の技術であり、マルチファミリーマルチエージェントシステムにおけるプリフィル不要の通信を実現します。エージェント間通信の設定において、SwaTを最近のKVキャッシュ圧縮技術と組み合わせることで、テキスト対テキスト通信と比較して、精度と速度の両方で優位性を示しました。具体的には、平均で40%高い精度と、平均で4倍速い壁時計時間を達成しました。<br><br>実験では、SwaTは12のLLMと6つのファミリーにわたる17のベンチマークで高いパフォーマンスを達成しました。さらに、送信側がビジョン・言語モデル（VLM）である場合、SwaTはテキスト専用受信側LLMに視覚能力を転送することができ、SwaTはテキスト専用データで訓練されているにもかかわらず、テキスト対テキスト通信を上回りました。SwaTは、送信側と受信側の両方のモデルをファインチューニングなしで凍結したままにし、トレーニングには50Mトークン未満と1GPU日未満しか必要としません。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Abdulrahman Alabdulkareem, Irene Tenison, Yang Zhang, Yada Zhu, Boris Katz, Dan Gutfreund<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.15095v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.15095v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-10" data-genre="Robotics" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.IR" data-title="言語モデルはウィキペディアゲームをプレイできるか？" data-timestamp="1791568796000" data-url="https://arxiv.org/abs/2610.13948v1">
   <p class="meta">arXiv cs.AI　Fri, 09 Oct 2026 17:59:56 Z</p>
   <h2 class="article-title">言語モデルはウィキペディアゲームをプレイできるか？</h2>
@@ -1475,108 +1577,6 @@
         分野：cs.AI<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2610.13889v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.13889v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="進化するマルチサービスエコシステムにおけるパーソナルエージェントのレッドチーミング手法X-AgentRed" data-timestamp="1791567284000" data-url="https://arxiv.org/abs/2610.13886v1">
-  <p class="meta">arXiv cs.AI　Fri, 09 Oct 2026 17:34:44 Z</p>
-  <h2 class="article-title">進化するマルチサービスエコシステムにおけるパーソナルエージェントのレッドチーミング手法X-AgentRed</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、進化するマルチサービスエコシステムにおいて、パーソナルエージェントが意図せず有害な結果を引き起こす可能性のある構成的失敗を体系的に特定するための新しいフレームワーク「X-AgentRed」を提案しています。<br><br>従来のレッドチーミング手法は、LLMにタスクや環境の説明から有害なパスを特定させるか、人間またはLLMが指定した有害な目的を無害なアクションの組み合わせに分解することに焦点を当てていました。しかし、これらの手法は学習済みのパターンに偏りがちで、新しいクロスサービス連携を見逃す可能性があります。X-AgentRedは、ツール間の依存関係のグラフを利用して有害なツール呼び出しパスを発見し、実行フィードバックを用いてそれらを拡張・洗練させる自己進化型レッドチーミングフレームワークです。<br><br>X-AgentRedは、各ツールの効果、潜在的な危害、実行の前提条件を分析し、ツールの効果が他のツールの実行前提条件を満たす方法を捉える有向グラフを構築します。このグラフからサンプリングされたレシピは、エージェントが有害な結果を生み出す可能性のある現実的なシナリオとしてインスタンス化されます。実行フィードバックは、ツール置換を通じて危害を生むパスを多様化し、失敗したパスのブロックされたステップでの前提条件を洗練させることで自己改善を可能にします。4つの最先端エージェントモデルでの評価では、X-AgentRedは既存手法の1.77倍の有害パス検出率を達成し、より多様なツールの探索により平均2.99倍のツールカバレッジを実現しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Yeonsung Jung, Zhiyuan Wang, Zifan Wang, Vítor Albiero, Benjamin Newman, Edoardo Debenedetti, Ivan Evtimov, Ninareh Mehrabi<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.13886v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.13886v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.CY" data-title="人工知能を用いた漫画の大規模研究フレームワークPAGEとアメリカンコミック・日本マンガの研究" data-timestamp="1791564569000" data-url="https://arxiv.org/abs/2610.13840v1">
-  <p class="meta">arXiv cs.AI　Fri, 09 Oct 2026 16:49:29 Z</p>
-  <h2 class="article-title">人工知能を用いた漫画の大規模研究フレームワークPAGEとアメリカンコミック・日本マンガの研究</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span></div>
-  <div class="summary">本論文は、人工知能（AI）、特に生成モデルを活用して、これまで個別の書籍単位でしか研究が進んでこなかった漫画という巨大な視覚的記録を大規模に分析するためのフレームワーク「PAGE」を提案しています。<br><br>PAGEフレームワークは、AIを漫画研究の楽器として位置づけ、スキャンされた漫画ページをパネル、テキスト、書誌情報に解析します。さらに、ビジョン言語モデルを用いて、人間が作成したコードブックに従って各ページを注釈付けし、これらの読み取り結果のサンプルを人間の注釈と照合します。そして、パブリッシャーやジャンルを制御した上で、アーカイブ全体での変化を説明します。<br><br>このフレームワークは、1938年から1956年までに出版された3,929冊のアメリカンコミックと87巻の日本マンガに適用され、3つの研究が行われました。第一の研究では、テキスト検索と視覚的読解を組み合わせて、大衆メディアが政治権力をどのように描写したかを明らかにしました。第二の研究では、業界全体でのページの視覚的形態を測定し、個々のアーティストの貢献を特定しました。第三の研究では、人間の注釈と比較しながら、2つのコミックの伝統における登場人物の発言を追跡しました。これらの研究は、AIが漫画研究の深化、保存、普及に貢献できる可能性を示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Emilio Ferrara<br>
-        分類：cs.AI, cs.CL, cs.CY<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.13840v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.13840v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.IR" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.IR, cs.CL" data-title="LLMクエリ拡張における幻覚用語の追跡と抑制：部分列関連フィルタリングと広がり認識選択" data-timestamp="1791562936000" data-url="https://arxiv.org/abs/2610.13810v1">
-  <p class="meta">arXiv cs.CL　Fri, 09 Oct 2026 16:22:16 Z</p>
-  <h2 class="article-title">LLMクエリ拡張における幻覚用語の追跡と抑制：部分列関連フィルタリングと広がり認識選択</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.IR</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）によるクエリ拡張時に発生する、存在しないエンティティやトピックから外れた用語（幻覚用語）の問題に対処します。<br><br>従来の対策が幻覚用語を単なるノイズとして扱い、その発生メカニズムや保持すべき用語数に関する原則的な基準を持たなかったのに対し、本研究では「部分列関連フィルタリングと広がり認識選択（SAFE-QE）」という、学習不要で検索エンジンに依存しない新しい手法を提案します。これは、幻覚用語の発生を部分列関連という観点から説明する理論に基づいています。<br><br>SAFE-QEは、候補となる拡張用語を、ランダム化されたクエリコンテキスト下での再現性と擬似関連セットにおけるサポートの有無に基づいてスコアリングします。再現性はあるものの擬似関連セットでのサポートを欠く用語は、支配的な幻覚関連の産物としてフラグを立て、重み付けを下げます。さらに、言語生成を一貫性（幻覚のなさ）と広がり（網羅性）のトレードオフとして捉え、用語選択を擬似関連セットにおける制約付きカバレッジ最大化問題として定式化し、約広範かつ一貫性があり、リサンプリング間で安定した用語セットを保持します。<br><br>また、関連文書に裏付けのない拡張用語の数をカウントする、クエリ側の忠実性メトリックである「幻覚拡張用語率」も導入しています。TRECおよびBEIRコレクションでの評価の結果、SAFE-QEはnDCG@10において、生成ベースやコーパス誘導型拡張と同等の統計的精度を示しつつ、Query2docやHyDEと比較して大幅に少ない（1クエリあたり4.3件対27.8件、57.5件）無支援用語を注入することが示されました。これは、検索品質を犠牲にすることなく忠実性を達成できることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Amit Kumar Jaiswal, Sagar Uprety, Prayag Tiwari<br>
-        分類：cs.IR, cs.CL<br>
-        分野：cs.IR<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.13810v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.13810v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="REFLECT：感情、情動、丁寧さ、フォーマルさの役割認識検出" data-timestamp="1791562225000" data-url="https://arxiv.org/abs/2610.13797v1">
-  <p class="meta">arXiv cs.CL　Fri, 09 Oct 2026 16:10:25 Z</p>
-  <h2 class="article-title">REFLECT：感情、情動、丁寧さ、フォーマルさの役割認識検出</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、対話における感情、情動、丁寧さ、フォーマルさ（SEPF）といった伝達的意味の検出において、単語の意味だけでなく、それらが表現される参加者の役割構造をモデル化することの重要性を指摘しています。<br><br>既存のアプローチは文脈的言語表現に依存していましたが、意味役割は暗黙的でした。本研究では、4つのSEPF次元を理論に基づいた意味役割ラベリング（SRL）構成にマッピングし、それをTransformerの自己注意機構に直接組み込む、役割認識Transformerアーキテクチャを提案します。役割認識注意機構は、非方向性の内部状態（感情と情動）をモデル化し、方向性役割認識注意機構は、外部キュー（丁寧さとフォーマルさ）の開始者から受信者への関係を捉えます。<br><br>これにより得られた役割認識表現は、学習されたゲートを通じて文脈埋め込みと融合され、意味役割を補助的な特徴ベクトルとして付加するのではなく、各入力がどれだけ役割情報に寄与するかを適応的に重み付けします。4つのベンチマークデータセット全体で、このフレームワークは、特に低頻度で複雑な感情や非常に丁寧な表現において、感情、丁寧さ、フォーマルさの検出において、強力なBERTベースのベースラインを上回る統計的に信頼性の高い改善をもたらしました。感情に関しては改善は限定的で有意ではありませんでしたが、これは感情が語彙選択を通じてより伝達されることを示唆しています。<br><br>さらに、実世界のデータに対する追加評価により、このフレームワークが予測性能とモデルの追跡可能性の両方を向上させることが示されました。これらの結果は、Transformerの自己注意機構に対する言語学的に根拠のある変更が、伝達的意味の検出を改善し、ベンチマークデータセットを超えて実世界のメンタルヘルスデータに一般化し、予測性能を超えて解釈可能性を拡張する追跡可能で役割に基づいた説明を提供することを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Sangpil Youm, Annabel Stocks Natalias, Hayden Heninger, Leah Jones, Xiaoyang Jin, Xiaoya Zhang, Bonnie Dorr<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.13797v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.13797v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="評価だけではない：言語モデルにおける談話助詞の感度に関するケーススタディ" data-timestamp="1791562044000" data-url="https://arxiv.org/abs/2610.13794v1">
-  <p class="meta">arXiv cs.CL　Fri, 09 Oct 2026 16:07:24 Z</p>
-  <h2 class="article-title">評価だけではない：言語モデルにおける談話助詞の感度に関するケーススタディ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、談話助詞が会話の文脈や対話者の態度を反映し、談話の流れを微妙に形作る一方で、真理条件的な意味には影響を与えないことが多いという性質に着目しています。また、これらの助詞は多機能であり、他の助詞と部分的に重なる異なる意味を持つこともあります。<br><br>英語の「just」と「only」の排他的な使用（例：「John only/just drinks water」）を例に、自然な会話におけるLLMの「just」と「only」に対する感度を、行動分析とメカニズム分析を用いて調査します。まず、LLMと人間は同様にこれらの助詞の存在を好む傾向があり、両者とも「only」よりも「just」に対してより敏感であることがわかりました。<br><br>次に、これらの助詞の有無でLLMから生成されたテキストをサンプリングすると、LLMは常に生成されたテキストをより尤もらしいと評価し、助詞に対する感度を示しました。両方の実験において、インストラクションチューニングは感度を増加させました。さらに、LLM内の助詞に敏感なユニットを特定したところ、「just」と「only」の間の重複は非対称であることが判明しました。「only」のユニットは排他的な「just」に選択的に転移する一方、「just」の全てのユニットは、意味に関わらず「only」に等しく転移しました。これは、LLMの語彙レベルの助詞表現が、意味によって部分的に組織化されていることを示唆しています。<br><br>本研究では、コード、意味ラベル付き対話刺激、および人間の選好アノテーションを公開しています。これらの結果は、LLMが談話助詞の微妙な意味合いを捉える能力を持ち、その感度がインストラクションチューニングによって向上することを示しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：William Sheffield, Jiahui Chen, Amy Zhang, Alex Warstadt, Junyi Jessy Li, Kanishka Misra<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.13794v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.13794v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="離散グラフ拡散モデルは秘密裏に記憶している：一般化ギャップとコミュニティ構造の出現" data-timestamp="1791561846000" data-url="https://arxiv.org/abs/2610.13786v1">
-  <p class="meta">arXiv cs.AI　Fri, 09 Oct 2026 16:04:06 Z</p>
-  <h2 class="article-title">離散グラフ拡散モデルは秘密裏に記憶している：一般化ギャップとコミュニティ構造の出現</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、離散グラフ拡散モデル（GDM）が、ノードとエッジに独立してノイズを加えるマルコフ的ノイズモデル下で学習される際に、実際には訓練データを記憶していることを初めて実証します。<br><br>これまでの研究では、ノード特徴がない非条件設定において、単一グラフで訓練された等変デノイザーは新しいグラフを生成し、エッジ重複率やWLカーネル類似度などのサンプルレベルの指標では記憶の証拠が見られないとされていました。しかし、本研究では、2ブロック確率的ブロックモデル（SBM）で訓練されたGDMの逆拡散軌道を分析した結果、強い訓練データバイアスを発見しました。具体的には、モデルは保持されたテストグラフと比較して、破損した訓練グラフをほぼ完全に復元することが示されました。これは、逆拡散軌道が破損した訓練グラフに条件付けられた場合にのみ現れる「条件付き記憶」であり、推論時には明らかにならないと指摘されています。<br><br>この現象は、訓練損失が改善するにつれて保持グラフの損失が悪化するという、一般的な汎化ギャップの拡大と一致しており、早期停止では緩和できません。さらに、記憶の発生は、生成されたグラフにおけるコミュニティ構造の出現よりも常に先行することが観察されました。これは、記憶が発生するチェックポイント以前のモデルが出力するグラフは構造を持たないことを意味します。この挙動は、テストした全てのノードサイズで一貫して確認されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Adarsh Jamadandi, Nicolas Keriven<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.13786v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.13786v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
