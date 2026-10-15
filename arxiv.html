@@ -1342,6 +1342,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="Generative Models" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.LG" data-title="ヒト型ロボット制御におけるニューラルネットワーク重みの拡散モデルによる生成と理解" data-timestamp="1792000792000" data-url="https://arxiv.org/abs/2610.20606v1">
+  <p class="meta">arXiv cs.AI　Wed, 14 Oct 2026 17:59:52 Z</p>
+  <h2 class="article-title">ヒト型ロボット制御におけるニューラルネットワーク重みの拡散モデルによる生成と理解</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、ヒト型ロボットの制御に用いられるニューラルネットワークの重み分布を、拡散モデルを用いて生成・理解する手法を提案しています。<br><br>従来のロボット学習では、制御ネットワークは従来の訓練手順で得られていましたが、重み空間におけるネットワークの分布を直接モデル化し、機能的なネットワークを生成することにはあまり注目されてきませんでした。本研究では、高精度なヒト型ロボット制御ネットワークが、その重みを通じて生成的にモデル化できるかを調査します。<br><br>具体的には、線形オートエンコーダーと拡散トランスフォーマーを組み合わせた潜在拡散フレームワークを採用しています。オートエンコーダーは、アクターネットワークのパラメータをコンパクトな潜在空間に圧縮し、拡散トランスフォーマーがこれらの潜在変数の分布をモデル化します。これにより、歩行、ダンス、回転キックなど、様々な実世界の動作を実行できる生成可能なネットワークを生成することに成功しました。<br><br>さらに、学習された重み空間を分析し、これらの制御ネットワークが捉えている構造を理解しようと試みています。特に、第一層の重みにロボットの運動学的事前知識を反映する構造原理を特定しました。この運動学的事前知識は、強化学習（RL）と模倣学習（IL）の両方の訓練で現れることから、特定の最適化プロセスに依存せず、ヒト型ロボットの身体性に関連する一般的な知識を反映している可能性が示唆されます。<br><br>これらの結果は、ヒト型ロボットのネットワーク重み空間における生成モデルの実現可能性を示し、学習された重みにエンコードされている情報についての初期的な洞察を提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Huixuan Cheng, Bike Zhang, Shankar Sastry, Koushil Sreenath<br>
+        分類：cs.RO, cs.AI, cs.LG<br>
+        分野：cs.RO<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.20606v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20606v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ブラジルポルトガル語LLMの再現可能な安全性アライメント：Manacá-1B-Instruct-2" data-timestamp="1792000426000" data-url="https://arxiv.org/abs/2610.20570v1">
+  <p class="meta">arXiv cs.CL　Wed, 14 Oct 2026 17:53:46 Z</p>
+  <h2 class="article-title">ブラジルポルトガル語LLMの再現可能な安全性アライメント：Manacá-1B-Instruct-2</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、ブラジルポルトガル語に特化した大規模言語モデル（LLM）であるManacá-1B-Instruct-2の安全性アライメントについて報告しています。オープンソースのLLMはブラジルポルトガル語の分野でまだ十分ではなく、安全性アライメントを行ったモデルも、何がうまくいかなかったか、あるいは統計的に有意な比較を検証した記録が少ないという課題があります。<br><br>Manacá-1B-Instruct-2は、Manacá-1B（17.2億パラメータ）の第2世代ポストトレーニングアライメントであり、291,223例のSFT（Supervised Fine-Tuning）コーパスを用いています。3回のDPO（Direct Preference Optimization）試行はすべてネガティブな結果となり、訓練報酬マージンが1.0に達しても生成結果が変わらないケースも確認されました。安全性は、3回のイテレーションを経て安全性と有用性のフロンティアを閉じるように洗練された、専用の安全性SFT（LLM-jp AnswerCarefullyスタイル）から得られました。<br><br>安全性SFTにおける一般データの割合を制御したスキャン（10%から60%）により、40-50%で膝点を持つ非単調な過剰拒否曲線が明らかになりました。最終モデルは、Wilson信頼区間とHolm-Bonferroni補正付きペアMcNemar検定を用いて、4つの外部PT-BRモデルと比較されました。その結果、安全性区間の下限（94.1%）は、すべてのベースラインモデルの上限を上回っています。<br><br>また、LLMジャッジ評価における方法論的な発見として、MT-Bench-PTの6つの安全性項目中2項目で、評価される応答に関わらずジャッジがスコアを割り当てることを拒否し、プロジェクトの過去の報告における実効Nをサイレントに減少させていることが報告されています。これに加えて、n-gramの汚染チェックとChinchilla基準の計算バジェット表により、一般的な能力のギャップはアライメント方法論ではなく、事前学習のスケールに起因することが示唆されています。報告されているすべての数値を生み出すコード、生データ、ログ、スクリプトはすべて公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Bruno Leonardo Santos Menezes, Carlos Leonardo Souza Cardoso, Fabio André Machado Porto<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.20570v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20570v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CV" data-title="物理空間に根差したエージェントフレームワークによる汎用的・インタラクティブな3D構成" data-timestamp="1792000044000" data-url="https://arxiv.org/abs/2610.20560v1">
+  <p class="meta">arXiv cs.AI　Wed, 14 Oct 2026 17:47:24 Z</p>
+  <h2 class="article-title">物理空間に根差したエージェントフレームワークによる汎用的・インタラクティブな3D構成</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、3Dオブジェクトの構成に関する研究です。3Dオブジェクトの構成は、デジタルコンテンツ制作やロボットシミュレーションにおいて極めて重要であり、基盤モデルにおける物理的知能のテストベッドとしても機能します。<br><br>従来の多くの手法は、大規模言語モデル（LLM）を用いてオブジェクト座標を直接予測するか、生成拡散モデルを用いて視覚的整合性のための複合画像を合成していました。しかし、これらの手法は、静的なデジタル空間の事前知識に依存しており、精密な配置、重力による沈降、隠蔽された包含といった複雑な構成タスクには一貫して苦労していました。これらのタスクには、グローバルな計画、微細な調整、物理シミュレーションを含むインタラクティブな構築プロセスが必要です。<br><br>本研究では、エージェントの探索と物理シミュレーションによる3D構成のための物理空間に根差したエージェントフレームワークであるPhySGAを提案します。これにより、剛体、関節、変形可能なオブジェクトの普遍的なインタラクティブな組み立てが可能になります。単純なLLMやVLMをこのタスクに直接適用しても不十分であることが判明しました。なぜなら、現在のモデルは本質的に物理的な理解とインタラクティブな構築経験が不足しているからです。この限界を克服するため、協調的なフィードフォワード・フィードバックアーキテクチャを設計しました。アセンブリ・エージェントは、グローバルなステップ計画と粗調整のための幾何学的・運動学的推論に焦点を当て、クリティック・エージェントは、シミュレータ状態の診断と微細なクローズドループ補正のための接触ダイナミクスに関する推論を行います。さらに、アクションルーターは意味論的な計画と分析を実行可能な物理プリミティブにマッピングし、タスク固有の自己進化スキルライブラリは、過去の試行錯誤のフィードバックを再利用可能な経験に蒸留し、成功率を高め、探索試行を最小限に抑えます。Isaac Simでの広範な実験により、PhySGAは関係忠実度、物理的妥当性、視覚的品質において既存の手法を大幅に上回ることが実証されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Weichen Lyu, Chong Xia, Mingyu Dong, Long Xu, Shengjun Zhang, Yueqi Duan<br>
+        分類：cs.AI, cs.CV<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.20560v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20560v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.SI" data-title="実世界での説得シナリオにおけるLLMの社会的知能の側面を調査するPerSo" data-timestamp="1791999575000" data-url="https://arxiv.org/abs/2610.20548v1">
+  <p class="meta">arXiv cs.CL　Wed, 14 Oct 2026 17:39:35 Z</p>
+  <h2 class="article-title">実世界での説得シナリオにおけるLLMの社会的知能の側面を調査するPerSo</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.SI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の社会的知能に関する研究です。LLMの社会的知能の理解は、人間とAIのインタラクションやマルチエージェント環境に関わるアプリケーションにとってますます重要になっています。<br><br>社会的知能は、他者の精神状態を推論する能力である認知的知能と、社会的目標を達成するためにこれらの推論に基づいて適切な社会的行動を選択する能力である行動的知能の2つの側面から構成されます。説得は、両方の側面が同時に作用する自然なテストベッドを提供しますが、これまでのベンチマークでは、合成シナリオを用いてこれらを個別に評価することが一般的でした。<br><br>本研究では、RedditのChangeMyViewコミュニティからの実世界の説得対話において、両側面を評価するベンチマークであるPerSoを導入します。評価タスクの構築には、LLMを介したパイプラインを使用し、人間によるアノテーションを通じて検証しました。多様なLLMの評価により、一般的にパフォーマンスはモデルサイズに比例してスケールしますが、次元によって変動することが示されました。最も性能の高いLLMは、行動タスクにおいて最高の人間パフォーマンスをわずかに上回りましたが、認知タスクにおいては最高の人間参加者が依然として先行しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Ali Zamani, Soroush Esfahanian, Erfan Shahabi, Mohammad Taher Pilehvar, Azadeh Shakery, Yadollah Yaghoobzadeh<br>
+        分類：cs.CL, cs.AI, cs.SI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.20548v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20548v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ハイブリッド線形アテンションLLMにおける投機的生成のための動的コンテキストとしてのリカレント状態：ReaDy" data-timestamp="1791997732000" data-url="https://arxiv.org/abs/2610.20503v1">
+  <p class="meta">arXiv cs.CL　Wed, 14 Oct 2026 17:08:52 Z</p>
+  <h2 class="article-title">ハイブリッド線形アテンションLLMにおける投機的生成のための動的コンテキストとしてのリカレント状態：ReaDy</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、ハイブリッド線形アテンション（HLA）大規模言語モデル（LLM）における投機的デコーディングを高速化する新しい手法「ReaDy」を提案しています。投機的デコーディングは、一度に複数のトークンを生成することで生成を加速しますが、従来のフィーチャーベースのドラフターは、後続のドラフト位置のニーズと必ずしも一致しない文脈上の強調を持つターゲット隠れフィーチャーに依存していました。<br><br>HLAモデルは、履歴の関連性を蓄積するコンパクトなリカレント状態を維持しており、投機的デコーディングのための補完的なコンテキストの効率的なソースを提供します。ReaDyは、ドラフト中の位置固有のコンテキスト取得のためにHLAリカレント状態を活用する、初の投機的デコーディング手法です。ReaDyは、各ドラフト位置に学習されたクエリを装備し、ターゲットのコミットされたリカレント状態から補足コンテキストを直接取得します。<br><br>軽量なステートリーダーは、残差更新を通じてこのコンテキストをドラフト表現に統合します。また、低ランクのステート読み取りと融合演算子により、追加の計算とI/Oオーバーヘッドを低く抑えています。DSparkの並列バックボーンと逐次予測ヘッドを基盤とし、ReaDyは軽量な2段階適応戦略を採用しており、リーダー容量、ステートソース、残差配置はアブレーション研究を通じて検討されています。<br><br>数学、コード生成、対話を含む7つのベンチマークにおいて、ReaDyはQwen3.8-27Bを単一のNVIDIA B200 GPU上で実行した場合の自己回帰デコーディングと比較して、平均3.16倍のデコーディング速度向上を達成しました。すべてのベンチマークでDSparkを上回り、スループットを平均7.97%、受け入れ長を平均8.50%向上させています。コードは公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Bohan Sun, Zunhai Su, Xialie Zhuang, Jianjin Li, Ngai Wong, Chuan-Wei Kuo<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.20503v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20503v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.CY" data-title="大規模言語モデルにおける時間を通じた文化的認識を評価するChronoCulture" data-timestamp="1791996635000" data-url="https://arxiv.org/abs/2610.20472v1">
+  <p class="meta">arXiv cs.CL　Wed, 14 Oct 2026 16:50:35 Z</p>
+  <h2 class="article-title">大規模言語モデルにおける時間を通じた文化的認識を評価するChronoCulture</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.CY</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の文化的認識に関する研究です。文化的な態度や社会規範は時間とともに進化しますが、LLMのためのほとんどの文化的ベンチマークは、文化を国や地域の静的な属性として扱っています。<br><br>本研究では、72カ国にわたる縦断的調査データから構築された10,360の時系列ペアからなるベンチマークであるChronoCultureを導入します。各ペアは、同じ国で古い年と新しい年に尋ねられた同じ調査質問を含み、完全な人口の回答分布を正解としています。<br><br>6つのLLMを対象とした評価では、モデルはしばしばある時点での国の態度を予測できますが、それらの態度がどのように変化するかを確実に捉えることはできないことがわかりました。異なる年に対するモデルの予測は互いに近く留まる傾向があり、観察された変化の多くを捉えられていません。プロンプトで意図した年を指定しても、調査回答との整合性において全体的な改善はほとんど見られませんでした。これらの発見は、モデルが文化的な態度を主に静的なものとして提示することが多く、時間を通じた文化的認識の評価が必要であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Rusali Saha, Nitya Khurana, Ruihong Huang, Kuan-Hao Huang<br>
+        分類：cs.CL, cs.CY<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.20472v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20472v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv cs.LG" data-area="AI" data-categories="stat.ML, cs.LG" data-title="テキスト情報を用いた学習データフィルタリングによる仮想流量計性能の向上" data-timestamp="1791969845000" data-url="https://arxiv.org/abs/2610.19860v1">
   <p class="meta">arXiv cs.LG　Wed, 14 Oct 2026 09:24:05 Z</p>
   <h2 class="article-title">テキスト情報を用いた学習データフィルタリングによる仮想流量計性能の向上</h2>
@@ -1475,108 +1577,6 @@
         分野：cs.RO<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2610.18869v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.18869v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Generative Models" data-field="hep-lat" data-source="arXiv cs.LG" data-area="AI" data-categories="hep-lat, cs.LG" data-title="格子場の理論におけるデータフリー拡散モデル学習" data-timestamp="1791914373000" data-url="https://arxiv.org/abs/2610.18863v1">
-  <p class="meta">arXiv cs.LG　Tue, 13 Oct 2026 17:59:33 Z</p>
-  <h2 class="article-title">格子場の理論におけるデータフリー拡散モデル学習</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">hep-lat</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、格子場の理論における平衡状態の場配置サンプリングの計算ボトルネックを解消するため、生成モデルである拡散モデルのデータフリー学習手法を提案するものです。<br><br>従来の拡散モデルは、学習にターゲット分布からのサンプルを必要とするため、元のサンプリング問題が再導入されるという課題がありました。本研究では、正規化されていない確率密度関数にアクセス可能であれば、生成されたサンプルのみを用いて拡散モデルを学習できることを示します。この学習は、ターゲットスコア恒等式を利用することで実現されます。<br><br>重要度重み付きの定式化は学習全体を通して一貫したターゲットを提供し、重みなしの変形は自己整合的な固定点学習スキームを定義します。提案手法は、二次元のφ^4理論でベンチマークされ、対称相、臨界相、破砕相のすべてにわたる効率的な学習とサンプリングを可能にする効果的な選択肢が特定されました。最終的に、提案されたデータフリー学習アプローチは、HMC参照データで学習した場合と同等の性能を達成しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Dennis Grinwald, Ankur Singha, Khaled Kahouli, Karl Jansen, Shinichi Nakajima<br>
-        分類：hep-lat, cs.LG<br>
-        分野：hep-lat<br>
-        ジャンル：Generative Models<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.18863v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.18863v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="DoubtLess：学習不要な対照的デコーディングによる効率的な推論" data-timestamp="1791914372000" data-url="https://arxiv.org/abs/2610.18862v1">
-  <p class="meta">arXiv cs.AI　Tue, 13 Oct 2026 17:59:32 Z</p>
-  <h2 class="article-title">DoubtLess：学習不要な対照的デコーディングによる効率的な推論</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の推論プロセスにおけるトークン消費量の削減を目指し、学習不要な対照的デコーディング手法「DoubtLess」を提案します。<br><br>DoubtLessは、より小さな推論モデルが大規模モデルの思考連鎖（CoT）を監視し、簡潔さを促すことで、冗長なトークン消費を抑制します。具体的には、小規模モデルが大規模モデルのCoTを「簡潔に思考する」場合と「冗長に思考する」場合の2つの出力を比較し、その差分を大規模モデルのロジットに加算することで、簡潔な推論を誘導します。<br><br>この手法は、追加の学習を必要とせず、既存のデコーディング手法よりも効率的です。7つのベンチマーク（数学、科学、プログラミング）において、Qwen3-32BモデルのCoTを31%短縮しつつ、精度を維持することに成功しました。また、自己デバッグコーディングエージェントにおいても、思考トークン数を20%削減し、タスク性能を維持しました。さらに、他のモデルファミリーや、既存の圧縮手法とも組み合わせ可能であることが示されています。<br><br>DoubtLessは、LLMの推論効率を大幅に改善する可能性を秘めています。特に、推論の後半で正解が出現した後の冗長なチェックを削減する効果が確認されており、実用的な応用が期待されます。ただし、小規模モデルの性能や、大規模モデルとの相互作用の最適化については、さらなる検討が必要です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Minghao Luo, Liang Chen<br>
-        分類：cs.CL, cs.AI, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.18862v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.18862v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="画像生成を参考に、美的で検証可能なコードを生成する手法「AesCode」" data-timestamp="1791914371000" data-url="https://arxiv.org/abs/2610.18860v1">
-  <p class="meta">arXiv cs.AI　Tue, 13 Oct 2026 17:59:31 Z</p>
-  <h2 class="article-title">画像生成を参考に、美的で検証可能なコードを生成する手法「AesCode」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、情報量の多い視覚的成果物（スライド、ポスター、ダッシュボードなど）をコードとして生成する手法「AesCode」を提案します。<br><br>従来のコード生成モデルは、レイアウトや色彩が視覚的にどのように組み合わさるかを理解できないため、美的品質が限定的でした。一方、画像生成モデルはデザインに優れますが、内容の正確な再現が難しいという課題があります。AesCodeは、同じプロンプトから生成された画像を参照し、コード生成の美的品質を向上させます。<br><br>この手法では、ターゲットをデザイングラフとして表現し、各プロパティをコードとレンダリングから検証可能なものと、視覚的グラフルーブリック（VGR）を用いて評価する非検証可能なものに分離します。これらの報酬を強化学習で最適化することで、空間計画、美的品質、検証可能性を同時に向上させます。<br><br>提案手法は、既存モデルと比較して美的品質を大幅に向上させ、最先端のクローズドソースモデルに匹敵する性能を示しました。この研究は、コード生成における美的側面と機能的側面の統合に貢献します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Xin Gao, Yifan Yang, Xin Li, Pan Wang, Yan Li, Muzhao Tian, Mingxi Cheng, Bei Liu<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.18860v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.18860v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="ハイブリッド推論エージェント：潜在空間とテキスト空間の融合" data-timestamp="1791914371000" data-url="https://arxiv.org/abs/2610.18861v1">
-  <p class="meta">arXiv cs.AI　Tue, 13 Oct 2026 17:59:31 Z</p>
-  <h2 class="article-title">ハイブリッド推論エージェント：潜在空間とテキスト空間の融合</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、言語モデルエージェントがテキストベースの対話能力を維持しつつ、人間言語を超えた潜在的な推論を行うことを可能にする「ハイブリッド推論エージェント（HybridAgents）」を提案します。<br><br>HybridAgentsは、軽量な「HybridLink」アーキテクチャにより、テキストモードと潜在モード間のシームレスな遷移を実現します。また、連続的なワーキングメモリにより、複数ターンの推論コンテキストをロスなく保持します。これにより、ツールの利用といったエージェント能力を維持しながら、潜在的な思考プロセスを可視化できます。<br><br>さらに、ハイブリッド推論に特化した後学習アルゴリズムとして、HybridSFT（ツール統合型ハイブリッド生成の安定化）とHybridRL（潜在空間での思考とテキストでの行動の学習）を開発しました。これらの技術により、数学、科学、医療、検索、エージェント推論など11のベンチマークで、既存の最先端LLMエージェントと比較して性能を10.4%向上させつつ、トークン削減率35.5%-54.7%、推論速度1.8倍-2.6倍、コスト削減率2.7倍-3.7倍を達成しました。<br><br>本研究は、エージェントの推論能力と効率性を大幅に向上させる新たなアーキテクチャと学習手法を提供します。ただし、潜在空間での推論の透明性は向上したものの、その解釈性や制御性についてはさらなる研究が期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Jiaru Zou, Yunzhe Qi, Sirui Chen, Federico Bianchi, Shang Zhu, Pan Lu, Jingrui He, James Zou<br>
-        分類：cs.CL, cs.AI, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.18861v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.18861v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.LG, q-bio.QM" data-title="MFG：多ターンフィードバック誘導型分子最適化" data-timestamp="1791914321000" data-url="https://arxiv.org/abs/2610.18851v1">
-  <p class="meta">arXiv cs.AI　Tue, 13 Oct 2026 17:58:41 Z</p>
-  <h2 class="article-title">MFG：多ターンフィードバック誘導型分子最適化</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">q-bio.QM</span></div>
-  <div class="summary">本論文は、創薬における多目的分子最適化プロセスを扱います。<br><br>従来のLLMベースの手法は、フィードバックを明示的に活用するように訓練されておらず、単一ターンの最適化に焦点を当てていました。本研究では、多ターンフィードバック誘導型（MFG）分子最適化という強化学習フレームワークを提案します。これは、LLMが過去のフィードバックを利用して分子を段階的に最適化するように訓練するものです。<br><br>MFGは、プロパティの改善とソース分子の類似性を捉えるフィードバックベクトルと、ターンを跨いだ段階的な改善を促進するフィードバックアラインメント報酬関数を導入します。この手法を最先端のLLMモデルであるGeLLM3Oに適用し、10の多目的分子最適化タスクで評価した結果、MFGはベースモデルを上回る高い類似性制約付き成功率を達成しました。これは、分子設計における反復的な改善プロセスの効率化に貢献する可能性があります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Trieu Nguyen, Frazier N. Baker, Ruoxi Gao, Daniel Adu-Ampratwum, Xia Ning<br>
-        分類：cs.AI, cs.LG, q-bio.QM<br>
-        分野：cs.AI<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.18851v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.18851v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="リモートセンシングタスクを再帰的自己改善として捉える" data-timestamp="1791914271000" data-url="https://arxiv.org/abs/2610.18845v1">
-  <p class="meta">arXiv cs.CL　Tue, 13 Oct 2026 17:57:51 Z</p>
-  <h2 class="article-title">リモートセンシングタスクを再帰的自己改善として捉える</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CV</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、人間が構築してきたリモートセンシングモデルの構築プロセスを、エージェントに委ねる新たなパラダイムを提案します。<br><br>従来、各タスクごとに専門家が学習レシピを設計し、ベンチマークに対してチューニングを行ってきました。本研究では、検証可能なタスクであれば、ハーネス（エージェントが利用できるもの）と検証者（成功を定義するもの）の2つの要素を与えるだけで、汎用的なコーディングエージェントがリモートセンシングモデルを構築し、再帰的に自己改善できることを示します。<br><br>ラベル付きベンチマーク、独立したセンサー、物理モデル、または同一地点の繰り返し観測を通じて、あらゆるリモートセンシングタスクを検証可能にすることが可能です。このアプローチにより、わずか1%の学習ラベルで最先端の性能を上回るモデルが構築され、その精度を維持することが実証されました。これは、人間がハーネスと検証者を設計し、エージェントがモデルを構築するという新しいパラダイムを確立するものです。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Sijie Zhao, Zeqi Zhou, Heli Qi, Xuanchao Fu, Zhuo Zheng, Junshi Xia, Junjue Wang, Weihao Xuan<br>
-        分類：cs.CV, cs.CL<br>
-        分野：cs.CV<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.18845v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.18845v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
