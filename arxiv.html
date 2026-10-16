@@ -1342,6 +1342,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL, cs.LG" data-title="自律型機械学習エンジニアリングのための汎用エージェントモデル「MLExpert」" data-timestamp="1792086992000" data-url="https://arxiv.org/abs/2610.22344v1">
+  <p class="meta">arXiv cs.AI　Thu, 15 Oct 2026 17:56:32 Z</p>
+  <h2 class="article-title">自律型機械学習エンジニアリングのための汎用エージェントモデル「MLExpert」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、AIがAIシステムを自律的に開発・改善する「AI for AI（AI4AI）」の進展を目指し、特に大規模言語モデル（LLM）が機械学習エンジニアリング（MLE）を自律的に行うためのアプローチを探求しています。<br><br>従来のMLEシステムは複雑なオーケストレーションにより長期間の実験を管理してきましたが、本研究ではモデルが実験結果のフィードバックに基づいて自律的に実験を組織し、最適化戦略を適応させる「モデル指向インタラクション」に着目します。しかし、長期間の実験では多くのコストがかかるため、中間的な結果から有用な監督情報を選択し、学習することが課題となります。<br><br>そこで、本研究では自律的な長期間MLE最適化のための学習後（post-training）手法を提案し、35BパラメータのMixture-of-Expertsエージェントモデル「MLExpert」を訓練しました。Kaggle-MLE Factoryとインタラクションハーネスを用いて、実行可能なタスクとモデル指向実験環境を構築。階層的エージェントSFTにより、汎用的なツール利用とコーディング能力を、結果ガイド付き監督を通じてMLEに転移させます。さらに、Windowed Interaction RL（WIRL）は、実験結果間の複数ターンの決定を「実行ウィンドウ」とみなし、共有された結果ベースの報酬を割り当てます。非同期収集とポリシー修正により、軌跡が終了する前にポリシー更新をサポートします。<br><br>MLExpertは、Kaggle-MLE Factory Liteにおいて、ベースモデルの平均メダル率を37.9%から72.7%に向上させ、Kimi-K3やGLM-5.3といった大規模モデルに匹敵する性能を達成しました。NatureBench Lite、エージェントスキャフォールド最適化、アルゴリズム最適化などのタスクでも性能向上が見られ、学習された最適化能力が他のタスクにも汎化することを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Shangheng Du, Jinxin Shi, Shuaiyu Zhang, Yiming Wu, Junpeng Zhao, Shiyang Feng, Xin Li, Liang He<br>
+        分類：cs.AI, cs.CL, cs.LG<br>
+        分野：cs.AI<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.22344v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.22344v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="多様な科学的アイデア生成のための推論モデル訓練" data-timestamp="1792086732000" data-url="https://arxiv.org/abs/2610.22324v1">
+  <p class="meta">arXiv cs.CL　Thu, 15 Oct 2026 17:52:12 Z</p>
+  <h2 class="article-title">多様な科学的アイデア生成のための推論モデル訓練</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、研究パイプラインの初期段階である「アイデア生成」に焦点を当て、大規模言語モデル（LLM）が生成するアイデアの「多様性」を高めるための手法を提案しています。<br><br>従来のLLMは個々のアイデアの質を最適化することに注力していましたが、本研究では、入力された文書に基づいて、質が高くかつ互いに明確に区別されるアイデアのセットを生成することを目指しています。これを実現するために、セットレベルの強化学習目標を用いた訓練方法を提案しています。<br><br>提案手法では、モデルは一度の生成で複数の構造化されたアイデアカードを作成し、そのセット全体が共同で評価されます。各アイデアの品質は、それ以前に生成されたアイデアとの距離によって重み付けされ、モデルは新しいアイデアを先行するものから逸らすように学習します。実験の結果、提案手法で訓練されたモデルは、既存の最先端モデルと比較して、品質と多様性を組み合わせた「クリエイティブユーティリティ」において高い性能を示しました。<br><br>人間によるパイロットスタディでも、提案モデルの生成したアイデアセットは、既存モデルと同等の有望さを持つと評価され、わずかにユニークなアイデアが多いことが示されました。また、アイデアを実行可能にするためのコーディングエージェントによる実験でも、提案モデルの成功率は既存モデルと同等であり、多様性の向上が付加価値をもたらすことが示唆されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Manya Wadhwa, Pranav Narayanan Venkit, Hiroaki Hayashi, Yu Li, Tuhin Chakrabarty, Chien-Sheng Wu<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.22324v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.22324v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Consciousness / Philosophy" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="メンタルヘルス支援における言語モデル評価のための臨床的根拠に基づく患者シミュレーションと評価ルーブリック「MindEval2」" data-timestamp="1792086661000" data-url="https://arxiv.org/abs/2610.22314v1">
+  <p class="meta">arXiv cs.CL　Thu, 15 Oct 2026 17:51:01 Z</p>
+  <h2 class="article-title">メンタルヘルス支援における言語モデル評価のための臨床的根拠に基づく患者シミュレーションと評価ルーブリック「MindEval2」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Consciousness / Philosophy</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、メンタルヘルス支援におけるAIチャットボットの利用が増加する中、これらのツールの評価の必要性が高まっていることを背景に、より現実的で臨床的に根拠に基づいた評価フレームワーク「MindEval2」を提案します。<br><br>従来のベンチマークは、合成患者とのマルチターンの対話をシミュレートし、LLMを評価者として用いる手法が主流でしたが、合成患者が過度に協力的であったり、自己反省的であったりする傾向があり、また、LLMによる評価が不透明なリッカート尺度に依存し、実用的な有用性が不明瞭であるという限界がありました。これらのギャップを埋めるため、本研究では「Mental Health Quality Rubrics（MHQR）」と「MindSim」の2つのコンポーネントからなるMindEval2を開発しました。<br><br>MHQRは、心理学の専門家と協力して、応答の質を、既存の評価分類法よりも解釈可能で実用的な、明確な操作基準に分解するルーブリックを開発しました。一方、MindSimは、慎重に設計された患者プロファイルとツールを組み合わせたLLMハーネスであり、既存のベースラインよりも多様で、挑戦的で、現実的な対話を可能にします。このハーネスには、対話間で更新されるメモリコンポーネントも含まれており、メンタルヘルスにおける経時的な側面をモデル化できます。<br><br>MindEval2を用いて18のプロプライエタリおよびオープンウェイトモデルを評価した結果、最先端モデルは表面的な質や境界に関する問題において大きく改善されましたが、ガイダンスのキャリブレーションが依然としてすべてのモデルに共通する主要な失敗モードであり、品質ギャップの大部分を占めていることが判明しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：John Mendonça, Daniel Tschernutter, José Pombal, Areti Vassilopoulos, Catarina Botelho, Ignacio Sarasua, Maya D&#39;Eon, Nuno Guerreiro<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Consciousness / Philosophy<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.22314v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.22314v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="LLMによる臨床多角的セカンドオピニオンのためのAI Consiliumベンチマーク" data-timestamp="1792086397000" data-url="https://arxiv.org/abs/2610.22298v1">
+  <p class="meta">arXiv cs.CL　Thu, 15 Oct 2026 17:46:37 Z</p>
+  <h2 class="article-title">LLMによる臨床多角的セカンドオピニオンのためのAI Consiliumベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）が生成する臨床的なセカンドオピニオンの質を評価するための多次元ベンチマーク「AI Consilium」を開発しました。<br><br>AI Consiliumは、300の診断確定済み症例データセットを使用し、LLMが生成する鑑別診断、臨床的整合性、実行可能性、安全性を評価します。8つの単一モデルパイプラインを用いて、専門医による参照評価とLLMジャッジによる評価を実施しました。<br><br>評価の結果、モデルの性能は応答形式よりもモデル自体の種類によって強く影響されることが示されました。特に、構造化された最終報告書は、多くのモデルパイプラインで全体的に高いスコアを獲得し、管理に関する項目でその優位性が顕著でした。また、構造化された事前コンシリウム意見と比較して、完全な構造化合成レポートは、問題の優先順位付け、事実的根拠、推論の一貫性において最も大きな向上を示しました。<br><br>本研究は、LLMが臨床意思決定支援において有用なセカンドオピニオンを提供できる可能性を示唆していますが、その評価には多角的な視点が必要であることを強調しています。開発されたベンチマークは、LLMの臨床応用における能力を区別し、今後の研究開発に貢献することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Alexey A. Bokov, Ivan I. Panin, Nikolay B. Nechaev, Mikhail Yu. Valkov, Valeria Yu. Chernina, Natalia Gombolevskaya, Ayyaz Hussain, Vladimir M. Agafonov<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.22298v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.22298v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="リアルライフシナリオにおけるプロアクティブ動画アシスタントの知覚・予測・介入能力のベンチマーク" data-timestamp="1792056225000" data-url="https://arxiv.org/abs/2610.21568v1">
+  <p class="meta">arXiv cs.LG　Thu, 15 Oct 2026 09:23:45 Z</p>
+  <h2 class="article-title">リアルライフシナリオにおけるプロアクティブ動画アシスタントの知覚・予測・介入能力のベンチマーク</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、近年のマルチモーダル大規模言語モデル（LLM）による動画理解能力の進展を踏まえ、単に観察された映像内容を解釈するだけでなく、リアルワールドシナリオにおいて、どのような支援が必要かを予測し、適切なタイミングで介入する「プロアクティブ動画アシスタント」の能力を評価する新たなベンチマーク「P³IBench」を提案します。<br><br>P³IBenchは、日常的な知覚、リスク予測、および介入という3つの補完的な能力を評価します。本研究では、ストリーミングシステムおよび非ストリーミングシステムを含む12の代表的なオープンソースおよびプロプライエタリな動画言語モデルをベンチマークしました。評価の結果、現在のモデルは、適切な応答決定を下す上で課題があることが明らかになりました。<br><br>さらに、プロアクティブなトレーニングデータを追加で構築し、「P³I-Assistant-4B」を訓練しました。これにより、いくつかのタスクで性能が向上しましたが、能力間での向上にはばらつきが見られました。これらの知見は、効果的なプロアクティブ支援には、視覚的理解だけでなく、正確な応答タイミングと適切な抑制が必要であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Boyu Cui, Junhao Luo, Zhihao Wang, Linghan Chen, Zejun Li, Jiwen Zhang, Siyuan Wang, Zhongyu Wei<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.21568v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.21568v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="対話エージェントにおける手続き的幻覚評価のためのDialFork" data-timestamp="1792055912000" data-url="https://arxiv.org/abs/2610.21561v1">
+  <p class="meta">arXiv cs.LG　Thu, 15 Oct 2026 09:18:32 Z</p>
+  <h2 class="article-title">対話エージェントにおける手続き的幻覚評価のためのDialFork</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、対話エージェントにおける「手続き的幻覚」という新たな問題に対処するためのベンチマーク「DialFork」を提案しています。<br><br>手続き的幻覚とは、エージェントが個々の発話は流暢で事実的にもっともらしく生成できるものの、意図された対話プロセスから逸脱してしまう現象を指します。これは、従来の事実誤認（factual hallucination）とは異なる、見過ごされがちな失敗モードです。<br><br>DialForkは、36,278の対話データセットを用いて、手続き的逸脱を3つの粒度で評価するタスクを定義しています。さらに、対話の流れを考慮した新しい評価指標「FlowKL」と「FlowScore」を提案し、内容だけでなく対話の展開を比較することで、手続き的な類似性を測定します。この指標は、既存の評価手法よりも優れており、意味的な類似性だけでは手続き的な類似性を代替できないことを示しています。<br><br>本研究は、対話エージェントの評価において、内容の正確性だけでなく、対話プロセス全体の整合性を評価することの重要性を強調しています。これにより、より信頼性の高い対話システムの開発に貢献することが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Sergio Burdisso, Esaú Villatoro-Tello, Dairazalia Sánchez-Cortés, Yanis Labrak, Jordi Luque, Milos Cernak, Petr Motlicek<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.21561v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.21561v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.LG" data-title="疎な人間のガイダンスによる実世界モバイル操作のための階層的残差ポリシー学習" data-timestamp="1792000792000" data-url="https://arxiv.org/abs/2610.20607v1">
   <p class="meta">arXiv cs.AI　Wed, 14 Oct 2026 17:59:52 Z</p>
   <h2 class="article-title">疎な人間のガイダンスによる実世界モバイル操作のための階層的残差ポリシー学習</h2>
@@ -1475,108 +1577,6 @@
         分野：cs.LG<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2610.20572v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20572v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CV" data-title="物理空間に根差したエージェントフレームワークによる汎用的・インタラクティブな3D構成" data-timestamp="1792000044000" data-url="https://arxiv.org/abs/2610.20560v1">
-  <p class="meta">arXiv cs.AI　Wed, 14 Oct 2026 17:47:24 Z</p>
-  <h2 class="article-title">物理空間に根差したエージェントフレームワークによる汎用的・インタラクティブな3D構成</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
-  <div class="summary">本論文は、3Dオブジェクトの構成に関する研究です。3Dオブジェクトの構成は、デジタルコンテンツ制作やロボットシミュレーションにおいて極めて重要であり、基盤モデルにおける物理的知能のテストベッドとしても機能します。<br><br>従来の多くの手法は、大規模言語モデル（LLM）を用いてオブジェクト座標を直接予測するか、生成拡散モデルを用いて視覚的整合性を図るための複合画像を合成していました。しかし、これらの手法は静的なデジタル空間の事前知識に依存しており、正確な配置、重力による沈降、隠蔽された包含といった複雑な構成タスクには一貫して苦労していました。これらのタスクは、グローバルな計画、微細な調整、物理シミュレーションを含むインタラクティブな構築プロセスを必要とします。<br><br>本研究では、エージェントの探索と物理シミュレーションによる3D構成のための物理空間に根差したエージェントフレームワーク「PhySGA」を提案します。これにより、剛体、関節、変形可能なオブジェクトの普遍的なインタラクティブな組み立てが可能になります。このフレームワークは、幾何学的・運動学的推論を担当するアセンブリ・エージェントと、接触ダイナミクスに関する推論を担当するクリティック・エージェントの協調的なフィードフォワード・フィードバックアーキテクチャを採用しています。さらに、アクションルーターが意味論的な計画と分析を実行可能な物理プリミティブにマッピングし、タスク固有の自己進化スキルライブラリが試行錯誤のフィードバックを再利用可能な経験に蒸留することで、成功率を高め、探索試行を最小限に抑えます。<br><br>Isaac Simを用いた広範な実験により、PhySGAが関係忠実度、物理的妥当性、視覚的品質において既存の手法を大幅に上回ることが示されました。この研究は、より高度でインタラクティブな3Dコンテンツ生成やロボットシミュレーションへの応用が期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Weichen Lyu, Chong Xia, Mingyu Dong, Long Xu, Shengjun Zhang, Yueqi Duan<br>
-        分類：cs.AI, cs.CV<br>
-        分野：cs.AI<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.20560v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20560v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.SI" data-title="大規模言語モデルの社会的知能を実世界の説得シナリオで評価" data-timestamp="1791999575000" data-url="https://arxiv.org/abs/2610.20548v1">
-  <p class="meta">arXiv cs.CL　Wed, 14 Oct 2026 17:39:35 Z</p>
-  <h2 class="article-title">大規模言語モデルの社会的知能を実世界の説得シナリオで評価</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.SI</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）の社会的知能の評価に関する研究です。社会的知能は、他者の精神状態を推測する認知的知能と、これらの推論に基づいて社会的目標を達成するために適切な社会的行動を選択する行動的知能の二つの側面から構成されます。<br><br>説得は、両側面が同時に作用する自然なテストベッドを提供しますが、これまでのベンチマークでは、合成シナリオを用いてこれらを個別に評価することが一般的でした。本研究では、Redditの「ChangeMyView」コミュニティからの実世界の説得対話データセット「PerSo」を導入し、LLMを組み込んだパイプラインを用いて評価タスクを構築し、人間によるアノテーションで検証しました。<br><br>多様なLLMの評価により、一般的に性能はモデルサイズに比例して向上するものの、側面によってばらつきがあることが示されました。最も性能の高いLLMは、行動タスクにおいて最高の人間パフォーマンスをわずかに上回りましたが、認知タスクにおいては最高の人間参加者に及ばない結果となりました。<br><br>この研究は、LLMの社会的知能、特に実世界での複雑なインタラクションにおける能力を理解するための重要な一歩となります。今後の研究では、より高度な社会的知能を持つLLMの開発や、人間とLLMの協調的なインタラクションの設計に貢献することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Ali Zamani, Soroush Esfahanian, Erfan Shahabi, Mohammad Taher Pilehvar, Azadeh Shakery, Yadollah Yaghoobzadeh<br>
-        分類：cs.CL, cs.AI, cs.SI<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.20548v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20548v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.CV" data-title="OCRにおける文字誤り率の不均等な影響を考慮した重み付け評価指標" data-timestamp="1791996262000" data-url="https://arxiv.org/abs/2610.20461v1">
-  <p class="meta">arXiv cs.CL　Wed, 14 Oct 2026 16:44:22 Z</p>
-  <h2 class="article-title">OCRにおける文字誤り率の不均等な影響を考慮した重み付け評価指標</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
-  <div class="summary">本論文は、光学文字認識（OCR）およびビジョン・言語モデル（VLM）の標準的な評価指標である文字誤り率（CER）の限界を指摘し、新たな評価指標「semCER」を提案する研究です。従来のCERは、タイプミスと固有名詞の間違いなどを同等に扱うため、誤りの深刻度を区別できませんでした。<br><br>提案手法であるsemCERは、CERのアライメントと分母を維持しつつ、各文字編集にLLMによる評価に基づいた深刻度スコアを付与します。単語のセグメンテーションは行いません。また、正規化CERは、トランスクリプション全体のスコアを追跡し、semCERと同様またはそれ以上の精度で読者の評価を追跡します。semCERは、そのスコアを編集ごとの詳細な内訳に分解します。<br><br>この評価指標は、英語、ベトナム語、中国語において、読者が最も深刻と評価する編集をリストの上位に配置し、読者の評価と一致することが示されました。さらに、16言語にわたる分析では、ジャッジはスペイン語のアクセント記号の誤りにはほとんど重みを与えない一方、テルグ語の文字の誤りにはほぼ文字自体の誤りと同等の重みを与えることが明らかになりました。<br><br>実単語数をカウントできるケースでは、一般的なVLMの文字誤りは偶然率を大幅に上回る一方、従来のパイプラインの誤りは偶然率に近い値を示しました。この研究は、OCRおよびVLMの評価において、誤りの深刻度をより正確に反映する新しい標準を確立する可能性があり、モデルの改善に貢献することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Nguyen Nguyen, Yongyi Zang<br>
-        分類：cs.CL, cs.AI, cs.CV<br>
-        分野：cs.CL<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.20461v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20461v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.AI, math.OC, stat.ML" data-title="強化学習におけるモメンタムの効果：検証可能な報酬付きの場合" data-timestamp="1791994274000" data-url="https://arxiv.org/abs/2610.20413v1">
-  <p class="meta">arXiv stat.ML　Wed, 14 Oct 2026 16:11:14 Z</p>
-  <h2 class="article-title">強化学習におけるモメンタムの効果：検証可能な報酬付きの場合</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">math.OC</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、検証可能な報酬付き強化学習（RLVR）において、モメンタム、特に一次モーメントモメンタムの有用性について考察します。<br><br>バイアス補正された指数移動平均（EMA）モメンタムを用いたバンディット定式化により、EMA係数βが過去の勾配の重み付けをどの程度速く減衰させるかを制御します。勾配が正確に評価される場合、βを過剰なオーバーシュートを防ぐ範囲内で増加させると、最適化が厳密に加速されることを証明します。<br><br>勾配がサンプリング応答から推定される場合、期待される正の利得はサンプリングの変動によって不明瞭になる可能性があります。学習率ηが減少すると、固定βでの期待利得はこれらの変動よりも速く消失しますが、η/(1-β)を安全な領域内に保つためにβを増加させると、消失しない利得が維持され、最終的に変動を上回ることを示します。バンディットシミュレーションとQwen3-4B-BaseおよびQwen2.5-32Bを用いたRLVR実験が、これらの予測を定量的に検証し、実用的なLLMポストトレーニングにおいてより大きな係数を選択する原則を支持します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Kaifei Wang, Zikang Shan, Liwei Wang, Yinyu Ye, Han Zhong<br>
-        分類：cs.LG, cs.AI, math.OC, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.20413v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20413v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="プラトンからアリストテレスへ：表現仮説の一般理論に向けて" data-timestamp="1791988882000" data-url="https://arxiv.org/abs/2610.20286v1">
-  <p class="meta">arXiv stat.ML　Wed, 14 Oct 2026 14:41:22 Z</p>
-  <h2 class="article-title">プラトンからアリストテレスへ：表現仮説の一般理論に向けて</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、モデルの能力向上に伴い、それらが共通の表現に収束するというプラトニック表現仮説（PRH）について論じます。しかし、近年の研究では、表現の整合性に関して異なる見解が示されています。<br><br>これらの見解の違いは、整合基準が格子上の異なる点に位置するためであると示し、これを格子表現仮説（LRH）として形式化します。LRHの下では、PRHが主張する収束は格子の最上部での合意であり、その証拠は格子の下部近くの基準である近傍の重複から来ています。アリストテレス表現仮説（ARH）は、キャリブレーションが近傍の重複の成長をモデルサイズとともに維持するが、中心化カーネルアライメントの成長をほぼ除去するため、収束を局所的な近傍に限定します。<br><br>さらに、Back into Plato's Cave（BPC）は、近傍の重複の崩壊から粗い共有構造を推測しますが、本研究ではそれを少なくとも部分的には、より短い距離をカバーする固定数の近傍に起因すると追跡します。Structure over Geometry（SOG）で使用されるスパニングツリーの重複は、主に1-最近傍の重複を繰り返すことを示します。LRHは独立に訓練されたモデルにも拡張され、それらの訓練手順と目的が、実行を確実に満たす基準を決定します。線形オートエンコーダーの訓練手順と、有限コントラスティブギブスモデルの目的についてこの主張を証明します。多数の事前訓練されたビジョンおよび言語モデル、および理論モデルの数千回の実行における実験が、これらの結論を支持します。この研究が、表現仮説の一般理論への道を開き、それらを分析し、その証拠を比較するためのフレームワークを提供することを期待します。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Dai Shi, Andi Han, Xiaoyu Li, Luke Thompson, José Miguel Hernández-Lobato<br>
-        分類：cs.LG, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.20286v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20286v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, stat.ML" data-title="MAEM：クラスインクリメンタルグラフ学習のためのリプレイフリー・容量制御型動的エキスパート混合による最近性バイアスの軽減" data-timestamp="1791987400000" data-url="https://arxiv.org/abs/2610.20238v1">
-  <p class="meta">arXiv stat.ML　Wed, 14 Oct 2026 14:16:40 Z</p>
-  <h2 class="article-title">MAEM：クラスインクリメンタルグラフ学習のためのリプレイフリー・容量制御型動的エキスパート混合による最近性バイアスの軽減</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">stat.ML</span></div>
-  <div class="summary">グラフニューラルネットワーク（GNN）はグラフ構造データで優れた性能を発揮しますが、クラスが順次到着する際に破滅的な忘却に苦しみます。クラスインクリメンタルグラフ学習では、予測は最近学習したクラスに支配されがちで、深刻な最近性バイアスを引き起こします。動的な拡張はセッション間で知識を分離できますが、多くの手法はタスクインクリメンタル設定を仮定しており、テスト時にタスクIDを必要とします。<br><br>本論文では、クラスインクリメンタルグラフ学習のためのリプレイフリー、容量制御型の動的エキスパート混合フレームワークであるMAEMを提案します。MAEMは、簡略化グラフ畳み込み（SGC）で表現を構築し、各新しいセッションに専用のエキスパートを訓練してから凍結し、以前の知識を保護します。タスクIDや共有の訓練可能ルーターなしでルーティングするために、各エキスパートはマスク付きオートエンコーダー（MAE）を使用します。テストノードは、再構築誤差が最も低いエキスパートに割り当てられ、ルーティングレベルの最近性バイアスを低減します。<br><br>エキスパートプールが固定容量に達すると、MAEMはGit Re-Basinアライメントを通じて最も使用されていないエキスパートをマージし、MAE分布からトポロジーを意識した疑似データ（DeepInversionスタイル）を使用して、履歴グラフデータを保存または再訪することなく、融合エキスパートに蒸留します。4つのクラスインクリメンタルグラフベンチマークにおいて、MAEMは最近性バイアスを軽減し、強力な継続的グラフ学習ベースラインを上回り、厳密なリプレイフリー学習下でモデル容量を制限内に保ちます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
-        サイト：arXiv<br>
-        著者：Junlin Chen, Wenhao Wang, Junchao Xu, Qingsong Yao, Fei Xue, Li Sun, Xiao Wang, Ruijie Wang<br>
-        分類：cs.LG, stat.ML<br>
-        分野：cs.LG<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.20238v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.20238v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
