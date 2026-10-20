@@ -1478,105 +1478,105 @@
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI" data-title="LatComm：大規模言語モデル間における再利用可能なコンテキスト圧縮のための潜在的通信" data-timestamp="1792432721000" data-url="https://arxiv.org/abs/2610.26840v1">
-  <p class="meta">arXiv cs.AI　Mon, 19 Oct 2026 17:58:41 Z</p>
-  <h2 class="article-title">LatComm：大規模言語モデル間における再利用可能なコンテキスト圧縮のための潜在的通信</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、複数の大規模言語モデル（LLM）を組み合わせたシステムにおいて、コンテキストがモデル間でテキストとして渡される際の非効率性を解消する手法を提案します。既存のコンテキスト圧縮や潜在的通信手法は、コンパクトさ、質問間の再利用性、異なるLLMによる可読性といった特性の一部しか満たしていませんでした。<br><br>本研究では、これらの特性をすべて満たす「LatComm」という潜在的通信インターフェースを導入します。LatCommは、エンコーディングとリーディングを分離することで、コンテキストを一度エンコードし、受信側は各質問に対して必要な部分を選択的に読み取ることができます。具体的には、固定されたコンテキストエンコーダーLLMがコンテキストを固定サイズのパケットに圧縮し、別の固定された受信者LLMに送信します。受信者LLMは、プロンプトから計算されたゲートを通じてクロスアテンションによりパケットを読み取ります。<br><br>12の多肢選択式質問応答データセットでの実験では、LatCommは単一ベクトルベースラインと比較して平均精度を最大10.2ポイント向上させました。また、QuALITYデータセットでは、受信側の入力を57倍削減し、記事の質問応答速度を3倍高速化しました。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="同じシミュレーションでも証拠が異なると：取得されたツールの出力がLLMエージェントの精度を低下させる仕組み" data-timestamp="1792432661000" data-url="https://arxiv.org/abs/2610.26836v1">
+  <p class="meta">arXiv cs.AI　Mon, 19 Oct 2026 17:57:41 Z</p>
+  <h2 class="article-title">同じシミュレーションでも証拠が異なると：取得されたツールの出力がLLMエージェントの精度を低下させる仕組み</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、正しい答えを計算できるLLMエージェントであっても、誤った答えを出す可能性があるという問題提起から始まります。特に、エージェントがコンテキストウィンドウに収まらない長いツールの出力をファイルに保存し、必要に応じて検索・読み込みを行う「ホスネス」と呼ばれる手法に焦点を当てています。<br><br>この手法が精度にどのような影響を与えるかを、米国地質調査所（USGS）が提供する広く利用されている地球化学シミュレーター「PHREEQC」を用いて検証しました。PHREEQCのレポートは最大846.8k文字に達し、その決定論的な性質により、出力される値はすべて追跡可能です。エージェントはこれを用いて、検証済みの158の多肢選択式問題を解きました。<br><br>その結果、エージェントがシミュレーターのレポートをセクションインデックス経由で読み込む場合、GPT-5.1とGPT-5.2はそれぞれ11.3点と7.9点の精度低下を示しましたが、Claude Opus 4.6とClaude Sonnet 4.6では検出可能なコストは見られませんでした。さらに、GPTモデルでは、証拠の置換（Evidence Substitution）と呼ばれる、本来参照すべきでない自身の高精度出力ファイルを参照して誤って丸めてしまう失敗が観測されました。コンテキスト管理の選択は、最終的な精度だけでなく、精度が失われる箇所を考慮して判断されるべきです。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Huawei Lin, Jinting Liu, Tan Yu, Weijie Zhao<br>
-        分類：cs.CL, cs.AI<br>
-        分野：cs.CL<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.26840v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26840v1</a>
+        著者：Ke Zhang, Sahchit Chundur, Jerry Peprah Owusu, Mohammad Javad Abdolhosseini Qomi, Maziar Raissi<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.26836v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26836v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI" data-title="長文コンテキスト線形アテンションのためのクロネッカーデルタルール" data-timestamp="1792432612000" data-url="https://arxiv.org/abs/2610.26834v1">
-  <p class="meta">arXiv cs.AI　Mon, 19 Oct 2026 17:56:52 Z</p>
-  <h2 class="article-title">長文コンテキスト線形アテンションのためのクロネッカーデルタルール</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文では、クロネッカーデルタルールに基づいた新しい線形アテンションアーキテクチャである KronLSTM を提案します。クロネッカーデルタルールは、連想行列メモリのための新しい更新ルールであり、メモリを単一の方向のみに沿って修正することで、ターゲットとする連想を修正するメモリ修正メカニズムを備えています。<br><br>この最小限の侵襲的なメモリ修正により、デルタルール更新と比較して以前に保存された情報との干渉が低減され、長文コンテキスト言語モデリングに特に適しています。結果として得られるメモリダイナミクスは、マルコフ連鎖として数学的に記述でき、メモリ行列の期待ノルムが入力シーケンス全体で一様に有界に保たれるため、安定したメモリダイナミクスが保証されます。<br><br>実験の結果、KronLSTM は既存の線形アテンションアーキテクチャ、特に長文コンテキストベンチマークにおいて、(Gated) DeltaNet ファミリのモデルを含む競合他社と同等か、しばしばそれを上回る性能を示しました。これらの結果は、クロネッカーデルタルールが、リカレント線形アテンションアーキテクチャにおける安定した連想メモリのための効果的かつ解析的に扱いやすい基盤であることを確立しています。<br><br>本研究で提案された KronLSTM は、長文コンテキストの処理において安定性と高い性能を両立させる新しいアプローチを提供します。コードとモデルはオープンソースとして公開されており、今後の研究や実務への応用が期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Anamaria-Roberta Hartl, Levente Zólyomi, Michael List, Günter Klambauer, Sebastian Böck, Sepp Hochreiter<br>
-        分類：cs.LG, cs.AI<br>
-        分野：cs.LG<br>
-        ジャンル：Vision / Multimodal<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.26834v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26834v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="メモリネイティブ進化に向けたMemT-1.0" data-timestamp="1792432475000" data-url="https://arxiv.org/abs/2610.26825v1">
-  <p class="meta">arXiv cs.LG　Mon, 19 Oct 2026 17:54:35 Z</p>
-  <h2 class="article-title">メモリネイティブ進化に向けたMemT-1.0</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、基盤モデルが情報を継続的に蓄積・利用できるように、メモリを本質的な能力として組み込む「メモリネイティブ進化」を目指しています。<br><br>提案手法「MemT-1.0」は、モデル計算の一部としてメモリを内部化する新しいメモリ基盤モデルアーキテクチャです。Gated DeltaNet-2と安定したトークンレベルのメモリ更新メカニズムを採用し、さらに「Mixture-of-Storage」によってネイティブメモリ容量のスケーリングを実現しています。<br><br>340億トークンの訓練データと効率的な訓練・推論インフラストラクチャを用いた2段階の訓練パイプライン（継続的事前訓練と事後訓練）を経て、MemT-1.0-NanoとMemT-1.0-Flashというモデルファミリーが開発されました。これらのモデルは、既存のパラメータメモリベースラインを平均的に上回り、検索拡張手法とも競争力のある性能を示しながら、一般的な能力を維持しています。<br><br>特に、128Kトークンの履歴長において、MemT-1.0-Nanoはエンドツーエンドの推論速度を約1.86倍向上させ、永続ストレージを66倍削減しました。これにより、エージェントタスクにおける成功率が向上し、メモリネイティブ進化に向けた実用的な一歩となります。ただし、モデルの複雑さや計算コストについては、さらなる最適化が求められる可能性があります。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Machine Learning" data-field="quant-ph" data-source="arXiv cs.LG" data-area="AI" data-categories="quant-ph, cs.LG" data-title="量子ハミルトニアン埋め込みによる教師あり学習" data-timestamp="1792432604000" data-url="https://arxiv.org/abs/2610.26833v1">
+  <p class="meta">arXiv cs.LG　Mon, 19 Oct 2026 17:56:44 Z</p>
+  <h2 class="article-title">量子ハミルトニアン埋め込みによる教師あり学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">quant-ph</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、古典的な訓練データを単一の効果的なパラメータ付きハミルトニアンにエンコードする教師あり学習フレームワークである量子ハミルトニアン埋め込みを提案します。<br><br>訓練は、このデータ依存ハミルトニアンのパラメータを最適化し、その近似基底状態が分類規則を定義します。基底状態が量子アルゴリズムを用いて近似された後、推論は古典的な表現または量子表現を用いて古典的または量子的に実行できます。勾配推定のための効率的な手法が確立され、有利な汎化保証が証明されています。<br><br>さらに、標準的な暗号化仮定の下で、ハミルトニアン埋め込みは効率的な古典的アルゴリズムの範囲を超える仮説関数を実現できることが示されています。IBM Heronプロセッサ上で標準的なベンチマークデータセットを用いてフレームワークが大規模に実証されました。これらの結果は、ハミルトニアン埋め込みを、理論的保証と大規模な実験的調査への道筋を組み合わせた新しい量子機械学習フレームワークとして確立します。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.LG<br>
         サイト：arXiv<br>
-        著者：Zhiyu Li, Zeyu Zhang, Linyun Liu, Yiwei Bu, Chenyang Xi, Xichong Zhang, Yi Yu, Yu Yu<br>
-        分類：cs.CL, cs.LG<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.26825v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26825v1</a>
+        著者：Riccardo Molteni, Minjun Jeon, Paolo Braccia, Abhinav Deshpande, Vedran Dunjko, Liang Jiang, Su-un Lee, Swarnadeep Majumder<br>
+        分類：quant-ph, cs.LG<br>
+        分野：quant-ph<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.26833v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26833v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ソフト制約最適化のための文法誘導型自動定式化のベンチマークと改善" data-timestamp="1792432355000" data-url="https://arxiv.org/abs/2610.26819v1">
-  <p class="meta">arXiv cs.CL　Mon, 19 Oct 2026 17:52:35 Z</p>
-  <h2 class="article-title">ソフト制約最適化のための文法誘導型自動定式化のベンチマークと改善</h2>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="ハイブリッドアーキテクチャにおける競合学習" data-timestamp="1792432555000" data-url="https://arxiv.org/abs/2610.26830v1">
+  <p class="meta">arXiv cs.CL　Mon, 19 Oct 2026 17:55:55 Z</p>
+  <h2 class="article-title">ハイブリッドアーキテクチャにおける競合学習</h2>
   <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、実世界の意思決定問題におけるソフト制約の自動定式化に焦点を当てています。<br><br>自然言語で記述された意思決定問題を、文法に導かれた抽象構文木（AST）にマッピングし、それを実行可能な最適化コードにコンパイルする推論時フレームワーク「ASTOR」を提案しています。ソフト制約は、消費者、管理者、計画担当者などの要求に含まれることが多いにもかかわらず、従来の自動定式化研究では軽視されがちでした。<br><br>ASTORは、ソフト制約を明示的にモデル化する必要がある多くの実用的な問題に対応します。提案されたベンチマーク「SoftOR」を用いた評価では、ASTORはソフト制約を含む問題において、既存のLLMベースの手法と比較して最高の総合精度を達成しました。また、ソフト制約のみを含む標準的な自動定式化ベンチマークでも競争力のある性能を示しています。<br><br>この研究は、ソフト制約のモデリングを強化することで、より現実に即した意思決定支援ツールの開発に貢献する可能性があります。ただし、LLMの能力に依存するため、その解釈性や頑健性についてはさらなる検討が必要となるでしょう。</div>
+  <div class="summary">本論文は、多くの最新言語モデルが採用している、線形時間再帰とソフトマックス注意機構の両方を組み込んだハイブリッドアーキテクチャに着目します。<br><br>現代の再帰層は高度に表現力豊かな混合メカニズムを提供しますが、文脈情報を固定サイズの状態に圧縮することで高いスループットを確保する一方で、文脈情報検索においてはソフトマックス注意機構に劣ることがあります。本研究では、異なる種類のミキサーが同じ関数を学習するために競合し、いずれかの層が関数を学習すると、他の層に対応する学習信号が抑制される「競合学習」現象を明らかにします。<br><br>層の帰属分析により、典型的なデータ分布下では、現代の再帰がソフトマックス注意機構よりも速く検索関数を学習し、ほとんどの場合、注意機構が検索を学習できなくなることが示されました。訓練途中で再帰の重み更新を停止すると、注意機構が検索を学習するのに役立ちます。これらの結果に基づき、自然言語に対するハイブリッドアーキテクチャの事前学習のための段階的訓練手順を提案します。10億パラメータまでのモデルでの経験的結果は、提案手法が言語モデリング損失、常識推論、および様々な文脈長にわたる広範な検索関連タスクにおいて大幅な改善をもたらすことを示しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
         配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Amer Goel, Yeganeh Alimohammadi, Andrew Daw<br>
+        著者：Xingyu Shen, Yingfa Chen, Ziqing Qiao, Chaojun Xiao, Xu Han, Zhiyuan Liu<br>
         分類：cs.CL<br>
         分野：cs.CL<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.26819v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26819v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.26830v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26830v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv stat.ML" data-area="AI" data-categories="cs.LG, cs.CL, stat.ML" data-title="LLMエージェントワークフローのためのコスト効率的なパレート推薦" data-timestamp="1792427107000" data-url="https://arxiv.org/abs/2610.26676v1">
-  <p class="meta">arXiv stat.ML　Mon, 19 Oct 2026 16:25:07 Z</p>
-  <h2 class="article-title">LLMエージェントワークフローのためのコスト効率的なパレート推薦</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">stat.ML</span></div>
-  <div class="summary">本論文は、LLMエージェントワークフローにおいて、タスク品質と展開コストのトレードオフを考慮したモデル選択の問題に取り組んでいます。<br><br>異なるモデルを専門的な役割に割り当てる際、ユーザーは品質、コスト、レイテンシの様々なバランスを求めることがあります。この最適な割り当てを見つけるために、単一目的のコスト認識型Gittins探索を多目的拡張した「Cost-Coupled Gittins (CC-Gittins)」を提案しています。この手法は、評価コストと展開コストの間の相関関係を利用し、探索と評価を交互に行うことで、両方の検索を効率化します。<br><br>CC-Gittinsは、各バッチ後に、品質と展開コストの不確実性調整済み推定値の下で優位でない割り当てを推薦します。8つの品質・コスト行列を用いた評価では、網羅的な評価コストの約10%で真のパレートフロンティアのかなりの部分を回復し、30%のコストでほとんどのフロンティアを誤検出なく回復しました。レイテンシを第3の目的とした評価でも有効性が確認されています。<br><br>この研究は、LLMエージェントワークフローにおけるモデル選択の効率化に貢献します。ただし、推薦される割り当てのパレートフロンティアの正確性や、実際のワークフローへの適用におけるスケーラビリティについては、さらなる検証が必要となるでしょう。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.LG, q-bio.BM" data-title="ProteinGeoBench：最先端の構造生物学エージェントは検索に強く、幾何学に弱い" data-timestamp="1792432538000" data-url="https://arxiv.org/abs/2610.26829v1">
+  <p class="meta">arXiv cs.AI　Mon, 19 Oct 2026 17:55:38 Z</p>
+  <h2 class="article-title">ProteinGeoBench：最先端の構造生物学エージェントは検索に強く、幾何学に弱い</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span><span class="tag">q-bio.BM</span></div>
+  <div class="summary">本論文は、最先端のエージェントが構造生物学分野において、構造メタデータの検索は得意とするものの、座標からの幾何学計算の信頼性が低いという現状を明らかにします。このギャップがベンチマークスコアにどの程度影響するか、また評価設定がモデルにどう影響するかを調査します。<br><br>「ProteinGeoBench」と名付けられた131のタンパク質構造タスクからなるベンチマークスイートを用いて、4つの最先端モデルと26のモデルに対する4,249回のロールアウトを分析しました。その結果、4つの最先端モデルのうち3つは0.785から0.816の範囲に収まり、差はほとんどありませんでしたが、残りの1つは0.707というスコアでした。また、3つのモデルはメタデータ検索の方が数値計算よりも得意であることが示されました。<br><br>数値タスクは全131タスクの28%を占めるにもかかわらず、全モデルが失敗した12タスクのうち半数を占めていました。評価予算（タスクあたりの実行回数）によってモデルのランキングが変わることも確認されました。さらに、ネットワークアクセスを無効にするとスコアが低下しますが、構造データベースドメインをブロックするよりも影響が大きいことが示唆されました。これらの実験は異なるタスクサブセットを使用しているため、モデル、ハーネス、アクセス条件、タスク構成を直接比較することはできません。評価においては、タスクファミリーごとの結果、実行回数、ハーネス、アクセス条件を報告することが推奨されます。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
+        配信元：arXiv cs.AI<br>
         サイト：arXiv<br>
-        著者：Qian Xie, Wenyue Hua, Yueli He, Sripad Karne, Armaan Agrawal, Nikos Pagonas, Eugene Wu, Kostis Kaffes<br>
-        分類：cs.LG, cs.CL, stat.ML<br>
-        分野：cs.LG<br>
+        著者：Matt Turk, Brandon L. Neel, Diana M. Lopez, Zachary D. Smith, Grace N. Johnecheck, James B. Golden<br>
+        分類：cs.AI, cs.LG, q-bio.BM<br>
+        分野：cs.AI<br>
         ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.26676v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26676v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.26829v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26829v1</a>
   </div>
 </article>
 
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG" data-title="人間評価者による最良の少数選抜：評価とペア比較の適応的統合" data-timestamp="1792416733000" data-url="https://arxiv.org/abs/2610.26380v1">
-  <p class="meta">arXiv stat.ML　Mon, 19 Oct 2026 13:32:13 Z</p>
-  <h2 class="article-title">人間評価者による最良の少数選抜：評価とペア比較の適応的統合</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、多数の候補者の中から上位k個の最適なアイテムを選び出す意思決定者を対象としています。この意思決定者は、人間による評価を通じてアイテムの品質を学習します。評価にはコストがかかるため、限られた評価予算を効率的に使用するために、評価を適応的に割り当てることを目指します。<br><br>評価の形式として、評価者が提供しやすい形式である「評価値」と「ペア比較」の両方を許容します。評価値は初期段階で大まかな品質把握に役立ち、その後ペア比較によって上位アイテムの順序付けを精緻化し、最終的な上位k個の選抜に絞り込みます。<br><br>この割り当て問題を解決するため、2つの割り当てポリシーに基づいた適応型アルゴリズムを開発しました。特に、将来のラウンドで何を評価すべきかという情報提供に価値を置く、将来志向の代理目的関数に基づいたポリシーが主要な貢献です。この意思決定規則は解釈可能であり、漸近的に一貫していることを証明しています。評価プロセスの後半では、将来志向が生産的でなくなるため、近視的なポリシーに切り替える基準を構築しました。<br><br>シミュレーションでは、この手法が2種類の評価をどのように組み合わせるかについての洞察を与え、既存のベンチマークを上回る性能を示しました。この研究は、限られた予算内で効率的に最適なアイテムを選抜するための新しいアプローチを提供します。</div>
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="文脈圧縮における証拠保存の評価：KEEP-Bench" data-timestamp="1792432518000" data-url="https://arxiv.org/abs/2610.26827v1">
+  <p class="meta">arXiv cs.CL　Mon, 19 Oct 2026 17:55:18 Z</p>
+  <h2 class="article-title">文脈圧縮における証拠保存の評価：KEEP-Bench</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、文脈圧縮が長文脈の効率を向上させる一方で、情報ボトルネックを通じて忠実性の問題を引き起こす可能性があることを指摘します。<br><br>既存の評価はQAメトリクスに依存していますが、読者は不忠実な圧縮からでも正しく回答できるため、これらのメトリクスは損失を過小評価します。このギャップを埋めるため、3つの困難な設定（参照解決、明示的な修飾語、少数派の視点のための証拠保持が必要）にわたる4,102のケースで圧縮の忠実性を直接評価する診断ベンチマーク「KEEP-Bench」を導入します。<br><br>実験の結果、調整されたプロンプティングを使用しても、最先端のモデルでさえ信頼性が低いことが示されました。文脈ウィンドウが100Kトークンを超え、入力が平均3.1Kトークンであるにもかかわらず、最良のオープンウェイトモデル（31B）は66.8%のケースでしか必要な証拠を保持できず、最良のプロプライエタリモデルは61.6%に留まりました。証拠構造間でのパフォーマンスのばらつきも大きく、限定的な構造からの結論は偏っている可能性があります。さらに、証拠保存率と推論FLOPsの関係を示す「Evidence Preservation Return (EPR)」メトリクスを導入し、中程度のスケール（4B-8B）でピークに達し、その際の保存率は低いことがわかりました。追加の出力予算は主に既に強力なモデルに利益をもたらし、能力のギャップを広げますが、これらのモデルのより強力な保存は高い計算コストを伴います。これらの発見は、大きな出力予算やモデルのスケーリングに依存するのではなく、小さな計算予算の下で強力な情報保持を持つコンプレッサーを調査する将来の研究の重要性を強調しています。</div>
   <div class="source-box">
         <strong>ソース・引用元</strong><br>
-        配信元：arXiv stat.ML<br>
+        配信元：arXiv cs.CL<br>
         サイト：arXiv<br>
-        著者：Motti Goldberger, Nils Rudi<br>
-        分類：stat.ML, cs.LG<br>
-        分野：stat.ML<br>
+        著者：Ziqing Man, Di Wu, Jia-Chen Gu, Junyi Zhang, Kai-Wei Chang, Nanyun Peng<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
         ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.26380v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26380v1</a>
+        原文URL：<a href="https://arxiv.org/abs/2610.26827v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26827v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.CV" data-title="Web開発における視覚参照条件付きエージェント生成のベンチマーク：RefCraft" data-timestamp="1792432506000" data-url="https://arxiv.org/abs/2610.26826v1">
+  <p class="meta">arXiv cs.CL　Mon, 19 Oct 2026 17:55:06 Z</p>
+  <h2 class="article-title">Web開発における視覚参照条件付きエージェント生成のベンチマーク：RefCraft</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、AIエージェントが実世界の生産性タスクに応用される上で不可欠な、視覚参照を効果的に組み込んだエージェント生成能力を、Web開発という実用的かつ評価しやすい設定で検証するベンチマーク「RefCraft」を提案します。<br><br>RefCraftは、自然言語指示と1〜5個の参照Webページのスクリーンショットを組み合わせた300の現実的なマルチモーダルWebページ開発タスクで構成されています。エージェントは、これらの参照を適切に解釈・利用し、視覚的な出力をレンダリング、検査、反復的に改良する必要があります。<br><br>評価は、独立して検証可能なキーポイントと、プログラムおよびVLM（視覚言語モデル）による評価者を組み合わせて行われました。9つの最先端（M）LLMを評価した結果、最も性能の高いシステムでも総合スコアは100点中52.12点にとどまり、視覚参照条件付きエージェント生成が実用的なWeb開発設定において依然として大きな課題であることが明らかになりました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Yuchi Wang, Rongyao Fang, Weihao Yu, Xilin Wei, Tiancheng Gu, Dingkang Yang, Hang Zhang, Dayiheng Liu<br>
+        分類：cs.CL, cs.AI, cs.CV<br>
+        分野：cs.CL<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.26826v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.26826v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
