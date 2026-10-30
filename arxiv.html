@@ -1360,6 +1360,108 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-10" data-genre="Robotics" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="大規模言語モデルのデータ帰属における設計空間の解明" data-timestamp="1793296793000" data-url="https://arxiv.org/abs/2610.40655v1">
+  <p class="meta">arXiv cs.CL　Thu, 29 Oct 2026 17:59:53 Z</p>
+  <h2 class="article-title">大規模言語モデルのデータ帰属における設計空間の解明</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Robotics</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LM）におけるデータ帰属手法の評価方法に焦点を当てています。<br><br>従来の評価では、データセットの複数の特性が同時に変化するため、帰属アルゴリズムが失敗する原因を特定することが困難でした。この問題を解決するため、本研究では特に評価に重点を置いたLMデータ帰属の設計空間を探求します。完全に架空の知識でファインチューニングされたLLMと、曖昧さのない正解データを提供する「Controlled Attribution Benchmark (CATT)」を導入しました。<br><br>この合成設定により、文書の冗長性やレキシカルディストラクタなどのデータセット構成要素を体系的に一つずつ変更できます。この設定を用いた実験から、冗長性とディストラクタが一貫して帰属性能を低下させることが示されました。さらに、勾配計算に使用される損失関数と、トークンごとの帰属スコアを文書スコアに集約する方法という、あまり探求されてこなかった2つの設計上の選択肢を検討しました。その結果、訓練文書内の真の因果的証拠は非常に局所的であるにもかかわらず、標準的な手法では文書全体で帰属スコアを平均化することで、この証拠がノイズに希釈されてしまうことが判明しました。標準的なクロスエントロピー損失勾配を負の対数オッズ勾配に置き換えることで、情報量の少ないトークンから重要なトークンを浮き彫りにできることが示されました。さらに、上位トークンスコアのみを集約することで、診断ベンチマークにおいて正解リコールの精度を35〜72パーセントポイント向上させることができました。負の対数オッズ補正は、テストしたすべての手法において、カウンターファクチュアル再学習性能を最大4.9倍向上させることで、FTRACE-TREXにも一般化しました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Steven Yu, Sheng-Yu Wang, Kimia Hamidieh, Antonio Torralba, David Bau<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Robotics<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.40655v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.40655v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CV" data-title="ニューラル・シケッツの重み摂動なしでの再考" data-timestamp="1793296769000" data-url="https://arxiv.org/abs/2610.40649v1">
+  <p class="meta">arXiv cs.AI　Thu, 29 Oct 2026 17:59:29 Z</p>
+  <h2 class="article-title">ニューラル・シケッツの重み摂動なしでの再考</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span></div>
+  <div class="summary">本論文は、事前学習済み言語モデルが、重み空間におけるタスク固有のエキスパートの密な近傍に存在するというニューラル・シケッツ仮説を検証する。<br><br>研究者らは、この仮説に基づく利得を再現しつつも、その幾何学的な説明は不要であることを示唆する。単一のデコーダーブロックの摂動や、モデルを完全に凍結した状態での出力ロジットへのランダムバイアスの追加でも、多くの推論タスクで同等以上の性能を示した。これは、出力の多様性、検証に基づく選択、および投票に基づく代替的な説明を示唆している。<br><br>この代替的な説明は、摂動・選択・投票（PSV）として定式化され、摂動された予測器を生成し、少数の検証セットで高性能なメンバーを選択し、それらの予測を集約する一般的な手順である。この解釈は、ニューラル・シケッツとサンプリング、自己整合性、検証者ガイド選択などの確立された推論時間手法を結びつける。さらに、小規模な重み摂動は主に誘起されるロジットシフトを通じて作用することが示された。<br><br>この分析は、ビジョン領域にも拡張され、ロジットPSVはドメインシフト下でも性能を大幅に向上させるが、完全な重み摂動はほとんど追加的な利点を提供しない。これらの結果は、重み空間のエキスパートの近傍に起因すると考えられていた利得が、出力の多様性、選択、および投票によって達成できることを示唆している。ロジットPSVは、完全に凍結されたモデルでこれらの利点を実現し、言語とビジョンの両方で完全な重み摂動アンサンブルに代わる、シンプルでトレーニング不要な代替手段を提供する。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Nicolas Dufour, Elouan Gardès, Amil Dravid, Patrick Pérez, Loic Landrieu<br>
+        分類：cs.LG, cs.AI, cs.CV<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.40649v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.40649v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="浅い安全性アライメントを活用したマルチターン対話型防御システム" data-timestamp="1793296613000" data-url="https://arxiv.org/abs/2610.40627v1">
+  <p class="meta">arXiv cs.CL　Thu, 29 Oct 2026 17:56:53 Z</p>
+  <h2 class="article-title">浅い安全性アライメントを活用したマルチターン対話型防御システム</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、マルチターンの対話において、言語モデルの安全性を維持するための新しい防御フレームワーク「ShallowDefend」を提案しています。<br><br>大規模言語モデルは、直接的な有害リクエストに対しては安全に拒否できるようになりましたが、対話が複数ターンにわたると、同じリクエストが成功してしまうという脆性が存在します。これは、既存の安全性アライメントが表層的な応答形式のみを監視し、モデルに明示的な安全性の決定を学習させる機会を与えていないためです。本研究では、応答の軌跡を決定する短いトークン列に着目し、防御側がその部分を最初に占有するという逆転の発想に基づいています。<br><br>提案手法は、「Assess → Decide → Respond」というフレームワークを採用しています。まずユーザーの意図を評価し、次に明示的で解析可能な安全性の決定を下し、その決定に基づいて応答を生成します。この決定はトークン列として扱われ、強化学習によって訓練されます。自己検証報酬は、決定ラベルと対話の性質を照合することで、審判やアノテーションを必要としません。また、LLMを審判とする評価も可能です。この手法は、安全性、有用性、親切さに関する14のベンチマークにおいて、マルチターンの安全性で最も強力な性能を示し、有用性を維持しつつ親切さへの影響はわずかでした。分析により、この手法が応答の軌跡を設定する短い検討段階に効果を集中させ、そこで下された決定が因果的な制御点となることが確認されました。攻撃者が悪用する浅さが、防御のメカニズムとなるのです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Qiyao Ma, Xiaodong Liu, Weiwei Yang, Mingqian Feng, Chengquan Guo, Jialin Song, Carolyn Buractaon, Zhe Zhao<br>
+        分類：cs.CL<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.40627v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.40627v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.CR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CR, cs.AI, cs.CL" data-title="TextSeal2：コピュラ混合とメモリレスレースによる歪みのないLLM電子透かし" data-timestamp="1793296452000" data-url="https://arxiv.org/abs/2610.40613v1">
+  <p class="meta">arXiv cs.AI　Thu, 29 Oct 2026 17:54:12 Z</p>
+  <h2 class="article-title">TextSeal2：コピュラ混合とメモリレスレースによる歪みのないLLM電子透かし</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CR</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文では、大規模言語モデル（LLM）向けの歪みのない電子透かし技術であるTextSeal2を紹介する。<br><br>TextSeal2は、投機的デコーディング下でも電子透かし信号を維持し、トークンの置き換えが発生しても同じキーでウォーターマークが付けられ、受け入れ率も変化しない。また、出力の多様性を維持し、推論レイテンシを増加させない。<br><br>先行技術であるTextSealは、Gumbel-maxスキームで多様性を回復するためにトークンをコインフリップで2つのキーのいずれかにルーティングしていたが、検出器がどちらのキーが使用されたかを知らずにスコアを平均化するため最適ではなかった。TextSeal2は、複数のキーを単一の仮想キーにマージし、AutoMarkのガウスコピュラを通じて新しいノイズと結合する。これにより、公開共有キーを含む任意の数のキーを希釈なしでマージできる。<br><br>投機的デコーディング下では、TextSeal2は、ドラフトレースの残りを利用した追加の指数関数的レースでキー付きドラフトを検証する。このレースはメモリレスであるため、ブロック検証を再現し、出力はターゲットモデルに正確に従う。3つのLLMで評価した結果、TextSeal2は、TextSealよりも検出率が高く、textGrainと同等であり、ポストロジット最適化を必要としない。投機的デコーディング下では、TextSealおよびtextGrainよりも大幅に高い検出率を示した。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Tom Sander, Pierre Fernandez, Itai Gat, Haiming Bao, Jiaxin Shi, Jason Park, Valeriu Lacatusu, Sylvestre-Alvise Rebuffi<br>
+        分類：cs.CR, cs.AI, cs.CL<br>
+        分野：cs.CR<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.40613v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.40613v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.MA, quant-ph" data-title="固体量子スピンを用いた自律実験研究のための協調的AIエージェント" data-timestamp="1793296070000" data-url="https://arxiv.org/abs/2610.40589v1">
+  <p class="meta">arXiv cs.AI　Thu, 29 Oct 2026 17:47:50 Z</p>
+  <h2 class="article-title">固体量子スピンを用いた自律実験研究のための協調的AIエージェント</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.MA</span><span class="tag">quant-ph</span></div>
+  <div class="summary">本論文は、質問の定式化から原稿作成まで、研究全体を自律的に実施できる研究室の実現を目指す。<br><br>研究者らは、大規模言語モデル（LLM）に基づくエージェントが互いの作業を評価し、調査を停止または方向転換できる自律研究室を提案する。これらのエージェントは、研究課題の生成と却下、独立した理論的チェックの要求、および主張に挑戦する実験の設計が可能である。<br><br>この能力を実証するために、ダイヤモンド中の量子スピンアンサンブルを調査した。エージェントは、特定のマイクロ波パルスシーケンスに対する応答を予測するために必要なキャリブレーション設定の最小数を導き出した。計算によるチェックを行い、競合する予測を区別するための実験を設計した。初期実験は理論的予測と一致したが、参照測定を繰り返したところ、データ収集中に信号がドリフトしていることが示された。<br><br>そのため、エージェントは結果を「未確定」とみなし、受容基準を緩和することなく測定プロトコルを改訂した。改訂された実験はこれらの基準を満たし、理論的予測を支持した。この研究は、協調的なAIエージェントが研究課題を選択し、理論的結果を導き出し、それらの予測を実験的にテストできることを示している。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：El Mustapha Mansouri, Eikichi Kimura, Masato Koga, Keigo Arai<br>
+        分類：cs.AI, cs.MA, quant-ph<br>
+        分野：cs.AI<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.40589v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.40589v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-10" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.AI, cs.CL, cs.IT" data-title="プリフィルベースのデコーディング長予測の根本的限界について" data-timestamp="1793295361000" data-url="https://arxiv.org/abs/2610.40541v1">
+  <p class="meta">arXiv cs.CL　Thu, 29 Oct 2026 17:36:01 Z</p>
+  <h2 class="article-title">プリフィルベースのデコーディング長予測の根本的限界について</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span><span class="tag">cs.IT</span></div>
+  <div class="summary">本論文は、大規模言語モデル（LLM）の推論スケジューリングにおける重要な要素である、プリフィル段階の隠れ状態のみを用いたデコーディングトークン数の予測に関する根本的な限界を明らかにします。<br><br>現在のベンチマークでは、予測器の品質とタスクの難易度が混同されており、ターゲットモデル、データセット、サンプリング設定が変更されると、予測器自体は変更されていないにもかかわらず、報告される精度が崩壊するという問題があります。本研究では、この不安定性の原因を、自己回帰デコーディング固有の確率性に起因する見過ごされてきた誤差源にまで遡り、すべてのプリフィルサイド手法が従わなければならない限界値を導出しました。<br><br>分析では、デコーディングを停止した確率的プロセスとして扱います。ステップごとの停止確率は一定ではなく、数百ステップにわたって上昇するため、デコーディング長は応答を終了させる多くの局所的な決定から生じる中心極限定理を継承します。これにより、明示的な誤差項を持つプロンプトごとの正規分布と、応答セグメント数の変動係数が傾きとなるアフィン分散則 $σ=αμ+b$ が得られます。経験的には、正規分布はプロンプトごとのMAEとデコーディング長分布の中心質量を数パーセント以内で再現し、正規分布からの残差（わずかな右への歪み、わずかな超過尖度）は、サンプリングノイズ補正によって予測されるものと一致しました。固定されたモデル、データ、サンプリング条件下では、MLP、EGTP、FiLM、ソフトラベル、Mixture-of-Expertsなどの多様な予測器設計空間が、限界値に近い類似の性能に収束し、システム誤差がモデル誤差を支配していることを確認しました。モデル、データ、サンプリングパラメータを固定し、絶対誤差指標と相対誤差指標の両方を報告するベンチマークプロトコルを提唱します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Haowen Shi, Xuzhe Yan, Fahao Chen, Peng Li<br>
+        分類：cs.AI, cs.CL, cs.IT<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2610.40541v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.40541v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-10" data-genre="Vision / Multimodal" data-field="cs.CV" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CV, cs.CL" data-title="参照ギャップの診断：マルチモーダル推論における視覚的足場が修正できること・できないこと" data-timestamp="1793253635000" data-url="https://arxiv.org/abs/2610.39419v1">
   <p class="meta">arXiv cs.CL　Thu, 29 Oct 2026 06:00:35 Z</p>
   <h2 class="article-title">参照ギャップの診断：マルチモーダル推論における視覚的足場が修正できること・できないこと</h2>
@@ -1476,108 +1578,6 @@
         分野：cs.RO<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2610.37666v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.37666v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.CL, cs.CR" data-title="プロンプト注入耐性を向上させる学習済みアテンションゲート「Heads of Security」" data-timestamp="1793123932000" data-url="https://arxiv.org/abs/2610.37657v1">
-  <p class="meta">arXiv cs.LG　Tue, 27 Oct 2026 17:58:52 Z</p>
-  <h2 class="article-title">プロンプト注入耐性を向上させる学習済みアテンションゲート「Heads of Security」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span><span class="tag">cs.CL</span><span class="tag">cs.CR</span></div>
-  <div class="summary">本論文は、プロンプト注入攻撃に対する堅牢性を向上させるための新しい防御手法「Heads of Security（HoS）」を提案します。HoSは、少数の学習済みアテンションゲートを用いて、指示とデータの分離を強制します。<br><br>HoSは、各アテンションヘッドが信頼できるトークンと信頼できないトークン間のアテンションをどのように再配分すべきかを学習します。これにより、モデルは注入された指示に従うことなく、信頼できないコンテンツを推論できるようになります。Llama-3.3-70B-InstructとGPT-OSS-20Bで評価されたHoSは、最先端のファインチューニングベースの防御手法であるSecAlign++や、モデルアーキテクチャに指示-データ分離を組み込むASIDEと比較されました。<br><br>実験の結果、HoSは適応型攻撃に対してより高い堅牢性を示し、標準的なユーティリティベンチマークでの性能も向上しました。また、エージェント型プロンプト注入ベンチマークでもトップクラスの性能を示しました。特に、ブラックボックス攻撃であるRL-Hammerは、GPT-OSS-20BやSecAlignに対して97%および85%の攻撃成功率（ASR）を示しましたが、HoSに対しては10%に抑えられました。HoSは、ベースモデルのユーティリティを維持しつつ、プロンプト注入に対するセキュリティとユーティリティのトレードオフを大幅に改善できることが示されました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Igor Shilov, Xiaoxue Yang, Alexander Panfilov, Evgenii Kortukov, Matthieu Meeus, Peter Romov, Wojciech Samek, Jonas Geiping<br>
-        分類：cs.LG, cs.CL, cs.CR<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.37657v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.37657v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Machine Learning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="KPPax: 大気化学における機械学習のための微分可能な運動論ODEの前処理" data-timestamp="1793123920000" data-url="https://arxiv.org/abs/2610.37655v1">
-  <p class="meta">arXiv cs.AI　Tue, 27 Oct 2026 17:58:40 Z</p>
-  <h2 class="article-title">KPPax: 大気化学における機械学習のための微分可能な運動論ODEの前処理</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、大気化学メカニズムを機械学習フレームワークで利用可能にするための新しい前処理ツール「KPPax」を提案します。<br><br>KPPaxは、既存のKPP言語で記述されたメカニズムから、JAX上で動作する微分可能で、JITコンパイルされ、ベクトル化された化学コードを生成します。これにより、手動でのアダルトコードの導出なしに、正確な感度解析が可能になります。<br><br>POLLUベンチマークメカニズムを用いた実証実験では、KPPaxが反応係数の特定や、ニューラルネットワークによる排出インベントリの補正において、その有効性を示しました。これにより、KPPメカニズムがパラメータ推定やハイブリッド物理・機械学習モデリングに直接利用できるようになります。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Wenqing Peng, Michael Boy, Zhi-Song Liu<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Machine Learning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.37655v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.37655v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.RO, cs.LG, eess.SY" data-title="高精度かつ安全なハンド内物体姿勢到達を実現する手法" data-timestamp="1793123900000" data-url="https://arxiv.org/abs/2610.37652v1">
-  <p class="meta">arXiv cs.LG　Tue, 27 Oct 2026 17:58:20 Z</p>
-  <h2 class="article-title">高精度かつ安全なハンド内物体姿勢到達を実現する手法</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.LG</span><span class="tag">eess.SY</span></div>
-  <div class="summary">本論文は、ロボット工学における多指ハンドを用いた器用なマニピュレーションの次のフロンティアとして、ハンド内での物体姿勢到達タスクに焦点を当てています。<br><br>このタスクは、指先で物体をほぼ任意の姿勢に移動させることを要求し、特に安全性の確保が重要ですが、これまでほとんど測定されてきませんでした。本研究では、多様なリセットと目標設定、適応的な摩擦カリキュラムなどを組み合わせた学習手法を提案し、シミュレーションで学習したポリシーが実機にゼロショットで転移することを示しています。システム同定を丁寧に行うことで、モーションキャプチャまたは単一のリスト搭載型深度カメラのみで、ポリシーは非常に高い能力と堅牢性を示します。<br><br>さらに、学習された残差安全フィルターを導入し、パフォーマンスと安全性のバランスを調整し、物体の落下を大幅に削減します。実際のロボット評価では、4800以上の未知の目標に対して高い到達率を達成し、フィルターによって落下が75%削減されながらも、目標到達率は91.5%を維持しました。このポリシーは、電球を任意の姿勢で回したり、分布外の目標に到達したり、腕の高速な動きや摂動に耐えることができます。<br><br>本研究で提案されたレシピは、高次元で器用なシステムにおけるパフォーマンス、信頼性、安全性を研究するためのプラットフォームとして公開されます。これにより、実用的なスキルとしての応用が期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Ian Chuang, Hiya Shah, Vamsi Chilamkur, Iman Soltani, Claire Tomlin<br>
-        分類：cs.RO, cs.LG, eess.SY<br>
-        分野：cs.RO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.37652v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.37652v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL" data-title="GEPA-Curator：自己改善エージェントのためのキュレーション学習フレームワーク" data-timestamp="1793123891000" data-url="https://arxiv.org/abs/2610.37651v1">
-  <p class="meta">arXiv cs.CL　Tue, 27 Oct 2026 17:58:11 Z</p>
-  <h2 class="article-title">GEPA-Curator：自己改善エージェントのためのキュレーション学習フレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が複雑な環境で持続的な相互作用を必要とするエージェントワークロードにおいて、より効果的に自己改善を行うための「GEPA-Curator」というフレームワークを提案しています。<br><br>従来のプロンプト最適化手法は、失敗したロールアウトから学習しますが、その失敗がプロンプトの弱さやノイズに起因する場合、学習シグナルとして有用でなかったり、むしろ有害になったりする可能性があります。GEPA-Curatorは、このようなノイズの多い、または信頼性の低い学習シグナルを提供する可能性のあるタスクを除外し、過去の成功した軌跡を選択的に取得して追加コンテキストとして提供することで、プロンプト最適化の質を高めます。<br><br>GoBrowse、ALFWorld、AppWorld、τ-benchの4つの環境で評価した結果、GEPA-Curatorは、Gemini 3.1 ProとClaude Opus 5の両方の最適化モデルにおいて、ベースラインを上回る性能を示し、GEPAに対して最大20.7%、ACEに対して最大21.2%の性能向上を達成しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.CL<br>
-        サイト：arXiv<br>
-        著者：Zack Yu, Nicholas Lee, Minjae Lee, Lakshya Agarwal, Luca Manolache, Wonjun Kang, Matei Zaharia, Michael W. Mahoney<br>
-        分類：cs.CL<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.37651v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.37651v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.MA" data-title="LLMは自由な探索を通じて隠れた物理法則を発見できるか？" data-timestamp="1793123820000" data-url="https://arxiv.org/abs/2610.37649v1">
-  <p class="meta">arXiv cs.AI　Tue, 27 Oct 2026 17:57:00 Z</p>
-  <h2 class="article-title">LLMは自由な探索を通じて隠れた物理法則を発見できるか？</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.MA</span></div>
-  <div class="summary">本論文は、大規模言語モデル（LLM）が、シミュレーションされた世界で、人間からの指示なしに、予期せぬ物理現象を観察し、隠れた物理法則を発見できるかを探求します。<br><br>「LongChang」というフレームワークを用いて、LLMに異なる物理法則を持つ世界を探索させ、自ら問いを立て、実験を通じて法則性を解明させます。LLMエージェントがシーン生成、ツール設計、レポート評価などを自律的に行います。<br><br>実験の結果、GPT-6-Astraのみが16.7%の発見率を示し、他のLLMは発見に至りませんでした。これは、LLMが科学的発見の初期段階において、未解明の異常を発見し、法則性を部分的に特定する能力を持つ可能性を示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Zhen Yang, Wen Wang, Xander Xu, Ying-Cong Chen<br>
-        分類：cs.CL, cs.AI, cs.MA<br>
-        分野：cs.CL<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.37649v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.37649v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-10" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="合成環境によるツール使用エージェントのスケーリング則の研究" data-timestamp="1793123806000" data-url="https://arxiv.org/abs/2610.37648v1">
-  <p class="meta">arXiv cs.LG　Tue, 27 Oct 2026 17:56:46 Z</p>
-  <h2 class="article-title">合成環境によるツール使用エージェントのスケーリング則の研究</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本研究は、複雑で多段階のタスクを完了する高性能な大規模言語モデル（LLM）ツール使用エージェントの構築方法を探求しています。特に、合成的に生成されたツール使用環境におけるデータ構成が、エージェントのトレーニングにどのように影響するかを調査しています。<br><br>研究チームは、ツール、タスク、およびそれらが操作するデータベースの多様性を明示的に制御する「SynthAPI」パイプラインを提案しました。このパイプラインを用いて、458,752のタスクと849のモデルで系統的に生成制御を変化させることで、合成環境の規模と構成に基づいた、ツール使用エージェントの汎化性能を予測するスケーリング則を導き出しました。<br><br>これらの予測可能な関係は、ツール使用エージェントのデータスケーリングに関するいくつかの重要な教訓を明らかにしました。データ予算が増加するにつれて、タスク数を増やすよりも、ツールとデータベースの多様性をスケーリングする方が効果的であり、データの複雑性を増やすことでより大きな利益が得られることが示されました。<br><br>これらの発見に従ってスケーリングされたエージェントは、4つの評価ベンチマークにおいて、大規模なツール使用エージェントと合成環境生成に関する先行研究のデータでトレーニングされたモデルを上回る性能を示しました。この研究は、合成環境の設計とデータ戦略が、LLMエージェントの能力向上に不可欠であることを示唆しています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Andrew Szot, Samira Abnar, Omar Attia, Abbas Kazerouni, Michael Kirchhof, Cheng-Yu Hsieh, Raviteja Vemulapalli, Alexander Toshev<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2610.37648v1" target="_blank" rel="noopener">https://arxiv.org/abs/2610.37648v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
