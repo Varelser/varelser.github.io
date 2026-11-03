@@ -1142,6 +1142,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-11" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="事前学習データ規模によるMuon-AdamWファインチューニングギャップの逆転" data-timestamp="1793645803000" data-url="https://arxiv.org/abs/2611.03633v1">
+  <p class="meta">arXiv cs.LG　Mon, 02 Nov 2026 18:56:43 Z</p>
+  <h2 class="article-title">事前学習データ規模によるMuon-AdamWファインチューニングギャップの逆転</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、大規模言語モデルの事前学習において有望視されるオプティマイザMuonとAdamWのファインチューニング後の挙動を比較分析します。<br><br>研究の結果、十分な事前学習データ規模を超えると、ファインチューニング後にはAdamWがMuonを上回るという逆転現象が明らかになりました。さらに、モデルサイズが増加するにつれて、AdamWがMuonを追い抜く事前学習トークン・パラメータ比率は低下する傾向が見られました。<br><br>この現象を説明するため、ファインチューニングをアウトプットの摂動と捉え、「マージン・トゥ・スプレッド比」という指標を導入しました。これは、正解ロジットが誤りロジットからどれだけ離れているかを、誤りロジットの広がりに対して測定するものです。言語モデルでは、データ規模が小さい場合はMuonが、大きい場合はAdamWがより高いマージン・トゥ・スプレッド比を示し、これがファインチューニングの傾向と一致しました。線形連想記憶モデルでは、データ規模の増加に伴い勾配降下法のマージン・トゥ・スプレッド比がMuonのそれに対して増加することを理論的に証明し、シミュレーションでもこの傾向が確認されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Catherine Li, Jingchu Gai, Andrej Risteski, Jacob Mitchell Springer, Aditi Raghunathan<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.03633v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03633v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-11" data-genre="Vision / Multimodal" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="全ての推論が一般化するわけではない：RLVRにおける一般化可能な推論戦略学習の事例研究" data-timestamp="1793645634000" data-url="https://arxiv.org/abs/2611.03627v1">
   <p class="meta">arXiv cs.LG　Mon, 02 Nov 2026 18:53:54 Z</p>
   <h2 class="article-title">全ての推論が一般化するわけではない：RLVRにおける一般化可能な推論戦略学習の事例研究</h2>
@@ -1156,6 +1173,23 @@
         分野：cs.LG<br>
         ジャンル：Vision / Multimodal<br>
         原文URL：<a href="https://arxiv.org/abs/2611.03627v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03627v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="FADE: オンラインRLVRスケジューリングのための因子分解された能力・難易度フィルタリング" data-timestamp="1793645603000" data-url="https://arxiv.org/abs/2611.03625v1">
+  <p class="meta">arXiv cs.LG　Mon, 02 Nov 2026 18:53:23 Z</p>
+  <h2 class="article-title">FADE: オンラインRLVRスケジューリングのための因子分解された能力・難易度フィルタリング</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、グループベース強化学習における検証可能報酬（RLVR）の学習効率を高めるための新しいスケジューリング手法「FADE（Factored Ability--Difficulty Estimation）」を提案します。RLVRでは、回答が一致しないプロンプトのみから学習することで効率化を図りますが、従来の適応型スケジューラーは、ポリシーの推論スキルにおける能力の変化と各プロンプト固有の難易度という、異なる速度で進化する2つの要素を単一の追跡器で混同してしまう問題がありました。<br><br>FADEは、この2つの時間スケールを分離する双線形状態空間フィルターです。各プロンプトの成功ロジットを、スキル負荷ベクトルと能力ベクトルの内積から、アイテム固有の切片を引いたものとして表現します。これにより、ポリシーの能力シフトを未観測のプロンプトにも即座に伝達しつつ、アイテム固有の難易度を安定させることができます。<br><br>Pólya-Gamma拡張を用いることで、各ミニバッチのバイナリロールアウト結果から能力の事後分布を閉形式で更新できます。この手法は、5つの推論ベンチマーク、2つのベースモデル、4つのスケジューリングパラダイムにおいて、ロールアウト予算を一致させた条件下で、一貫して下流タスクの精度とキャリブレーションを向上させることが実証されました。さらに、1ステップあたりの追加計算量は0.6ミリ秒未満と、計算コストも非常に小さいです。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Tomas Duncun, Jonah Ellison, Mateo Ruiz, Hanae Fujita, Ingrid Solberg<br>
+        分類：cs.LG<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.03625v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03625v1</a>
   </div>
 </article>
 
@@ -1210,6 +1244,40 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-11" data-genre="Generative Models" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, stat.ME, stat.ML" data-title="スパースでペアになっていないキャッシュ応答によるベンチマーク予測" data-timestamp="1793645373000" data-url="https://arxiv.org/abs/2611.03614v1">
+  <p class="meta">arXiv cs.LG　Mon, 02 Nov 2026 18:49:33 Z</p>
+  <h2 class="article-title">スパースでペアになっていないキャッシュ応答によるベンチマーク予測</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Generative Models</span><span class="tag">cs.LG</span><span class="tag">stat.ME</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、生成モデルの評価における計算コストの問題に対処するため、スパースでペアになっていない応答データを利用したベンチマーク予測手法「Product Kernel Perspective Space（PKPS）」を提案します。従来の評価方法では、全てのベンチマークタスクの全クエリに対する応答を評価することが計算量的に困難なため、異なるタスクやクエリのサブセットが用いられ、結果として応答データがスパースかつペアになっていない状態になります。<br><br>PKPSは、既存のブラックボックス生成モデル表現手法を一般化し、類似したクエリへの応答を比較することで、スパースでペアになっていない情報も活用できるように設計されています。理論的には、PKPSを用いたベンチマーク予測が、密でペアになった評価データのみを利用する方法と比較して、クエリ効率が高いことを示しています。<br><br>実証実験では、PKPSベースの手法が、2つの大規模ベンチマークスイートにおいて、ベースライン手法を上回るベンチマーク予測性能を示すことが確認されました。この手法は、限られた評価リソースでモデルの性能をより正確に把握するための有効なアプローチを提供します。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Hayden Helm, Avijit Ghosh, Ben Johnson, Carey Priebe<br>
+        分類：cs.LG, stat.ME, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Generative Models<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.03614v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03614v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-11" data-genre="Machine Learning" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, math.DS, stat.ML" data-title="動的システムにおける効率的な閉鎖学習：データ同化と埋め込みアプローチの比較" data-timestamp="1793645260000" data-url="https://arxiv.org/abs/2611.03612v1">
+  <p class="meta">arXiv cs.LG　Mon, 02 Nov 2026 18:47:40 Z</p>
+  <h2 class="article-title">動的システムにおける効率的な閉鎖学習：データ同化と埋め込みアプローチの比較</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Machine Learning</span><span class="tag">cs.LG</span><span class="tag">math.DS</span><span class="tag">stat.ML</span></div>
+  <div class="summary">本論文は、動的システムにおける閉鎖モデル学習の効率性について論じています。<br><br>データ駆動型閉鎖モデルは、モデルの精度と適用性を向上させる柔軟なメカニズムを提供しますが、計算モデルに閉鎖を埋め込むアプローチは、計算コストが高く、学習中に数値的不安定性を引き起こす可能性があります。これを回避するため、本研究ではデータ同化と機械学習を組み合わせた段階的アプローチを提案し、埋め込みアプローチと比較しています。<br><br>具体的には、合成疫学モデルを用いて、データ同化によって状態と閉鎖の軌跡を推定し、そのデータを用いてオフラインで機械学習モデルを学習させる手法のコストと精度のトレードオフを調査しました。結果として、埋め込み学習は平均精度が最も高いものの、段階的アプローチは同等の質的挙動を、計算量の増加を抑えつつ、より少ないモデル評価回数と改善された最適化ロバスト性で実現できることが示されました。これは、精度と効率性の実用的なトレードオフを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Rileigh Bandy, Teresa Portone, Mohammad Khalil, Eric Crislip, Kyle Neal<br>
+        分類：cs.LG, math.DS, stat.ML<br>
+        分野：cs.LG<br>
+        ジャンル：Machine Learning<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.03612v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03612v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-11" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.CL" data-title="DiabAgent：自律的な生理学的制御に向けたエージェント開発" data-timestamp="1793644862000" data-url="https://arxiv.org/abs/2611.03601v1">
   <p class="meta">arXiv cs.AI　Mon, 02 Nov 2026 18:41:02 Z</p>
   <h2 class="article-title">DiabAgent：自律的な生理学的制御に向けたエージェント開発</h2>
@@ -1241,6 +1309,23 @@
         分野：cs.AI<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2611.03600v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03600v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG, cs.DS, cs.IT" data-title="データを共有すべきか？プライベートなデータ共有評価のためのアルゴリズムと限界" data-timestamp="1793644838000" data-url="https://arxiv.org/abs/2611.03599v1">
+  <p class="meta">arXiv cs.LG　Mon, 02 Nov 2026 18:40:38 Z</p>
+  <h2 class="article-title">データを共有すべきか？プライベートなデータ共有評価のためのアルゴリズムと限界</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.LG</span><span class="tag">cs.DS</span><span class="tag">cs.IT</span></div>
+  <div class="summary">本論文は、2つの独立したデータを持つエージェントが、プライバシーを保護しながらデータを共有すべきかどうかを判断するためのアルゴリズムと理論的限界を研究しています。<br><br>各エージェントは機密性の高いラベル付きデータセットを保持しており、特定の仮説クラスから分類器を学習したいと考えています。たとえ各データセットが単独で完全に分類可能であっても、ラベリング基準の不一致や選択バイアスにより、結合データに対して単一の分類器が適合しない場合があります。本研究では、この問題を学習理論的な観点から定式化し、結合データに対する最適化誤差（最小誤り数）を、互いのデータを開示することなく区別するインタラクティブな通信プロトコルを提案しています。<br><br>純粋なε-2者間差分プライバシーの下で、最適化誤差が0であるか、またはt以上であるかを区別する問題を扱います。キュレーターが存在する場合と比較して、キュレーターなしで必要な閾値tを最小化することを目指しています。実数直線上の閾値については、ドメインサイズmに対して、最適なtは$\\tilde{\Theta}(\\log\\log m/\\varepsilon)$となり、これはキュレーター付きでもプライベートに学習するために必要なサンプル数よりも指数関数的に小さいことが示されました。一方、R^dにおける半空間の場合は、mへの依存性がlog(m)に増加し、提案プロトコルは$t=\\tilde{O}(d^3\\log m/\\varepsilon)$であり、一部のドメインでは$t=Ω(d\\log(m/d)/\\varepsilon)$が必要であることが示されました。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Mahdi Haghifam, Kumar Kshitij Patel, Avrim Blum, Giulia Fanti, Juba Ziani<br>
+        分類：cs.LG, cs.DS, cs.IT<br>
+        分野：cs.LG<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.03599v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03599v1</a>
   </div>
 </article>
 
@@ -1414,6 +1499,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-11" data-genre="Vision / Multimodal" data-field="stat.ML" data-source="arXiv stat.ML" data-area="AI" data-categories="stat.ML, cs.LG, q-fin.ST" data-title="EventGPT：銀行顧客履歴における次イベント予測事前学習" data-timestamp="1793633783000" data-url="https://arxiv.org/abs/2611.03302v1">
+  <p class="meta">arXiv stat.ML　Mon, 02 Nov 2026 15:36:23 Z</p>
+  <h2 class="article-title">EventGPT：銀行顧客履歴における次イベント予測事前学習</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Vision / Multimodal</span><span class="tag">stat.ML</span><span class="tag">cs.LG</span><span class="tag">q-fin.ST</span></div>
+  <div class="summary">本論文は、銀行顧客の行動履歴データを用いて、顧客の次のイベントを予測する事前学習モデル「EventGPT」を提案しています。<br><br>EventGPTは、階層的因果Transformerアーキテクチャを採用し、顧客のトランザクションや位置情報などの時系列データを学習します。このモデルは、ラベルなしデータに対して次のイベントを予測するタスクで事前学習されるため、将来のイベント発生確率を推定し、様々な下流タスクに再利用可能な特徴量表現を提供できます。<br><br>公開されているMultimodal Banking Dataset (MBD-mini) を用いてEventGPTを事前学習した結果、約2時間で学習が完了しました。事前学習済みモデルは、ラベルなしで将来のイベント発生確率を評価するタスクにおいて、高いROC-AUCスコア（0.79〜0.92）を達成しました。これは、従来のエンジニアリング特徴量を用いた勾配ブースティング手法と比較して、大幅に少ないデータで同等以上の性能を示すものです。また、製品予測タスクにおいても、EventGPTの埋め込み特徴量は、エンジニアリング特徴量に匹敵する性能を示し、アンサンブル学習ではさらに性能を向上させることが確認されました。本研究では、コードと事前学習済み重みも公開されています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv stat.ML<br>
+        サイト：arXiv<br>
+        著者：Denis Burakov<br>
+        分類：stat.ML, cs.LG, q-fin.ST<br>
+        分野：stat.ML<br>
+        ジャンル：Vision / Multimodal<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.03302v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03302v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-11" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="意味的一貫性検出における流暢性：反応時間、確信度、視線運動からの洞察" data-timestamp="1793491200000" data-url="https://doi.org/10.1016/j.concog.2026.104122">
   <p class="meta">Crossref Consciousness　Sun, 01 Nov 2026 00:00:00 Z</p>
   <h2 class="article-title">意味的一貫性検出における流暢性：反応時間、確信度、視線運動からの洞察</h2>
@@ -1465,114 +1567,6 @@
         掲載先：Consciousness and Cognition<br>
         DOI：10.1016/j.concog.2026.104123<br>
         原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104123" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104123</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="意識の機能主義理論：脳物理学による機能の展開、置換、および不確定性" data-timestamp="1793491200000" data-url="https://doi.org/10.1016/j.concog.2026.104121">
-  <p class="meta">Crossref Consciousness　Sun, 01 Nov 2026 00:00:00 Z</p>
-  <h2 class="article-title">意識の機能主義理論：脳物理学による機能の展開、置換、および不確定性</h2>
-  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
-  <div class="summary">本論文は、意識の機能主義理論に焦点を当て、その展開、置換、そして脳の物理学が機能に与える不確定性について論じます。<br><br>機能主義は、意識の状態を、その原因や結果となる機能的な役割によって定義しようとする立場です。しかし、脳の物理的な特性が、これらの機能的な定義にどのように影響を与えるのか、特に機能が不確定になる可能性について、詳細な検討が求められています。<br><br>本研究は、意識の機能主義的理解における重要な課題を提起し、今後の理論的発展に向けた議論を促すものです。脳の物理的制約と機能的説明の間の関係性を明らかにすることは、意識の科学的理解を深める上で不可欠です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：Crossref Consciousness<br>
-        サイト：Crossref<br>
-        著者：Jonathan Basri, Patrick BarAvi, Meir Hemmo<br>
-        分野：Philosophy<br>
-        ジャンル：Consciousness / Philosophy<br>
-        掲載先：Consciousness and Cognition<br>
-        DOI：10.1016/j.concog.2026.104121<br>
-        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104121" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104121</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="近代から未来文化への移行期における意識変容の条件（惑星文明形成におけるユーラシア文化）" data-timestamp="1793491200000" data-url="https://doi.org/10.7256/2454-0625.2026.11.80493">
-  <p class="meta">Crossref Consciousness　Sun, 01 Nov 2026 00:00:00 Z</p>
-  <h2 class="article-title">近代から未来文化への移行期における意識変容の条件（惑星文明形成におけるユーラシア文化）</h2>
-  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Ethics / Safety</span><span class="tag">Philosophy</span></div>
-  <div class="summary">本論文は、近代から未来文化への移行期における意識変容の条件を分析します。<br><br>著者は、N.K.ロエリックの中央アジア探検（1924-1928）を、科学的・芸術的事業としてだけでなく、世界の変容条件を創造する試みとして捉えます。ロエリックらは、スクリャービン、テイヤール・ド・シャルダン、ヴェルナツキーらと共に、新世界をもたらすという天命を体現しました。論文では、この天命に取り組むためのロエリックの4つの方向性（秘教的、芸術的、心理技術的、社会的）を分析します。ロエリックの世界観は、「生ける倫理」と宇宙の進化・エネルギー的理解に基づき、真の世界を信じる秘教的認識の特徴を示しています。<br><br>20世紀初頭と現在との類似点として、新世界への期待が共通していることが指摘されます。しかし、近代が自然の支配に焦点を当てていたのに対し、現在は文明的脅威（環境危機、宇宙災害、人工超知能の創造）に直面し、地球上の生命の維持が最優先事項となっています。現代は競争と成長を重視するため、危険な技術を制限する試みを妨げています。この状況からの脱却は、意識の変容（自然、宇宙、人格などの基本概念の再概念化）と、大衆創造を通じた新しい社会性の形成という2つのプロセスに見出されます。歴史的な示唆として、古代から中世への移行を促進するためにキリスト教の神を合理的に再概念化したアウグスティヌスの戦略が参照されます。近代への移行が国家、自然科学、工学、技術などの概念を生み出したように、現在、社会性と生命（個人のものを含む）の新しい概念の創造と実装が急務となっています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：Crossref Consciousness<br>
-        サイト：Crossref<br>
-        著者：Vadim Markovich Rozin<br>
-        分野：Philosophy<br>
-        ジャンル：Ethics / Safety<br>
-        掲載先：Культура и искусство<br>
-        DOI：10.7256/2454-0625.2026.11.80493<br>
-        原文URL：<a href="https://doi.org/10.7256/2454-0625.2026.11.80493" target="_blank" rel="noopener">https://doi.org/10.7256/2454-0625.2026.11.80493</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="危険な注意散漫刺激はいつ課題遂行を妨げるか？注意の範囲と主要課題処理負荷の役割" data-timestamp="1793491200000" data-url="https://doi.org/10.1016/j.concog.2026.104124">
-  <p class="meta">Crossref Consciousness　Sun, 01 Nov 2026 00:00:00 Z</p>
-  <h2 class="article-title">危険な注意散漫刺激はいつ課題遂行を妨げるか？注意の範囲と主要課題処理負荷の役割</h2>
-  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
-  <div class="summary">本論文は、注意散漫な刺激が課題遂行に影響を与える条件について、注意の範囲と主要課題の処理負荷という2つの要因の役割を調査します。<br><br>実験では、注意散漫な刺激が課題遂行に干渉するメカニズムを明らかにすることを目指しました。具体的には、参加者がどれだけ広範囲に注意を払っているか、そして主要な課題を処理するためにどれだけの認知リソースを必要としているかが、注意散漫刺激への反応にどのように影響するかを分析しました。<br><br>公開メタデータ上の要旨情報が限定的であるため、詳細な方法論や具体的な結果については、さらなる情報が必要です。しかし、この研究は、注意メカニズムと認知負荷が、外部からの干渉に対してどのように影響を受けるかについての理解を深める上で重要であると考えられます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：Crossref Consciousness<br>
-        サイト：Crossref<br>
-        著者：Peng Liu, Hongjieyu Ma, Congqian Xue, Shuyan Fan, Kuiyuan Qin<br>
-        分野：Philosophy<br>
-        ジャンル：Consciousness / Philosophy<br>
-        掲載先：Consciousness and Cognition<br>
-        DOI：10.1016/j.concog.2026.104124<br>
-        原文URL：<a href="https://doi.org/10.1016/j.concog.2026.104124" target="_blank" rel="noopener">https://doi.org/10.1016/j.concog.2026.104124</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="集中治療室における意識障害患者への神経刺激薬：システマティックレビュー" data-timestamp="1793491200000" data-url="https://doi.org/10.1016/j.genhosppsych.2026.08.012">
-  <p class="meta">Crossref Consciousness　Sun, 01 Nov 2026 00:00:00 Z</p>
-  <h2 class="article-title">集中治療室における意識障害患者への神経刺激薬：システマティックレビュー</h2>
-  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
-  <div class="summary">本論文は、集中治療室（ICU）における意識障害患者の治療に用いられる神経刺激薬に関するシステマティックレビューを提示します。<br><br>意識障害の評価と治療は、ICUにおける重要な課題であり、神経刺激薬はその選択肢の一つとして注目されています。本研究では、既存の研究を網羅的に収集・分析し、神経刺激薬の効果、安全性、および適用可能性について評価することを目的としています。<br><br>本レビューは、意識障害患者の予後改善に向けた治療戦略の確立に貢献することが期待されます。ただし、個々の患者の状態や病態に応じた最適な薬剤選択や投与方法については、さらなる検討が必要です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：Crossref Consciousness<br>
-        サイト：Crossref<br>
-        著者：Matthew Gunther, Nathan Tran, Katherine Prothro, Boglarka Huddleston, Shixie Jiang<br>
-        分野：Philosophy<br>
-        ジャンル：Consciousness / Philosophy<br>
-        掲載先：General Hospital Psychiatry<br>
-        DOI：10.1016/j.genhosppsych.2026.08.012<br>
-        原文URL：<a href="https://doi.org/10.1016/j.genhosppsych.2026.08.012" target="_blank" rel="noopener">https://doi.org/10.1016/j.genhosppsych.2026.08.012</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="頭蓋骨整体法による意識変容メカニズムの検証可能な理論的枠組み" data-timestamp="1793491200000" data-url="https://doi.org/10.1016/j.explore.2026.103512">
-  <p class="meta">Crossref Consciousness　Sun, 01 Nov 2026 00:00:00 Z</p>
-  <h2 class="article-title">頭蓋骨整体法による意識変容メカニズムの検証可能な理論的枠組み</h2>
-  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
-  <div class="summary">本論文は、頭蓋骨整体法におけるスティルポイント誘導が、自律神経系、デフォルトモードネットワーク、内受容感覚メカニズムの収束を通じて、意識の変容にどのように影響するかについての検証可能な理論的枠組みを提案します。<br><br>従来の医療では十分に説明されてこなかった頭蓋骨整体法の効果に着目し、その作用機序を神経科学的および生理学的な観点から解明しようとする試みです。特に、自律神経系の調節、脳のデフォルトモードネットワークの活動変化、そして身体内部の状態を感知する内受容感覚の役割に焦点を当てています。<br><br>この理論的枠組みは、頭蓋骨整体法の効果を客観的に評価し、さらなる研究を進めるための基盤となる可能性があります。しかし、この枠組みの妥当性を実証するためには、さらなる実験的研究と臨床的検証が不可欠です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：Crossref Consciousness<br>
-        サイト：Crossref<br>
-        著者：Siddhant Nikam, Nimisha S Narayan<br>
-        分野：Philosophy<br>
-        ジャンル：Consciousness / Philosophy<br>
-        掲載先：EXPLORE<br>
-        DOI：10.1016/j.explore.2026.103512<br>
-        原文URL：<a href="https://doi.org/10.1016/j.explore.2026.103512" target="_blank" rel="noopener">https://doi.org/10.1016/j.explore.2026.103512</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Consciousness / Philosophy" data-field="Philosophy" data-source="Crossref Consciousness" data-area="Philosophy" data-categories="" data-title="意識障害における潜在的皮質複雑性のその先：許容される転帰と証明責任" data-timestamp="1793491200000" data-url="https://doi.org/10.1016/j.cortex.2026.08.011">
-  <p class="meta">Crossref Consciousness　Sun, 01 Nov 2026 00:00:00 Z</p>
-  <h2 class="article-title">意識障害における潜在的皮質複雑性のその先：許容される転帰と証明責任</h2>
-  <div class="article-tags"><span class="tag">Philosophy</span><span class="tag">Consciousness / Philosophy</span><span class="tag">Philosophy</span></div>
-  <div class="summary">本論文は、意識障害の評価において、潜在的な皮質複雑性を超えた視点から、許容される転帰と証明責任の問題について論じます。<br><br>意識障害の診断と予後予測は、しばしば脳の複雑な活動パターンに依存しますが、本研究では、そのような複雑性だけでは捉えきれない側面、特に患者にとって「許容される転帰」とは何か、そしてその証明責任が誰にあるのかという倫理的・哲学的な問いを提起します。著者は、診断技術の進歩と、それによって生じる期待や責任のあり方について考察しています。<br><br>本稿は、意識障害患者とその家族、医療従事者、そして社会全体が、意識障害の「質」や「意味」について深く考えるきっかけを提供します。ただし、具体的な臨床現場での意思決定に直接応用するには、さらなる議論とコンセンサス形成が必要です。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：Crossref Consciousness<br>
-        サイト：Crossref<br>
-        著者：Florent Gobert, Jacques Luauté<br>
-        分野：Philosophy<br>
-        ジャンル：Consciousness / Philosophy<br>
-        掲載先：Cortex<br>
-        DOI：10.1016/j.cortex.2026.08.011<br>
-        原文URL：<a href="https://doi.org/10.1016/j.cortex.2026.08.011" target="_blank" rel="noopener">https://doi.org/10.1016/j.cortex.2026.08.011</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
