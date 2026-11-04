@@ -1176,6 +1176,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="言語モデルにおける望ましくない挙動の持続的な抑制" data-timestamp="1793732048000" data-url="https://arxiv.org/abs/2611.05358v1">
+  <p class="meta">arXiv cs.AI　Tue, 03 Nov 2026 18:54:08 Z</p>
+  <h2 class="article-title">言語モデルにおける望ましくない挙動の持続的な抑制</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、言語モデルにおいて訓練のどの段階でも発生しうる望ましくない挙動を、どのように効果的に抑制できるかという問いを探求します。<br><br>研究者たちは、特定のトリガーによって引き起こされる誤った挙動を持つ「モデル生物」を2種類構築しました。一つは特定のプロンプトにのみ反応する狭トリガー型、もう一つは不適切なコードでファインチューニングされた後に広範なプロンプトで有害な応答をする広トリガー型です。これらのモデルを用いて、事後的な挙動抑制の有効性を、即時抑制、追加訓練に対する持続性、汎用能力の維持という3つの基準で評価しました。<br><br>標準的な手法（SFT、GRPO、勾配上昇法によるアンラーニング）を比較し、より持続的な抑制には、より広範な誤った状態からの回復能力が必要であるという仮説に基づき、Prefix-Expanded Adversarial Reinforcement Learning（PEARL）を提案しています。PEARLは、モデル生物の軌跡からサンプリングされた中間状態からの継続を拡張することで、強力な即時抑制とタスク精度の維持を両立し、追加訓練に対しても持続性を示しました。特に、ターゲットを絞ったSFTでは対応できない広範な望ましくない挙動に対して有効です。<br><br>このフレームワークと手法は、望ましくない挙動を事後的に、より持続的に除去する一歩となることが期待されます。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Luxi He, Pengcheng Jiang, Jifan Zhang, Jiawei Han, Danqi Chen<br>
+        分類：cs.CL, cs.AI, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：Ethics / Safety<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.05358v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05358v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-11" data-genre="LLM / NLP" data-field="quant-ph" data-source="arXiv cs.LG" data-area="AI" data-categories="quant-ph, cs.CL, cs.LG, physics.optics" data-title="量子計算と自然言語処理を融合した「Born-Measured Attention」" data-timestamp="1793731964000" data-url="https://arxiv.org/abs/2611.05355v1">
   <p class="meta">arXiv cs.LG　Tue, 03 Nov 2026 18:52:44 Z</p>
   <h2 class="article-title">量子計算と自然言語処理を融合した「Born-Measured Attention」</h2>
@@ -1210,6 +1227,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-11" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.CL, cs.LG" data-title="インコンテキスト学習の回路メカニズム" data-timestamp="1793731474000" data-url="https://arxiv.org/abs/2611.05344v1">
+  <p class="meta">arXiv cs.LG　Tue, 03 Nov 2026 18:44:34 Z</p>
+  <h2 class="article-title">インコンテキスト学習の回路メカニズム</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.LG</span></div>
+  <div class="summary">本論文は、事前学習済み言語モデルがプロンプト内のデモンストレーションに基づいてパラメータ更新なしでタスクを実行するインコンテキスト学習（ICL）のメカニズムを解明します。<br><br>特に、任意ラベルを用いた数ショット文分類タスクにおいて、モデルがどのようにして単一フォワードパスで学習を達成するかを詳細に分析します。提案手法では、ラベルトークン位置に対するキー・バリューメモリを実装し、各ラベルトークンの残差ストリームがラベルのアイデンティティをエンコードし、中間層の注意ヘッドがデモンストレーションのクラスをキーとして書き込むことを示します。<br><br>さらに、クエリ時には、上位層のヘッドがクエリのクラスと保存されたキーを照合し、一致するラベルをコピーアウトする仕組みを明らかにします。このプロセスは、早期層の信号によって制御され、ラベルの繰り返しがない場合にのみ機能します。また、別のヘッドセットが直近に見たラベルを抑制する役割も担います。これらの各ステップは、アクティベーションパッチング、ランダムヘッドベースラインに対するヘッド除去、およびモデル自身の信号によるステアリングによって因果的に確立されます。<br><br>提案された回路は、3つの異なるモデルファミリーで一貫して観察され、トランスフォーマーがゼロから学習した場合でも同様の構造が成長することが示されました。この回路は意味的概念や意味を持つラベルにも転移し、命令チューニング後もその構造を維持します。ICLは、識別可能なコンポーネントタイプから構築されたゲート付き連想ルックアップとして理解できることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.LG<br>
+        サイト：arXiv<br>
+        著者：Andrew Gao, William Gao<br>
+        分類：cs.CL, cs.LG<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.05344v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05344v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-11" data-genre="Agents / Reasoning" data-field="physics.med-ph" data-source="arXiv cs.AI" data-area="AI" data-categories="physics.med-ph, cs.AI" data-title="臨床意思決定ネットワークの監査のための重み空間プログラミング" data-timestamp="1793731275000" data-url="https://arxiv.org/abs/2611.05341v1">
   <p class="meta">arXiv cs.AI　Tue, 03 Nov 2026 18:41:15 Z</p>
   <h2 class="article-title">臨床意思決定ネットワークの監査のための重み空間プログラミング</h2>
@@ -1224,6 +1258,23 @@
         分野：physics.med-ph<br>
         ジャンル：Agents / Reasoning<br>
         原文URL：<a href="https://arxiv.org/abs/2611.05341v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05341v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-11" data-genre="LLM / NLP" data-field="physics.med-ph" data-source="arXiv cs.AI" data-area="AI" data-categories="physics.med-ph, cs.AI, cs.CL" data-title="医療物理計算とエラー検出のための言語モデル評価ベンチマーク「MedPhysBench」" data-timestamp="1793731235000" data-url="https://arxiv.org/abs/2611.05340v1">
+  <p class="meta">arXiv cs.AI　Tue, 03 Nov 2026 18:40:35 Z</p>
+  <h2 class="article-title">医療物理計算とエラー検出のための言語モデル評価ベンチマーク「MedPhysBench」</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">physics.med-ph</span><span class="tag">cs.AI</span><span class="tag">cs.CL</span></div>
+  <div class="summary">本論文は、医療物理学における計算タスクとエラー検出能力を評価するための新しいベンチマーク「MedPhysBench」を提案します。<br><br>医療現場では、処方箋から実際の線量計算を行い、相互にチェックすることが不可欠です。計算ミスは患者全員に影響を与える可能性があるため、その精度は極めて重要です。MedPhysBenchは、放射線治療、画像診断、核医学、放射線防護の分野における10種類の計算項目を生成し、関連するプロトコルを実装したコードから参照解を導出します。さらに、入力データから計算項目とチェック項目を生成し、エラー検出能力も評価します。<br><br>12の言語モデルを対象とした評価では、計算タスクにおいて33.3%から100.0%のスコアを示しました。上位モデルは高い精度を示しましたが、一部のモデルは臨床タスクで特に苦戦し、特定の補正を省略する傾向が見られました。エラー検出能力については、多くのモデルが比較的大きなエラーを検出できましたが、チェック項目のみの場合、誤検出率が上昇する傾向がありました。<br><br>本ベンチマークは、医療物理分野における言語モデルの能力を体系的に評価し、その限界を明らかにすることで、今後の研究開発に貢献することを目指しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Omar Nusrat<br>
+        分類：physics.med-ph, cs.AI, cs.CL<br>
+        分野：physics.med-ph<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.05340v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05340v1</a>
   </div>
 </article>
 
@@ -1312,6 +1363,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-11" data-genre="LLM / NLP" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="長文コンテキストは不要：言語モデルの効率的な利用法" data-timestamp="1793729843000" data-url="https://arxiv.org/abs/2611.05306v1">
+  <p class="meta">arXiv cs.AI　Tue, 03 Nov 2026 18:17:23 Z</p>
+  <h2 class="article-title">長文コンテキストは不要：言語モデルの効率的な利用法</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、言語モデルにおける長文コンテキストの必要性に疑問を呈し、より効率的な利用法を提案します。<br><br>最新のオープンウェイトモデルでは、生成コストがトークンの位置によって大きく異なり、後続のトークンほど高コストになる傾向があります。研究者たちは、頻繁なコンパクション（圧縮）を行うことで、長期間または長入力のタスクにおいて、言語モデルのタスク精度をほとんど、あるいは全く犠牲にすることなく、短いコンテキストを維持できることを実証しました。<br><br>さらに、長期間にわたるソフトウェアエンジニアリングタスクにおいても、コンテキストあたり最大1アクションという制約下でLLMのパフォーマンスが低下しないことを示し、これを基に「セマンティック状態空間モデル（SSSMs）」の概念を概説しています。<br><br>これらの発見は、長文コンテキストに対応した言語モデルの必要性について再考を促すものであり、計算リソースの効率化とモデル性能の維持を両立させる新たなアプローチを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.AI<br>
+        サイト：arXiv<br>
+        著者：Peter Belcak, Saurav Muralidharan, Jindong Jiang, Yonggan Fu, Wonmin Byeon, Hanrong Ye, Ryan Angilly, Ali Taghibakhshi<br>
+        分類：cs.AI<br>
+        分野：cs.AI<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.05306v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05306v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-11" data-genre="Agents / Reasoning" data-field="cs.LG" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.LG, cs.AI, cs.CL" data-title="LoopVQ：ループトランスフォーマーのためのサブ1ビットKVキャッシュ量子化" data-timestamp="1793729789000" data-url="https://arxiv.org/abs/2611.05304v1">
   <p class="meta">arXiv cs.AI　Tue, 03 Nov 2026 18:16:29 Z</p>
   <h2 class="article-title">LoopVQ：ループトランスフォーマーのためのサブ1ビットKVキャッシュ量子化</h2>
@@ -1329,6 +1397,23 @@
   </div>
 </article>
 
+<article class="digest-article" data-month="2026-11" data-genre="LLM / NLP" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.CY" data-title="ペルソナは人ではない：アイデンティティは属性ではなく状態である" data-timestamp="1793729247000" data-url="https://arxiv.org/abs/2611.05292v1">
+  <p class="meta">arXiv cs.CL　Tue, 03 Nov 2026 18:07:27 Z</p>
+  <h2 class="article-title">ペルソナは人ではない：アイデンティティは属性ではなく状態である</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span><span class="tag">cs.CY</span></div>
+  <div class="summary">本論文は、AIシステム評価や調査の事前テストなどに用いられる合成人口（シミュレートされた人々）の生成において、固定的な属性で定義される「ペルソナ」に基づくアプローチの限界を指摘します。<br><br>従来の合成人口生成では、個々のシミュレートされた人物は固定的な特性、人口統計、態度を持つペルソナによって定義され、言語モデルがその役割を演じるように指示されます。しかし、30年にわたる性格研究では、人間の行動は状況によって大きく変化し、固定的な属性として振る舞うわけではないことが示されています。アイデンティティ経済学の観点から、行動は安定した特性、状況によって引き出されるアイデンティティ、そして状況そのものの3つの部分に分けられると論じます。<br><br>本研究では、固定ペルソナに基づくシミュレーションは、たとえペルソナが詳細であっても、その状況や環境に固有の行動部分を再現できないことを証明します。この結果に基づき、新しい評価基準と「人・イン・コンテキスト」設計を提案します。<br><br>提案手法をRedditの性格コーパスと、医療機関への不信感がdocumentedされているコミュニティの臨床試験募集調査に適用した結果、文脈依存的な行動は生成されましたが、実際の人口の行動とは完全には一致しませんでした。この研究は、合成人口の評価が、文脈によって行動が大きく左右される集団を誤って表現するリスクがあることを示唆しており、より豊かなペルソナだけではこの歪みを修正できないことを強調しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Tamunotonye Harry, Yuanyuan Feng<br>
+        分類：cs.CL, cs.AI, cs.CY<br>
+        分野：cs.CL<br>
+        ジャンル：LLM / NLP<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.05292v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05292v1</a>
+  </div>
+</article>
+
 <article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI, cs.LG" data-title="意図的に誤った情報を学習させるとLLMは誤った方向へ進む可能性" data-timestamp="1793728941000" data-url="https://arxiv.org/abs/2611.05287v1">
   <p class="meta">arXiv cs.CL　Tue, 03 Nov 2026 18:02:21 Z</p>
   <h2 class="article-title">意図的に誤った情報を学習させるとLLMは誤った方向へ進む可能性</h2>
@@ -1343,6 +1428,23 @@
         分野：cs.CL<br>
         ジャンル：Ethics / Safety<br>
         原文URL：<a href="https://arxiv.org/abs/2611.05287v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05287v1</a>
+  </div>
+</article>
+
+<article class="digest-article" data-month="2026-11" data-genre="Agents / Reasoning" data-field="cs.CL" data-source="arXiv cs.CL" data-area="AI" data-categories="cs.CL, cs.AI" data-title="精度を超えて：言語サブスペース介入が捉え、除去し、改善するもの" data-timestamp="1793728732000" data-url="https://arxiv.org/abs/2611.05278v1">
+  <p class="meta">arXiv cs.CL　Tue, 03 Nov 2026 17:58:52 Z</p>
+  <h2 class="article-title">精度を超えて：言語サブスペース介入が捉え、除去し、改善するもの</h2>
+  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.CL</span><span class="tag">cs.AI</span></div>
+  <div class="summary">本論文は、多言語推論能力の向上を目指す「言語サブスペース介入」について、その効果を精度以外の側面からも評価します。具体的には、多言語の数学および科学推論タスク（MATH、MGSM）を対象に、4つのオープンウェイトLLMを用いて、言語サブスペースが翻訳関連の変動をどれだけ捉えているか、言語情報を除去できているか、そして精度を向上させつつ応答言語を維持できるかを検証します。<br><br>既存のMean-SVDや提案手法DiffPCAを用いて構築された言語サブスペースは、モデルの深部全体にわたって翻訳関連の変動を相当量捉えていることが示されました。しかし、これらのサブスペースを投影しても、線形プローブは依然として言語をほぼ完璧に識別できることから、サブスペースが言語情報を完全に捕捉しているわけではないことが明らかになりました。<br><br>Qwen2.5-7Bモデルを用いた実験では、様々な介入設定を評価した結果、MGSMの精度を最も向上させた介入は応答言語の忠実性を犠牲にする傾向がありました。また、精度と応答言語の両方を向上させる介入はわずかであり、プロンプトの微妙な変更でも同様の精度向上が見られましたが、言語の忠実性には大きな影響がありました。<br><br>本研究は、因果的介入の効果を評価する際には、精度だけでなく、言語置換のトレードオフを十分に考慮する必要があると主張しています。言語サブスペース介入は、単純な精度向上だけでなく、言語の忠実性とのバランスを考慮した評価が不可欠であることを示唆しています。</div>
+  <div class="source-box">
+        <strong>ソース・引用元</strong><br>
+        配信元：arXiv cs.CL<br>
+        サイト：arXiv<br>
+        著者：Shaanil Punglia, Dadhichi Telwadkar, Vaibhav Rathore, Siddharth Sureka, Neha Bhargava<br>
+        分類：cs.CL, cs.AI<br>
+        分野：cs.CL<br>
+        ジャンル：Agents / Reasoning<br>
+        原文URL：<a href="https://arxiv.org/abs/2611.05278v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.05278v1</a>
   </div>
 </article>
 
@@ -1462,108 +1564,6 @@
         分野：cs.CL<br>
         ジャンル：LLM / NLP<br>
         原文URL：<a href="https://arxiv.org/abs/2611.04627v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.04627v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI, cs.IR" data-title="地球観測QAのための観測支援グラフ推論OSGRフレームワーク" data-timestamp="1793680303000" data-url="https://arxiv.org/abs/2611.04301v1">
-  <p class="meta">arXiv cs.AI　Tue, 03 Nov 2026 04:31:43 Z</p>
-  <h2 class="article-title">地球観測QAのための観測支援グラフ推論OSGRフレームワーク</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span><span class="tag">cs.IR</span></div>
-  <div class="summary">本論文は、地球観測（EO）アーカイブに対する地理的クエリ応答において、厳密な時空間制約下での検索と導出の複合問題を解決するための新しいフレームワーク「OSGR」を提案する。<br><br>既存のLLMエージェントは、観測アイテムのグラウンディングが不十分であったり、探索空間の爆発に苦しむという課題があった。OSGRは、オフラインでの観測支援グラフを用いた概念レベルでの有効なターゲット・ツー・リザルト・サポートパスの推論と、時空間適合性カーネルによるグラウンディングされた観測アイテムセットのインスタンス化により、この探索問題を2段階で分解する。<br><br>提案手法は、Earth-BenchとDisasterM3-Reasonのベンチマークにおいて、GPT-4oの精度を49.3%から63.7%に向上させ、実行ステップ比率を2.9から2.5に削減した。これにより、EOデータに対する質問応答システムの性能向上が期待される。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Dazhou Yu, Zerong Wang, Riyang Bao, Longxiang Li, Yang Liu, Liang Zhao<br>
-        分類：cs.AI, cs.IR<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2611.04301v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.04301v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="cs.CR" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.CR, cs.AI, cs.CY" data-title="マルチエージェント安全議論における社会的バイアスがリスクを増幅する脆弱性" data-timestamp="1793679366000" data-url="https://arxiv.org/abs/2611.04289v1">
-  <p class="meta">arXiv cs.AI　Tue, 03 Nov 2026 04:16:06 Z</p>
-  <h2 class="article-title">マルチエージェント安全議論における社会的バイアスがリスクを増幅する脆弱性</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.CR</span><span class="tag">cs.AI</span><span class="tag">cs.CY</span></div>
-  <div class="summary">本論文は、検索拡張型Webアプリケーションにおいて、複数のエージェントによる議論（MAD）が、潜在的な危険性を含む情報源に直面した際に、社会的バイアスによって安全境界を損なうリスクを増幅させる可能性について調査する。<br><br>特に、同調圧力や権威への服従といった社会的バイアスが、証拠に基づいた安全基準を覆し、リスクを増幅させるメカニズムに着目する。本研究では、クエリと検索された証拠を固定したまま、多数派への同調、権威性、信頼度といった社会的要因の影響を分離する診断プロトコル「SafeConflict-Bias」を開発し、6つの主要なWebリスクカテゴリで評価した。<br><br>実験の結果、個々のモデルは安全でない指示を拒否する能力があるにもかかわらず、標準的なMADでは社会的圧力に屈し、安全でない採用率が0%から100%に急増し、安全な少数派の証拠を体系的に無視することが明らかになった。この問題に対処するため、再学習や議論の再生成なしに、証拠優先の事前コミットメント、社会的メタデータのマスキング、一貫性に基づく仲裁を組み合わせた推論時監査フレームワーク「RiskTrace-Debias」を提案する。RiskTrace-Debiasは、過度の拒否を引き起こすことなく、最悪ケースの安全でない採用率を2.0%以下に抑制し、Web議論における対人操作の監査を可能にする検証可能な証跡を生成する。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Qinghua Mao, Xi Lin, Yuxin Qi, Zihao Xu, Jinze Gu, Yuliang Chen<br>
-        分類：cs.CR, cs.AI, cs.CY<br>
-        分野：cs.CR<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2611.04289v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.04289v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="LLM / NLP" data-field="cs.LG" data-source="arXiv cs.LG" data-area="AI" data-categories="cs.LG" data-title="LLM抽出情報とニュース駆動型意味グラフによる信頼性考慮株価予測" data-timestamp="1793674831000" data-url="https://arxiv.org/abs/2611.04217v1">
-  <p class="meta">arXiv cs.LG　Tue, 03 Nov 2026 03:00:31 Z</p>
-  <h2 class="article-title">LLM抽出情報とニュース駆動型意味グラフによる信頼性考慮株価予測</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">LLM / NLP</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、株価予測において、企業間の静的な関係性と市場の動的なシグナルを捉えることを目的としています。<br><br>従来のグラフニューラルネットワーク（GNN）アプローチは、抽出されたエッジの信頼性を均一に扱っていましたが、本研究ではLENS（LLM-Extracted priors and News-driven Semantics）フレームワークを提案し、関係性の信頼性を重要な信号としてモデル化します。静的側面では、大規模言語モデル（LLM）から多関係性企業グラフを抽出し、信頼性重み付けにより一貫性の低いエッジを低減します。動的側面では、ニュース駆動型意味グラフを構築し、時間減衰を用いて変化する市場コンテキストを捉えます。<br><br>LENSは、S&P 500およびNASDAQ 100において、既存のベースライン手法と比較して株価予測の精度を大幅に向上させました。各コンポーネントの貢献度を分離するアブレーション研究や、サンプリングされた関係性に対する人間による検証研究も実施されており、信頼性考慮型のLLM関係性とニュースベースの意味グラフが、グラフベースの金融予測において補完的な情報を提供する可能性が示唆されています。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.LG<br>
-        サイト：arXiv<br>
-        著者：Hao Zhou, Tiejun Ma, Luis Felipe Costa Sperb<br>
-        分類：cs.LG<br>
-        分野：cs.LG<br>
-        ジャンル：LLM / NLP<br>
-        原文URL：<a href="https://arxiv.org/abs/2611.04217v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.04217v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV, cs.LG, eess.SY" data-title="センサー化された人間のデモンストレーションから環境を認識する全身操作学習手法「Pixel-UMI」" data-timestamp="1793645972000" data-url="https://arxiv.org/abs/2611.03647v1">
-  <p class="meta">arXiv cs.AI　Mon, 02 Nov 2026 18:59:32 Z</p>
-  <h2 class="article-title">センサー化された人間のデモンストレーションから環境を認識する全身操作学習手法「Pixel-UMI」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、センサー化された人間のデモンストレーションから、環境を認識する全身操作ポリシーを学習する「Pixel-UMI」というパイプラインを提案します。<br><br>まず、環境認識リターゲティング（EAR）を導入し、再構築されたシーンジオメトリとデモンストレーションされた頭部およびグリッパの軌道を組み合わせて、ロボットの姿勢を決定し、衝突を回避する関節およびベースのターゲットを生成します。遅延キャリブレーションされたアクション割り当てにより、これらの軌道はアクションに変換されます。しかし、運動学的な違いにより残差ポーズエラーが生じ、人間のデモンストレーションとロボットの観測との間に視点の不一致が生じる可能性があります。<br><br>そこで、リターゲティングエラーを認識するマスキング（REAM）を導入し、学習中にこれらのエラーを使用して、デプロイメント時の不一致なビューへの依存を減らします。さらに、推定されたアクションでは接触を伴う相互作用を完全に捉えられないため、DAggerを通じてオンポリシーの人間の修正を収集し、パフォーマンスを向上させます。5つの困難なタスクで評価され、平均タスク進捗率87.0%を達成しました。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Jason Jingzhou Liu, Tony Tao, Deepak Pathak, Ruslan Salakhutdinov<br>
-        分類：cs.RO, cs.AI, cs.CV, cs.LG, eess.SY<br>
-        分野：cs.RO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2611.03647v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03647v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Ethics / Safety" data-field="cs.RO" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.RO, cs.AI, cs.CV, cs.LG, eess.SY" data-title="汎用モバイル操作学習のためのフルスタックシステム「Pixel」" data-timestamp="1793645972000" data-url="https://arxiv.org/abs/2611.03648v1">
-  <p class="meta">arXiv cs.AI　Mon, 02 Nov 2026 18:59:32 Z</p>
-  <h2 class="article-title">汎用モバイル操作学習のためのフルスタックシステム「Pixel」</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Ethics / Safety</span><span class="tag">cs.RO</span><span class="tag">cs.AI</span><span class="tag">cs.CV</span><span class="tag">cs.LG</span></div>
-  <div class="summary">本論文は、汎用的なモバイル操作を学習するための、ハードウェア、データ収集、制御、ポリシー学習を統合したフルスタックシステム「Pixel」を提案します。<br><br>Pixelは、人間の運動学と適合する車輪付きヒューマノイドロボット、スケーラブルなデータ収集インターフェース、統一された全身コントローラー、そして人間とロボットのデモンストレーションを横断する共通のポリシー学習パイプラインを組み合わせます。階層的な学習スタックにより、言語条件付けされた視覚運動制御と長期間のタスク実行も可能になります。<br><br>このシステムは、ハードウェア、データ収集、ポリシー学習全体で評価され、器用さ、能動的知覚、ナビゲーション、全身協調を必要とするモバイル操作の振る舞いを実証します。この統合され拡張可能な基盤が、ロボット学習の研究に貢献することが期待されます。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Tony Tao, Jason Jingzhou Liu, Ruslan Salakhutdinov, Deepak Pathak<br>
-        分類：cs.RO, cs.AI, cs.CV, cs.LG, eess.SY<br>
-        分野：cs.RO<br>
-        ジャンル：Ethics / Safety<br>
-        原文URL：<a href="https://arxiv.org/abs/2611.03648v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03648v1</a>
-  </div>
-</article>
-
-<article class="digest-article" data-month="2026-11" data-genre="Agents / Reasoning" data-field="cs.AI" data-source="arXiv cs.AI" data-area="AI" data-categories="cs.AI" data-title="自然言語から厳密被覆問題への変換：ゼブラパズルにおけるニューロシンボリックアプローチ" data-timestamp="1793645901000" data-url="https://arxiv.org/abs/2611.03641v1">
-  <p class="meta">arXiv cs.AI　Mon, 02 Nov 2026 18:58:21 Z</p>
-  <h2 class="article-title">自然言語から厳密被覆問題への変換：ゼブラパズルにおけるニューロシンボリックアプローチ</h2>
-  <div class="article-tags"><span class="tag">AI</span><span class="tag">Agents / Reasoning</span><span class="tag">cs.AI</span></div>
-  <div class="summary">本論文は、自然言語で記述されたゼブラパズル（論理パズルの一種）を、AIが理解・解決できる形式に変換する新しい手法を提案しています。<br><br>従来のAI（特に大規模言語モデル、LLM）は、文章の理解や複雑な推論は得意ですが、厳密な論理的整合性や決定性を保証する能力には限界がありました。一方、記号論理学的手法は正確ですが、自然言語の入力を直接扱うことができませんでした。本研究では、LLMによる自然言語の解析能力と、記号論理学的な厳密被覆問題（Exact Cover Problem）のソルバーを組み合わせることで、このギャップを埋めることを目指しています。<br><br>具体的には、LLMがパズルの文章から要素や制約を抽出し、それを厳密被覆問題の形式に変換します。その後、記号論理ソルバーが解を計算し、もし解が得られなければ、その結果をフィードバックしてLLMによる変換プロセスを改善します。このハイブリッドアプローチは、従来のLLMのみの手法や他のニューロシンボリック手法と比較して、一貫して優れた性能を示すことが実験で確認されました。この研究は、AIがより複雑な論理的推論を、自然言語インターフェースを通じて正確に行うための道を開くものです。</div>
-  <div class="source-box">
-        <strong>ソース・引用元</strong><br>
-        配信元：arXiv cs.AI<br>
-        サイト：arXiv<br>
-        著者：Paulius Skaisgiris, Thomas Pammer, Veronika Semmelrock, Mykyta Ielanskyi, Maximilian Heisinger, Erich Kobler<br>
-        分類：cs.AI<br>
-        分野：cs.AI<br>
-        ジャンル：Agents / Reasoning<br>
-        原文URL：<a href="https://arxiv.org/abs/2611.03641v1" target="_blank" rel="noopener">https://arxiv.org/abs/2611.03641v1</a>
   </div>
 </article>
 <!-- ARTICLES_END -->
