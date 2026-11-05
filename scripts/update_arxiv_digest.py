@@ -51,7 +51,7 @@ HTML_TEMPLATE = """<!doctype html>
 </head>
 <body>
   <div class=\"container\">
-    <a href=\"/hp/\" class=\"back\">← ホームに戻る</a>
+    <a href=\"/\" class=\"back\">← ホームに戻る</a>
     <h1>最新の arXiv AI 論文</h1>
     <p class=\"desc\">arXiv の AI 関連カテゴリを対象に、日本語要約・ジャンル分類付きで整理しています。</p>
     <div class=\"panel\">

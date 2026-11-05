@@ -46,6 +46,7 @@ HTML_TEMPLATE = """<!doctype html>
   <title>看護ニュースダイジェスト</title>
   <style>
     body{font-family:-apple-system,BlinkMacSystemFont,\"Hiragino Sans\",\"Yu Gothic\",sans-serif;margin:0;background:#fafafa;color:#111}
+    .back{display:inline-block;margin-bottom:16px;color:#666;text-decoration:none;font-size:14px}
     .wrap{max-width:1120px;margin:0 auto;padding:24px 16px 48px}
     h1{font-size:28px;margin:0 0 8px}.muted{color:#666;font-size:14px}
     .panel{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin-top:16px}
@@ -60,6 +61,7 @@ HTML_TEMPLATE = """<!doctype html>
 </head>
 <body>
   <div class=\"wrap\">
+    <a href=\"/\" class=\"back\">← ホームに戻る</a>
     <h1>看護ニュースダイジェスト</h1>
     <div class=\"muted\">医療・看護実務に関連する公開情報を日本語で整理した一覧です。原文リンクは各記事末尾に記載しています。</div>
     <div class=\"panel\">

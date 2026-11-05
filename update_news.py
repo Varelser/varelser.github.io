@@ -254,7 +254,7 @@ def build_final_html(all_articles: str) -> str:
 </head>
 <body>
   <div class="container">
-    <a href="/hp/" class="back-link">← ホームに戻る</a>
+    <a href="/" class="back-link">← ホームに戻る</a>
     <p class="page-title">最新の医療・看護ニュース</p>
     <p class="page-desc">海外の最新医療ニュースをAIで要約し、定期配信しています。</p>
 <!-- ARTICLES_START -->
