@@ -164,6 +164,7 @@
         <label class="control"><span>配信元</span><select id="filter-source"><option value="">すべて</option></select></label>
         <label class="control control-wide"><span>キーワード</span><input id="filter-keyword" type="search" placeholder="タイトル・要約・分類を検索" /></label>
         <label class="control"><span>並び順</span><select id="sort-order"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">タイトル順</option></select></label>
+        <label class="control"><span>表示件数</span><select id="page-size"><option value="10" selected>10件</option><option value="20">20件</option><option value="50">50件</option><option value="all">すべて</option></select></label>
       </div>
       <p id="digest-result-count" class="digest-result-count"></p>
     </section>
@@ -734,6 +735,11 @@
 </article>
     <!-- ARTICLES_END -->
   </div>
+  <nav id="digest-pager" class="digest-pager" style="max-width:860px;margin:18px auto 0;padding:0 16px;display:flex;gap:14px;align-items:center;justify-content:center;">
+    <button type="button" id="page-prev">← 前へ</button>
+    <span id="page-info"></span>
+    <button type="button" id="page-next">次へ →</button>
+  </nav>
   <!-- ARCHIVE_LINKS_START -->
   <section class="archive-index" style="max-width:860px;margin:28px auto 36px;padding:0 16px;">
     <h2 style="font-size:1.05rem;margin:0 0 6px;">過去のアーカイブ（月別）</h2>
@@ -796,6 +802,7 @@
           article.textContent || ""
         ].join(" "));
       }
+      var currentPage = 1;
       function applyFilters(){
         var month = byId("filter-month") ? byId("filter-month").value : "";
         var genre = byId("filter-genre") ? byId("filter-genre").value : "";
@@ -820,24 +827,46 @@
           return Number(b.dataset.timestamp || 0) - Number(a.dataset.timestamp || 0);
         });
 
+        var pageSizeSelect = byId("page-size");
+        var pageSizeRaw = pageSizeSelect ? pageSizeSelect.value : "10";
+        var pageSize = pageSizeRaw === "all" ? Math.max(matched.length, 1) : (parseInt(pageSizeRaw, 10) || 10);
+        var totalPages = Math.max(1, Math.ceil(matched.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+        var startIdx = (currentPage - 1) * pageSize;
+        var visibleSet = new Set(sorted.slice(startIdx, startIdx + pageSize));
+
         articles.forEach(function(article){ article.style.display = "none"; });
         sorted.forEach(function(article){
-          article.style.display = "";
+          article.style.display = visibleSet.has(article) ? "" : "none";
           article.parentNode.appendChild(article);
         });
 
         var counter = byId("digest-result-count");
         if (counter) counter.textContent = "表示件数: " + matched.length + " / " + articles.length;
+
+        var pager = byId("digest-pager");
+        if (pager) pager.style.display = totalPages > 1 ? "" : "none";
+        var pageInfo = byId("page-info");
+        if (pageInfo) pageInfo.textContent = currentPage + " / " + totalPages + " ページ";
+        var prev = byId("page-prev");
+        if (prev) prev.disabled = currentPage <= 1;
+        var next = byId("page-next");
+        if (next) next.disabled = currentPage >= totalPages;
       }
 
       document.addEventListener("DOMContentLoaded", function(){
         buildOptions();
-        ["filter-month", "filter-genre", "filter-field", "filter-source", "sort-order"].forEach(function(id){
+        ["filter-month", "filter-genre", "filter-field", "filter-source", "sort-order", "page-size"].forEach(function(id){
           var el = byId(id);
-          if (el) el.addEventListener("change", applyFilters);
+          if (el) el.addEventListener("change", function(){ currentPage = 1; applyFilters(); });
         });
         var keyword = byId("filter-keyword");
-        if (keyword) keyword.addEventListener("input", applyFilters);
+        if (keyword) keyword.addEventListener("input", function(){ currentPage = 1; applyFilters(); });
+        var prevBtn = byId("page-prev");
+        if (prevBtn) prevBtn.addEventListener("click", function(){ if (currentPage > 1) { currentPage--; applyFilters(); } });
+        var nextBtn = byId("page-next");
+        if (nextBtn) nextBtn.addEventListener("click", function(){ currentPage++; applyFilters(); });
         applyFilters();
       });
     })();
