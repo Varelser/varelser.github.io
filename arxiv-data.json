@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-06T08:30:32Z",
+ "updatedAt": "2026-11-06T09:31:35Z",
  "articles": [
   {
    "source": "OSF Preprints",
@@ -82,6 +82,28 @@
    "field": "cs.AI",
    "genre": "Agents / Reasoning",
    "timestamp": 1793905169000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "arXiv cs.AI",
+   "title": "Scientist World: Grow a Research World for AI-Scientists",
+   "titleJa": "Scientist World――AI科学者のための「研究の世界」を育てる",
+   "summaryHtml": "AI科学者は登場したが、彼らが成長するための世界はなかった。人間の科学者には、文献に蓄積された何世紀もの未解決問題と共有されたアイデアという世界があるのが当たり前だが、AI科学者にとってその世界は読めても実行できないものだった。本論文は「Scientist World」を構築する。すべての研究論文を実行可能な環境に変える試みである。<br><br>自律的なパイプラインが各論文の未解決の研究課題を抽出し、提案された手法をベースラインとして再現する。環境に入ったAI科学者は、人間の著者が達成したことと対比して評価される。検証済みの環境を最初に1,000件公開した。この世界を評価の場として使った結果、最先端のAI科学者はすでに74%の場合に人間の研究者を上回ることが分かった。<br><br>AIが科学を行う記録として、6,400時間分の研究の軌跡が収められている。すべてのアイデア、実験、失敗、成功が記録されている。訓練の場としては、小規模モデルを鍛え上げることで、研究アイデアの創出において最先端モデルに並ぶ水準まで引き上げることができた（+158%）。AI科学者自身の世界が、科学から育ち、科学とともに成長し始めたという。",
+   "url": "https://arxiv.org/abs/2611.08478",
+   "publishedAt": "2026-11-05T18:58:17Z",
+   "authors": [
+    "Taiming Lu",
+    "Sachin Konan",
+    "Zhuang Liu"
+   ],
+   "categories": [
+    "cs.AI",
+    "cs.CL",
+    "cs.LG"
+   ],
+   "field": "cs.AI",
+   "genre": "Agents / Reasoning",
+   "timestamp": 1793905097000,
    "monthKey": "2026-11"
   },
   {
@@ -220,6 +242,27 @@
    "field": "cs.AI",
    "genre": "Ethics / Safety",
    "timestamp": 1793882960000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "Hugging Face Papers",
+   "title": "SAE Interprets MoE: Sparse AutoEncoders Reveal That MoE Experts Exhibit Human-Interpretable Fine-Grained Specialization",
+   "titleJa": "SAEが解き明かすMoE――スパースオートエンコーダが示す専門家の人間にも理解できる細かな分業",
+   "summaryHtml": "Mixture-of-Experts（MoE）モデルは各トークンを多数のエキスパートのうち少数に振り分けるが、個々のエキスパートが何を担っているかは未解明のままだった。従来の分析は、分野ラベル付きコーパスでエキスパートが選ばれる頻度を数えるもので、分類をあらかじめ固定し、粗く、寄与ではなく選択を記録するものだった。本論文は、MoE層の出力にスパースオートエンコーダ（SAE）を訓練し、特徴空間で専門化を調べる。<br><br>MoE層の出力はエキスパート出力のルーター重み付き和であり、SAEのエンコーダはアフィンであるため、すべての潜在変数の事前活性化はエキスパートごとに正確に分解できる。コーパス全体で集計すると、各エキスパートは、その活性化を主に駆動する潜在変数の支配的な集合を持つ。Qwen3-30B-A3Bの第4・30・46層では、寄与はゲーティングよりもはるかに集中しており、ほとんどの潜在変数は1〜2人の支配者しか持たず、支配集合の重なりは少数のエキスパートペアに集中していた。<br><br>支配集合を自動解釈すると、粗い分野の下にある分業が見えてくる。Javaとフロントエンドのウェブコード、あるいは幾何と算術・多項式で異なるエキスパートが働く一方、粗い分野そのものが使うエキスパート数は大きく偏っていた。エキスパートの働きを「選ばれる回数」ではなく「何に寄与するか」で測ることで、MoEの内部構造を人間が理解できる粒度で描き出した研究である。",
+   "url": "https://arxiv.org/abs/2611.08089",
+   "publishedAt": "2026-11-05T09:35:08Z",
+   "authors": [
+    "Anyuan Zhuo",
+    "Shaohua Zhang",
+    "Yuan Lin",
+    "Pinyan Lu"
+   ],
+   "categories": [
+    "cs.LG"
+   ],
+   "field": "cs.LG",
+   "genre": "LLM / NLP",
+   "timestamp": 1793871308000,
    "monthKey": "2026-11"
   },
   {
@@ -1908,58 +1951,6 @@
    "categories": [
     "cs.CV",
     "cs.AI"
-   ]
-  },
-  {
-   "source": "arXiv cs.CV",
-   "title": "TailSteer: Trajectory-Tail Steering for Drift-Resistant Multi-turn Image Editing",
-   "titleJa": "TailSteer――軌道の尾部を操舵して複数ターン画像編集のドリフトに抗う",
-   "summaryHtml": "単一ターンの編集性能が強くても、複数ターンの対話が信頼できるとは限らない。編集された出力が繰り返し再利用されるにつれ、小さな意図しない変化が蓄積し、深刻な視覚的ドリフトになりうる。この長期ドリフトは通常、複数ターンデータでの訓練やターン横断のロールアウトで緩和されるが、それは事前学習の事前分布を変えてしまう可能性がある。あるいは基盤モデルへの拡張が難しい、推論時に特化した仕組みで対処されてきた。<br><br>本論文は、最終段階の訓練フレームワーク「TailSteer」を提案する。複数ターンの頑健性を高めながら、それまでの訓練で獲得した生成・編集能力を保持する。<br><br>TailSteerの原理は単純である。初期のデノイジング動態はベースモデルに近づけて保ち、保存のための修正は、細かな逸脱を抑え込める軌道の尾部（テール）付近に集中させる。修正は、編集器自身のオンポリシーなデノイジング・ロールアウトから、変化していないソース内容を使って学習される。能力を壊さずにドリフトだけを抑える狙いの設計である。",
-   "url": "https://arxiv.org/abs/2611.06741",
-   "publishedAt": "2026-11-04T16:23:24Z",
-   "timestamp": 1793809404000,
-   "monthKey": "2026-11",
-   "field": "cs.CV",
-   "genre": "Vision / Multimodal",
-   "authors": [
-    "Ruikang Li",
-    "Zixuan Chen",
-    "Jiarui Wu",
-    "Mingde Yao",
-    "Yiyuan Zhang",
-    "Yujin Wang",
-    "Hanming Deng",
-    "Lewei Lu",
-    "Tianfan Xue"
-   ],
-   "categories": [
-    "cs.CV",
-    "cs.AI"
-   ]
-  },
-  {
-   "source": "arXiv cs.CV",
-   "title": "Coupled Scene Graph Anticipation: When With-Constraint Recall Hides Structural Inconsistency",
-   "titleJa": "結合シーングラフ予測――制約付き再現率が構造的不整合を隠すとき",
-   "summaryHtml": "シーングラフ予測（SGA）は、将来のビデオフレームにおける物体間の関係を予測する。連続時間のSGAモデルは主語―目的語の各ペアを独立したニューラルODEで進化させるため、実体を共有する関係同士は積分の間に互いに影響し合えず、同じペアについて「座っている」と「立っている」のような相互排他的な予測を何も妨げない。<br><br>本論文は「CoupledSGA」を提案する。関係同士を、ODEのベクトル場内にグラフ注意を持つ「関係相互作用グラフ」で結びつけ、相互排他的な述語の行列に基づく構造的一貫性損失（L_SC）を加える。<br><br>CoupledSGAの開発は、評価プロトコルの限界も明らかにした。制約付き（With-Constraint）評価は主語―目的語ペアごとにグループあたり1つの述語だけを保持するため、その R@K と mR@K は、L_SC が狙うグループ内の違反を捉えることができない。各グループの勝者述語が変わらない限り、これらの指標は不変であることが証明されている。評価指標そのものへの批判を含む研究である。",
-   "url": "https://arxiv.org/abs/2611.06738",
-   "publishedAt": "2026-11-04T16:20:37Z",
-   "timestamp": 1793809237000,
-   "monthKey": "2026-11",
-   "field": "cs.CV",
-   "genre": "Vision / Multimodal",
-   "authors": [
-    "Zeno Nongmaithem",
-    "Anushttha Srivastava",
-    "Anshit Sinha",
-    "Apoorv Sisodia",
-    "Suman Chowdhury",
-    "Prerana Mukherjee",
-    "Rajesh P. Barnwal"
-   ],
-   "categories": [
-    "cs.CV",
-    "cs.LG"
    ]
   }
  ]
