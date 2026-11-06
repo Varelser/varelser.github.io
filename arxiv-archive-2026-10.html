@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Digest アーカイブ 2026年10月 | VARELSER</title>
+  <style>
+    body{margin:0;background:#fff;color:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.8}
+    .container{max-width:920px;margin:0 auto;padding:40px 18px 56px}.back{display:inline-block;margin-bottom:28px;color:#666;text-decoration:none;font-size:14px}
+    h1{font-size:24px;margin:0 0 8px}.desc{color:#666;font-size:13px;margin:0 0 18px}
+    .panel{border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;margin-bottom:24px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wide{grid-column:1/-1}
+    select,input{width:100%;height:42px;padding:0 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff}.label{display:block;font-size:12px;color:#666;margin:0 0 6px}
+    .meta{font-size:13px;color:#666;margin-top:10px}.list{display:grid;gap:18px}
+    article{border-bottom:1px solid #e5e7eb;padding-bottom:28px}.src{font-size:12px;color:#666;margin-bottom:8px}.title{font-size:20px;line-height:1.5;font-weight:700;margin:0 0 10px}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.tag{font-size:12px;padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#f3f4f6}
+    .summary{font-size:14px;color:#222}.box{margin-top:14px;padding:12px 14px;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa;font-size:13px;color:#555}
+    a{color:#0f766e;text-decoration:none} a:hover{text-decoration:underline}
+    @media (max-width:720px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="arxiv.html" class="back">← Research Digest に戻る</a>
+    <h1>Research Digest アーカイブ 2026年10月</h1>
+    <p class="desc">アーカイブ一覧は本体ページにあります。 <a href="arxiv.html">Research Digest に戻る</a></p>
+
+    <div class="panel">
+      <div class="grid">
+        <label><span class="label">月</span><select id="month"><option value="">すべて</option></select></label>
+        <label><span class="label">ジャンル</span><select id="genre"><option value="">すべて</option></select></label>
+        <label><span class="label">主分類</span><select id="field"><option value="">すべて</option></select></label>
+        <label><span class="label">並び順</span><select id="sort"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">タイトル順</option></select></label>
+        <label class="wide"><span class="label">キーワード</span><input id="keyword" type="search" placeholder="タイトル・要約・著者・分類を検索" /></label>
+      </div>
+      <div id="meta" class="meta"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+  <script>
+    const DATA = {"version": 1, "updatedAt": "2026-11-06T00:48:16Z", "articles": [{"source": "Europe PMC", "title": "AI is not as conscious as humans: Essentialism in mental state attributions to artificial systems", "titleJa": "AIは人間ほど意識があるとは見なされない――心的状態の帰属における本質主義", "summaryHtml": "人工システムはますます人間に似た振る舞いをするようになっている。だが、それだけで私たちは人工システムを意識的だとみなすのだろうか。本論文は二つの可能性を対比する。一つは機能主義的な帰属で、環境への応答が適切であるほど、相手が人間でも人工物でも意識的だとみなすというもの。もう一つは本質主義的な帰属で、人工システムが人間と同じくらい適切に応答しても、意識は低いと判断するというもの。さらに、この傾向が意識に特有なのか、気づきのような関連概念にも広がるのかを問う。<br><br>事前登録された2組の研究（5実験、参加者1092人）では、英国の参加者が空間的・社会的・時間的な環境特徴への応答性が異なる人間または人工エージェントのシナリオを読み、その意識と気づきを評価した。その結果、意識の帰属は本質主義的な論理に従った。応答性が同程度でも、参加者は一貫して人間の方により大きな意識を帰属させた。<br><br>一方、気づきの帰属は機能主義的なパターンを示した。人間でも人工エージェントでも、応答性が高まるにつれて気づきの評価は着実に上がった（ただし最高水準では人間がより気づいていると評価された）。つまり人々は、心的概念ごとに異なる推論規則を用いている。意識はエージェントが何であるかに、気づきはエージェントが何をするかに依存すると扱われる、という知見である。", "url": "https://europepmc.org/article/MED/42822076", "publishedAt": "2026-10-01T00:00:00Z", "authors": ["Longin L", "Karpus J", "Meertens N", "Bahrami B", "Deroy O"], "categories": ["consciousness", "experimental philosophy"], "field": "Cognition", "genre": "Consciousness / Philosophy", "timestamp": 1790812800000, "monthKey": "2026-10"}]};
+    const byId = id => document.getElementById(id);
+    const norm = s => String(s||'').toLowerCase().normalize('NFKC').replace(/\s+/g,' ').trim();
+    const esc = s => String(s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const months = [...new Set((DATA.articles||[]).map(a => a.monthKey).filter(Boolean))].sort().reverse();
+    const genres = [...new Set((DATA.articles||[]).map(a => a.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    const fields = [...new Set((DATA.articles||[]).map(a => a.field).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    function fill(select, values){ values.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; select.appendChild(o); }); }
+    fill(byId('month'), months); fill(byId('genre'), genres); fill(byId('field'), fields);
+    function render(){
+      const month=byId('month').value, genre=byId('genre').value, field=byId('field').value, sort=byId('sort').value, kw=norm(byId('keyword').value);
+      let rows=(DATA.articles||[]).filter(a=>{
+        if(month&&a.monthKey!==month) return false; if(genre&&a.genre!==genre) return false; if(field&&a.field!==field) return false;
+        const hay=norm([a.titleJa,a.title,a.summaryHtml,a.authors.join(' '),a.categories.join(' ')].join(' '));
+        if(kw&& !hay.includes(kw)) return false; return true;
+      });
+      rows = rows.slice().sort((a,b)=> sort==='oldest' ? a.timestamp-b.timestamp : sort==='title' ? a.titleJa.localeCompare(b.titleJa,'ja') : b.timestamp-a.timestamp);
+      byId('meta').textContent = `更新: ${DATA.updatedAt || '-'} / 表示件数: ${rows.length}件`;
+      byId('list').innerHTML = rows.map(a=>`
+        <article>
+          <div class="src">${esc(a.source)} / ${esc(a.publishedAt.slice(0,10))}</div>
+          <h2 class="title">${esc(a.titleJa)}</h2>
+          <div class="tags"><span class="tag">AI</span><span class="tag">${esc(a.genre)}</span><span class="tag">${esc(a.field)}</span>${a.categories.slice(0,4).map(c=>`<span class=\"tag\">${esc(c)}</span>`).join('')}</div>
+          <div class="summary">${a.summaryHtml}</div>
+          <div class="box"><strong>著者</strong><br>${esc(a.authors.join(', '))}<br><br><a href="${esc(a.url)}" target="_blank" rel="noopener">原文を開く</a></div>
+        </article>`).join('');
+    }
+    ['month','genre','field','sort'].forEach(id=>byId(id).addEventListener('change',render)); byId('keyword').addEventListener('input',render); render();
+  </script>
+</body>
+</html>

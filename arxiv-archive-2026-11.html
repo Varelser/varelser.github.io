@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Digest アーカイブ 2026年11月 | VARELSER</title>
+  <style>
+    body{margin:0;background:#fff;color:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.8}
+    .container{max-width:920px;margin:0 auto;padding:40px 18px 56px}.back{display:inline-block;margin-bottom:28px;color:#666;text-decoration:none;font-size:14px}
+    h1{font-size:24px;margin:0 0 8px}.desc{color:#666;font-size:13px;margin:0 0 18px}
+    .panel{border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;margin-bottom:24px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wide{grid-column:1/-1}
+    select,input{width:100%;height:42px;padding:0 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff}.label{display:block;font-size:12px;color:#666;margin:0 0 6px}
+    .meta{font-size:13px;color:#666;margin-top:10px}.list{display:grid;gap:18px}
+    article{border-bottom:1px solid #e5e7eb;padding-bottom:28px}.src{font-size:12px;color:#666;margin-bottom:8px}.title{font-size:20px;line-height:1.5;font-weight:700;margin:0 0 10px}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.tag{font-size:12px;padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#f3f4f6}
+    .summary{font-size:14px;color:#222}.box{margin-top:14px;padding:12px 14px;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa;font-size:13px;color:#555}
+    a{color:#0f766e;text-decoration:none} a:hover{text-decoration:underline}
+    @media (max-width:720px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="arxiv.html" class="back">← Research Digest に戻る</a>
+    <h1>Research Digest アーカイブ 2026年11月</h1>
+    <p class="desc">アーカイブ一覧は本体ページにあります。 <a href="arxiv.html">Research Digest に戻る</a></p>
+
+    <div class="panel">
+      <div class="grid">
+        <label><span class="label">月</span><select id="month"><option value="">すべて</option></select></label>
+        <label><span class="label">ジャンル</span><select id="genre"><option value="">すべて</option></select></label>
+        <label><span class="label">主分類</span><select id="field"><option value="">すべて</option></select></label>
+        <label><span class="label">並び順</span><select id="sort"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">タイトル順</option></select></label>
+        <label class="wide"><span class="label">キーワード</span><input id="keyword" type="search" placeholder="タイトル・要約・著者・分類を検索" /></label>
+      </div>
+      <div id="meta" class="meta"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+  <script>
+    const DATA = {"version": 1, "updatedAt": "2026-11-06T00:48:16Z", "articles": [{"source": "arXiv cs.LG", "title": "Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man", "titleJa": "Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man", "summaryHtml": "本論文は、Where It Breaks: Diagnosing Perception, Memory, and Decision Failures of a Vision-Language Agent in Pac-Man を扱います。<br><br>Training an agent to play Pac-Man with only up, down, left and right actions raises a basic question: when performance is poor, what should be improved? Difficulty can arise from reading the screen or from choosing actions over a long sequence. We examine these problems in a Qwen3.5-9B-based agent through separate perception checks and primitive-policy reinforcement-learning studies. In the policy study, which uses textual boards to remove image transcription from the decision interface, completion on eight held-out mazes increased from 0% before this optimization to 80.2% at a selected checkpoint, with three extra lives. The perception checks show that accurate static screenshot reading can coexist with errors during interaction. A separate policy comparison also shows that further optimization can accompany worse action choices. Together, these findings motivate concrete checks for pos<br><br>利用時は原文抄録と本文を確認し、研究目的・方法・限界を一次情報で確認してください。", "url": "http://arxiv.org/abs/2611.06704v1", "publishedAt": "2026-11-04T16:04:57Z", "timestamp": 1793808297000, "monthKey": "2026-11", "field": "cs.LG", "genre": "Vision / Multimodal", "authors": ["Xinglu Wang", "Edward Wang", "Yong Zhang", "Zhenan Fan"], "categories": ["cs.LG"]}, {"source": "arXiv cs.RO", "title": "When to Ask for Help: Uncertainty-Triggered Aerial Refinement for Off-Road Navigation", "titleJa": "When to Ask for Help: Uncertainty-Triggered Aerial Refinement for Off-Road Navigation", "summaryHtml": "本論文は、When to Ask for Help: Uncertainty-Triggered Aerial Refinement for Off-Road Navigation を扱います。<br><br>Heterogeneous air-ground teams can use aerial sensing to address the limited range and viewpoint of ground-vehicle sensors, but deciding when the UGV needs assistance and what information the UAV should collect remains a challenge. This paper presents a planner-conditioned air-ground assistance method that evaluates how uncertain map information affects the UGV&#x27;s current MPPI rollouts. When navigation remains degraded, we score the same rollouts under resolved map hypotheses, select the map layer with the largest useful improvement, request the corresponding aerial measurement, fuse the returned information, and replan. Unlike approaches driven by fixed support roles, task structure, or uncertainty alone, our method conditions assistance on whether resolving uncertainty improves predicted ground navigation. Across 180 simulation trials on three off-road routes, the method achieves 98.9% <br><br>利用時は原文抄録と本文を確認し、研究目的・方法・限界を一次情報で確認してください。", "url": "http://arxiv.org/abs/2611.06702v1", "publishedAt": "2026-11-04T16:02:59Z", "timestamp": 1793808179000, "monthKey": "2026-11", "field": "cs.RO", "genre": "Robotics", "authors": ["Pranay Samineni", "Adam Thorpe", "John Chubick", "Anand Balakrishnan", "Christian Ellis", "Swarat Chaudhuri", "Ufuk Topcu"], "categories": ["cs.RO", "eess.SY"]}, {"source": "arXiv cs.CV", "title": "Agent-Driven Generative Priors for Pathology Image Synthesis and Segmentation", "titleJa": "Agent-Driven Generative Priors for Pathology Image Synthesis and Segmentation", "summaryHtml": "本論文は、Agent-Driven Generative Priors for Pathology Image Synthesis and Segmentation を扱います。<br><br>Deep learning methods for pathology are constrained by the limited availability and high cost of large-scale pixel-level annotations. Synthetic data can alleviate this limitation, but existing pipelines often lack reliable quality control and remain weakly connected to downstream analysis. To address these issues, we propose a three-stage framework that integrates automated data screening, generative representation learning, and efficient adaptation to downstream tasks. First, we develop a pathology agent system to assess image quality and filter samples, resulting in TCGA-200K, a dataset containing 217,030 pathology patches selected from the public TCGA repository. Second, we train a generative model on the screened data. In addition to image synthesis, its backbone learns structural and semantic representations that can be transferred to downstream tasks. Third, we adapt the pretrained<br><br>利用時は原文抄録と本文を確認し、研究目的・方法・限界を一次情報で確認してください。", "url": "http://arxiv.org/abs/2611.06701v1", "publishedAt": "2026-11-04T16:02:29Z", "timestamp": 1793808149000, "monthKey": "2026-11", "field": "cs.CV", "genre": "Vision / Multimodal", "authors": ["Sicheng Yang", "Rui Tang", "Haipeng Zhou", "Hongqiu Wang", "Zhaohu Xing", "Jianda Ma", "Lie Dai", "Guang Yang", "Lei Zhu"], "categories": ["cs.CV"]}, {"source": "Hugging Face Papers", "title": "What Does Multi-Turn Reinforcement Learning Really Improve in LLM Agents?", "titleJa": "マルチターン強化学習はLLMエージェントの何を本当に改善するのか", "summaryHtml": "マルチターンのエージェント強化学習は長期的なタスクで優れた性能を示すが、その効果は対話の制約条件に大きく左右される。本論文は、サンプリングの幅Kと対話の深さTを変えた評価指標Pass@(K,T)により、軌跡レベルの強化学習の優位性が十分なターン数の予算に依存し、予算が厳しくなると大幅に低下することを示した。<br><br>また、エージェント強化学習は一段階の意思決定の質を一様に高めるわけではない。その強みはむしろ、誤りからの回復や長期的な粘り強さに集中していることが明らかになった。展開時の予算依存によるリスクを抑えるため、論文ではプロセス監督シグナルの利点と限界を予備的に論じ、学習中に相互作用の予算を変化させるBudgetMix RLを提案している。<br><br>実験の結果、BudgetMix RLは多様な実行条件のもとで頑健な性能を達成し、学習時と展開時でターンの予算が異なる場合でも性能が崩れにくい点が確認された。エージェント強化学習の効果を「何が改善され、何が改善されないか」という観点から切り分けた、実務的にも示唆に富む検証である。", "url": "https://arxiv.org/abs/2611.06483", "publishedAt": "2026-11-04T08:24:54Z", "authors": ["Kejian Zhu", "Zhuoran Jin", "Shangqing Tu", "Tianyi Men", "Yupu Hao", "Jiachun Li", "Kang Liu", "Jun Zhao"], "categories": ["cs.LG", "cs.CL"], "field": "cs.LG", "genre": "Agents / Reasoning", "timestamp": 1793780694000, "monthKey": "2026-11"}, {"source": "PubMed", "title": "Psilocybin-Assisted Therapy for Cancer-Related Psychological and Existential Distress in Adults with Cancer: An Integrative Systematic Review", "titleJa": "がんに伴う心理的・実存的苦悩に対するシロシビン支援療法――統合的システマティックレビュー", "summaryHtml": "シロシビン支援療法は、がんや生命を脅かす病気に伴う苦悩への有望な介入として再び注目されている。本統合的システマティックレビューはPRISMA指針に沿い、2025年8月10日から10月31日までにPubMed、Scopus、Google Scholar、CINAHLを検索し、6つの独立した臨床コホートから得られた11件の報告を対象に、がんのある成人における抑うつ、不安、実存的苦悩に対する安全性、有効性、治療的影響を評価した。<br><br>シロシビンは一般に、準備、投与、統合の構造化された枠組みのもとで、監督下の単回中〜高用量（25〜30mg/70kg）として投与された。すべての研究デザインを通じて、抑うつ、不安、実存的苦悩、死への恐怖の迅速かつ持続的な軽減がみられ、効果は2〜6か月、場合によっては4.5年まで続いた。質的知見では、感情の明晰さや受容、スピリチュアルな安寧、意味との再接続が際立った。11件中5件がMMATの基準を満たし、他では評価者の盲検化や代表性、交絡の統制などに課題が残った。<br><br>シロシビン関連の重篤な有害事象は報告されず、一時的な心血管系の変化や頭痛、吐き気、不安、短時間の精神病様症状がみられた。著者らは、がん関連の心理的・実存的苦悩に対する有望だがいまだ研究段階の緩和的介入だと結論づけている。", "url": "https://pubmed.ncbi.nlm.nih.gov/42975895/", "publishedAt": "2026-11-03T00:00:00Z", "authors": ["Athanasios Pitis", "Maria Nikoloudi", "Nikos Stefanis", "Kyriaki Mystakidou"], "categories": ["psychedelics", "systematic review"], "field": "PubMed", "genre": "Psychedelics / Therapy", "timestamp": 1793664000000, "monthKey": "2026-11"}]};
+    const byId = id => document.getElementById(id);
+    const norm = s => String(s||'').toLowerCase().normalize('NFKC').replace(/\s+/g,' ').trim();
+    const esc = s => String(s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const months = [...new Set((DATA.articles||[]).map(a => a.monthKey).filter(Boolean))].sort().reverse();
+    const genres = [...new Set((DATA.articles||[]).map(a => a.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    const fields = [...new Set((DATA.articles||[]).map(a => a.field).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    function fill(select, values){ values.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; select.appendChild(o); }); }
+    fill(byId('month'), months); fill(byId('genre'), genres); fill(byId('field'), fields);
+    function render(){
+      const month=byId('month').value, genre=byId('genre').value, field=byId('field').value, sort=byId('sort').value, kw=norm(byId('keyword').value);
+      let rows=(DATA.articles||[]).filter(a=>{
+        if(month&&a.monthKey!==month) return false; if(genre&&a.genre!==genre) return false; if(field&&a.field!==field) return false;
+        const hay=norm([a.titleJa,a.title,a.summaryHtml,a.authors.join(' '),a.categories.join(' ')].join(' '));
+        if(kw&& !hay.includes(kw)) return false; return true;
+      });
+      rows = rows.slice().sort((a,b)=> sort==='oldest' ? a.timestamp-b.timestamp : sort==='title' ? a.titleJa.localeCompare(b.titleJa,'ja') : b.timestamp-a.timestamp);
+      byId('meta').textContent = `更新: ${DATA.updatedAt || '-'} / 表示件数: ${rows.length}件`;
+      byId('list').innerHTML = rows.map(a=>`
+        <article>
+          <div class="src">${esc(a.source)} / ${esc(a.publishedAt.slice(0,10))}</div>
+          <h2 class="title">${esc(a.titleJa)}</h2>
+          <div class="tags"><span class="tag">AI</span><span class="tag">${esc(a.genre)}</span><span class="tag">${esc(a.field)}</span>${a.categories.slice(0,4).map(c=>`<span class=\"tag\">${esc(c)}</span>`).join('')}</div>
+          <div class="summary">${a.summaryHtml}</div>
+          <div class="box"><strong>著者</strong><br>${esc(a.authors.join(', '))}<br><br><a href="${esc(a.url)}" target="_blank" rel="noopener">原文を開く</a></div>
+        </article>`).join('');
+    }
+    ['month','genre','field','sort'].forEach(id=>byId(id).addEventListener('change',render)); byId('keyword').addEventListener('input',render); render();
+  </script>
+</body>
+</html>
