@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2026年2月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);z-index:10;}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="感染症">感染症</option><option value="栄養">栄養</option><option value="疼痛">疼痛</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全6件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="2d64e28e7d5ebfacbf002b75269b76aa"
+  data-date="2026-02-28"
+  data-month="2026-02"
+  data-topics=""
+  data-clinical-areas=""
+  data-audiences=""
+  data-evidence-type="不明"
+  data-practice-impact="medium"
+  data-search="米国CDC予防接種諮問委員会の新任医師2名発表 米国保健福祉省（HHS）と疾病予防管理センター（CDC）は、予防接種実施諮問委員会（ACIP）に新たに2名の医師が任命されたことを発表しました。今回の任命は、ロバート・F・ケネディ・ジュニア長官が、国の予防接種政策を導く上で、透明性、厳格な科学、多様な臨床専門知識へのコミットメントを反映したものです。長官は2025年6月に、ワクチンの信頼回復を目指してACIPを再編成しました。  新たに任命されたのは、内科・小児科を専門とするショーン・G・ダウニング医師と、テキサス州で家族健康ウェルネスクリニックを経営する小児科医のアンジェリーナ・ファレラ医師です。ダウニング医師は20年以上にわたり、フロリダ州で内科および小児科のプライマリケアに従事し、医療過疎地域での無保険患者の診療経験も持ちます。ファレラ医師も20年以上にわたり小児科医として、自身のクリニック経営のほか、小児救急、代診診療など幅広い臨床経験を有しています。  ケネディ長官は、「ACIPは証拠を公然と精査し、厳しい質問をし、透明性のある議論を通じて国民の信頼を得なければならない」と述べました。「ダウニング医師とファレラ医師は、子供、成人、家族のケアにおける数十年の実務経験をもたらしており、この最前線の視点は、最高水準の科学に基づき、国民の信頼に値する勧告を行う上で不可欠です。」  CDCのジェイ・バタチャリア暫定所長は、「公衆衛生は、科学が厳格でプロセスが透明である場合に最も効果的に機能する」と述べ、「これらの任命は、患者や家族にとって予防接種ガイダンスがどのように重要であるかを理解している経験豊富な臨床医によってACIPを強化するものです。」と付け加えました。ACIPは、米国の一般市民におけるワクチンで予防可能な疾患の管理のための予防接種の使用について、CDC長官およびHHS長官に勧告を提供します。  看護実務への示唆：予防接種政策の策定プロセスに、多様な臨床経験を持つ専門家が関与することは、現場のニーズや患者の視点を反映した、より実践的で信頼性の高いガイドラインにつながる可能性があります。看護師は、これらの専門家による勧告の実施者として、最新の科学的根拠に基づいた質の高いケアを提供するために、委員会の構成や議論の動向を注視することが重要です。 CDC (Centers for Disease Control and Prevention)  不明 ">
+  <p class="meta">CDC (Centers for Disease Control and Prevention)　2026-02-28 19:00</p>
+  <h2 class="article-title">米国CDC予防接種諮問委員会の新任医師2名発表</h2>
+  <div class="taxonomy"><span class="chip">エビデンス: 不明</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">米国保健福祉省（HHS）と疾病予防管理センター（CDC）は、予防接種実施諮問委員会（ACIP）に新たに2名の医師が任命されたことを発表しました。今回の任命は、ロバート・F・ケネディ・ジュニア長官が、国の予防接種政策を導く上で、透明性、厳格な科学、多様な臨床専門知識へのコミットメントを反映したものです。長官は2025年6月に、ワクチンの信頼回復を目指してACIPを再編成しました。<br><br>新たに任命されたのは、内科・小児科を専門とするショーン・G・ダウニング医師と、テキサス州で家族健康ウェルネスクリニックを経営する小児科医のアンジェリーナ・ファレラ医師です。ダウニング医師は20年以上にわたり、フロリダ州で内科および小児科のプライマリケアに従事し、医療過疎地域での無保険患者の診療経験も持ちます。ファレラ医師も20年以上にわたり小児科医として、自身のクリニック経営のほか、小児救急、代診診療など幅広い臨床経験を有しています。<br><br>ケネディ長官は、「ACIPは証拠を公然と精査し、厳しい質問をし、透明性のある議論を通じて国民の信頼を得なければならない」と述べました。「ダウニング医師とファレラ医師は、子供、成人、家族のケアにおける数十年の実務経験をもたらしており、この最前線の視点は、最高水準の科学に基づき、国民の信頼に値する勧告を行う上で不可欠です。」<br><br>CDCのジェイ・バタチャリア暫定所長は、「公衆衛生は、科学が厳格でプロセスが透明である場合に最も効果的に機能する」と述べ、「これらの任命は、患者や家族にとって予防接種ガイダンスがどのように重要であるかを理解している経験豊富な臨床医によってACIPを強化するものです。」と付け加えました。ACIPは、米国の一般市民におけるワクチンで予防可能な疾患の管理のための予防接種の使用について、CDC長官およびHHS長官に勧告を提供します。<br><br>看護実務への示唆：予防接種政策の策定プロセスに、多様な臨床経験を持つ専門家が関与することは、現場のニーズや患者の視点を反映した、より実践的で信頼性の高いガイドラインにつながる可能性があります。看護師は、これらの専門家による勧告の実施者として、最新の科学的根拠に基づいた質の高いケアを提供するために、委員会の構成や議論の動向を注視することが重要です。</div>
+  <div class="action-box"><strong>看護アクション</strong></div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：CDC (Centers for Disease Control and Prevention)<br>
+    原文URL：<a href="https://tools.cdc.gov/api/embed/downloader/download.asp?m=132608&amp;c=763817" target="_blank" rel="noopener">https://tools.cdc.gov/api/embed/downloader/download.asp?m=132608&amp;c=763817</a>
+  </div>
+</article>
+<article
+  data-id="233262c0d675b09fa98491ff345e1b0b"
+  data-date="2026-02-04"
+  data-month="2026-02"
+  data-topics=""
+  data-clinical-areas=""
+  data-audiences=""
+  data-evidence-type="不明"
+  data-practice-impact="medium"
+  data-search="Preventive cholera vaccination resumes as global supply reaches critical milestone 【予防的コレラワクチン接種が再開：世界の供給量が大幅改善】  Gavi、UNICEF、世界保健機関（WHO）は、3年以上ぶりに生命を救う予防的コレラワクチンキャンペーンが再開可能になったと発表しました。これは、経口コレラワクチン（OCV）の世界的供給量が、十分な水準に達したためです。モザンビークが、2022年にコレラ症例が世界的に急増し需要が高まり、OCVの備蓄不足により停止されていた予防接種を再開する最初の国となります。  この再開は、コレラのアウトブレイクが進行中で、70万人以上が被災し、多くの人々が避難した洪水の影響が残るモザンビークで実施されます。洪水は保健システムを混乱させ、水道システムを損傷し、コレラのような水系感染症のリスクをさらに高めています。  WHO事務局長のテドロス・アダノム・ゲブレイェソス博士は、「世界的なワクチン不足により、私たちはコレラのアウトブレイクを予防するのではなく、それに対応するサイクルに陥っていました。今、そのサイクルを断ち切る強力な位置にいます。」と述べ、集団接種に必要な規模でコレラワクチンを生産している唯一のメーカーであるEUBiologicsに感謝の意を表し、他のメーカーにもこの重要な分野への参入を促しています。  最初の割り当てとして2000万回分のワクチンが予防キャンペーンに展開されます。このうち360万回分がモザンビークに、610万回分が大規模なアウトブレイクを経験しているコンゴ民主共和国に、そして1030万回分がバングラデシュに届けられる予定です。これらの費用はGaviが負担し、UNICEFが調達・配送します。コレラ制御のための国際タスクフォース（GTFCC）が設定した配分基準に基づき、予防キャンペーン用のワクチンが体系的、公平、透明性を持って分配されるよう、供給国が選ばれました。  世界的機関、メーカー、パートナーによる継続的な努力の結果、OCVの年間供給量は2022年の3500万回分から2025年には約7000万回分へと倍増しました。GaviのCEOであるサニア・ニシュター博士は、持続可能でアクセス可能なワクチン供給は世界の公共財であると強調し、パートナーやメーカー、特にEUBiologicsに感謝の意を表しています。  UNICEF事務局長のキャサリン・ラッセル氏は、「何年かぶりに、このワクチン増加により大規模なコレラ緊急事態をより良く予防できるようになります。予防的コレラワクチン接種の再開は子どもたちを保護し、この非常に伝染性の高い病気を食い止めるのに役立ちます。」と述べています。しかし、安全な水と基本的な衛生設備へのアクセス改善など、他の努力と併せて実施されるべきであると強調しています。  OCVは安全で効果的であり、1歳以上の個人に推奨されます。1回接種で少なくとも6ヶ月の短期的な防御効果があり、アウトブレイクの制御に役立ちます。一方、2回接種は3年間のより長期的な感染防御を提供します。世界的なワクチン供給は着実に改善していますが、アウトブレイク対応では当面の間、1回接種戦略が標準となり、2回接種の適用はケースバイケースで検討されます。  コレラは汚染された食物や水を介して広がり、重度の下痢と脱水を引き起こし、迅速に治療されなければ死に至る可能性があります。安全な水と衛生設備が不足している地域、特に紛争や貧困の影響を受ける地域で多く見られます。昨年、WHOには33カ国から60万件以上のコレラまたは急性水様性下痢症と約7600人の死亡が報告されましたが、コレラは過少報告される傾向にあるため、これらは過小評価された数値です。2021年以降、世界のコレラ症例は年々増加していましたが、2025年には減少が予測されています。しかし、コレラによる死亡者数は同時期に増加し続けています。  ワクチン接種はコレラの予防と対応の一側面に過ぎません。長期的な視点での安全な水、衛生、手洗いインフラへの投資、疾患監視、迅速な治療、そして地域社会との連携は、アウトブレイクの発生と拡大を防ぎ、長期的に死亡を減らすために不可欠な要素です。  Gaviは、世界の子供たちの半数以上を最も致命的な病気から守るための官民パートナーシップです。UNICEFは、世界中のすべての子供たちの権利を保護するために活動する国連機関です。WHOは、国際的な公衆衛生を統括・調整する機関です。 WHO (World Health Organization)  不明 ">
+  <p class="meta">WHO (World Health Organization)　2026-02-04 23:20</p>
+  <h2 class="article-title">Preventive cholera vaccination resumes as global supply reaches critical milestone</h2>
+  <div class="taxonomy"><span class="chip">エビデンス: 不明</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">【予防的コレラワクチン接種が再開：世界の供給量が大幅改善】<br><br>Gavi、UNICEF、世界保健機関（WHO）は、3年以上ぶりに生命を救う予防的コレラワクチンキャンペーンが再開可能になったと発表しました。これは、経口コレラワクチン（OCV）の世界的供給量が、十分な水準に達したためです。モザンビークが、2022年にコレラ症例が世界的に急増し需要が高まり、OCVの備蓄不足により停止されていた予防接種を再開する最初の国となります。<br><br>この再開は、コレラのアウトブレイクが進行中で、70万人以上が被災し、多くの人々が避難した洪水の影響が残るモザンビークで実施されます。洪水は保健システムを混乱させ、水道システムを損傷し、コレラのような水系感染症のリスクをさらに高めています。<br><br>WHO事務局長のテドロス・アダノム・ゲブレイェソス博士は、「世界的なワクチン不足により、私たちはコレラのアウトブレイクを予防するのではなく、それに対応するサイクルに陥っていました。今、そのサイクルを断ち切る強力な位置にいます。」と述べ、集団接種に必要な規模でコレラワクチンを生産している唯一のメーカーであるEUBiologicsに感謝の意を表し、他のメーカーにもこの重要な分野への参入を促しています。<br><br>最初の割り当てとして2000万回分のワクチンが予防キャンペーンに展開されます。このうち360万回分がモザンビークに、610万回分が大規模なアウトブレイクを経験しているコンゴ民主共和国に、そして1030万回分がバングラデシュに届けられる予定です。これらの費用はGaviが負担し、UNICEFが調達・配送します。コレラ制御のための国際タスクフォース（GTFCC）が設定した配分基準に基づき、予防キャンペーン用のワクチンが体系的、公平、透明性を持って分配されるよう、供給国が選ばれました。<br><br>世界的機関、メーカー、パートナーによる継続的な努力の結果、OCVの年間供給量は2022年の3500万回分から2025年には約7000万回分へと倍増しました。GaviのCEOであるサニア・ニシュター博士は、持続可能でアクセス可能なワクチン供給は世界の公共財であると強調し、パートナーやメーカー、特にEUBiologicsに感謝の意を表しています。<br><br>UNICEF事務局長のキャサリン・ラッセル氏は、「何年かぶりに、このワクチン増加により大規模なコレラ緊急事態をより良く予防できるようになります。予防的コレラワクチン接種の再開は子どもたちを保護し、この非常に伝染性の高い病気を食い止めるのに役立ちます。」と述べています。しかし、安全な水と基本的な衛生設備へのアクセス改善など、他の努力と併せて実施されるべきであると強調しています。<br><br>OCVは安全で効果的であり、1歳以上の個人に推奨されます。1回接種で少なくとも6ヶ月の短期的な防御効果があり、アウトブレイクの制御に役立ちます。一方、2回接種は3年間のより長期的な感染防御を提供します。世界的なワクチン供給は着実に改善していますが、アウトブレイク対応では当面の間、1回接種戦略が標準となり、2回接種の適用はケースバイケースで検討されます。<br><br>コレラは汚染された食物や水を介して広がり、重度の下痢と脱水を引き起こし、迅速に治療されなければ死に至る可能性があります。安全な水と衛生設備が不足している地域、特に紛争や貧困の影響を受ける地域で多く見られます。昨年、WHOには33カ国から60万件以上のコレラまたは急性水様性下痢症と約7600人の死亡が報告されましたが、コレラは過少報告される傾向にあるため、これらは過小評価された数値です。2021年以降、世界のコレラ症例は年々増加していましたが、2025年には減少が予測されています。しかし、コレラによる死亡者数は同時期に増加し続けています。<br><br>ワクチン接種はコレラの予防と対応の一側面に過ぎません。長期的な視点での安全な水、衛生、手洗いインフラへの投資、疾患監視、迅速な治療、そして地域社会との連携は、アウトブレイクの発生と拡大を防ぎ、長期的に死亡を減らすために不可欠な要素です。<br><br>Gaviは、世界の子供たちの半数以上を最も致命的な病気から守るための官民パートナーシップです。UNICEFは、世界中のすべての子供たちの権利を保護するために活動する国連機関です。WHOは、国際的な公衆衛生を統括・調整する機関です。</div>
+  <div class="action-box"><strong>看護アクション</strong></div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/04-02-2026-preventive-cholera-vaccination-resumes-as-global-supply-reaches-critical-milestone" target="_blank" rel="noopener">https://www.who.int/news/item/04-02-2026-preventive-cholera-vaccination-resumes-as-global-supply-reaches-critical-milestone</a>
+  </div>
+</article>
+<article
+  data-id="8189a46dd4314cdc4473df6ed2f26163"
+  data-date="2026-02-03"
+  data-month="2026-02"
+  data-topics=""
+  data-clinical-areas=""
+  data-audiences=""
+  data-evidence-type="不明"
+  data-practice-impact="medium"
+  data-search="Four in ten cancer cases could be prevented globally 【世界の癌予防の新たな可能性】  世界保健機関（WHO）と国際がん研究機関（IARC）による最新の国際分析によると、世界で発生する癌のうち、最大4割、具体的には2022年の新規癌症例の約37%（約710万件）が予防可能であると推定されました。この画期的な研究では、従来の喫煙、アルコール摂取、高いBMI（肥満度指数）、身体活動不足、大気汚染、紫外線といった要因に加え、初めて癌を引き起こす9種類の感染症を予防可能原因として分析対象に含めました。この知見は、世界的な癌負担を軽減する上で、予防が持つ計り知れない可能性を浮き彫りにしています。  【主要な予防可能要因と関連癌】  分析の結果、予防可能な癌の主要因はタバコであり、全世界の新規癌症例の15%に関与しています。次いで感染症が10%、アルコール摂取が3%を占めます。特に、肺癌、胃癌、子宮頸癌の3つの癌種が、予防可能な癌症例全体のほぼ半分を占めています。肺癌は主に喫煙と大気汚染に、胃癌はヘリコバクター・ピロリ菌感染に、そして子宮頸癌はヒトパピローマウイルス（HPV）感染に強く関連していることが示されました。WHOの癌対策チームリーダーであるアンドレ・イルバウィ医師は、この分析が「予防可能な原因からどれだけの癌リスクが生じるかを示した初のグローバル分析である」と述べています。  【性差と地域差に見る予防の多様性】  予防可能な癌の負担には性差が見られ、男性では新規癌症例の45%が、女性では30%が予防可能でした。男性では喫煙が23%と最も大きな要因であり、次いで感染症が9%、アルコールが4%でした。一方、女性では感染症が11%と最も多く、次いで喫煙が6%、高いBMIが3%を占めています。地域間でも予防可能な癌の割合は大きく異なり、男性では東アジアで57%と最も高く、女性ではサハラ以南アフリカで38%と最も高くなっています。これは、行動、環境、職業、感染症のリスク要因への曝露度、社会経済的発展度、国の予防政策、医療システム能力の違いを反映しています。  【看護師が実践できる予防戦略の提言】  今回の知見は、看護師が日々の業務において癌予防の重要性を患者さんやそのご家族に伝える上で極めて貴重な情報となります。喫煙対策の強化、アルコール摂取の適正化、HPVやB型肝炎ウイルスワクチン接種の推奨、健康的な食生活と身体活動の促進、大気汚染や職場環境のリスク軽減に向けた啓発活動などが挙げられます。これらの予防策は、癌の発生率を減少させるだけでなく、長期的な医療費の削減や国民全体の健康と幸福の向上にも繋がります。健康・教育・エネルギー・運輸・労働といった多岐にわたる分野との協調的な行動を通じて、多くの人々を癌の診断という負担から守ることができるでしょう。私たちは、それぞれの状況に応じた個別具体的な予防戦略を立案し、実践していく必要があります。 WHO (World Health Organization)  不明 ">
+  <p class="meta">WHO (World Health Organization)　2026-02-03 20:33</p>
+  <h2 class="article-title">Four in ten cancer cases could be prevented globally</h2>
+  <div class="taxonomy"><span class="chip">エビデンス: 不明</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">【世界の癌予防の新たな可能性】<br><br>世界保健機関（WHO）と国際がん研究機関（IARC）による最新の国際分析によると、世界で発生する癌のうち、最大4割、具体的には2022年の新規癌症例の約37%（約710万件）が予防可能であると推定されました。この画期的な研究では、従来の喫煙、アルコール摂取、高いBMI（肥満度指数）、身体活動不足、大気汚染、紫外線といった要因に加え、初めて癌を引き起こす9種類の感染症を予防可能原因として分析対象に含めました。この知見は、世界的な癌負担を軽減する上で、予防が持つ計り知れない可能性を浮き彫りにしています。<br><br>【主要な予防可能要因と関連癌】<br><br>分析の結果、予防可能な癌の主要因はタバコであり、全世界の新規癌症例の15%に関与しています。次いで感染症が10%、アルコール摂取が3%を占めます。特に、肺癌、胃癌、子宮頸癌の3つの癌種が、予防可能な癌症例全体のほぼ半分を占めています。肺癌は主に喫煙と大気汚染に、胃癌はヘリコバクター・ピロリ菌感染に、そして子宮頸癌はヒトパピローマウイルス（HPV）感染に強く関連していることが示されました。WHOの癌対策チームリーダーであるアンドレ・イルバウィ医師は、この分析が「予防可能な原因からどれだけの癌リスクが生じるかを示した初のグローバル分析である」と述べています。<br><br>【性差と地域差に見る予防の多様性】<br><br>予防可能な癌の負担には性差が見られ、男性では新規癌症例の45%が、女性では30%が予防可能でした。男性では喫煙が23%と最も大きな要因であり、次いで感染症が9%、アルコールが4%でした。一方、女性では感染症が11%と最も多く、次いで喫煙が6%、高いBMIが3%を占めています。地域間でも予防可能な癌の割合は大きく異なり、男性では東アジアで57%と最も高く、女性ではサハラ以南アフリカで38%と最も高くなっています。これは、行動、環境、職業、感染症のリスク要因への曝露度、社会経済的発展度、国の予防政策、医療システム能力の違いを反映しています。<br><br>【看護師が実践できる予防戦略の提言】<br><br>今回の知見は、看護師が日々の業務において癌予防の重要性を患者さんやそのご家族に伝える上で極めて貴重な情報となります。喫煙対策の強化、アルコール摂取の適正化、HPVやB型肝炎ウイルスワクチン接種の推奨、健康的な食生活と身体活動の促進、大気汚染や職場環境のリスク軽減に向けた啓発活動などが挙げられます。これらの予防策は、癌の発生率を減少させるだけでなく、長期的な医療費の削減や国民全体の健康と幸福の向上にも繋がります。健康・教育・エネルギー・運輸・労働といった多岐にわたる分野との協調的な行動を通じて、多くの人々を癌の診断という負担から守ることができるでしょう。私たちは、それぞれの状況に応じた個別具体的な予防戦略を立案し、実践していく必要があります。</div>
+  <div class="action-box"><strong>看護アクション</strong></div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/03-02-2026-four-in-ten-cancer-cases-could-be-prevented-globally" target="_blank" rel="noopener">https://www.who.int/news/item/03-02-2026-four-in-ten-cancer-cases-could-be-prevented-globally</a>
+  </div>
+</article>
+<article
+  data-id="988cac3b9f3eb3af4b8ce029bf4a4e6b"
+  data-date="2026-02-03"
+  data-month="2026-02"
+  data-topics=""
+  data-clinical-areas=""
+  data-audiences=""
+  data-evidence-type="不明"
+  data-practice-impact="medium"
+  data-search="WHO launches 2026 appeal to help millions of people in health emergencies and crisis settings 【世界の公衆衛生危機への対応 WHOが2026年の緊急支援を呼びかけ】  世界保健機関（WHO）は、人道危機や紛争地域に住む何百万もの人々が医療を受けられるよう、2026年のグローバルアピール（国際的な資金提供の呼びかけ）を開始しました。これは、緊急性の高い公衆衛生問題に直面する世界中の人々に、タイムリーで効果的な支援を届けることを目的としています。  2025年には、WHOとパートナー団体は年間緊急アピールを通じて調達された資金により、3000万人を支援しました。この支援は、530万人以上の子供たちへの命を守る予防接種、5300万回に及ぶ健康相談の実施、8000以上の医療施設のサポート、そして1370台の移動診療所の配備を可能にしました。これらの活動は、脆弱な状況にある人々の健康と命を守る上で極めて重要な役割を果たしています。  2026年のアピールでは、世界中で発生している36の緊急事態、特に組織的な対応が最高レベルで求められる14のグレード3緊急事態に対応するため、約10億ドル（約1500億円）の資金を目指しています。テドロスWHO事務局長は、このアピールは単なる慈善活動ではなく、「健康と安全への戦略的投資」であると強調しています。医療へのアクセスは、人々の尊厳を回復させ、コミュニティを安定させ、復興への道筋を提供するものです。  しかし、長引く紛争、気候変動の激化、感染症の再発など、複合的な世界的圧力により健康緊急事態への支援ニーズは増大し続けています。一方で、人道支援への国際的な資金提供は縮小傾向にあり、2025年には目標とした8100万人に対して、WHOとパートナーはわずか3分の1の人々にしか支援を届けられませんでした。この現状は、最も脆弱な状況にある人々を保護し支援するために、新たなコミットメントと連帯が緊急に必要であることを示しています。2026年のWHOの緊急対応の優先地域には、アフガニスタン、コンゴ民主共和国、ハイチ、ミャンマー、占領下のパレスチナ地域、ソマリア、南スーダン、スーダン、シリア、ウクライナ、イエメンなどが含まれるほか、コレラやエムポックスといった感染症のアウトブレイクへの対応も重要課題です。  WHOは、人道支援における保健対応の主導機関として、世界24の危機地域で1500を超えるパートナーと連携し、各国当局や現地のパートナーが緊急対応の中心となるよう調整しています。共同議長を務めたアイルランドとノルウェーの代表者も、「あらゆる人道危機は健康危機である」と述べ、WHOの役割の不可欠性を強調し、国際社会に対し、最前線で働く医療従事者への支援を含め、WHOへの強力な支援を呼びかけました。危機が発生した際に迅速に対応できるよう、早期かつ予測可能な投資を行うことは、死亡や疾病を減らし、アウトブレイクを封じ込め、健康リスクがより広範な人道・健康安全保障危機へとエスカレートするのを防ぐ上で不可欠です。 WHO (World Health Organization)  不明 ">
+  <p class="meta">WHO (World Health Organization)　2026-02-03 20:16</p>
+  <h2 class="article-title">WHO launches 2026 appeal to help millions of people in health emergencies and crisis settings</h2>
+  <div class="taxonomy"><span class="chip">エビデンス: 不明</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">【世界の公衆衛生危機への対応 WHOが2026年の緊急支援を呼びかけ】<br><br>世界保健機関（WHO）は、人道危機や紛争地域に住む何百万もの人々が医療を受けられるよう、2026年のグローバルアピール（国際的な資金提供の呼びかけ）を開始しました。これは、緊急性の高い公衆衛生問題に直面する世界中の人々に、タイムリーで効果的な支援を届けることを目的としています。<br><br>2025年には、WHOとパートナー団体は年間緊急アピールを通じて調達された資金により、3000万人を支援しました。この支援は、530万人以上の子供たちへの命を守る予防接種、5300万回に及ぶ健康相談の実施、8000以上の医療施設のサポート、そして1370台の移動診療所の配備を可能にしました。これらの活動は、脆弱な状況にある人々の健康と命を守る上で極めて重要な役割を果たしています。<br><br>2026年のアピールでは、世界中で発生している36の緊急事態、特に組織的な対応が最高レベルで求められる14のグレード3緊急事態に対応するため、約10億ドル（約1500億円）の資金を目指しています。テドロスWHO事務局長は、このアピールは単なる慈善活動ではなく、「健康と安全への戦略的投資」であると強調しています。医療へのアクセスは、人々の尊厳を回復させ、コミュニティを安定させ、復興への道筋を提供するものです。<br><br>しかし、長引く紛争、気候変動の激化、感染症の再発など、複合的な世界的圧力により健康緊急事態への支援ニーズは増大し続けています。一方で、人道支援への国際的な資金提供は縮小傾向にあり、2025年には目標とした8100万人に対して、WHOとパートナーはわずか3分の1の人々にしか支援を届けられませんでした。この現状は、最も脆弱な状況にある人々を保護し支援するために、新たなコミットメントと連帯が緊急に必要であることを示しています。2026年のWHOの緊急対応の優先地域には、アフガニスタン、コンゴ民主共和国、ハイチ、ミャンマー、占領下のパレスチナ地域、ソマリア、南スーダン、スーダン、シリア、ウクライナ、イエメンなどが含まれるほか、コレラやエムポックスといった感染症のアウトブレイクへの対応も重要課題です。<br><br>WHOは、人道支援における保健対応の主導機関として、世界24の危機地域で1500を超えるパートナーと連携し、各国当局や現地のパートナーが緊急対応の中心となるよう調整しています。共同議長を務めたアイルランドとノルウェーの代表者も、「あらゆる人道危機は健康危機である」と述べ、WHOの役割の不可欠性を強調し、国際社会に対し、最前線で働く医療従事者への支援を含め、WHOへの強力な支援を呼びかけました。危機が発生した際に迅速に対応できるよう、早期かつ予測可能な投資を行うことは、死亡や疾病を減らし、アウトブレイクを封じ込め、健康リスクがより広範な人道・健康安全保障危機へとエスカレートするのを防ぐ上で不可欠です。</div>
+  <div class="action-box"><strong>看護アクション</strong></div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/03-02-2026-who-launches-2026-appeal-to-help-millions-of-people-in-health-emergencies-and-crisis-settings" target="_blank" rel="noopener">https://www.who.int/news/item/03-02-2026-who-launches-2026-appeal-to-help-millions-of-people-in-health-emergencies-and-crisis-settings</a>
+  </div>
+</article>
+<article
+  data-id="57309db26d3a0adfdcfbadf09d3e4712"
+  data-date="2026-02-03"
+  data-month="2026-02"
+  data-topics=""
+  data-clinical-areas=""
+  data-audiences=""
+  data-evidence-type="不明"
+  data-practice-impact="medium"
+  data-search="Six years after COVID-19’s global alarm: Is the world better prepared for the next pandemic? 【COVID-19から6年：次のパンデミックに世界は備えられているか】  世界保健機関（WHO）が新しいコロナウイルス感染症（後にCOVID-19として知られる）を「国際的に懸念される公衆衛生上の緊急事態（PHEIC）」と宣言してから6年が経過しました。このPHEICは2023年5月に解除されたものの、COVID-19の記憶と影響は今も世界中で感じられています。WHOは、この6年の節目に、次のパンデミックへの世界の備えについて「イエス」と「ノー」の両方の側面があると述べています。  多くの点で「イエス」と言えるのは、パンデミックへの準備、予防、対応を強化するための具体的かつ意味のある措置が講じられてきたからです。WHOのテドロス事務局長は、「パンデミックは、地球規模の脅威には地球規模の対応が求められることを私たち全員に教えてくれた。連帯こそが最良の免疫である」と述べました。この教訓を活かし、WHOと加盟国、パートナーは協力して大きな進展を遂げています。例えば、かつてワクチンも迅速な診断もなく、壊滅的な被害をもたらしたエボラ出血熱が変革され、最近のコンゴ民主共和国におけるエボラや、ルワンダ、タンザニア、エチオピアにおけるマールブルグ病のアウトブレイクは、以前よりも短期間で封じ込められ、感染拡大と致死率が抑えられました。これは、各国の機関がWHOの支援を受けて対応を主導した結果です。  しかし、「ノー」と言えるのは、これまでの進展が脆弱で不均一であり、人類を安全に保つためにはさらなる取り組みが必要だからです。近年、世界の保健分野は大きな混乱に見舞われ、資金は保健分野から国防や国家安全保障へと移行する傾向にあります。これは近視眼的な見方であり、パンデミック自体が国家安全保障上の脅威であることを忘れてはなりません。WHOは、次のパンデミックが襲う前に、備えへの投資を継続することが重要であると強く訴えています。  WHOは、すべての政府、パートナー、関係者に対し、パンデミックへの準備と予防の手を緩めることなく、継続的な警戒を求めています。病原体は国境を尊重せず、いかなる国も単独でパンデミックを予防したり管理したりすることはできません。地球規模の保健安全保障には、セクターや政府、地域を超えた連携が不可欠です。WHOは、パンデミックからより安全な世界を築くための歴史的な「世界的な協定」を完成させる加盟国の努力を引き続き支援し、備えを強化し、革新を加速し、連帯を堅持していくと強調しています。準備は今、次のパンデミックが起こる前に行うべきことです。 WHO (World Health Organization)  不明 ">
+  <p class="meta">WHO (World Health Organization)　2026-02-03 07:30</p>
+  <h2 class="article-title">Six years after COVID-19’s global alarm: Is the world better prepared for the next pandemic?</h2>
+  <div class="taxonomy"><span class="chip">エビデンス: 不明</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">【COVID-19から6年：次のパンデミックに世界は備えられているか】<br><br>世界保健機関（WHO）が新しいコロナウイルス感染症（後にCOVID-19として知られる）を「国際的に懸念される公衆衛生上の緊急事態（PHEIC）」と宣言してから6年が経過しました。このPHEICは2023年5月に解除されたものの、COVID-19の記憶と影響は今も世界中で感じられています。WHOは、この6年の節目に、次のパンデミックへの世界の備えについて「イエス」と「ノー」の両方の側面があると述べています。<br><br>多くの点で「イエス」と言えるのは、パンデミックへの準備、予防、対応を強化するための具体的かつ意味のある措置が講じられてきたからです。WHOのテドロス事務局長は、「パンデミックは、地球規模の脅威には地球規模の対応が求められることを私たち全員に教えてくれた。連帯こそが最良の免疫である」と述べました。この教訓を活かし、WHOと加盟国、パートナーは協力して大きな進展を遂げています。例えば、かつてワクチンも迅速な診断もなく、壊滅的な被害をもたらしたエボラ出血熱が変革され、最近のコンゴ民主共和国におけるエボラや、ルワンダ、タンザニア、エチオピアにおけるマールブルグ病のアウトブレイクは、以前よりも短期間で封じ込められ、感染拡大と致死率が抑えられました。これは、各国の機関がWHOの支援を受けて対応を主導した結果です。<br><br>しかし、「ノー」と言えるのは、これまでの進展が脆弱で不均一であり、人類を安全に保つためにはさらなる取り組みが必要だからです。近年、世界の保健分野は大きな混乱に見舞われ、資金は保健分野から国防や国家安全保障へと移行する傾向にあります。これは近視眼的な見方であり、パンデミック自体が国家安全保障上の脅威であることを忘れてはなりません。WHOは、次のパンデミックが襲う前に、備えへの投資を継続することが重要であると強く訴えています。<br><br>WHOは、すべての政府、パートナー、関係者に対し、パンデミックへの準備と予防の手を緩めることなく、継続的な警戒を求めています。病原体は国境を尊重せず、いかなる国も単独でパンデミックを予防したり管理したりすることはできません。地球規模の保健安全保障には、セクターや政府、地域を超えた連携が不可欠です。WHOは、パンデミックからより安全な世界を築くための歴史的な「世界的な協定」を完成させる加盟国の努力を引き続き支援し、備えを強化し、革新を加速し、連帯を堅持していくと強調しています。準備は今、次のパンデミックが起こる前に行うべきことです。</div>
+  <div class="action-box"><strong>看護アクション</strong></div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/02-02-2026-six-years-after-covid-19-s-global-alarm-is-the-world-better-prepared-for-the-next-pandemic" target="_blank" rel="noopener">https://www.who.int/news/item/02-02-2026-six-years-after-covid-19-s-global-alarm-is-the-world-better-prepared-for-the-next-pandemic</a>
+  </div>
+</article>
+<article
+  data-id="21e6fbf6c6d0266fc56abe9003fa58af"
+  data-date="2026-02-03"
+  data-month="2026-02"
+  data-topics=""
+  data-clinical-areas=""
+  data-audiences=""
+  data-evidence-type="不明"
+  data-practice-impact="medium"
+  data-search="Joint statement on the renewed Quadripartite Memorandum of Understanding regarding cooperation on One Health until 2030 【ワンヘルス推進に向けた国際協力体制の強化】&lt;br&gt;国連食糧農業機関（FAO）、国連環境計画（UNEP）、世界保健機関（WHO）、そして国際獣疫事務局（WOAH）という四つの国際機関が、ワンヘルス・アプローチの推進に関する覚書（MoU）を更新しました。この更新により、2030年までの国際的な協力体制がさらに強化されることになります。これは、人間、動物、植物、生態系、そして広範な環境の健康が本質的に相互に関連しているという認識に基づき、長年の協力と共同の成功を土台としたものです。  【ワンヘルス・アプローチの重要性】&lt;br&gt;ワンヘルスとは、人間、動物、環境の健康が密接に結びついているという考え方であり、これらの分野を統合的に捉えて健康課題に取り組むアプローチです。現在、そして将来的に発生する可能性のある健康上の課題に対処するためには、分野横断的で多角的な協力が不可欠であると、四者機関は改めて強調しています。パンデミック、薬剤耐性、食料安全保障、気候変動など、今日の複雑な健康問題は、どれか一つの分野だけで解決できるものではありません。このため、ワンヘルスはこれらの課題に対する最も効果的な戦略とされています。  【更新された覚書の目的と原則】&lt;br&gt;今回の覚書更新は、各機関のそれぞれの使命と得意分野を活かし、協力のための法的および運営上の枠組みを強化するものです。これにより、主要な優先分野における協力の可能性がさらに高まります。協力、共通の責任、包摂性、公平性、そしてジェンダー平等という原則に導かれ、四者機関は引き続き、エビデンスに基づいた政策を推進し、各国の政府やパートナー組織への協調的な支援を進めていく方針です。この継続的な取り組みを通じて、ワンヘルス・アプローチの実施を加速させることを目指しています。  【持続可能な健康成果への決意】&lt;br&gt;更新された覚書を通じて、FAO、UNEP、WHO、WOAHは、世界中で健康リスクを低減し、人間、動物、植物、生態系、そしてより広い環境における持続可能な健康成果を促進するという共通の決意を改めて表明しました。これは、地球全体の健康と福祉を守るための国際社会の強い意志を示すものです。  【看護師の皆様への示唆】&lt;br&gt;私たち看護師は、患者さんのケアや公衆衛生の現場で、まさに人間と環境の接点にいます。感染症の拡大防止、薬剤耐性菌への対応、環境変化が健康に与える影響への理解、そして地域社会全体の健康増進といった日々の業務において、ワンヘルスの視点を持つことは極めて重要です。この国際的な取り組みは、多様な専門家との連携を促進し、私たちの実践がより広範な健康課題解決に貢献できる可能性を示唆しています。人間だけでなく、動物や環境の健康にも配慮した包括的なアプローチを理解し、多職種連携の一員としてその実現に貢献していくことが、今後の看護実践に求められるでしょう。 WHO (World Health Organization)  不明 ">
+  <p class="meta">WHO (World Health Organization)　2026-02-03 02:02</p>
+  <h2 class="article-title">Joint statement on the renewed Quadripartite Memorandum of Understanding regarding cooperation on One Health until 2030</h2>
+  <div class="taxonomy"><span class="chip">エビデンス: 不明</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">【ワンヘルス推進に向けた国際協力体制の強化】<br>国連食糧農業機関（FAO）、国連環境計画（UNEP）、世界保健機関（WHO）、そして国際獣疫事務局（WOAH）という四つの国際機関が、ワンヘルス・アプローチの推進に関する覚書（MoU）を更新しました。この更新により、2030年までの国際的な協力体制がさらに強化されることになります。これは、人間、動物、植物、生態系、そして広範な環境の健康が本質的に相互に関連しているという認識に基づき、長年の協力と共同の成功を土台としたものです。<br><br>【ワンヘルス・アプローチの重要性】<br>ワンヘルスとは、人間、動物、環境の健康が密接に結びついているという考え方であり、これらの分野を統合的に捉えて健康課題に取り組むアプローチです。現在、そして将来的に発生する可能性のある健康上の課題に対処するためには、分野横断的で多角的な協力が不可欠であると、四者機関は改めて強調しています。パンデミック、薬剤耐性、食料安全保障、気候変動など、今日の複雑な健康問題は、どれか一つの分野だけで解決できるものではありません。このため、ワンヘルスはこれらの課題に対する最も効果的な戦略とされています。<br><br>【更新された覚書の目的と原則】<br>今回の覚書更新は、各機関のそれぞれの使命と得意分野を活かし、協力のための法的および運営上の枠組みを強化するものです。これにより、主要な優先分野における協力の可能性がさらに高まります。協力、共通の責任、包摂性、公平性、そしてジェンダー平等という原則に導かれ、四者機関は引き続き、エビデンスに基づいた政策を推進し、各国の政府やパートナー組織への協調的な支援を進めていく方針です。この継続的な取り組みを通じて、ワンヘルス・アプローチの実施を加速させることを目指しています。<br><br>【持続可能な健康成果への決意】<br>更新された覚書を通じて、FAO、UNEP、WHO、WOAHは、世界中で健康リスクを低減し、人間、動物、植物、生態系、そしてより広い環境における持続可能な健康成果を促進するという共通の決意を改めて表明しました。これは、地球全体の健康と福祉を守るための国際社会の強い意志を示すものです。<br><br>【看護師の皆様への示唆】<br>私たち看護師は、患者さんのケアや公衆衛生の現場で、まさに人間と環境の接点にいます。感染症の拡大防止、薬剤耐性菌への対応、環境変化が健康に与える影響への理解、そして地域社会全体の健康増進といった日々の業務において、ワンヘルスの視点を持つことは極めて重要です。この国際的な取り組みは、多様な専門家との連携を促進し、私たちの実践がより広範な健康課題解決に貢献できる可能性を示唆しています。人間だけでなく、動物や環境の健康にも配慮した包括的なアプローチを理解し、多職種連携の一員としてその実現に貢献していくことが、今後の看護実践に求められるでしょう。</div>
+  <div class="action-box"><strong>看護アクション</strong></div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/03-02-2026-joint-statement-on-the-renewed-quadripartite-memorandum-of-understanding-regarding-cooperation-on-one-health-until-2030" target="_blank" rel="noopener">https://www.who.int/news/item/03-02-2026-joint-statement-on-the-renewed-quadripartite-memorandum-of-understanding-regarding-cooperation-on-one-health-until-2030</a>
+  </div>
+</article>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function apply(){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const month = els.month.value;
+        const topic = els.topic.value;
+        const clinical = els.clinical.value;
+        const audience = els.audience.value;
+        const evidence = els.evidence.value;
+        const impact = els.impact.value;
+        let visible = 0;
+        articles.forEach(function(article){
+          const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+          const ok = (!q || haystack.indexOf(q) !== -1)
+            && (!month || article.getAttribute("data-month") === month)
+            && hasToken(article.getAttribute("data-topics"), topic)
+            && hasToken(article.getAttribute("data-clinical-areas"), clinical)
+            && hasToken(article.getAttribute("data-audiences"), audience)
+            && (!evidence || article.getAttribute("data-evidence-type") === evidence)
+            && (!impact || article.getAttribute("data-practice-impact") === impact);
+          article.style.display = ok ? "block" : "none";
+          if (ok) visible += 1;
+        });
+        els.count.textContent = String(visible);
+        els.empty.style.display = visible ? "none" : "block";
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", apply);
+        el.addEventListener("change", apply);
+      });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply();
+      });
+      apply();
+    })();
+  </script>
+</body>
+</html>
