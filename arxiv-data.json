@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-07T16:29:01Z",
+ "updatedAt": "2026-11-07T17:33:57Z",
  "articles": [
   {
    "source": "Crossref",
@@ -663,6 +663,28 @@
    "monthKey": "2026-11"
   },
   {
+   "source": "arXiv cs.LG",
+   "title": "Spectral and Subspace Dynamics of LoRA in Supervised Fine-Tuning and Reinforcement Learning",
+   "titleJa": "SFTと強化学習におけるLoRAのスペクトル・部分空間ダイナミクス",
+   "summaryHtml": "低ランク適応（LoRA）は教師ありファインチューニング（SFT）でも強化学習（RL）でも広く使われ、最適化の設定も似通っている。だが、二つの段階で学習のダイナミクスがどう異なり、それがLoRAの最適化する低ランク更新にどう現れるかは明らかでなかった。本研究は数学的推論タスクにおいて、LoRA更新の特異スペクトルと部分空間を追跡した。RLではあらゆる学習率でスペクトルが集中するのに対し、SFTでは中程度の学習率でスペクトルが広がった。さらにRLは小さな学習率でも特異部分空間をはるかに速く回転させることが分かった。<br><br>SFTとRLを一要素ずつ補間しながら原因を切り分けると、両方の違いの源はグループ平均ベースライン減算にあることが特定された。LoRAで更新される二次多重指数モデルによる解析では、その仕組みも明らかになった。グループ平均ベースライン減算は、整合的なフィッティングと勾配ノイズという二つの競合する力のバランスを、スペクトル集中と速い部分空間回転の側へ傾け、同時にリスク面で望ましい学習率を低く抑える。<br><br>この知見に基づき、著者らは段階ごとにLoRA更新を調整した。SFTでは更新全体のスペクトルを平坦化して適応を特異方向全体に広げ、RLでは現在のLoRA増分範囲の外側の部分を平坦化して部分空間の回転を促す。複数のモデルによる数学的推論タスクの実験では、それぞれの設定が比較対象の手法の中でほとんどの設定で最良の性能を示した。SFTとRLでLoRAを別々に扱うべき根拠を与える研究である。",
+   "url": "https://arxiv.org/abs/2611.08414",
+   "publishedAt": "2026-11-05T18:17:39Z",
+   "authors": [
+    "Chenruo Liu",
+    "Zihan Wang",
+    "Yijun Dong",
+    "Qi Lei"
+   ],
+   "categories": [
+    "cs.LG",
+    "stat.ML"
+   ],
+   "field": "cs.LG",
+   "genre": "LLM / NLP",
+   "timestamp": 1793902659000,
+   "monthKey": "2026-11"
+  },
+  {
    "source": "arXiv cs.AI",
    "title": "StepBack: Step-Level Error-Localized Resampling for Efficient Test-Time Reasoning",
    "titleJa": "StepBack――ステップ単位の誤り局所化リサンプリングによる効率的なテスト時推論",
@@ -859,6 +881,28 @@
    "field": "cs.LG",
    "genre": "LLM / NLP",
    "timestamp": 1793871308000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "Hugging Face Papers",
+   "title": "Reducing Representational Interference in Retrieval Embeddings with Trainable Prefix Tokens",
+   "titleJa": "学習可能な接頭辞トークンで検索埋め込みの表現干渉を減らす",
+   "summaryHtml": "埋め込みモデルは可変長のテキストを固定サイズのベクトル表現に圧縮するが、この圧縮の過程で意味内容と、残余のトークンレベルの情報が絡み合ってしまうことがある。アテンションシンクのふるまいに由来するアーティファクトなどがその例だ。本研究は、埋め込みモデルの学習時に入力の先頭に学習可能な[DUMP]トークンを付け加える、シンプルな手法を提案する。モデル構造、プーリング戦略、学習損失はそのままに、追加したトークンだけを標準的な対照的検索目的で最適化する。<br><br>エンコード時に通常のトークンと相互作用する、学習可能な接頭辞の位置を導入することで、[DUMP]トークンは残余の、あるいは情報量の少ないトークンレベルの信号が最終的な検索表現に及ぼす影響を減らす。標準的な検索ベンチマークと長文脈ベンチマークでの実験では、この手法がファインチューニング済みのベースラインを、エンコーダ型とデコーダ型の埋め込みモデルの両方で一貫して上回った。<br><br>さらなる分析では、[DUMP]トークンが低情報トークンに関連するトークンレベルの活性化とアテンションパターンを変化させることも確認された。学習可能な接頭辞トークンが、検索表現を改善する軽量な方法になることを示す結果である。",
+   "url": "https://arxiv.org/abs/2611.07298",
+   "publishedAt": "2026-11-05T01:30:28Z",
+   "authors": [
+    "Seongtae Hong",
+    "Youngjoon Jang",
+    "Jungseob Lee",
+    "Chanjun Park",
+    "Heuiseok Lim"
+   ],
+   "categories": [
+    "cs.IR"
+   ],
+   "field": "cs.IR",
+   "genre": "LLM / NLP",
+   "timestamp": 1793842228000,
    "monthKey": "2026-11"
   },
   {
@@ -1902,53 +1946,6 @@
    ],
    "categories": [
     "cs.CV"
-   ]
-  },
-  {
-   "source": "arXiv cs.LG",
-   "title": "Context--Answer Metamodels: Forecasting LLM Activations Before the First Answer Token",
-   "titleJa": "文脈―応答メタモデル――最初の応答トークンの前にLLMの活性化を予測する",
-   "summaryHtml": "確率的デコーディングのもとでは、1つの文脈から言語モデルは多様な応答を引き出しうる。このばらつきの特性評価には通常、多数の高コストな自己回帰ロールアウトが必要で、しかも各 rollout が示すのは1つの実現だけである。本研究は、文脈を読む際に生じる活性化から、モデルのロールアウト活性化を直接予測できるかを問う。<br><br>著者らは、文脈の活性化系列を、平均プールされた応答活性化の点予測または分布予測へ写す「文脈―応答メタモデル」を訓練した。<br><br>主な知見は4つある。(i) 検討した4つのメタモデル族は平均プール応答活性化を高い忠実度で予測し、分布メタモデルはロールアウトの変動も捉える。(ii) 訓練集合が50万プロンプトまで増えるにつれて性能が向上し、ドメイン外データセットへもゼロショットで汎化する。(iii) 予測には行動を予測する信号が保持される。(iv) Qwen2.5の文脈活性化から応答活性化が予測できる。多数のサンプリングをせずに応答分布の見通しを得る道筋である。",
-   "url": "https://arxiv.org/abs/2611.06837",
-   "publishedAt": "2026-11-04T17:53:52Z",
-   "timestamp": 1793814832000,
-   "monthKey": "2026-11",
-   "field": "cs.LG",
-   "genre": "LLM / NLP",
-   "authors": [
-    "Tommy He",
-    "Thomas Jiralerspong"
-   ],
-   "categories": [
-    "cs.LG",
-    "cs.AI"
-   ]
-  },
-  {
-   "source": "arXiv cs.CL",
-   "title": "LooM: Loop-Invariant Memory for Causal Encoder-Decoder Language Models",
-   "titleJa": "LooM――因果的エンコーダ・デコーダ言語モデルのためのループ不変メモリ",
-   "summaryHtml": "ループ型Transformerは共有層を再実行することで実効的な深さを増やすが、採用を妨げる3つの限界がある。メモリがループ回数とともに増えること、計算量の調整がブロック単位でしかできないこと、訓練後にループ回数を変えにくいことである。本論文はそのそれぞれに対処する「LooM（ループ不変メモリ）」を提案する。<br><br>因果的エンコーダ・デコーダ（CED）において、LooMは最初のデコーダ層以降だけをループさせ、それらはトークンごとに一度だけ書かれる大域メモリを読む。各層はトークンのキー・バリュー（KV）エントリを最初の訪問時にだけ公開するため、キャッシュはループ回数とともに増えない。<br><br>各層が独立にループすることで、トークンあたり3〜21回の層実行というあらゆる予算が可能になり、予算をランダムにサンプリングして訓練した1つのモデルが、ルータなしで全予算をカバーする。十分なループ数では、同じデータで訓練した単一パスのベースラインを、言語モデリング、ゼロショット精度、長文脈パープレキシティで上回った。",
-   "url": "https://arxiv.org/abs/2611.06835",
-   "publishedAt": "2026-11-04T17:52:11Z",
-   "timestamp": 1793814731000,
-   "monthKey": "2026-11",
-   "field": "cs.CL",
-   "genre": "LLM / NLP",
-   "authors": [
-    "Lele Yang",
-    "Muxi Diao",
-    "Zhonghao Yan",
-    "Jiankang Chen",
-    "Bin Wen",
-    "Tingting Gao",
-    "Wentao Zhang",
-    "Kongming Liang",
-    "Zhanyu Ma",
-    "Weiran Xu"
-   ],
-   "categories": [
-    "cs.CL"
    ]
   }
  ]
