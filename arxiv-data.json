@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-07T10:29:31Z",
+ "updatedAt": "2026-11-07T11:28:41Z",
  "articles": [
   {
    "source": "Crossref",
@@ -594,6 +594,52 @@
    "field": "cs.CL",
    "genre": "LLM / NLP",
    "timestamp": 1793899410000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "Hugging Face Papers",
+   "title": "Terminal-style Mathematical Modeling Bench: The First Agentic and Verifiable Benchmark for Mathematical Modeling",
+   "titleJa": "ターミナル型数理モデリングベンチ――エージェントによる検証可能なモデリング評価",
+   "summaryHtml": "数理モデリングは、現実の未解決問題を仮定・モデル・解法・提言へ落とし込む作業だが、その答えが価値を持つのは、信頼できる参照に近く、かつ物理的に実現可能な場合に限られる。既存のベンチマークは解法の断片を採点するか、LLMジャッジに報告書を採点させるもので、数値の検証が不十分だった。<br><br>本研究はTB-MathModel（ターミナル型数理モデリングベンチ）を提案する。2023〜2025年の実際のCUMCM・MCM問題18題を対象に、コンテスト形式のモデリング問題をエージェント的・検証可能・ターミナル完結にした初のベンチマークである。各課題は問題文と公式の添付資料・図をコンテナ化されたターミナルで提供し、エージェントは1つのJSON成果物を返す。採点は、最優秀賞論文の再現に対する最終設問の数値的な中核で行われる。<br><br>特徴は2つある。アンカーを上回ることを罰しない方向感覚のある片側採点と、6種の決定可能な不変条件に対するプログラム的ゲートと624件のLean 4義務による2層の実現可能性検証で、実現不可能な答えは厳しいゲートで0点になる。7つのマルチモーダルなエントリでは、最強のものが多参照O-Evalで64.58%に達し、オープンモデルも59.81%を100分の1のコストで記録した。長時間のモデリング能力を測る、再現可能な機械検査可能な指標である。",
+   "url": "https://arxiv.org/abs/2611.08237",
+   "publishedAt": "2026-11-05T16:18:35Z",
+   "authors": [
+    "Xiaojun Wu",
+    "Cehao Yang",
+    "Xuhui Jiang",
+    "Chengjin Xu",
+    "Jia Li",
+    "Jian Guo"
+   ],
+   "categories": [
+    "cs.CL"
+   ],
+   "field": "cs.CL",
+   "genre": "Agents / Reasoning",
+   "timestamp": 1793895515000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "arXiv stat.ML",
+   "title": "Identifying Neural Dynamics Using Nonlinear Interventional State Space Models",
+   "titleJa": "神経ダイナミクスを同定する――非線形介入型状態空間モデル",
+   "summaryHtml": "状態空間モデルは高次元の観測から低次元の潜在ダイナミクスを復元するが、観測データだけでは潜在変数は一般に同定できない。介入型状態空間モデル（iSSM）は摂動によって観測上の対称性を破り、置換・スケーリング・シフトを除いてパラメータを同定する。ただし従来の理論は線形の潜在ダイナミクスと区分線形の出力に限られ、神経回路に特徴的なふるまいの多くを扱えなかった。<br><br>本研究はiSSMを大幅に広いモデルクラスへ拡張する。一般の単射な出力関数とガウス型の潜在遷移のもとでアフィン同定可能性が成り立つこと、さらに介入があれば一般の非線形潜在ダイナミクスのもとでも置換・スケーリング・シフトを除く同定可能性が保たれることを証明した。シミュレーションではFitzHugh-Nagumoダイナミクスで理論を検証している。<br><br>応用として、意思決定の競合モデルの判定と、サルとヒトの神経記録における未知の微小刺激への応答予測を示し、ヒトのデータでは保持しておいた刺激部位への汎化も確認した。刺激プロトコルの設計指針もシミュレーションから導いている。神経回路の同定に理論的な足場を与える研究である。",
+   "url": "https://arxiv.org/abs/2611.08113",
+   "publishedAt": "2026-11-05T14:48:35Z",
+   "authors": [
+    "Hanna M. Tolle",
+    "Carles Balsells-Rodas",
+    "Yixin Wang",
+    "Pedro A. M. Mediano",
+    "Amin Nejatbakhsh"
+   ],
+   "categories": [
+    "stat.ML",
+    "cs.LG"
+   ],
+   "field": "stat.ML",
+   "genre": "Consciousness / Neuroscience",
+   "timestamp": 1793890115000,
    "monthKey": "2026-11"
   },
   {
@@ -1928,49 +1974,6 @@
    ],
    "categories": [
     "cs.CV"
-   ]
-  },
-  {
-   "source": "arXiv cs.CL",
-   "title": "SAUCE: Summary Analysis Using Conversation Entailment",
-   "titleJa": "SAUCE――会話含意で要約を分析する、参照不要の事実ベース評価",
-   "summaryHtml": "明確な最終目標を持たない会話の要約と評価には課題が残る。本論文は、言語横断の会話音声要約のための、参照不要で事実ベースの評価パイプライン「SAUCE」を提案する。SAUCEは、会話とテキストの間の含意（entailment）を通じて、要約の正確さと事実のカバレッジを測る。<br><br>著者らはSAUCEを複数の一般的な要約指標と比較し、文字起こしや翻訳の誤りによる情報損失の捕捉や、壊れた要約の特定における有効性を示した。<br><br>決定的に重要なのは、ブラックボックスなLLM評価器や密な埋め込み指標と違い、SAUCEが本来的に説明可能であることである。要約スコアを離散的で検証可能な事実へ対応づけるため、利用者は正確なハルシネーションや脱落をピンポイントで特定できる。この解釈可能性が、開発者によるLLMの振る舞いの系統的なプロファイリングを助ける。音声対話の要約評価における、監査可能性を重視した設計である。",
-   "url": "https://arxiv.org/abs/2611.06812",
-   "publishedAt": "2026-11-04T17:25:40Z",
-   "timestamp": 1793813140000,
-   "monthKey": "2026-11",
-   "field": "cs.CL",
-   "genre": "LLM / NLP",
-   "authors": [
-    "Man-Ling Sung",
-    "Hemanth Kandula",
-    "Jeff Ma",
-    "William Hartmann",
-    "Matthew Snover"
-   ],
-   "categories": [
-    "cs.CL",
-    "eess.AS"
-   ]
-  },
-  {
-   "source": "arXiv cond-mat.mtrl-sci",
-   "title": "Evolutionary Design of Interpretable Spatial Descriptors for Structure-Property Relationship Discovery",
-   "titleJa": "構造―物性関係の発見に向けた、解釈可能な空間記述子の進化的設計",
-   "summaryHtml": "構造と物性の予測は、分子活性や材料物性から顕微鏡で測る局所的な機能応答まで、機械学習の古典的な課題である。画像ベースの回帰では、予測に使える情報を決める選択が2つある。画像近傍の大きさと、その内部に保持する空間解像度である。小さな近傍は関連する周囲構造を取りこぼし、大きく細かくサンプルした近傍は冗長で無関係な情報を招きうる。<br><br>本研究は、局所スペクトルとヒステリシスループの予測のための空間記述子を構築する枠組みを開発する。回帰モデルをベンチマークし、SHAPマップで空間的な寄与を調べ、パッチサイズと圧縮の影響を探って、予測精度と記述子の次元数との関係を明らかにする。<br><br>さらに遺伝的アルゴリズムを用いて、空間分割と測定の割り当てを最適化し、解釈可能性を保ちながら予測に効く空間記述子を進化的に設計する。記述子の「設計」そのものを最適化対象にするアプローチである。",
-   "url": "https://arxiv.org/abs/2611.06811",
-   "publishedAt": "2026-11-04T17:25:10Z",
-   "timestamp": 1793813110000,
-   "monthKey": "2026-11",
-   "field": "cond-mat.mtrl-sci",
-   "genre": "Vision / Multimodal",
-   "authors": [
-    "Aditya Raghavan",
-    "Sergei V Kalinin"
-   ],
-   "categories": [
-    "cond-mat.mtrl-sci",
-    "cs.LG"
    ]
   }
  ]
