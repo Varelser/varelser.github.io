@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-07T11:28:41Z",
+ "updatedAt": "2026-11-07T12:28:06Z",
  "articles": [
   {
    "source": "Crossref",
@@ -508,6 +508,28 @@
    "monthKey": "2026-11"
   },
   {
+   "source": "arXiv cs.AI",
+   "title": "ReproBridge: Building Reproducibility into ML Research Artifacts",
+   "titleJa": "再現性を成果物に組み込む――機械学習の実験を整えるReproBridge",
+   "summaryHtml": "機械学習の実験を再現するには、論文や公開コード、付随する資料に散らばった手順を復元しなければならない。そのためコーディングエージェントの再現成功は、公開された成果物そのものよりも、欠落した細部を補う能力に左右されがちである。本研究は、回復した手順や意思決定を保存しておくことで、その後の独立した再現が改善するかを問う。<br><br>標準化された成果物設計として、精製されたコードベース、環境設定、実験ランチャー、再現ガイドを定め、それを構築するエージェントワークフローReproBridgeを提案する。評価用のReproBridge-Benchは36本の論文・387件の実験から1,029件のタスクを提供し、各タスクには人間が検証した参照スコアが5件ずつ付与されている。エージェントは新しいセッションで生のコードか精製された成果物を使って課題に挑み、別のAuditorが実行の証拠を確認する。<br><br>4つのモデルで評価した結果、精製された成果物により平均再現成功率は76.4%から92.6%へ上がり、下流のAPI支出は平均19.7%削減された。モデル間の成功率のばらつきは21.6ポイントから3.9ポイントに縮小し、4モデルすべてが平均90%超を達成した。構成要素を除くアブレーションでは成功率が低下し、コードと環境の除去による損失が最大だった。実行の知識を保存することが、再現の信頼性とコストの両方を改善する。",
+   "url": "https://arxiv.org/abs/2611.08452",
+   "publishedAt": "2026-11-05T18:45:36Z",
+   "authors": [
+    "Yubo Wang",
+    "Rui Meng",
+    "Jaehyun Nam",
+    "Tomas Pfister",
+    "Jinsung Yoon"
+   ],
+   "categories": [
+    "cs.AI"
+   ],
+   "field": "cs.AI",
+   "genre": "Agents / Reasoning",
+   "timestamp": 1793904336000,
+   "monthKey": "2026-11"
+  },
+  {
    "source": "arXiv cs.CL",
    "title": "Understanding AI from the Inside: The State of Mechanistic Interpretability for AI Safety",
    "titleJa": "AIを内側から理解する――AI安全のためのメカニスティック解釈可能性の現在",
@@ -574,6 +596,26 @@
    "field": "cs.CL",
    "genre": "LLM / NLP",
    "timestamp": 1793903240000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "Hugging Face Papers",
+   "title": "Muir: Linear Attention with Sensitivity-Allocated Gating and Matched-Filter Readout",
+   "titleJa": "Muir――感度配分ゲートとマッチドフィルタ読み出しによる線形アテンション",
+   "summaryHtml": "線形アテンションは文脈を固定サイズのキー・バリュー状態に圧縮し、線形時間の学習と定数メモリでの推論を実現する。ゲート付きデルタルールモデルはこの状態を減衰させ、入力キーに対する予測を消去してから新しい値を書き込む。Gated DeltaNet-2（GDN-2）はチャネルごとの減衰と、分離されたフルランクの消去・書き込みゲートでこれを一般化した。しかし状態更新は、消去よりも書き込みに対してはるかに敏感であることが分かった。キーの活性化と単位正規化によりキーのエネルギーは少数のチャネルに集中する一方、値の書き込みは全チャネルに及ぶため、消去ゲートは低ランクで十分だという。<br><br>さらに、ゆっくり減衰する状態行は速い行よりはるかに大きなノルムを蓄積し、重みなしの読み出しを支配して、干渉を抑えるためにより強い書き込み時の消去を強いていた。そこでMuirは、すべてのゲートを感度配分型の低ランク射影に統合し、マッチドフィルタ読み出しゲートで状態行を重み付けし、節約したパラメータをより広いフィードフォワード層に再投資する。大きなチャンクサイズで広い行列ユニットを飽和させる際に、標準のチャンクワイズアルゴリズムが数値的に不安定になる問題に対しては、安定で効率的な学習のための並列更新を設計した。<br><br>1億6,600万〜13億4,000万パラメータの範囲で、MuirはGDN-2よりパープレキシティを1.8〜2.0%、Transformerより2.5〜3.6%下げ、常識精度を最大1.9ポイント上げ、抽出的想起も改善した。13億4,000万パラメータではマルチホップとマルチニードルの想起で両ベースラインを上回り、4Kの学習長から1,000万トークンのストリームへ2,560倍に外挿してもパープレキシティの漂いはなく、100万トークンまでのパスキャー検索はほぼ100%を維持した。GDN-2並みのスループットを保ちつつ、100Bトークンの検証損失に1.2倍速く到達し、32KではTransformerより2.7倍速く学習する。",
+   "url": "https://arxiv.org/abs/2611.08376",
+   "publishedAt": "2026-11-05T17:53:49Z",
+   "authors": [
+    "Tushaar Gangavarapu",
+    "Gil Tabak",
+    "Clemens JS Schaefer"
+   ],
+   "categories": [
+    "cs.LG"
+   ],
+   "field": "cs.LG",
+   "genre": "LLM / NLP",
+   "timestamp": 1793901229000,
    "monthKey": "2026-11"
   },
   {
@@ -1905,75 +1947,6 @@
    ],
    "categories": [
     "cs.AI"
-   ]
-  },
-  {
-   "source": "arXiv quant-ph",
-   "title": "GFlowQEC: Generative Flow Networks that Learn to Sample Quantum LDPC Codes",
-   "titleJa": "GFlowQEC――生成フローネットワークで量子LDPC符号をサンプリングする",
-   "summaryHtml": "実際のデバイス向けに量子誤り訂正符号を選ぶには、候補を回路レベルのシミュレーションで採点する必要があるが、その計算は遅く、数百件しか実行できない。だからこそ評価1回1回が貴重であり、探索は「支払った評価あたり何件の良い符号を見つけたか」で judged される。少数の群要素から作られる量子LDPC符号は多くの論理量子ビットを守るが、良いものは巨大な空間の中では稀である。<br><br>本論文は、量子符号設計のための、おそらく初の生成フローネットワーク（GFlowNet）「GFlowQEC」を提案する。符号を群要素1つずつ組み立て、スコアの冪に比例する確率で符号を提案するよう学習する。過去の探索のスコアで一度訓練して凍結し、180物理量子ビットのリフテッド積符号を、距離で採点しながら提案させる。<br><br>有料の呼び出しごとに10件の抽選を順位付けすると、GFlowQECは調整済みの並列テンパリングより2倍を超える数の、新しい最高スコア級の符号（訓練に使われたどれとも非同値なもの）を見つけた。評価コストの高い探索問題への生成モデルの応用である。",
-   "url": "https://arxiv.org/abs/2611.06819",
-   "publishedAt": "2026-11-04T17:31:57Z",
-   "timestamp": 1793813517000,
-   "monthKey": "2026-11",
-   "field": "quant-ph",
-   "genre": "Generative Models",
-   "authors": [
-    "Nuno Batista",
-    "Gabriel Falcao",
-    "Penousal Machado"
-   ],
-   "categories": [
-    "quant-ph",
-    "cs.LG"
-   ]
-  },
-  {
-   "source": "arXiv cs.CV",
-   "title": "Open-HumanScale: An Open Recipe for Scaling Human and Robot Experience for Embodied Foundation Models",
-   "titleJa": "Open-HumanScale――人とロボットの経験を50,000時間へ拡大する公開レシピ",
-   "summaryHtml": "一人称の人間動画は、ロボット学習のための操作事前知識の、拡張可能な供給源である。しかし生のデータ規模を汎化可能なロボットポリシーへ結びつけるには、厳密なデータキュレーションと訓練レシピが要る。本論文は、一人称事前学習を50,000時間まで拡大するための初の完全公開レシピ「Open-HumanScale」を提案する。その中核は、手の動きと自然言語で密に注釈された一人称動画コーパス「Open-HumanScale-50K」である。<br><br>このコーパスを使い、著者らは純粋な人間データの事前学習を閉ループのシミュレーション評価で系統的に検証し、事前学習データの時間数と下流のロボット成功率を結ぶ、経験的な対数線形のスケーリング則を発見した。<br><br>この知見に基づき、50,000時間の一人称人間動画だけで事前学習した世界―行動モデル「HumanWAM-Vanilla」を開発した。ロボットの事後訓練を施すと、RoboTwin 2.0のClean2Cleanで92.08%、Clean2Randomで68.88%の成功率に達した。人間動画からの事前学習をどこまで押し上げられるかを示す公開基盤である。",
-   "url": "https://arxiv.org/abs/2611.06817",
-   "publishedAt": "2026-11-04T17:31:35Z",
-   "timestamp": 1793813495000,
-   "monthKey": "2026-11",
-   "field": "cs.CV",
-   "genre": "Vision / Multimodal",
-   "authors": [
-    "Juncheng Ma",
-    "Jiaxin Li",
-    "Jiankai Tu",
-    "Bo Liang",
-    "Guodong Lv",
-    "Yufan Deng",
-    "Junzhe Tang",
-    "Liangzhu Yang",
-    "Chen Bian",
-    "Zicong Cao",
-    "Baohao Zhu",
-    "Jianxin Bi",
-    "Tengfei Yan",
-    "Yinyuan Zhang",
-    "Kewei Zhang",
-    "Xinglong Chen",
-    "Kaiqi Chen",
-    "Duomin Wang",
-    "Xiaotian Tang",
-    "Liang Tan",
-    "Li Li",
-    "Yuan Xu",
-    "Haosen Yang",
-    "Yuqi Wang",
-    "Jingfei Xia",
-    "Songyan Huang",
-    "Zhiyang Dou",
-    "Zhen Dong",
-    "Enze Xie",
-    "Tat-Seng Chua",
-    "Daquan Zhou"
-   ],
-   "categories": [
-    "cs.CV"
    ]
   }
  ]
