@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-08T02:32:27Z",
+ "updatedAt": "2026-11-08T03:33:12Z",
  "articles": [
   {
    "source": "Crossref",
@@ -791,6 +791,27 @@
    "field": "cs.LG",
    "genre": "LLM / NLP",
    "timestamp": 1793901229000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "arXiv cs.CL",
+   "title": "SpecCTMC: Exact Speculative Simulation of Diffusion Language Model Continuous-Time Markov Chains",
+   "titleJa": "SpecCTMC――拡散言語モデルの連続時間マルコフ連鎖を正確に投機サンプリングする手法",
+   "summaryHtml": "マスク付き拡散言語モデルはテキストを並列に生成できるが、複数トークンを独立にサンプリングするとトークン間の依存関係が壊れ、出力分布が変わってしまう。連続時間サンプリングならこの近似を避けて正確な分布が得られるものの、通常はトークン1つあたり1回の逐次的なモデル評価が必要になる。本研究は、別途ドラフトモデルを用意することなく、この逐次ボトルネックを減らす学習不要の投機的サンプラー SpecCTMC を提案する。<br><br>SpecCTMC は、すでに計算済みのモデル予測を用いて連続するトークン更新を提案し、その中間状態を並列に評価したうえで、厳密な受理・修正手続きを適用する。提案手法が、基礎となる連続時間マルコフ連鎖のイベント時刻・生成順序・トークン値の同時分布を保存することを証明した。時間の離散化誤差も、並列デコーディングによる追加の分解誤差も生じない。<br><br>LLaDA-8B-Instruct と Dream-v0-Instruct-7B を用い、5つのベンチマークで評価した結果、直接の連続時間サンプリングと比べて逐次モデル評価回数を1.73〜4.38倍削減しながら、参照サンプリング分布を維持した。拡散言語モデルの高速化と分布の正確さを両立させる手法である。",
+   "url": "https://arxiv.org/abs/2611.08362",
+   "publishedAt": "2026-11-05T17:41:20Z",
+   "authors": [
+    "Siva Rajesh Kasa",
+    "Yasong Dai",
+    "Sumit Negi",
+    "Hongdong Li"
+   ],
+   "categories": [
+    "cs.CL"
+   ],
+   "field": "cs.CL",
+   "genre": "LLM / NLP",
+   "timestamp": 1793900480000,
    "monthKey": "2026-11"
   },
   {
@@ -1917,31 +1938,6 @@
    "categories": [
     "cond-mat.mtrl-sci",
     "cs.LG"
-   ]
-  },
-  {
-   "source": "arXiv cs.AI",
-   "title": "ServerBench: How can your coding agents design specialized LLM serving systems?",
-   "titleJa": "ServerBench――コーディングエージェントにLLMサービングシステムを設計させられるか",
-   "summaryHtml": "LLMコーディングエージェントは実験を通じてソフトウェアを開発する。その力を使えば、自分たちの運用を支えるサービングシステム自体を設計させることもできる。有効なサービングには、セッション依存性、レイテンシ制約、正しさの要件のもとで、実装と運用の判断を調整することが求められる。本論文は、完全で特化したLLMサービングシステムのエージェント設計を測るベンチマーク「ServerBench」を提案する。<br><br>エージェントは共通の目的――「ドルあたりドル」、すなわちGPUコスト1ドルあたりの、レイテンシ条件を満たしたトークン価値――に対して実験を行う。状態を持つリプレイがセッション依存性を保ち、独立した検証が提出されたシステムを確認する。<br><br>11のコーディングエージェントモデルと3つの配備条件での評価では、Claude Sonnet 5.5がGemma E4Bで2.97ドル/ドルを達成し、vLLM参照実装の4.87倍となった。33回の実行のうち22回が検証済みシステムを生み、13回が最強のベースラインを上回った。分析からは、高価値な設計に共通する3つの知見が特定されている。",
-   "url": "https://arxiv.org/abs/2611.06841",
-   "publishedAt": "2026-11-04T17:59:07Z",
-   "timestamp": 1793815147000,
-   "monthKey": "2026-11",
-   "field": "cs.AI",
-   "genre": "LLM / NLP",
-   "authors": [
-    "Xinrui Zhong",
-    "Zhiming Wang",
-    "Yongqi Liu",
-    "Zhaohui Wang",
-    "Shanglin Yang",
-    "Zikun Li",
-    "Zhuoming Chen",
-    "Beidi Chen"
-   ],
-   "categories": [
-    "cs.AI"
    ]
   }
  ]
