@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-08T13:36:37Z",
+ "updatedAt": "2026-11-08T14:37:21Z",
  "articles": [
   {
    "source": "Crossref",
@@ -599,6 +599,43 @@
    "monthKey": "2026-11"
   },
   {
+   "source": "Hugging Face Papers",
+   "title": "VFlash: Fast, Accurate Visual Planning via Flash Primitive Decoding",
+   "titleJa": "VFlash――プリミティブ単位の並列復号による高速で正確な視覚プランニング",
+   "summaryHtml": "フィジカルAIの課題では、言語による推論だけでなく、点・バウンディングボックス・軌跡といった「視覚プラン」で空間的な目標や動きの見通しを表すことができる。だが自己回帰型の視覚言語モデルは座標を1トークンずつ生成するため、予測が豊かになるほどコストがかさむ。VFlashは「フラッシュ・プリミティブ復号」により、視覚プリミティブの座標をまとめて予測する手法である。<br><br>視覚プリミティブの既知の構造を利用し、軽量なドラフターが1回のフォワードパスでプリミティブ全体を生成する。レイアウトはプリミティブの種類・次元・長さに適応し、コンパクトなボックスから可変長の長い軌跡まで扱える。空間的な正確さは自己回帰モデルのトークン列を再現することではなく、アノテーション付きプリミティブで学習し、構造的に妥当な予測をそのまま受け入れることで得られる。<br><br>2次元・3次元のロボット軌跡タスクで、自己回帰復号と比べて予測誤差を一貫して削減した。3次元点運動予測の予備測定では約25倍の高速化を示し、VFlashのプランを条件とするワールド・アクションモデルは4つのMolmoSpacesタスク群で平均70.2%の成功率を達成し、ベースラインの62.6%を上回った。",
+   "url": "https://arxiv.org/abs/2611.08449",
+   "publishedAt": "2026-11-05T18:44:43Z",
+   "authors": [
+    "Yu-Cheng Chou",
+    "Shihao Wang",
+    "Jin Huang",
+    "Chi-Pin Huang",
+    "Chiao-An Yang",
+    "Xianzhe Fan",
+    "Jing Wang",
+    "Zhiqi Li",
+    "Yuanguo Kuang",
+    "Ruijie Zheng",
+    "Johan Bjorck",
+    "Sifei Liu",
+    "Hang Su",
+    "Abhishek Badki",
+    "Lei Zhang",
+    "Alan Yuille",
+    "Linxi \"Jim\" Fan",
+    "Jan Kautz",
+    "Zhiding Yu"
+   ],
+   "categories": [
+    "cs.RO",
+    "cs.CV"
+   ],
+   "field": "cs.RO",
+   "genre": "Vision / Multimodal",
+   "timestamp": 1793904283000,
+   "monthKey": "2026-11"
+  },
+  {
    "source": "arXiv cs.LG",
    "title": "A Hidden Markov Preference Model for Online Prediction of Adversary Actions",
    "titleJa": "隠れマルコフ選好モデル――敵対者の次の行動をオンラインで予測する",
@@ -838,6 +875,33 @@
    "field": "cs.LG",
    "genre": "LLM / NLP",
    "timestamp": 1793901229000,
+   "monthKey": "2026-11"
+  },
+  {
+   "source": "Hugging Face Papers",
+   "title": "SLA: Scaling Spatial-Language-Action Model via Continual Pre-training",
+   "titleJa": "SLA――継続事前学習で空間・言語・行動モデルに空間理解を組み込む",
+   "summaryHtml": "確実なロボット操作には、意味の理解と3次元空間での精密な制御の両方が要る。だが視覚・言語・行動（VLA）基盤モデルは2次元の視覚言語事前学習から表現を引き継ぎ、空間的な教師信号はタスク固有の適応時にしか入らないことが多い。本研究は、空間理解を転移可能な基盤モデルの能力として育てるため、より広いロボット経験から学ぶSLA（空間・言語・行動モデル）を提案する。<br><br>事前学習済みのロボット方策π0.5から初期化し、行動予測と、中間視覚埋め込みと凍結した3次元知覚モデルによる空間表現との整合を共同で最適化する。空間学習を支えるため、異なる身体・タスク・場面にまたがる多様なロボットデータセットを整備・統合した。特徴依存ゲートが複数のVLA層からの視覚埋め込みを適応的に集約し、教師モデルはRGB観測に加えて部分的に利用可能な深度やカメラ較正も活用する。<br><br>確率的な状態ドロップアウトにより視覚的手がかりへの依存を促し、実演軌跡への過剰適合を抑える。補助的な構成要素はすべて学習時のみに使い、事前学習済みVLAの重みをそのまま再利用でき、推論時の構造は変えない設計になっている。",
+   "url": "https://arxiv.org/abs/2611.08373",
+   "publishedAt": "2026-11-05T17:52:16Z",
+   "authors": [
+    "Fuhao Li",
+    "Wenxuan Song",
+    "Qizhou Huang",
+    "Ziyang Zhou",
+    "Jingbo Wang",
+    "Junwu E",
+    "Pengwei Wang",
+    "Yan Wang",
+    "Shunbo Zhou",
+    "Haoang Li"
+   ],
+   "categories": [
+    "cs.RO"
+   ],
+   "field": "cs.RO",
+   "genre": "Robotics",
+   "timestamp": 1793901136000,
    "monthKey": "2026-11"
   },
   {
@@ -1871,58 +1935,6 @@
    ],
    "categories": [
     "cs.RO"
-   ]
-  },
-  {
-   "source": "arXiv cs.CL",
-   "title": "Balancing hierarchical representation and quantization: A performance trade-off in text embeddings",
-   "titleJa": "階層表現と量子化のバランス――テキスト埋め込みの性能トレードオフ",
-   "summaryHtml": "階層型テキスト埋め込みモデルは可変長の表現を提供し、量子化は数値精度を下げて計算効率を高める。両者は直交する既存の技術だが、その相互作用は十分に調べられてこなかった。本研究は、この2つの効率化手法がどう干渉するかを実証的にベンチマークする。<br><br>評価はMTEBの38タスクで、4つのTransformer系埋め込みモデルを用い、1次元・2次元の階層表現と32ビット・8ビット・バイナリ量子化を組み合わせた、タスクあたり168構成を検証する。効率の次元は分けて報告され、理論上のベクトルあたり記憶量と、エンドツーエンドの評価時間が示される。<br><br>Friedman検定とNemenyi事後分析では、int8量子化はペア分類と再ランキングでfloat32と統計的に区別がつかず、全体でも最大1.5ポイントのコストにとどまった。一方、バイナリ量子化は全タスクカテゴリで有意に悪かった。埋め込み次元を半分にすることの影響もあわせて検討されている。",
-   "url": "https://arxiv.org/abs/2611.06859",
-   "publishedAt": "2026-11-04T18:15:08Z",
-   "timestamp": 1793816108000,
-   "monthKey": "2026-11",
-   "field": "cs.CL",
-   "genre": "LLM / NLP",
-   "authors": [
-    "Kai Ponel",
-    "Marco Polignano",
-    "Erasmo Purificato",
-    "Aylin Julia Temizkan",
-    "Marco Levantesi",
-    "Giovanni Semeraro",
-    "Ernesto William De Luca"
-   ],
-   "categories": [
-    "cs.CL",
-    "cs.IR",
-    "cs.LG"
-   ]
-  },
-  {
-   "source": "arXiv cs.AI",
-   "title": "CompressionBench: How can your coding agents compress LLMs?",
-   "titleJa": "CompressionBench――コーディングエージェントにLLM圧縮を任せられるか",
-   "summaryHtml": "再帰的自己改善には、後続のシステムが使うモデルや基盤をAIシステム自身が改善することが求められる。LLM圧縮はその具体的な効率化目標となる。事前学習済みモデルの振る舞いを、より小さなモデル記憶予算の中に保持することである。本研究は、コーディングエージェントがこの工程を自律的に遂行できるかを問う。<br><br>圧縮はターミナルタスクとして定式化される。エージェントはソースのチェックポイント、記憶容量の上限、推論環境、時間予算を与えられ、圧縮された重みと実行可能な推論コードを構築する。アルゴリズムと実験の進め方はエージェントが握り、パープレキシティのフィードバックが探索を導き、独立した検証が最終モデルを確認する。<br><br>6つのエージェントと6つのモデル×サイズ設定で、36件の提出のうち29件が検証に合格した。タスクごとに最もパープレキシティの低い設計を選ぶと、BF16比で平均3.4%のパープレキシティ増、下流精度77.33%（BF16は79.56%）となった。記録された実験の過程も分析されている。",
-   "url": "https://arxiv.org/abs/2611.06858",
-   "publishedAt": "2026-11-04T18:14:50Z",
-   "timestamp": 1793816090000,
-   "monthKey": "2026-11",
-   "field": "cs.AI",
-   "genre": "Vision / Multimodal",
-   "authors": [
-    "Xinrui Zhong",
-    "Zhifeng Li",
-    "Zhiming Wang",
-    "Yongqi Liu",
-    "Shanglin Yang",
-    "Yang Zhou",
-    "Zikun Li",
-    "Zhuoming Chen",
-    "Beidi Chen"
-   ],
-   "categories": [
-    "cs.AI"
    ]
   }
  ]
