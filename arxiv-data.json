@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-09T00:41:42Z",
+ "updatedAt": "2026-11-09T01:40:29Z",
  "articles": [
   {
    "authors": [
@@ -1220,6 +1220,29 @@
    "monthKey": "2026-11"
   },
   {
+   "authors": [
+    "Kotaro Oishi",
+    "Kazuma Ikeda",
+    "Ryosei Hara",
+    "Ryo Yoshida",
+    "Mariko Isogawa",
+    "Kentaro Yoshioka"
+   ],
+   "categories": [
+    "cs.CV"
+   ],
+   "field": "cs.CV",
+   "genre": "Vision / Multimodal",
+   "monthKey": "2026-11",
+   "publishedAt": "2026-11-05T02:56:01.000Z",
+   "source": "Hugging Face Papers",
+   "summaryHtml": "LiDARは自動運転やロボティクスに不可欠なセンサーだが、霧・雨・透明な物体・低反射面といった悪条件に弱い。全波形LiDAR（FWL）は反射波の全体をヒストグラムとして捉え、マルチパスエコーや微弱な信号も含む豊かな情報を保持することでこの弱点を補う。TransformerによるFWL処理は有望だが、低強度の背景領域の冗長なトークンによる計算コストと、注釈付き学習データの不足による汎化の低さが課題だった。<br><br>本論文はFWLデータの物理的構造を活かしてこの2つの課題に対処する。まず、強度分布を利用してトークンを選択的に削減・統合するFWL-ToPMを提案し、波形の重要な内容を保ったまま計算量を抑える。さらに、各光線の飛行時間波形と視錐台の形状を保持するデータ拡張FWLAugを導入し、未知の場面への汎化を高める。<br><br>Ghost-FWLベンチマークでの評価では、FWL-ToPMは従来手法より8倍以上の高速化でリアルタイム処理を達成し、F1スコアも約9ポイント向上した。FWLAugも標準ベンチマークと未知の場面の両方で性能を改善し、FWLによる知覚の実用化に近づけた。コードと分布外データセットは公開されている。",
+   "timestamp": 1793847361000,
+   "title": "Towards Real-Time Full-Waveform LiDAR Transformers via Intensity-Guided Token Reduction and Physics-Aware Augmentation",
+   "titleJa": "リアルタイム全波形LiDARトランスフォーマーへ――強度誘導トークン削減と物理を意識した拡張",
+   "url": "https://arxiv.org/abs/2611.07613"
+  },
+  {
    "source": "Hugging Face Papers",
    "title": "Reducing Representational Interference in Retrieval Embeddings with Trainable Prefix Tokens",
    "titleJa": "学習可能な接頭辞トークンで検索埋め込みの表現干渉を減らす",
@@ -1346,6 +1369,22 @@
    "genre": "Ethics / Safety",
    "timestamp": 1793836800000,
    "monthKey": "2026-11"
+  },
+  {
+   "authors": [
+    "James Emokhai Uzualu"
+   ],
+   "categories": [],
+   "field": "Afrocentric Legal Review",
+   "genre": "Philosophy",
+   "monthKey": "2026-11",
+   "publishedAt": "2026-11-05T00:00:00Z",
+   "source": "Crossref",
+   "summaryHtml": "ナイジェリアでは誘拐やテロなどの犯罪が増加し、その背景には市民の警察への不信がある。本論文は、現行の地域警察活動（コミュニティ・ポリシング）を評価し、アフリカの思想であるウブントゥ哲学の原理を取り入れたアフロセントリックな警察活動の枠組みを提案する。研究手法は、法令などの一次資料と学術文献を組み合わせるドクトリン研究とシステマティック・レビューで、目的は共同体への信頼を土台に警察と市民の協力を強める方法を示すことにある。<br><br>分析の結果、地域警察活動は情報収集能力を高めたものの、汚職や植民地時代の歴史的要因がその効果を妨げていることが示された。ウブントゥ哲学は人と人とのつながりと共同体への責任を重んじ、法執行に人間の尊厳を取り戻し、警察への信頼を再構築する手がかりになると論じる。<br><br>著者は、ウブントゥの原理を法改正と研修プログラムを通じて制度に正式に組み込み、地域の伝統的価値を警察制度に取り入れることで、持続可能な治安の枠組みを築くよう提言する。警察官の研修にウブントゥの価値観を位置づけ、法制度の側からも地域の慣習を認めることが、市民の信頼回復につながると結論づけている。",
+   "timestamp": 1793836800000,
+   "title": "Integrating Ubuntu Philosophy in Enhancing Community Policing in Curbing Crime in Nigeria",
+   "titleJa": "ウブントゥ哲学と地域警察活動――ナイジェリアにおける犯罪抑止への統合",
+   "url": "https://doi.org/10.68928/alr-2026-2-2-02"
   },
   {
    "source": "Hugging Face Papers",
@@ -1875,53 +1914,6 @@
    ],
    "categories": [
     "cs.CV"
-   ]
-  },
-  {
-   "source": "arXiv cs.AI",
-   "title": "On Turn-Level Best-of-N Sampling for Scaling LLM Agents",
-   "titleJa": "ターン単位のBest-of-NサンプリングでLLMエージェントをスケールさせる",
-   "summaryHtml": "本研究は、複雑で長期のタスクに取り組むLLMエージェントに対して、「ターン単位のBest-of-Nサンプリング」に基づく単純な推論時スケーリング手法を評価する。生成器と選択器の2つのLLMからなる枠組みで、各ターンに生成器モデルがN個の行動候補を出し、選択器モデルがそのうち1つを選んで環境で実行する。<br><br>推論時の誘導探索に批評家（クリティック）モデルを使った先行研究と異なり、本研究は、市販のオープンウェイトLLMが候補行動同士を直接比較して有効に機能するかを検証する点に特徴がある。<br><br>長期のターミナルタスクでの実験では、この手法が精度（5〜10%）と試行間の一貫性の両面で有意な改善をもたらした。エージェントの軌跡分析では、行動の質の変化も観察されている。訓練なしに推論時の計算でエージェントを底上げする実践的な選択肢である。",
-   "url": "https://arxiv.org/abs/2611.06868",
-   "publishedAt": "2026-11-04T18:23:14Z",
-   "timestamp": 1793816594000,
-   "monthKey": "2026-11",
-   "field": "cs.AI",
-   "genre": "LLM / NLP",
-   "authors": [
-    "Jalaj Bhandari",
-    "Dhawal Gupta",
-    "Hongli Zhan",
-    "Zhenting Wang",
-    "Varad Pimpalkhute",
-    "Zhengzhong Liu",
-    "Eric Xing",
-    "Rupesh Srivastava"
-   ],
-   "categories": [
-    "cs.AI"
-   ]
-  },
-  {
-   "source": "arXiv cs.SE",
-   "title": "GH-AWTrace: A Large-Scale Dataset of GitHub Agentic Workflow Execution Logs",
-   "titleJa": "GH-AWTrace――GitHubのエージェンティックワークフロー実行ログ大規模データセット",
-   "summaryHtml": "エージェンティックワークフローは、AIエージェントがスケジュールやリポジトリのイベントに応じて繰り返しのリポジトリ作業を行う仕組みである。既存研究はワークフローの定義と出力を調べるが、実行中に何が起きているかの証拠は限られていた。本論文は、その実行証拠を結びつけたデータセット「GH-AWTrace」を提示する。<br><br>データセットは、検証済みのGitHub Agentic Workflows 25,014件（5,051リポジトリ）を、4,112,526件の実行記録と562,877件の空でない実行ログアーカイブへ結びつける。実行証拠はGitHubのログ保持制限の範囲で保存され、リポジトリのメタデータと生成されたワークフロー設定にもリンクされる。<br><br>事例からは、ツール拒否、プロバイダ障害、エージェントの方針変更、エージェント間の委任といった、ログでなければ見えない事象が読み取れる。実行の失敗、ツール使用、報告された実行結果と実際のタスク進捗との関係を研究する土台となる。なおカバレッジはワークフローごとに異なり、ログは部分的な観測にとどまる。",
-   "url": "https://arxiv.org/abs/2611.06866",
-   "publishedAt": "2026-11-04T18:20:41Z",
-   "timestamp": 1793816441000,
-   "monthKey": "2026-11",
-   "field": "cs.SE",
-   "genre": "Vision / Multimodal",
-   "authors": [
-    "Jasem Khelifi",
-    "Hao Li",
-    "Ali Ouni",
-    "Mohammed Sayagh",
-    "Mohamed Aymen Saied"
-   ],
-   "categories": [
-    "cs.SE"
    ]
   }
  ]
