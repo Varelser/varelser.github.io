@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2026年11月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全2件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="d69ee578adc49dc2f5f3d1416dc331c0"
+  data-date="2026-11-01"
+  data-month="2026-11"
+  data-topics="急性期・クリティカルケア||患者安全||看護研究"
+  data-clinical-areas="ICU||急性期"
+  data-audiences="成人"
+  data-evidence-type="総説"
+  data-practice-impact="medium"
+  data-search="抜管後嚥下障害の看護師によるベッドサイドスクリーニング：ICUにおける実施可能性と精度のスコーピングレビュー 侵襲的機械換気を受けた後の抜管後嚥下障害（PED）はよくみられる合併症である。看護師がベッドサイドでタイムリーにリスクスクリーニングを行える一方で、検査器具の妥当性、看護師の手での性能、導入の有効性はそれぞれ別々の問いである。本スコーピングレビューは、成人集中治療室（ICU）における看護師実施の直接エビデンス、看護師が実施可能なツールの転用可能性、導入の文脈、患者アウトカムを地図化した。  6つのデータベースを検索し（2026年8月に更新）、実施者と参照基準でエビデンスを層別化し、MMATとQUADAS-2で評価した。対象は34報告・31研究群だった。看護師・看護助手が実施し器具的参照基準と照合した完全検証コホートは2件で、修正Volume-Viscosity Swallow Test対FEESは44例で感度89.5%・特異度72%、GUSS-IVA対FEESは56例中51例で81.0%・88.9%だった。3件目の看護師スクリーニングは123例中38例のみFEESを実施し、感度86%・特異度21%だった。  その他の看護師実施研究は、臨床的・代理的な比較や陽性例のみの検証にとどまった。言語聴覚士が実施したFEESの研究は転用可能性の参考にはなるが、看護師実施の精度を示すものではない。導入の忠実度にはばらつきがあり、アウトカム研究は非ランダム化だった。結論として、看護師による構造化されたPEDスクリーニングは実施可能だが、精度と患者アウトカムの直接エビデンスは異質で、選択・検証・交絡バイアスのリスクがある。ICUは能力評価・記録・専門職へのエスカレーション・アウトカム監査を備えた管理されたパスウェイで試行できるが、標準ケアとして確立した単一のスクリーニングは存在しない。  看護実務への示唆としては、ベッドサイドのスクリーニングは診断ではなくリスク層別化であることをチームで共有し、異常・不一致・高リスクの所見が出た場合は速やかに専門職評価へつなげ、必要に応じてFEESやVFSSを検討する流れを病棟で整えておくことが大切です。 Europe PMC 急性期・クリティカルケア 患者安全 看護研究 ICU 急性期 成人 総説 抜管後の嚥下スクリーニングは診断ではなくリスク層別化と位置づけ、異常所見時は速やかに専門職へつなぎ、FEESやVFSSを検討する。">
+  <p class="meta">Europe PMC　2026-11-01 09:00</p>
+  <h2 class="article-title">抜管後嚥下障害の看護師によるベッドサイドスクリーニング：ICUにおける実施可能性と精度のスコーピングレビュー</h2>
+  <div class="taxonomy"><span class="chip">トピック: 急性期・クリティカルケア</span><span class="chip">トピック: 患者安全</span><span class="chip">トピック: 看護研究</span><span class="chip">領域: ICU</span><span class="chip">領域: 急性期</span><span class="chip">対象: 成人</span><span class="chip">エビデンス: 総説</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">侵襲的機械換気を受けた後の抜管後嚥下障害（PED）はよくみられる合併症である。看護師がベッドサイドでタイムリーにリスクスクリーニングを行える一方で、検査器具の妥当性、看護師の手での性能、導入の有効性はそれぞれ別々の問いである。本スコーピングレビューは、成人集中治療室（ICU）における看護師実施の直接エビデンス、看護師が実施可能なツールの転用可能性、導入の文脈、患者アウトカムを地図化した。<br><br>6つのデータベースを検索し（2026年8月に更新）、実施者と参照基準でエビデンスを層別化し、MMATとQUADAS-2で評価した。対象は34報告・31研究群だった。看護師・看護助手が実施し器具的参照基準と照合した完全検証コホートは2件で、修正Volume-Viscosity Swallow Test対FEESは44例で感度89.5%・特異度72%、GUSS-IVA対FEESは56例中51例で81.0%・88.9%だった。3件目の看護師スクリーニングは123例中38例のみFEESを実施し、感度86%・特異度21%だった。<br><br>その他の看護師実施研究は、臨床的・代理的な比較や陽性例のみの検証にとどまった。言語聴覚士が実施したFEESの研究は転用可能性の参考にはなるが、看護師実施の精度を示すものではない。導入の忠実度にはばらつきがあり、アウトカム研究は非ランダム化だった。結論として、看護師による構造化されたPEDスクリーニングは実施可能だが、精度と患者アウトカムの直接エビデンスは異質で、選択・検証・交絡バイアスのリスクがある。ICUは能力評価・記録・専門職へのエスカレーション・アウトカム監査を備えた管理されたパスウェイで試行できるが、標準ケアとして確立した単一のスクリーニングは存在しない。<br><br>看護実務への示唆としては、ベッドサイドのスクリーニングは診断ではなくリスク層別化であることをチームで共有し、異常・不一致・高リスクの所見が出た場合は速やかに専門職評価へつなげ、必要に応じてFEESやVFSSを検討する流れを病棟で整えておくことが大切です。</div>
+  <div class="action-box"><strong>看護アクション</strong>抜管後の嚥下スクリーニングは診断ではなくリスク層別化と位置づけ、異常所見時は速やかに専門職へつなぎ、FEESやVFSSを検討する。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Europe PMC<br>
+    原文URL：<a href="https://europepmc.org/article/MED/42786711" target="_blank" rel="noopener">https://europepmc.org/article/MED/42786711</a>
+  </div>
+</article>
+<article
+  data-id="2873507f154ef55a67c37f3900561553"
+  data-date="2026-11-01"
+  data-month="2026-11"
+  data-topics="看護研究||臨床判断"
+  data-clinical-areas="教育・研修||管理"
+  data-audiences="成人"
+  data-evidence-type="実践報告"
+  data-practice-impact="medium"
+  data-search="看護師長による臨床監督を標準化へ：レソトの公立病院で開発された8つのガイドライン 臨床監督は、登録看護師の専門性の発達を支え、患者ケアの質を確保するうえで重要な仕組みである。しかしレソトでは臨床監督が非構造的で、看護師長が登録看護師をどう監督・支援すべきかを示す指針が限られていた。本研究は、レソトの公立病院の看護師長が登録看護師を支援するための、エビデンスに基づく臨床監督ガイドラインを開発し、その内容について専門家コンセンサスを確立した。  方法は3段階の方法論的研究で、第1段階の概念分析、第2段階の看護師長と登録看護師への実証的探索、第3段階のガイドライン開発と専門家コンセンサスからなる。概念分析と実証的探索の知見を統合する枠組みには、AGREE II（ガイドライン評価ツール）とドナベディアンモデルに基づく研究者開発の枠組みを用いた。妥当性・信頼性・適用可能性・明確性・関連性・包括性・柔軟性・受容性を、21名の国内外専門家による3ラウンドの電子デルファイ調査で評価した。  結果として、文脈に特化した8つの臨床監督ガイドラインが開発された。構造領域とプロセス領域に整理され、ガイドライン8は構造的、ガイドライン1・2・3・4・5・7はプロセス志向、ガイドライン6は両方の性質を持つと分類された。すべてのガイドラインで専門家コンセンサスが達成された。結論として、このガイドラインは看護師長の監督・支援・指導を強化し、登録看護師の能力とウェルビーイングを支え、患者ケアの質に資する枠組みである。導入により、効率的で支援的かつ説明責任のある看護ケア環境の実現が期待される。  看護実務への示唆としては、臨床監督を属人的な助言ではなく、構造とプロセスを明文化した仕組みとして整えることが、指導のばらつきを減らし、スタッフの成長とケアの質を両立させる鍵になります。 Europe PMC 看護研究 臨床判断 教育・研修 管理 成人 実践報告 臨床監督は構造とプロセスを明文化した仕組みとして整え、指導のばらつきを減らしてスタッフの成長とケアの質を両立させる。">
+  <p class="meta">Europe PMC　2026-11-01 09:00</p>
+  <h2 class="article-title">看護師長による臨床監督を標準化へ：レソトの公立病院で開発された8つのガイドライン</h2>
+  <div class="taxonomy"><span class="chip">トピック: 看護研究</span><span class="chip">トピック: 臨床判断</span><span class="chip">領域: 教育・研修</span><span class="chip">領域: 管理</span><span class="chip">対象: 成人</span><span class="chip">エビデンス: 実践報告</span><span class="chip">実務影響度: 中</span></div>
+  <div class="summary">臨床監督は、登録看護師の専門性の発達を支え、患者ケアの質を確保するうえで重要な仕組みである。しかしレソトでは臨床監督が非構造的で、看護師長が登録看護師をどう監督・支援すべきかを示す指針が限られていた。本研究は、レソトの公立病院の看護師長が登録看護師を支援するための、エビデンスに基づく臨床監督ガイドラインを開発し、その内容について専門家コンセンサスを確立した。<br><br>方法は3段階の方法論的研究で、第1段階の概念分析、第2段階の看護師長と登録看護師への実証的探索、第3段階のガイドライン開発と専門家コンセンサスからなる。概念分析と実証的探索の知見を統合する枠組みには、AGREE II（ガイドライン評価ツール）とドナベディアンモデルに基づく研究者開発の枠組みを用いた。妥当性・信頼性・適用可能性・明確性・関連性・包括性・柔軟性・受容性を、21名の国内外専門家による3ラウンドの電子デルファイ調査で評価した。<br><br>結果として、文脈に特化した8つの臨床監督ガイドラインが開発された。構造領域とプロセス領域に整理され、ガイドライン8は構造的、ガイドライン1・2・3・4・5・7はプロセス志向、ガイドライン6は両方の性質を持つと分類された。すべてのガイドラインで専門家コンセンサスが達成された。結論として、このガイドラインは看護師長の監督・支援・指導を強化し、登録看護師の能力とウェルビーイングを支え、患者ケアの質に資する枠組みである。導入により、効率的で支援的かつ説明責任のある看護ケア環境の実現が期待される。<br><br>看護実務への示唆としては、臨床監督を属人的な助言ではなく、構造とプロセスを明文化した仕組みとして整えることが、指導のばらつきを減らし、スタッフの成長とケアの質を両立させる鍵になります。</div>
+  <div class="action-box"><strong>看護アクション</strong>臨床監督は構造とプロセスを明文化した仕組みとして整え、指導のばらつきを減らしてスタッフの成長とケアの質を両立させる。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Europe PMC<br>
+    原文URL：<a href="https://europepmc.org/article/MED/42967858" target="_blank" rel="noopener">https://europepmc.org/article/MED/42967858</a>
+  </div>
+</article>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function apply(){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const month = els.month.value;
+        const topic = els.topic.value;
+        const clinical = els.clinical.value;
+        const audience = els.audience.value;
+        const evidence = els.evidence.value;
+        const impact = els.impact.value;
+        let visible = 0;
+        articles.forEach(function(article){
+          const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+          const ok = (!q || haystack.indexOf(q) !== -1)
+            && (!month || article.getAttribute("data-month") === month)
+            && hasToken(article.getAttribute("data-topics"), topic)
+            && hasToken(article.getAttribute("data-clinical-areas"), clinical)
+            && hasToken(article.getAttribute("data-audiences"), audience)
+            && (!evidence || article.getAttribute("data-evidence-type") === evidence)
+            && (!impact || article.getAttribute("data-practice-impact") === impact);
+          article.style.display = ok ? "block" : "none";
+          if (ok) visible += 1;
+        });
+        els.count.textContent = String(visible);
+        els.empty.style.display = visible ? "none" : "block";
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", apply);
+        el.addEventListener("change", apply);
+      });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply();
+      });
+      apply();
+    })();
+  </script>
+</body>
+</html>
