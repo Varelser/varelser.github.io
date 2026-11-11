@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- TOPO v2 (2026-11-11): evaluation fixes - performance guards (work estimate, adaptive grid, async chunked export with confirm/hard limits), MAX_HOLES=12, seed UI + localStorage + settings JSON + undo, p5.js SRI, accessibility (lang/labels/keyboard holes/panel toggle), unified draw routines. Tests: tests/topo.test.mjs -->
+<!-- TOPO v3 (2026-11-11): worker + performance update - unified pure core (p5-exact Perlin/LCG ports, bit-identical output), Web Worker scene builds (exports + heavy screen scenes, stale-result discard, main-thread fallback), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -358,6 +358,7 @@ const MAX_HOLES = 12;
 const UNDO_MAX = 50;
 const STORAGE_KEY = 'topo-settings-v1';
 const SCREEN_CELL_BUDGET = 50000000;
+const WORKER_SCREEN_THRESHOLD = 3000000;
 const EXPORT_CONFIRM_CELLS = 100000000;
 const EXPORT_CONFIRM_PIXELS = 25000000;
 const EXPORT_HARD_CELLS = 900000000;
@@ -428,6 +429,7 @@ function setup() {
     params.CANVAS_W = window.innerWidth;
     params.CANVAS_H = window.innerHeight;
     resizeCanvas(params.CANVAS_W, params.CANVAS_H);
+    invalidateArtworkCache();
     debouncedRegenerate(false);
   });
 }
@@ -890,6 +892,45 @@ function requestDragRegenerate() {
   }, 34);
 }
 
+let sceneRequestSeq = 0;
+
+function coreParamsSnapshot() {
+  return {
+    NUM_RINGS: params.NUM_RINGS,
+    ANGLE_STEPS: params.ANGLE_STEPS,
+    NOISE_FREQ: params.NOISE_FREQ,
+    NOISE_AMPLITUDE: params.NOISE_AMPLITUDE,
+    CENTER_BULGE: params.CENTER_BULGE,
+    OUTER_RADIUS_RATIO: params.OUTER_RADIUS_RATIO,
+    WAVE_DETAIL: params.WAVE_DETAIL,
+    INTERFERENCE_BOOST: params.INTERFERENCE_BOOST,
+    CIRCULARIZE_MIX: params.CIRCULARIZE_MIX,
+    ENABLE_INTERFERENCE: params.ENABLE_INTERFERENCE,
+    ENABLE_CIRCULARIZE: params.ENABLE_CIRCULARIZE,
+    TEXTURE_POINTS: params.TEXTURE_POINTS
+  };
+}
+
+function snapshotSceneHoles() {
+  return holes.map((h) => ({
+    x: h.x,
+    y: h.y,
+    radius: h.radius,
+    strength: h.strength,
+    waveAmp: h.waveAmp,
+    phase: h.phase
+  }));
+}
+
+function afterSceneBuilt(adapted) {
+  invalidateArtworkCache();
+  if (adapted) {
+    setStatus('負荷軽減のためグリッドを粗くしました');
+  }
+  syncSelectedHoleControls();
+  updateSeedDisplay();
+}
+
 function regenerateScene(options = {}) {
   const { newSeed = false, targetWidth = width, targetHeight = height } = options;
 
@@ -901,109 +942,186 @@ function regenerateScene(options = {}) {
     scheduleSaveSettings();
   }
 
+  const flat = isFlatFieldMode();
+  const eff = getEffectiveGridStep(targetWidth, targetHeight, flat, SCREEN_CELL_BUDGET);
+  const reqId = ++sceneRequestSeq;
+
+  if (eff.estimate.cellChecks > WORKER_SCREEN_THRESHOLD) {
+    // Heavy scene: compute in the Worker so the UI stays responsive.
+    // Requests coalesce by sequence number — a stale result that
+    // arrives after a newer request has started is discarded.
+    setStatus('Workerで計算中…');
+    buildSceneViaWorker({
+      params: coreParamsSnapshot(),
+      holes: snapshotSceneHoles(),
+      seed: seedVal,
+      width: targetWidth,
+      height: targetHeight,
+      baseW: width,
+      baseH: height,
+      gridStep: eff.gridStep
+    }, (ratio) => {
+      if (reqId === sceneRequestSeq) {
+        setStatus(`Workerで計算中… ${Math.round(ratio * 100)}%`);
+      }
+    }).then((built) => {
+      if (reqId !== sceneRequestSeq) return;
+      if (built) {
+        scene = built;
+        afterSceneBuilt(eff.adapted);
+        if (!eff.adapted) setStatus('');
+      } else {
+        scene = buildSceneData(targetWidth, targetHeight, seedVal, { budget: SCREEN_CELL_BUDGET });
+        afterSceneBuilt(eff.adapted);
+        if (!eff.adapted) setStatus('Workerを利用できないためメインスレッドで計算しました');
+      }
+      redraw();
+    });
+    syncSelectedHoleControls();
+    updateSeedDisplay();
+    return;
+  }
+
   scene = buildSceneData(targetWidth, targetHeight, seedVal, { budget: SCREEN_CELL_BUDGET });
-  if (scene.adapted) {
-    setStatus('負荷軽減のためグリッドを粗くしました');
-  }
-  syncSelectedHoleControls();
-  updateSeedDisplay();
+  afterSceneBuilt(eff.adapted);
 }
 
-function buildSceneData(targetWidth, targetHeight, seed, buildOpts = {}) {
-  const gen = buildSceneSteps(targetWidth, targetHeight, seed, buildOpts);
-  let result = gen.next();
-  while (!result.done) result = gen.next();
-  return result.value;
+// ============================================================
+// TOPO CORE (v3): pure scene computation. No p5 globals, no DOM.
+// This exact code runs on the main thread (fallback / small scenes)
+// and inside the Web Worker (source assembled from these functions),
+// so both paths produce identical results.
+// Noise and random are faithful ports of p5 1.6.0 (unminified source):
+// Perlin with PERLIN_SIZE 4095, 4 octaves, falloff 0.5, scaled-cosine
+// interpolation, and the Numerical Recipes LCG (a=1664525,
+// c=1013904223, m=2^32). Verified bit-exact against real p5 1.6.0.
+// ============================================================
+
+function createCoreState() {
+  return { perlin: null, noiseLcgZ: 0, rngZ: 0 };
 }
 
-async function buildSceneDataAsync(targetWidth, targetHeight, seed, onProgress) {
-  const gen = buildSceneSteps(targetWidth, targetHeight, seed, {});
-  let result = gen.next();
-  while (!result.done) {
-    if (typeof onProgress === 'function') onProgress(result.value);
-    await yieldToUI();
-    result = gen.next();
-  }
-  return result.value;
+function coreClamp(value, minValue, maxValue) {
+  return Math.min(maxValue, Math.max(minValue, value));
 }
 
-function yieldToUI() {
-  return new Promise((resolve) => setTimeout(resolve, 0));
+function coreLerp(a, b, t) {
+  return a + (b - a) * t;
 }
 
-function* buildSceneSteps(targetWidth, targetHeight, seed, buildOpts = {}) {
-  const holesPx = holes.map((hole) => ({
-    x: hole.x * targetWidth,
-    y: hole.y * targetHeight,
-    radius: hole.radius,
-    coreRadiusPx: getHoleCoreRadiusPx(hole, targetWidth, targetHeight),
-    influenceSpreadPx: getHoleInfluenceSpreadPx(hole, targetWidth, targetHeight),
-    strength: hole.strength,
-    waveAmp: hole.waveAmp,
-    phase: hole.phase
-  }));
-
-  const flatMode = isFlatFieldMode();
-
-  noiseSeed(seed);
-  randomSeed(seed + 12345);
-
-  let gridStep = getGridStep(targetWidth, targetHeight, flatMode);
-  let adapted = false;
-  let estimate = estimateWork(targetWidth, targetHeight, gridStep, params.NUM_RINGS, holes.length);
-  if (buildOpts && buildOpts.budget) {
-    const eff = getEffectiveGridStep(targetWidth, targetHeight, flatMode, buildOpts.budget);
-    gridStep = eff.gridStep;
-    adapted = eff.adapted;
-    estimate = eff.estimate;
-  }
-  const cols = floor(targetWidth / gridStep) + 2;
-  const rows = floor(targetHeight / gridStep) + 2;
-  const field = new Float32Array(cols * rows);
-  let minField = Infinity;
-  let maxField = -Infinity;
-
-  for (let gy = 0; gy < rows; gy++) {
-    const y = gy * gridStep;
-    for (let gx = 0; gx < cols; gx++) {
-      const x = gx * gridStep;
-      const value = flatMode
-        ? sampleFlatFieldAt(x, y, targetWidth, targetHeight, holesPx)
-        : sampleFieldAt(x, y, targetWidth, targetHeight, holesPx, seed, false);
-      const idx = gy * cols + gx;
-      field[idx] = value;
-      if (value < minField) minField = value;
-      if (value > maxField) maxField = value;
-    }
-    if (gy % 16 === 15) yield { phase: 'field', ratio: (gy + 1) / rows };
-  }
-
-  const thresholds = flatMode
-    ? buildFlatThresholds(targetWidth, targetHeight, holesPx, gridStep)
-    : buildThresholds(minField, maxField, false);
-  let contours = [];
-  for (let i = 0; i < thresholds.length; i++) {
-    const paths = marchingSquaresPaths(field, cols, rows, gridStep, thresholds[i]);
-    for (let j = 0; j < paths.length; j++) {
-      if (paths[j].points.length >= 4) contours.push(paths[j]);
-    }
-    if (i % 4 === 3) yield { phase: 'contours', ratio: (i + 1) / thresholds.length };
-  }
-
-  if (flatMode) {
-    contours = filterContoursForFlatMode(contours, targetWidth, targetHeight, gridStep)
-      .map((path) => smoothPathObject(path, 3, 0.42));
-  }
-
-  if (params.ENABLE_CIRCULARIZE && params.CIRCULARIZE_MIX > 0.0001) {
-    contours = contours.map((path) => circularizePathObject(path, params.CIRCULARIZE_MIX));
-  }
-
-  const textureDots = buildTextureDots(targetWidth, targetHeight, params.TEXTURE_POINTS, seed + 987654321);
-  return { contours, textureDots, holesPx, gridStep, adapted, estimate };
+function coreMapValue(value, start1, stop1, start2, stop2, clampFlag) {
+  let t = (value - start1) / (stop1 - start1);
+  if (clampFlag) t = Math.min(1, Math.max(0, t));
+  return start2 + t * (stop2 - start2);
 }
 
-function estimateWork(targetWidth, targetHeight, gridStep, rings, holeCount) {
+function coreNoiseSeed(core, seed) {
+  core.noiseLcgZ = (seed == null ? Math.random() * 4294967296 : seed) >>> 0;
+  const perlin = new Float64Array(4096);
+  for (let i = 0; i < 4096; i++) {
+    core.noiseLcgZ = (1664525 * core.noiseLcgZ + 1013904223) % 4294967296;
+    perlin[i] = core.noiseLcgZ / 4294967296;
+  }
+  core.perlin = perlin;
+}
+
+function coreNoise(core, x, y, z) {
+  const PERLIN_YWRAPB = 4;
+  const PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
+  const PERLIN_ZWRAPB = 8;
+  const PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
+  const PERLIN_SIZE = 4095;
+  if (z === undefined) z = 0;
+  if (core.perlin == null) {
+    const perlin = new Float64Array(4096);
+    for (let i = 0; i < 4096; i++) perlin[i] = Math.random();
+    core.perlin = perlin;
+  }
+  const perlin = core.perlin;
+  if (x < 0) x = -x;
+  if (y < 0) y = -y;
+  if (z < 0) z = -z;
+  let xi = Math.floor(x);
+  let yi = Math.floor(y);
+  let zi = Math.floor(z);
+  let xf = x - xi;
+  let yf = y - yi;
+  let zf = z - zi;
+  let r = 0;
+  let ampl = 0.5;
+  let n1 = 0;
+  let n2 = 0;
+  let n3 = 0;
+  for (let o = 0; o < 4; o++) {
+    let of = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
+    const rxf = 0.5 * (1 - Math.cos(xf * Math.PI));
+    const ryf = 0.5 * (1 - Math.cos(yf * Math.PI));
+    n1 = perlin[of & PERLIN_SIZE];
+    n1 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n1);
+    n2 = perlin[(of + PERLIN_YWRAP) & PERLIN_SIZE];
+    n2 += rxf * (perlin[(of + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n2);
+    n1 += ryf * (n2 - n1);
+    of += PERLIN_ZWRAP;
+    n2 = perlin[of & PERLIN_SIZE];
+    n2 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n2);
+    n3 = perlin[(of + PERLIN_YWRAP) & PERLIN_SIZE];
+    n3 += rxf * (perlin[(of + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n3);
+    n2 += ryf * (n3 - n2);
+    n1 += (0.5 * (1 - Math.cos(zf * Math.PI))) * (n2 - n1);
+    r += n1 * ampl;
+    ampl *= 0.5;
+    xi <<= 1; xf *= 2;
+    yi <<= 1; yf *= 2;
+    zi <<= 1; zf *= 2;
+    if (xf >= 1) { xi++; xf--; }
+    if (yf >= 1) { yi++; yf--; }
+    if (zf >= 1) { zi++; zf--; }
+  }
+  return r;
+}
+
+function coreRandomSeed(core, seed) {
+  core.rngZ = (seed == null ? Math.random() * 4294967296 : seed) >>> 0;
+}
+
+function coreRandomNext(core) {
+  core.rngZ = (1664525 * core.rngZ + 1013904223) % 4294967296;
+  return core.rngZ / 4294967296;
+}
+
+function coreRandom(core, min, max) {
+  const rand = coreRandomNext(core);
+  if (typeof min === 'undefined') return rand;
+  if (typeof max === 'undefined') {
+    if (Array.isArray(min)) return min[Math.floor(rand * min.length)];
+    return rand * min;
+  }
+  let lo = min;
+  let hi = max;
+  if (lo > hi) { const tmp = lo; lo = hi; hi = tmp; }
+  return rand * (hi - lo) + lo;
+}
+
+function coreHoleCoreRadiusPx(cp, radius, targetWidth, targetHeight) {
+  const minDim = Math.min(targetWidth, targetHeight);
+  const baseRadius = minDim * (0.018 + cp.OUTER_RADIUS_RATIO * 0.080);
+  return Math.max(6, baseRadius * radius);
+}
+
+function coreHoleInfluenceSpreadPx(cp, radius, targetWidth, targetHeight) {
+  const minDim = Math.min(targetWidth, targetHeight);
+  const spreadBase = minDim * (0.042 + cp.OUTER_RADIUS_RATIO * 0.26);
+  return Math.max(10, spreadBase * (0.68 + radius * 0.58));
+}
+
+function coreGetGridStep(cp, targetWidth, targetHeight, baseWidth, baseHeight, flatMode) {
+  const base = coreMapValue(cp.ANGLE_STEPS, 128, 2000, 18, 4, true);
+  const sizeScale = Math.sqrt((targetWidth * targetHeight) / Math.max(1, baseWidth * baseHeight));
+  const raw = base / Math.max(1, sizeScale * 0.85);
+  return flatMode ? Math.max(2, Math.round(raw * 0.6)) : Math.max(3, Math.round(raw));
+}
+
+function coreEstimateWork(targetWidth, targetHeight, gridStep, rings, holeCount) {
   const safeStep = Math.max(1, gridStep || 1);
   const cols = Math.floor(targetWidth / safeStep) + 2;
   const rows = Math.floor(targetHeight / safeStep) + 2;
@@ -1024,43 +1142,67 @@ function estimateWork(targetWidth, targetHeight, gridStep, rings, holeCount) {
   };
 }
 
-function getEffectiveGridStep(targetWidth, targetHeight, flatMode, budget) {
-  let step = getGridStep(targetWidth, targetHeight, flatMode);
-  let estimate = estimateWork(targetWidth, targetHeight, step, params.NUM_RINGS, holes.length);
+function coreEffectiveGridStep(cp, targetWidth, targetHeight, baseWidth, baseHeight, flatMode, budget, holeCount) {
+  let step = coreGetGridStep(cp, targetWidth, targetHeight, baseWidth, baseHeight, flatMode);
+  let estimate = coreEstimateWork(targetWidth, targetHeight, step, cp.NUM_RINGS, holeCount);
   let adapted = false;
   while (estimate.cellChecks > budget && step < 512) {
     step += 1;
     adapted = true;
-    estimate = estimateWork(targetWidth, targetHeight, step, params.NUM_RINGS, holes.length);
+    estimate = coreEstimateWork(targetWidth, targetHeight, step, cp.NUM_RINGS, holeCount);
   }
   return { gridStep: step, estimate, adapted };
 }
 
-function getGridStep(targetWidth, targetHeight, flatMode = false) {
-  const base = map(params.ANGLE_STEPS, 128, 2000, 18, 4, true);
-  const sizeScale = Math.sqrt((targetWidth * targetHeight) / Math.max(1, width * height));
-  const raw = base / Math.max(1, sizeScale * 0.85);
-  return flatMode ? Math.max(2, Math.round(raw * 0.6)) : Math.max(3, Math.round(raw));
+function coreIsFlatFieldMode(cp) {
+  return cp.NOISE_AMPLITUDE <= 0.0001;
 }
 
-function sampleFlatFieldAt(x, y, targetWidth, targetHeight, holesPx) {
-  const minDim = Math.min(targetWidth, targetHeight);
-  const smoothK = minDim * (0.018 + params.OUTER_RADIUS_RATIO * 0.028);
-  let sdf = Infinity;
+// Precompute every per-hole / global constant once per build.
+// cullCutoff = coreRadius + CULL_ND * spread: beyond it the skipped
+// contribution per hole is < ~5e-4 of field scale at default amplitude
+// (shoulder term dominates: 0.28 * strength * exp(-0.92 * 7) ~= 4.5e-4
+// at strength 1; wave term is ~2.6e-5). See coreSampleFieldAt.
+const CORE_CULL_ND = 7;
 
-  for (let i = 0; i < holesPx.length; i++) {
-    const hole = holesPx[i];
-    const radiusPx = hole.coreRadiusPx ?? getHoleCoreRadiusPx(hole, targetWidth, targetHeight);
-    const dx = x - hole.x;
-    const dy = y - hole.y;
-    const circleSdf = Math.hypot(dx, dy) - radiusPx;
-    sdf = smoothMinPoly(sdf, circleSdf, smoothK);
+function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
+  const holesPx = [];
+  for (let i = 0; i < holes.length; i++) {
+    const hole = holes[i];
+    const coreRadiusPx = coreHoleCoreRadiusPx(cp, hole.radius, targetWidth, targetHeight);
+    const spreadPx = coreHoleInfluenceSpreadPx(cp, hole.radius, targetWidth, targetHeight);
+    const spreadDenom = Math.max(1, spreadPx);
+    const cutoff = coreRadiusPx + CORE_CULL_ND * spreadDenom;
+    holesPx.push({
+      x: hole.x * targetWidth,
+      y: hole.y * targetHeight,
+      radius: hole.radius,
+      coreRadiusPx: coreRadiusPx,
+      influenceSpreadPx: spreadPx,
+      strength: hole.strength,
+      waveAmp: hole.waveAmp,
+      phase: hole.phase,
+      spreadDenom: spreadDenom,
+      cutoffSq: cutoff * cutoff
+    });
   }
-
-  return Math.max(0, sdf);
+  const minDim = Math.min(targetWidth, targetHeight);
+  return {
+    holesPx: holesPx,
+    waveScratch: new Float64Array(holesPx.length),
+    waveFreq: (1.0 + cp.NOISE_FREQ * 1.15) * (Math.PI * 2) * cp.WAVE_DETAIL,
+    waveNoiseAmp: cp.NOISE_AMPLITUDE,
+    waveEnvCoef: 1.0 + 0.35 / Math.max(0.25, cp.CENTER_BULGE),
+    noiseFreq: 0.0032 * cp.NOISE_FREQ,
+    noiseOffX: seed * 1e-6,
+    noiseOffY: seed * 2e-6,
+    interference: !!(cp.ENABLE_INTERFERENCE && holesPx.length > 1 && cp.INTERFERENCE_BOOST > 0.0001),
+    interferenceFactor: 0.22 * cp.INTERFERENCE_BOOST,
+    flatSmoothK: minDim * (0.018 + cp.OUTER_RADIUS_RATIO * 0.028)
+  };
 }
 
-function smoothMinPoly(a, b, k) {
+function coreSmoothMinPoly(a, b, k) {
   if (!isFinite(a)) return b;
   if (!isFinite(b)) return a;
   if (k <= 0.0001) return Math.min(a, b);
@@ -1068,112 +1210,141 @@ function smoothMinPoly(a, b, k) {
   return Math.min(a, b) - (h * h * k * 0.25);
 }
 
-function sampleFieldAt(x, y, targetWidth, targetHeight, holesPx, seed, flatMode = false) {
-  const waveFreq = (1.0 + params.NOISE_FREQ * 1.15) * TWO_PI * params.WAVE_DETAIL;
-  const waveNoiseAmp = flatMode ? 0 : params.NOISE_AMPLITUDE;
+function coreSampleFlatFieldAt(prep, x, y) {
+  let sdf = Infinity;
+  const holesPx = prep.holesPx;
+  for (let i = 0; i < holesPx.length; i++) {
+    const hole = holesPx[i];
+    const dx = x - hole.x;
+    const dy = y - hole.y;
+    const circleSdf = Math.hypot(dx, dy) - hole.coreRadiusPx;
+    sdf = coreSmoothMinPoly(sdf, circleSdf, prep.flatSmoothK);
+  }
+  return Math.max(0, sdf);
+}
+
+function coreSampleFieldAt(core, prep, x, y, cull) {
+  const holesPx = prep.holesPx;
+  const waveTerms = prep.waveScratch;
+  const waveFreq = prep.waveFreq;
+  const waveNoiseAmp = prep.waveNoiseAmp;
   let value = 0;
-  const waveTerms = [];
 
   for (let i = 0; i < holesPx.length; i++) {
     const hole = holesPx[i];
     const dx = x - hole.x;
     const dy = y - hole.y;
+    const distSq = dx * dx + dy * dy;
+    if (cull && distSq > hole.cutoffSq) {
+      waveTerms[i] = 0;
+      continue;
+    }
     const dist = Math.hypot(dx, dy) + 0.0001;
-    const coreRadiusPx = hole.coreRadiusPx ?? getHoleCoreRadiusPx(hole, targetWidth, targetHeight);
-    const spread = hole.influenceSpreadPx ?? getHoleInfluenceSpreadPx(hole, targetWidth, targetHeight);
-    const edgeDist = Math.max(0, dist - coreRadiusPx);
-    const nd = edgeDist / Math.max(1, spread);
+    const edgeDist = Math.max(0, dist - hole.coreRadiusPx);
+    const nd = edgeDist / hole.spreadDenom;
 
-    const core = hole.strength * Math.exp(-nd * nd * 1.55);
+    const coreTerm = hole.strength * Math.exp(-nd * nd * 1.55);
     const shoulder = hole.strength * 0.28 * Math.exp(-nd * 0.92);
-    const waveEnv = Math.exp(-nd * (1.0 + 0.35 / Math.max(0.25, params.CENTER_BULGE)));
+    const waveEnv = Math.exp(-nd * prep.waveEnvCoef);
     const wave = Math.sin(nd * waveFreq + hole.phase) * hole.waveAmp * waveNoiseAmp * 2.35;
     const waveTerm = hole.strength * wave * waveEnv;
 
-    value += core + shoulder + waveTerm;
-    waveTerms.push(waveTerm);
+    value += coreTerm + shoulder + waveTerm;
+    waveTerms[i] = waveTerm;
   }
 
-  if (!flatMode && params.ENABLE_INTERFERENCE && holesPx.length > 1 && params.INTERFERENCE_BOOST > 0.0001) {
+  if (prep.interference) {
     let pairTerm = 0;
     for (let i = 0; i < waveTerms.length; i++) {
+      const wi = waveTerms[i];
+      if (wi === 0) continue;
       for (let j = i + 1; j < waveTerms.length; j++) {
-        pairTerm += waveTerms[i] * waveTerms[j];
+        pairTerm += wi * waveTerms[j];
       }
     }
-    value += pairTerm * 0.22 * params.INTERFERENCE_BOOST;
+    value += pairTerm * prep.interferenceFactor;
   }
 
-  const noiseFreq = 0.0032 * params.NOISE_FREQ;
-  const backgroundNoise = noise(
-    x * noiseFreq + seed * 1e-6,
-    y * noiseFreq + seed * 2e-6
-  );
+  const backgroundNoise = coreNoise(core, x * prep.noiseFreq + prep.noiseOffX, y * prep.noiseFreq + prep.noiseOffY, 0);
   value += (backgroundNoise - 0.5) * waveNoiseAmp * 0.55;
 
   return value;
 }
 
-function getHoleCoreRadiusPx(hole, targetWidth = width, targetHeight = height) {
+function coreBuildFlatThresholds(cp, targetWidth, targetHeight, gridStep) {
+  const count = Math.max(2, Math.trunc(cp.NUM_RINGS));
   const minDim = Math.min(targetWidth, targetHeight);
-  const baseRadius = minDim * (0.018 + params.OUTER_RADIUS_RATIO * 0.080);
-  return Math.max(6, baseRadius * hole.radius);
-}
-
-function getHoleInfluenceSpreadPx(hole, targetWidth = width, targetHeight = height) {
-  const minDim = Math.min(targetWidth, targetHeight);
-  const spreadBase = minDim * (0.042 + params.OUTER_RADIUS_RATIO * 0.26);
-  return Math.max(10, spreadBase * (0.68 + hole.radius * 0.58));
-}
-
-function buildFlatThresholds(targetWidth, targetHeight, holesPx, gridStep) {
-  const count = Math.max(2, int(params.NUM_RINGS));
-  const minDim = Math.min(targetWidth, targetHeight);
-  const outerDist = minDim * (0.030 + params.OUTER_RADIUS_RATIO * 0.22);
+  const outerDist = minDim * (0.030 + cp.OUTER_RADIUS_RATIO * 0.22);
   const low = Math.max(gridStep * 0.9, 2.0);
   const high = Math.max(low + 1, outerDist);
   const thresholds = [];
   for (let i = 0; i < count; i++) {
     const t = count === 1 ? 0 : i / (count - 1);
-    thresholds.push(lerp(low, high, t));
+    thresholds.push(coreLerp(low, high, t));
   }
   return thresholds;
 }
 
-function buildThresholds(minField, maxField, flatMode = false) {
+function coreBuildThresholds(cp, minField, maxField, flatMode) {
   const range = Math.max(1e-6, maxField - minField);
   const thresholds = [];
-  const count = Math.max(2, int(params.NUM_RINGS));
+  const count = Math.max(2, Math.trunc(cp.NUM_RINGS));
   const high = maxField - range * 0.018;
-  const lowFrac = flatMode ? (0.12 + (1.0 - params.OUTER_RADIUS_RATIO) * 0.12) : (0.06 + (1.0 - params.OUTER_RADIUS_RATIO) * 0.22);
+  const lowFrac = flatMode ? (0.12 + (1.0 - cp.OUTER_RADIUS_RATIO) * 0.12) : (0.06 + (1.0 - cp.OUTER_RADIUS_RATIO) * 0.22);
   const low = minField + range * lowFrac;
-  const exponent = flatMode ? 1.0 : Math.max(0.18, 1.18 * params.CENTER_BULGE);
+  const exponent = flatMode ? 1.0 : Math.max(0.18, 1.18 * cp.CENTER_BULGE);
 
   for (let i = 0; i < count; i++) {
     const t = count === 1 ? 0 : i / (count - 1);
     const eased = Math.pow(t, exponent);
-    thresholds.push(lerp(high, low, eased));
+    thresholds.push(coreLerp(high, low, eased));
   }
   return thresholds;
 }
 
-function isFlatFieldMode() {
-  return params.NOISE_AMPLITUDE <= 0.0001;
+function corePathArea(pts) {
+  if (!pts || pts.length < 3) return 0;
+  let area = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i];
+    const b = pts[(i + 1) % pts.length];
+    area += a.x * b.y - b.x * a.y;
+  }
+  return area * 0.5;
 }
 
-function filterContoursForFlatMode(contours, targetWidth, targetHeight, gridStep) {
+function corePathLength(pts) {
+  if (!pts || pts.length < 2) return 0;
+  let total = 0;
+  for (let i = 1; i < pts.length; i++) {
+    total += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+  }
+  return total;
+}
+
+function coreTouchesBoundary(pts, w, h, margin) {
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i];
+    if (p.x <= margin || p.y <= margin || p.x >= w - margin || p.y >= h - margin) return true;
+  }
+  return false;
+}
+
+function coreFilterFlatContours(contours, targetWidth, targetHeight, gridStep) {
   const minClosedArea = Math.max(48, gridStep * gridStep * 5.0);
   const minOpenLength = Math.max(gridStep * 5.0, 40);
   return contours.filter((path) => {
     if (!path || path.points.length < 4) return false;
     if (path.closed) {
-      return Math.abs(pathArea(path.points)) >= minClosedArea;
+      return Math.abs(corePathArea(path.points)) >= minClosedArea;
     }
-    return pathLength(path.points) >= minOpenLength && !touchesBoundary(path.points, targetWidth, targetHeight, gridStep * 0.55);
+    return corePathLength(path.points) >= minOpenLength && !coreTouchesBoundary(path.points, targetWidth, targetHeight, gridStep * 0.55);
   });
 }
 
-function smoothPathObject(pathObj, passes = 1, mix = 0.35) {
+function coreSmoothPathObject(pathObj, passes, mix) {
+  if (passes === undefined) passes = 1;
+  if (mix === undefined) mix = 0.35;
   if (!pathObj || pathObj.points.length < 3) return pathObj;
   let pts = pathObj.points.slice();
   for (let pass = 0; pass < passes; pass++) {
@@ -1190,8 +1361,8 @@ function smoothPathObject(pathObj, passes = 1, mix = 0.35) {
       const avgX = (prev.x + cur.x + following.x) / 3;
       const avgY = (prev.y + cur.y + following.y) / 3;
       next.push({
-        x: lerp(cur.x, avgX, mix),
-        y: lerp(cur.y, avgY, mix)
+        x: coreLerp(cur.x, avgX, mix),
+        y: coreLerp(cur.y, avgY, mix)
       });
     }
     pts = next;
@@ -1199,190 +1370,7 @@ function smoothPathObject(pathObj, passes = 1, mix = 0.35) {
   return { points: pts, closed: pathObj.closed };
 }
 
-function pathArea(pts) {
-  if (!pts || pts.length < 3) return 0;
-  let area = 0;
-  for (let i = 0; i < pts.length; i++) {
-    const a = pts[i];
-    const b = pts[(i + 1) % pts.length];
-    area += a.x * b.y - b.x * a.y;
-  }
-  return area * 0.5;
-}
-
-function pathLength(pts) {
-  if (!pts || pts.length < 2) return 0;
-  let total = 0;
-  for (let i = 1; i < pts.length; i++) {
-    total += dist(pts[i - 1].x, pts[i - 1].y, pts[i].x, pts[i].y);
-  }
-  return total;
-}
-
-function touchesBoundary(pts, w, h, margin) {
-  for (let i = 0; i < pts.length; i++) {
-    const p = pts[i];
-    if (p.x <= margin || p.y <= margin || p.x >= w - margin || p.y >= h - margin) return true;
-  }
-  return false;
-}
-
-function marchingSquaresPaths(field, cols, rows, step, threshold) {
-  const segments = [];
-
-  for (let gy = 0; gy < rows - 1; gy++) {
-    for (let gx = 0; gx < cols - 1; gx++) {
-      const idx = gy * cols + gx;
-      const va = field[idx];
-      const vb = field[idx + 1];
-      const vc = field[idx + cols + 1];
-      const vd = field[idx + cols];
-
-      const a = { x: gx * step, y: gy * step };
-      const b = { x: (gx + 1) * step, y: gy * step };
-      const c = { x: (gx + 1) * step, y: (gy + 1) * step };
-      const d = { x: gx * step, y: (gy + 1) * step };
-
-      const mask = ((va >= threshold) << 3) | ((vb >= threshold) << 2) | ((vc >= threshold) << 1) | (vd >= threshold);
-      if (mask === 0 || mask === 15) continue;
-
-      const pTop = interpPoint(a, b, va, vb, threshold);
-      const pRight = interpPoint(b, c, vb, vc, threshold);
-      const pBottom = interpPoint(d, c, vd, vc, threshold);
-      const pLeft = interpPoint(a, d, va, vd, threshold);
-      const centerValue = (va + vb + vc + vd) * 0.25;
-
-      switch (mask) {
-        case 1: segments.push([pLeft, pBottom]); break;
-        case 2: segments.push([pBottom, pRight]); break;
-        case 3: segments.push([pLeft, pRight]); break;
-        case 4: segments.push([pTop, pRight]); break;
-        case 5:
-          if (centerValue >= threshold) {
-            segments.push([pTop, pLeft], [pBottom, pRight]);
-          } else {
-            segments.push([pTop, pRight], [pLeft, pBottom]);
-          }
-          break;
-        case 6: segments.push([pTop, pBottom]); break;
-        case 7: segments.push([pTop, pLeft]); break;
-        case 8: segments.push([pTop, pLeft]); break;
-        case 9: segments.push([pTop, pBottom]); break;
-        case 10:
-          if (centerValue >= threshold) {
-            segments.push([pTop, pRight], [pLeft, pBottom]);
-          } else {
-            segments.push([pTop, pLeft], [pBottom, pRight]);
-          }
-          break;
-        case 11: segments.push([pTop, pRight]); break;
-        case 12: segments.push([pLeft, pRight]); break;
-        case 13: segments.push([pBottom, pRight]); break;
-        case 14: segments.push([pLeft, pBottom]); break;
-      }
-    }
-  }
-
-  return stitchSegmentsToPaths(segments, step);
-}
-
-function interpPoint(p1, p2, v1, v2, threshold) {
-  if (Math.abs(v2 - v1) < 1e-9) return { x: (p1.x + p2.x) * 0.5, y: (p1.y + p2.y) * 0.5 };
-  const t = (threshold - v1) / (v2 - v1);
-  return {
-    x: p1.x + (p2.x - p1.x) * t,
-    y: p1.y + (p2.y - p1.y) * t
-  };
-}
-
-function stitchSegmentsToPaths(segments, step) {
-  const adjacency = new Map();
-  const used = new Array(segments.length).fill(false);
-
-  for (let i = 0; i < segments.length; i++) {
-    const seg = segments[i];
-    const k0 = pointKey(seg[0], step);
-    const k1 = pointKey(seg[1], step);
-    if (!adjacency.has(k0)) adjacency.set(k0, []);
-    if (!adjacency.has(k1)) adjacency.set(k1, []);
-    adjacency.get(k0).push({ segIndex: i, end: 0 });
-    adjacency.get(k1).push({ segIndex: i, end: 1 });
-  }
-
-  const paths = [];
-  for (let i = 0; i < segments.length; i++) {
-    if (used[i]) continue;
-    used[i] = true;
-    const seg = segments[i];
-    const path = [seg[0], seg[1]];
-    extendPath(path, adjacency, segments, used, true, step);
-    extendPath(path, adjacency, segments, used, false, step);
-    const normalized = normalizePath(path, step);
-    if (normalized.points.length >= 2) paths.push(normalized);
-  }
-  return paths;
-}
-
-function extendPath(path, adjacency, segments, used, extendTail, step) {
-  while (true) {
-    const anchor = extendTail ? path[path.length - 1] : path[0];
-    const items = adjacency.get(pointKey(anchor, step)) || [];
-    let found = null;
-
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (used[item.segIndex]) continue;
-      found = item;
-      break;
-    }
-
-    if (!found) break;
-
-    used[found.segIndex] = true;
-    const seg = segments[found.segIndex];
-    const nextPoint = found.end === 0 ? seg[1] : seg[0];
-
-    if (extendTail) {
-      path.push(nextPoint);
-    } else {
-      path.unshift(nextPoint);
-    }
-  }
-}
-
-function normalizePath(path, step) {
-  if (!path || path.length < 2) return { points: [], closed: false };
-  const pts = path.slice();
-  const tolerance = Math.max(0.8, step * 0.45);
-  const first = pts[0];
-  const last = pts[pts.length - 1];
-  const closed = dist(first.x, first.y, last.x, last.y) <= tolerance;
-
-  if (closed) {
-    pts[pts.length - 1] = { x: first.x, y: first.y };
-    if (pts.length >= 3) pts.pop();
-  }
-
-  return { points: dedupeSequentialPoints(pts, tolerance * 0.25), closed };
-}
-
-function dedupeSequentialPoints(pts, tolerance) {
-  if (pts.length <= 1) return pts.slice();
-  const out = [pts[0]];
-  for (let i = 1; i < pts.length; i++) {
-    const prev = out[out.length - 1];
-    const cur = pts[i];
-    if (dist(prev.x, prev.y, cur.x, cur.y) > tolerance) out.push(cur);
-  }
-  return out;
-}
-
-function pointKey(pt, step) {
-  const precision = Math.max(2, Math.ceil(8 / Math.max(1, step)) + 2);
-  return `${pt.x.toFixed(precision)}:${pt.y.toFixed(precision)}`;
-}
-
-function circularizePathObject(pathObj, mix) {
+function coreCircularizePathObject(cp, pathObj, mix) {
   if (!pathObj.closed || pathObj.points.length < 8) return pathObj;
 
   const pts = pathObj.points;
@@ -1400,7 +1388,7 @@ function circularizePathObject(pathObj, mix) {
     radiusSum += Math.hypot(pts[i].x - cx, pts[i].y - cy);
   }
   const avgRadius = Math.max(0.0001, radiusSum / pts.length);
-  const blend = clamp(mix, 0, 1);
+  const blend = coreClamp(mix, 0, 1);
 
   const newPts = pts.map((pt) => {
     const dx = pt.x - cx;
@@ -1409,52 +1397,743 @@ function circularizePathObject(pathObj, mix) {
     const circleX = cx + Math.cos(ang) * avgRadius;
     const circleY = cy + Math.sin(ang) * avgRadius;
     return {
-      x: lerp(pt.x, circleX, blend),
-      y: lerp(pt.y, circleY, blend)
+      x: coreLerp(pt.x, circleX, blend),
+      y: coreLerp(pt.y, circleY, blend)
     };
   });
 
   return { points: newPts, closed: true };
 }
 
-function buildTextureDots(w, h, count, seed) {
-  randomSeed(seed);
+// Point identity for stitching: coordinates quantized to the
+// same decimal precision the pre-v3 implementation used for its
+// string keys (precision = max(2, ceil(8 / step) + 2) digits).
+// Adjacency uses a two-level Map (qx -> qy -> segment ends), so
+// there is no key-packing range limit at any canvas size, and no
+// string allocation. Identical endpoint floats always quantize
+// identically; distinct crossings stay distinct down to
+// 10^-precision px (0.001 px at the default grid step).
+function coreStitchScale(step) {
+  const precision = Math.max(2, Math.ceil(8 / Math.max(1, step)) + 2);
+  return Math.pow(10, precision);
+}
+
+function coreQuantizeCoord(value, scale) {
+  return Math.round(value * scale);
+}
+
+function coreInterpCoord(p1, p2, v1, v2, threshold) {
+  if (Math.abs(v2 - v1) < 1e-9) return (p1 + p2) * 0.5;
+  const t = (threshold - v1) / (v2 - v1);
+  return p1 + (p2 - p1) * t;
+}
+
+// Marching squares over one threshold. Segments are stored in a
+// flat number array [x1, y1, x2, y2, ...]; no per-cell objects.
+function coreMarchingSquaresPaths(field, cols, rows, step, threshold) {
+  const segments = [];
+  const edge = new Float64Array(8); // top, right, bottom, left (x,y pairs)
+
+  for (let gy = 0; gy < rows - 1; gy++) {
+    const y0 = gy * step;
+    const y1 = (gy + 1) * step;
+    for (let gx = 0; gx < cols - 1; gx++) {
+      const idx = gy * cols + gx;
+      const va = field[idx];
+      const vb = field[idx + 1];
+      const vc = field[idx + cols + 1];
+      const vd = field[idx + cols];
+
+      const mask = ((va >= threshold) << 3) | ((vb >= threshold) << 2) | ((vc >= threshold) << 1) | (vd >= threshold);
+      if (mask === 0 || mask === 15) continue;
+
+      const x0 = gx * step;
+      const x1 = (gx + 1) * step;
+      // top edge a->b, right edge b->c, bottom edge d->c, left edge a->d
+      edge[0] = coreInterpCoord(x0, x1, va, vb, threshold); edge[1] = y0;
+      edge[2] = x1; edge[3] = coreInterpCoord(y0, y1, vb, vc, threshold);
+      edge[4] = coreInterpCoord(x0, x1, vd, vc, threshold); edge[5] = y1;
+      edge[6] = x0; edge[7] = coreInterpCoord(y0, y1, va, vd, threshold);
+      const centerValue = (va + vb + vc + vd) * 0.25;
+
+      const T = 0, R = 2, B = 4, L = 6;
+      switch (mask) {
+        case 1: segments.push(edge[L], edge[L + 1], edge[B], edge[B + 1]); break;
+        case 2: segments.push(edge[B], edge[B + 1], edge[R], edge[R + 1]); break;
+        case 3: segments.push(edge[L], edge[L + 1], edge[R], edge[R + 1]); break;
+        case 4: segments.push(edge[T], edge[T + 1], edge[R], edge[R + 1]); break;
+        case 5:
+          if (centerValue >= threshold) {
+            segments.push(edge[T], edge[T + 1], edge[L], edge[L + 1], edge[B], edge[B + 1], edge[R], edge[R + 1]);
+          } else {
+            segments.push(edge[T], edge[T + 1], edge[R], edge[R + 1], edge[L], edge[L + 1], edge[B], edge[B + 1]);
+          }
+          break;
+        case 6: segments.push(edge[T], edge[T + 1], edge[B], edge[B + 1]); break;
+        case 7: segments.push(edge[T], edge[T + 1], edge[L], edge[L + 1]); break;
+        case 8: segments.push(edge[T], edge[T + 1], edge[L], edge[L + 1]); break;
+        case 9: segments.push(edge[T], edge[T + 1], edge[B], edge[B + 1]); break;
+        case 10:
+          if (centerValue >= threshold) {
+            segments.push(edge[T], edge[T + 1], edge[R], edge[R + 1], edge[L], edge[L + 1], edge[B], edge[B + 1]);
+          } else {
+            segments.push(edge[T], edge[T + 1], edge[L], edge[L + 1], edge[B], edge[B + 1], edge[R], edge[R + 1]);
+          }
+          break;
+        case 11: segments.push(edge[T], edge[T + 1], edge[R], edge[R + 1]); break;
+        case 12: segments.push(edge[L], edge[L + 1], edge[R], edge[R + 1]); break;
+        case 13: segments.push(edge[B], edge[B + 1], edge[R], edge[R + 1]); break;
+        case 14: segments.push(edge[L], edge[L + 1], edge[B], edge[B + 1]); break;
+      }
+    }
+  }
+
+  return coreStitchSegmentsToPaths(segments, step);
+}
+
+function coreStitchSegmentsToPaths(segments, step) {
+  const segCount = segments.length / 4;
+  const scale = coreStitchScale(step);
+  const adjacency = new Map();
+  const used = new Uint8Array(segCount);
+
+  const adjList = (x, y, create) => {
+    const qx = coreQuantizeCoord(x, scale);
+    const qy = coreQuantizeCoord(y, scale);
+    let inner = adjacency.get(qx);
+    if (!inner) {
+      if (!create) return null;
+      inner = new Map();
+      adjacency.set(qx, inner);
+    }
+    let list = inner.get(qy);
+    if (!list) {
+      if (!create) return null;
+      list = [];
+      inner.set(qy, list);
+    }
+    return list;
+  };
+
+  for (let i = 0; i < segCount; i++) {
+    const o = i * 4;
+    adjList(segments[o], segments[o + 1], true).push(i * 2);
+    adjList(segments[o + 2], segments[o + 3], true).push(i * 2 + 1);
+  }
+
+  const paths = [];
+  for (let i = 0; i < segCount; i++) {
+    if (used[i]) continue;
+    used[i] = 1;
+    const o = i * 4;
+    const path = [segments[o], segments[o + 1], segments[o + 2], segments[o + 3]];
+    coreExtendFlatPath(path, adjList, segments, used, true);
+    coreExtendFlatPath(path, adjList, segments, used, false);
+    const normalized = coreNormalizeFlatPath(path, step);
+    if (normalized.points.length >= 2) paths.push(normalized);
+  }
+  return paths;
+}
+
+function coreExtendFlatPath(path, adjList, segments, used, extendTail) {
+  while (true) {
+    const anchorIdx = extendTail ? path.length - 2 : 0;
+    const items = adjList(path[anchorIdx], path[anchorIdx + 1], false) || [];
+    let found = -1;
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (used[item >> 1]) continue;
+      found = item;
+      break;
+    }
+
+    if (found < 0) break;
+
+    used[found >> 1] = 1;
+    const o = (found >> 1) * 4;
+    const nextIdx = (found % 2 === 0) ? o + 2 : o;
+
+    if (extendTail) {
+      path.push(segments[nextIdx], segments[nextIdx + 1]);
+    } else {
+      path.unshift(segments[nextIdx], segments[nextIdx + 1]);
+    }
+  }
+}
+
+function coreNormalizeFlatPath(path, step) {
+  if (!path || path.length < 4) return { points: [], closed: false };
+  const pts = path.slice();
+  const tolerance = Math.max(0.8, step * 0.45);
+  const firstX = pts[0];
+  const firstY = pts[1];
+  const lastX = pts[pts.length - 2];
+  const lastY = pts[pts.length - 1];
+  const closed = Math.hypot(firstX - lastX, firstY - lastY) <= tolerance;
+
+  let pointCount = pts.length / 2;
+  if (closed) {
+    pts[pts.length - 2] = firstX;
+    pts[pts.length - 1] = firstY;
+    if (pointCount >= 3) {
+      pts.length -= 2;
+      pointCount -= 1;
+    }
+  }
+
+  const dedupeTol = tolerance * 0.25;
+  const out = [{ x: pts[0], y: pts[1] }];
+  for (let i = 1; i < pointCount; i++) {
+    const prev = out[out.length - 1];
+    const x = pts[i * 2];
+    const y = pts[i * 2 + 1];
+    if (Math.hypot(x - prev.x, y - prev.y) > dedupeTol) out.push({ x: x, y: y });
+  }
+
+  return { points: out, closed: closed };
+}
+
+function coreBuildTextureDots(core, w, h, count, seed) {
+  coreRandomSeed(core, seed);
   const dots = [];
   for (let i = 0; i < count; i++) {
     dots.push({
-      x: random(w),
-      y: random(h),
-      s: random(0.4, 2.0)
+      x: coreRandom(core, w),
+      y: coreRandom(core, h),
+      s: coreRandom(core, 0.4, 2.0)
     });
   }
   return dots;
 }
 
-function draw() {
-  background(0);
+function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, buildOpts) {
+  const opts = buildOpts || {};
+  const prep = corePrepareField(cp, holes, targetWidth, targetHeight, seed);
+  const holesPx = prep.holesPx.map((h) => ({
+    x: h.x,
+    y: h.y,
+    radius: h.radius,
+    coreRadiusPx: h.coreRadiusPx,
+    influenceSpreadPx: h.influenceSpreadPx,
+    strength: h.strength,
+    waveAmp: h.waveAmp,
+    phase: h.phase
+  }));
 
-  if (params.SHOW_TEXTURE) {
-    drawFaintTexture(null, scene.textureDots);
+  const flatMode = coreIsFlatFieldMode(cp);
+  const cull = opts.cull !== false;
+
+  coreNoiseSeed(core, seed);
+  coreRandomSeed(core, seed + 12345);
+
+  const gridStep = opts.gridStep || coreGetGridStep(cp, targetWidth, targetHeight, opts.baseW || targetWidth, opts.baseH || targetHeight, flatMode);
+  const cols = Math.floor(targetWidth / gridStep) + 2;
+  const rows = Math.floor(targetHeight / gridStep) + 2;
+  const field = new Float32Array(cols * rows);
+  let minField = Infinity;
+  let maxField = -Infinity;
+
+  for (let gy = 0; gy < rows; gy++) {
+    const y = gy * gridStep;
+    for (let gx = 0; gx < cols; gx++) {
+      const x = gx * gridStep;
+      const value = flatMode
+        ? coreSampleFlatFieldAt(prep, x, y)
+        : coreSampleFieldAt(core, prep, x, y, cull);
+      const idx = gy * cols + gx;
+      field[idx] = value;
+      if (value < minField) minField = value;
+      if (value > maxField) maxField = value;
+    }
+    if (gy % 16 === 15) yield { phase: 'field', ratio: (gy + 1) / rows };
   }
 
+  const thresholds = flatMode
+    ? coreBuildFlatThresholds(cp, targetWidth, targetHeight, gridStep)
+    : coreBuildThresholds(cp, minField, maxField, false);
+  let contours = [];
+  for (let i = 0; i < thresholds.length; i++) {
+    const paths = coreMarchingSquaresPaths(field, cols, rows, gridStep, thresholds[i]);
+    for (let j = 0; j < paths.length; j++) {
+      if (paths[j].points.length >= 4) contours.push(paths[j]);
+    }
+    if (i % 4 === 3) yield { phase: 'contours', ratio: (i + 1) / thresholds.length };
+  }
+
+  if (flatMode) {
+    contours = coreFilterFlatContours(contours, targetWidth, targetHeight, gridStep)
+      .map((path) => coreSmoothPathObject(path, 3, 0.42));
+  }
+
+  if (cp.ENABLE_CIRCULARIZE && cp.CIRCULARIZE_MIX > 0.0001) {
+    contours = contours.map((path) => coreCircularizePathObject(cp, path, cp.CIRCULARIZE_MIX));
+  }
+
+  const textureDots = coreBuildTextureDots(core, targetWidth, targetHeight, cp.TEXTURE_POINTS, seed + 987654321);
+  return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep };
+}
+
+function coreBuildScene(core, cp, holes, seed, targetWidth, targetHeight, buildOpts) {
+  const gen = coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, buildOpts || {});
+  let result = gen.next();
+  while (!result.done) result = gen.next();
+  return result.value;
+}
+
+// Flatten a scene into transferable typed arrays (Worker -> main).
+function flattenScene(scene) {
+  let totalPoints = 0;
+  for (let i = 0; i < scene.contours.length; i++) totalPoints += scene.contours[i].points.length;
+  const coords = new Float64Array(totalPoints * 2);
+  const counts = new Uint32Array(scene.contours.length);
+  const closed = new Uint8Array(scene.contours.length);
+  let o = 0;
   for (let i = 0; i < scene.contours.length; i++) {
     const contour = scene.contours[i];
-    if (params.SHOW_RED_SHADOW) {
-      stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
-      strokeWeight(params.WHITE_STROKE_WEIGHT * params.RED_SHADOW_SCALE);
+    counts[i] = contour.points.length;
+    closed[i] = contour.closed ? 1 : 0;
+    for (let j = 0; j < contour.points.length; j++) {
+      coords[o++] = contour.points[j].x;
+      coords[o++] = contour.points[j].y;
+    }
+  }
+  const dots = new Float64Array(scene.textureDots.length * 3);
+  for (let i = 0; i < scene.textureDots.length; i++) {
+    dots[i * 3] = scene.textureDots[i].x;
+    dots[i * 3 + 1] = scene.textureDots[i].y;
+    dots[i * 3 + 2] = scene.textureDots[i].s;
+  }
+  return {
+    coords: coords,
+    counts: counts,
+    closed: closed,
+    dots: dots,
+    holesPx: scene.holesPx,
+    gridStep: scene.gridStep
+  };
+}
+
+function unflattenScene(flat) {
+  const contours = [];
+  let o = 0;
+  for (let i = 0; i < flat.counts.length; i++) {
+    const points = [];
+    for (let j = 0; j < flat.counts[i]; j++) {
+      points.push({ x: flat.coords[o++], y: flat.coords[o++] });
+    }
+    contours.push({ points: points, closed: !!flat.closed[i] });
+  }
+  const textureDots = [];
+  for (let i = 0; i < flat.dots.length / 3; i++) {
+    textureDots.push({ x: flat.dots[i * 3], y: flat.dots[i * 3 + 1], s: flat.dots[i * 3 + 2] });
+  }
+  return { contours: contours, textureDots: textureDots, holesPx: flat.holesPx, gridStep: flat.gridStep };
+}
+
+
+// ============================================================
+// Main-thread adapters over the core. These keep the v2 API
+// (global params / holes / p5 canvas size) while all computation
+// lives in the core above.
+// ============================================================
+
+function planSceneBuild(targetWidth, targetHeight, buildOpts = {}) {
+  const flat = isFlatFieldMode();
+  let gridStep;
+  let adapted = false;
+  let estimate;
+  if (buildOpts.gridStep) {
+    gridStep = buildOpts.gridStep;
+    estimate = estimateWork(targetWidth, targetHeight, gridStep, params.NUM_RINGS, holes.length);
+  } else if (buildOpts.budget) {
+    const eff = getEffectiveGridStep(targetWidth, targetHeight, flat, buildOpts.budget);
+    gridStep = eff.gridStep;
+    adapted = eff.adapted;
+    estimate = eff.estimate;
+  } else {
+    gridStep = getGridStep(targetWidth, targetHeight, flat);
+    estimate = estimateWork(targetWidth, targetHeight, gridStep, params.NUM_RINGS, holes.length);
+  }
+  return { gridStep, adapted, estimate };
+}
+
+function* buildSceneSteps(targetWidth, targetHeight, seed, buildOpts = {}) {
+  const plan = planSceneBuild(targetWidth, targetHeight, buildOpts);
+  const core = createCoreState();
+  const built = yield* coreBuildSceneSteps(core, params, snapshotSceneHoles(), seed, targetWidth, targetHeight, {
+    baseW: width,
+    baseH: height,
+    gridStep: plan.gridStep,
+    cull: buildOpts.cull !== false
+  });
+  built.adapted = plan.adapted;
+  built.estimate = plan.estimate;
+  return built;
+}
+
+function buildSceneData(targetWidth, targetHeight, seed, buildOpts = {}) {
+  const gen = buildSceneSteps(targetWidth, targetHeight, seed, buildOpts);
+  let result = gen.next();
+  while (!result.done) result = gen.next();
+  return result.value;
+}
+
+async function buildSceneDataAsync(targetWidth, targetHeight, seed, onProgress, buildOpts = {}) {
+  const gen = buildSceneSteps(targetWidth, targetHeight, seed, buildOpts);
+  let result = gen.next();
+  while (!result.done) {
+    if (typeof onProgress === 'function') onProgress(result.value);
+    await yieldToUI();
+    result = gen.next();
+  }
+  return result.value;
+}
+
+function yieldToUI() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+function estimateWork(targetWidth, targetHeight, gridStep, rings, holeCount) {
+  return coreEstimateWork(targetWidth, targetHeight, gridStep, rings, holeCount);
+}
+
+function getEffectiveGridStep(targetWidth, targetHeight, flatMode, budget) {
+  return coreEffectiveGridStep(params, targetWidth, targetHeight, width, height, flatMode, budget, holes.length);
+}
+
+function getGridStep(targetWidth, targetHeight, flatMode = false) {
+  return coreGetGridStep(params, targetWidth, targetHeight, width, height, flatMode);
+}
+
+function sampleFlatFieldAt(x, y, targetWidth, targetHeight, holesPx) {
+  const core = createCoreState();
+  const prep = corePrepareField(params, holesPx.map((h) => ({
+    x: targetWidth ? h.x / targetWidth : 0,
+    y: targetHeight ? h.y / targetHeight : 0,
+    radius: h.radius,
+    strength: h.strength,
+    waveAmp: h.waveAmp,
+    phase: h.phase
+  })), targetWidth, targetHeight, 0);
+  return coreSampleFlatFieldAt(prep, x, y);
+}
+
+function sampleFieldAt(x, y, targetWidth, targetHeight, holesPx, seed, flatMode = false) {
+  if (flatMode) return sampleFlatFieldAt(x, y, targetWidth, targetHeight, holesPx);
+  const core = createCoreState();
+  coreNoiseSeed(core, seed);
+  const prep = corePrepareField(params, holesPx.map((h) => ({
+    x: targetWidth ? h.x / targetWidth : 0,
+    y: targetHeight ? h.y / targetHeight : 0,
+    radius: h.radius,
+    strength: h.strength,
+    waveAmp: h.waveAmp,
+    phase: h.phase
+  })), targetWidth, targetHeight, seed);
+  return coreSampleFieldAt(core, prep, x, y, false);
+}
+
+function getHoleCoreRadiusPx(hole, targetWidth = width, targetHeight = height) {
+  return coreHoleCoreRadiusPx(params, hole.radius, targetWidth, targetHeight);
+}
+
+function getHoleInfluenceSpreadPx(hole, targetWidth = width, targetHeight = height) {
+  return coreHoleInfluenceSpreadPx(params, hole.radius, targetWidth, targetHeight);
+}
+
+function buildFlatThresholds(targetWidth, targetHeight, holesPx, gridStep) {
+  return coreBuildFlatThresholds(params, targetWidth, targetHeight, gridStep);
+}
+
+function buildThresholds(minField, maxField, flatMode = false) {
+  return coreBuildThresholds(params, minField, maxField, flatMode);
+}
+
+function isFlatFieldMode() {
+  return coreIsFlatFieldMode(params);
+}
+
+function filterContoursForFlatMode(contours, targetWidth, targetHeight, gridStep) {
+  return coreFilterFlatContours(contours, targetWidth, targetHeight, gridStep);
+}
+
+function smoothPathObject(pathObj, passes = 1, mix = 0.35) {
+  return coreSmoothPathObject(pathObj, passes, mix);
+}
+
+function pathArea(pts) {
+  return corePathArea(pts);
+}
+
+function pathLength(pts) {
+  return corePathLength(pts);
+}
+
+function touchesBoundary(pts, w, h, margin) {
+  return coreTouchesBoundary(pts, w, h, margin);
+}
+
+function marchingSquaresPaths(field, cols, rows, step, threshold) {
+  return coreMarchingSquaresPaths(field, cols, rows, step, threshold);
+}
+
+function circularizePathObject(pathObj, mix) {
+  return coreCircularizePathObject(params, pathObj, mix);
+}
+
+function buildTextureDots(w, h, count, seed) {
+  const core = createCoreState();
+  return coreBuildTextureDots(core, w, h, count, seed);
+}
+
+// ============================================================
+// Web Worker execution. The worker source is assembled from the
+// core functions' own source text plus topoWorkerMain, so the
+// worker runs literally the same code as the main thread.
+// Any failure (no Worker/Blob support, CSP, runtime error)
+// falls back to the main-thread paths and is reported.
+// ============================================================
+
+const TOPO_CORE_FUNCTIONS = [
+  createCoreState,
+  coreClamp,
+  coreLerp,
+  coreMapValue,
+  coreNoiseSeed,
+  coreNoise,
+  coreRandomSeed,
+  coreRandomNext,
+  coreRandom,
+  coreHoleCoreRadiusPx,
+  coreHoleInfluenceSpreadPx,
+  coreGetGridStep,
+  coreEstimateWork,
+  coreEffectiveGridStep,
+  coreIsFlatFieldMode,
+  corePrepareField,
+  coreSmoothMinPoly,
+  coreSampleFlatFieldAt,
+  coreSampleFieldAt,
+  coreBuildFlatThresholds,
+  coreBuildThresholds,
+  corePathArea,
+  corePathLength,
+  coreTouchesBoundary,
+  coreFilterFlatContours,
+  coreSmoothPathObject,
+  coreCircularizePathObject,
+  coreStitchScale,
+  coreQuantizeCoord,
+  coreInterpCoord,
+  coreMarchingSquaresPaths,
+  coreStitchSegmentsToPaths,
+  coreExtendFlatPath,
+  coreNormalizeFlatPath,
+  coreBuildTextureDots,
+  coreBuildSceneSteps,
+  coreBuildScene,
+  flattenScene,
+  unflattenScene
+];
+
+function getCoreSourceText() {
+  return TOPO_CORE_FUNCTIONS.map((f) => f.toString()).join('\n\n');
+}
+
+function getWorkerSourceText() {
+  return getCoreSourceText() + '\n;(' + topoWorkerMain.toString() + ')();\n';
+}
+
+// Runs only inside the Worker (never invoked on the main thread).
+function topoWorkerMain() {
+  self.onmessage = function (e) {
+    const req = e.data || {};
+    const id = req.id;
+    try {
+      const core = createCoreState();
+      const gen = coreBuildSceneSteps(core, req.params, req.holes, req.seed, req.width, req.height, {
+        baseW: req.baseW,
+        baseH: req.baseH,
+        gridStep: req.gridStep,
+        cull: true
+      });
+      let lastPct = -1;
+      let result = gen.next();
+      while (!result.done) {
+        const ratio = result.value.phase === 'field' ? result.value.ratio * 0.7 : 0.7 + result.value.ratio * 0.3;
+        const pct = Math.floor(ratio * 100);
+        if (pct !== lastPct) {
+          lastPct = pct;
+          self.postMessage({ type: 'progress', id: id, progress: ratio });
+        }
+        result = gen.next();
+      }
+      const payload = flattenScene(result.value);
+      self.postMessage(
+        { type: 'result', id: id, payload: payload },
+        [payload.coords.buffer, payload.counts.buffer, payload.closed.buffer, payload.dots.buffer]
+      );
+    } catch (err) {
+      self.postMessage({ type: 'error', id: id, message: String((err && err.message) || err) });
+    }
+  };
+}
+
+let topoWorker = null;
+let workerFailed = false;
+let workerRequestSeq = 0;
+const workerPending = new Map();
+let artworkCache = null;
+
+function markWorkerFailed() {
+  workerFailed = true;
+  workerPending.forEach((entry) => entry.resolve(null));
+  workerPending.clear();
+  if (topoWorker) {
+    try { topoWorker.terminate(); } catch (err) { /* ignore */ }
+    topoWorker = null;
+  }
+}
+
+function ensureTopoWorker() {
+  if (workerFailed) return null;
+  if (topoWorker) return topoWorker;
+  try {
+    if (typeof Worker === 'undefined' || typeof Blob === 'undefined' || typeof URL === 'undefined' || !URL.createObjectURL) {
+      throw new Error('Worker is not available in this browser');
+    }
+    const blob = new Blob([getWorkerSourceText()], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    worker.onmessage = (e) => {
+      const msg = e.data;
+      if (!msg || typeof msg.id === 'undefined') return;
+      const entry = workerPending.get(msg.id);
+      if (!entry) return;
+      if (msg.type === 'progress') {
+        if (entry.onProgress) entry.onProgress(msg.progress);
+      } else if (msg.type === 'result') {
+        workerPending.delete(msg.id);
+        entry.resolve(unflattenScene(msg.payload));
+      } else if (msg.type === 'error') {
+        workerPending.delete(msg.id);
+        entry.resolve(null);
+      }
+    };
+    worker.onerror = () => {
+      markWorkerFailed();
+    };
+    topoWorker = worker;
+    return worker;
+  } catch (err) {
+    workerFailed = true;
+    return null;
+  }
+}
+
+function getWorkerState() {
+  return { failed: workerFailed, active: !!topoWorker, pending: workerPending.size };
+}
+
+// Resolves to a scene object, or null when the Worker path is
+// unavailable (callers then fall back to the main-thread build).
+function buildSceneViaWorker(req, onProgress) {
+  const worker = ensureTopoWorker();
+  if (!worker) return Promise.resolve(null);
+  const id = ++workerRequestSeq;
+  return new Promise((resolve) => {
+    workerPending.set(id, { resolve: resolve, onProgress: onProgress });
+    try {
+      worker.postMessage({
+        id: id,
+        params: req.params,
+        holes: req.holes,
+        seed: req.seed,
+        width: req.width,
+        height: req.height,
+        baseW: req.baseW,
+        baseH: req.baseH,
+        gridStep: req.gridStep
+      });
+    } catch (err) {
+      workerPending.delete(id);
+      markWorkerFailed();
+      resolve(null);
+    }
+  });
+}
+
+
+function draw() {
+  if (!artworkCache) renderArtworkCache();
+
+  if (artworkCache) {
+    image(artworkCache, 0, 0);
+  } else {
+    // Fallback when createGraphics is unavailable: draw directly.
+    background(0);
+    if (params.SHOW_TEXTURE) {
+      drawFaintTexture(null, scene.textureDots);
+    }
+    for (let i = 0; i < scene.contours.length; i++) {
+      const contour = scene.contours[i];
+      if (params.SHOW_RED_SHADOW) {
+        stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
+        strokeWeight(params.WHITE_STROKE_WEIGHT * params.RED_SHADOW_SCALE);
+        noFill();
+        drawSmoothPath(null, contour.points, contour.closed);
+      }
+      stroke(255);
+      strokeWeight(params.WHITE_STROKE_WEIGHT);
       noFill();
       drawSmoothPath(null, contour.points, contour.closed);
     }
-
-    stroke(255);
-    strokeWeight(params.WHITE_STROKE_WEIGHT);
-    noFill();
-    drawSmoothPath(null, contour.points, contour.closed);
   }
 
   if (params.SHOW_HOLE_GUIDES) {
     drawHoleHandlesMain(scene.holesPx, false);
   }
+}
+
+// Render the artwork (texture + red shadow + white contours) once
+// per scene into an offscreen buffer. Selection changes and other
+// redraw() calls then only blit this image and draw hole handles.
+function renderArtworkCache() {
+  if (typeof createGraphics !== 'function') {
+    artworkCache = null;
+    return;
+  }
+  const pg = createGraphics(width, height);
+  pg.pixelDensity(pixelDensity());
+  pg.background(0);
+
+  if (params.SHOW_TEXTURE) {
+    drawFaintTexture(pg, scene.textureDots);
+  }
+
+  for (let i = 0; i < scene.contours.length; i++) {
+    const contour = scene.contours[i];
+    if (params.SHOW_RED_SHADOW) {
+      pg.stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
+      pg.strokeWeight(params.WHITE_STROKE_WEIGHT * params.RED_SHADOW_SCALE);
+      pg.noFill();
+      drawSmoothPath(pg, contour.points, contour.closed);
+    }
+
+    pg.stroke(255);
+    pg.strokeWeight(params.WHITE_STROKE_WEIGHT);
+    pg.noFill();
+    drawSmoothPath(pg, contour.points, contour.closed);
+  }
+
+  if (artworkCache && artworkCache.remove) artworkCache.remove();
+  artworkCache = pg;
+}
+
+function invalidateArtworkCache() {
+  if (artworkCache && artworkCache.remove) artworkCache.remove();
+  artworkCache = null;
 }
 
 function mainDrawTarget() {
@@ -1605,6 +2284,8 @@ async function runExport(scale, transparent, exportW, exportH) {
     isExporting = false;
   };
 
+  const step = getGridStep(exportW, exportH, isFlatFieldMode());
+
   try {
     const pg = createGraphics(exportW, exportH);
     pg.pixelDensity(1);
@@ -1614,11 +2295,26 @@ async function runExport(scale, transparent, exportW, exportH) {
       pg.background(0);
     }
 
-    const exportScene = await buildSceneDataAsync(exportW, exportH, seedVal, (progress) => {
-      if (!exportButton || !progress) return;
-      const overall = progress.phase === 'field' ? progress.ratio * 0.7 : 0.7 + progress.ratio * 0.3;
-      exportButton.textContent = `書き出し中… ${Math.round(overall * 100)}%`;
-    });
+    const onExportProgress = (overall) => {
+      if (exportButton) exportButton.textContent = `書き出し中… ${Math.round(overall * 100)}%`;
+    };
+    let exportScene = await buildSceneViaWorker({
+      params: coreParamsSnapshot(),
+      holes: snapshotSceneHoles(),
+      seed: seedVal,
+      width: exportW,
+      height: exportH,
+      baseW: width,
+      baseH: height,
+      gridStep: step
+    }, onExportProgress);
+    if (!exportScene) {
+      setStatus('Workerを利用できないためメインスレッドで計算しました');
+      exportScene = await buildSceneDataAsync(exportW, exportH, seedVal, (progress) => {
+        if (!progress) return;
+        onExportProgress(progress.phase === 'field' ? progress.ratio * 0.7 : 0.7 + progress.ratio * 0.3);
+      }, { gridStep: step });
+    }
 
     if (params.SHOW_TEXTURE) {
       drawFaintTexture(pg, exportScene.textureDots);
