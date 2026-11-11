@@ -198,6 +198,25 @@
     .readout{grid-template-columns:1fr}
     .legend{grid-template-columns:1fr 1fr}
   }
+  #tooltip {
+    position: fixed;
+    z-index: 9999;
+    max-width: 300px;
+    padding: 8px 11px;
+    border-radius: 8px;
+    background: rgba(10, 12, 18, 0.96);
+    border: 1px solid rgba(148, 184, 255, 0.35);
+    color: #e8eefc;
+    font-size: 12px;
+    line-height: 1.55;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  #tooltip.visible { opacity: 1; transform: translateY(0); }
+  [data-help] { cursor: help; }
 </style>
 </head>
 <body>
@@ -209,13 +228,13 @@
         <div class="grid2">
           <div class="field">
             <label><span>Preset</span></label>
-            <select id="presetSelect"></select>
+            <select id="presetSelect" data-help="プリセットを選んで適用します。下のピルと同じ一覧です。"></select>
           </div>
           <div class="field">
             <label><span>操作</span></label>
             <div class="grid2">
-              <button id="applyPreset" class="secondary" type="button">適用</button>
-              <button id="randomizeAll" class="secondary" type="button">ランダム</button>
+              <button id="applyPreset" class="secondary" type="button" data-help="選択中のプリセットを適用します。">適用</button>
+              <button id="randomizeAll" class="secondary" type="button" data-help="パラメータをランダムに設定します。思わぬ音との出会いに。Seedも変わります。">ランダム</button>
             </div>
           </div>
         </div>
@@ -227,13 +246,13 @@
       <div class="head"><h2>セッション</h2></div>
       <div class="body">
         <div class="session-actions">
-          <button id="saveSessionBtn" class="secondary" type="button">JSON保存</button>
-          <button id="loadSessionBtn" class="secondary" type="button">JSON読込</button>
-          <button id="copySessionBtn" class="secondary" type="button">JSONコピー</button>
-          <button id="copyUrlBtn" class="secondary" type="button">URLコピー</button>
-          <button id="swapLayersBtn" class="secondary" type="button">A↔B 入替</button>
-          <button id="copyAtoBBtn" class="secondary" type="button">A→B コピー</button>
-          <button id="clearAutosaveBtn" class="secondary" type="button">自動保存削除</button>
+          <button id="saveSessionBtn" class="secondary" type="button" data-help="現在の設定をJSONファイルとして保存します。">JSON保存</button>
+          <button id="loadSessionBtn" class="secondary" type="button" data-help="保存したセッションJSONを読み込みます。">JSON読込</button>
+          <button id="copySessionBtn" class="secondary" type="button" data-help="現在の設定JSONをクリップボードへコピーします。AIへ渡す時にも使えます。">JSONコピー</button>
+          <button id="copyUrlBtn" class="secondary" type="button" data-help="現在の設定を埋め込んだURLをコピーします。開くと設定が再現されます。">URLコピー</button>
+          <button id="swapLayersBtn" class="secondary" type="button" data-help="Layer AとBの設定を入れ替えます。">A↔B 入替</button>
+          <button id="copyAtoBBtn" class="secondary" type="button" data-help="Layer Aの設定をBへコピーします。似た音を重ねたい時に。">A→B コピー</button>
+          <button id="clearAutosaveBtn" class="secondary" type="button" data-help="ブラウザに自動保存された前回設定を消します。次回は初期状態で開きます。">自動保存削除</button>
         </div>
         <div class="help">設定全体をJSONで保存・再読込できます。前回状態は自動保存されます。</div>
         <input id="sessionFile" type="file" accept="application/json,.json" hidden>
@@ -266,7 +285,7 @@
         <div class="grid2">
           <div class="field">
             <label><span>スリープタイマー</span></label>
-            <select id="sleepTimer">
+            <select id="sleepTimer" data-help="指定時間後に自動で停止します(終了前に30秒フェードアウト)。0は無効。">
               <option value="0">オフ</option>
               <option value="15">15分</option>
               <option value="30">30分</option>
@@ -278,7 +297,7 @@
           </div>
           <div class="field">
             <label><span>フェードイン</span></label>
-            <select id="sleepFadeIn">
+            <select id="sleepFadeIn" data-help="再生開始時にこの秒数をかけて音量をゆっくり上げます。">
               <option value="0">なし</option>
               <option value="10">10秒</option>
               <option value="30">30秒</option>
@@ -295,22 +314,22 @@
       <div class="body">
         <div class="field">
           <label><span>作りたい音を言葉で</span></label>
-          <input id="aiPrompt" type="text" placeholder="例: 雨の音でぐっすり眠りたい / 集中できる低音">
+          <input id="aiPrompt" type="text" placeholder="例: 雨の音でぐっすり眠りたい / 集中できる低音" data-help="作りたい音を言葉で書いてください。例:「雨の音で眠りたい」「集中できる工場のような音」">
         </div>
         <div class="grid2">
-          <button id="aiRuleBtn" class="secondary" type="button">ルール生成</button>
-          <button id="aiLlmBtn" class="secondary" type="button">LLM生成 (BYOK)</button>
+          <button id="aiRuleBtn" class="secondary" type="button" data-help="オフラインのルール判定でパラメータを生成します。APIキー不要、その場で完了。">ルール生成</button>
+          <button id="aiLlmBtn" class="secondary" type="button" data-help="入力したキーでLLMにパラメータを設計させます。結果は安全な範囲に自動で丸められます。">LLM生成 (BYOK)</button>
         </div>
         <div class="field" style="margin-top:10px">
           <label><span>LLM プロバイダ</span></label>
-          <select id="aiProvider">
+          <select id="aiProvider" data-help="LLM生成で使うサービス。キーはこのブラウザ内にだけ保存されます。">
             <option value="groq">Groq</option>
             <option value="gemini">Gemini</option>
           </select>
         </div>
         <div class="field">
           <label><span>APIキー（このブラウザ内だけに保存）</span></label>
-          <input id="aiApiKey" type="password" placeholder="API key" autocomplete="off">
+          <input id="aiApiKey" type="password" placeholder="API key" autocomplete="off" data-help="APIキー。localStorageに保存され、外部へは選んだサービスのAPIへだけ送られます。">
         </div>
         <div class="help">ルール生成はオフラインでキーワードから組み立てます（Enterでも実行）。LLM生成は入力したキーでプロバイダへ直接リクエストし、返ってきたJSONを検証してから適用します。キーは localStorage にのみ保存されます。セッションJSON / URL共有を使えば、外部のAIに作らせた設定も読み込めます。Spaceキーでも再生/停止できます（入力欄にフォーカスがある時を除く）。</div>
       </div>
@@ -320,8 +339,8 @@
       <div class="head"><h2>DAW / MIDI</h2></div>
       <div class="body">
         <div class="session-actions">
-          <button id="midiBtn" class="secondary" type="button">MIDI入力を開始</button>
-          <label class="check"><input id="midiNoteToggle" type="checkbox" checked><span>ノートで再生/停止</span></label>
+          <button id="midiBtn" class="secondary" type="button" data-help="Web MIDIを有効化します。ノート=再生/停止、各種CCでパラメータ操作ができます。">MIDI入力を開始</button>
+          <label class="check" data-help="ノートオフでも停止するかどうか。ONだと鍵盤を離した時に止まります。"><input id="midiNoteToggle" type="checkbox" checked><span>ノートで再生/停止</span></label>
         </div>
         <div class="help">Web MIDI対応ブラウザで、ノート=再生/停止（連打しても再起動しません）、CC7=Master Gain、CC1=Width、CC74=Drive、CC20/21=Layer A/B Gain、CC22=Binaural Level、CC23=Space を操作できます。DAW連携の中心は WAV/AIFF 書き出しです（Loop Crossfade 使用時は WAV に smpl ループチャンクが付きます）。同じリポジトリの noise-cli.mjs を使えば、Node.js のある VM / サーバーからも同じプリセット・同じ音をヘッドレスで書き出せます。</div>
       </div>
@@ -342,15 +361,15 @@
     <div class="readout">
       <div class="card">
         <div class="ch">波形</div>
-        <canvas id="scope" role="img" aria-label="波形表示"></canvas>
+        <canvas id="scope" role="img" aria-label="波形表示" data-help="波形。音の大きさの動きが見えます。"></canvas>
       </div>
       <div class="card">
         <div class="ch">スペクトラム</div>
-        <canvas id="spec" role="img" aria-label="スペクトラム表示"></canvas>
+        <canvas id="spec" role="img" aria-label="スペクトラム表示" data-help="スペクトラム。今鳴っている周波数の分布です。"></canvas>
       </div>
       <div class="card">
         <div class="ch">スペクトログラム</div>
-        <canvas id="gram" role="img" aria-label="スペクトログラム表示"></canvas>
+        <canvas id="gram" role="img" aria-label="スペクトログラム表示" data-help="スペクトログラム。周波数の時間変化を色で表示します。"></canvas>
       </div>
     </div>
     <div class="topbar">
@@ -359,11 +378,11 @@
         <div class="sub">noise generator / visualizers first / ultra wide / safe export</div>
       </div>
       <div class="actions">
-        <button id="playBtn" type="button">再生</button>
-        <button id="stopBtn" type="button" class="secondary">停止</button>
-        <button id="exportBtn" type="button" class="secondary">保存</button>
-        <button id="cancelExportBtn" type="button" class="secondary" disabled>保存中止</button>
-        <button id="resetBtn" type="button" class="warn">初期化</button>
+        <button id="playBtn" type="button" data-help="再生を開始します(Spaceキーでも可)。AudioWorkletで低遅延再生します。">再生</button>
+        <button id="stopBtn" type="button" class="secondary" data-help="再生を停止します(Spaceキーでも可)。">停止</button>
+        <button id="exportBtn" type="button" class="secondary" data-help="現在の設定で音声ファイルを書き出します。長さや形式はMasterセクションで指定。">保存</button>
+        <button id="cancelExportBtn" type="button" class="secondary" disabled data-help="書き出しを中止します。">保存中止</button>
+        <button id="resetBtn" type="button" class="warn" data-help="全パラメータを初期状態に戻します。">初期化</button>
       </div>
     </div>
     <div id="status" class="status" aria-live="polite">待機中</div>
@@ -950,6 +969,66 @@
     { id:'stereo', type:'range', label:'Stereo（独立L/R）', min:0, max:1, step:0.01 }
   ];
 
+
+  const HELP_TEXTS = {
+    // Layer fields (shared by A/B/C)
+    enabled: 'このレイヤーを鳴らすかどうか。OFFのレイヤーは音も書き出しも対象外になります。',
+    type: 'ノイズの種類。47種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
+    gain: 'このレイヤーの音量。上げすぎるとマスターで歪むことがあるので、全体のバランスで調整を。',
+    pan: 'このレイヤーの左右位置。-1で左、+1で右。マスターのLFOでもゆっくり揺れます。',
+    tone: '音の明るさ。左で暗く丸く、右で明るく鋭くなります。',
+    density: '音の密度や速さ。種類ごとに効き方が違い、雨の強さ、雷の頻度、鼓動の速さなどが変わります。',
+    motion: '時間的なうねりや変化の量。風の強弱や波の寄せ引きのような動きが大きくなります。',
+    grain: '粒立ちや質感の粗さ。雨粒、焚き火の爆ぜ、レコードのチリチリ感などを強めます。',
+    stereo: '右チャンネル専用の独立した生成を混ぜます。0で従来のモノラル、1で完全な独立L/R。ヘッドホンで広がりが分かります。',
+    // Master fields
+    master_sampleRate: 'プレビュー再生のサンプルレート。通常は48kHzでOK。書き出しのレートとは別です。',
+    master_previewQuality: 'プレビューの解析と描画の軽さ。音そのものには影響しません。',
+    master_exportMode: '書き出し形式。Mixは全レイヤー混合、Stemsはレイヤーごとの個別ファイル、Mix + Stemsは両方。',
+    master_batchCount: 'シードを変えたバリエーションを何ファイル作るか。Seed Stepずつずらして生成します。',
+    master_seedStep: 'バッチ生成でシードをいくつずつ進めるか。',
+    master_exportFormat: '書き出しファイル形式。WAVかAIFF。ループ情報(smpl)はWAVのみ付きます。',
+    master_exportSampleRate: '書き出しのサンプルレート。配布用は48kHz、軽さ優先なら22.05kHzなど。',
+    master_exportBitDepth: '書き出しのビット深度。16bitが一般的、32fは編集用に余裕を持たせたい時。',
+    master_exportDither: '16bitなどPCM書き出し時のディザ。量子化ノイズを目立たなくします。32fでは無効。',
+    master_exportOversample: '書き出し時のオーバーサンプリング。高域の折り返しを減らし、歪み系の質が上がります(処理は重くなります)。',
+    master_exportLimiter: '書き出し専用のリミッター。Ceilingを超えないようピークを抑えます。',
+    master_truePeakProtect: 'サンプル間ピーク(トゥルーピーク)も見越して少し余裕を持たせる保護です。',
+    master_exportCeilingDb: 'リミッターの天井。-1dB前後が安全です。',
+    master_exportLimiterRelease: 'リミッターが効いたあと戻る速さ。短いと荒く、長いと大人しくなります。',
+    master_exportNoiseShaping: 'ディザノイズの周波数配分。聴感上ノイズが目立たない帯域へ寄せます。',
+    master_duration: '書き出す長さ(秒)。最大30分。スリープ用途の長時間ファイルもここで指定します。',
+    master_seed: '乱数の種。同じ設定+同じシードでは書き出しが完全に同じ音になります。再現用に控えておくと便利。',
+    master_gain: '全体の音量。プレビューと書き出しの両方に効きます。',
+    master_width: 'ステレオの広がり。1が原音、上げるほど左右に広がり、下げるとモノラルに近づきます。',
+    master_space: '拡散感のある残響的な広がり。洞窟や大空間のような空気感が出ます。',
+    master_air: '高域の空気感を持ち上げるエキサイター。こもった音が抜けてきます。',
+    master_lowcut: 'この周波数以下を切ります。ゴロゴロした不要な低域の除去に。',
+    master_highcut: 'この周波数以上を切ります。耳に痛い高域を落として丸くします。',
+    master_drive: '全体に歪みと倍音を足します。アナログ機材のような厚みが出ますが、上げすぎ注意。',
+    master_analog: 'テープやアナログ回路のような質感。少し丸く、温かくなります。',
+    master_unison: 'わずかにずらした音を重ねて厚みと広がりを出す効果。コーラスの仲間です。',
+    master_chorusMix: 'コーラスの量。ゆらぎと広がりが出て、モノラル源でもステレオ感が作れます。',
+    master_chorusRate: 'コーラスのゆらぎの速さ。',
+    master_wow: 'テープの回転ムラ(遅い周期の音程ゆれ)。レトロな質感に。',
+    master_flutter: 'Wowより速い周期の音程ゆれ。震えるような質感になります。',
+    master_phaserMix: 'フェイザーの量。うねるような周波数の櫛型効果で動きが出ます。',
+    master_phaserRate: 'フェイザーのうねりの速さ。',
+    master_resonatorMix: '特定の周波数を響かせる共鳴の量。金属的・空間的な響きが付きます。',
+    master_resonatorHz: '共鳴させる周波数。低くすると洞窟、高くすると金属管のような響き。',
+    master_subBody: '低域の土台を増強します。体の芯で感じる重さが欲しい時に。',
+    master_lfoRate: 'レイヤーのパンを自動で揺らすLFOの速さ。',
+    master_lfoDepth: 'LFOでパンを揺らす量。0では固定、上げると音が左右を行き来します。',
+    master_humHz: '電源ハムの周波数(50Hz=東日本/60Hz=西日本)。VinylやPower Humの種類で使われます。',
+    master_normalize: '書き出し時にピークを0dB付近へ自動調整します。音量を揃えたい時に。',
+    master_loopFade: '書き出しの頭を末尾の続き素材とクロスフェードし、途切れないループにします。WAVにはループ情報も付きます。',
+    master_binauralEnabled: 'バイノーラル/アイソクロニック/モノラルのビート音を重ねます。睡眠や集中のプリセットで使用。',
+    master_binauralMode: 'Binaural=左右で違う周波数(ヘッドホン必須)、Isochronic=断続音、Monaural=スピーカーでも聞こえる振幅ビート。',
+    master_binauralCarrier: 'ビートの土台になる音の高さ。低め(150〜250Hz)が標準的です。',
+    master_binauralBeat: 'ビートの速さ。目安: 0.5〜4Hz=深い睡眠δ、4〜8Hz=瞑想θ、8〜13Hz=リラックスα、13〜30Hz=集中β、40Hz=γ。',
+    master_binauralLevel: 'ビート音の音量。ノイズに埋もれるくらい控えめが基本です。'
+  };
+
   function buildFields(targetId, schema, prefix = '') {
     const root = $(targetId);
     root.innerHTML = '';
@@ -958,6 +1037,8 @@
     schema.forEach(def => {
       const wrap = document.createElement('div');
       wrap.className = 'field';
+      const helpText = HELP_TEXTS[def.id];
+      if (helpText && wrap.setAttribute) wrap.setAttribute('data-help', helpText);
       const fullId = prefix ? `${prefix}_${def.id}` : def.id;
 
       if (def.type === 'checkbox') {
@@ -996,7 +1077,7 @@
   const presetSelect = $('presetSelect');
   presetSelect.innerHTML = Object.keys(PRESETS).map(name => `<option value="${name}">${name}</option>`).join('');
   $('presetPills').innerHTML = Object.keys(PRESETS)
-    .map(name => `<button type="button" class="pill" data-preset="${name}">${name}</button>`)
+    .map(name => `<button type="button" class="pill" data-preset="${name}" data-help="プリセット「${name}」を適用します">${name}</button>`)
     .join('');
 
   function setStatus(msg, cls = '') {
@@ -3730,6 +3811,60 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       const name = e.target?.dataset?.preset;
       if (name) applyPreset(name);
     });
+    // ---- Hover help tooltips ----
+    const tipEl = $('tooltip');
+    if (tipEl) {
+      let tipTimer = 0;
+      let tipTarget = null;
+      const hideTip = () => {
+        clearTimeout(tipTimer);
+        tipEl.classList.remove('visible');
+        tipTarget = null;
+      };
+      const positionTip = (x, y) => {
+        const pad = 14;
+        const rect = tipEl.getBoundingClientRect();
+        let left = x + pad;
+        let top = y + pad + 6;
+        if (left + rect.width > innerWidth - 8) left = x - rect.width - pad;
+        if (top + rect.height > innerHeight - 8) top = y - rect.height - pad;
+        tipEl.style.left = `${Math.max(4, left)}px`;
+        tipEl.style.top = `${Math.max(4, top)}px`;
+      };
+      addEventListener('mouseover', (e) => {
+        const t = e.target && e.target.closest ? e.target.closest('[data-help]') : null;
+        if (t === tipTarget) return;
+        hideTip();
+        if (!t) return;
+        tipTarget = t;
+        const text = t.getAttribute('data-help');
+        tipTimer = setTimeout(() => {
+          if (tipTarget !== t) return;
+          tipEl.textContent = text;
+          tipEl.classList.add('visible');
+          positionTip(e.clientX, e.clientY);
+        }, 350);
+      });
+      addEventListener('mousemove', (e) => {
+        if (tipTarget && tipEl.classList.contains('visible')) positionTip(e.clientX, e.clientY);
+      });
+      addEventListener('mouseout', (e) => {
+        if (!e.relatedTarget) hideTip();
+      });
+      addEventListener('focusin', (e) => {
+        const t = e.target && e.target.closest ? e.target.closest('[data-help]') : null;
+        if (!t || t === tipTarget) return;
+        hideTip();
+        tipTarget = t;
+        tipEl.textContent = t.getAttribute('data-help');
+        tipEl.classList.add('visible');
+        const r = t.getBoundingClientRect();
+        positionTip(r.left + r.width / 2, r.bottom);
+      });
+      addEventListener('focusout', hideTip);
+      addEventListener('scroll', hideTip, true);
+    }
+
     $('playBtn').addEventListener('click', () => engine.play());
     $('stopBtn').addEventListener('click', () => engine.stop());
     $('exportBtn').addEventListener('click', exportAudio);
@@ -3812,5 +3947,6 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 })();
 
 </script>
+  <div id="tooltip" role="tooltip"></div>
 </body>
 </html>
