@@ -1,9 +1,21 @@
 <!doctype html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
   <title>TOPO</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js" integrity="sha512-3RlxD1bW34eFKPwj9gUXEWtdSMC59QqIqHnD8O/NoTwSJhgxRizdcFVQhUMFyTp5RwLTDL0Lbcqtl8b7bFAzog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    (function () {
+      function checkP5Loaded() {
+        if (typeof window.p5 === 'undefined') {
+          var banner = document.getElementById('p5Error');
+          if (banner) banner.hidden = false;
+        }
+      }
+      window.addEventListener('load', function () { setTimeout(checkP5Loaded, 1500); });
+      setTimeout(checkP5Loaded, 4000);
+    })();
+  </script>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     html, body { height: 100%; margin: 0; background: #000; }
@@ -11,7 +23,7 @@
       position: fixed;
       right: 10px;
       top: 10px;
-      width: 340px;
+      width: min(340px, calc(100vw - 20px));
       max-height: calc(100vh - 20px);
       overflow: auto;
       background: rgba(10, 10, 10, 0.78);
@@ -66,6 +78,86 @@
       cursor: pointer;
     }
     .checkrow input[type="checkbox"] { margin: 0; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, canvas:focus-visible {
+      outline: 2px solid #7ab8ff;
+      outline-offset: 2px;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 6px;
+      border-radius: 4px;
+      border: 0;
+      background: #222;
+      color: #fff;
+      box-sizing: border-box;
+    }
+    #statusLine {
+      min-height: 1.2em;
+      font-size: 12px;
+      color: #ffd97a;
+      line-height: 1.45;
+    }
+    #statusLine:empty { min-height: 0; margin-bottom: 0; }
+    #panelToggle {
+      position: fixed;
+      left: 10px;
+      top: 10px;
+      width: auto;
+      z-index: 1001;
+      padding: 8px 12px;
+      margin-top: 0;
+    }
+    #p5Error {
+      position: fixed;
+      left: 50%;
+      top: 12px;
+      transform: translateX(-50%);
+      z-index: 3000;
+      background: #7a1622;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      max-width: calc(100vw - 40px);
+    }
+    #dialogOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.62);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #dialogOverlay[hidden] { display: none; }
+    #dialogBox {
+      width: min(560px, calc(100vw - 32px));
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      background: #141414;
+      color: #eee;
+      border-radius: 8px;
+      padding: 14px;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+    }
+    #dialogBox h3 { margin: 0 0 8px 0; font-size: 15px; }
+    #dialogMessage { font-size: 13px; line-height: 1.55; white-space: pre-wrap; margin: 0 0 8px 0; }
+    #dialogText {
+      width: 100%;
+      box-sizing: border-box;
+      background: #0c0c0c;
+      color: #eee;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 6px;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    #dialogError { color: #ff8f9a; font-size: 12px; min-height: 1.2em; line-height: 1.45; }
+    .dialog-buttons { display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px; }
+    .dialog-buttons button { width: auto; padding: 6px 12px; margin-top: 0; }
   </style>
 </head>
 <body>
@@ -73,57 +165,63 @@
     <h3>TOPO</h3>
 
     <div class="row">
-      <label>輪の数 (NUM_RINGS) <span id="rVal" class="val"></span></label>
+      <button id="hidePanel" type="button">パネルを隠す (H)</button>
+    </div>
+
+    <div id="statusLine" class="row" role="status" aria-live="polite"></div>
+
+    <div class="row">
+      <label for="r">輪の数 (NUM_RINGS) <span id="rVal" class="val"></span></label>
       <input id="r" type="range" min="8" max="220" step="1" value="70">
     </div>
 
     <div class="row">
-      <label>角度分割相当 (ANGLE_STEPS) <span id="aVal" class="val"></span></label>
+      <label for="a">グリッド解像度 (ANGLE_STEPS) <span id="aVal" class="val"></span></label>
       <input id="a" type="range" min="128" max="2000" step="8" value="900">
     </div>
 
     <div class="row">
-      <label>ノイズ周波数 (NOISE_FREQ) <span id="fVal" class="val"></span></label>
+      <label for="f">ノイズ周波数 (NOISE_FREQ) <span id="fVal" class="val"></span></label>
       <input id="f" type="range" min="0.5" max="8" step="0.1" value="3.5">
     </div>
 
     <div class="row">
-      <label>ノイズ振幅 (NOISE_AMPLITUDE) <span id="ampVal" class="val"></span></label>
+      <label for="amp">ノイズ振幅 (NOISE_AMPLITUDE) <span id="ampVal" class="val"></span></label>
       <input id="amp" type="range" min="0.0" max="0.5" step="0.01" value="0.14">
     </div>
 
     <div class="row">
-      <label>中心突出 (CENTER_BULGE) <span id="bulgeVal" class="val"></span></label>
+      <label for="bulge">中心突出 (CENTER_BULGE) <span id="bulgeVal" class="val"></span></label>
       <input id="bulge" type="range" min="0.2" max="2.5" step="0.05" value="1.0">
     </div>
 
     <div class="row">
-      <label>外側半径比 (OUTER_RADIUS_RATIO) <span id="outerVal" class="val"></span></label>
+      <label for="outer">外側半径比 (OUTER_RADIUS_RATIO) <span id="outerVal" class="val"></span></label>
       <input id="outer" type="range" min="0.15" max="0.9" step="0.01" value="0.46">
     </div>
 
     <div class="row">
-      <label>赤影の透明度 (RED_SHADOW_ALPHA) <span id="redVal" class="val"></span></label>
+      <label for="red">赤影の透明度 (RED_SHADOW_ALPHA) <span id="redVal" class="val"></span></label>
       <input id="red" type="range" min="0" max="200" step="2" value="42">
     </div>
 
     <div class="row">
-      <label>白線太さ (WHITE_STROKE_WEIGHT) <span id="wVal" class="val"></span></label>
+      <label for="w">白線太さ (WHITE_STROKE_WEIGHT) <span id="wVal" class="val"></span></label>
       <input id="w" type="range" min="0.3" max="6" step="0.1" value="1.1">
     </div>
 
     <div class="row">
-      <label>波の細かさ (WAVE_DETAIL) <span id="waveDetailVal" class="val"></span></label>
+      <label for="waveDetail">波の細かさ (WAVE_DETAIL) <span id="waveDetailVal" class="val"></span></label>
       <input id="waveDetail" type="range" min="0.5" max="3.5" step="0.05" value="1.00">
     </div>
 
     <div class="row">
-      <label>干渉強度 (INTERFERENCE_BOOST) <span id="interferenceVal" class="val"></span></label>
+      <label for="interference">干渉強度 (INTERFERENCE_BOOST) <span id="interferenceVal" class="val"></span></label>
       <input id="interference" type="range" min="0.0" max="3.0" step="0.05" value="1.00">
     </div>
 
     <div class="row">
-      <label>円形寄せ量 (CIRCULARIZE_MIX) <span id="circularizeVal" class="val"></span></label>
+      <label for="circularize">円形寄せ量 (CIRCULARIZE_MIX) <span id="circularizeVal" class="val"></span></label>
       <input id="circularize" type="range" min="0.0" max="1.0" step="0.01" value="0.30">
     </div>
 
@@ -146,6 +244,39 @@
       <button id="preset2" class="small">粗い／渦</button>
     </div>
 
+    <div class="row" style="display:flex;gap:6px;">
+      <button id="preset3" class="small">波紋</button>
+      <button id="preset4" class="small">静かな同心円</button>
+    </div>
+
+    <h4>シード / 設定</h4>
+    <div class="row">現在のシード: <span id="seedVal" class="val" style="float:none;">-</span></div>
+
+    <div class="row">
+      <label for="seedInput">シードを指定 (1〜999999999)</label>
+      <input id="seedInput" type="number" min="1" max="999999999" step="1" placeholder="例: 12345">
+    </div>
+
+    <div class="row" style="display:flex;gap:6px;">
+      <button id="applySeed" class="small">シード適用</button>
+      <button id="undoBtn" class="small">元に戻す (Ctrl+Z)</button>
+    </div>
+
+    <div class="row" style="display:flex;gap:6px;">
+      <button id="settingsBtn" class="small">設定JSON</button>
+      <button id="resetBtn" class="small">初期化</button>
+    </div>
+
+    <div class="row">
+      <label for="exportScale">PNG書き出し倍率</label>
+      <select id="exportScale">
+        <option value="1">1x</option>
+        <option value="2">2x</option>
+        <option value="3">3x</option>
+        <option value="4" selected>4x</option>
+      </select>
+    </div>
+
     <h4>穴</h4>
     <div id="holeInfo" class="row">選択穴: - / 総数: 0</div>
 
@@ -155,23 +286,42 @@
     </div>
 
     <div class="row">
-      <label>選択穴の大きさ <span id="holeRadiusVal" class="val"></span></label>
+      <label for="holeRadius">選択穴の大きさ <span id="holeRadiusVal" class="val"></span></label>
       <input id="holeRadius" type="range" min="0.10" max="4.00" step="0.01" value="1.00">
     </div>
 
     <div class="row">
-      <label>選択穴の強さ <span id="holeStrengthVal" class="val"></span></label>
+      <label for="holeStrength">選択穴の強さ <span id="holeStrengthVal" class="val"></span></label>
       <input id="holeStrength" type="range" min="0.35" max="3.00" step="0.01" value="1.00">
     </div>
 
     <div class="row">
-      <label>選択穴の波強度 <span id="holeWaveVal" class="val"></span></label>
+      <label for="holeWave">選択穴の波強度 <span id="holeWaveVal" class="val"></span></label>
       <input id="holeWave" type="range" min="0.00" max="2.50" step="0.01" value="1.00">
     </div>
 
     <div class="muted">
-      操作: 何もない場所をクリックで穴追加 / 穴をドラッグで移動 / Delete または Backspace で選択穴削除。<br>
-      R=再生成, S=透過PNG保存（高解像度）。保存時も複数穴と干渉を同条件で再計算します。
+      操作: 何もない場所をクリックで穴追加（最大12個）/ 穴をドラッグで移動 / Delete または Backspace で選択穴削除。<br>
+      キーボード: キャンバスをクリックしてフォーカスし、[ / ] で穴を選択、矢印キーで選択穴を移動（Shift同時押しで大きく移動）。<br>
+      R=再生成, S=透過PNG保存（高解像度）, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数穴と干渉を同条件で再計算します。
+    </div>
+  </div>
+
+  <button id="panelToggle" type="button" style="display:none;">TOPO設定を表示 (H)</button>
+
+  <div id="p5Error" hidden role="alert">p5.js の読み込みに失敗しました。通信環境を確認して、ページを再読み込みしてください。</div>
+
+  <div id="dialogOverlay" hidden>
+    <div id="dialogBox" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+      <h3 id="dialogTitle"></h3>
+      <p id="dialogMessage"></p>
+      <textarea id="dialogText" rows="10" spellcheck="false"></textarea>
+      <div id="dialogError" role="alert"></div>
+      <div class="dialog-buttons">
+        <button id="dialogDownload" type="button">JSONをダウンロード</button>
+        <button id="dialogCancel" type="button">キャンセル</button>
+        <button id="dialogOk" type="button">OK</button>
+      </div>
     </div>
   </div>
 
@@ -203,6 +353,32 @@ let params = {
   SHOW_HOLE_GUIDES: true
 };
 
+const MAX_HOLES = 12;
+const UNDO_MAX = 50;
+const STORAGE_KEY = 'topo-settings-v1';
+const SCREEN_CELL_BUDGET = 50000000;
+const EXPORT_CONFIRM_CELLS = 100000000;
+const EXPORT_CONFIRM_PIXELS = 25000000;
+const EXPORT_HARD_CELLS = 900000000;
+const EXPORT_HARD_POINTS = 6000000;
+const EXPORT_HARD_PIXELS = 64000000;
+const DEFAULT_PARAMS = JSON.parse(JSON.stringify(params));
+const PARAM_RANGES = {
+  NUM_RINGS: [8, 220],
+  ANGLE_STEPS: [128, 2000],
+  NOISE_FREQ: [0.5, 8],
+  NOISE_AMPLITUDE: [0, 0.5],
+  CENTER_BULGE: [0.2, 2.5],
+  OUTER_RADIUS_RATIO: [0.15, 0.9],
+  RED_SHADOW_ALPHA: [0, 200],
+  WHITE_STROKE_WEIGHT: [0.3, 6],
+  WAVE_DETAIL: [0.5, 3.5],
+  INTERFERENCE_BOOST: [0, 3],
+  CIRCULARIZE_MIX: [0, 1]
+};
+const PARAM_BOOLEANS = ['ENABLE_INTERFERENCE', 'ENABLE_CIRCULARIZE', 'SHOW_TEXTURE', 'SHOW_RED_SHADOW', 'SHOW_HOLE_GUIDES', 'EXPORT_TRANSPARENT'];
+const SETTINGS_PARAM_KEYS = Object.keys(PARAM_RANGES).concat(PARAM_BOOLEANS, ['EXPORT_SCALE']);
+
 let scene = {
   contours: [],
   textureDots: [],
@@ -216,15 +392,35 @@ let dragRegenTimer = null;
 let isExporting = false;
 let selectedHoleIndex = -1;
 let dragHoleIndex = -1;
+let undoStack = [];
+let saveSettingsTimer = null;
+let panelVisible = true;
+let preChangeSnapshot = null;
+let preChangeCommitted = false;
+let preDragSnapshot = null;
+let arrowUndoSnapshot = null;
+let dialogState = { onOk: null, onDownload: null };
 
 function setup() {
-  createCanvas(params.CANVAS_W, params.CANVAS_H);
+  const cnv = createCanvas(params.CANVAS_W, params.CANVAS_H);
   pixelDensity(1);
   noLoop();
 
+  if (cnv && cnv.elt) {
+    cnv.elt.setAttribute('tabindex', '0');
+    cnv.elt.setAttribute('aria-label', 'TOPOキャンバス。左右の角かっこキーで穴を選択し、矢印キーで選択した穴を移動できます。');
+  }
+
   initControls();
-  initDefaultHoles();
-  regenerateScene({ newSeed: true });
+  const loaded = loadSettings();
+  if (!loaded) {
+    initDefaultHoles();
+  } else {
+    selectedHoleIndex = holes.length > 0 ? 0 : -1;
+    syncAllControlValues();
+    syncSelectedHoleControls();
+  }
+  regenerateScene({ newSeed: !loaded });
   redraw();
 
   window.addEventListener('resize', () => {
@@ -255,11 +451,16 @@ function initControls() {
     const valEl = document.getElementById(valId);
     if (!el || !valEl) return;
     valEl.textContent = el.value;
+    el.addEventListener('pointerdown', capturePreChange);
+    el.addEventListener('focus', capturePreChange);
+    el.addEventListener('change', resetPreChange);
     el.addEventListener('input', () => {
+      commitPreChange();
       const isFloat = String(el.step || '').includes('.');
       params[key] = isFloat ? parseFloat(el.value) : parseInt(el.value, 10);
       valEl.textContent = el.value;
       debouncedRegenerate(false);
+      scheduleSaveSettings();
     });
   });
 
@@ -274,8 +475,10 @@ function initControls() {
     const el = document.getElementById(id);
     el.checked = !!params[key];
     el.addEventListener('change', () => {
+      pushUndo();
       params[key] = el.checked;
       debouncedRegenerate(false);
+      scheduleSaveSettings();
     });
   });
 
@@ -285,8 +488,56 @@ function initControls() {
   });
 
   document.getElementById('export').addEventListener('click', () => {
-    exportPNG(params.EXPORT_SCALE, params.EXPORT_TRANSPARENT);
+    startExportFromUI();
   });
+
+  document.getElementById('hidePanel').addEventListener('click', () => {
+    setPanelVisible(false);
+  });
+
+  document.getElementById('panelToggle').addEventListener('click', () => {
+    setPanelVisible(true);
+  });
+
+  document.getElementById('applySeed').addEventListener('click', () => {
+    const input = document.getElementById('seedInput');
+    applySeed(input ? input.value : '');
+  });
+
+  document.getElementById('undoBtn').addEventListener('click', () => {
+    undoLast();
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    resetSettings();
+  });
+
+  document.getElementById('settingsBtn').addEventListener('click', () => {
+    openSettingsDialog();
+  });
+
+  document.getElementById('exportScale').addEventListener('change', (e) => {
+    const v = parseInt(e.target.value, 10);
+    params.EXPORT_SCALE = [1, 2, 3, 4].includes(v) ? v : 4;
+    scheduleSaveSettings();
+  });
+
+  document.getElementById('dialogOk').addEventListener('click', () => {
+    const textEl = document.getElementById('dialogText');
+    const result = dialogState.onOk ? dialogState.onOk(textEl ? textEl.value : '') : true;
+    if (result === false) return;
+    closeDialog();
+  });
+
+  document.getElementById('dialogCancel').addEventListener('click', () => {
+    closeDialog();
+  });
+
+  document.getElementById('dialogDownload').addEventListener('click', () => {
+    if (dialogState.onDownload) dialogState.onDownload();
+  });
+
+  updateUndoButton();
 
   document.getElementById('preset1').addEventListener('click', () => {
     applyPreset({
@@ -318,6 +569,36 @@ function initControls() {
     });
   });
 
+  document.getElementById('preset3').addEventListener('click', () => {
+    applyPreset({
+      NUM_RINGS: 90,
+      ANGLE_STEPS: 1200,
+      NOISE_AMPLITUDE: 0.20,
+      NOISE_FREQ: 2.2,
+      CENTER_BULGE: 0.8,
+      WAVE_DETAIL: 2.6,
+      INTERFERENCE_BOOST: 1.40,
+      CIRCULARIZE_MIX: 0.15,
+      ENABLE_INTERFERENCE: true,
+      ENABLE_CIRCULARIZE: true
+    });
+  });
+
+  document.getElementById('preset4').addEventListener('click', () => {
+    applyPreset({
+      NUM_RINGS: 60,
+      ANGLE_STEPS: 1000,
+      NOISE_AMPLITUDE: 0.0,
+      NOISE_FREQ: 3.5,
+      CENTER_BULGE: 1.0,
+      WAVE_DETAIL: 1.0,
+      INTERFERENCE_BOOST: 1.0,
+      CIRCULARIZE_MIX: 0.0,
+      ENABLE_INTERFERENCE: false,
+      ENABLE_CIRCULARIZE: false
+    });
+  });
+
   document.getElementById('addHole').addEventListener('click', () => {
     addHole(0.5, 0.5);
   });
@@ -330,43 +611,99 @@ function initControls() {
   const holeStrength = document.getElementById('holeStrength');
   const holeWave = document.getElementById('holeWave');
 
+  [holeRadius, holeStrength, holeWave].forEach((el) => {
+    el.addEventListener('pointerdown', capturePreChange);
+    el.addEventListener('focus', capturePreChange);
+    el.addEventListener('change', resetPreChange);
+  });
   holeRadius.addEventListener('input', () => {
     if (!hasSelectedHole()) return;
+    commitPreChange();
     holes[selectedHoleIndex].radius = parseFloat(holeRadius.value);
     syncSelectedHoleControls();
     debouncedRegenerate(false);
+    scheduleSaveSettings();
   });
   holeStrength.addEventListener('input', () => {
     if (!hasSelectedHole()) return;
+    commitPreChange();
     holes[selectedHoleIndex].strength = parseFloat(holeStrength.value);
     syncSelectedHoleControls();
     debouncedRegenerate(false);
+    scheduleSaveSettings();
   });
   holeWave.addEventListener('input', () => {
     if (!hasSelectedHole()) return;
+    commitPreChange();
     holes[selectedHoleIndex].waveAmp = parseFloat(holeWave.value);
     syncSelectedHoleControls();
     debouncedRegenerate(false);
+    scheduleSaveSettings();
   });
 
   syncAllControlValues();
 
   window.addEventListener('keydown', (e) => {
+    if (isInteractiveElement(document.activeElement)) return;
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) {
+      e.preventDefault();
+      undoLast();
+      return;
+    }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
+      if (!hasSelectedHole()) return;
+      e.preventDefault();
+      if (!arrowUndoSnapshot) arrowUndoSnapshot = snapshotState();
+      const step = e.shiftKey ? 0.025 : 0.005;
+      const hole = holes[selectedHoleIndex];
+      if (k === 'ArrowLeft') hole.x = clamp(hole.x - step, 0.02, 0.98);
+      if (k === 'ArrowRight') hole.x = clamp(hole.x + step, 0.02, 0.98);
+      if (k === 'ArrowUp') hole.y = clamp(hole.y - step, 0.02, 0.98);
+      if (k === 'ArrowDown') hole.y = clamp(hole.y + step, 0.02, 0.98);
+      syncSelectedHoleControls();
+      debouncedRegenerate(false);
+      return;
+    }
     if (e.repeat) return;
-    if (e.key === 'r' || e.key === 'R') {
+    if (k === 'r' || k === 'R') {
       e.preventDefault();
       regenerateScene({ newSeed: true });
       redraw();
       return;
     }
-    if (e.key === 's' || e.key === 'S') {
+    if (k === 's' || k === 'S') {
       e.preventDefault();
-      exportPNG(params.EXPORT_SCALE, params.EXPORT_TRANSPARENT);
+      startExportFromUI();
       return;
     }
-    if ((e.key === 'Delete' || e.key === 'Backspace') && !isRangeElement(document.activeElement)) {
+    if (k === 'h' || k === 'H') {
+      e.preventDefault();
+      setPanelVisible(!panelVisible);
+      return;
+    }
+    if (k === '[') {
+      cycleHoleSelection(-1);
+      return;
+    }
+    if (k === ']') {
+      cycleHoleSelection(1);
+      return;
+    }
+    if (k === 'Delete' || k === 'Backspace') {
       e.preventDefault();
       deleteSelectedHole();
+    }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    if (e.key && e.key.startsWith('Arrow') && arrowUndoSnapshot) {
+      undoStack.push(arrowUndoSnapshot);
+      trimUndoStack();
+      arrowUndoSnapshot = null;
+      updateUndoButton();
+      scheduleSaveSettings();
     }
   });
 }
@@ -396,7 +733,11 @@ function syncAllControlValues() {
   document.getElementById('showRedShadow').checked = !!params.SHOW_RED_SHADOW;
   document.getElementById('showHoleGuides').checked = !!params.SHOW_HOLE_GUIDES;
 
+  const exportScaleEl = document.getElementById('exportScale');
+  if (exportScaleEl) exportScaleEl.value = String(params.EXPORT_SCALE);
+
   syncValueLabels();
+  updateSeedDisplay();
 }
 
 function initDefaultHoles() {
@@ -423,9 +764,11 @@ function computeHolePhase(index) {
 }
 
 function applyPreset(p) {
+  pushUndo();
   Object.assign(params, p);
   syncAllControlValues();
   debouncedRegenerate(false);
+  scheduleSaveSettings();
 }
 
 function syncValueLabels() {
@@ -491,7 +834,20 @@ function isRangeElement(el) {
   return !!(el && el.tagName === 'INPUT' && el.type === 'range');
 }
 
+function isInteractiveElement(el) {
+  if (!el) return false;
+  if (el.isContentEditable) return true;
+  const tag = el.tagName;
+  return tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON';
+}
+
 function addHole(nx, ny) {
+  if (holes.length >= MAX_HOLES) {
+    setStatus(`穴は最大 ${MAX_HOLES} 個までです`);
+    syncSelectedHoleControls();
+    return false;
+  }
+  pushUndo();
   const hole = createHole(nx, ny, {
     radius: hasSelectedHole() ? holes[selectedHoleIndex].radius : 1.0,
     strength: hasSelectedHole() ? holes[selectedHoleIndex].strength : 1.0,
@@ -502,15 +858,19 @@ function addHole(nx, ny) {
   syncSelectedHoleControls();
   regenerateScene({ newSeed: false });
   redraw();
+  scheduleSaveSettings();
+  return true;
 }
 
 function deleteSelectedHole() {
   if (!hasSelectedHole() || holes.length <= 1) return;
+  pushUndo();
   holes.splice(selectedHoleIndex, 1);
   selectedHoleIndex = clamp(selectedHoleIndex, 0, holes.length - 1);
   syncSelectedHoleControls();
   regenerateScene({ newSeed: false });
   redraw();
+  scheduleSaveSettings();
 }
 
 function debouncedRegenerate(newSeed = false) {
@@ -537,13 +897,40 @@ function regenerateScene(options = {}) {
     for (let i = 0; i < holes.length; i++) {
       holes[i].phase = computeHolePhase(i);
     }
+    scheduleSaveSettings();
   }
 
-  scene = buildSceneData(targetWidth, targetHeight, seedVal);
+  scene = buildSceneData(targetWidth, targetHeight, seedVal, { budget: SCREEN_CELL_BUDGET });
+  if (scene.adapted) {
+    setStatus('負荷軽減のためグリッドを粗くしました');
+  }
   syncSelectedHoleControls();
+  updateSeedDisplay();
 }
 
-function buildSceneData(targetWidth, targetHeight, seed) {
+function buildSceneData(targetWidth, targetHeight, seed, buildOpts = {}) {
+  const gen = buildSceneSteps(targetWidth, targetHeight, seed, buildOpts);
+  let result = gen.next();
+  while (!result.done) result = gen.next();
+  return result.value;
+}
+
+async function buildSceneDataAsync(targetWidth, targetHeight, seed, onProgress) {
+  const gen = buildSceneSteps(targetWidth, targetHeight, seed, {});
+  let result = gen.next();
+  while (!result.done) {
+    if (typeof onProgress === 'function') onProgress(result.value);
+    await yieldToUI();
+    result = gen.next();
+  }
+  return result.value;
+}
+
+function yieldToUI() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+function* buildSceneSteps(targetWidth, targetHeight, seed, buildOpts = {}) {
   const holesPx = holes.map((hole) => ({
     x: hole.x * targetWidth,
     y: hole.y * targetHeight,
@@ -560,7 +947,15 @@ function buildSceneData(targetWidth, targetHeight, seed) {
   noiseSeed(seed);
   randomSeed(seed + 12345);
 
-  const gridStep = getGridStep(targetWidth, targetHeight, flatMode);
+  let gridStep = getGridStep(targetWidth, targetHeight, flatMode);
+  let adapted = false;
+  let estimate = estimateWork(targetWidth, targetHeight, gridStep, params.NUM_RINGS, holes.length);
+  if (buildOpts && buildOpts.budget) {
+    const eff = getEffectiveGridStep(targetWidth, targetHeight, flatMode, buildOpts.budget);
+    gridStep = eff.gridStep;
+    adapted = eff.adapted;
+    estimate = eff.estimate;
+  }
   const cols = floor(targetWidth / gridStep) + 2;
   const rows = floor(targetHeight / gridStep) + 2;
   const field = new Float32Array(cols * rows);
@@ -579,6 +974,7 @@ function buildSceneData(targetWidth, targetHeight, seed) {
       if (value < minField) minField = value;
       if (value > maxField) maxField = value;
     }
+    if (gy % 16 === 15) yield { phase: 'field', ratio: (gy + 1) / rows };
   }
 
   const thresholds = flatMode
@@ -590,6 +986,7 @@ function buildSceneData(targetWidth, targetHeight, seed) {
     for (let j = 0; j < paths.length; j++) {
       if (paths[j].points.length >= 4) contours.push(paths[j]);
     }
+    if (i % 4 === 3) yield { phase: 'contours', ratio: (i + 1) / thresholds.length };
   }
 
   if (flatMode) {
@@ -602,7 +999,40 @@ function buildSceneData(targetWidth, targetHeight, seed) {
   }
 
   const textureDots = buildTextureDots(targetWidth, targetHeight, params.TEXTURE_POINTS, seed + 987654321);
-  return { contours, textureDots, holesPx, gridStep };
+  return { contours, textureDots, holesPx, gridStep, adapted, estimate };
+}
+
+function estimateWork(targetWidth, targetHeight, gridStep, rings, holeCount) {
+  const safeStep = Math.max(1, gridStep || 1);
+  const cols = Math.floor(targetWidth / safeStep) + 2;
+  const rows = Math.floor(targetHeight / safeStep) + 2;
+  const fieldPoints = cols * rows;
+  const cells = Math.max(0, cols - 1) * Math.max(0, rows - 1);
+  const cellChecks = cells * Math.max(1, Math.round(rings || 1));
+  const pairs = holeCount > 1 ? (holeCount * (holeCount - 1)) / 2 : 0;
+  const pointCost = fieldPoints * (Math.max(0, holeCount || 0) + pairs);
+  return {
+    cols,
+    rows,
+    gridStep: safeStep,
+    fieldPoints,
+    cells,
+    cellChecks,
+    pointCost,
+    pixels: targetWidth * targetHeight
+  };
+}
+
+function getEffectiveGridStep(targetWidth, targetHeight, flatMode, budget) {
+  let step = getGridStep(targetWidth, targetHeight, flatMode);
+  let estimate = estimateWork(targetWidth, targetHeight, step, params.NUM_RINGS, holes.length);
+  let adapted = false;
+  while (estimate.cellChecks > budget && step < 512) {
+    step += 1;
+    adapted = true;
+    estimate = estimateWork(targetWidth, targetHeight, step, params.NUM_RINGS, holes.length);
+  }
+  return { gridStep: step, estimate, adapted };
 }
 
 function getGridStep(targetWidth, targetHeight, flatMode = false) {
@@ -1003,7 +1433,7 @@ function draw() {
   background(0);
 
   if (params.SHOW_TEXTURE) {
-    drawFaintTextureToMain(scene.textureDots);
+    drawFaintTexture(null, scene.textureDots);
   }
 
   for (let i = 0; i < scene.contours.length; i++) {
@@ -1012,13 +1442,13 @@ function draw() {
       stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
       strokeWeight(params.WHITE_STROKE_WEIGHT * params.RED_SHADOW_SCALE);
       noFill();
-      drawSmoothPathMain(contour.points, contour.closed);
+      drawSmoothPath(null, contour.points, contour.closed);
     }
 
     stroke(255);
     strokeWeight(params.WHITE_STROKE_WEIGHT);
     noFill();
-    drawSmoothPathMain(contour.points, contour.closed);
+    drawSmoothPath(null, contour.points, contour.closed);
   }
 
   if (params.SHOW_HOLE_GUIDES) {
@@ -1026,70 +1456,52 @@ function draw() {
   }
 }
 
-function drawSmoothPathMain(pts, closed) {
+function mainDrawTarget() {
+  return {
+    beginShape: (...args) => beginShape(...args),
+    curveVertex: (x, y) => curveVertex(x, y),
+    endShape: (...args) => endShape(...args),
+    push: () => push(),
+    pop: () => pop(),
+    noStroke: () => noStroke(),
+    fill: (...args) => fill(...args),
+    ellipse: (...args) => ellipse(...args)
+  };
+}
+
+function drawSmoothPath(target, pts, closed) {
   const n = pts.length;
   if (n < 2) return;
+  const T = target || mainDrawTarget();
 
-  beginShape();
+  T.beginShape();
   if (closed) {
-    curveVertex(pts[n - 1].x, pts[n - 1].y);
-    curveVertex(pts[0].x, pts[0].y);
-    for (let i = 0; i < n; i++) curveVertex(pts[i].x, pts[i].y);
-    curveVertex(pts[0].x, pts[0].y);
-    curveVertex(pts[1].x, pts[1].y);
-    endShape(CLOSE);
+    T.curveVertex(pts[n - 1].x, pts[n - 1].y);
+    T.curveVertex(pts[0].x, pts[0].y);
+    for (let i = 0; i < n; i++) T.curveVertex(pts[i].x, pts[i].y);
+    T.curveVertex(pts[0].x, pts[0].y);
+    T.curveVertex(pts[1].x, pts[1].y);
+    T.endShape(CLOSE);
   } else {
-    curveVertex(pts[0].x, pts[0].y);
-    curveVertex(pts[0].x, pts[0].y);
-    for (let i = 1; i < n; i++) curveVertex(pts[i].x, pts[i].y);
-    curveVertex(pts[n - 1].x, pts[n - 1].y);
-    curveVertex(pts[n - 1].x, pts[n - 1].y);
-    endShape();
+    T.curveVertex(pts[0].x, pts[0].y);
+    T.curveVertex(pts[0].x, pts[0].y);
+    for (let i = 1; i < n; i++) T.curveVertex(pts[i].x, pts[i].y);
+    T.curveVertex(pts[n - 1].x, pts[n - 1].y);
+    T.curveVertex(pts[n - 1].x, pts[n - 1].y);
+    T.endShape();
   }
 }
 
-function drawSmoothPathOnGraphics(pg, pts, closed) {
-  const n = pts.length;
-  if (n < 2) return;
-
-  pg.beginShape();
-  if (closed) {
-    pg.curveVertex(pts[n - 1].x, pts[n - 1].y);
-    pg.curveVertex(pts[0].x, pts[0].y);
-    for (let i = 0; i < n; i++) pg.curveVertex(pts[i].x, pts[i].y);
-    pg.curveVertex(pts[0].x, pts[0].y);
-    pg.curveVertex(pts[1].x, pts[1].y);
-    pg.endShape(CLOSE);
-  } else {
-    pg.curveVertex(pts[0].x, pts[0].y);
-    pg.curveVertex(pts[0].x, pts[0].y);
-    for (let i = 1; i < n; i++) pg.curveVertex(pts[i].x, pts[i].y);
-    pg.curveVertex(pts[n - 1].x, pts[n - 1].y);
-    pg.curveVertex(pts[n - 1].x, pts[n - 1].y);
-    pg.endShape();
-  }
-}
-
-function drawFaintTextureToMain(dots) {
-  push();
-  noStroke();
-  fill(255, 6);
+function drawFaintTexture(target, dots) {
+  const T = target || mainDrawTarget();
+  T.push();
+  T.noStroke();
+  T.fill(255, 6);
   for (let i = 0; i < dots.length; i++) {
     const d = dots[i];
-    ellipse(d.x, d.y, d.s, d.s);
+    T.ellipse(d.x, d.y, d.s, d.s);
   }
-  pop();
-}
-
-function drawFaintTextureToGraphics(pg, dots) {
-  pg.push();
-  pg.noStroke();
-  pg.fill(255, 6);
-  for (let i = 0; i < dots.length; i++) {
-    const d = dots[i];
-    pg.ellipse(d.x, d.y, d.s, d.s);
-  }
-  pg.pop();
+  T.pop();
 }
 
 function drawHoleHandlesMain(holesPx, exportMode) {
@@ -1117,7 +1529,63 @@ function getHoleHandleRadiusPx(hole, targetWidth = width, targetHeight = height)
   return Math.max(params.HANDLE_RADIUS, coreRadiusPx);
 }
 
-function exportPNG(scale = 4, transparent = true) {
+function startExportFromUI() {
+  const sel = document.getElementById('exportScale');
+  if (sel) {
+    const v = parseInt(sel.value, 10);
+    params.EXPORT_SCALE = [1, 2, 3, 4].includes(v) ? v : 4;
+  }
+  exportPNG(params.EXPORT_SCALE, params.EXPORT_TRANSPARENT);
+}
+
+async function exportPNG(scale = 4, transparent = true) {
+  if (isExporting) return;
+  const useScale = [1, 2, 3, 4].includes(scale) ? scale : 4;
+  const exportW = Math.max(64, Math.round(width * useScale));
+  const exportH = Math.max(64, Math.round(height * useScale));
+
+  const step = getGridStep(exportW, exportH, isFlatFieldMode());
+  const est = estimateWork(exportW, exportH, step, params.NUM_RINGS, holes.length);
+
+  const reasons = [];
+  if (est.cellChecks > EXPORT_HARD_CELLS) {
+    reasons.push(`推定セル走査回数（約 ${formatCount(est.cellChecks)} 回）が上限（約 ${formatCount(EXPORT_HARD_CELLS)} 回）を超えています。輪の数かグリッド解像度、または書き出し倍率を下げてください。`);
+  }
+  if (est.fieldPoints > EXPORT_HARD_POINTS) {
+    reasons.push(`推定グリッド点数（約 ${formatCount(est.fieldPoints)} 点）が上限（約 ${formatCount(EXPORT_HARD_POINTS)} 点）を超えています。グリッド解像度か書き出し倍率を下げてください。`);
+  }
+  if (est.pixels > EXPORT_HARD_PIXELS) {
+    reasons.push(`書き出しサイズ（${exportW}×${exportH} = 約 ${formatCount(est.pixels)} 画素）が上限（約 ${formatCount(EXPORT_HARD_PIXELS)} 画素）を超えています。書き出し倍率を下げてください。`);
+  }
+  if (reasons.length > 0) {
+    setStatus('書き出しを中止しました（負荷上限超過）');
+    showDialog({
+      title: '書き出しできません',
+      message: reasons.join('\n'),
+      okLabel: '閉じる',
+      hideCancel: true,
+      onOk: () => true
+    });
+    return;
+  }
+
+  if (est.cellChecks > EXPORT_CONFIRM_CELLS || est.pixels > EXPORT_CONFIRM_PIXELS) {
+    showDialog({
+      title: '書き出しの確認',
+      message: `推定負荷が大きめです。\n書き出しサイズ: ${exportW}×${exportH}（約 ${formatCount(est.pixels)} 画素）\n推定セル走査: 約 ${formatCount(est.cellChecks)} 回\n処理に時間がかかる場合があります。続行しますか？`,
+      okLabel: '書き出す',
+      onOk: () => {
+        runExport(useScale, transparent, exportW, exportH);
+        return true;
+      }
+    });
+    return;
+  }
+
+  runExport(useScale, transparent, exportW, exportH);
+}
+
+async function runExport(scale, transparent, exportW, exportH) {
   if (isExporting) return;
   isExporting = true;
 
@@ -1125,7 +1593,7 @@ function exportPNG(scale = 4, transparent = true) {
   const prevLabel = exportButton ? exportButton.textContent : '';
   if (exportButton) {
     exportButton.disabled = true;
-    exportButton.textContent = '書き出し中…';
+    exportButton.textContent = '書き出し中… 0%';
   }
 
   const finish = () => {
@@ -1137,8 +1605,6 @@ function exportPNG(scale = 4, transparent = true) {
   };
 
   try {
-    const exportW = Math.max(64, Math.round(width * scale));
-    const exportH = Math.max(64, Math.round(height * scale));
     const pg = createGraphics(exportW, exportH);
     pg.pixelDensity(1);
     pg.clear();
@@ -1147,10 +1613,14 @@ function exportPNG(scale = 4, transparent = true) {
       pg.background(0);
     }
 
-    const exportScene = buildSceneData(exportW, exportH, seedVal);
+    const exportScene = await buildSceneDataAsync(exportW, exportH, seedVal, (progress) => {
+      if (!exportButton || !progress) return;
+      const overall = progress.phase === 'field' ? progress.ratio * 0.7 : 0.7 + progress.ratio * 0.3;
+      exportButton.textContent = `書き出し中… ${Math.round(overall * 100)}%`;
+    });
 
     if (params.SHOW_TEXTURE) {
-      drawFaintTextureToGraphics(pg, exportScene.textureDots);
+      drawFaintTexture(pg, exportScene.textureDots);
     }
 
     for (let i = 0; i < exportScene.contours.length; i++) {
@@ -1159,17 +1629,17 @@ function exportPNG(scale = 4, transparent = true) {
         pg.stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
         pg.strokeWeight(params.WHITE_STROKE_WEIGHT * params.RED_SHADOW_SCALE * scale);
         pg.noFill();
-        drawSmoothPathOnGraphics(pg, contour.points, contour.closed);
+        drawSmoothPath(pg, contour.points, contour.closed);
       }
 
       pg.stroke(255);
       pg.strokeWeight(params.WHITE_STROKE_WEIGHT * scale);
       pg.noFill();
-      drawSmoothPathOnGraphics(pg, contour.points, contour.closed);
+      drawSmoothPath(pg, contour.points, contour.closed);
     }
 
     const ts = Date.now();
-    const filename = `TOPO_multihole_refined_transparent_seed${seedVal}_x${scale}_${ts}.png`;
+    const filename = `TOPO_multihole_refined_${transparent ? 'transparent_' : ''}seed${seedVal}_x${scale}_${ts}.png`;
     downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
       pg.remove();
       finish();
@@ -1227,13 +1697,14 @@ function mousePressed() {
   if (hitIndex >= 0) {
     selectedHoleIndex = hitIndex;
     dragHoleIndex = hitIndex;
+    preDragSnapshot = snapshotState();
     syncSelectedHoleControls();
     redraw();
     return false;
   }
 
-  addHole(mouseX / width, mouseY / height);
-  dragHoleIndex = selectedHoleIndex;
+  const added = addHole(mouseX / width, mouseY / height);
+  dragHoleIndex = added ? selectedHoleIndex : -1;
   return false;
 }
 
@@ -1252,8 +1723,19 @@ function mouseDragged() {
 function mouseReleased() {
   if (dragHoleIndex >= 0) {
     if (dragRegenTimer) clearTimeout(dragRegenTimer);
+    if (preDragSnapshot) {
+      const before = preDragSnapshot.holes[dragHoleIndex];
+      const now = holes[dragHoleIndex];
+      if (before && now && (before.x !== now.x || before.y !== now.y)) {
+        undoStack.push(preDragSnapshot);
+        trimUndoStack();
+        updateUndoButton();
+      }
+      preDragSnapshot = null;
+    }
     regenerateScene({ newSeed: false });
     redraw();
+    scheduleSaveSettings();
   }
   dragHoleIndex = -1;
   return true;
@@ -1275,12 +1757,359 @@ function hitTestHole(px, py) {
 }
 
 function isPointerInsideControls(px, py) {
-  const rect = document.getElementById('controls').getBoundingClientRect();
+  if (!panelVisible) return false;
+  const controls = document.getElementById('controls');
+  if (!controls) return false;
+  const rect = controls.getBoundingClientRect();
   return px >= rect.left && px <= rect.right && py >= rect.top && py <= rect.bottom;
 }
 
 function clamp(value, minValue, maxValue) {
   return Math.min(maxValue, Math.max(minValue, value));
+}
+
+function setStatus(message) {
+  const el = document.getElementById('statusLine');
+  if (el) el.textContent = message || '';
+}
+
+function updateSeedDisplay() {
+  const el = document.getElementById('seedVal');
+  if (el) el.textContent = String(seedVal);
+}
+
+function formatCount(value) {
+  const v = Math.round(value);
+  if (v >= 100000000) return `${(v / 100000000).toFixed(1)}億`;
+  if (v >= 10000) return `${(v / 10000).toFixed(1)}万`;
+  return v.toLocaleString('ja-JP');
+}
+
+function setPanelVisible(visible) {
+  panelVisible = !!visible;
+  const panel = document.getElementById('controls');
+  const toggle = document.getElementById('panelToggle');
+  if (panel) {
+    panel.style.display = panelVisible ? '' : 'none';
+    panel.setAttribute('aria-hidden', String(!panelVisible));
+  }
+  if (toggle) toggle.style.display = panelVisible ? 'none' : '';
+}
+
+function cycleHoleSelection(dir) {
+  if (holes.length === 0) return;
+  if (selectedHoleIndex < 0) {
+    selectedHoleIndex = 0;
+  } else {
+    selectedHoleIndex = (selectedHoleIndex + dir + holes.length) % holes.length;
+  }
+  syncSelectedHoleControls();
+  redraw();
+}
+
+function collectSettingsParams(source) {
+  const src = source || params;
+  const out = {};
+  SETTINGS_PARAM_KEYS.forEach((key) => {
+    out[key] = src[key];
+  });
+  return out;
+}
+
+function snapshotState() {
+  return {
+    params: collectSettingsParams(),
+    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp })),
+    seed: seedVal,
+    selectedHoleIndex
+  };
+}
+
+function trimUndoStack() {
+  while (undoStack.length > UNDO_MAX) undoStack.shift();
+}
+
+function pushUndo() {
+  undoStack.push(snapshotState());
+  trimUndoStack();
+  updateUndoButton();
+}
+
+function updateUndoButton() {
+  const btn = document.getElementById('undoBtn');
+  if (btn) btn.disabled = undoStack.length === 0;
+}
+
+function capturePreChange() {
+  if (!preChangeSnapshot) {
+    preChangeSnapshot = snapshotState();
+    preChangeCommitted = false;
+  }
+}
+
+function commitPreChange() {
+  if (preChangeSnapshot && !preChangeCommitted) {
+    undoStack.push(preChangeSnapshot);
+    trimUndoStack();
+    preChangeCommitted = true;
+    updateUndoButton();
+  }
+}
+
+function resetPreChange() {
+  preChangeSnapshot = null;
+  preChangeCommitted = false;
+}
+
+function undoLast() {
+  if (undoStack.length === 0) return;
+  const snapshot = undoStack.pop();
+  applySettingsData({
+    params: snapshot.params,
+    holes: snapshot.holes,
+    seed: snapshot.seed
+  });
+  if (Number.isInteger(snapshot.selectedHoleIndex)) {
+    selectedHoleIndex = holes.length === 0 ? -1 : clamp(snapshot.selectedHoleIndex, 0, holes.length - 1);
+  }
+  syncAllControlValues();
+  syncSelectedHoleControls();
+  updateSeedDisplay();
+  regenerateScene({ newSeed: false });
+  redraw();
+  updateUndoButton();
+  scheduleSaveSettings();
+  setStatus('元に戻しました');
+}
+
+function sanitizeNumber(value, minValue, maxValue, fallback) {
+  const n = typeof value === 'number' ? value : parseFloat(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(maxValue, Math.max(minValue, n));
+}
+
+function sanitizeSeed(value, fallback) {
+  const n = Math.floor(Number(value));
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(999999999, Math.max(1, n));
+}
+
+function sanitizeSettings(obj) {
+  const srcParams = (obj && typeof obj === 'object' && obj.params && typeof obj.params === 'object') ? obj.params : {};
+  const cleanParams = collectSettingsParams(DEFAULT_PARAMS);
+  Object.keys(PARAM_RANGES).forEach((key) => {
+    const [minV, maxV] = PARAM_RANGES[key];
+    cleanParams[key] = sanitizeNumber(srcParams[key], minV, maxV, DEFAULT_PARAMS[key]);
+  });
+  cleanParams.NUM_RINGS = Math.round(cleanParams.NUM_RINGS);
+  cleanParams.ANGLE_STEPS = Math.round(cleanParams.ANGLE_STEPS);
+  cleanParams.RED_SHADOW_ALPHA = Math.round(cleanParams.RED_SHADOW_ALPHA);
+  PARAM_BOOLEANS.forEach((key) => {
+    cleanParams[key] = typeof srcParams[key] === 'boolean' ? srcParams[key] : DEFAULT_PARAMS[key];
+  });
+  const scaleValue = Math.round(sanitizeNumber(srcParams.EXPORT_SCALE, 1, 4, DEFAULT_PARAMS.EXPORT_SCALE));
+  cleanParams.EXPORT_SCALE = [1, 2, 3, 4].includes(scaleValue) ? scaleValue : DEFAULT_PARAMS.EXPORT_SCALE;
+
+  let cleanHoles = [];
+  if (obj && Array.isArray(obj.holes)) {
+    cleanHoles = obj.holes.slice(0, MAX_HOLES).map((h) => {
+      const src = (h && typeof h === 'object') ? h : {};
+      return {
+        x: sanitizeNumber(src.x, 0.03, 0.97, 0.5),
+        y: sanitizeNumber(src.y, 0.03, 0.97, 0.5),
+        radius: sanitizeNumber(src.radius, 0.10, 4.00, 1.0),
+        strength: sanitizeNumber(src.strength, 0.35, 3.00, 1.0),
+        waveAmp: sanitizeNumber(src.waveAmp, 0.00, 2.50, 1.0)
+      };
+    });
+  }
+  if (cleanHoles.length === 0) {
+    cleanHoles = [{ x: 0.5, y: 0.5, radius: 1.0, strength: 1.0, waveAmp: 1.0 }];
+  }
+
+  const seedFallback = Number.isFinite(seedVal) && seedVal > 0 ? seedVal : 1;
+  const cleanSeed = obj && obj.seed !== undefined ? sanitizeSeed(obj.seed, seedFallback) : seedFallback;
+
+  return { params: cleanParams, holes: cleanHoles, seed: cleanSeed };
+}
+
+function applySettingsData(data) {
+  Object.assign(params, data.params);
+  seedVal = data.seed;
+  holes = data.holes.map((h, i) => ({
+    x: h.x,
+    y: h.y,
+    radius: h.radius,
+    strength: h.strength,
+    waveAmp: h.waveAmp,
+    phase: computeHolePhase(i)
+  }));
+  selectedHoleIndex = holes.length > 0 ? 0 : -1;
+}
+
+function serializeSettings() {
+  return JSON.stringify({
+    version: 1,
+    params: collectSettingsParams(),
+    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp })),
+    seed: seedVal
+  }, null, 2);
+}
+
+function parseSettingsJSON(text) {
+  let obj;
+  try {
+    obj = JSON.parse(text);
+  } catch (err) {
+    return { ok: false, error: `JSONの解析に失敗しました: ${err.message}` };
+  }
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+    return { ok: false, error: '設定JSONの形式が正しくありません（オブジェクトが必要です）' };
+  }
+  return { ok: true, data: sanitizeSettings(obj) };
+}
+
+function saveSettings() {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, serializeSettings());
+    }
+  } catch (err) {
+    // 保存に失敗しても描画は継続する
+  }
+}
+
+function scheduleSaveSettings() {
+  if (saveSettingsTimer) clearTimeout(saveSettingsTimer);
+  saveSettingsTimer = setTimeout(saveSettings, 250);
+}
+
+function loadSettings() {
+  let raw = null;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      raw = localStorage.getItem(STORAGE_KEY);
+    }
+  } catch (err) {
+    raw = null;
+  }
+  if (!raw) return false;
+  const result = parseSettingsJSON(raw);
+  if (!result.ok) return false;
+  applySettingsData(result.data);
+  return true;
+}
+
+function resetSettings() {
+  pushUndo();
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  } catch (err) {
+    // 削除に失敗しても初期化は続行する
+  }
+  Object.assign(params, JSON.parse(JSON.stringify(DEFAULT_PARAMS)));
+  params.CANVAS_W = window.innerWidth;
+  params.CANVAS_H = window.innerHeight;
+  seedVal = 0;
+  holes = [createHole(0.5, 0.5, { radius: 1.0, strength: 1.0, waveAmp: 1.0 })];
+  selectedHoleIndex = 0;
+  syncAllControlValues();
+  syncSelectedHoleControls();
+  regenerateScene({ newSeed: true });
+  redraw();
+  setStatus('設定を初期化しました');
+}
+
+function applySeed(value) {
+  const n = Math.floor(Number(value));
+  if (!Number.isFinite(n) || n < 1 || n > 999999999) {
+    setStatus('シードは1〜999999999の整数で指定してください');
+    return false;
+  }
+  pushUndo();
+  seedVal = n;
+  for (let i = 0; i < holes.length; i++) {
+    holes[i].phase = computeHolePhase(i);
+  }
+  updateSeedDisplay();
+  regenerateScene({ newSeed: false });
+  redraw();
+  scheduleSaveSettings();
+  setStatus(`シード ${n} を適用しました`);
+  return true;
+}
+
+function showDialog(options) {
+  const overlay = document.getElementById('dialogOverlay');
+  if (!overlay) return;
+  const titleEl = document.getElementById('dialogTitle');
+  const messageEl = document.getElementById('dialogMessage');
+  const textEl = document.getElementById('dialogText');
+  const okEl = document.getElementById('dialogOk');
+  const cancelEl = document.getElementById('dialogCancel');
+  const downloadEl = document.getElementById('dialogDownload');
+  if (titleEl) titleEl.textContent = options.title || '';
+  if (messageEl) messageEl.textContent = options.message || '';
+  if (textEl) {
+    textEl.hidden = !options.text;
+    textEl.value = options.text || '';
+  }
+  if (okEl) okEl.textContent = options.okLabel || 'OK';
+  if (cancelEl) cancelEl.hidden = !!options.hideCancel;
+  if (downloadEl) downloadEl.hidden = !options.onDownload;
+  setDialogError('');
+  dialogState = { onOk: options.onOk || null, onDownload: options.onDownload || null };
+  overlay.hidden = false;
+  if (textEl && options.text) textEl.focus();
+  else if (okEl) okEl.focus();
+}
+
+function closeDialog() {
+  const overlay = document.getElementById('dialogOverlay');
+  if (overlay) overlay.hidden = true;
+  dialogState = { onOk: null, onDownload: null };
+}
+
+function setDialogError(message) {
+  const el = document.getElementById('dialogError');
+  if (el) el.textContent = message || '';
+}
+
+function openSettingsDialog() {
+  showDialog({
+    title: '設定JSON',
+    message: '現在の設定です。内容を編集して「取り込む」を押すと検証して適用します。',
+    text: serializeSettings(),
+    okLabel: '取り込む',
+    onOk: (text) => {
+      const result = parseSettingsJSON(text);
+      if (!result.ok) {
+        setDialogError(result.error);
+        return false;
+      }
+      pushUndo();
+      applySettingsData(result.data);
+      syncAllControlValues();
+      syncSelectedHoleControls();
+      updateSeedDisplay();
+      regenerateScene({ newSeed: false });
+      redraw();
+      scheduleSaveSettings();
+      setStatus('設定を取り込みました');
+      return true;
+    },
+    onDownload: () => {
+      downloadTextFile(serializeSettings(), `topo-settings-seed${seedVal}.json`);
+    }
+  });
+}
+
+function downloadTextFile(text, filename) {
+  const blob = new Blob([text], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  triggerDownload(url, filename, true);
 }
 </script>
 </body>
