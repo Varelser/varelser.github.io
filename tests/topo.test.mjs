@@ -6,7 +6,8 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const html = fs.readFileSync(path.join(here, 'topo.html'), 'utf8');
+const htmlPath = [path.join(here, 'topo.html'), path.join(here, '..', 'topo.html')].find((p) => fs.existsSync(p));
+const html = fs.readFileSync(htmlPath, 'utf8');
 const inlineScripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
 const mainScript = inlineScripts.reduce((a, b) => (b.length > a.length ? b : a), '');
 
