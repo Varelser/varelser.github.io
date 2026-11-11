@@ -246,6 +246,7 @@ async function main() {
   check('no window.confirm/prompt/alert usage', !/window\.(confirm|prompt|alert)/.test(html) && !/\b(confirm|prompt|alert)\s*\(/.test(mainScript));
   check('unified draw routines only (no old duplicated pairs)', !/drawSmoothPath(Main|OnGraphics)|drawFaintTextureTo(Main|Graphics)/.test(html));
   check('grid resolution label renamed', html.includes('グリッド解像度 (ANGLE_STEPS)') && !html.includes('角度分割相当'));
+  check('canvas press guard ignores clicks on UI elements (panel toggle)', /event\.target\.tagName !== 'CANVAS'/.test(mainScript) && mainScript.includes("getElementById('panelToggle')"));
 
   const rangeIds = [...html.matchAll(/<input[^>]*type="range"[^>]*>/g)].map((m) => {
     const idMatch = m[0].match(/id="([^"]+)"/);
