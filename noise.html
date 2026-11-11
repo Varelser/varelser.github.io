@@ -917,6 +917,8 @@
   }
 
   function applyPreset(name) {
+    if (!PRESETS[name]) return;
+    presetSelect.value = name;
     setParams(PRESETS[name]);
     engine.rebuild();
     scheduleAutosave();
