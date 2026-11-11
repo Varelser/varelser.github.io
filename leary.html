@@ -270,6 +270,10 @@
     border-radius:22px;
     box-shadow:none;
   }
+  canvas:focus-visible{
+    outline:2px solid rgba(255,255,255,.85);
+    outline-offset:4px;
+  }
   .checker{
     background-image:
       linear-gradient(45deg, rgba(255,255,255,.016) 25%, transparent 25%),
@@ -480,12 +484,12 @@
 
   <main class="viewer checker" id="viewer">
     <div class="viewer-top">
-      <div class="pill"><span>ホイール: ズーム</span><span>ドラッグ: パン</span></div>
+      <div class="pill"><span>ホイール: ズーム</span><span>ドラッグ: パン</span><span>キー: パン／ズーム（Canvasにフォーカス）</span></div>
       <div class="pill"><span id="viewInfo">zoom 1.00</span></div>
     </div>
     <div class="canvas-wrap">
       <div class="stage" id="stage">
-        <canvas id="canvas" width="1920" height="1080"></canvas>
+        <canvas id="canvas" width="1920" height="1080" tabindex="0" aria-label="プレビューキャンバス（矢印キーでパン、+と-でズーム、0で表示リセット）"></canvas>
         <div id="overlay"></div>
       </div>
     </div>
@@ -539,6 +543,7 @@
     currentRenderToken: 0,
     rendering: false,
     interactionTimer: 0,
+    renderTimer: 0,
     geometryDirty: true,
     previewCache: document.createElement('canvas'),
   };
@@ -838,6 +843,13 @@
     });
   }
 
+  // パラメータ入力 (スライダ代わりの数値入力やカラーピッカー) は短時間に
+  // 何度も発火するため、再描画を 140ms まとめてから1回だけ行う。
+  function scheduleGeometryRenderDebounced(){
+    window.clearTimeout(state.renderTimer);
+    state.renderTimer = window.setTimeout(() => { scheduleGeometryRender(); }, 140);
+  }
+
   function scheduleAfterInteraction(){
     window.clearTimeout(state.interactionTimer);
     state.interactionTimer = window.setTimeout(() => {
@@ -968,6 +980,34 @@
     overlay.querySelectorAll('.source.dragging').forEach(el => el.classList.remove('dragging'));
   }
 
+  function zoomViewAtCenter(factor){
+    const mx = state.size.width / 2;
+    const my = state.size.height / 2;
+    const newZoom = clamp(state.view.zoom * factor, 0.1, 10);
+    const worldX = (mx - state.view.x) / state.view.zoom;
+    const worldY = (my - state.view.y) / state.view.zoom;
+    state.view.x = mx - worldX * newZoom;
+    state.view.y = my - worldY * newZoom;
+    state.view.zoom = newZoom;
+  }
+
+  // Canvasにフォーカスがあるときのキーボード操作 (矢印=パン, +-=ズーム, 0=リセット)
+  function onCanvasKeyDown(e){
+    const panStep = e.shiftKey ? 120 : 24;
+    let handled = true;
+    if(e.key === 'ArrowLeft') state.view.x += panStep;
+    else if(e.key === 'ArrowRight') state.view.x -= panStep;
+    else if(e.key === 'ArrowUp') state.view.y += panStep;
+    else if(e.key === 'ArrowDown') state.view.y -= panStep;
+    else if(e.key === '+' || e.key === '=') zoomViewAtCenter(1.15);
+    else if(e.key === '-' || e.key === '_') zoomViewAtCenter(1 / 1.15);
+    else if(e.key === '0') state.view = { x: 0, y: 0, zoom: 1 };
+    else handled = false;
+    if(!handled) return;
+    e.preventDefault();
+    scheduleComposite();
+  }
+
   function onWheel(e){
     e.preventDefault();
     const rect = canvas.getBoundingClientRect();
@@ -1034,8 +1074,10 @@
       if(state.config.colors.length <= 1) return;
       state.config.colors.splice(idx, 1);
       renderColorInputs();
+      scheduleGeometryRender();
+      return;
     }
-    scheduleGeometryRender();
+    scheduleGeometryRenderDebounced();
   }
 
   function bindInputs(){
@@ -1063,7 +1105,7 @@
           }
           if(id === 'lineCount' || id === 'generationWidth') rebuildBaseLines();
         }
-        scheduleGeometryRender();
+        scheduleGeometryRenderDebounced();
         updateExportEstimate();
       });
     });
@@ -1110,6 +1152,7 @@
       });
     });
     canvas.addEventListener('pointerdown', onCanvasPointerDown);
+    canvas.addEventListener('keydown', onCanvasKeyDown);
     viewer.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('resize', () => { updateStageSize(); updateOverlay(); scheduleComposite(); });
   }
