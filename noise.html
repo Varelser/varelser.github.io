@@ -3863,7 +3863,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         positionTip(r.left + r.width / 2, r.bottom);
       });
       addEventListener('focusout', hideTip);
-      addEventListener('scroll', hideTip, true);
+      addEventListener('scroll', () => { if (tipEl.classList.contains('visible')) hideTip(); }, true);
     }
 
     $('playBtn').addEventListener('click', () => engine.play());
