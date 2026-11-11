@@ -539,6 +539,9 @@
     swirls: [],
     baseLines: null,
     drag: { mode: null, swirlId: null, startClientX: 0, startClientY: 0, startViewX: 0, startViewY: 0 },
+    pointers: new Map(),
+    pinch: null,
+    geometryVersion: 0,
     compositeQueued: false,
     currentRenderToken: 0,
     rendering: false,
@@ -766,6 +769,7 @@
 
   async function renderGeometryPreview(){
     const token = ++state.currentRenderToken;
+    const startVersion = state.geometryVersion;
     const cfg = state.config;
     const { width, height } = ensurePreviewCache();
     const scaleX = width / state.size.width;
@@ -784,11 +788,15 @@
     const renderYMax = height + 500 * scaleY;
     const { xs, yRatios, widths, normalizedPos, count } = baseLines;
     const batch = clamp(Math.round(cfg.batchLines), 10, 4000);
+    // プレビュー専用の自動保護: 線が多すぎる場合は間引いて描き、応答性を保つ。
+    // (PNG/SVG 書き出しは従来どおり全数を描画する)
+    const MAX_PREVIEW_LINES = 6000;
+    const stride = Math.max(1, Math.ceil(count / MAX_PREVIEW_LINES));
 
-    for(let start=0; start<count; start += batch){
+    for(let start=0; start<count; start += batch * stride){
       if(token !== state.currentRenderToken) return;
-      const end = Math.min(count, start + batch);
-      for(let i=start;i<end;i++){
+      const end = Math.min(count, start + batch * stride);
+      for(let i=start;i<end;i+=stride){
         const colorDef = chooseColor(i, normalizedPos[i]);
         const yCenter = yRatios[i] * height;
         const startY = yCenter - flowHalfLen;
@@ -805,10 +813,13 @@
     }
 
     finishBaseSurface(pctx, previewCfg);
-    state.geometryDirty = false;
+    // 描画中にソース点が動いていたら dirty を残し、追随描画を予約する
+    state.geometryDirty = state.geometryVersion !== startVersion;
     state.rendering = false;
     updateStatus('待機', 1);
     compositePreview();
+    if(stride > 1) $('statusRender').textContent = `待機 (プレビュー間引き 1/${stride})`;
+    if(state.geometryDirty) scheduleAfterInteraction();
   }
 
   function compositePreview(){
@@ -833,6 +844,13 @@
     });
   }
 
+  // 描画中の変更を検出するための世代カウンタ付き dirty マーク。
+  // ソース点の移動 (ドラッグ/キー) のように「描画を即時開始しない変更」ではこちらを使う。
+  function markGeometryDirty(){
+    state.geometryDirty = true;
+    state.geometryVersion++;
+  }
+
   function scheduleGeometryRender(){
     state.geometryDirty = true;
     renderGeometryPreview().catch(err => {
@@ -853,7 +871,10 @@
   function scheduleAfterInteraction(){
     window.clearTimeout(state.interactionTimer);
     state.interactionTimer = window.setTimeout(() => {
-      if(state.geometryDirty && !state.rendering) scheduleGeometryRender();
+      if(!state.geometryDirty) return;
+      // 描画中なら諦めずに再試行する (以前はここで取りこぼし、プレビューが古いまま残った)
+      if(state.rendering){ scheduleAfterInteraction(); return; }
+      scheduleGeometryRender();
     }, 120);
   }
 
@@ -900,7 +921,7 @@
       el.dataset.id = String(swirl.id);
       el.tabIndex = 0;
       el.setAttribute('role', 'button');
-      el.setAttribute('aria-label', `ソース点${idx + 1}（矢印キーで移動、Shift同時押しで10px）`);
+      el.setAttribute('aria-label', `ソース点${idx + 1}（矢印キーで移動、Shift同時押しで10px、Enterで中心へ戻す）`);
       el.addEventListener('pointerdown', onSwirlPointerDown);
       el.addEventListener('keydown', onSwirlKeyDown);
       overlay.appendChild(el);
@@ -921,6 +942,18 @@
   }
 
   function onSwirlKeyDown(e){
+    const s = state.swirls.find(v => v.id === Number(e.currentTarget.dataset.id));
+    if(!s) return;
+    if(e.key === 'Enter' || e.key === ' '){
+      // ボタンとしての起動操作: ソース点をキャンバス中心へ戻す
+      e.preventDefault();
+      s.x = state.size.width / 2;
+      s.y = state.size.height / 2;
+      markGeometryDirty();
+      scheduleComposite();
+      scheduleAfterInteraction();
+      return;
+    }
     const step = e.shiftKey ? 10 : 1;
     let dx = 0, dy = 0;
     if(e.key === 'ArrowLeft') dx = -step;
@@ -929,27 +962,63 @@
     else if(e.key === 'ArrowDown') dy = step;
     else return;
     e.preventDefault();
-    const s = state.swirls.find(v => v.id === Number(e.currentTarget.dataset.id));
-    if(!s) return;
     s.x += dx;
     s.y += dy;
-    state.geometryDirty = true;
+    markGeometryDirty();
     scheduleComposite();
     scheduleAfterInteraction();
   }
 
+  function canvasPointFromClient(clientX, clientY){
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (clientX - rect.left) * (state.size.width / rect.width),
+      y: (clientY - rect.top) * (state.size.height / rect.height),
+    };
+  }
+
   function onCanvasPointerDown(e){
-    if(e.button !== 0) return;
-    state.drag.mode = 'pan';
-    state.drag.startClientX = e.clientX;
-    state.drag.startClientY = e.clientY;
-    state.drag.startViewX = state.view.x;
-    state.drag.startViewY = state.view.y;
+    if(e.pointerType === 'mouse' && e.button !== 0) return;
+    state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp, { once: true });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+    if(state.pointers.size === 2){
+      // 2本目のポインタ: ピンチ開始。中点のワールド座標をアンカーにする
+      const [p1, p2] = [...state.pointers.values()];
+      const mid = canvasPointFromClient((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+      state.drag.mode = 'pinch';
+      state.pinch = {
+        dist: Math.max(1, Math.hypot(p1.x - p2.x, p1.y - p2.y)),
+        worldX: (mid.x - state.view.x) / state.view.zoom,
+        worldY: (mid.y - state.view.y) / state.view.zoom,
+        zoom: state.view.zoom,
+      };
+    } else if(state.pointers.size === 1){
+      state.drag.mode = 'pan';
+      state.drag.startClientX = e.clientX;
+      state.drag.startClientY = e.clientY;
+      state.drag.startViewX = state.view.x;
+      state.drag.startViewY = state.view.y;
+    }
   }
 
   function onPointerMove(e){
+    if(state.drag.mode === 'pinch'){
+      if(!state.pointers.has(e.pointerId)) return;
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if(state.pointers.size === 2 && state.pinch){
+        const [p1, p2] = [...state.pointers.values()];
+        const dist = Math.max(1, Math.hypot(p1.x - p2.x, p1.y - p2.y));
+        const mid = canvasPointFromClient((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+        const newZoom = clamp(state.pinch.zoom * (dist / state.pinch.dist), 0.1, 10);
+        state.view.zoom = newZoom;
+        state.view.x = mid.x - state.pinch.worldX * newZoom;
+        state.view.y = mid.y - state.pinch.worldY * newZoom;
+        scheduleComposite();
+      }
+      return;
+    }
     if(state.drag.mode === 'pan'){
       const rect = canvas.getBoundingClientRect();
       const scaleX = state.size.width / rect.width;
@@ -965,19 +1034,41 @@
       const p = clientToWorld(e.clientX, e.clientY);
       s.x = p.x;
       s.y = p.y;
-      state.geometryDirty = true;
+      markGeometryDirty();
       scheduleComposite();
       updateOverlay();
       scheduleAfterInteraction();
     }
   }
 
-  function onPointerUp(){
-    if(state.drag.mode === 'swirl') scheduleGeometryRender();
-    state.drag.mode = null;
-    state.drag.swirlId = null;
-    window.removeEventListener('pointermove', onPointerMove);
-    overlay.querySelectorAll('.source.dragging').forEach(el => el.classList.remove('dragging'));
+  function onPointerUp(e){
+    if(state.drag.mode === 'swirl'){
+      scheduleGeometryRender();
+      state.drag.mode = null;
+      state.drag.swirlId = null;
+      window.removeEventListener('pointermove', onPointerMove);
+      overlay.querySelectorAll('.source.dragging').forEach(el => el.classList.remove('dragging'));
+      return;
+    }
+    if(e && e.pointerId != null) state.pointers.delete(e.pointerId);
+    if(state.pointers.size === 1 && state.drag.mode === 'pinch'){
+      // ピンチを離したら、残り1本でパンを引き継ぐ
+      const [p] = [...state.pointers.values()];
+      state.drag.mode = 'pan';
+      state.pinch = null;
+      state.drag.startClientX = p.x;
+      state.drag.startClientY = p.y;
+      state.drag.startViewX = state.view.x;
+      state.drag.startViewY = state.view.y;
+      return;
+    }
+    if(state.pointers.size === 0){
+      state.drag.mode = null;
+      state.pinch = null;
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+    }
   }
 
   function zoomViewAtCenter(factor){
@@ -1108,6 +1199,16 @@
         scheduleGeometryRenderDebounced();
         updateExportEstimate();
       });
+    });
+
+    // 確定時 (change) にクランプ後の実値を入力欄へ書き戻し、表示と実値を一致させる。
+    // 入力途中 (input) では書き戻さないので、小数などのタイピングを妨げない。
+    [
+      'width','height','exportScale','previewScale','exportQuality','exportSupersample','exportBatchLines','bgColor','colorMode','lineCount','lineWidthMin','lineWidthMax','opacity',
+      'flowCoverage','generationWidth','segmentResolution','batchLines','swirlType','swirlRadius','swirlStrength','curveTension',
+      'turbulence','turbulenceFreq','verticalStretch','renderShape'
+    ].forEach(id => {
+      $(id).addEventListener('change', () => syncInputs());
     });
 
     $('exportAutoProtect').addEventListener('change', () => { state.exportAutoProtect = $('exportAutoProtect').checked; updateExportEstimate(); });

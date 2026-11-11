@@ -7,6 +7,7 @@
 //
 // Usage (from the repository root):  node tests/leary.test.mjs
 // Exits non-zero if any test fails. No dependencies.
+// To run these automatically on push, see tests/ci-workflow.yml.example.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -99,7 +100,12 @@ globalThis.document = {
   },
   querySelectorAll() { return []; },
 };
-globalThis.window = { addEventListener() {}, removeEventListener() {}, setTimeout, clearTimeout };
+const winListeners = {};
+globalThis.window = {
+  addEventListener(ev, fn) { (winListeners[ev] ||= []).push(fn); },
+  removeEventListener(ev, fn) { if (winListeners[ev]) winListeners[ev] = winListeners[ev].filter(f => f !== fn); },
+  setTimeout, clearTimeout,
+};
 globalThis.requestAnimationFrame = (cb) => setTimeout(cb, 0);
 globalThis.alert = () => {};
 globalThis.confirm = (m) => { confirmCalls.push(String(m)); return confirmAnswer; };
@@ -125,6 +131,11 @@ function fireOn(el, ev, evObj = {}) {
   return fns.length;
 }
 function fire(id, ev) { return fireOn(els[id], ev); }
+function fireWindow(ev, evObj = {}) {
+  const fns = (winListeners[ev] || []).slice();
+  fns.forEach(f => f({ preventDefault() {}, stopPropagation() {}, ...evObj }));
+  return fns.length;
+}
 function setInput(id, val) { els[id].value = String(val); fire(id, 'input'); }
 async function exportSettings() {
   const mark = downloads.length;
@@ -159,6 +170,20 @@ check('non-numeric lineCount keeps previous value', els.statusCount.textContent 
 setInput('lineCount', '900');
 await tick(400);
 await waitFor(() => status() === '待機', 'render after clamp tests');
+
+// On 'change', the clamped value is written back into the field itself,
+// so what the user sees matches the value actually in effect.
+setInput('lineCount', '999999');
+fire('lineCount', 'change');
+check('clamped value is written back to the field on change', els.lineCount.value === '30000', els.lineCount.value);
+setInput('width', '99999');
+fire('width', 'change');
+check('width write-back shows the 16384 clamp', els.width.value === '16384', els.width.value);
+setInput('width', '1920');
+fire('width', 'change');
+setInput('lineCount', '900');
+await tick(400);
+await waitFor(() => status() === '待機', 'render after write-back tests');
 
 // Parameter re-rendering is debounced (~140ms): no composite right after input.
 const mainCtxRec = els.canvas.getContext()._rec;
@@ -241,6 +266,55 @@ await waitFor(() => status() === '待機', 'render after debounce test');
   await tick(400);
 }
 
+// A swirl moved by keyboard while a heavy render is in flight must still get
+// a follow-up render (the interaction timer re-arms instead of dropping it).
+{
+  setInput('previewScale', '1');
+  setInput('lineCount', '5000');
+  await tick(500);
+  await waitFor(() => status() === '待機', 'heavy render settled');
+  els.seedInput.value = '124';
+  fire('seedInput', 'change'); // starts a render immediately, swirl ids unchanged
+  await waitFor(() => status() === '描画中', 'heavy render started', 5000);
+  await tick(30);
+  const srcEl = els.overlay.querySelectorAll().find(c => c.dataset && c.dataset.id);
+  srcEl.focus();
+  fireOn(srcEl, 'keydown', { key: 'ArrowRight', shiftKey: true });
+  await waitFor(() => status() === '待機', 'first render completes', 30000);
+  let followUp = false;
+  const t0 = Date.now();
+  while (Date.now() - t0 < 3000) {
+    if (status() === '描画中') { followUp = true; break; }
+    await tick(10);
+  }
+  check('mid-render key move schedules a follow-up render', followUp);
+  await waitFor(() => status() === '待機', 'follow-up render completes', 30000);
+  els.seedInput.value = '123';
+  fire('seedInput', 'change');
+  setInput('lineCount', '900');
+  await tick(400);
+  await waitFor(() => status() === '待機', 'render after race test');
+}
+
+// Preview auto-protect: at 30000 lines the preview draws at most ~6000
+// strokes (stride sampling) and says so in the status line.
+{
+  const previewCtxRec = createdCanvases[0].getContext()._rec;
+  setInput('previewScale', '0.25');
+  setInput('lineCount', '30000');
+  await tick(500);
+  await waitFor(() => status() === '待機' || String(els.statusRender.textContent).includes('間引き'), 'strided preview render', 60000);
+  const before = previewCtxRec.lineWidths.length;
+  fire('btnResetSwirls', 'click');
+  await waitFor(() => String(els.statusRender.textContent).includes('間引き'), 'strided preview render 2', 60000);
+  const drawn = previewCtxRec.lineWidths.length - before;
+  check('preview stride caps drawn lines (~6000 of 30000)', drawn > 500 && drawn <= 6100, String(drawn));
+  check('status line notes the preview stride', String(els.statusRender.textContent).includes('間引き 1/5'), els.statusRender.textContent);
+  setInput('lineCount', '900');
+  await tick(400);
+  await waitFor(() => status() === '待機', 'render after stride test');
+}
+
 // Swirl source points: keyboard operation + focus preservation.
 {
   const before = await exportSettings();
@@ -257,6 +331,11 @@ await waitFor(() => status() === '待機', 'render after debounce test');
     JSON.stringify({ dx: after.swirls[0].x - before.swirls[0].x, dy: after.swirls[0].y - before.swirls[0].y }));
   check('focus survives overlay rebuild',
     globalThis.document.activeElement && globalThis.document.activeElement.dataset.id === src.dataset.id);
+  fireOn(src, 'keydown', { key: 'Enter' });
+  await tick(250);
+  const centred = await exportSettings();
+  check('Enter moves the source point to the canvas centre',
+    centred.swirls[0].x === 960 && centred.swirls[0].y === 540, JSON.stringify(centred.swirls[0]));
 }
 
 // Viewer keyboard operation: arrows pan, + zooms, 0 resets.
@@ -273,6 +352,18 @@ await waitFor(() => status() === '待機', 'render after debounce test');
   await tick(150);
   v = viewInfo();
   check('viewer 0 resets the view', v && v.zoom === 1 && v.x === 0 && v.y === 0, JSON.stringify(v));
+
+  // Two-pointer pinch: spreading 200px -> 400px doubles the zoom around the midpoint.
+  fireOn(els.canvas, 'pointerdown', { pointerId: 1, pointerType: 'touch', button: 0, clientX: 400, clientY: 300 });
+  fireOn(els.canvas, 'pointerdown', { pointerId: 2, pointerType: 'touch', button: 0, clientX: 600, clientY: 300 });
+  fireWindow('pointermove', { pointerId: 2, clientX: 800, clientY: 300 });
+  await tick(150);
+  v = viewInfo();
+  check('pinch zoom doubles zoom around the midpoint', v && Math.abs(v.zoom - 2) < 0.005 && v.x === -400 && v.y === -300, JSON.stringify(v));
+  fireWindow('pointerup', { pointerId: 2 });
+  fireWindow('pointerup', { pointerId: 1 });
+  fireOn(els.canvas, 'keydown', { key: '0', shiftKey: false });
+  await tick(150);
 }
 
 // Seed input + settings JSON round-trip.

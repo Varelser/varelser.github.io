@@ -1,0 +1,32 @@
+# GitHub Actions workflow example for the Leary behavioural tests.
+#
+# Muse's GitHub App cannot push files under .github/workflows/ (it has no
+# `workflows` permission), so this example is shipped next to the tests.
+# To enable CI, save this file as:
+#
+#     .github/workflows/leary-tests.yml
+#
+# in the repository — via the GitHub web UI ("Add file" → "Create new file")
+# or from a local git clone. No changes to the content are needed.
+
+name: leary-tests
+
+on:
+  push:
+    paths:
+      - leary.html
+      - tests/**
+  pull_request:
+    paths:
+      - leary.html
+      - tests/**
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node tests/leary.test.mjs
