@@ -408,6 +408,9 @@
         <button id="stopBtn" type="button" class="secondary" data-help="再生を停止します(Spaceキーでも可)。">停止</button>
         <button id="exportBtn" type="button" class="secondary" data-help="現在の設定で音声ファイルを書き出します。長さや形式はMasterセクションで指定。">保存</button>
         <button id="recordBtn" type="button" class="secondary" data-help="再生中の音をそのまま録音します。スライダーを動かしたライブな変化も記録でき、停止すると音声ファイル(WebM等)で保存されます。">● 録音</button>
+        <button id="undoBtn" type="button" class="secondary" data-help="パラメータの変更を元に戻します(Ctrl+Z)。プリセット適用やランダムも戻せます。">↩ 戻す</button>
+        <button id="redoBtn" type="button" class="secondary" data-help="元に戻した変更をやり直します(Ctrl+Shift+Z / Ctrl+Y)。">↪ やり直す</button>
+        <button id="snapBtn" type="button" class="secondary" data-help="波形・スペクトラム・スペクトログラムの3つの表示を1枚のPNG画像として保存します。">画像保存</button>
         <button id="cancelExportBtn" type="button" class="secondary" disabled data-help="書き出しを中止します。">保存中止</button>
         <button id="resetBtn" type="button" class="warn" data-help="全パラメータを初期状態に戻します。">初期化</button>
       </div>
@@ -1409,6 +1412,7 @@
       const info = document.createElement('div');
       info.className = 'type-info';
       info.setAttribute('data-type-info', prefix);
+      info.setAttribute('aria-live', 'polite');
       typeInfoEls[prefix] = info;
       field.parentNode.insertBefore(info, field.nextSibling);
       sel.addEventListener('change', refreshTypeInfos);
@@ -1427,6 +1431,7 @@
     syncReadouts();
     updateMini(getParams());
     refreshTypeInfos();
+    commitHistory();
   }
 
   function getParams() {
@@ -4322,6 +4327,74 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     });
   }
 
+  const paramHistory = { stack: [], index: -1, applying: false, timer: null };
+  function snapshotParams() {
+    try { return JSON.stringify(getParams()); } catch (err) { return ''; }
+  }
+  function updateUndoButtons() {
+    const u = $('undoBtn'), r = $('redoBtn');
+    if (u) u.disabled = paramHistory.index <= 0;
+    if (r) r.disabled = paramHistory.index >= paramHistory.stack.length - 1;
+  }
+  function commitHistory() {
+    if (paramHistory.applying) return;
+    const snap = snapshotParams();
+    if (!snap) return;
+    if (paramHistory.stack[paramHistory.index] === snap) { updateUndoButtons(); return; }
+    paramHistory.stack = paramHistory.stack.slice(0, paramHistory.index + 1);
+    paramHistory.stack.push(snap);
+    if (paramHistory.stack.length > 60) paramHistory.stack.shift();
+    paramHistory.index = paramHistory.stack.length - 1;
+    updateUndoButtons();
+  }
+  function noteParamEdit() {
+    clearTimeout(paramHistory.timer);
+    paramHistory.timer = setTimeout(commitHistory, 500);
+  }
+  function restoreHistory(dir) {
+    const next = paramHistory.index + dir;
+    if (next < 0 || next >= paramHistory.stack.length) return;
+    paramHistory.index = next;
+    paramHistory.applying = true;
+    try {
+      setParams(JSON.parse(paramHistory.stack[next]));
+      engine.rebuild();
+      scheduleAutosave();
+    } catch (err) { /* corrupted entry: ignore */ }
+    paramHistory.applying = false;
+    updateUndoButtons();
+    setStatus(dir < 0 ? 'パラメータを元に戻しました。' : 'パラメータをやり直しました。');
+  }
+  function saveVisualizerPng() {
+    const items = [['Waveform', $('scope')], ['Spectrum', $('spec')], ['Spectrogram', $('gram')]]
+      .filter(([, c]) => c && c.width > 0 && c.height > 0);
+    if (!items.length) { setStatus('可視化キャンバスが見つかりません。', 'err'); return; }
+    const labelH = 20, pad = 8;
+    const w = Math.max(...items.map(([, c]) => c.width));
+    const h = items.reduce((sum, [, c]) => sum + c.height + labelH + pad, pad);
+    const out = document.createElement('canvas');
+    out.width = w + pad * 2;
+    out.height = h;
+    const g = out.getContext('2d');
+    if (!g) { setStatus('画像の生成に失敗しました。', 'err'); return; }
+    g.fillStyle = '#0a0a0a';
+    g.fillRect(0, 0, out.width, out.height);
+    g.fillStyle = '#e8e8e8';
+    g.font = '12px sans-serif';
+    g.textBaseline = 'middle';
+    let y = pad;
+    items.forEach(([label, c]) => {
+      g.fillText(label, pad, y + labelH / 2);
+      g.drawImage(c, pad, y + labelH);
+      y += labelH + c.height + pad;
+    });
+    out.toBlob((blob) => {
+      if (!blob) { setStatus('画像の生成に失敗しました。', 'err'); return; }
+      triggerBlobDownload(blob, `noise-viz-${new Date().toISOString().replace(/[:.]/g, '-')}.png`);
+      setStatus('可視化をPNGで保存しました。', 'ok');
+    }, 'image/png');
+  }
+
   function wireEvents() {
 
     document.querySelectorAll('input, select').forEach(el => {
@@ -4329,11 +4402,27 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         if (el.id === 'aiPrompt' || el.id === 'aiApiKey' || el.id === 'aiProvider') return;
         syncReadouts();
         engine.updateLiveParams(el.id);
+        noteParamEdit();
       };
       el.addEventListener('input', handler);
       el.addEventListener('change', handler);
     });
     $('applyPreset').addEventListener('click', () => applyPreset(presetSelect.value));
+    const undoBtn = $('undoBtn');
+    if (undoBtn) undoBtn.addEventListener('click', () => restoreHistory(-1));
+    const redoBtn = $('redoBtn');
+    if (redoBtn) redoBtn.addEventListener('click', () => restoreHistory(1));
+    const snapBtn = $('snapBtn');
+    if (snapBtn) snapBtn.addEventListener('click', saveVisualizerPng);
+    addEventListener('keydown', (e) => {
+      if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'TEXTAREA') return;
+      if (tag === 'INPUT' && /text|password|search|url|email/.test(e.target.type || '')) return;
+      const key = (e.key || '').toLowerCase();
+      if (key === 'z' && !e.shiftKey) { e.preventDefault(); restoreHistory(-1); }
+      else if ((key === 'z' && e.shiftKey) || key === 'y') { e.preventDefault(); restoreHistory(1); }
+    });
     $('randomizeAll').addEventListener('click', randomizeParams);
     $('presetPills').addEventListener('click', (e) => {
       const name = e.target?.dataset?.preset;
