@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -623,6 +623,44 @@
       color: var(--muted);
       line-height: 1.45;
     }
+    button:focus-visible, input:focus-visible, [tabindex]:focus-visible, canvas:focus-visible {
+      outline: 2px solid rgba(96,165,250,0.95);
+      outline-offset: 2px;
+    }
+    .json-dialog {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(4px);
+      padding: 18px;
+    }
+    .json-dialog[hidden] { display: none; }
+    .json-dialog-card {
+      width: min(680px, 94vw);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(12,12,15,0.97);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.5);
+    }
+    .json-text {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 10px 12px;
+      font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse { from { opacity: 0.56; } to { opacity: 1; } }
     @media (max-width: 1460px) {
@@ -642,7 +680,8 @@
       .dock-col.bordered { padding-left: 0; border-left: 0; padding-top: 6px; border-top: 1px solid var(--line-2); }
     }
     @media (max-width: 680px) {
-      .preview-toolbar { display: none; }
+      .preview-toolbar { top: 8px; left: 8px; right: 8px; max-width: none; padding: 6px 8px; gap: 8px; }
+      .preview-toolbar .right { display: none; }
       .button-row, .toggle-row, .scale-row, .grid-2, .grid-3, .color-wrap, .meta-grid, .tool-row, .mask-legend { grid-template-columns: 1fr; }
       .canvas-wrap { padding: 8px; }
       .nodes-pill { top: -34px; }
@@ -651,7 +690,7 @@
 </head>
 <body>
   <div class="app">
-    <input id="fileInput" type="file" accept="image/*" hidden />
+    <input id="fileInput" aria-label="Load image file" type="file" accept="image/*" hidden />
 
     <main class="preview">
       <div class="preview-toolbar">
@@ -734,7 +773,7 @@
                 </div>
                 <label class="field">
                   <span class="label-row"><span class="label">Split / Overlay</span><span class="value" id="compareMixValue">50 %</span></span>
-                  <input class="range" type="range" id="compareMix" min="0" max="100" step="1" />
+                  <input class="range" type="range" id="compareMix" aria-label="Split / Overlay" min="0" max="100" step="1" />
                 </label>
                 <div class="tool-row">
                   <button class="toolchip" id="captureABtn" disabled>Capture A</button>
@@ -759,15 +798,15 @@
                 </div>
                 <label class="field">
                   <span class="label-row"><span class="label">Brush</span><span class="value" id="brushSizeValue"></span></span>
-                  <input class="range" type="range" id="brushSize" min="4" max="320" step="1" />
+                  <input class="range" type="range" id="brushSize" aria-label="Brush" min="4" max="320" step="1" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Softness</span><span class="value" id="brushSoftnessValue"></span></span>
-                  <input class="range" type="range" id="brushSoftness" min="0" max="100" step="1" />
+                  <input class="range" type="range" id="brushSoftness" aria-label="Softness" min="0" max="100" step="1" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Mask Opacity</span><span class="value" id="maskOpacityValue"></span></span>
-                  <input class="range" type="range" id="maskOpacity" min="0" max="100" step="1" />
+                  <input class="range" type="range" id="maskOpacity" aria-label="Mask Opacity" min="0" max="100" step="1" />
                 </label>
                 <div class="mask-legend">
                   <div class="legend-chip"><span class="legend-color" style="background:#ff5f6d"></span><span>erase</span></div>
@@ -782,43 +821,43 @@
               <div class="grid-2">
                 <label class="field">
                   <span class="label-row"><span class="label">Min Size</span><span class="value" id="minDotSizeValue"></span></span>
-                  <input class="range" type="range" id="minDotSize" min="0.1" max="50" step="0.1" />
+                  <input class="range" type="range" id="minDotSize" aria-label="Min Size" min="0.1" max="50" step="0.1" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Max Size</span><span class="value" id="maxDotSizeValue"></span></span>
-                  <input class="range" type="range" id="maxDotSize" min="0.1" max="50" step="0.1" />
+                  <input class="range" type="range" id="maxDotSize" aria-label="Max Size" min="0.1" max="50" step="0.1" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Grid Spacing</span><span class="value" id="spacingValue"></span></span>
-                  <input class="range" type="range" id="spacing" min="1" max="80" step="1" />
+                  <input class="range" type="range" id="spacing" aria-label="Grid Spacing" min="1" max="80" step="1" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Contrast</span><span class="value" id="contrastValue"></span></span>
-                  <input class="range" type="range" id="contrast" min="0.4" max="4" step="0.05" />
+                  <input class="range" type="range" id="contrast" aria-label="Contrast" min="0.4" max="4" step="0.05" />
                 </label>
                 <label class="field wide">
                   <span class="label-row"><span class="label">Threshold</span><span class="value" id="thresholdValue"></span></span>
-                  <input class="range" type="range" id="threshold" min="0" max="1" step="0.01" />
+                  <input class="range" type="range" id="threshold" aria-label="Threshold" min="0" max="1" step="0.01" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Shadow Size</span><span class="value" id="shadowBoostValue"></span></span>
-                  <input class="range" type="range" id="shadowBoost" min="-1" max="2" step="0.01" />
+                  <input class="range" type="range" id="shadowBoost" aria-label="Shadow Size" min="-1" max="2" step="0.01" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Highlight Size</span><span class="value" id="highlightBoostValue"></span></span>
-                  <input class="range" type="range" id="highlightBoost" min="-1" max="2" step="0.01" />
+                  <input class="range" type="range" id="highlightBoost" aria-label="Highlight Size" min="-1" max="2" step="0.01" />
                 </label>
                 <label class="field wide">
                   <span class="label-row"><span class="label">Edge Weight</span><span class="value" id="edgeBoostValue"></span></span>
-                  <input class="range" type="range" id="edgeBoost" min="0" max="3" step="0.01" />
+                  <input class="range" type="range" id="edgeBoost" aria-label="Edge Weight" min="0" max="3" step="0.01" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Margin</span><span class="value" id="marginPxValue"></span></span>
-                  <input class="range" type="range" id="marginPx" min="0" max="400" step="1" />
+                  <input class="range" type="range" id="marginPx" aria-label="Margin" min="0" max="400" step="1" />
                 </label>
                 <label class="field">
                   <span class="label-row"><span class="label">Preview Budget</span><span class="value" id="previewBudgetValue"></span></span>
-                  <input class="range" type="range" id="previewBudget" min="500" max="200000" step="500" />
+                  <input class="range" type="range" id="previewBudget" aria-label="Preview Budget" min="500" max="200000" step="500" />
                 </label>
               </div>
               <div class="stack">
@@ -833,19 +872,19 @@
               </div>
               <div class="card stack tight">
                 <div class="label-row"><span class="label">Density Curve</span><span class="value" id="curveSummary">0 / 0 / 0</span></div>
-                <canvas id="curveCanvas" class="curve-canvas" width="640" height="240"></canvas>
+                <canvas id="curveCanvas" class="curve-canvas" width="640" height="240" tabindex="0" role="img" aria-label="Density curve editor. Tab to focus, use Left and Right arrow keys to select the shadow, mid or highlight point, and Up and Down arrow keys to adjust the selected point by 0.05."></canvas>
                 <div class="grid-3">
                   <label class="field">
                     <span class="label-row"><span class="label">Shadow</span><span class="value" id="curveShadowValue"></span></span>
-                    <input class="range" type="range" id="curveShadow" min="-1" max="1" step="0.01" />
+                    <input class="range" type="range" id="curveShadow" aria-label="Curve Shadow" min="-1" max="1" step="0.01" />
                   </label>
                   <label class="field">
                     <span class="label-row"><span class="label">Mid</span><span class="value" id="curveMidValue"></span></span>
-                    <input class="range" type="range" id="curveMid" min="-1" max="1" step="0.01" />
+                    <input class="range" type="range" id="curveMid" aria-label="Curve Mid" min="-1" max="1" step="0.01" />
                   </label>
                   <label class="field">
                     <span class="label-row"><span class="label">High</span><span class="value" id="curveHighValue"></span></span>
-                    <input class="range" type="range" id="curveHigh" min="-1" max="1" step="0.01" />
+                    <input class="range" type="range" id="curveHigh" aria-label="Curve High" min="-1" max="1" step="0.01" />
                   </label>
                 </div>
               </div>
@@ -866,52 +905,52 @@
                 <div class="color-wrap">
                   <label class="color-field">
                     <span class="label-row"><span class="label">Ink</span><span class="value" id="inkValue"></span></span>
-                    <input id="inkColor" type="color" />
+                    <input id="inkColor" aria-label="Ink colour" type="color" />
                   </label>
                   <label class="color-field">
                     <span class="label-row"><span class="label">Paper</span><span class="value" id="paperValue"></span></span>
-                    <input id="paperColor" type="color" />
+                    <input id="paperColor" aria-label="Paper colour" type="color" />
                   </label>
                   <label class="color-field">
                     <span class="label-row"><span class="label">Accent</span><span class="value" id="accentValue"></span></span>
-                    <input id="accentColor" type="color" />
+                    <input id="accentColor" aria-label="Accent colour" type="color" />
                   </label>
                   <label class="color-field">
                     <span class="label-row"><span class="label">Edge</span><span class="value" id="edgeColorValue"></span></span>
-                    <input id="edgeColor" type="color" />
+                    <input id="edgeColor" aria-label="Edge colour" type="color" />
                   </label>
                 </div>
                 <div class="grid-2">
                   <label class="field">
                     <span class="label-row"><span class="label">Base Opacity</span><span class="value" id="baseOpacityValue"></span></span>
-                    <input class="range" type="range" id="baseOpacity" min="0" max="100" step="1" />
+                    <input class="range" type="range" id="baseOpacity" aria-label="Base Opacity" min="0" max="100" step="1" />
                   </label>
                   <label class="field">
                     <span class="label-row"><span class="label">Edge Opacity</span><span class="value" id="edgeOpacityValue"></span></span>
-                    <input class="range" type="range" id="edgeOpacity" min="0" max="100" step="1" />
+                    <input class="range" type="range" id="edgeOpacity" aria-label="Edge Opacity" min="0" max="100" step="1" />
                   </label>
                   <label class="field">
                     <span class="label-row"><span class="label">Accent Opacity</span><span class="value" id="accentOpacityValue"></span></span>
-                    <input class="range" type="range" id="accentOpacity" min="0" max="100" step="1" />
+                    <input class="range" type="range" id="accentOpacity" aria-label="Accent Opacity" min="0" max="100" step="1" />
                   </label>
                   <label class="field">
                     <span class="label-row"><span class="label">Edge Threshold</span><span class="value" id="edgeThresholdValue"></span></span>
-                    <input class="range" type="range" id="edgeThreshold" min="0" max="1" step="0.01" />
+                    <input class="range" type="range" id="edgeThreshold" aria-label="Edge Threshold" min="0" max="1" step="0.01" />
                   </label>
                   <label class="field">
                     <span class="label-row"><span class="label">Accent Threshold</span><span class="value" id="accentThresholdValue"></span></span>
-                    <input class="range" type="range" id="accentThreshold" min="0" max="1" step="0.01" />
+                    <input class="range" type="range" id="accentThreshold" aria-label="Accent Threshold" min="0" max="1" step="0.01" />
                   </label>
                   <label class="field">
                     <span class="label-row"><span class="label">Accent Scale</span><span class="value" id="accentScaleValue"></span></span>
-                    <input class="range" type="range" id="accentScale" min="0.2" max="3" step="0.01" />
+                    <input class="range" type="range" id="accentScale" aria-label="Accent Scale" min="0.2" max="3" step="0.01" />
                   </label>
                 </div>
               </div>
               <div class="card stack tight">
                 <div class="label-row"><span class="label">Presets</span><span class="value" id="presetCountValue">0</span></div>
                 <div class="inline-row">
-                  <input class="text grow" id="presetName" type="text" maxlength="48" placeholder="preset name" />
+                  <input class="text grow" id="presetName" aria-label="Preset name" type="text" maxlength="48" placeholder="preset name" />
                   <button class="pill" id="savePresetBtn">Save</button>
                 </div>
                 <div class="preset-list" id="presetList"></div>
@@ -923,7 +962,7 @@
               <div class="card stack tight">
                 <div class="label-row"><span class="label">Seed Library</span><span class="value" id="seedCountValue">0</span></div>
                 <div class="inline-row">
-                  <input class="text grow" id="seedName" type="text" maxlength="40" placeholder="seed label" />
+                  <input class="text grow" id="seedName" aria-label="Seed label" type="text" maxlength="40" placeholder="seed label" />
                   <button class="pill" id="saveSeedBtn">Save</button>
                 </div>
                 <div class="inline-row">
@@ -939,7 +978,7 @@
               <div class="stack">
                 <label class="field">
                   <span class="label-row"><span class="label">Seed</span><span class="value">integer</span></span>
-                  <input class="number" id="seedInput" type="number" min="0" max="2147483647" step="1" />
+                  <input class="number" id="seedInput" aria-label="Seed" type="number" min="0" max="2147483647" step="1" />
                 </label>
                 <div class="field">
                   <span class="label-row"><span class="label">Output Scale</span><span class="value" id="actualScaleText">1x</span></span>
@@ -952,7 +991,7 @@
                 </div>
                 <label class="field">
                   <span class="label-row"><span class="label">SVG Precision</span><span class="value" id="svgPrecisionValue"></span></span>
-                  <input class="range" type="range" id="svgPrecision" min="0" max="4" step="1" />
+                  <input class="range" type="range" id="svgPrecision" aria-label="SVG Precision" min="0" max="4" step="1" />
                 </label>
                 <p class="hint" id="exportHint">PNG scale is clamped to a visible safe limit for the current image size. SVG keeps the requested scale and is the fallback for very large outputs.</p>
                 <div class="meta-grid">
@@ -968,6 +1007,17 @@
             </section>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <div class="json-dialog" id="jsonDialog" hidden role="dialog" aria-modal="true" aria-labelledby="jsonDialogTitle">
+    <div class="json-dialog-card">
+      <div class="label-row"><span class="label" id="jsonDialogTitle">Preset JSON</span></div>
+      <textarea id="jsonDialogText" class="json-text" rows="12" spellcheck="false" aria-label="Preset JSON text"></textarea>
+      <p class="message" id="jsonDialogError"></p>
+      <div class="inline-row">
+        <button class="pill" id="jsonDialogApply">Apply</button>
+        <button class="pill" id="jsonDialogClose">Close</button>
       </div>
     </div>
   </div>
@@ -1044,6 +1094,9 @@
       worker: null,
       workerReady: false,
       workerPendingSource: false,
+      workerBusy: false,
+      workerPending: null,
+      lastExpectedSamples: 0,
       objectUrl: null,
       uiCollapsed: false,
       previewRaster: null,
@@ -1189,7 +1242,13 @@
       randomSeedBtn: document.getElementById('randomSeedBtn'),
       applySeedBtn: document.getElementById('applySeedBtn'),
       seedList: document.getElementById('seedList'),
-      seedCountValue: document.getElementById('seedCountValue')
+      seedCountValue: document.getElementById('seedCountValue'),
+      jsonDialog: document.getElementById('jsonDialog'),
+      jsonDialogTitle: document.getElementById('jsonDialogTitle'),
+      jsonDialogText: document.getElementById('jsonDialogText'),
+      jsonDialogError: document.getElementById('jsonDialogError'),
+      jsonDialogApply: document.getElementById('jsonDialogApply'),
+      jsonDialogClose: document.getElementById('jsonDialogClose')
     };
 
     const previewCtx = els.previewCanvas.getContext('2d', { alpha: true });
@@ -1202,6 +1261,11 @@
 
     function clamp(v, min, max) {
       return v < min ? min : (v > max ? max : v);
+    }
+
+    function numOr(value, fallback) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
     }
 
     function lerp(a, b, t) {
@@ -1221,7 +1285,7 @@
     function safeFileName(name) {
       return (name || 'punkt-output')
         .replace(/\.[^.]+$/, '')
-        .replace(/[^a-z0-9\-_]+/gi, '-')
+        .replace(/[^\p{L}\p{N}\-_]+/gu, '-')
         .replace(/^-+|-+$/g, '') || 'punkt-output';
     }
 
@@ -1241,7 +1305,7 @@
     }
 
     function getRequestedScale() {
-      return clamp(Number(state.config.exportScale) || 1, 1, 8);
+      return clamp(numOr(state.config.exportScale, 1), 1, 8);
     }
 
     function getSafePngScale() {
@@ -1346,10 +1410,46 @@
       return state.maskData ? state.maskData.slice() : null;
     }
 
-    function pushHistory(label = '') {
+    const HISTORY_MASK_BUDGET = 128 * 1024 * 1024;
+
+    function makeSnapshot(label = '', includeMask = false) {
+      return {
+        config: serializeConfig(),
+        mask: includeMask ? cloneMask() : null,
+        hasMask: !!includeMask && !!state.maskData,
+        label
+      };
+    }
+
+    function trimHistoryMasks(stack) {
+      let total = 0;
+      for (const entry of stack) if (entry && entry.mask) total += entry.mask.byteLength || entry.mask.length || 0;
+      for (const entry of stack) {
+        if (total <= HISTORY_MASK_BUDGET) break;
+        if (entry && entry.mask) {
+          total -= entry.mask.byteLength || entry.mask.length || 0;
+          entry.mask = null;
+          entry.hasMask = false;
+        }
+      }
+    }
+
+    function pushHistory(label = '', options = {}) {
       if (state.suppressHistory) return;
-      state.historyUndo.push({ config: serializeConfig(), mask: cloneMask(), label });
+      let entry;
+      if (options.snapshot) {
+        entry = {
+          config: JSON.parse(JSON.stringify(options.snapshot.config || {})),
+          mask: options.snapshot.mask || null,
+          hasMask: !!options.snapshot.mask,
+          label
+        };
+      } else {
+        entry = makeSnapshot(label, !!options.includeMask);
+      }
+      state.historyUndo.push(entry);
       if (state.historyUndo.length > 50) state.historyUndo.shift();
+      trimHistoryMasks(state.historyUndo);
       state.historyRedo.length = 0;
       refreshUi();
     }
@@ -1360,15 +1460,11 @@
       try {
         state.config = { ...DEFAULTS, ...(snapshot.config || {}) };
         sanitizeConfig();
-        if (state.source) {
+        if (state.source && snapshot.mask) {
           const size = state.source.width * state.source.height;
-          if (snapshot.mask && snapshot.mask.length === size) {
+          if (snapshot.mask.length === size) {
             state.maskData = snapshot.mask.slice();
-          } else {
-            ensureMask();
           }
-        } else {
-          state.maskData = null;
         }
         updateInputsFromConfig();
         updateMaskCanvas();
@@ -1381,53 +1477,56 @@
 
     function undo() {
       if (!state.historyUndo.length) return;
-      const current = { config: serializeConfig(), mask: cloneMask(), label: 'redo' };
       const snapshot = state.historyUndo.pop();
+      const current = makeSnapshot('redo', !!snapshot.hasMask);
       state.historyRedo.push(current);
+      trimHistoryMasks(state.historyRedo);
       applySnapshot(snapshot);
       refreshUi();
     }
 
     function redo() {
       if (!state.historyRedo.length) return;
-      const current = { config: serializeConfig(), mask: cloneMask(), label: 'undo' };
       const snapshot = state.historyRedo.pop();
+      const current = makeSnapshot('undo', !!snapshot.hasMask);
       state.historyUndo.push(current);
+      trimHistoryMasks(state.historyUndo);
       applySnapshot(snapshot);
       refreshUi();
     }
 
     function sanitizeConfig() {
       const cfg = state.config;
-      cfg.minDotSize = clamp(Number(cfg.minDotSize) || DEFAULTS.minDotSize, 0.1, 50);
-      cfg.maxDotSize = clamp(Number(cfg.maxDotSize) || DEFAULTS.maxDotSize, cfg.minDotSize, 50);
-      cfg.spacing = clamp(Math.round(Number(cfg.spacing) || DEFAULTS.spacing), 1, 80);
-      cfg.contrast = clamp(Number(cfg.contrast) || DEFAULTS.contrast, 0.4, 4);
-      cfg.threshold = clamp(Number(cfg.threshold) || DEFAULTS.threshold, 0, 1);
-      cfg.seed = Math.max(0, Math.floor(Number(cfg.seed) || 1));
-      cfg.shadowBoost = clamp(Number(cfg.shadowBoost) || 0, -1, 2);
-      cfg.highlightBoost = clamp(Number(cfg.highlightBoost) || 0, -1, 2);
-      cfg.edgeBoost = clamp(Number(cfg.edgeBoost) || 0, 0, 3);
-      cfg.curveShadow = clamp(Number(cfg.curveShadow) || 0, -1, 1);
-      cfg.curveMid = clamp(Number(cfg.curveMid) || 0, -1, 1);
-      cfg.curveHigh = clamp(Number(cfg.curveHigh) || 0, -1, 1);
-      cfg.marginPx = clamp(Math.round(Number(cfg.marginPx) || 0), 0, 400);
-      cfg.previewBudget = clamp(Math.round(Number(cfg.previewBudget) || DEFAULTS.previewBudget), 500, 200000);
-      cfg.brushSize = clamp(Math.round(Number(cfg.brushSize) || DEFAULTS.brushSize), 4, 320);
-      cfg.brushSoftness = clamp(Math.round(Number(cfg.brushSoftness) || DEFAULTS.brushSoftness), 0, 100);
-      cfg.maskOpacity = clamp(Math.round(Number(cfg.maskOpacity) || DEFAULTS.maskOpacity), 0, 100);
-      cfg.baseOpacity = clamp(Math.round(Number(cfg.baseOpacity) || DEFAULTS.baseOpacity), 0, 100);
-      cfg.edgeOpacity = clamp(Math.round(Number(cfg.edgeOpacity) || DEFAULTS.edgeOpacity), 0, 100);
-      cfg.accentOpacity = clamp(Math.round(Number(cfg.accentOpacity) || DEFAULTS.accentOpacity), 0, 100);
-      cfg.edgeThreshold = clamp(Number(cfg.edgeThreshold) || DEFAULTS.edgeThreshold, 0, 1);
-      cfg.accentThreshold = clamp(Number(cfg.accentThreshold) || DEFAULTS.accentThreshold, 0, 1);
-      cfg.accentScale = clamp(Number(cfg.accentScale) || DEFAULTS.accentScale, 0.2, 3);
-      cfg.svgPrecision = clamp(Math.round(Number(cfg.svgPrecision) || DEFAULTS.svgPrecision), 0, 4);
-      cfg.compareMix = clamp(Math.round(Number(cfg.compareMix) || DEFAULTS.compareMix), 0, 100);
+      cfg.minDotSize = clamp(numOr(cfg.minDotSize, DEFAULTS.minDotSize), 0.1, 50);
+      cfg.maxDotSize = clamp(numOr(cfg.maxDotSize, DEFAULTS.maxDotSize), cfg.minDotSize, 50);
+      cfg.spacing = clamp(Math.round(numOr(cfg.spacing, DEFAULTS.spacing)), 1, 80);
+      cfg.contrast = clamp(numOr(cfg.contrast, DEFAULTS.contrast), 0.4, 4);
+      cfg.threshold = clamp(numOr(cfg.threshold, DEFAULTS.threshold), 0, 1);
+      cfg.seed = Math.max(0, Math.floor(numOr(cfg.seed, DEFAULTS.seed)));
+      cfg.shadowBoost = clamp(numOr(cfg.shadowBoost, DEFAULTS.shadowBoost), -1, 2);
+      cfg.highlightBoost = clamp(numOr(cfg.highlightBoost, DEFAULTS.highlightBoost), -1, 2);
+      cfg.edgeBoost = clamp(numOr(cfg.edgeBoost, DEFAULTS.edgeBoost), 0, 3);
+      cfg.curveShadow = clamp(numOr(cfg.curveShadow, DEFAULTS.curveShadow), -1, 1);
+      cfg.curveMid = clamp(numOr(cfg.curveMid, DEFAULTS.curveMid), -1, 1);
+      cfg.curveHigh = clamp(numOr(cfg.curveHigh, DEFAULTS.curveHigh), -1, 1);
+      cfg.marginPx = clamp(Math.round(numOr(cfg.marginPx, DEFAULTS.marginPx)), 0, 400);
+      cfg.previewBudget = clamp(Math.round(numOr(cfg.previewBudget, DEFAULTS.previewBudget)), 500, 200000);
+      cfg.brushSize = clamp(Math.round(numOr(cfg.brushSize, DEFAULTS.brushSize)), 4, 320);
+      cfg.brushSoftness = clamp(Math.round(numOr(cfg.brushSoftness, DEFAULTS.brushSoftness)), 0, 100);
+      cfg.maskOpacity = clamp(Math.round(numOr(cfg.maskOpacity, DEFAULTS.maskOpacity)), 0, 100);
+      cfg.baseOpacity = clamp(Math.round(numOr(cfg.baseOpacity, DEFAULTS.baseOpacity)), 0, 100);
+      cfg.edgeOpacity = clamp(Math.round(numOr(cfg.edgeOpacity, DEFAULTS.edgeOpacity)), 0, 100);
+      cfg.accentOpacity = clamp(Math.round(numOr(cfg.accentOpacity, DEFAULTS.accentOpacity)), 0, 100);
+      cfg.edgeThreshold = clamp(numOr(cfg.edgeThreshold, DEFAULTS.edgeThreshold), 0, 1);
+      cfg.accentThreshold = clamp(numOr(cfg.accentThreshold, DEFAULTS.accentThreshold), 0, 1);
+      cfg.accentScale = clamp(numOr(cfg.accentScale, DEFAULTS.accentScale), 0.2, 3);
+      cfg.svgPrecision = clamp(Math.round(numOr(cfg.svgPrecision, DEFAULTS.svgPrecision)), 0, 4);
+      cfg.compareMix = clamp(Math.round(numOr(cfg.compareMix, DEFAULTS.compareMix)), 0, 100);
       if (!MODES.includes(cfg.mode)) cfg.mode = DEFAULTS.mode;
       if (!['single', 'split', 'overlay'].includes(cfg.previewMode)) cfg.previewMode = 'single';
       if (!['off', 'erase', 'keep', 'boost', 'smooth'].includes(cfg.maskMode)) cfg.maskMode = 'off';
-      cfg.exportScale = clamp(Math.round(Number(cfg.exportScale) || DEFAULTS.exportScale), 1, Math.max(1, getSafePngScale()));
+      const scaleCap = state.source ? Math.max(1, getSafePngScale()) : 8;
+      cfg.exportScale = clamp(Math.round(numOr(cfg.exportScale, DEFAULTS.exportScale)), 1, scaleCap);
     }
 
     function updateValueLabels() {
@@ -1672,129 +1771,7 @@
       scheduleProcess(40);
     }
 
-    function workerCode() {
-      return `
-        let source = null;
-        function clamp(v,min,max){return v<min?min:(v>max?max:v);}
-        function mulberry32(seed){let t=seed>>>0;return function(){t+=0x6D2B79F5;let r=Math.imul(t^(t>>>15),t|1);r^=r+Math.imul(r^(r>>>7),r|61);return ((r^(r>>>14))>>>0)/4294967296;};}
-        function brightness(data, index, contrast){
-          let v=(0.299*data[index]+0.587*data[index+1]+0.114*data[index+2])/255;
-          v=(v-0.5)*contrast+0.5;
-          return clamp(v,0,1);
-        }
-        function curveAdjust(d, cfg){
-          const pts=[{x:0,y:0},{x:0.25,y:clamp(0.25+cfg.curveShadow*0.25,0,1)},{x:0.5,y:clamp(0.5+cfg.curveMid*0.25,0,1)},{x:0.75,y:clamp(0.75+cfg.curveHigh*0.25,0,1)},{x:1,y:1}];
-          for(let i=0;i<pts.length-1;i++){
-            const a=pts[i], b=pts[i+1];
-            if(d<=b.x){ const t=(d-a.x)/Math.max(1e-6,b.x-a.x); return clamp(a.y+(b.y-a.y)*t,0,1); }
-          }
-          return d;
-        }
-        function edgeAt(data,w,h,x,y,contrast){
-          const xl=Math.max(0,x-1), xr=Math.min(w-1,x+1), yu=Math.max(0,y-1), yd=Math.min(h-1,y+1);
-          const il=(y*w+xl)*4, ir=(y*w+xr)*4, iu=(yu*w+x)*4, id=(yd*w+x)*4;
-          const dx=Math.abs(brightness(data,ir,contrast)-brightness(data,il,contrast));
-          const dy=Math.abs(brightness(data,id,contrast)-brightness(data,iu,contrast));
-          return clamp((dx+dy)*1.5,0,1);
-        }
-        function maskWeight(mask, idx){
-          if(!mask) return 1;
-          const v=mask[idx];
-          if(v<=0) return 0;
-          if(v<100) return v/100;
-          return 1+((v-100)/100)*0.75;
-        }
-        function process(config, requestId, maskBuffer){
-          if(!source) throw new Error('No source image loaded.');
-          const { width, height, data } = source;
-          const mask = maskBuffer ? new Uint8Array(maskBuffer) : null;
-          const values=[];
-          const minRadius=Math.max(0.01,config.minDotSize)*0.5;
-          const maxRadius=Math.max(minRadius,config.maxDotSize)*0.5;
-          const radiusRange=maxRadius-minRadius;
-          const thresholdGate=config.threshold;
-          const spacing=Math.max(1,config.spacing);
-          const contrast=config.contrast;
-          const invert=!!config.invert;
-          const rng=mulberry32((config.seed>>>0)||1);
-          let skippedTransparent=0, included=0;
-          function samplePoint(px,py){
-            if(px<0||py<0||px>=width||py>=height) return;
-            const xi=Math.floor(px), yi=Math.floor(py), flat=yi*width+xi, idx=flat*4;
-            if(data[idx+3]===0){ skippedTransparent++; return; }
-            let gray=brightness(data, idx, contrast);
-            let density=invert ? gray : (1-gray);
-            density=curveAdjust(density, config);
-            const weight=maskWeight(mask, flat);
-            density=clamp(density*weight,0,1.6);
-            if(density < thresholdGate) return;
-            const edge=edgeAt(data,width,height,xi,yi,contrast);
-            let radius=minRadius + radiusRange * Math.min(1, density);
-            const sizeFactor=1 + config.shadowBoost*density + config.highlightBoost*(1-Math.min(1,density)) + config.edgeBoost*edge;
-            radius *= Math.max(0.05,sizeFactor);
-            if(radius < 0.01) return;
-            values.push(px,py,radius,density,edge);
-            included++;
-          }
-          if(config.mode==='HALFTONE'){
-            const step=Math.max(0.5,spacing), half=step*0.5;
-            for(let y=0;y<height;y+=step){
-              for(let x=0;x<width;x+=step){ samplePoint(x+half,y+half); }
-            }
-          } else {
-            const jitterFactor=config.mode==='POISSON' ? 0.45 : 0.8;
-            for(let y=0;y<height;y+=spacing){
-              for(let x=0;x<width;x+=spacing){
-                const jitter=spacing*jitterFactor;
-                const px=x+spacing*0.5 + (rng()-0.5)*jitter*2;
-                const py=y+spacing*0.5 + (rng()-0.5)*jitter*2;
-                samplePoint(px,py);
-              }
-            }
-          }
-          const arr=new Float32Array(values);
-          return { requestId, points: arr, meta: { included, skippedTransparent, width, height } };
-        }
-        self.onmessage = (event) => {
-          const payload=event.data||{};
-          if(payload.type==='setImage'){
-            source={ width: payload.width, height: payload.height, data: new Uint8ClampedArray(payload.buffer) };
-            self.postMessage({ type:'ready' });
-            return;
-          }
-          if(payload.type==='process'){
-            try{
-              const start=performance.now();
-              const result=process(payload.config||{}, payload.requestId, payload.maskBuffer || null);
-              self.postMessage({ type:'done', requestId: result.requestId, width: source.width, height: source.height, points: result.points, meta: result.meta, elapsed: performance.now()-start }, [result.points.buffer]);
-            }catch(error){
-              self.postMessage({ type:'error', requestId: payload.requestId, message: error && error.message ? error.message : String(error) });
-            }
-          }
-        };
-      `;
-    }
-
-    function createWorker() {
-      try {
-        const blob = new Blob([workerCode()], { type: 'text/javascript' });
-        const url = URL.createObjectURL(blob);
-        const worker = new Worker(url);
-        URL.revokeObjectURL(url);
-        return worker;
-      } catch (error) {
-        console.warn('Worker init failed, falling back to main thread.', error);
-        return null;
-      }
-    }
-
-    function getMaskBufferForWorker() {
-      if (!state.source) return null;
-      ensureMask();
-      return state.maskData.slice().buffer;
-    }
-
-    function processOnMainThread(sourceImage, config, maskData) {
+    function processPoints(sourceImage, config, maskData) {
       const width = sourceImage.width;
       const height = sourceImage.height;
       const data = sourceImage.data;
@@ -1835,8 +1812,8 @@
         for (let i = 0; i < pts.length - 1; i++) {
           const a = pts[i], b = pts[i + 1];
           if (d <= b.x) {
-            const t = (d - a.x) / Math.max(1e-6, b.x - a.x);
-            return clamp(a.y + (b.y - a.y) * t, 0, 1);
+            const tt = (d - a.x) / Math.max(1e-6, b.x - a.x);
+            return clamp(a.y + (b.y - a.y) * tt, 0, 1);
           }
         }
         return d;
@@ -1848,42 +1825,244 @@
         if (v < 100) return v / 100;
         return 1 + ((v - 100) / 100) * 0.75;
       }
-      function sample(px, py) {
-        if (px < 0 || py < 0 || px >= width || py >= height) return;
+      function evaluate(px, py) {
+        if (px < 0 || py < 0 || px >= width || py >= height) return null;
         const xi = Math.floor(px), yi = Math.floor(py), flat = yi * width + xi, idx = flat * 4;
-        if (data[idx + 3] === 0) { skippedTransparent++; return; }
+        const alpha = data[idx + 3];
+        if (alpha === 0) { skippedTransparent++; return null; }
         let gray = brightness(idx);
         let density = invert ? gray : (1 - gray);
         density = curveAdjust(density);
-        density = clamp(density * maskWeight(flat), 0, 1.6);
-        if (density < thresholdGate) return;
+        density = clamp(density * maskWeight(flat) * (alpha / 255), 0, 1.6);
+        if (density < thresholdGate) return null;
         const edge = edgeAt(xi, yi);
         let radius = minRadius + radiusRange * Math.min(1, density);
         const sizeFactor = 1 + config.shadowBoost * density + config.highlightBoost * (1 - Math.min(1, density)) + config.edgeBoost * edge;
         radius *= Math.max(0.05, sizeFactor);
-        if (radius < 0.01) return;
-        values.push(px, py, radius, density, edge);
-        included++;
+        if (radius < 0.01) return null;
+        return [px, py, radius, density, edge];
       }
+      function accept(rec) {
+        if (!rec) return false;
+        values.push(rec[0], rec[1], rec[2], rec[3], rec[4]);
+        included++;
+        return true;
+      }
+
       if (config.mode === 'HALFTONE') {
         const step = Math.max(0.5, spacing), half = step * 0.5;
-        for (let y = 0; y < height; y += step) for (let x = 0; x < width; x += step) sample(x + half, y + half);
+        for (let y = 0; y < height; y += step) {
+          for (let x = 0; x < width; x += step) accept(evaluate(x + half, y + half));
+        }
+      } else if (config.mode === 'POISSON') {
+        const minDist = spacing;
+        const cellSize = minDist / Math.SQRT2;
+        const gridW = Math.max(1, Math.ceil(width / cellSize));
+        const gridH = Math.max(1, Math.ceil(height / cellSize));
+        const grid = new Int32Array(gridW * gridH).fill(-1);
+        const points = [];
+        const active = [];
+        function farEnough(x, y) {
+          const gx = Math.floor(x / cellSize), gy = Math.floor(y / cellSize);
+          const r = Math.ceil(minDist / cellSize);
+          for (let yy = Math.max(0, gy - r); yy <= Math.min(gridH - 1, gy + r); yy++) {
+            for (let xx = Math.max(0, gx - r); xx <= Math.min(gridW - 1, gx + r); xx++) {
+              const pi = grid[yy * gridW + xx];
+              if (pi < 0) continue;
+              const dx = points[pi][0] - x, dy = points[pi][1] - y;
+              if (dx * dx + dy * dy < minDist * minDist) return false;
+            }
+          }
+          return true;
+        }
+        function tryAdd(x, y) {
+          if (x < 0 || y < 0 || x >= width || y >= height) return false;
+          if (!farEnough(x, y)) return false;
+          const rec = evaluate(x, y);
+          if (!rec) return false;
+          const pi = points.length;
+          points.push([x, y]);
+          grid[Math.floor(y / cellSize) * gridW + Math.floor(x / cellSize)] = pi;
+          active.push(pi);
+          accept(rec);
+          return true;
+        }
+        let seeded = false;
+        for (let attempt = 0; attempt < 200 && !seeded; attempt++) {
+          seeded = tryAdd(rng() * width, rng() * height);
+        }
+        if (!seeded) {
+          for (let y = spacing * 0.5; y < height && !seeded; y += spacing) {
+            for (let x = spacing * 0.5; x < width && !seeded; x += spacing) {
+              seeded = tryAdd(x, y);
+            }
+          }
+        }
+        function drainActive() {
+          while (active.length) {
+            const ai = Math.floor(rng() * active.length);
+            const centre = points[active[ai]];
+            let placed = false;
+            for (let k = 0; k < 30; k++) {
+              const angle = rng() * Math.PI * 2;
+              const dist = minDist * (1 + rng());
+              if (tryAdd(centre[0] + Math.cos(angle) * dist, centre[1] + Math.sin(angle) * dist)) placed = true;
+            }
+            if (!placed) {
+              active[ai] = active[active.length - 1];
+              active.pop();
+            }
+          }
+        }
+        drainActive();
+        // Bridson expansion cannot cross areas rejected by evaluate() (e.g. white
+        // regions), so re-seed separate accepted regions until a full scan finds none.
+        for (let reseed = 0; reseed < 16; reseed++) {
+          let found = false;
+          for (let y = spacing * 0.5; y < height && !found; y += spacing) {
+            for (let x = spacing * 0.5; x < width && !found; x += spacing) {
+              if (tryAdd(x, y)) found = true;
+            }
+          }
+          if (!found) break;
+          drainActive();
+        }
       } else {
-        const jitterFactor = config.mode === 'POISSON' ? 0.45 : 0.8;
+        const jitterFactor = 0.8;
+        let records = [];
         for (let y = 0; y < height; y += spacing) {
           for (let x = 0; x < width; x += spacing) {
             const jitter = spacing * jitterFactor;
             const px = x + spacing * 0.5 + (rng() - 0.5) * jitter * 2;
             const py = y + spacing * 0.5 + (rng() - 0.5) * jitter * 2;
-            sample(px, py);
+            const rec = evaluate(px, py);
+            if (rec) records.push(rec);
           }
         }
+        for (let pass = 0; pass < 2; pass++) {
+          if (records.length < 2) break;
+          const cell = spacing;
+          const hash = new Map();
+          records.forEach((rec, i) => {
+            const key = Math.floor(rec[0] / cell) + ':' + Math.floor(rec[1] / cell);
+            if (!hash.has(key)) hash.set(key, []);
+            hash.get(key).push(i);
+          });
+          const next = records.slice();
+          records.forEach((rec, i) => {
+            const cx = Math.floor(rec[0] / cell), cy = Math.floor(rec[1] / cell);
+            let sw = 0, sx = 0, sy = 0;
+            for (let yy = cy - 1; yy <= cy + 1; yy++) {
+              for (let xx = cx - 1; xx <= cx + 1; xx++) {
+                const bucket = hash.get(xx + ':' + yy);
+                if (!bucket) continue;
+                for (const j of bucket) {
+                  const o = records[j];
+                  const dx = o[0] - rec[0], dy = o[1] - rec[1];
+                  if (dx * dx + dy * dy > spacing * spacing) continue;
+                  const w = Math.max(0.0001, o[3]);
+                  sw += w; sx += o[0] * w; sy += o[1] * w;
+                }
+              }
+            }
+            if (sw > 0) {
+              const moved = evaluate(sx / sw, sy / sw);
+              if (moved) next[i] = moved;
+            }
+          });
+          records = next;
+        }
+        for (const rec of records) accept(rec);
       }
       return {
         points: new Float32Array(values),
         meta: { included, skippedTransparent, width, height },
         elapsed: performance.now() - start
       };
+    }
+
+    function buildWorkerSource() {
+      return [
+        'let source = null;',
+        'const clamp = ' + clamp.toString() + ';',
+        'const mulberry32 = ' + mulberry32.toString() + ';',
+        'const processPoints = ' + processPoints.toString() + ';',
+        'self.onmessage = (event) => {',
+        '  const payload = event.data || {};',
+        "  if (payload.type === 'setImage') {",
+        '    source = { width: payload.width, height: payload.height, data: new Uint8ClampedArray(payload.buffer) };',
+        "    self.postMessage({ type: 'ready' });",
+        '    return;',
+        '  }',
+        "  if (payload.type === 'process') {",
+        '    try {',
+        '      const start = performance.now();',
+        '      const mask = payload.maskBuffer ? new Uint8Array(payload.maskBuffer) : null;',
+        '      const result = processPoints(source, payload.config || {}, mask);',
+        "      self.postMessage({ type: 'done', requestId: payload.requestId, width: source.width, height: source.height, points: result.points, meta: result.meta, elapsed: performance.now() - start }, [result.points.buffer]);",
+        '    } catch (error) {',
+        "      self.postMessage({ type: 'error', requestId: payload.requestId, message: error && error.message ? error.message : String(error) });",
+        '    }',
+        '  }',
+        '};'
+      ].join('\n');
+    }
+
+    function workerCode() {
+      return buildWorkerSource();
+    }
+
+    function createWorker() {
+      try {
+        const blob = new Blob([workerCode()], { type: 'text/javascript' });
+        const url = URL.createObjectURL(blob);
+        const worker = new Worker(url);
+        URL.revokeObjectURL(url);
+        return worker;
+      } catch (error) {
+        console.warn('Worker init failed, falling back to main thread.', error);
+        return null;
+      }
+    }
+
+    function getMaskBufferForWorker() {
+      if (!state.source) return null;
+      ensureMask();
+      return state.maskData.slice().buffer;
+    }
+
+    function processOnMainThread(sourceImage, config, maskData) {
+      return processPoints(sourceImage, config, maskData);
+    }
+
+    function dispatchWorkerJob(job) {
+      state.workerBusy = true;
+      state.worker.postMessage(
+        { type: 'process', requestId: job.requestId, config: job.config, maskBuffer: job.maskBuffer },
+        job.maskBuffer ? [job.maskBuffer] : []
+      );
+    }
+
+    function takeWorkerPending() {
+      if (!state.workerPending) return false;
+      const job = state.workerPending;
+      state.workerPending = null;
+      if (job.requestId === state.processToken && state.worker && state.workerReady) {
+        dispatchWorkerJob(job);
+        return true;
+      }
+      return false;
+    }
+
+    function expectedSampleCount() {
+      if (!state.source) return 0;
+      const spacing = Math.max(1, numOr(state.config.spacing, 1));
+      return Math.ceil(state.source.width / spacing) * Math.ceil(state.source.height / spacing);
+    }
+
+    function pointWarningText() {
+      if (state.pointCount <= 1000000) return '';
+      return ` Warning: ${state.pointCount.toLocaleString()} points (from about ${(state.lastExpectedSamples || 0).toLocaleString()} expected samples) exceeds 1,000,000 - PNG and SVG exports may be very large.`;
     }
 
     state.worker = createWorker();
@@ -1899,6 +2078,8 @@
           return;
         }
         if (data.type === 'done') {
+          state.workerBusy = false;
+          if (takeWorkerPending()) return;
           if (data.requestId !== state.processToken) return;
           state.records = new Float32Array(data.points);
           state.pointCount = Math.floor(state.records.length / 5);
@@ -1906,12 +2087,14 @@
           state.lastProcessMs = data.elapsed;
           state.isProcessing = false;
           setBusyState(false, `Done · ${state.pointCount.toLocaleString()} points`);
-          setMessage(`Processed ${state.pointCount.toLocaleString()} points from ${data.width.toLocaleString()} × ${data.height.toLocaleString()} source pixels.`);
+          setMessage(`Processed ${state.pointCount.toLocaleString()} points from ${data.width.toLocaleString()} × ${data.height.toLocaleString()} source pixels.${pointWarningText()}`);
           refreshUi();
           renderPreview();
           return;
         }
         if (data.type === 'error') {
+          state.workerBusy = false;
+          if (takeWorkerPending()) return;
           if (data.requestId !== state.processToken) return;
           state.isProcessing = false;
           setBusyState(false, 'Error');
@@ -1922,6 +2105,8 @@
         console.error(error);
         state.worker = null;
         state.workerReady = false;
+        state.workerBusy = false;
+        state.workerPending = null;
         setMessage('Worker failed. Falling back to main-thread processing.');
       };
     }
@@ -1931,14 +2116,31 @@
       setMessage('Decoding image…');
       setBusyState(true, 'Loading');
       try {
-        const bitmap = await createImageBitmap(file);
+        let bitmap;
+        try {
+          bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        } catch {
+          bitmap = await createImageBitmap(file);
+        }
+        const origWidth = bitmap.width;
+        const origHeight = bitmap.height;
+        const MAX_SOURCE_PIXELS = 20000000;
+        let targetWidth = origWidth;
+        let targetHeight = origHeight;
+        let downscaled = false;
+        if (origWidth * origHeight > MAX_SOURCE_PIXELS) {
+          const factor = Math.sqrt(MAX_SOURCE_PIXELS / (origWidth * origHeight));
+          targetWidth = Math.max(1, Math.floor(origWidth * factor));
+          targetHeight = Math.max(1, Math.floor(origHeight * factor));
+          downscaled = true;
+        }
         const canvas = document.createElement('canvas');
-        canvas.width = bitmap.width;
-        canvas.height = bitmap.height;
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
         const ctx = canvas.getContext('2d', { alpha: true, willReadFrequently: true });
         if (!ctx) throw new Error('2D canvas context unavailable.');
-        ctx.drawImage(bitmap, 0, 0);
-        const imageData = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
+        ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
+        const imageData = ctx.getImageData(0, 0, targetWidth, targetHeight);
         const sourceData = new Uint8ClampedArray(imageData.data);
         bitmap.close?.();
         state.source = { name: file.name, width: imageData.width, height: imageData.height, data: sourceData };
@@ -1964,8 +2166,10 @@
         }
         els.fileInput.value = '';
         setBusyState(false, 'Loaded');
-        setMessage(`Loaded ${file.name} (${state.source.width.toLocaleString()} × ${state.source.height.toLocaleString()}).`);
-        pushHistory('load-image');
+        setMessage(downscaled
+          ? `Loaded ${file.name} (${state.source.width.toLocaleString()} × ${state.source.height.toLocaleString()}), downscaled from ${origWidth.toLocaleString()} × ${origHeight.toLocaleString()} to fit the 20 MP limit.`
+          : `Loaded ${file.name} (${state.source.width.toLocaleString()} × ${state.source.height.toLocaleString()}).`);
+        pushHistory('load-image', { includeMask: true });
         refreshUi();
       } catch (error) {
         state.source = null;
@@ -1989,10 +2193,15 @@
       sanitizeConfig();
       refreshUi();
       const requestId = ++state.processToken;
+      state.lastExpectedSamples = expectedSampleCount();
       setBusyState(true, 'Processing');
-      const maskBuffer = getMaskBufferForWorker();
       if (state.worker && state.workerReady) {
-        state.worker.postMessage({ type: 'process', requestId, config: { ...state.config }, maskBuffer }, maskBuffer ? [maskBuffer] : []);
+        const job = { requestId, config: { ...state.config }, maskBuffer: getMaskBufferForWorker() };
+        if (state.workerBusy) {
+          state.workerPending = job;
+          return;
+        }
+        dispatchWorkerJob(job);
         return;
       }
       await new Promise(requestAnimationFrame);
@@ -2005,7 +2214,7 @@
         state.lastProcessMs = result.elapsed;
         state.isProcessing = false;
         setBusyState(false, `Done · ${state.pointCount.toLocaleString()} points`);
-        setMessage(`Processed ${state.pointCount.toLocaleString()} points from ${state.source.width.toLocaleString()} × ${state.source.height.toLocaleString()} source pixels.`);
+        setMessage(`Processed ${state.pointCount.toLocaleString()} points from ${state.source.width.toLocaleString()} × ${state.source.height.toLocaleString()} source pixels.${pointWarningText()}`);
         refreshUi();
         renderPreview();
       } catch (error) {
@@ -2016,9 +2225,9 @@
       }
     }
 
-    function computeRenderSpec(targetScale = 1) {
+    function computeRenderSpec(targetScale = 1, cfg = state.config) {
       if (!state.source) return null;
-      const margin = Math.max(0, Number(state.config.marginPx) || 0) * targetScale;
+      const margin = Math.max(0, numOr(cfg.marginPx, 0)) * targetScale;
       const width = Math.max(1, Math.round((state.source.width * targetScale) + margin * 2));
       const height = Math.max(1, Math.round((state.source.height * targetScale) + margin * 2));
       return { width, height, scale: targetScale, margin };
@@ -2027,7 +2236,7 @@
     function selectPreviewRecords() {
       if (!state.records) return null;
       if (!state.config.autoQuality) return state.records;
-      const budget = Math.max(500, state.config.previewBudget || DEFAULTS.previewBudget);
+      const budget = Math.max(500, numOr(state.config.previewBudget, DEFAULTS.previewBudget));
       if (state.pointCount <= budget) return state.records;
       const step = Math.ceil(state.pointCount / budget);
       const reduced = new Float32Array(Math.ceil(state.pointCount / step) * 5);
@@ -2062,7 +2271,7 @@
       els.maskCanvas.style.height = cssH;
     }
 
-    function drawLayerPoints(ctx, records, scale, margin, color, opacity, kind, token, batchSize, sizeScale = 1) {
+    function drawLayerPoints(ctx, records, scale, margin, color, opacity, kind, token, batchSize, sizeScale = 1, cfg = state.config) {
       return new Promise(async (resolve) => {
         if (!records || !records.length || opacity <= 0) return resolve(true);
         ctx.fillStyle = hexToRgba(color, opacity);
@@ -2077,8 +2286,8 @@
             const r = records[i + 2] * scale * sizeScale;
             const density = records[i + 3];
             const edge = records[i + 4];
-            if (kind === 'edge' && edge < state.config.edgeThreshold) continue;
-            if (kind === 'accent' && density < state.config.accentThreshold) continue;
+            if (kind === 'edge' && edge < cfg.edgeThreshold) continue;
+            if (kind === 'accent' && density < cfg.accentThreshold) continue;
             if (r < 0.2) continue;
             if (r < 0.75) {
               ctx.rect(x - r, y - r, r * 2, r * 2);
@@ -2097,10 +2306,11 @@
     async function renderSceneToCanvas(targetCanvas, options = {}) {
       const records = options.records || state.records;
       if (!state.source || !records || !records.length) return null;
+      const cfg = options.config || state.config;
       const scale = options.scale || 1;
       const fit = options.fit || null;
       const dpr = options.dpr || 1;
-      const spec = computeRenderSpec(scale);
+      const spec = computeRenderSpec(scale, cfg);
       const ctx = targetCanvas.getContext('2d', { alpha: true });
       if (!ctx) throw new Error('2D canvas context unavailable.');
       let cssWidth = spec.width;
@@ -2120,22 +2330,22 @@
       }
       ctx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
       const renderScale = fit ? ((cssWidth / spec.width) * scale) : scale;
-      const margin = (state.config.marginPx || 0) * (fit ? (cssWidth / spec.width) : scale);
-      if (!state.config.transparentBackground) {
-        ctx.fillStyle = state.config.backgroundColor;
+      const margin = (cfg.marginPx || 0) * (fit ? (cssWidth / spec.width) : scale);
+      if (!cfg.transparentBackground) {
+        ctx.fillStyle = cfg.backgroundColor;
         ctx.fillRect(0, 0, fit ? cssWidth : spec.width, fit ? cssHeight : spec.height);
       }
       const token = options.token;
-      if (state.config.baseLayer) {
-        const ok = await drawLayerPoints(ctx, records, renderScale, margin, state.config.color, state.config.baseOpacity / 100, 'base', token, fit ? PREVIEW_BATCH : EXPORT_BATCH, 1);
+      if (cfg.baseLayer) {
+        const ok = await drawLayerPoints(ctx, records, renderScale, margin, cfg.color, cfg.baseOpacity / 100, 'base', token, fit ? PREVIEW_BATCH : EXPORT_BATCH, 1, cfg);
         if (!ok) return null;
       }
-      if (state.config.edgeLayer) {
-        const ok = await drawLayerPoints(ctx, records, renderScale, margin, state.config.edgeColor, state.config.edgeOpacity / 100, 'edge', token, fit ? PREVIEW_BATCH : EXPORT_BATCH, 1);
+      if (cfg.edgeLayer) {
+        const ok = await drawLayerPoints(ctx, records, renderScale, margin, cfg.edgeColor, cfg.edgeOpacity / 100, 'edge', token, fit ? PREVIEW_BATCH : EXPORT_BATCH, 1, cfg);
         if (!ok) return null;
       }
-      if (state.config.accentLayer) {
-        const ok = await drawLayerPoints(ctx, records, renderScale, margin, state.config.accentColor, state.config.accentOpacity / 100, 'accent', token, fit ? PREVIEW_BATCH : EXPORT_BATCH, state.config.accentScale);
+      if (cfg.accentLayer) {
+        const ok = await drawLayerPoints(ctx, records, renderScale, margin, cfg.accentColor, cfg.accentOpacity / 100, 'accent', token, fit ? PREVIEW_BATCH : EXPORT_BATCH, cfg.accentScale, cfg);
         if (!ok) return null;
       }
       return targetCanvas;
@@ -2296,6 +2506,15 @@
       const maxX = Math.min(width - 1, Math.ceil(x + radius + 1));
       const minY = Math.max(0, Math.floor(y - radius - 1));
       const maxY = Math.min(height - 1, Math.ceil(y + radius + 1));
+      let regionSnap = null;
+      if (state.config.maskMode === 'smooth') {
+        regionSnap = [];
+        for (let yy = minY; yy <= maxY; yy++) regionSnap.push(state.maskData.slice(yy * width + minX, yy * width + maxX + 1));
+      }
+      const readMask = (sx, sy) => {
+        if (regionSnap && sx >= minX && sx <= maxX && sy >= minY && sy <= maxY) return regionSnap[sy - minY][sx - minX];
+        return state.maskData[sy * width + sx];
+      };
       for (let yy = minY; yy <= maxY; yy++) {
         for (let xx = minX; xx <= maxX; xx++) {
           const dx = xx - x;
@@ -2315,7 +2534,7 @@
               let sum = 0, count = 0;
               for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) {
                 const sx = clamp(xx + ox, 0, width - 1), sy = clamp(yy + oy, 0, height - 1);
-                sum += state.maskData[sy * width + sx]; count++;
+                sum += readMask(sx, sy); count++;
               }
               target = lerp(current, sum / count, falloff); break;
             }
@@ -2331,7 +2550,7 @@
       if (!state.source || state.config.maskMode === 'off') return;
       const sourcePoint = previewToSource(event.clientX, event.clientY);
       if (!sourcePoint) return;
-      pushHistory('mask-stroke');
+      pushHistory('mask-stroke', { includeMask: true });
       state.currentPointer = { preview: { x: event.clientX, y: event.clientY } };
       applyMaskStroke(sourcePoint);
       updateMaskCanvas(sourceToPreview(sourcePoint.x, sourcePoint.y));
@@ -2367,6 +2586,8 @@
         canvas,
         config: serializeConfig(),
         count: state.pointCount,
+        records: state.records ? state.records.slice() : null,
+        pointCount: state.pointCount,
         label: slot.toUpperCase(),
         createdAt: Date.now()
       };
@@ -2398,13 +2619,57 @@
 
     async function exportPng() {
       if (!state.source || !state.records || !state.pointCount) return;
+      if (state.pointCount > 2000000) {
+        const proceed = confirm(`This PNG export will render ${state.pointCount.toLocaleString()} points, which may take a long time or use a lot of memory. Continue?`);
+        if (!proceed) { setMessage('PNG export cancelled.'); return; }
+      }
       setExportBusy(true, 'Exporting PNG');
       try {
         const actualScale = getActualPngScale();
         const canvas = document.createElement('canvas');
         let note = getRequestedScale() !== actualScale ? ` Requested ${getRequestedScale()}x was clamped to safe PNG scale ${actualScale}x.` : '';
         const compareActive = state.config.previewMode !== 'single' && (state.compareA || state.compareB) && state.config.asSeenExport;
-        if (compareActive && els.previewCanvas.width && els.previewCanvas.height) {
+        const compareHasRecords = compareActive && !!((state.compareA && state.compareA.records) || (state.compareB && state.compareB.records));
+        if (compareHasRecords) {
+          const spec = computeRenderSpec(actualScale);
+          canvas.width = spec.width;
+          canvas.height = spec.height;
+          const ctx = canvas.getContext('2d', { alpha: true });
+          if (!ctx) throw new Error('2D canvas context unavailable.');
+          const renderSide = async (snap) => {
+            const side = document.createElement('canvas');
+            if (snap && snap.records) {
+              await renderSceneToCanvas(side, { records: snap.records, scale: actualScale, config: snap.config });
+            } else {
+              await renderSceneToCanvas(side, { records: state.records, scale: actualScale });
+            }
+            return side;
+          };
+          const canvasA = await renderSide(state.compareA);
+          const canvasB = await renderSide(state.compareB);
+          if (state.config.previewMode === 'overlay') {
+            ctx.drawImage(canvasA, 0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.globalAlpha = state.config.compareMix / 100;
+            ctx.drawImage(canvasB, 0, 0, canvas.width, canvas.height);
+            ctx.restore();
+          } else {
+            const splitPx = Math.round((state.config.compareMix / 100) * canvas.width);
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(0, 0, splitPx, canvas.height);
+            ctx.clip();
+            ctx.drawImage(canvasA, 0, 0, canvas.width, canvas.height);
+            ctx.restore();
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(splitPx, 0, canvas.width - splitPx, canvas.height);
+            ctx.clip();
+            ctx.drawImage(canvasB, 0, 0, canvas.width, canvas.height);
+            ctx.restore();
+          }
+          note += ' Compare composite was re-rendered at full export resolution.';
+        } else if (compareActive && els.previewCanvas.width && els.previewCanvas.height) {
           const spec = computeRenderSpec(actualScale);
           canvas.width = spec.width;
           canvas.height = spec.height;
@@ -2412,7 +2677,7 @@
           if (!ctx) throw new Error('2D canvas context unavailable.');
           ctx.imageSmoothingEnabled = true;
           ctx.drawImage(els.previewCanvas, 0, 0, canvas.width, canvas.height);
-          note += ' Compare composite was exported exactly as preview.';
+          note += ' Compare composite was exported from the preview raster (full-resolution compare data unavailable), so it may look soft.';
         } else {
           await renderSceneToCanvas(canvas, { records: state.records, scale: actualScale });
         }
@@ -2428,6 +2693,17 @@
 
     function quant(n, dp) {
       return Number(n.toFixed(dp));
+    }
+
+    function estimateSvgBytes(pointCount, config) {
+      const cfg = config || {};
+      const dp = Number.isFinite(Number(cfg.svgPrecision)) ? Number(cfg.svgPrecision) : 2;
+      const perPoint = 30 + dp * 5;
+      let layerFactor = 0;
+      if (cfg.baseLayer !== false && numOr(cfg.baseOpacity, 100) > 0) layerFactor += 1;
+      if (cfg.edgeLayer && numOr(cfg.edgeOpacity, 0) > 0) layerFactor += 0.5;
+      if (cfg.accentLayer && numOr(cfg.accentOpacity, 0) > 0) layerFactor += 0.5;
+      return Math.round(pointCount * perPoint * layerFactor) + 256;
     }
 
     function buildSvgMarkup() {
@@ -2477,6 +2753,16 @@
 
     function exportSvg() {
       if (!state.source || !state.records || !state.pointCount) return;
+      const estimate = estimateSvgBytes(state.pointCount, state.config);
+      const estimateMb = (estimate / 1000000).toFixed(1);
+      if (estimate > 150000000) {
+        setMessage(`SVG export refused: the estimated size is about ${estimateMb} MB for ${state.pointCount.toLocaleString()} points, over the 150 MB limit. Increase the grid spacing to reduce the point count.`);
+        return;
+      }
+      if (estimate > 20000000) {
+        const proceed = confirm(`This SVG export is estimated at about ${estimateMb} MB for ${state.pointCount.toLocaleString()} points. Continue?`);
+        if (!proceed) { setMessage('SVG export cancelled.'); return; }
+      }
       setExportBusy(true, 'Exporting SVG');
       try {
         const svg = buildSvgMarkup();
@@ -2510,8 +2796,26 @@
       refreshUi();
     }
 
+    function trackPreChange(input, label) {
+      let pending = null;
+      const captureFresh = () => { pending = { config: serializeConfig(), mask: null, hasMask: false }; };
+      input.addEventListener('pointerdown', captureFresh);
+      input.addEventListener('focus', () => { if (!pending) captureFresh(); });
+      input.addEventListener('blur', () => { pending = null; });
+      input.addEventListener('change', () => {
+        if (!pending) return;
+        const snap = pending;
+        pending = null;
+        if (JSON.stringify(snap.config) !== JSON.stringify(state.config)) {
+          pushHistory(label, { snapshot: snap });
+          pending = { config: serializeConfig(), mask: null, hasMask: false };
+        }
+      });
+    }
+
     function bindRange(id, key, parse = Number, options = {}) {
       const input = els[id];
+      trackPreChange(input, `change-${key}`);
       input.addEventListener('input', () => {
         state.config[key] = parse(input.value);
         sanitizeConfig();
@@ -2522,16 +2826,15 @@
           scheduleProcess(options.delay ?? 60);
         }
       });
-      input.addEventListener('change', () => pushHistory(`change-${key}`));
     }
 
     function bindColor(id, key, redrawOnly = false) {
+      trackPreChange(els[id], `color-${key}`);
       els[id].addEventListener('input', () => {
         state.config[key] = els[id].value;
         updateInputsFromConfig();
         if (redrawOnly) renderPreview(); else if (state.source) scheduleProcess(40);
       });
-      els[id].addEventListener('change', () => pushHistory(`color-${key}`));
     }
 
     bindRange('minDotSize', 'minDotSize');
@@ -2564,11 +2867,21 @@
     bindColor('accentColor', 'accentColor', true);
     bindColor('edgeColor', 'edgeColor', true);
 
+    let seedPending = null;
+    const captureSeedPending = () => { seedPending = { config: serializeConfig(), mask: null, hasMask: false }; };
+    els.seedInput.addEventListener('pointerdown', captureSeedPending);
+    els.seedInput.addEventListener('focus', () => { if (!seedPending) captureSeedPending(); });
+    els.seedInput.addEventListener('blur', () => { seedPending = null; });
     els.seedInput.addEventListener('change', () => {
-      state.config.seed = Math.max(0, Math.floor(Number(els.seedInput.value) || 1));
+      const prev = seedPending;
+      seedPending = null;
+      state.config.seed = Math.max(0, Math.floor(numOr(els.seedInput.value, 1)));
       sanitizeConfig();
       updateInputsFromConfig();
-      pushHistory('seed');
+      if (prev && JSON.stringify(prev.config) !== JSON.stringify(state.config)) {
+        pushHistory('seed', { snapshot: prev });
+        seedPending = { config: serializeConfig(), mask: null, hasMask: false };
+      }
       if (state.source) scheduleProcess(20);
     });
 
@@ -2634,7 +2947,7 @@
 
     els.clearMaskBtn.addEventListener('click', () => {
       if (!state.source) return;
-      pushHistory('clear-mask');
+      pushHistory('clear-mask', { includeMask: true });
       clearMaskData();
     });
 
@@ -2652,6 +2965,14 @@
       const file = event.dataTransfer?.files?.[0];
       if (file) loadImage(file);
     });
+    ['dragenter', 'dragover'].forEach((type) => els.canvasWrap.addEventListener(type, (event) => { event.preventDefault(); els.uploadDrop.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach((type) => els.canvasWrap.addEventListener(type, (event) => { event.preventDefault(); els.uploadDrop.classList.remove('drag'); }));
+    els.canvasWrap.addEventListener('drop', (event) => {
+      const file = event.dataTransfer?.files?.[0];
+      if (file) loadImage(file);
+    });
+    window.addEventListener('dragover', (event) => event.preventDefault());
+    window.addEventListener('drop', (event) => event.preventDefault());
 
     els.reprocessBtn.addEventListener('click', () => state.source && scheduleProcess(20));
     els.undoBtn.addEventListener('click', undo);
@@ -2684,6 +3005,28 @@
       };
       window.addEventListener('pointermove', move);
       window.addEventListener('pointerup', up);
+    });
+
+    let curveKeyIndex = 1;
+    let curveKeyPending = null;
+    els.curveCanvas.addEventListener('keydown', (event) => {
+      const keys = ['curveShadow', 'curveMid', 'curveHigh'];
+      if (event.key === 'ArrowLeft') { curveKeyIndex = Math.max(0, curveKeyIndex - 1); event.preventDefault(); return; }
+      if (event.key === 'ArrowRight') { curveKeyIndex = Math.min(2, curveKeyIndex + 1); event.preventDefault(); return; }
+      if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+      event.preventDefault();
+      if (!curveKeyPending) curveKeyPending = { config: serializeConfig(), mask: null, hasMask: false };
+      const key = keys[curveKeyIndex];
+      state.config[key] = Number(clamp(state.config[key] + (event.key === 'ArrowUp' ? 0.05 : -0.05), -1, 1).toFixed(2));
+      sanitizeConfig();
+      updateInputsFromConfig();
+      if (state.source) scheduleProcess(40);
+    });
+    els.curveCanvas.addEventListener('keyup', () => {
+      if (!curveKeyPending) return;
+      const snap = curveKeyPending;
+      curveKeyPending = null;
+      if (JSON.stringify(snap.config) !== JSON.stringify(state.config)) pushHistory('curve-keyboard', { snapshot: snap });
     });
 
     function renderPresetList() {
@@ -2759,27 +3102,51 @@
       setMessage(`Preset saved: ${name}`);
     });
 
-    els.exportPresetBtn.addEventListener('click', async () => {
-      const text = JSON.stringify(serializeConfig(), null, 2);
-      try { await navigator.clipboard.writeText(text); setMessage('Preset JSON copied to clipboard.'); }
-      catch { prompt('Copy preset JSON', text); }
-    });
-
-    els.importPresetBtn.addEventListener('click', async () => {
-      let text = '';
-      try { text = await navigator.clipboard.readText(); } catch {}
-      text = prompt('Paste preset JSON', text || '');
-      if (!text) return;
+    let jsonDialogMode = 'export';
+    function openJsonDialog(mode, text) {
+      jsonDialogMode = mode;
+      els.jsonDialogTitle.textContent = mode === 'import' ? 'Paste Preset JSON' : 'Preset JSON';
+      els.jsonDialogText.value = text || '';
+      els.jsonDialogError.textContent = '';
+      els.jsonDialogApply.style.display = mode === 'import' ? '' : 'none';
+      els.jsonDialogText.readOnly = mode !== 'import';
+      els.jsonDialog.hidden = false;
+      els.jsonDialogText.focus();
+      els.jsonDialogText.select();
+    }
+    function closeJsonDialog() {
+      els.jsonDialog.hidden = true;
+    }
+    els.jsonDialogClose.addEventListener('click', closeJsonDialog);
+    els.jsonDialog.addEventListener('click', (event) => { if (event.target === els.jsonDialog) closeJsonDialog(); });
+    els.jsonDialogApply.addEventListener('click', () => {
+      if (jsonDialogMode !== 'import') return;
+      const text = els.jsonDialogText.value || '';
+      if (!text.trim()) { els.jsonDialogError.textContent = 'Nothing to import.'; return; }
       try {
         const parsed = JSON.parse(text);
         pushHistory('preset-import');
         state.config = { ...DEFAULTS, ...parsed };
         sanitizeConfig();
         updateInputsFromConfig();
+        closeJsonDialog();
         if (state.source) scheduleProcess(20); else refreshUi();
+        setMessage('Preset imported.');
       } catch (error) {
-        setMessage(`Preset import failed: ${error && error.message ? error.message : String(error)}`);
+        els.jsonDialogError.textContent = `Preset import failed: ${error && error.message ? error.message : String(error)}`;
       }
+    });
+
+    els.exportPresetBtn.addEventListener('click', async () => {
+      const text = JSON.stringify(serializeConfig(), null, 2);
+      try { await navigator.clipboard.writeText(text); setMessage('Preset JSON copied to clipboard.'); }
+      catch { openJsonDialog('export', text); }
+    });
+
+    els.importPresetBtn.addEventListener('click', async () => {
+      let text = '';
+      try { text = await navigator.clipboard.readText(); } catch {}
+      openJsonDialog('import', text || '');
     });
 
     els.saveSeedBtn.addEventListener('click', () => {
