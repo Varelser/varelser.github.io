@@ -1,0 +1,179 @@
+/* ════════════════════════════════════════════════════════════════
+   MEIKYOSHISUI — Modern Skin (2026-11-10)
+   洗練されたモダンな外観への上書きレイヤー。styles.css の後で読み込む。
+   方針:
+   - パネルは「線」ではなく「面」で見せる (ソリッドなサーフェス階層)
+   - 色は使わない。白・グレー階調 + 選択状態の白反転のみ
+   - フォントはシステムサンセリフに統一し、数値とログだけ等幅
+   - グラデーション文字・発光・ノイズ・虹色バッジなどの装飾を排除
+   旧デザインへは DESIGN: CLASSIC トグル (link の disabled) で戻れる。
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  --m-bg: #0a0a0c;
+  --m-panel: #131316;
+  --m-raised: #1a1a1f;
+  --m-inset: #0e0e11;
+  --m-line: #222228;
+  --m-line2: #2e2e36;
+  --m-text: #f4f4f5;
+  --m-sub: #a3a3ab;
+  --m-dim: #63636c;
+  --m-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+  --m-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Hiragino Kaku Gothic ProN", monospace;
+}
+
+/* ── 地とタイポグラフィ ── */
+body { background: var(--m-bg) !important; }
+body::before, body::after { display: none !important; }
+body, body * { font-family: var(--m-font) !important; }
+.pval, .log, .chord-box, .chord-status, .ui-macro-val, .sv,
+[class*="readout"], [class*="lcd"] { font-family: var(--m-mono) !important; }
+::selection { background: #f4f4f5; color: #101013; }
+
+/* ── ヘッダー: 静かなマストヘッド ── */
+header { text-align: left !important; padding: 30px 0 26px !important; }
+.sys-tag { font-size: 10px !important; letter-spacing: .28em !important; color: var(--m-dim) !important; opacity: 1 !important; margin-bottom: 10px !important; }
+h1 {
+  font-size: clamp(30px, 4.2vw, 44px) !important; font-weight: 750 !important;
+  letter-spacing: .01em !important; line-height: 1.05 !important;
+  background: none !important; -webkit-text-fill-color: var(--m-text) !important; color: var(--m-text) !important;
+}
+.sub { font-size: 11px !important; letter-spacing: .24em !important; color: var(--m-dim) !important; margin-top: 10px !important; }
+#osc { opacity: .5 !important; height: 56px !important; }
+
+/* ── パネル: ソリッドな面 ── */
+.panel {
+  background: var(--m-panel) !important;
+  border: 1px solid var(--m-line) !important;
+  border-radius: 8px !important;
+  padding: 24px !important;
+}
+.panel-top { display: none !important; }
+.g2, .g3 { gap: 18px !important; margin-bottom: 18px !important; }
+.full, .mb16 { margin-bottom: 18px !important; }
+
+.sec-label {
+  font-size: 11px !important; font-weight: 650 !important;
+  letter-spacing: .16em !important; color: var(--m-sub) !important;
+  text-transform: uppercase; margin-bottom: 18px !important;
+}
+.sec-label::before { content: none !important; display: none !important; }
+
+/* ── コード入力 ── */
+.chord-box {
+  background: var(--m-inset) !important; border: 1px solid var(--m-line2) !important;
+  border-radius: 8px !important; font-size: 25px !important; letter-spacing: 1px !important;
+  color: var(--m-text) !important; caret-color: var(--m-text) !important; padding: 16px 20px !important;
+}
+.chord-box:focus { border-color: #4a4a55 !important; box-shadow: 0 0 0 3px rgba(244,244,245,.08) !important; }
+.chord-status { font-size: 11px !important; letter-spacing: .04em !important; color: var(--m-dim) !important; }
+
+/* ── ラベルと値 ── */
+.param-label { font-size: 11px !important; letter-spacing: .05em !important; color: var(--m-sub) !important; text-transform: none !important; }
+.pval { font-size: 12px !important; color: var(--m-text) !important; }
+
+/* ── スライダー: 太いトラックとソリッドなツマミ ── */
+.slider, input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  height: 4px !important; border-radius: 2px !important; background: #26262d !important;
+}
+.slider::-webkit-slider-thumb, input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: #f4f4f5; border: 1px solid #000;
+  box-shadow: 0 1px 3px rgba(0,0,0,.55) !important; cursor: pointer;
+}
+.slider::-moz-range-thumb, input[type="range"]::-moz-range-thumb {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: #f4f4f5; border: 1px solid #000;
+  box-shadow: 0 1px 3px rgba(0,0,0,.55) !important; cursor: pointer;
+}
+
+/* ── トグルスイッチ: ソリッド ── */
+.tog {
+  width: 40px !important; height: 22px !important; border-radius: 11px !important;
+  background: #2b2b33 !important; transition: background .18s !important;
+}
+.tog::after { width: 16px !important; height: 16px !important; top: 3px !important; left: 3px !important; background: #8f8f98 !important; box-shadow: none !important; }
+.tog.on { background: #f4f4f5 !important; }
+.tog.on::after { background: #131316 !important; transform: translateX(18px); }
+.tog-name { font-size: 12px !important; letter-spacing: .02em !important; color: var(--m-text) !important; }
+.tog-desc { font-size: 10.5px !important; color: var(--m-dim) !important; letter-spacing: .01em !important; }
+
+/* ── ボタン総則: 面で押し、選択は白反転 ── */
+.g-btn, .s-btn, .t-tab, .ab-btn, .c-btn, .ep-btn, .oct-pill,
+[class*="-btn"] {
+  box-shadow: none !important; text-shadow: none !important;
+}
+button, .g-btn {
+  background: var(--m-raised) !important; border: 1px solid var(--m-line2) !important;
+  border-radius: 6px !important; color: var(--m-sub) !important;
+  font-size: 11.5px !important; letter-spacing: .05em !important;
+}
+button:hover, .g-btn:hover { background: #222229 !important; color: var(--m-text) !important; }
+.g-btn { padding: 13px 10px !important; }
+.g-btn.on { background: #f4f4f5 !important; color: #121215 !important; border-color: #f4f4f5 !important; font-weight: 650; }
+
+/* セクション内の選択式ボタン群 (各エンジンのモード/プリセット類) */
+[class*="-btn"].on, [class*="-pill"].on, [class*="-tog"].on, .t-tab.on {
+  background: #f4f4f5 !important; color: #121215 !important;
+  border-color: #f4f4f5 !important; box-shadow: none !important;
+}
+[class*="-btn"], [class*="-pill"] { border-radius: 6px; }
+
+/* タブ */
+.t-tab { background: transparent !important; border-bottom: 2px solid transparent !important; font-size: 11px !important; letter-spacing: .08em !important; color: var(--m-dim) !important; border-radius: 0 !important; }
+.t-tab.on { background: var(--m-raised) !important; color: var(--m-text) !important; border-bottom: 2px solid #f4f4f5 !important; }
+
+/* ── バッジとチップ: 無地のタグに統一 (虹色を消す) ── */
+.badge {
+  background: var(--m-raised) !important; border: 1px solid transparent !important;
+  border-radius: 4px !important; color: var(--m-sub) !important;
+  font-size: 9.5px !important; letter-spacing: .06em !important; padding: 2px 7px !important;
+}
+[style*="border-color:#"], [style*="border-color: #"],
+[style*="border:1px solid #"], [style*="border: 1px solid #"] {
+  border-color: var(--m-line2) !important;
+}
+[style*="color:#"], [style*="color: #"] { color: var(--m-sub) !important; }
+[style*="background:rgba("], [style*="background: rgba("] { background-color: var(--m-raised) !important; }
+
+/* セクション固有のアクセント色 (クラス経由) も階調へ寄せる */
+[class*="-badge"], .cca-lane-label, .nr-path-result, .pcs-hover-detail {
+  color: var(--m-sub) !important; border-color: var(--m-line2) !important;
+  background: var(--m-raised) !important; box-shadow: none !important;
+}
+.nr-cur-chord, .sp-score-value { color: var(--m-text) !important; }
+
+/* ── 入力・セレクト ── */
+input[type="text"], input[type="number"], select, textarea {
+  background: var(--m-inset) !important; border: 1px solid var(--m-line2) !important;
+  border-radius: 6px !important; color: var(--m-text) !important;
+  font-size: 12px !important; letter-spacing: .02em !important;
+}
+select option { background: #17171b; color: var(--m-text); }
+
+/* ── ログ ── */
+.log {
+  background: var(--m-inset) !important; border: 1px solid var(--m-line) !important;
+  border-radius: 8px !important; font-size: 11px !important; line-height: 1.9 !important;
+  color: #8e8e97 !important; letter-spacing: .01em !important;
+}
+
+/* ── キャンバスの受け面 ── */
+canvas { border-radius: 6px; }
+
+/* ── スクロールバー ── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #2b2b32; border-radius: 5px; border: 2px solid var(--m-bg); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ── UI 改善レイヤー (69) と生成バーも同じ面で ── */
+#uiControlBar, #genBar, #uiMacroPanel {
+  background: rgba(17,17,20,.94) !important; border-color: var(--m-line) !important;
+}
+.ui-view-btn { background: var(--m-raised) !important; border-color: var(--m-line2) !important; color: var(--m-sub) !important; border-radius: 6px !important; }
+.ui-view-btn.on { background: #f4f4f5 !important; color: #121215 !important; border-color: #f4f4f5 !important; }
+#genBar button.primary { background: #f4f4f5 !important; color: #121215 !important; border-color: #f4f4f5 !important; font-weight: 650; }
+.status-chip { background: var(--m-raised) !important; border-color: transparent !important; color: var(--m-sub) !important; border-radius: 4px !important; }
