@@ -2386,6 +2386,12 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     const ctx2 = spec.getContext('2d');
     const ctx3 = gram.getContext('2d');
 
+    const gramCol = document.createElement('canvas');
+    gramCol.width = 1;
+    gramCol.height = 1;
+    const gramColCtx = gramCol.getContext('2d');
+    let gramColData = gramColCtx.createImageData(1, 1);
+
     const resize = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       for (const c of [scope, spec, gram]) {
@@ -2400,12 +2406,6 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     };
     resize();
     addEventListener('resize', resize);
-
-    const gramCol = document.createElement('canvas');
-    gramCol.width = 1;
-    gramCol.height = 1;
-    const gramColCtx = gramCol.getContext('2d');
-    let gramColData = gramColCtx.createImageData(1, 1);
 
     let timeData = new Uint8Array(1024);
     let freqData = new Uint8Array(512);
