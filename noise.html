@@ -125,6 +125,19 @@
     letter-spacing:.05em;
   }
   .section .body{padding:10px 12px}
+  .section.collapsed > .body{display:none}
+  .section.collapsed > .head{border-bottom:none}
+  .section > .head{cursor:pointer;user-select:none}
+  .collapse-btn{
+    flex:none;width:24px;height:24px;padding:0;border-radius:4px;
+    border:1px solid var(--line);background:transparent;color:var(--muted);
+    font-size:13px;line-height:1;cursor:pointer;
+  }
+  .collapse-btn:hover{color:#fff;border-color:var(--muted)}
+  .collapse-btn .chev{display:inline-block;transition:transform .15s ease}
+  .section.collapsed .collapse-btn .chev{transform:rotate(-90deg)}
+  .panel-tools{display:flex;gap:8px}
+  .panel-tools button{flex:1}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   .field{display:grid;gap:6px;margin-bottom:10px}
@@ -230,7 +243,11 @@
 <body>
 <div id="app">
   <aside id="panel">
-    <div class="section">
+    <div class="panel-tools">
+      <button id="expandAllBtn" class="secondary" type="button" data-help="左パネルの全セクションを開きます。">全て開く</button>
+      <button id="collapseAllBtn" class="secondary" type="button" data-help="左パネルの全セクションを閉じます。見出しだけの状態になります。">全て閉じる</button>
+    </div>
+    <div class="section" id="sec-preset">
       <div class="head"><h2>プリセット</h2></div>
       <div class="body">
         <div class="grid2">
@@ -250,7 +267,7 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-session">
       <div class="head"><h2>セッション</h2></div>
       <div class="body">
         <div class="session-actions">
@@ -267,27 +284,27 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-master">
       <div class="head"><h2>マスター</h2></div>
       <div class="body" id="masterFields"></div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-layerA">
       <div class="head"><h3>Layer A</h3></div>
       <div class="body" id="layerAFields"></div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-layerB">
       <div class="head"><h3>Layer B</h3></div>
       <div class="body" id="layerBFields"></div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-layerC">
       <div class="head"><h3>Layer C</h3></div>
       <div class="body" id="layerCFields"></div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-sleep">
       <div class="head"><h2>スリープ</h2></div>
       <div class="body">
         <div class="grid2">
@@ -317,7 +334,7 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-ai">
       <div class="head"><h2>AI生成</h2></div>
       <div class="body">
         <div class="field">
@@ -343,7 +360,7 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-midi">
       <div class="head"><h2>DAW / MIDI</h2></div>
       <div class="body">
         <div class="session-actions">
@@ -354,7 +371,7 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="section" id="sec-notes">
       <div class="head"><h2>備考</h2></div>
       <div class="body">
         <div class="help">
@@ -3884,6 +3901,53 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     }
   }
 
+  const UI_PANELS_KEY = 'noise_ui_panels_v1';
+  const PANEL_DEFAULT_COLLAPSED = { 'sec-session': true, 'sec-sleep': true, 'sec-ai': true, 'sec-midi': true, 'sec-notes': true };
+  function loadPanelPrefs() {
+    try {
+      const raw = localStorage.getItem(UI_PANELS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (err) { return {}; }
+  }
+  function savePanelPrefs(prefs) {
+    try { localStorage.setItem(UI_PANELS_KEY, JSON.stringify(prefs)); } catch (err) { /* private mode */ }
+  }
+  function setSectionCollapsed(section, collapsed, prefs) {
+    section.classList.toggle('collapsed', collapsed);
+    const btn = section.querySelector('.collapse-btn');
+    if (btn) btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (prefs && section.id) { prefs[section.id] = collapsed; savePanelPrefs(prefs); }
+  }
+  function initCollapsibleSections() {
+    const prefs = loadPanelPrefs();
+    const sections = document.querySelectorAll('#panel .section');
+    sections.forEach(section => {
+      const head = section.querySelector(':scope > .head');
+      const body = section.querySelector(':scope > .body');
+      if (!head || !body) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'collapse-btn';
+      btn.setAttribute('data-help', 'このセクションを開閉します。状態はブラウザに保存されます。');
+      btn.innerHTML = '<span class="chev" aria-hidden="true">\u25BE</span>';
+      if (body.id) btn.setAttribute('aria-controls', body.id);
+      head.appendChild(btn);
+      const stored = section.id && section.id in prefs ? prefs[section.id] : !!PANEL_DEFAULT_COLLAPSED[section.id];
+      setSectionCollapsed(section, !!stored, null);
+      head.addEventListener('click', () => {
+        setSectionCollapsed(section, !section.classList.contains('collapsed'), prefs);
+      });
+    });
+    const expandAll = $('expandAllBtn');
+    if (expandAll) expandAll.addEventListener('click', () => {
+      sections.forEach(section => setSectionCollapsed(section, false, prefs));
+    });
+    const collapseAll = $('collapseAllBtn');
+    if (collapseAll) collapseAll.addEventListener('click', () => {
+      sections.forEach(section => setSectionCollapsed(section, true, prefs));
+    });
+  }
+
   function wireEvents() {
 
     document.querySelectorAll('input, select').forEach(el => {
@@ -4078,6 +4142,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   }
 
   setParams(DEFAULTS);
+  initCollapsibleSections();
   wireEvents();
   setBusyUI(false);
   drawLoop();
