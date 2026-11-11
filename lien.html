@@ -602,7 +602,7 @@
               <button class="export-btn" data-export-transparent="1" data-export-scale="4" data-disable-during-export="1" type="button">Transparent 4×</button>
             </div>
             <div class="small-label" style="margin:0;color:var(--muted);">
-              Export recreates the current artwork from the active seed and frame state, then saves PNG at the selected scale.
+              Export re-renders the artwork from the active seed and frame count at the selected scale, applying the current visual settings to every frame. After a window resize, it exports the current view scaled up instead.
             </div>
           </div>
         </div>
@@ -805,6 +805,9 @@
         lineColor: '#ffffff'
       };
 
+      // Only trajectory-defining keys reset the simulation. Visual-only keys
+      // (opacity, line widths, line colour, background inversion, zoom) are
+      // applied to subsequent frames without erasing the accumulated artwork.
       const CONFIG_RESET_KEYS = new Set([
         'seed',
         'stepsPerLine',
@@ -814,12 +817,7 @@
         'clustering',
         'waveMode',
         'flowDirection',
-        'particleCount',
-        'lineWidthMin',
-        'lineWidthMax',
-        'opacity',
-        'colorInvert',
-        'lineColor'
+        'particleCount'
       ]);
 
       const PLAY_ICON = '<span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 0 1 0 1.971l-11.54 6.347a1.125 1.125 0 0 1-1.667-.985V5.653Z" /></svg></span>';
@@ -898,6 +896,13 @@
       const metricsRef = { current: { logicalWidth: 0, logicalHeight: 0, viewPixelRatio: 1, artPixelRatio: 1 } };
       const rgbCacheRef = { current: { hex: '', rgb: { r: 255, g: 255, b: 255 } } };
       const perfRef = { current: { lastViewComposite: 0, compositeIntervalMs: 16 } };
+      // Frames drawn since the last full reset, and whether the artwork on
+      // the art canvas is exactly reproducible by replaying the simulation
+      // from the seed for that many frames (false after a resize preserved
+      // and rescaled the previous bitmap). Export uses this to choose a true
+      // re-render over a plain upscale.
+      const framesRef = { current: 0 };
+      const replayableRef = { current: false };
 
       function mulberry32(seed) {
         let t = seed >>> 0;
@@ -1092,7 +1097,8 @@
         ctx.restore();
       }
 
-      function drawSimulationFrame(ctx, sim, cfg, width, height, rgbCache) {
+      function drawSimulationFrame(ctx, sim, cfg, width, height, rgbCache, margin) {
+        const boundsMargin = typeof margin === 'number' ? margin : 100;
         const cx = width / 2;
         const cy = height / 2;
         const alpha = clamp(cfg.opacity, 1, 255) / 255;
@@ -1124,7 +1130,7 @@
           p.y += Math.sin(angle) * cfg.stepLength;
           p.remainingLife -= 1;
 
-          if (p.x < -100 || p.x > width + 100 || p.y < -100 || p.y > height + 100) {
+          if (p.x < -boundsMargin || p.x > width + boundsMargin || p.y < -boundsMargin || p.y > height + boundsMargin) {
             p.reset(width, height, cfg.lineWidthMin, cfg.lineWidthMax, sim.noise, cfg.clustering, cfg.noiseFreq);
             continue;
           }
@@ -1294,7 +1300,9 @@
         artCtx.setTransform(artPixelRatio, 0, 0, artPixelRatio, 0, 0);
         clearCanvasWithBackground(artCtx, logicalWidth, logicalHeight, state.config, true);
 
+        let preservedArtwork = false;
         if (preserveArtwork && hadPreviousArt && previousMetrics.logicalWidth && previousMetrics.logicalHeight) {
+          preservedArtwork = true;
           artCtx.imageSmoothingEnabled = true;
           if ('imageSmoothingQuality' in artCtx) artCtx.imageSmoothingQuality = 'high';
           artCtx.drawImage(
@@ -1331,6 +1339,15 @@
           rngRef.current = sim.rng;
           noiseRef.current = sim.noise;
           particlesRef.current = sim.particles;
+        }
+
+        if (preservedArtwork) {
+          // The visible artwork now mixes a rescaled bitmap with new frames,
+          // so a from-seed replay would no longer reproduce it exactly.
+          replayableRef.current = false;
+        } else {
+          framesRef.current = 0;
+          replayableRef.current = true;
         }
 
         rgbCacheRef.current = { hex: '', rgb: hexToRgb(state.config.lineColor) };
@@ -1401,6 +1418,7 @@
         };
 
         drawSimulationFrame(artCtx, sim, state.config, metrics.logicalWidth, metrics.logicalHeight, rgbCacheRef);
+        framesRef.current += 1;
 
         const perf = perfRef.current;
         if ((timestamp - perf.lastViewComposite) >= perf.compositeIntervalMs) {
@@ -1426,11 +1444,13 @@
         updateUI();
 
         if (options.silent) return;
-        if (key === 'zoom') {
+        if (key === 'zoom' || key === 'colorInvert') {
           renderView();
         } else if (CONFIG_RESET_KEYS.has(key)) {
           if (mounted) fullReset(false);
         }
+        // Remaining keys are visual-only: they take effect from the next
+        // drawn frame and never erase the accumulated artwork.
       }
 
       function setPause(nextPaused) {
@@ -1476,13 +1496,59 @@
 
         if (!artCanvas || !metrics.logicalWidth || !metrics.logicalHeight) return;
 
+        const framesToReplay = framesRef.current;
+        const canRerender = replayableRef.current && framesToReplay > 0;
+
         try {
           state.isExporting = true;
           stopAnimationLoop();
-          state.exportMessage = 'Exporting current view ' + (transparent ? 'transparent' : 'background') + ' PNG ' + scale + '×';
+          state.exportMessage = (canRerender ? 'Re-rendering ' : 'Exporting current view ') + (transparent ? 'transparent' : 'background') + ' PNG ' + scale + '×';
           updateUI();
 
           await nextFrame();
+
+          // True re-render: replay the deterministic simulation from the
+          // active seed for exactly the number of frames drawn so far, in a
+          // coordinate space scaled by the export factor (step length and
+          // line widths scale up, noise frequency scales down, so the flow
+          // field is identical). Trajectory settings cannot change without
+          // a full reset, so the replayed paths match the live artwork; the
+          // current visual settings are applied uniformly to every frame.
+          // After a resize preserved a rescaled bitmap the artwork is no
+          // longer replayable, and export falls back to scaling the
+          // current view.
+          let sourceCanvas = artCanvas;
+          if (canRerender) {
+            const simWidth = Math.max(1, Math.floor(metrics.logicalWidth * scale));
+            const simHeight = Math.max(1, Math.floor(metrics.logicalHeight * scale));
+            const replayCanvas = document.createElement('canvas');
+            replayCanvas.width = simWidth;
+            replayCanvas.height = simHeight;
+            const replayCtx = replayCanvas.getContext('2d', { alpha: true, desynchronized: true });
+            if (!replayCtx) throw new Error('Canvas context is not available.');
+
+            const replayCfg = {
+              ...cfg,
+              stepLength: cfg.stepLength * scale,
+              noiseFreq: cfg.noiseFreq / scale,
+              lineWidthMin: cfg.lineWidthMin * scale,
+              lineWidthMax: cfg.lineWidthMax * scale
+            };
+            const replaySim = createSimulationState(replayCfg, simWidth, simHeight);
+            const replayRgbCache = { current: { hex: '', rgb: hexToRgb(replayCfg.lineColor) } };
+
+            let lastYieldAt = performance.now();
+            for (let frame = 0; frame < framesToReplay; frame++) {
+              drawSimulationFrame(replayCtx, replaySim, replayCfg, simWidth, simHeight, replayRgbCache, 100 * scale);
+              if ((frame & 63) === 63 && performance.now() - lastYieldAt > 24) {
+                state.exportMessage = 'Re-rendering ' + (transparent ? 'transparent' : 'background') + ' PNG ' + scale + '× — ' + Math.round(((frame + 1) / framesToReplay) * 100) + '%';
+                updateUI();
+                await nextFrame();
+                lastYieldAt = performance.now();
+              }
+            }
+            sourceCanvas = replayCanvas;
+          }
 
           const exportCanvas = document.createElement('canvas');
           exportCanvas.width = Math.max(1, Math.floor(metrics.logicalWidth * scale));
@@ -1492,7 +1558,7 @@
           if (!ctx) throw new Error('Canvas context is not available.');
 
           ctx.setTransform(scale, 0, 0, scale, 0, 0);
-          renderComposite(ctx, artCanvas, cfg, metrics.logicalWidth, metrics.logicalHeight, !!transparent);
+          renderComposite(ctx, sourceCanvas, cfg, metrics.logicalWidth, metrics.logicalHeight, !!transparent);
 
           const blob = await canvasToBlob(exportCanvas);
           const filename = 'lien-' + (transparent ? 'transparent' : 'background') + '-' + scale + 'x-' + Date.now() + '.png';
@@ -1618,10 +1684,16 @@
 
         inputs.colorInvert.addEventListener('change', function(event) {
           const nextInvert = !!event.target.checked;
-          state.config.colorInvert = nextInvert;
-          state.config.lineColor = nextInvert ? '#000000' : '#ffffff';
-          updateUI();
-          if (mounted) fullReset(false);
+          // Swap the line colour only when it is exactly the default colour
+          // that would become invisible on the new background (white lines
+          // on white, black lines on black). A custom line colour is always
+          // preserved, and the accumulated artwork is never erased.
+          if (nextInvert && state.config.lineColor === '#ffffff') {
+            state.config.lineColor = '#000000';
+          } else if (!nextInvert && state.config.lineColor === '#000000') {
+            state.config.lineColor = '#ffffff';
+          }
+          setConfigValue('colorInvert', nextInvert);
         });
 
         for (let i = 0; i < optionButtons.length; i++) {
