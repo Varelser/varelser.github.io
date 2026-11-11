@@ -218,6 +218,44 @@ const halfImg = makeImage(120, 90, (x) => x < 60 ? [0, 0, 0, 255] : [255, 255, 2
   }
 }
 
+// ---------- (v) STIPPLE weighted Voronoi behaviour ----------
+{
+  const grad = makeImage(200, 100, (x) => { const v = Math.round(255 * x / 199); return [v, v, v, 255]; });
+  const vcfg = { ...baseCfg, mode: 'STIPPLE', spacing: 10, threshold: 0.2, seed: 1 };
+  const pts = processPoints(grad, vcfg, null).points;
+  let zoneA = 0, zoneB = 0;
+  for (let i = 0; i < pts.length; i += 5) {
+    const x = pts[i];
+    if (x >= 10 && x < 60) zoneA++;
+    else if (x >= 110 && x < 160) zoneB++;
+  }
+  check('v1 stipple density response (dark zone >= 1.25x light zone)', zoneB > 0 && zoneA >= zoneB * 1.25, `A=${zoneA} B=${zoneB} ratio=${(zoneA / Math.max(1, zoneB)).toFixed(3)}`);
+
+  const dark = makeImage(120, 90, () => [0, 0, 0, 255]);
+  const st = processPoints(dark, { ...baseCfg, mode: 'STIPPLE', spacing: 10, threshold: 0.2, seed: 1 }, null).points;
+  const ht = processPoints(dark, { ...baseCfg, mode: 'HALFTONE', spacing: 10, threshold: 0.2, seed: 1 }, null).points;
+  const covRatio = (st.length / 5) / Math.max(1, ht.length / 5);
+  check('v2 stipple count within +/-35% of halftone on uniform dark', covRatio >= 0.65 && covRatio <= 1.35, `stipple=${st.length / 5} halftone=${ht.length / 5} ratio=${covRatio.toFixed(3)}`);
+  const quads = [0, 0, 0, 0];
+  for (let i = 0; i < st.length; i += 5) { quads[(st[i] >= 60 ? 1 : 0) + (st[i + 1] >= 45 ? 2 : 0)]++; }
+  check('v2b stipple covers all four quadrants', quads.every((q) => q > 0), `quadrants=${quads.join(',')}`);
+
+  const sA = processPoints(grad, { ...vcfg, seed: 11 }, null).points;
+  const sB = processPoints(grad, { ...vcfg, seed: 12 }, null).points;
+  check('v3 voronoi stipple different seed differs', sA.length > 0 && !eqArr(sA, sB));
+}
+
+// ---------- (k) keyboard mask painting (static checks) ----------
+{
+  const sceneTag = html.match(/<div class="scene-wrap"[^>]*>/);
+  check('k1a sceneWrap is focusable (tabindex="0")', !!sceneTag && sceneTag[0].includes('tabindex="0"'), sceneTag ? '' : 'sceneWrap tag not found');
+  check('k1b sceneWrap aria-label explains arrow keys + Space', !!sceneTag && sceneTag[0].includes('arrow keys') && sceneTag[0].includes('Space'));
+  const kdStart = script.indexOf("els.sceneWrap.addEventListener('keydown'");
+  const kdBlock = kdStart >= 0 ? script.slice(kdStart, kdStart + 3000) : '';
+  check('k1c sceneWrap keydown handler uses Arrow keys and Space', kdBlock.includes('ArrowLeft') && kdBlock.includes('ArrowRight') && kdBlock.includes('ArrowUp') && kdBlock.includes('ArrowDown') && kdBlock.includes("'Space'"), kdStart >= 0 ? '' : 'no sceneWrap keydown handler');
+  check('k1d keyboard painting state present', script.includes('state.keyboardCursor') && script.includes('keyboardPainting'));
+}
+
 // ---------- (g) estimateSvgBytes ----------
 {
   const cfg = { svgPrecision: 2, baseLayer: true, edgeLayer: true, accentLayer: true, baseOpacity: 100, edgeOpacity: 50, accentOpacity: 48 };
