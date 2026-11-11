@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Noise</title>
+<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。24種のノイズを2レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="Noise — Noise Generator">
+<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。24種のノイズを2レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://varelser.github.io/noise.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
   :root{
     --bg:#000;
@@ -130,6 +137,9 @@
   .check input{accent-color:#fff}
   .pillrow{display:flex;flex-wrap:wrap;gap:8px}
   .pill{
+    min-height:0;
+    font:inherit;
+    background:#000;
     padding:6px 8px;
     border:1px solid var(--line);
     border-radius:999px;
@@ -257,15 +267,15 @@
     <div class="readout">
       <div class="card">
         <div class="ch">波形</div>
-        <canvas id="scope"></canvas>
+        <canvas id="scope" role="img" aria-label="波形表示"></canvas>
       </div>
       <div class="card">
         <div class="ch">スペクトラム</div>
-        <canvas id="spec"></canvas>
+        <canvas id="spec" role="img" aria-label="スペクトラム表示"></canvas>
       </div>
       <div class="card">
         <div class="ch">スペクトログラム</div>
-        <canvas id="gram"></canvas>
+        <canvas id="gram" role="img" aria-label="スペクトログラム表示"></canvas>
       </div>
     </div>
     <div class="topbar">
@@ -281,7 +291,7 @@
         <button id="resetBtn" type="button" class="warn">初期化</button>
       </div>
     </div>
-    <div id="status" class="status">待機中</div>
+    <div id="status" class="status" aria-live="polite">待機中</div>
     <div class="legend">
       <div class="mini"><div class="k">Layer A</div><div id="miniA" class="v">-</div></div>
       <div class="mini"><div class="k">Layer B</div><div id="miniB" class="v">-</div></div>
@@ -640,7 +650,7 @@
   const presetSelect = $('presetSelect');
   presetSelect.innerHTML = Object.keys(PRESETS).map(name => `<option value="${name}">${name}</option>`).join('');
   $('presetPills').innerHTML = Object.keys(PRESETS)
-    .map(name => `<span class="pill" data-preset="${name}">${name}</span>`)
+    .map(name => `<button type="button" class="pill" data-preset="${name}">${name}</button>`)
     .join('');
 
   function setStatus(msg, cls = '') {
@@ -1381,51 +1391,67 @@
     return y * p.gain;
   }
 
-  function createStereoRenderer(params, sampleRate) {
+
+  function normalizeParams(params) {
     const p = { ...params };
-    p.master_sampleRate = Number(sampleRate || p.master_sampleRate || 48000);
-    p.master_duration = clamp(Number(p.master_duration) || 10, 1, 120);
     p.master_seed = Math.max(1, Math.floor(Number(p.master_seed) || 1));
     p.master_humHz = Number(p.master_humHz) === 60 ? 60 : 50;
-    p.master_gain = clamp(Number(p.master_gain) || 0, 0, 1.8);
-    p.master_width = clamp(Number(p.master_width) || 0, 0, 4);
+    p.master_duration = clamp(Number(p.master_duration) || 10, 1, 120);
+    p.master_gain = clamp(Number(p.master_gain) || 0, 0, 2.2);
+    p.master_width = clamp(Number(p.master_width) || 0, 0, 5.5);
+    p.master_space = clamp(Number(p.master_space) || 0, 0, 1.8);
+    p.master_air = clamp(Number(p.master_air) || 0, 0, 1.6);
     p.master_lowcut = clamp(Number(p.master_lowcut) || 10, 5, 8000);
     p.master_highcut = clamp(Number(p.master_highcut) || 20000, 500, 20000);
-    p.master_drive = clamp(Number(p.master_drive) || 0, 0, 1.6);
-    p.master_analog = clamp(Number(p.master_analog) || 0, 0, 1.4);
-    p.master_unison = clamp(Number(p.master_unison) || 0, 0, 1.4);
-    p.master_chorusMix = clamp(Number(p.master_chorusMix) || 0, 0, 1.4);
+    p.master_drive = clamp(Number(p.master_drive) || 0, 0, 2.0);
+    p.master_analog = clamp(Number(p.master_analog) || 0, 0, 1.8);
+    p.master_unison = clamp(Number(p.master_unison) || 0, 0, 1.8);
+    p.master_chorusMix = clamp(Number(p.master_chorusMix) || 0, 0, 1.8);
     p.master_chorusRate = clamp(Number(p.master_chorusRate) || 0.38, 0.02, 8);
-    p.master_wow = clamp(Number(p.master_wow) || 0, 0, 1.4);
-    p.master_flutter = clamp(Number(p.master_flutter) || 0, 0, 1.4);
-    p.master_phaserMix = clamp(Number(p.master_phaserMix) || 0, 0, 1.4);
+    p.master_wow = clamp(Number(p.master_wow) || 0, 0, 1.8);
+    p.master_flutter = clamp(Number(p.master_flutter) || 0, 0, 1.8);
+    p.master_phaserMix = clamp(Number(p.master_phaserMix) || 0, 0, 1.8);
     p.master_phaserRate = clamp(Number(p.master_phaserRate) || 0.22, 0.02, 8);
-    p.master_resonatorMix = clamp(Number(p.master_resonatorMix) || 0, 0, 1.4);
+    p.master_resonatorMix = clamp(Number(p.master_resonatorMix) || 0, 0, 1.8);
     p.master_resonatorHz = clamp(Number(p.master_resonatorHz) || 180, 30, 6000);
-    p.master_subBody = clamp(Number(p.master_subBody) || 0, 0, 1.4);
+    p.master_subBody = clamp(Number(p.master_subBody) || 0, 0, 1.8);
     p.master_lfoRate = clamp(Number(p.master_lfoRate) || 0.18, 0.01, 40);
-    p.master_lfoDepth = clamp(Number(p.master_lfoDepth) || 0, 0, 1.4);
+    p.master_lfoDepth = clamp(Number(p.master_lfoDepth) || 0, 0, 1.8);
     p.master_normalize = !!p.master_normalize;
+    ['A', 'B'].forEach(prefix => {
+      p[`${prefix}_gain`] = clamp(Number(p[`${prefix}_gain`]) || 0, 0, 2.2);
+      p[`${prefix}_pan`] = clamp(Number(p[`${prefix}_pan`]) || 0, -1, 1);
+      p[`${prefix}_tone`] = clamp(Number(p[`${prefix}_tone`]) || 0, -1, 1);
+      p[`${prefix}_density`] = clamp(Number(p[`${prefix}_density`]) || 0, 0, 1.5);
+      p[`${prefix}_motion`] = clamp(Number(p[`${prefix}_motion`]) || 0, 0, 1.5);
+      p[`${prefix}_grain`] = clamp(Number(p[`${prefix}_grain`]) || 0, 0, 1.5);
+    });
+    return p;
+  }
+
+  function createStereoRenderer(params, sampleRate) {
+    const p = normalizeParams(params);
+    p.master_sampleRate = Number(sampleRate || p.master_sampleRate || 48000);
 
     const pA = {
       enabled: !!p.A_enabled,
       type: p.A_type,
-      gain: clamp(Number(p.A_gain) || 0, 0, 1.8),
-      pan: clamp(Number(p.A_pan) || 0, -1, 1),
-      tone: clamp(Number(p.A_tone) || 0, -1, 1),
-      density: clamp(Number(p.A_density) || 0, 0, 1.5),
-      motion: clamp(Number(p.A_motion) || 0, 0, 1.5),
-      grain: clamp(Number(p.A_grain) || 0, 0, 1.5)
+      gain: p.A_gain,
+      pan: p.A_pan,
+      tone: p.A_tone,
+      density: p.A_density,
+      motion: p.A_motion,
+      grain: p.A_grain
     };
     const pB = {
       enabled: !!p.B_enabled,
       type: p.B_type,
-      gain: clamp(Number(p.B_gain) || 0, 0, 1.8),
-      pan: clamp(Number(p.B_pan) || 0, -1, 1),
-      tone: clamp(Number(p.B_tone) || 0, -1, 1),
-      density: clamp(Number(p.B_density) || 0, 0, 1.5),
-      motion: clamp(Number(p.B_motion) || 0, 0, 1.5),
-      grain: clamp(Number(p.B_grain) || 0, 0, 1.5)
+      gain: p.B_gain,
+      pan: p.B_pan,
+      tone: p.B_tone,
+      density: p.B_density,
+      motion: p.B_motion,
+      grain: p.B_grain
     };
 
     return {
@@ -1948,7 +1974,131 @@
   }
 
 
-  const AUDIO_WORKLET_SOURCE = "  const TAU = Math.PI * 2;\n  const $ = (id) => document.getElementById(id);\n  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));\n  const lerp = (a, b, t) => a + (b - a) * t;\n  const fmt = (v, n = 2) => Number(v).toFixed(n);\n  const fmtBytes = (bytes) => {\n    if (!Number.isFinite(bytes) || bytes < 0) return '-';\n    const units = ['B', 'KB', 'MB', 'GB'];\n    let value = bytes;\n    let unit = 0;\n    while (value >= 1024 && unit < units.length - 1) {\n      value /= 1024;\n      unit++;\n    }\n    return `${value >= 100 ? Math.round(value) : value.toFixed(value >= 10 ? 1 : 2)} ${units[unit]}`;\n  };\n  const dbToAmp = (db) => Math.pow(10, Number(db) / 20);\n  const ampToDb = (amp) => 20 * Math.log10(Math.max(1e-12, Number(amp) || 0));\n  const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => resolve()));\n  const HARD_REBUILD_KEYS = new Set(['master_sampleRate', 'master_seed', 'master_humHz', 'A_enabled', 'A_type', 'B_enabled', 'B_type']);\n  const SESSION_KEY = 'noise_session_v1';\n  let autosaveTimer = 0;\n\n  const NOISE_TYPES = [\n    ['white', 'White'],\n    ['gaussian', 'Gaussian'],\n    ['pink', 'Pink'],\n    ['brown', 'Brown / Red'],\n    ['blue', 'Blue'],\n    ['violet', 'Violet'],\n    ['grey', 'Grey*'],\n    ['green', 'Green*'],\n    ['black', 'Black*'],\n    ['rumble', 'Rumble'],\n    ['powerhum', 'Power Hum'],\n    ['vinyl', 'Vinyl'],\n    ['tape', 'Tape Hiss'],\n    ['wind', 'Wind'],\n    ['rain', 'Rain'],\n    ['ocean', 'Ocean'],\n    ['crackle', 'Crackle'],\n    ['dust', 'Dust'],\n    ['shot', 'Shot'],\n    ['velvet', 'Velvet'],\n    ['staticam', 'Static AM'],\n    ['digital', 'Digital / Bitcrush'],\n    ['glitch', 'Glitch Burst'],\n    ['sand', 'Resonant Sand']\n  ];\n\n  const DEFAULTS = {\n    master_sampleRate: 48000,\n    master_previewQuality: 'normal',\n    master_exportMode: 'mix',\n    master_batchCount: 1,\n    master_seedStep: 1,\n    master_exportFormat: 'wav',\n    master_exportSampleRate: 96000,\n    master_exportBitDepth: 24,\n    master_exportDither: true,\n    master_exportOversample: 2,\n    master_exportLimiter: true,\n    master_truePeakProtect: true,\n    master_exportCeilingDb: -1.0,\n    master_exportLimiterRelease: 80,\n    master_exportNoiseShaping: 'gentle',\n    master_duration: 10,\n    master_seed: 20260311,\n    master_gain: 0.55,\n    master_width: 1,\n    master_lowcut: 10,\n    master_highcut: 20000,\n    master_drive: 0.12,\n    master_analog: 0.0,\n    master_unison: 0.0,\n    master_chorusMix: 0.0,\n    master_chorusRate: 0.38,\n    master_wow: 0.0,\n    master_flutter: 0.0,\n    master_phaserMix: 0.0,\n    master_phaserRate: 0.22,\n    master_resonatorMix: 0.0,\n    master_resonatorHz: 180,\n    master_subBody: 0.0,\n    master_lfoRate: 0.18,\n    master_lfoDepth: 0.0,\n    master_humHz: 50,\n    master_normalize: true,\n    A_enabled: true,\n    A_type: 'pink',\n    A_gain: 0.8,\n    A_pan: 0,\n    A_tone: -0.2,\n    A_density: 0.5,\n    A_motion: 0.2,\n    A_grain: 0.2,\n    B_enabled: false,\n    B_type: 'vinyl',\n    B_gain: 0.35,\n    B_pan: 0,\n    B_tone: 0.2,\n    B_density: 0.45,\n    B_motion: 0.35,\n    B_grain: 0.4\n  };\n\n  const PRESETS = {\n    'Clean Pink Bed': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'pink', A_gain: 0.9, A_tone: -0.35, A_density: 0.4, A_motion: 0.12, A_grain: 0.08,\n      B_enabled: false,\n      master_gain: 0.58, master_drive: 0.04, master_width: 1.0, master_lfoDepth: 0.0\n    },\n    'Deep Rumble': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'rumble', A_gain: 0.92, A_tone: -0.85, A_density: 0.5, A_motion: 0.08, A_grain: 0.06,\n      B_enabled: true, B_type: 'brown', B_gain: 0.18, B_tone: -0.7, B_density: 0.35, B_motion: 0.12, B_grain: 0.12,\n      master_lowcut: 8, master_highcut: 250, master_gain: 0.64, master_drive: 0.16, master_width: 0.35\n    },\n    'Vinyl Archive': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'vinyl', A_gain: 0.78, A_tone: 0.12, A_density: 0.62, A_motion: 0.28, A_grain: 0.55,\n      B_enabled: true, B_type: 'powerhum', B_gain: 0.12, B_tone: -0.2, B_density: 0.5, B_motion: 0.18, B_grain: 0.08,\n      master_gain: 0.52, master_drive: 0.09, master_width: 0.82, master_humHz: 50\n    },\n    'Storm Room': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'wind', A_gain: 0.85, A_tone: -0.1, A_density: 0.78, A_motion: 0.78, A_grain: 0.25,\n      B_enabled: true, B_type: 'rain', B_gain: 0.58, B_tone: 0.2, B_density: 0.88, B_motion: 0.62, B_grain: 0.38,\n      master_gain: 0.48, master_drive: 0.05, master_width: 1.35, master_lfoRate: 0.11, master_lfoDepth: 0.06\n    },\n    'Ocean Drone': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'ocean', A_gain: 0.92, A_tone: -0.18, A_density: 0.66, A_motion: 0.54, A_grain: 0.16,\n      B_enabled: true, B_type: 'pink', B_gain: 0.14, B_tone: -0.28, B_density: 0.32, B_motion: 0.1, B_grain: 0.08,\n      master_gain: 0.52, master_drive: 0.05, master_width: 1.22, master_lowcut: 10, master_highcut: 12000\n    },\n    'Electric Grid': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'powerhum', A_gain: 0.86, A_tone: -0.05, A_density: 0.56, A_motion: 0.16, A_grain: 0.05,\n      B_enabled: true, B_type: 'staticam', B_gain: 0.22, B_tone: 0.3, B_density: 0.46, B_motion: 0.44, B_grain: 0.18,\n      master_gain: 0.5, master_drive: 0.14, master_width: 0.68, master_humHz: 60\n    },\n    'Digital Ruin': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'digital', A_gain: 0.72, A_tone: 0.55, A_density: 0.82, A_motion: 0.46, A_grain: 0.84,\n      B_enabled: true, B_type: 'glitch', B_gain: 0.52, B_tone: 0.72, B_density: 0.62, B_motion: 0.72, B_grain: 0.88,\n      master_gain: 0.38, master_drive: 0.18, master_width: 1.1, master_highcut: 14000\n    },\n    'Sparse Dust': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'dust', A_gain: 0.74, A_tone: 0.85, A_density: 0.08, A_motion: 0.18, A_grain: 0.38,\n      B_enabled: true, B_type: 'black', B_gain: 0.18, B_tone: -0.65, B_density: 0.22, B_motion: 0.22, B_grain: 0.2,\n      master_gain: 0.68, master_drive: 0.04, master_width: 1.28\n    },\n    'Resonant Sand': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'sand', A_gain: 0.88, A_tone: 0.2, A_density: 0.62, A_motion: 0.38, A_grain: 0.42,\n      B_enabled: true, B_type: 'velvet', B_gain: 0.14, B_tone: 0.4, B_density: 0.55, B_motion: 0.25, B_grain: 0.3,\n      master_gain: 0.52, master_drive: 0.09, master_width: 1.18\n    },\n    'Vintage Synth Bed': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'pink', A_gain: 0.74, A_pan: -0.08, A_tone: -0.28, A_density: 0.48, A_motion: 0.22, A_grain: 0.18,\n      B_enabled: true, B_type: 'tape', B_gain: 0.24, B_pan: 0.11, B_tone: 0.08, B_density: 0.42, B_motion: 0.34, B_grain: 0.3,\n      master_gain: 0.46, master_width: 1.35, master_drive: 0.16, master_analog: 0.52, master_unison: 0.48,\n      master_chorusMix: 0.34, master_chorusRate: 0.42, master_wow: 0.16, master_flutter: 0.09,\n      master_subBody: 0.22, master_resonatorMix: 0.18, master_resonatorHz: 150\n    },\n    'Unstable Tape Cloud': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'tape', A_gain: 0.78, A_tone: -0.06, A_density: 0.58, A_motion: 0.52, A_grain: 0.46,\n      B_enabled: true, B_type: 'vinyl', B_gain: 0.18, B_tone: -0.12, B_density: 0.36, B_motion: 0.4, B_grain: 0.3,\n      master_gain: 0.42, master_drive: 0.11, master_analog: 0.38, master_wow: 0.42, master_flutter: 0.34,\n      master_chorusMix: 0.2, master_chorusRate: 0.28, master_width: 1.08, master_subBody: 0.1\n    },\n    'Ensemble Noise Choir': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'gaussian', A_gain: 0.62, A_pan: -0.12, A_tone: 0.08, A_density: 0.52, A_motion: 0.24, A_grain: 0.12,\n      B_enabled: true, B_type: 'pink', B_gain: 0.48, B_pan: 0.14, B_tone: -0.18, B_density: 0.3, B_motion: 0.12, B_grain: 0.1,\n      master_gain: 0.44, master_drive: 0.09, master_width: 1.48, master_analog: 0.26, master_unison: 0.62,\n      master_chorusMix: 0.58, master_chorusRate: 0.55, master_subBody: 0.14\n    },\n    'Resonant Mono Drone': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'brown', A_gain: 0.76, A_tone: -0.62, A_density: 0.44, A_motion: 0.1, A_grain: 0.09,\n      B_enabled: true, B_type: 'sand', B_gain: 0.2, B_tone: -0.05, B_density: 0.4, B_motion: 0.28, B_grain: 0.18,\n      master_gain: 0.5, master_width: 0.52, master_drive: 0.18, master_analog: 0.42, master_resonatorMix: 0.48,\n      master_resonatorHz: 96, master_subBody: 0.34, master_lowcut: 8, master_highcut: 5000\n    },\n    'Modulated Machine': {\n      ...DEFAULTS,\n      A_enabled: true, A_type: 'staticam', A_gain: 0.72, A_tone: 0.12, A_density: 0.62, A_motion: 0.58, A_grain: 0.18,\n      B_enabled: true, B_type: 'powerhum', B_gain: 0.18, B_tone: -0.22, B_density: 0.42, B_motion: 0.18, B_grain: 0.06,\n      master_gain: 0.42, master_drive: 0.16, master_width: 1.08, master_analog: 0.34,\n      master_phaserMix: 0.46, master_phaserRate: 0.31, master_wow: 0.08, master_flutter: 0.16,\n      master_chorusMix: 0.16, master_unison: 0.22, master_resonatorMix: 0.16, master_resonatorHz: 220\n    }\n  };\n\n  const MASTER_SCHEMA = [\n    { id:'master_sampleRate', type:'select', label:'Preview Rate', options:[['44100','44.1 kHz'],['48000','48 kHz']] },\n    { id:'master_previewQuality', type:'select', label:'Preview Quality', options:[['eco','Eco'],['normal','Normal'],['high','High']] },\n    { id:'master_exportMode', type:'select', label:'Export Mode', options:[['mix','Mix'],['stems','Stems'],['mixstems','Mix + Stems']] },\n    { id:'master_batchCount', type:'select', label:'Batch Seeds', options:[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['7','7'],['8','8']] },\n    { id:'master_seedStep', type:'number', label:'Seed Step', min:1, max:1000000, step:1 },\n    { id:'master_exportFormat', type:'select', label:'Format', options:[['wav','WAV'],['aiff','AIFF']] },\n    { id:'master_exportSampleRate', type:'select', label:'Export Rate', options:[['44100','44.1 kHz'],['48000','48 kHz'],['88200','88.2 kHz'],['96000','96 kHz'],['192000','192 kHz']] },\n    { id:'master_exportBitDepth', type:'select', label:'Bit Depth', options:[['16','16-bit PCM'],['24','24-bit PCM'],['32f','32-bit float WAV']] },\n    { id:'master_exportDither', type:'checkbox', label:'Dither (PCM only)' },\n    { id:'master_exportOversample', type:'select', label:'HQ Oversampling', options:[['1','Off / 1x'],['2','2x'],['4','4x']] },\n    { id:'master_exportLimiter', type:'checkbox', label:'Limiter (Export)' },\n    { id:'master_truePeakProtect', type:'checkbox', label:'True-Peak\u5bc4\u308a\u4fdd\u8b77' },\n    { id:'master_exportCeilingDb', type:'range', label:'Ceiling (dB)', min:-6, max:-0.1, step:0.1 },\n    { id:'master_exportLimiterRelease', type:'range', label:'Limiter Release (ms)', min:5, max:250, step:1 },\n    { id:'master_exportNoiseShaping', type:'select', label:'Noise Shaping', options:[['off','Off'],['gentle','Gentle'],['strong','Strong']] },\n    { id:'master_duration', type:'range', label:'Export\u79d2\u6570', min:1, max:120, step:1 },\n    { id:'master_seed', type:'number', label:'Seed', min:1, max:2147483646, step:1 },\n    { id:'master_gain', type:'range', label:'Master Gain', min:0, max:1.8, step:0.01 },\n    { id:'master_width', type:'range', label:'Stereo Width', min:0, max:4, step:0.01 },\n    { id:'master_lowcut', type:'range', label:'Low Cut (Hz)', min:5, max:8000, step:1 },\n    { id:'master_highcut', type:'range', label:'High Cut (Hz)', min:500, max:20000, step:1 },\n    { id:'master_drive', type:'range', label:'Drive', min:0, max:2.0, step:0.01 },\n    { id:'master_analog', type:'range', label:'Analog Tone', min:0, max:1.8, step:0.01 },\n    { id:'master_unison', type:'range', label:'Unison', min:0, max:1.8, step:0.01 },\n    { id:'master_chorusMix', type:'range', label:'Chorus / Ensemble', min:0, max:1.8, step:0.01 },\n    { id:'master_chorusRate', type:'range', label:'Chorus Rate (Hz)', min:0.02, max:8, step:0.01 },\n    { id:'master_wow', type:'range', label:'Wow', min:0, max:1.8, step:0.01 },\n    { id:'master_flutter', type:'range', label:'Flutter', min:0, max:1.8, step:0.01 },\n    { id:'master_phaserMix', type:'range', label:'Phaser', min:0, max:1.8, step:0.01 },\n    { id:'master_phaserRate', type:'range', label:'Phaser Rate (Hz)', min:0.02, max:8, step:0.01 },\n    { id:'master_resonatorMix', type:'range', label:'Resonator', min:0, max:1.8, step:0.01 },\n    { id:'master_resonatorHz', type:'range', label:'Resonator Freq (Hz)', min:30, max:6000, step:1 },\n    { id:'master_subBody', type:'range', label:'Sub Body', min:0, max:1.8, step:0.01 },\n    { id:'master_lfoRate', type:'range', label:'LFO Rate (Hz)', min:0.01, max:40, step:0.01 },\n    { id:'master_lfoDepth', type:'range', label:'LFO Depth', min:0, max:1.8, step:0.01 },\n    { id:'master_humHz', type:'select', label:'Hum', options:[['50','50 Hz'],['60','60 Hz']] },\n    { id:'master_normalize', type:'checkbox', label:'Normalize Export' }\n  ];\n\n  const LAYER_SCHEMA = [\n    { id:'enabled', type:'checkbox', label:'Enable' },\n    { id:'type', type:'select', label:'Type', options:NOISE_TYPES.map(([v,l]) => [v,l]) },\n    { id:'gain', type:'range', label:'Gain', min:0, max:2.2, step:0.01 },\n    { id:'pan', type:'range', label:'Pan', min:-1, max:1, step:0.01 },\n    { id:'tone', type:'range', label:'Tone', min:-1, max:1, step:0.01 },\n    { id:'density', type:'range', label:'Density', min:0, max:1.5, step:0.01 },\n    { id:'motion', type:'range', label:'Motion', min:0, max:1.5, step:0.01 },\n    { id:'grain', type:'range', label:'Grain', min:0, max:1.5, step:0.01 }\n  ];\n\n  function buildFields(targetId, schema, prefix = '') {\n    const root = $(targetId);\n    root.innerHTML = '';\n    const frag = document.createDocumentFragment();\n\n    schema.forEach(def => {\n      const wrap = document.createElement('div');\n      wrap.className = 'field';\n      const fullId = prefix ? `${prefix}_${def.id}` : def.id;\n\n      if (def.type === 'checkbox') {\n        wrap.innerHTML = `\n          <label><span>${def.label}</span></label>\n          <label class=\"check\"><input id=\"${fullId}\" type=\"checkbox\"><span>${def.label}</span></label>\n        `;\n      } else if (def.type === 'select') {\n        const options = def.options.map(([v, l]) => `<option value=\"${v}\">${l}</option>`).join('');\n        wrap.innerHTML = `\n          <label><span>${def.label}</span></label>\n          <select id=\"${fullId}\">${options}</select>\n        `;\n      } else if (def.type === 'number') {\n        wrap.innerHTML = `\n          <label><span>${def.label}</span></label>\n          <input id=\"${fullId}\" type=\"number\" min=\"${def.min}\" max=\"${def.max}\" step=\"${def.step}\">\n        `;\n      } else {\n        wrap.innerHTML = `\n          <label><span>${def.label}</span><b id=\"${fullId}_val\"></b></label>\n          <input id=\"${fullId}\" type=\"range\" min=\"${def.min}\" max=\"${def.max}\" step=\"${def.step}\">\n        `;\n      }\n      frag.appendChild(wrap);\n    });\n\n    root.appendChild(frag);\n  }\n\n  buildFields('masterFields', MASTER_SCHEMA);\n  buildFields('layerAFields', LAYER_SCHEMA, 'A');\n  buildFields('layerBFields', LAYER_SCHEMA, 'B');\n\n  const presetSelect = $('presetSelect');\n  presetSelect.innerHTML = Object.keys(PRESETS).map(name => `<option value=\"${name}\">${name}</option>`).join('');\n  $('presetPills').innerHTML = Object.keys(PRESETS)\n    .map(name => `<span class=\"pill\" data-preset=\"${name}\">${name}</span>`)\n    .join('');\n\n  function setStatus(msg, cls = '') {\n    const el = $('status');\n    el.className = `status ${cls}`.trim();\n    el.textContent = msg;\n  }\n\n  function updateMini(params) {\n    $('miniA').textContent = params.A_enabled\n      ? `${labelOfType(params.A_type)} / gain ${fmt(params.A_gain)} / tone ${fmt(params.A_tone)}`\n      : 'OFF';\n    $('miniB').textContent = params.B_enabled\n      ? `${labelOfType(params.B_type)} / gain ${fmt(params.B_gain)} / tone ${fmt(params.B_tone)}`\n      : 'OFF';\n    $('miniMaster').textContent = `gain ${fmt(params.master_gain)} / width ${fmt(params.master_width)} / space ${fmt(params.master_space)} / air ${fmt(params.master_air)} / reson ${Math.round(params.master_resonatorHz)} Hz`; \n    const exportFmt = getExportFormat(params);\n    const exportSr = getExportSampleRate(params);\n    const exportBit = getExportBitDepth(params);\n    const osFactor = getExportOversampleFactor(params);\n    const ceilingDb = getExportCeilingDb(params);\n    const shaping = getExportNoiseShaping(params);\n    const exportMode = getExportMode(params);\n    const batchCount = getBatchCount(params);\n    const jobs = createExportJobs(params);\n    const ditherText = exportBit === '32f' ? 'float' : (params.master_exportDither ? 'dither on' : 'dither off');\n    const limiterText = params.master_exportLimiter ? `lim ${fmt(ceilingDb, 1)} dB` : 'lim off';\n    const tpText = params.master_truePeakProtect ? 'tp on' : 'tp off';\n    const shapeText = exportBit === '32f' ? 'shape off' : `shape ${shaping}`;\n    $('miniExport').textContent = `${exportFormatLabel(exportFmt)} / ${exportSr / 1000} kHz / ${exportBit === '32f' ? '32f' : exportBit + '-bit'} / OS ${osFactor}x / ${params.master_duration}s / ${exportMode} / batch ${batchCount} / files ${jobs.length} / total ${fmtBytes(estimateExportTotalBytes(params))} / ${ditherText} / ${shapeText} / ${limiterText} / ${tpText} / normalize ${params.master_normalize ? 'on' : 'off'}`;\n  }\n\n  function labelOfType(id) {\n    const found = NOISE_TYPES.find(v => v[0] === id);\n    return found ? found[1] : id;\n  }\n\n  function getExportFormat(params) {\n    const raw = String(params.master_exportFormat || 'wav').toLowerCase();\n    return raw === 'aiff' ? 'aiff' : 'wav';\n  }\n\n  function getExportSampleRate(params) {\n    return Number(params.master_exportSampleRate) || Number(params.master_sampleRate) || 48000;\n  }\n\n  function getExportBitDepth(params) {\n    const raw = params.master_exportBitDepth;\n    if (raw === '32f') return '32f';\n    const num = Number(raw);\n    return num === 24 ? '24' : '16';\n  }\n\n  function getExportOversampleFactor(params) {\n    const n = Number(params.master_exportOversample);\n    return n === 2 || n === 4 ? n : 1;\n  }\n\n  function getExportCeilingDb(params) {\n    return clamp(Number(params.master_exportCeilingDb) || -1, -6, -0.1);\n  }\n\n  function getExportNoiseShaping(params) {\n    const raw = String(params.master_exportNoiseShaping || 'off').toLowerCase();\n    return raw === 'strong' ? 'strong' : (raw === 'gentle' ? 'gentle' : 'off');\n  }\n\n  function getExportTargetPeakAmp(params) {\n    const ceilingAmp = dbToAmp(getExportCeilingDb(params));\n    if (params.master_exportLimiter || params.master_truePeakProtect) return Math.min(0.98, ceilingAmp);\n    return 0.98;\n  }\n\n  function bytesPerSampleForBitDepth(bitDepth) {\n    if (bitDepth === '32f') return 4;\n    if (bitDepth === '24') return 3;\n    return 2;\n  }\n\n  function bitDepthLabel(bitDepth) {\n    return bitDepth === '32f' ? '32-bit float' : `${bitDepth}-bit PCM`;\n  }\n\n  function exportFormatLabel(format) {\n    return format === 'aiff' ? 'AIFF' : 'WAV';\n  }\n\n  function getPreviewQuality(params) {\n    const raw = String(params.master_previewQuality || 'normal').toLowerCase();\n    return raw === 'eco' ? 'eco' : (raw === 'high' ? 'high' : 'normal');\n  }\n\n  function getExportMode(params) {\n    const raw = String(params.master_exportMode || 'mix').toLowerCase();\n    return raw === 'stems' ? 'stems' : (raw === 'mixstems' ? 'mixstems' : 'mix');\n  }\n\n  function getBatchCount(params) {\n    return clamp(Math.floor(Number(params.master_batchCount) || 1), 1, 8);\n  }\n\n  function getSeedStep(params) {\n    return Math.max(1, Math.floor(Number(params.master_seedStep) || 1));\n  }\n\n  function previewConfigForQuality(quality) {\n    if (quality === 'eco') return { fftSize: 512, smoothing: 0.88, fps: 20, bars: 96 };\n    if (quality === 'high') return { fftSize: 2048, smoothing: 0.76, fps: 45, bars: 220 };\n    return { fftSize: 1024, smoothing: 0.82, fps: 30, bars: 144 };\n  }\n\n  function cloneParams(params) {\n    return JSON.parse(JSON.stringify(params));\n  }\n\n  function createExportJobs(params) {\n    const jobs = [];\n    const mode = getExportMode(params);\n    const batchCount = getBatchCount(params);\n    const seedStep = getSeedStep(params);\n    for (let i = 0; i < batchCount; i++) {\n      const seed = Math.max(1, Math.floor(Number(params.master_seed) || 1) + i * seedStep);\n      const base = { ...cloneParams(params), master_seed: seed };\n      const seedSuffix = batchCount > 1 ? `_seed${seed}` : '';\n      if (mode === 'mix' || mode === 'mixstems') {\n        jobs.push({ label: 'Mix', suffix: `mix${seedSuffix}`, params: base });\n      }\n      if (mode === 'stems' || mode === 'mixstems') {\n        if (base.A_enabled) jobs.push({ label: 'Stem A', suffix: `stemA${seedSuffix}`, params: { ...cloneParams(base), B_enabled: false } });\n        if (base.B_enabled) jobs.push({ label: 'Stem B', suffix: `stemB${seedSuffix}`, params: { ...cloneParams(base), A_enabled: false } });\n      }\n    }\n    return jobs;\n  }\n\n  function estimateExportTotalBytes(params) {\n    return createExportJobs(params).reduce((sum, job) => sum + estimateExportBytes(job.params), 0);\n  }\n\n  function triggerBlobDownload(blob, filename) {\n    const url = URL.createObjectURL(blob);\n    const a = document.createElement('a');\n    a.href = url;\n    a.download = filename;\n    document.body.appendChild(a);\n    a.click();\n    a.remove();\n    setTimeout(() => URL.revokeObjectURL(url), 2000);\n  }\n\n  function serializeSession() {\n    return JSON.stringify(getParams(), null, 2);\n  }\n\n  function scheduleAutosave() {\n    clearTimeout(autosaveTimer);\n    autosaveTimer = setTimeout(() => {\n      try { localStorage.setItem(SESSION_KEY, serializeSession()); } catch (_) {}\n    }, 120);\n  }\n\n  function clearAutosave() {\n    try { localStorage.removeItem(SESSION_KEY); } catch (_) {}\n  }\n\n  function loadSessionObject(obj, label = '\u30bb\u30c3\u30b7\u30e7\u30f3') {\n    if (!obj || typeof obj !== 'object') throw new Error('SESSION_JSON_INVALID');\n    setParams({ ...DEFAULTS, ...obj });\n    engine.rebuild();\n    scheduleAutosave();\n    setStatus(`${label}\u3092\u8aad\u8fbc\u3057\u307e\u3057\u305f\u3002`, 'ok');\n  }\n\n  function restoreAutosave() {\n    try {\n      const raw = localStorage.getItem(SESSION_KEY);\n      if (!raw) return false;\n      const data = JSON.parse(raw);\n      loadSessionObject(data, '\u524d\u56de\u72b6\u614b');\n      return true;\n    } catch (_) {\n      return false;\n    }\n  }\n\n\n  function syncReadouts() {\n\n    [...MASTER_SCHEMA.map(v => v.id), ...LAYER_SCHEMA.map(v => 'A_' + v.id), ...LAYER_SCHEMA.map(v => 'B_' + v.id)].forEach(id => {\n      const el = $(id);\n      const out = $(id + '_val');\n      if (!el || !out) return;\n      out.textContent = el.value;\n    });\n  }\n\n  function setParams(obj) {\n    Object.entries(obj).forEach(([k, v]) => {\n      const el = $(k);\n      if (!el) return;\n      if (el.type === 'checkbox') el.checked = !!v;\n      else el.value = String(v);\n    });\n    syncReadouts();\n    updateMini(getParams());\n  }\n\n  function getParams() {\n    const out = {};\n    MASTER_SCHEMA.forEach(def => {\n      const el = $(def.id);\n      out[def.id] = el.type === 'checkbox' ? el.checked : def.type === 'select' ? Number(el.value) || el.value : Number(el.value);\n    });\n    ['A', 'B'].forEach(prefix => {\n      LAYER_SCHEMA.forEach(def => {\n        const key = `${prefix}_${def.id}`;\n        const el = $(key);\n        out[key] = el.type === 'checkbox' ? el.checked : def.type === 'select' ? el.value : Number(el.value);\n      });\n    });\n    return out;\n  }\n\n  function randomizeParams() {\n    const p = getParams();\n    const pickType = () => NOISE_TYPES[Math.floor(Math.random() * NOISE_TYPES.length)][0];\n    p.A_enabled = true;\n    p.B_enabled = Math.random() > 0.25;\n    p.A_type = pickType();\n    p.B_type = pickType();\n    ['A','B'].forEach(prefix => {\n      p[`${prefix}_gain`] = Math.random() * 0.95;\n      p[`${prefix}_pan`] = Math.random() * 2 - 1;\n      p[`${prefix}_tone`] = Math.random() * 2 - 1;\n      p[`${prefix}_density`] = Math.random();\n      p[`${prefix}_motion`] = Math.random();\n      p[`${prefix}_grain`] = Math.random();\n    });\n    p.master_gain = 0.28 + Math.random() * 0.45;\n    p.master_width = 0.4 + Math.random() * 1.3;\n    p.master_lowcut = Math.round(5 + Math.random() * 60);\n    p.master_highcut = Math.round(5000 + Math.random() * 15000);\n    p.master_drive = Math.random() * 0.25;\n    p.master_analog = Number((Math.random() * 0.65).toFixed(2));\n    p.master_unison = Number((Math.random() * 0.7).toFixed(2));\n    p.master_chorusMix = Number((Math.random() * 0.65).toFixed(2));\n    p.master_chorusRate = Number((0.08 + Math.random() * 1.1).toFixed(2));\n    p.master_wow = Number((Math.random() * 0.45).toFixed(2));\n    p.master_flutter = Number((Math.random() * 0.4).toFixed(2));\n    p.master_phaserMix = Number((Math.random() * 0.45).toFixed(2));\n    p.master_phaserRate = Number((0.08 + Math.random() * 0.9).toFixed(2));\n    p.master_resonatorMix = Number((Math.random() * 0.45).toFixed(2));\n    p.master_resonatorHz = Math.round(70 + Math.random() * 520);\n    p.master_subBody = Number((Math.random() * 0.35).toFixed(2));\n    p.master_lfoRate = Number((0.05 + Math.random() * 1.2).toFixed(2));\n    p.master_lfoDepth = Number((Math.random() * 0.25).toFixed(2));\n    p.master_humHz = Math.random() > 0.5 ? 50 : 60;\n    p.master_seed = 1 + Math.floor(Math.random() * 2147483645);\n    setParams(p);\n    engine.rebuild();\n    scheduleAutosave();\n  }\n\n  function applyPreset(name) {\n    setParams(PRESETS[name]);\n    engine.rebuild();\n    scheduleAutosave();\n    setStatus(`\u30d7\u30ea\u30bb\u30c3\u30c8\u9069\u7528: ${name}`);\n  }\n\n  async function copySessionJson() {\n    try {\n      await navigator.clipboard.writeText(serializeSession());\n      setStatus('JSON\u3092\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f\u3002', 'ok');\n    } catch (_) {\n      setStatus('JSON\u30b3\u30d4\u30fc\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002', 'err');\n    }\n  }\n\n  function saveSessionJson() {\n    const stamp = new Date().toISOString().replace(/[:.]/g, '-');\n    const blob = new Blob([serializeSession()], { type: 'application/json' });\n    triggerBlobDownload(blob, `noise_session_${stamp}.json`);\n    setStatus('JSON\u3092\u4fdd\u5b58\u3057\u307e\u3057\u305f\u3002', 'ok');\n  }\n\n  function loadSessionFromText(text) {\n    const obj = JSON.parse(text);\n    loadSessionObject(obj, 'JSON');\n  }\n\n  class RNG {\n    constructor(seed) {\n      this.s = (seed >>> 0) || 1;\n    }\n    next() {\n      let x = this.s;\n      x ^= x << 13;\n      x ^= x >>> 17;\n      x ^= x << 5;\n      this.s = x >>> 0;\n      return this.s;\n    }\n    float() {\n      return this.next() / 4294967295;\n    }\n    signed() {\n      return this.float() * 2 - 1;\n    }\n  }\n\n  function lp(state, key, x, cutoff, sr) {\n    cutoff = clamp(cutoff, 1, sr * 0.45);\n    const a = Math.exp(-TAU * cutoff / sr);\n    state[key] = (1 - a) * x + a * (state[key] || 0);\n    return state[key];\n  }\n\n  function hp(state, key, x, cutoff, sr) {\n    const low = lp(state, key, x, cutoff, sr);\n    return x - low;\n  }\n\n  function bp(state, keyA, keyB, x, lowCut, highCut, sr) {\n    const hi = lp(state, keyA, x, highCut, sr);\n    const lo = lp(state, keyB, x, lowCut, sr);\n    return hi - lo;\n  }\n\n  function softclip(x, drive) {\n    if (drive <= 0) return x;\n    const k = 1 + drive * 8;\n    return Math.tanh(x * k) / Math.tanh(k);\n  }\n\n  function readDelay(buf, index, delaySamps) {\n    delaySamps = clamp(delaySamps, 0, buf.length - 2);\n    let pos = index - delaySamps;\n    while (pos < 0) pos += buf.length;\n    const i0 = Math.floor(pos) % buf.length;\n    const frac = pos - Math.floor(pos);\n    const i1 = (i0 + 1) % buf.length;\n    return buf[i0] * (1 - frac) + buf[i1] * frac;\n  }\n\n  function allpass1(state, key, x, a) {\n    const x1 = state[key + '_x'] || 0;\n    const y1 = state[key + '_y'] || 0;\n    const y = -a * x + x1 + a * y1;\n    state[key + '_x'] = x;\n    state[key + '_y'] = y;\n    return y;\n  }\n\n  function svfBand(state, key, x, freq, q, sr) {\n    const f = clamp(freq, 10, sr * 0.4);\n    const g = Math.tan(Math.PI * f / sr);\n    const R = 1 / (2 * Math.max(0.35, q));\n    let ic1eq = state[key + '_ic1'] || 0;\n    let ic2eq = state[key + '_ic2'] || 0;\n    const v3 = x - ic2eq;\n    const v1 = (ic1eq + g * v3) / (1 + g * (g + 2 * R));\n    const v2 = ic2eq + g * v1;\n    state[key + '_ic1'] = 2 * v1 - ic1eq;\n    state[key + '_ic2'] = 2 * v2 - ic2eq;\n    return { low: v2, band: v1, high: v3 - 2 * R * v1 };\n  }\n\n  function initMasterRuntime(sr, params) {\n    const maxDelaySamples = Math.max(4096, Math.ceil(sr * 0.08));\n    return {\n      sr,\n      p: params,\n      delayL: new Float32Array(maxDelaySamples),\n      delayR: new Float32Array(maxDelaySamples),\n      delayIndex: 0\n    };\n  }\n\n  function applyMasterFx(state, l, r, t) {\n    const p = state.p;\n    const sr = state.sr;\n\n    const ampLfo = 1 - p.master_lfoDepth * 0.25 + p.master_lfoDepth * 0.25 * (0.5 + 0.5 * Math.sin(TAU * p.master_lfoRate * t));\n    l *= p.master_gain * ampLfo;\n    r *= p.master_gain * ampLfo;\n\n    l = hp(state, 'mhl', l, p.master_lowcut, sr);\n    r = hp(state, 'mhr', r, p.master_lowcut, sr);\n    l = lp(state, 'mll', l, p.master_highcut, sr);\n    r = lp(state, 'mlr', r, p.master_highcut, sr);\n\n    const analog = clamp(p.master_analog, 0, 1.8);\n    if (analog > 0) {\n      const preL = l * (1 + analog * 4.2 + p.master_drive * 3.2) + analog * 0.07;\n      const preR = r * (1 + analog * 4.0 + p.master_drive * 3.2) - analog * 0.05;\n      const satL = Math.tanh(preL);\n      const satR = Math.tanh(preR);\n      const colL = lp(state, 'anl', satL, 2200 + (1 - analog) * 13000, sr);\n      const colR = lp(state, 'anr', satR, 2200 + (1 - analog) * 13000, sr);\n      l = lerp(l, colL, analog * 0.76);\n      r = lerp(r, colR, analog * 0.76);\n    }\n\n    const mono = (l + r) * 0.5;\n    const subBody = clamp(p.master_subBody, 0, 1.8);\n    if (subBody > 0) {\n      const sub1 = lp(state, 'sub1', mono, 50 + subBody * 120, sr);\n      const sub2 = lp(state, 'sub2', sub1, 46 + subBody * 100, sr);\n      const sub = Math.tanh(sub2 * (1.8 + subBody * 2.6)) * subBody * 0.42;\n      l += sub;\n      r += sub;\n    }\n\n    const resonMix = clamp(p.master_resonatorMix, 0, 1.8);\n    if (resonMix > 0) {\n      const bp = svfBand(state, 'res', mono, p.master_resonatorHz, 1.1 + (1 - resonMix) * 4.5, sr).band;\n      const ring = softclip(bp * (1.2 + resonMix * 3.4), 0.08 + resonMix * 0.42) * resonMix * 0.38;\n      l += ring;\n      r += ring;\n    }\n\n    const phMix = clamp(p.master_phaserMix, 0, 1.8);\n    if (phMix > 0) {\n      const sw1 = 0.5 + 0.5 * Math.sin(TAU * p.master_phaserRate * t);\n      const sw2 = 0.5 + 0.5 * Math.sin(TAU * p.master_phaserRate * t + 1.2);\n      let pl = l;\n      let pr = r;\n      pl = allpass1(state, 'phl1', pl, 0.18 + sw1 * 0.58);\n      pl = allpass1(state, 'phl2', pl, 0.24 + sw2 * 0.50);\n      pl = allpass1(state, 'phl3', pl, 0.31 + sw1 * 0.42);\n      pr = allpass1(state, 'phr1', pr, 0.18 + sw2 * 0.58);\n      pr = allpass1(state, 'phr2', pr, 0.24 + sw1 * 0.50);\n      pr = allpass1(state, 'phr3', pr, 0.31 + sw2 * 0.42);\n      l = lerp(l, pl, phMix * 0.74);\n      r = lerp(r, pr, phMix * 0.74);\n    }\n\n    let mid = (l + r) * 0.5;\n    let side = (l - r) * 0.5 * p.master_width;\n    l = mid + side;\n    r = mid - side;\n\n    const wet = clamp(p.master_chorusMix * 0.84 + p.master_unison * 0.50 + p.master_wow * 0.22 + p.master_flutter * 0.18 + (p.master_space || 0) * 0.08, 0, 0.985);\n    if (wet > 0.0001) {\n      const wowMs = p.master_wow * (2.0 + 6.2 * (0.5 + 0.5 * Math.sin(TAU * (0.07 + p.master_wow * 0.22) * t + 0.4)));\n      const flutterMs = p.master_flutter * (0.1 + 0.34 * (0.5 + 0.5 * Math.sin(TAU * (4.5 + p.master_flutter * 9.5) * t + 1.3)) + 0.18 * (0.5 + 0.5 * Math.sin(TAU * (7.8 + p.master_flutter * 13.5) * t + 2.1)));\n      const chorusDepth = p.master_chorusMix * (2.4 + p.master_unison * 6.8);\n      const baseUni = p.master_unison * 9.5;\n      const dl = 7.0 + baseUni + wowMs + flutterMs + chorusDepth * (0.5 + 0.5 * Math.sin(TAU * p.master_chorusRate * t));\n      const dr = 11.5 + baseUni + wowMs + flutterMs + chorusDepth * (0.5 + 0.5 * Math.sin(TAU * p.master_chorusRate * t + 1.7));\n      const wetL = readDelay(state.delayL, state.delayIndex, dl * sr / 1000);\n      const wetR = readDelay(state.delayR, state.delayIndex, dr * sr / 1000);\n      const cross = p.master_unison * 0.18 + p.master_chorusMix * 0.05;\n      const outL = lerp(l, wetL + wetR * cross, wet);\n      const outR = lerp(r, wetR + wetL * cross, wet);\n      state.delayL[state.delayIndex] = l;\n      state.delayR[state.delayIndex] = r;\n      state.delayIndex = (state.delayIndex + 1) % state.delayL.length;\n      l = outL;\n      r = outR;\n    } else {\n      state.delayL[state.delayIndex] = l;\n      state.delayR[state.delayIndex] = r;\n      state.delayIndex = (state.delayIndex + 1) % state.delayL.length;\n    }\n\n    l = softclip(l, p.master_drive + analog * 0.22);\n    r = softclip(r, p.master_drive + analog * 0.22);\n    l = hp(state, 'moutl', l, 8, sr);\n    r = hp(state, 'moutr', r, 8, sr);\n\n    state.outL = l;\n    state.outR = r;\n    return state;\n  }\n\n  function initLayerRuntime(layerId, params, sr, seedBase, humHz = 50) {\n    const offset = layerId === 'A' ? 101 : 202;\n    return {\n      id: layerId,\n      sr,\n      p: params,\n      rng: new RNG((seedBase + offset) >>> 0),\n      prev1: 0,\n      prev2: 0,\n      brown: 0,\n      gate: 0,\n      gateTarget: 0,\n      gust: 0,\n      surf: 0,\n      click1: 0,\n      click2: 0,\n      click3: 0,\n      tone1: 0,\n      tone2: 0,\n      tone3: 0,\n      burst: 0,\n      resonPhase: 0,\n      resonDecay: 0,\n      resonFreq: 1200,\n      holdCounter: 0,\n      holdValue: 0,\n      velvetCounter: 0,\n      velvetInterval: 128,\n      phase1: 0,\n      phase2: 0,\n      phase3: 0,\n      humHz,\n      pink0:0,pink1:0,pink2:0,pink3:0,pink4:0,pink5:0,pink6:0,\n      lfoPhase: 0\n    };\n  }\n\n  function rawWhite(s) { return s.rng.signed(); }\n  function rawGaussian(s) {\n    return ((s.rng.float()+s.rng.float()+s.rng.float()+s.rng.float()+s.rng.float()+s.rng.float()) / 3) - 1;\n  }\n  function rawPink(s) {\n    const white = s.rng.signed();\n    s.pink0 = 0.99886 * s.pink0 + white * 0.0555179;\n    s.pink1 = 0.99332 * s.pink1 + white * 0.0750759;\n    s.pink2 = 0.96900 * s.pink2 + white * 0.1538520;\n    s.pink3 = 0.86650 * s.pink3 + white * 0.3104856;\n    s.pink4 = 0.55000 * s.pink4 + white * 0.5329522;\n    s.pink5 = -0.7616 * s.pink5 - white * 0.0168980;\n    const out = s.pink0 + s.pink1 + s.pink2 + s.pink3 + s.pink4 + s.pink5 + s.pink6 + white * 0.5362;\n    s.pink6 = white * 0.115926;\n    return out * 0.11;\n  }\n  function rawBrown(s, motion = 0.2) {\n    s.brown = clamp(s.brown + s.rng.signed() * (0.006 + motion * 0.024), -1.2, 1.2);\n    return s.brown * 0.9;\n  }\n  function humSample(s, hz) {\n    s.phase1 += TAU * hz / s.sr;\n    s.phase2 += TAU * hz * 2 / s.sr;\n    s.phase3 += TAU * hz * 3 / s.sr;\n    return Math.sin(s.phase1) * 0.75 + Math.sin(s.phase2) * 0.28 + Math.sin(s.phase3) * 0.12;\n  }\n  function rawBlue(s) {\n    const w = s.rng.signed();\n    const y = (w - s.prev1) * 1.35;\n    s.prev1 = w;\n    return y;\n  }\n  function rawViolet(s) {\n    const w = s.rng.signed();\n    const y = (w - 2 * s.prev1 + s.prev2) * 1.1;\n    s.prev2 = s.prev1;\n    s.prev1 = w;\n    return y;\n  }\n\n  function nextNoiseRaw(s, p, t) {\n    const sr = s.sr;\n    const density = clamp(p.density, 0, 1.5);\n    const motion = clamp(p.motion, 0, 1.5);\n    const grain = clamp(p.grain, 0, 1.5);\n\n    switch (p.type) {\n      case 'white': return rawWhite(s);\n      case 'gaussian': return rawGaussian(s);\n      case 'pink': return rawPink(s);\n      case 'brown': return rawBrown(s, motion);\n      case 'blue': return rawBlue(s);\n      case 'violet': return rawViolet(s);\n      case 'grey': {\n        const w = rawWhite(s);\n        return bp(s, 'g1', 'g2', w, 700, 4500, sr) * 3.4;\n      }\n      case 'green': {\n        const w = rawWhite(s);\n        return bp(s, 'g3', 'g4', w, 180, 1200, sr) * 4.1;\n      }\n      case 'black': {\n        if (s.rng.float() < 0.002 + motion * 0.008) s.gateTarget = s.rng.float() < (0.15 + density * 0.75) ? 1 : 0;\n        s.gate += (s.gateTarget - s.gate) * (0.0006 + motion * 0.01);\n        const body = lp(s, 'blk1', rawPink(s), 140 + density * 800, sr);\n        return body * Math.pow(clamp(s.gate, 0, 1), 2.6) * 1.5;\n      }\n      case 'rumble': {\n        return lp(s, 'rum1', rawBrown(s, motion), 18 + density * 70, sr) * 5.5;\n      }\n      case 'powerhum': {\n        return humSample(s, s.humHz) + rawWhite(s) * 0.015;\n      }\n      case 'vinyl': {\n        if (s.rng.float() < 0.002 + density * 0.02) s.click1 = 0.8 + s.rng.float() * 0.5;\n        s.click1 *= 0.90 - grain * 0.08;\n        const crack = s.click1 * (s.rng.float() * 2 - 1);\n        const hum = humSample(s, s.humHz) * 0.04;\n        const body = hp(s, 'vin1', rawPink(s), 1800 - density * 1200, sr) * 0.65 + rawPink(s) * 0.22;\n        const wow = 0.92 + 0.08 * Math.sin(TAU * (0.12 + motion * 0.3) * t);\n        return body * wow + hum + crack;\n      }\n      case 'tape': {\n        const hiss = hp(s, 'tap1', rawWhite(s), 2500 - density * 1000, sr) * 0.9;\n        const flutter = 0.86 + 0.14 * Math.sin(TAU * (0.2 + motion * 0.6) * t + 1.4);\n        const rum = lp(s, 'tap2', rawBrown(s, motion), 35 + density * 50, sr) * 0.2;\n        return hiss * flutter + rum;\n      }\n      case 'wind': {\n        const target = density * 0.85 + s.rng.float() * 0.4;\n        s.gust += (target - s.gust) * (0.00008 + motion * 0.0014);\n        const whoosh = lp(s, 'win1', rawWhite(s), 240 + density * 1600, sr);\n        const hiss = hp(s, 'win2', whoosh, 60, sr) * 0.3;\n        const howl = bp(s, 'win3', 'win4', rawWhite(s), 180 + motion * 180, 900 + motion * 1600, sr) * 0.24;\n        return (whoosh * 0.85 + hiss + howl) * (0.2 + clamp(s.gust, 0, 1));\n      }\n      case 'rain': {\n        if (s.rng.float() < 0.002 + density * 0.06) {\n          if (s.click1 < 0.01) { s.click1 = 0.8; s.tone1 = 1200 + s.rng.float() * 6000; }\n          else if (s.click2 < 0.01) { s.click2 = 0.8; s.tone2 = 1200 + s.rng.float() * 6000; }\n          else { s.click3 = 0.8; s.tone3 = 1200 + s.rng.float() * 6000; }\n        }\n        s.click1 *= 0.94 - grain * 0.03;\n        s.click2 *= 0.95 - grain * 0.03;\n        s.click3 *= 0.955 - grain * 0.03;\n        const d1 = bp(s, 'rn1', 'rn2', rawWhite(s), s.tone1 * 0.35, s.tone1, sr) * s.click1;\n        const d2 = bp(s, 'rn3', 'rn4', rawWhite(s), s.tone2 * 0.35, s.tone2, sr) * s.click2;\n        const d3 = bp(s, 'rn5', 'rn6', rawWhite(s), s.tone3 * 0.35, s.tone3, sr) * s.click3;\n        const bed = hp(s, 'rn7', rawPink(s), 600, sr) * 0.12;\n        return bed + d1 + d2 + d3;\n      }\n      case 'ocean': {\n        s.surf += ((0.5 + 0.5 * Math.sin(TAU * (0.04 + motion * 0.08) * t + 0.7)) - s.surf) * 0.0012;\n        const swell = lp(s, 'oc1', rawWhite(s), 180 + density * 400, sr) * (0.2 + s.surf * 0.95);\n        const foam = bp(s, 'oc2', 'oc3', rawWhite(s), 800, 4000 + density * 2000, sr) * 0.22;\n        return swell + foam;\n      }\n      case 'crackle': {\n        if (s.rng.float() < 0.002 + density * 0.08) s.click1 = 0.9 + s.rng.float() * 0.6;\n        s.click1 *= 0.88 - grain * 0.07;\n        return s.click1 * s.rng.signed();\n      }\n      case 'dust': {\n        if (s.rng.float() < 0.0004 + density * 0.012) s.click1 = 1;\n        s.click1 *= 0.6;\n        return hp(s, 'du1', s.click1 * s.rng.signed(), 2500, sr) * 1.7;\n      }\n      case 'shot': {\n        return s.rng.float() < (0.0001 + density * 0.004) ? (s.rng.float() > 0.5 ? 1 : -1) * (0.8 + s.rng.float() * 0.2) : 0;\n      }\n      case 'velvet': {\n        if (s.velvetCounter-- <= 0) {\n          const minGap = Math.max(1, Math.floor(sr / (30 + density * 6000)));\n          s.velvetInterval = minGap + Math.floor(s.rng.float() * minGap * 0.8);\n          s.velvetCounter = s.velvetInterval;\n          return s.rng.float() > 0.5 ? 1 : -1;\n        }\n        return 0;\n      }\n      case 'staticam': {\n        s.lfoPhase += TAU * (0.4 + motion * 12) / sr;\n        const am = 0.1 + 0.9 * (0.5 + 0.5 * Math.sin(s.lfoPhase));\n        return rawWhite(s) * am;\n      }\n      case 'digital': {\n        if (s.holdCounter-- <= 0) {\n          s.holdCounter = 1 + Math.floor((1 - density) * 110 + grain * 70);\n          s.holdValue = rawWhite(s);\n          if (s.rng.float() < grain * 0.12) s.holdValue = 0;\n        }\n        const bits = 14 - Math.floor(grain * 11);\n        const steps = Math.max(4, 1 << Math.max(2, bits));\n        return Math.round(s.holdValue * steps) / steps;\n      }\n      case 'glitch': {\n        if (s.holdCounter-- <= 0) {\n          s.holdCounter = 1 + Math.floor((1 - density) * 60 + 6);\n          s.holdValue = rawWhite(s);\n        }\n        if (s.rng.float() < 0.0007 + density * 0.016) s.burst = 1;\n        s.burst *= 0.985 - grain * 0.01;\n        const bits = 10 - Math.floor(grain * 8);\n        const steps = Math.max(4, 1 << Math.max(2, bits));\n        const base = Math.round(s.holdValue * steps) / steps;\n        const extra = s.burst > 0.01 ? rawViolet(s) * s.burst * (0.6 + grain) : 0;\n        return base + extra;\n      }\n      case 'sand': {\n        if (s.rng.float() < 0.0008 + density * 0.022) {\n          s.resonDecay = 1;\n          s.resonFreq = 400 + s.rng.float() * (2000 + motion * 5000);\n        }\n        s.resonPhase += TAU * s.resonFreq / sr;\n        s.resonDecay *= 0.995 - grain * 0.002;\n        const ring = Math.sin(s.resonPhase) * s.resonDecay;\n        const grit = bp(s, 'sd1', 'sd2', rawWhite(s), 800, 6000, sr) * 0.08;\n        return ring + grit;\n      }\n      default: return rawWhite(s);\n    }\n  }\n\n  function shapeLayerSample(s, raw, p) {\n    const sr = s.sr;\n    let y = raw;\n    if (p.tone < 0) {\n      const cut = lerp(70, 6000, 1 + p.tone);\n      const low = lp(s, 'toneLP', y, cut, sr);\n      y = lerp(y, low, -p.tone);\n    } else if (p.tone > 0) {\n      const cut = lerp(120, 9000, p.tone);\n      const high = hp(s, 'toneHP', y, cut, sr);\n      y = lerp(y, high, p.tone);\n    }\n    y = softclip(y, p.grain * 0.25);\n    return y * p.gain;\n  }\n\n  function createStereoRenderer(params, sampleRate) {\n    const p = { ...params };\n    p.master_sampleRate = Number(sampleRate || p.master_sampleRate || 48000);\n    p.master_duration = clamp(Number(p.master_duration) || 10, 1, 120);\n    p.master_seed = Math.max(1, Math.floor(Number(p.master_seed) || 1));\n    p.master_humHz = Number(p.master_humHz) === 60 ? 60 : 50;\n    p.master_gain = clamp(Number(p.master_gain) || 0, 0, 1.8);\n    p.master_width = clamp(Number(p.master_width) || 0, 0, 4);\n    p.master_lowcut = clamp(Number(p.master_lowcut) || 10, 5, 8000);\n    p.master_highcut = clamp(Number(p.master_highcut) || 20000, 500, 20000);\n    p.master_drive = clamp(Number(p.master_drive) || 0, 0, 1.6);\n    p.master_analog = clamp(Number(p.master_analog) || 0, 0, 1.4);\n    p.master_unison = clamp(Number(p.master_unison) || 0, 0, 1.4);\n    p.master_chorusMix = clamp(Number(p.master_chorusMix) || 0, 0, 1.4);\n    p.master_chorusRate = clamp(Number(p.master_chorusRate) || 0.38, 0.02, 8);\n    p.master_wow = clamp(Number(p.master_wow) || 0, 0, 1.4);\n    p.master_flutter = clamp(Number(p.master_flutter) || 0, 0, 1.4);\n    p.master_phaserMix = clamp(Number(p.master_phaserMix) || 0, 0, 1.4);\n    p.master_phaserRate = clamp(Number(p.master_phaserRate) || 0.22, 0.02, 8);\n    p.master_resonatorMix = clamp(Number(p.master_resonatorMix) || 0, 0, 1.4);\n    p.master_resonatorHz = clamp(Number(p.master_resonatorHz) || 180, 30, 6000);\n    p.master_subBody = clamp(Number(p.master_subBody) || 0, 0, 1.4);\n    p.master_lfoRate = clamp(Number(p.master_lfoRate) || 0.18, 0.01, 40);\n    p.master_lfoDepth = clamp(Number(p.master_lfoDepth) || 0, 0, 1.4);\n    p.master_normalize = !!p.master_normalize;\n\n    const pA = {\n      enabled: !!p.A_enabled,\n      type: p.A_type,\n      gain: clamp(Number(p.A_gain) || 0, 0, 1.8),\n      pan: clamp(Number(p.A_pan) || 0, -1, 1),\n      tone: clamp(Number(p.A_tone) || 0, -1, 1),\n      density: clamp(Number(p.A_density) || 0, 0, 1.5),\n      motion: clamp(Number(p.A_motion) || 0, 0, 1.5),\n      grain: clamp(Number(p.A_grain) || 0, 0, 1.5)\n    };\n    const pB = {\n      enabled: !!p.B_enabled,\n      type: p.B_type,\n      gain: clamp(Number(p.B_gain) || 0, 0, 1.8),\n      pan: clamp(Number(p.B_pan) || 0, -1, 1),\n      tone: clamp(Number(p.B_tone) || 0, -1, 1),\n      density: clamp(Number(p.B_density) || 0, 0, 1.5),\n      motion: clamp(Number(p.B_motion) || 0, 0, 1.5),\n      grain: clamp(Number(p.B_grain) || 0, 0, 1.5)\n    };\n\n    return {\n      params: p,\n      sampleRate: p.master_sampleRate,\n      frame: 0,\n      sA: initLayerRuntime('A', pA, p.master_sampleRate, p.master_seed >>> 0, p.master_humHz),\n      sB: initLayerRuntime('B', pB, p.master_sampleRate, p.master_seed >>> 0, p.master_humHz),\n      masterState: initMasterRuntime(p.master_sampleRate, p)\n    };\n  }\n\n  function initExportSafetyState(sampleRate, params) {\n    const ceilingDb = getExportCeilingDb(params);\n    return {\n      sampleRate,\n      limiterEnabled: !!params.master_exportLimiter,\n      truePeakEnabled: !!params.master_truePeakProtect,\n      ceilingDb,\n      ceilingAmp: dbToAmp(ceilingDb),\n      attackCoeff: Math.exp(-1 / Math.max(1, sampleRate * 0.00012)),\n      releaseCoeff: Math.exp(-1 / Math.max(1, sampleRate * (clamp(Number(params.master_exportLimiterRelease) || 80, 5, 250) / 1000))),\n      gain: 1,\n      prevL: 0,\n      prevR: 0\n    };\n  }\n\n  function measureBlockPeak(left, right) {\n    let peak = 0;\n    for (let i = 0; i < left.length; i++) {\n      const a = Math.abs(left[i]);\n      const b = Math.abs(right[i]);\n      if (a > peak) peak = a;\n      if (b > peak) peak = b;\n    }\n    return peak;\n  }\n\n  function applyExportSafetyBlock(left, right, state) {\n    if (!state || (!state.limiterEnabled && !state.truePeakEnabled)) return measureBlockPeak(left, right);\n    const ceiling = state.ceilingAmp;\n    let gain = state.gain;\n    let prevL = state.prevL;\n    let prevR = state.prevR;\n    let peak = 0;\n\n    for (let i = 0; i < left.length; i++) {\n      const l = left[i];\n      const r = right[i];\n      let detect = Math.max(Math.abs(l), Math.abs(r));\n\n      if (state.truePeakEnabled) {\n        const dL = l - prevL;\n        const dR = r - prevR;\n        for (let s = 1; s < 4; s++) {\n          const frac = s * 0.25;\n          const il = prevL + dL * frac;\n          const ir = prevR + dR * frac;\n          const p = Math.max(Math.abs(il), Math.abs(ir));\n          if (p > detect) detect = p;\n        }\n      }\n\n      let target = detect > ceiling ? (ceiling / detect) : 1;\n      if (!state.limiterEnabled && state.truePeakEnabled) target = Math.min(target, 1);\n\n      const coeff = target < gain ? state.attackCoeff : state.releaseCoeff;\n      gain = target + coeff * (gain - target);\n      if (target < gain) gain = target;\n\n      const outL = l * gain;\n      const outR = r * gain;\n      left[i] = outL;\n      right[i] = outR;\n\n      const outPeak = Math.max(Math.abs(outL), Math.abs(outR));\n      if (outPeak > peak) peak = outPeak;\n      prevL = l;\n      prevR = r;\n    }\n\n    state.gain = gain;\n    state.prevL = prevL;\n    state.prevR = prevR;\n    return peak;\n  }\n\n  function createNoiseShaper(mode = 'off') {\n    return {\n      mode,\n      l1: 0, l2: 0,\n      r1: 0, r2: 0\n    };\n  }\n\n  function shapeForQuantize(sample, shaper, channel) {\n    if (!shaper || shaper.mode === 'off') return sample;\n    const strong = shaper.mode === 'strong';\n    const e1 = channel === 0 ? shaper.l1 : shaper.r1;\n    const e2 = channel === 0 ? shaper.l2 : shaper.r2;\n    const a1 = strong ? 1.18 : 0.78;\n    const a2 = strong ? -0.34 : -0.18;\n    return sample + e1 * a1 + e2 * a2;\n  }\n\n  function updateNoiseShaper(shaper, channel, error) {\n    if (!shaper || shaper.mode === 'off') return;\n    const e = clamp(error, -0.25, 0.25);\n    if (channel === 0) {\n      shaper.l2 = shaper.l1;\n      shaper.l1 = e;\n    } else {\n      shaper.r2 = shaper.r1;\n      shaper.r1 = e;\n    }\n  }\n\n  function renderBlock(renderer, frames, outL = null, outR = null, pcm = null, pcmGain = 1) {\n    const p = renderer.params;\n    const sA = renderer.sA;\n    const sB = renderer.sB;\n    const masterState = renderer.masterState;\n    const sr = renderer.sampleRate;\n    let peak = 0;\n    let pcmIndex = 0;\n\n    for (let i = 0; i < frames; i++, renderer.frame++) {\n      const t = renderer.frame / sr;\n      let l = 0;\n      let r = 0;\n\n      if (sA.p.enabled) {\n        const raw = nextNoiseRaw(sA, sA.p, t);\n        const y = shapeLayerSample(sA, raw, sA.p);\n        const pan = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22, -1, 1);\n        l += y * Math.sqrt((1 - pan) * 0.5);\n        r += y * Math.sqrt((1 + pan) * 0.5);\n      }\n      if (sB.p.enabled) {\n        const raw = nextNoiseRaw(sB, sB.p, t);\n        const y = shapeLayerSample(sB, raw, sB.p);\n        const pan = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22, -1, 1);\n        l += y * Math.sqrt((1 - pan) * 0.5);\n        r += y * Math.sqrt((1 + pan) * 0.5);\n      }\n\n      applyMasterFx(masterState, l, r, t);\n      l = masterState.outL;\n      r = masterState.outR;\n\n      if (outL) outL[i] = l;\n      if (outR) outR[i] = r;\n\n      const absPeak = Math.max(Math.abs(l), Math.abs(r));\n      if (absPeak > peak) peak = absPeak;\n\n      if (pcm) {\n        const l16 = clamp(l * pcmGain, -1, 1);\n        const r16 = clamp(r * pcmGain, -1, 1);\n        pcm[pcmIndex++] = l16 < 0 ? l16 * 0x8000 : l16 * 0x7FFF;\n        pcm[pcmIndex++] = r16 < 0 ? r16 * 0x8000 : r16 * 0x7FFF;\n      }\n    }\n\n    return peak;\n  }\n\nclass NoiseAtlasProcessor extends AudioWorkletProcessor {\n  constructor(options = {}) {\n    super();\n    const processorOptions = options.processorOptions || {};\n    this.params = processorOptions.params ? { ...processorOptions.params } : { ...DEFAULTS };\n    this.renderer = createStereoRenderer(this.params, sampleRate);\n    this.playing = false;\n    this.port.onmessage = (event) => this.onMessage(event.data || {});\n  }\n\n  applyLiveParams(params) {\n    const p = params;\n    this.renderer.params = p;\n    this.renderer.sA.p.enabled = p.A_enabled;\n    this.renderer.sA.p.type = p.A_type;\n    this.renderer.sA.p.gain = p.A_gain;\n    this.renderer.sA.p.pan = p.A_pan;\n    this.renderer.sA.p.tone = p.A_tone;\n    this.renderer.sA.p.density = p.A_density;\n    this.renderer.sA.p.motion = p.A_motion;\n    this.renderer.sA.p.grain = p.A_grain;\n\n    this.renderer.sB.p.enabled = p.B_enabled;\n    this.renderer.sB.p.type = p.B_type;\n    this.renderer.sB.p.gain = p.B_gain;\n    this.renderer.sB.p.pan = p.B_pan;\n    this.renderer.sB.p.tone = p.B_tone;\n    this.renderer.sB.p.density = p.B_density;\n    this.renderer.sB.p.motion = p.B_motion;\n    this.renderer.sB.p.grain = p.B_grain;\n\n    this.renderer.masterState.p = p;\n  }\n\n  rebuildRenderer(params) {\n    const frame = this.renderer ? this.renderer.frame : 0;\n    this.renderer = createStereoRenderer(params, sampleRate);\n    this.renderer.frame = frame;\n  }\n\n  onMessage(msg) {\n    if (!msg || typeof msg !== 'object') return;\n\n    if (msg.type === 'play') {\n      this.playing = true;\n      return;\n    }\n    if (msg.type === 'stop') {\n      this.playing = false;\n      return;\n    }\n    if (msg.type === 'reset') {\n      if (this.renderer) this.renderer.frame = 0;\n      return;\n    }\n    if (msg.type === 'params') {\n      const nextParams = msg.params ? { ...msg.params } : this.params;\n      const changedId = String(msg.changedId || '');\n      const forceRebuild = !!msg.forceRebuild;\n      this.params = nextParams;\n      if (!this.renderer || forceRebuild || HARD_REBUILD_KEYS.has(changedId)) {\n        this.rebuildRenderer(nextParams);\n      } else {\n        this.applyLiveParams(nextParams);\n      }\n    }\n  }\n\n  process(inputs, outputs) {\n    const output = outputs[0];\n    if (!output || !output.length) return true;\n    const outL = output[0];\n    const outR = output[1] || output[0];\n    if (!this.playing || !this.renderer) {\n      outL.fill(0);\n      outR.fill(0);\n      return true;\n    }\n    renderBlock(this.renderer, outL.length, outL, outR);\n    return true;\n  }\n}\n\nregisterProcessor('noise-processor', NoiseAtlasProcessor);\n";
+  // AudioWorklet source is built from the SAME DSP functions the main thread
+  // uses (Function.prototype.toString), so the worklet can never drift from
+  // the preview/export renderer again. Only DSP code is included: nothing in
+  // here touches document, window or localStorage.
+  const WORKLET_DSP_SOURCE = [
+    `const TAU = ${TAU};`,
+    `const clamp = ${clamp.toString()};`,
+    `const lerp = ${lerp.toString()};`,
+    `const HARD_REBUILD_KEYS = new Set(${JSON.stringify([...HARD_REBUILD_KEYS])});`,
+    `const NOISE_TYPES = ${JSON.stringify(NOISE_TYPES)};`,
+    `const DEFAULTS = ${JSON.stringify(DEFAULTS)};`,
+    RNG.toString(),
+    lp.toString(),
+    hp.toString(),
+    bp.toString(),
+    softclip.toString(),
+    readDelay.toString(),
+    allpass1.toString(),
+    svfBand.toString(),
+    initMasterRuntime.toString(),
+    applyMasterFx.toString(),
+    initLayerRuntime.toString(),
+    rawWhite.toString(),
+    rawGaussian.toString(),
+    rawPink.toString(),
+    rawBrown.toString(),
+    humSample.toString(),
+    rawBlue.toString(),
+    rawViolet.toString(),
+    nextNoiseRaw.toString(),
+    shapeLayerSample.toString(),
+    normalizeParams.toString(),
+    createStereoRenderer.toString(),
+    renderBlock.toString()
+  ].join('\n');
+
+  const NOISE_PROCESSOR_SOURCE = `
+class NoiseAtlasProcessor extends AudioWorkletProcessor {
+  constructor(options = {}) {
+    super();
+    const processorOptions = options.processorOptions || {};
+    this.params = processorOptions.params ? { ...processorOptions.params } : { ...DEFAULTS };
+    this.renderer = createStereoRenderer(this.params, sampleRate);
+    this.playing = false;
+    this.port.onmessage = (event) => this.onMessage(event.data || {});
+  }
+
+  applyLiveParams(params) {
+    const p = normalizeParams(params);
+    this.renderer.params = p;
+    this.renderer.sA.p.enabled = p.A_enabled;
+    this.renderer.sA.p.type = p.A_type;
+    this.renderer.sA.p.gain = p.A_gain;
+    this.renderer.sA.p.pan = p.A_pan;
+    this.renderer.sA.p.tone = p.A_tone;
+    this.renderer.sA.p.density = p.A_density;
+    this.renderer.sA.p.motion = p.A_motion;
+    this.renderer.sA.p.grain = p.A_grain;
+
+    this.renderer.sB.p.enabled = p.B_enabled;
+    this.renderer.sB.p.type = p.B_type;
+    this.renderer.sB.p.gain = p.B_gain;
+    this.renderer.sB.p.pan = p.B_pan;
+    this.renderer.sB.p.tone = p.B_tone;
+    this.renderer.sB.p.density = p.B_density;
+    this.renderer.sB.p.motion = p.B_motion;
+    this.renderer.sB.p.grain = p.B_grain;
+
+    this.renderer.masterState.p = p;
+  }
+
+  rebuildRenderer(params) {
+    const frame = this.renderer ? this.renderer.frame : 0;
+    this.renderer = createStereoRenderer(params, sampleRate);
+    this.renderer.frame = frame;
+  }
+
+  onMessage(msg) {
+    if (!msg || typeof msg !== 'object') return;
+
+    if (msg.type === 'play') {
+      this.playing = true;
+      return;
+    }
+    if (msg.type === 'stop') {
+      this.playing = false;
+      return;
+    }
+    if (msg.type === 'reset') {
+      if (this.renderer) this.renderer.frame = 0;
+      return;
+    }
+    if (msg.type === 'params') {
+      const nextParams = msg.params ? { ...msg.params } : this.params;
+      const changedId = String(msg.changedId || '');
+      const forceRebuild = !!msg.forceRebuild;
+      this.params = nextParams;
+      if (!this.renderer || forceRebuild || HARD_REBUILD_KEYS.has(changedId)) {
+        this.rebuildRenderer(nextParams);
+      } else {
+        this.applyLiveParams(nextParams);
+      }
+    }
+  }
+
+  process(inputs, outputs) {
+    const output = outputs[0];
+    if (!output || !output.length) return true;
+    const outL = output[0];
+    const outR = output[1] || output[0];
+    if (!this.playing || !this.renderer) {
+      outL.fill(0);
+      outR.fill(0);
+      return true;
+    }
+    renderBlock(this.renderer, outL.length, outL, outR);
+    return true;
+  }
+}
+
+registerProcessor('noise-processor', NoiseAtlasProcessor);
+`;
+
+  const AUDIO_WORKLET_SOURCE = WORKLET_DSP_SOURCE + '\n' + NOISE_PROCESSOR_SOURCE;
+
   let audioWorkletModuleURL = '';
 
   function getAudioWorkletModuleURL() {
@@ -2062,7 +2212,7 @@
     },
 
     rebuildFallbackState(force = false, changedId = '') {
-      const p = this.params || getParams();
+      const p = normalizeParams(this.params || getParams());
       const mustRebuild = force || !this.sA || !this.sB || !this.masterState || HARD_REBUILD_KEYS.has(changedId);
 
       if (mustRebuild) {
@@ -2112,7 +2262,7 @@
       this.applyPreviewQuality();
 
       if (this.node) {
-        this.node.port.postMessage({ type: 'params', params: this.params, forceRebuild: !!force });
+        this.node.port.postMessage({ type: 'params', params: normalizeParams(this.params), forceRebuild: !!force });
       } else if (this.fallbackProcessor) {
         this.rebuildFallbackState(!!force);
       }
@@ -2143,7 +2293,7 @@
       }
 
       if (this.node) {
-        this.node.port.postMessage({ type: 'params', params: p, changedId });
+        this.node.port.postMessage({ type: 'params', params: normalizeParams(p), changedId });
       } else if (this.fallbackProcessor) {
         this.rebuildFallbackState(false, changedId);
       }
@@ -2182,7 +2332,7 @@
         return;
       }
 
-      const p = this.params;
+      const p = normalizeParams(this.params);
       const sA = this.sA;
       const sB = this.sB;
       const masterState = this.masterState;
@@ -2245,9 +2395,17 @@
       }
       ctx3.fillStyle = '#000';
       ctx3.fillRect(0, 0, gram.width, gram.height);
+      gramCol.height = Math.max(1, gram.height);
+      gramColData = gramColCtx.createImageData(1, gramCol.height);
     };
     resize();
     addEventListener('resize', resize);
+
+    const gramCol = document.createElement('canvas');
+    gramCol.width = 1;
+    gramCol.height = 1;
+    const gramColCtx = gramCol.getContext('2d');
+    let gramColData = gramColCtx.createImageData(1, 1);
 
     let timeData = new Uint8Array(1024);
     let freqData = new Uint8Array(512);
@@ -2312,13 +2470,24 @@
       }
 
       ctx3.drawImage(gram, -1, 0);
-      for (let y = 0; y < gram.height; y++) {
-        const frac = 1 - (y / Math.max(1, gram.height - 1));
-        const idx = Math.floor((frac ** 2.2) * (freqData.length - 1));
-        const v = freqData[idx] / 255;
-        const c = Math.max(0, Math.min(255, Math.floor(v * 255)));
-        ctx3.fillStyle = `rgb(${c},${c},${c})`;
-        ctx3.fillRect(gram.width - 1, y, 1, 1);
+      if (gramColData.height !== gram.height) {
+        gramCol.height = Math.max(1, gram.height);
+        gramColData = gramColCtx.createImageData(1, gramCol.height);
+      }
+      {
+        const data = gramColData.data;
+        for (let y = 0; y < gram.height; y++) {
+          const frac = 1 - (y / Math.max(1, gram.height - 1));
+          const idx = Math.floor((frac ** 2.2) * (freqData.length - 1));
+          const c = freqData[idx];
+          const o = y * 4;
+          data[o] = c;
+          data[o + 1] = c;
+          data[o + 2] = c;
+          data[o + 3] = 255;
+        }
+        gramColCtx.putImageData(gramColData, 0, 0);
+        ctx3.drawImage(gramCol, gram.width - 1, 0);
       }
     };
     loop();
