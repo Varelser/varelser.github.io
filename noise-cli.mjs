@@ -69,7 +69,7 @@ parts.push(braceBlock(src, src.indexOf('function normalizeParams')));
 }
 
 const epilogue = `
-;globalThis.__api = { DEFAULTS, PRESETS, NOISE_TYPES, normalizeParams, scanPeakStreamed, encodeAudioChunked, getExportTargetPeakAmp };
+;globalThis.__api = { DEFAULTS, PRESETS, NOISE_TYPES, normalizeParams, scanPeakStreamed, scanLoudnessStreamed, encodeAudioChunked, getExportTargetPeakAmp };
 `;
 if (typeof globalThis.requestAnimationFrame !== 'function') {
   globalThis.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0);
@@ -135,10 +135,27 @@ const progress = (done, total, pass) => {
   if (pct !== lastPct && pct % 10 === 0) { lastPct = pct; console.log(`pass ${pass}: ${pct}%`); }
 };
 
-const peak = await api.scanPeakStreamed(params, token, (d, t) => progress(d, t, 1));
+const loudTarget = Number(params.master_exportLoudness) || 0;
 let normalizeGain = 1;
-if (params.master_normalize && peak > 0.000001) {
-  normalizeGain = Math.min(api.getExportTargetPeakAmp(params) / peak, 8);
+let peak = 0;
+if (params.master_normalize || loudTarget) {
+  const scan = await api.scanLoudnessStreamed(params, token, (d, t) => progress(d, t, 1));
+  peak = scan.peak;
+  const targetPeak = api.getExportTargetPeakAmp(params);
+  let gPeak = null;
+  let gLoud = null;
+  if (params.master_normalize && scan.peak > 0.000001) gPeak = Math.min(targetPeak / scan.peak, 8);
+  if (loudTarget && Number.isFinite(scan.rmsDb)) {
+    gLoud = Math.pow(10, (loudTarget - scan.rmsDb) / 20);
+    if (scan.peak > 0.000001) gLoud = Math.min(gLoud, targetPeak / scan.peak);
+    gLoud = Math.min(gLoud, 8);
+  }
+  if (gPeak !== null && gLoud !== null) normalizeGain = Math.min(gPeak, gLoud);
+  else if (gPeak !== null) normalizeGain = gPeak;
+  else if (gLoud !== null) normalizeGain = gLoud;
+}
+if (!params.master_normalize && !loudTarget) {
+  peak = await api.scanPeakStreamed(params, token, (d, t) => progress(d, t, 1));
 }
 const blob = await api.encodeAudioChunked(params, token, (d, t) => progress(d, t, 2), normalizeGain);
 const buf = Buffer.from(await blob.arrayBuffer());

@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="https://noise-assets.pages.dev/apple-touch-icon.png">
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <title>Noise</title>
-<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。47種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。49種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="Noise — Noise Generator">
-<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。47種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。49種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://varelser.github.io/noise.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -170,6 +170,8 @@
     user-select:none;
   }
   .pill:hover{border-color:#666;color:#fff}
+  .preset-filters{margin-bottom:8px}
+  .preset-filters .pill.active{border-color:#fff;color:#fff;background:#1c1c1c}
   .readout{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
@@ -264,6 +266,7 @@
             </div>
           </div>
         </div>
+        <div id="presetFilters" class="pillrow preset-filters"></div>
         <div id="presetPills" class="pillrow"></div>
       </div>
     </div>
@@ -377,7 +380,7 @@
       <div class="body">
         <div class="help">
           色付きノイズの一部（Grey / Green / Black など）は用途により定義が揺れるため、本作では実用向けの近似実装です。<br>
-          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を47種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
+          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を49種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
         </div>
       </div>
     </div>
@@ -489,12 +492,14 @@
     ['waterfall', 'Waterfall'],
     ['thunder', 'Thunder'],
     ['forest', 'Forest Leaves'],
+    ['snow', 'Snow / Muffled Quiet'],
     ['city', 'City Traffic'],
     ['train', 'Train'],
     ['shower', 'Shower'],
     ['underwater', 'Underwater'],
     ['band', 'Resonant Band'],
     ['grains', 'Granular Cloud'],
+    ['furin', 'Furin / Wind Chime'],
     ['chaos', 'Chaos (Logistic)'],
     ['cicadas', 'Cicadas'],
     ['crickets', 'Crickets'],
@@ -539,12 +544,14 @@
     waterfall: '滝の轟音。広帯域で力強く、周囲の音を消します。',
     thunder: '遠くの雷鳴。大きなピークと、長く尾を引く低音。',
     forest: '木の葉が擦れる音。風に連動する柔らかい高域。',
+    snow: '雪の夜の静けさ。低く抑えた柔らかな気配と、稀に落ちる小さな粒。吸音されたような静けさ。',
     city: '街の交通音。車両の通過と、低い都市のざわめき。',
     train: '列車の走行音。レールの継ぎ目の周期と低い振動。',
     shower: 'シャワーの水音。明るく密度の高い水のノイズ。',
     underwater: '水中のこもった音。低域中心で、高域が丸くなります。',
     band: '狭い帯域だけを抽出した共鳴音。設定次第で笛のような持続音にも。',
     grains: '短い粒(グレイン)を雲のように撒く質感。きらめきと揺らぎ。',
+    furin: '風鈴。風に揺られて稀に鳴る金属の余韻。Densityで頻度、Grainで余韻の長さ、Motionで風の気まぐれさが変わります。',
     chaos: 'ロジスティック写像で作る予測不能な信号。実験的な電子音です。',
     cicadas: 'セミの鳴き声。高域の持続と、種ごとのうねり。',
     crickets: 'コオロギや鈴虫の高く澄んだ断続音。秋の夜の音。',
@@ -598,6 +605,7 @@
     master_lfoGain: 0,
     master_humHz: 50,
     master_normalize: true,
+    master_exportLoudness: '0',
     master_binauralEnabled: false,
     master_binauralMode: 'binaural',
     master_binauralCarrier: 200,
@@ -1202,6 +1210,24 @@
       master_gain: 0.58, master_width: 1.1,
       master_exportFormat: 'wav', master_exportSampleRate: 384000, master_exportBitDepth: '32f', master_exportOversample: 2, master_exportDither: false, master_duration: 60
     },
+    'Furin Breeze': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'furin', A_gain: 0.9, A_tone: 0.1, A_density: 0.55, A_motion: 0.6, A_grain: 0.5, A_stereo: 0.7,
+      B_enabled: true, B_type: 'wind', B_gain: 0.18, B_tone: -0.2, B_density: 0.5, B_motion: 0.55, B_grain: 0.2, B_stereo: 0.6,
+      master_gain: 0.55, master_width: 1.25, master_highcut: 12000, master_space: 0.35
+    },
+    'Nature: First Snow': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'snow', A_gain: 0.95, A_tone: -0.2, A_density: 0.5, A_motion: 0.4, A_grain: 0.3, A_stereo: 0.6,
+      B_enabled: true, B_type: 'pink', B_gain: 0.12, B_tone: -0.35, B_density: 0.3, B_motion: 0.1, B_grain: 0.06,
+      master_gain: 0.55, master_width: 1.15, master_highcut: 4500, master_space: 0.25
+    },
+    'Sleep: Snow Silence': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'snow', A_gain: 0.9, A_tone: -0.3, A_density: 0.4, A_motion: 0.3, A_grain: 0.2, A_stereo: 0.5,
+      B_enabled: true, B_type: 'brown', B_gain: 0.25, B_tone: -0.4, B_density: 0.3, B_motion: 0.12, B_grain: 0.06,
+      master_gain: 0.5, master_width: 1.0, master_highcut: 3500
+    },
     'Lab: Velvet Static': {
       ...DEFAULTS,
       A_enabled: true, A_type: 'velvet', A_gain: 0.6, A_tone: 0.1, A_density: 0.5, A_motion: 0.3, A_grain: 0.3, A_stereo: 0.7,
@@ -1252,6 +1278,7 @@
     { id:'master_lfoGain', type:'range', label:'LFO→Gain (Tremolo)', min:0, max:1, step:0.01 },
     { id:'master_humHz', type:'select', label:'Hum', options:[['50','50 Hz'],['60','60 Hz']] },
     { id:'master_normalize', type:'checkbox', label:'Normalize Export' },
+    { id:'master_exportLoudness', type:'select', label:'Loudness (RMS)', options:[['0','Off'],['-23','-23 dB'],['-18','-18 dB'],['-16','-16 dB'],['-14','-14 dB']] },
     { id:'master_loopFade', type:'select', label:'Loop Crossfade (sec)', options:[['0','Off'],['1','1'],['2','2'],['3','3'],['5','5'],['10','10']] },
     { id:'master_binauralEnabled', type:'checkbox', label:'Binaural' },
     { id:'master_binauralMode', type:'select', label:'Binaural Mode', options:[['binaural','Binaural (L/R)'],['isochronic','Isochronic'],['monaural','Monaural Beat']] },
@@ -1279,7 +1306,7 @@
   const HELP_TEXTS = {
     // Layer fields (shared by A/B/C)
     enabled: 'このレイヤーを鳴らすかどうか。OFFのレイヤーは音も書き出しも対象外になります。',
-    type: 'ノイズの種類。47種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
+    type: 'ノイズの種類。49種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
     gain: 'このレイヤーの音量。上げすぎるとマスターで歪むことがあるので、全体のバランスで調整を。',
     pan: 'このレイヤーの左右位置。-1で左、+1で右。マスターのLFOでもゆっくり揺れます。',
     tone: '音の明るさ。左で暗く丸く、右で明るく鋭くなります。',
@@ -1330,6 +1357,7 @@
     master_lfoDepth: 'LFOでパンを揺らす量。0では固定、上げると音が左右を行き来します。',
     master_humHz: '電源ハムの周波数(50Hz=東日本/60Hz=西日本)。VinylやPower Humの種類で使われます。',
     master_normalize: '書き出し時にピークを0dB付近へ自動調整します。音量を揃えたい時に。',
+    master_exportLoudness: '書き出し全体の平均音量(RMS)を目標値に揃えます。動画や配信のラウドネス目安に。ピークが上限を超える場合は上限優先で抑えます。',
     master_loopFade: '書き出しの頭を末尾の続き素材とクロスフェードし、途切れないループにします。WAVにはループ情報も付きます。',
     master_binauralEnabled: 'バイノーラル/アイソクロニック/モノラルのビート音を重ねます。睡眠や集中のプリセットで使用。',
     master_binauralMode: 'Binaural=左右で違う周波数(ヘッドホン必須)、Isochronic=断続音、Monaural=スピーカーでも聞こえる振幅ビート。',
@@ -1955,6 +1983,8 @@
       gate: 0,
       gateTarget: 0,
       gust: 0,
+      gustTarget: 0.5,
+      chimes: null,
       surf: 0,
       click1: 0,
       click2: 0,
@@ -2287,6 +2317,39 @@
         const grit = bp(s, 'gr1', 'gr2', rawWhite(s), s.resonFreq * 0.6, s.resonFreq * 1.6, sr) * s.burst * 0.5;
         const bed = lp(s, 'gr3', rawPink(s), 500, sr) * 0.12;
         return grainTone * 0.7 + grit + bed;
+      }
+      case 'snow': {
+        s.surf += ((0.5 + 0.5 * Math.sin(TAU * (0.015 + motion * 0.045) * t + 1.9)) - s.surf) * 0.0009;
+        const body = lp(s, 'sn1', rawPink(s), 420 + density * 800, sr) * (0.35 + s.surf * 0.5);
+        if (s.rng.float() < 0.00004 + density * 0.00035) s.click2 = 0.4 + s.rng.float() * 0.6;
+        s.click2 *= 0.90;
+        const tick = hp(s, 'sn2', s.click2 * s.rng.signed(), 3800, sr) * grain * 0.5;
+        return body + tick;
+      }
+      case 'furin': {
+        if (!s.chimes) s.chimes = [];
+        s.gust += (s.gustTarget - s.gust) * 0.0006;
+        if (s.rng.float() < 0.00003 + motion * 0.00012) s.gustTarget = s.rng.float();
+        const breeze = clamp(0.15 + s.gust * 1.1 + 0.25 * Math.sin(TAU * 0.05 * t + 0.8), 0, 1.6);
+        const strikeP = (0.000004 + density * 0.000045) * breeze;
+        if (s.rng.float() < strikeP && s.chimes.length < 5) {
+          const scale = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2];
+          const f = 1568 * scale[Math.floor(s.rng.float() * scale.length)] * (0.996 + s.rng.float() * 0.008);
+          s.chimes.push({ f, ph: 0, env: 1, vel: 0.45 + s.rng.float() * 0.55 });
+        }
+        let y = 0;
+        const tau = 0.7 + grain * 1.7;
+        const dec = Math.exp(-1 / (sr * tau));
+        for (let i = s.chimes.length - 1; i >= 0; i--) {
+          const c = s.chimes[i];
+          c.ph += TAU * c.f / sr;
+          c.env *= dec;
+          if (c.env < 0.0004) { s.chimes.splice(i, 1); continue; }
+          const e2 = c.env * c.env;
+          y += c.vel * (Math.sin(c.ph) * c.env + 0.42 * Math.sin(c.ph * 2.76) * e2 + 0.16 * Math.sin(c.ph * 5.4) * e2 * c.env);
+        }
+        const air = lp(s, 'fu1', rawWhite(s), 800, sr) * 0.03 * breeze;
+        return y * 0.8 + air;
       }
       case 'chaos': {
         if (s.holdCounter-- <= 0) {
@@ -3140,6 +3203,55 @@
     return peak;
   }
 
+  async function scanLoudnessStreamed(params, token, onProgress) {
+    const sampleRate = getExportSampleRate(params);
+    const oversampleFactor = getExportOversampleFactor(params);
+    const internalRate = sampleRate * oversampleFactor;
+    const totalFrames = Math.max(1, Math.floor(params.master_duration * sampleRate));
+    const chunkFrames = chooseChunkFrames(sampleRate, totalFrames, oversampleFactor);
+    const renderer = createStereoRenderer(params, internalRate);
+    const decimator = createDecimator(oversampleFactor);
+    const safetyState = initExportSafetyState(sampleRate, params);
+    const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
+    let done = 0;
+    let peak = 0;
+    let sumSq = 0;
+    const accumulate = (left, right, frames) => {
+      let acc = 0;
+      for (let i = 0; i < frames; i++) acc += left[i] * left[i] + right[i] * right[i];
+      sumSq += acc * 0.5;
+    };
+    while (done < totalFrames) {
+      if (token.cancelled) throw new Error('__EXPORT_CANCELLED__');
+      const frames = Math.min(chunkFrames, totalFrames - done);
+      if (oversampleFactor === 1) {
+        const left = new Float32Array(frames);
+        const right = new Float32Array(frames);
+        renderBlock(renderer, frames, left, right);
+        applyLoopHeadMix(left, right, done, loopPost);
+        peak = Math.max(peak, applyExportSafetyBlock(left, right, safetyState));
+        accumulate(left, right, frames);
+      } else {
+        const tempFrames = frames * oversampleFactor;
+        const tempL = new Float32Array(tempFrames);
+        const tempR = new Float32Array(tempFrames);
+        const outL = new Float32Array(frames);
+        const outR = new Float32Array(frames);
+        renderBlock(renderer, tempFrames, tempL, tempR);
+        const produced = decimateInto(decimator, tempL, tempR, outL, outR);
+        if (produced !== frames) throw new Error('DECIMATION_LENGTH_MISMATCH');
+        applyLoopHeadMix(outL, outR, done, loopPost);
+        peak = Math.max(peak, applyExportSafetyBlock(outL, outR, safetyState));
+        accumulate(outL, outR, frames);
+      }
+      done += frames;
+      onProgress(done, totalFrames, 1, peak);
+      await nextFrame();
+    }
+    const meanSq = sumSq / totalFrames;
+    return { peak, rmsDb: meanSq > 0 ? 10 * Math.log10(meanSq) : -Infinity };
+  }
+
 
   // ---- FLAC encoder (lossless, spec subset, no dependencies) ----
   // Stereo 16/24-bit integer samples. Subframes: constant / verbatim / fixed
@@ -3982,6 +4094,8 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   const AI_NOISE_KEYWORDS = [
     [/雷|thunder/i, 'thunder'],
     [/焚き火|薪|fire|campfire/i, 'fire'],
+    [/風鈴|furin|wind ?chime/i, 'furin'],
+    [/雪|snow/i, 'snow'],
     [/滝|waterfall/i, 'waterfall'],
     [/川|せせらぎ|渓流|stream|brook/i, 'stream'],
     [/シャワー|shower/i, 'shower'],
@@ -4460,15 +4574,25 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         const totalFrames = Math.max(1, Math.floor(job.params.master_duration * exportRate));
         const safeInfo = `file ${jobIndex + 1}/${jobs.length} / ${job.label} / ${exportFormatLabel(format)} / frames ${totalFrames.toLocaleString()} / ${exportRate} Hz / OS ${oversampleFactor}x / internal ${internalRate.toLocaleString()} Hz / ${bitDepthLabel(exportBit)} / file ${fmtBytes(jobBytes)} / total ${fmtBytes(totalEstimatedBytes)} / lim ${job.params.master_exportLimiter ? 'on' : 'off'} / tp ${job.params.master_truePeakProtect ? 'on' : 'off'} / shape ${exportBit === '32f' ? 'off' : getExportNoiseShaping(job.params)}`;
         let normalizeGain = 1;
-
-        if (job.params.master_normalize) {
+        const loudTarget = Number(job.params.master_exportLoudness) || 0;
+        if (job.params.master_normalize || loudTarget) {
           setStatus(`解析中 1/2: ${safeInfo}`);
-          const peak = await scanPeakStreamed(job.params, token, (done, total, pass, value) => {
+          const scan = await scanLoudnessStreamed(job.params, token, (done, total, pass, value) => {
             const pct = Math.floor(done / total * 100);
             setStatus(`解析中 1/2: ${pct}% / peak ${fmt(value, 3)} / ${ampToDb(value).toFixed(1)} dBFS / ${safeInfo}`);
           });
           const targetPeak = getExportTargetPeakAmp(job.params);
-          normalizeGain = peak > 0.000001 ? Math.min(targetPeak / peak, 8) : 1;
+          let gPeak = null;
+          let gLoud = null;
+          if (job.params.master_normalize && scan.peak > 0.000001) gPeak = Math.min(targetPeak / scan.peak, 8);
+          if (loudTarget && Number.isFinite(scan.rmsDb)) {
+            gLoud = Math.pow(10, (loudTarget - scan.rmsDb) / 20);
+            if (scan.peak > 0.000001) gLoud = Math.min(gLoud, targetPeak / scan.peak);
+            gLoud = Math.min(gLoud, 8);
+          }
+          if (gPeak !== null && gLoud !== null) normalizeGain = Math.min(gPeak, gLoud);
+          else if (gPeak !== null) normalizeGain = gPeak;
+          else if (gLoud !== null) normalizeGain = gLoud;
         }
 
         setStatus(`書き出し中 2/2: 0% / gain ${fmt(normalizeGain, 3)} / ${safeInfo}`);
@@ -4620,6 +4744,32 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     }, 'image/png');
   }
 
+  let presetFilterCat = 'All';
+  function presetCategoryOf(name) {
+    return name.includes(':') ? name.split(':')[0].trim() : 'Other';
+  }
+  function applyPresetFilter() {
+    document.querySelectorAll('#presetPills .pill').forEach(btn => {
+      const name = btn.dataset.preset || '';
+      btn.style.display = (presetFilterCat === 'All' || presetCategoryOf(name) === presetFilterCat) ? '' : 'none';
+    });
+    document.querySelectorAll('#presetFilters .pill').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.filter === presetFilterCat);
+    });
+  }
+  function buildPresetFilters() {
+    const host = $('presetFilters');
+    if (!host) return;
+    const cats = [];
+    Object.keys(PRESETS).forEach(name => {
+      const c = presetCategoryOf(name);
+      if (!cats.includes(c)) cats.push(c);
+    });
+    const ordered = ['All', ...cats.filter(c => c !== 'Other'), ...(cats.includes('Other') ? ['Other'] : [])];
+    host.innerHTML = ordered.map(c => `<button type="button" class="pill" data-filter="${c}" data-help="プリセットを「${c}」カテゴリだけに絞り込みます">${c}</button>`).join('');
+    applyPresetFilter();
+  }
+
   function wireEvents() {
 
     document.querySelectorAll('input, select').forEach(el => {
@@ -4633,6 +4783,12 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       el.addEventListener('change', handler);
     });
     $('applyPreset').addEventListener('click', () => applyPreset(presetSelect.value));
+    buildPresetFilters();
+    const presetFiltersEl = $('presetFilters');
+    if (presetFiltersEl) presetFiltersEl.addEventListener('click', (e) => {
+      const cat = e.target?.dataset?.filter;
+      if (cat) { presetFilterCat = cat; applyPresetFilter(); }
+    });
     const undoBtn = $('undoBtn');
     if (undoBtn) undoBtn.addEventListener('click', () => restoreHistory(-1));
     const redoBtn = $('redoBtn');
