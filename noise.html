@@ -125,6 +125,7 @@
     letter-spacing:.05em;
   }
   .section .body{padding:10px 12px}
+  .type-info{font-size:11px;line-height:1.6;color:var(--muted);margin:-4px 0 10px;min-height:18px}
   .section.collapsed > .body{display:none}
   .section.collapsed > .head{border-bottom:none}
   .section > .head{cursor:pointer;user-select:none}
@@ -502,6 +503,56 @@
     ['clock', 'Clock Tick'],
     ['typing', 'Typing']
   ];
+
+  const NOISE_TYPE_INFO = {
+    white: '全周波数を均等に含む「シャー」という音。最も明るく、測定やマスキングの基準になります。',
+    gaussian: '正規分布に従う滑らかなホワイトノイズ。耳当たりがやや柔らかく、長時間向き。',
+    pink: '低音ほど大きい、自然界に多いバランス。雨や風に近く、聴いていて疲れにくい定番です。',
+    brown: '低音が支配的な「ゴー」という重い音。Brown運動由来で、遠雷や地鳴りの土台に。',
+    blue: '高音ほど大きい、鋭く軽いノイズ。水の噴出や蒸気のような質感です。',
+    violet: '高音がさらに強い、最も鋭い部類の色ノイズ。',
+    grey: '聴感上どの帯域も同じ大きさに聞こえるよう調整したノイズの近似実装です。',
+    green: '自然環境の周波数分布を模したノイズ。森や草原の環境音の土台に。',
+    black: 'ほぼ無音に近い、ごく弱いノイズ。静寂の表現などに。',
+    rumble: '建物や地面を伝わるような低い振動成分。大型機械や地震の気配。',
+    powerhum: '電源周波数(50/60Hz)とその倍音の「ブーン」。機器の待機音のような気配です。',
+    vinyl: 'レコードのサーフェスノイズ。チリチリしたクラックルと低い底ノイズ。',
+    tape: 'テープのヒス。柔らかい高域のざわつきで、アナログ感を足します。',
+    wind: '帯域がゆっくりうねる風の音。強弱の変化が大きいのが特徴。',
+    rain: '無数の水滴が作る広帯域のざわめき。マスキングと睡眠の定番です。',
+    ocean: '波の寄せ引きを周期的に再現。うねりが大きく、リラックス向き。',
+    crackle: 'パチパチと断続する小さな破裂音。焚き火や静電気の質感。',
+    dust: 'ほこりや砂が舞うような、乾いて軽い粒状のノイズ。',
+    shot: '粒子が当たるような散発的なインパルス。物理現象のショットノイズ。',
+    velvet: '数学的に生成される滑らかなインパルス列。音響処理の素材にも。',
+    staticam: 'ラジオの選局がずれたような、ざらついた中域のノイズ。',
+    digital: 'ビットクラッシュした粗い電子ノイズ。量子化の段差が聞こえます。',
+    glitch: '短いバーストと途切れを繰り返す、故障したデジタルの質感。',
+    sand: '共鳴した帯域が揺れる、砂のようなシンセパッド的な音。',
+    fan: '扇風機・換気扇の回転音。一定で生活感のある持続音です。',
+    airplane: '飛行機の機内音。低い轟音と空調の重なりで、眠気を誘います。',
+    fire: '焚き火。低い渦の音と、パチパチする破裂音の組み合わせ。',
+    stream: '渓流のせせらぎ。水が岩に当たる中高域のきらめき。',
+    waterfall: '滝の轟音。広帯域で力強く、周囲の音を消します。',
+    thunder: '遠くの雷鳴。大きなピークと、長く尾を引く低音。',
+    forest: '木の葉が擦れる音。風に連動する柔らかい高域。',
+    city: '街の交通音。車両の通過と、低い都市のざわめき。',
+    train: '列車の走行音。レールの継ぎ目の周期と低い振動。',
+    shower: 'シャワーの水音。明るく密度の高い水のノイズ。',
+    underwater: '水中のこもった音。低域中心で、高域が丸くなります。',
+    band: '狭い帯域だけを抽出した共鳴音。設定次第で笛のような持続音にも。',
+    grains: '短い粒(グレイン)を雲のように撒く質感。きらめきと揺らぎ。',
+    chaos: 'ロジスティック写像で作る予測不能な信号。実験的な電子音です。',
+    cicadas: 'セミの鳴き声。高域の持続と、種ごとのうねり。',
+    crickets: 'コオロギや鈴虫の高く澄んだ断続音。秋の夜の音。',
+    heartbeat: '心拍。低い二拍子の鼓動で、瞑想や安眠の文脈で使われます。',
+    womb: '胎内音。心拍と血流のこもった音で、乳児の安眠用にも。',
+    purr: '猫のゴロゴロ。低い振動と呼吸のゆらぎ。',
+    drops: '水滴が落ちる音。洞窟や雨だれのような単発の響き。',
+    dryer: 'ドライヤーの送風音。強い中高域の持続で周囲をマスクします。',
+    clock: '時計のチクタク。一定間隔の小さなクリック。',
+    typing: 'キーボードのタイピング音。不規則な打鍵の連なりで、作業の疑似環境音に。',
+  };
 
   const DEFAULTS = {
     master_sampleRate: 48000,
@@ -965,7 +1016,7 @@
     { id:'master_exportMode', type:'select', label:'Export Mode', options:[['mix','Mix'],['stems','Stems'],['mixstems','Mix + Stems']] },
     { id:'master_batchCount', type:'select', label:'Batch Seeds', options:[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['7','7'],['8','8']] },
     { id:'master_seedStep', type:'number', label:'Seed Step', min:1, max:1000000, step:1 },
-    { id:'master_exportFormat', type:'select', label:'Format', options:[['wav','WAV'],['aiff','AIFF']] },
+    { id:'master_exportFormat', type:'select', label:'Format', options:[['wav','WAV'],['aiff','AIFF'],['flac','FLAC']] },
     { id:'master_exportSampleRate', type:'select', label:'Export Rate', options:[['22050','22.05 kHz'],['44100','44.1 kHz'],['48000','48 kHz'],['88200','88.2 kHz'],['96000','96 kHz'],['192000','192 kHz']] },
     { id:'master_exportBitDepth', type:'select', label:'Bit Depth', options:[['16','16-bit PCM'],['24','24-bit PCM'],['32f','32-bit float WAV']] },
     { id:'master_exportDither', type:'checkbox', label:'Dither (PCM only)' },
@@ -1044,7 +1095,7 @@
     master_exportMode: '書き出し形式。Mixは全レイヤー混合、Stemsはレイヤーごとの個別ファイル、Mix + Stemsは両方。',
     master_batchCount: 'シードを変えたバリエーションを何ファイル作るか。Seed Stepずつずらして生成します。',
     master_seedStep: 'バッチ生成でシードをいくつずつ進めるか。',
-    master_exportFormat: '書き出しファイル形式。WAVかAIFF。ループ情報(smpl)はWAVのみ付きます。',
+    master_exportFormat: '書き出しファイル形式。WAV / AIFF / FLAC(可逆圧縮)。ループ情報(smpl)はWAVのみ付きます。FLACは16/24bitのみ。',
     master_exportSampleRate: '書き出しのサンプルレート。配布用は48kHz、軽さ優先なら22.05kHzなど。',
     master_exportBitDepth: '書き出しのビット深度。16bitが一般的、32fは編集用に余裕を持たせたい時。',
     master_exportDither: '16bitなどPCM書き出し時のディザ。量子化ノイズを目立たなくします。32fでは無効。',
@@ -1127,10 +1178,12 @@
     root.appendChild(frag);
   }
 
+  const typeInfoEls = {};
   buildFields('masterFields', MASTER_SCHEMA);
   buildFields('layerAFields', LAYER_SCHEMA, 'A');
   buildFields('layerBFields', LAYER_SCHEMA, 'B');
   buildFields('layerCFields', LAYER_SCHEMA, 'C');
+  initTypeInfos();
 
   const presetSelect = $('presetSelect');
   presetSelect.innerHTML = Object.keys(PRESETS).map(name => `<option value="${name}">${name}</option>`).join('');
@@ -1179,7 +1232,7 @@
 
   function getExportFormat(params) {
     const raw = String(params.master_exportFormat || 'wav').toLowerCase();
-    return raw === 'aiff' ? 'aiff' : 'wav';
+    return raw === 'aiff' ? 'aiff' : (raw === 'flac' ? 'flac' : 'wav');
   }
 
   function getExportSampleRate(params) {
@@ -1224,7 +1277,7 @@
   }
 
   function exportFormatLabel(format) {
-    return format === 'aiff' ? 'AIFF' : 'WAV';
+    return format === 'aiff' ? 'AIFF' : (format === 'flac' ? 'FLAC' : 'WAV');
   }
 
   function getPreviewQuality(params) {
@@ -1337,6 +1390,33 @@
     });
   }
 
+  function refreshTypeInfos() {
+    ['A', 'B', 'C'].forEach(prefix => {
+      const sel = $(prefix + '_type');
+      const info = typeInfoEls[prefix];
+      if (!sel || !info) return;
+      const text = NOISE_TYPE_INFO[sel.value] || '';
+      info.textContent = text ? `${labelOfType(sel.value)}：${text}` : '';
+      if (text) sel.setAttribute('data-help', text);
+    });
+  }
+  function initTypeInfos() {
+    ['A', 'B', 'C'].forEach(prefix => {
+      const sel = $(prefix + '_type');
+      if (!sel || !sel.closest) return;
+      const field = sel.closest('.field');
+      if (!field || !field.parentNode) return;
+      const info = document.createElement('div');
+      info.className = 'type-info';
+      info.setAttribute('data-type-info', prefix);
+      typeInfoEls[prefix] = info;
+      field.parentNode.insertBefore(info, field.nextSibling);
+      sel.addEventListener('change', refreshTypeInfos);
+      sel.addEventListener('input', refreshTypeInfos);
+    });
+    refreshTypeInfos();
+  }
+
   function setParams(obj) {
     Object.entries(obj).forEach(([k, v]) => {
       const el = $(k);
@@ -1346,6 +1426,7 @@
     });
     syncReadouts();
     updateMini(getParams());
+    refreshTypeInfos();
   }
 
   function getParams() {
@@ -2829,6 +2910,293 @@
     return peak;
   }
 
+
+  // ---- FLAC encoder (lossless, spec subset, no dependencies) ----
+  // Stereo 16/24-bit integer samples. Subframes: constant / verbatim / fixed
+  // predictors (order 0-4) with Rice coding. Channel decorrelation:
+  // independent / left-side / right-side / mid-side. STREAMINFO carries the
+  // real MD5 of the PCM. Estimates only guide encoding choices; validity
+  // never depends on them. Verified bit-exact against reference decoders.
+  const FLAC_BLOCK = 4096;
+  const FLAC_CRC8_TABLE = (() => {
+    const t = new Uint8Array(256);
+    for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 0x80) ? ((c << 1) ^ 0x07) & 0xff : (c << 1) & 0xff; t[n] = c; }
+    return t;
+  })();
+  const FLAC_CRC16_TABLE = (() => {
+    const t = new Uint16Array(256);
+    for (let n = 0; n < 256; n++) { let c = n << 8; for (let k = 0; k < 8; k++) c = (c & 0x8000) ? ((c << 1) ^ 0x8005) & 0xffff : (c << 1) & 0xffff; t[n] = c; }
+    return t;
+  })();
+  function flacCrc8(bytes) { let c = 0; for (let i = 0; i < bytes.length; i++) c = FLAC_CRC8_TABLE[(c ^ bytes[i]) & 0xff]; return c; }
+  function flacCrc16(bytes) { let c = 0; for (let i = 0; i < bytes.length; i++) c = ((c << 8) & 0xffff) ^ FLAC_CRC16_TABLE[((c >> 8) ^ bytes[i]) & 0xff]; return c; }
+
+  function createMd5() {
+    const S = [7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21];
+    const K = new Float64Array(64);
+    for (let i = 0; i < 64; i++) K[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 4294967296);
+    let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+    let pending = new Uint8Array(0);
+    let totalLen = 0;
+    function process(block, off) {
+      const M = new Float64Array(16);
+      for (let i = 0; i < 16; i++) {
+        const o = off + i * 4;
+        M[i] = (block[o] | (block[o + 1] << 8) | (block[o + 2] << 16) | (block[o + 3] << 24)) >>> 0;
+      }
+      let a = a0, b = b0, c = c0, d = d0;
+      for (let i = 0; i < 64; i++) {
+        let f, g;
+        if (i < 16) { f = ((b & c) | (~b & d)) >>> 0; g = i; }
+        else if (i < 32) { f = ((d & b) | (~d & c)) >>> 0; g = (5 * i + 1) % 16; }
+        else if (i < 48) { f = (b ^ c ^ d) >>> 0; g = (3 * i + 5) % 16; }
+        else { f = (c ^ (b | ~d)) >>> 0; g = (7 * i) % 16; }
+        const sum = (f + a + K[i] + M[g]) % 4294967296;
+        const rotated = ((sum << S[i]) | (sum >>> (32 - S[i]))) >>> 0;
+        a = d; d = c; c = b;
+        b = (b + rotated) % 4294967296;
+      }
+      a0 = (a0 + a) % 4294967296; b0 = (b0 + b) % 4294967296;
+      c0 = (c0 + c) % 4294967296; d0 = (d0 + d) % 4294967296;
+    }
+    return {
+      update(bytes) {
+        totalLen += bytes.length;
+        const merged = new Uint8Array(pending.length + bytes.length);
+        merged.set(pending); merged.set(bytes, pending.length);
+        let off = 0;
+        while (merged.length - off >= 64) { process(merged, off); off += 64; }
+        pending = merged.slice(off);
+      },
+      digest() {
+        const bitLen = totalLen * 8;
+        const padZeros = (56 - ((totalLen + 1) % 64) + 64) % 64;
+        const tail = new Uint8Array(1 + padZeros + 8);
+        tail[0] = 0x80;
+        const lo = bitLen >>> 0;
+        const hi = Math.floor(bitLen / 4294967296) >>> 0;
+        tail.set([lo & 0xff, (lo >>> 8) & 0xff, (lo >>> 16) & 0xff, (lo >>> 24) & 0xff,
+                  hi & 0xff, (hi >>> 8) & 0xff, (hi >>> 16) & 0xff, (hi >>> 24) & 0xff], 1 + padZeros);
+        const merged = new Uint8Array(pending.length + tail.length);
+        merged.set(pending); merged.set(tail, pending.length);
+        for (let off = 0; off < merged.length; off += 64) process(merged, off);
+        const out = new Uint8Array(16);
+        [a0, b0, c0, d0].forEach((v, i) => {
+          out[i * 4] = v & 0xff; out[i * 4 + 1] = (v >>> 8) & 0xff;
+          out[i * 4 + 2] = (v >>> 16) & 0xff; out[i * 4 + 3] = (v >>> 24) & 0xff;
+        });
+        return out;
+      }
+    };
+  }
+
+  function createFlacBitWriter() {
+    const bytes = [];
+    let acc = 0, nbits = 0;
+    function writeBits(value, count) {
+      if (count === 0) return;
+      acc = acc * Math.pow(2, count) + (value >>> 0) % Math.pow(2, count);
+      nbits += count;
+      while (nbits >= 8) {
+        const shift = nbits - 8;
+        bytes.push(Math.floor(acc / Math.pow(2, shift)) & 0xff);
+        acc = acc % Math.pow(2, shift);
+        nbits = shift;
+      }
+    }
+    function writeUnary(q) {
+      while (q >= 16) { writeBits(0, 16); q -= 16; }
+      if (q > 0 || true) writeBits(1, q + 1);
+    }
+    function writeSigned(value, bps) {
+      writeBits(value & ((1 << bps) - 1), bps);
+    }
+    function toBytes() {
+      if (nbits > 0) { bytes.push((acc << (8 - nbits)) & 0xff); acc = 0; nbits = 0; }
+      return Uint8Array.from(bytes);
+    }
+    return { writeBits, writeUnary, writeSigned, toBytes };
+  }
+
+  function flacResiduals(signal, order) {
+    const n = signal.length;
+    const out = new Int32Array(Math.max(0, n - order));
+    if (order === 0) { out.set(signal); return out; }
+    for (let i = order; i < n; i++) {
+      const x = signal[i];
+      let r;
+      if (order === 1) r = x - signal[i - 1];
+      else if (order === 2) r = x - 2 * signal[i - 1] + signal[i - 2];
+      else if (order === 3) r = x - 3 * signal[i - 1] + 3 * signal[i - 2] - signal[i - 3];
+      else r = x - 4 * signal[i - 1] + 6 * signal[i - 2] - 4 * signal[i - 3] + signal[i - 4];
+      out[i - order] = r;
+    }
+    return out;
+  }
+
+  function flacEstimateSubframe(signal, bps) {
+    const n = signal.length;
+    if (n === 0) return { bits: 8 + bps, kind: 'constant', param: 0, order: 0 };
+    let same = true;
+    for (let i = 1; i < n; i++) { if (signal[i] !== signal[0]) { same = false; break; } }
+    if (same) return { bits: 8 + bps, kind: 'constant', param: 0, order: 0 };
+    let best = { bits: 8 + n * bps, kind: 'verbatim', param: 0, order: 0 };
+    const maxOrder = Math.min(4, n - 1);
+    for (let k = 0; k <= maxOrder; k++) {
+      const res = flacResiduals(signal, k);
+      const step = Math.max(1, Math.floor(res.length / 512));
+      let bestRice = Infinity, bestP = 0;
+      for (let p = 0; p <= 14; p++) {
+        let bits = 0, cnt = 0;
+        for (let i = 0; i < res.length; i += step) {
+          const r = res[i];
+          const u = r >= 0 ? 2 * r : -2 * r - 1;
+          bits += Math.floor(u / (1 << p)) + 1 + p;
+          cnt++;
+        }
+        const est = bits * (res.length / Math.max(1, cnt));
+        if (est < bestRice) { bestRice = est; bestP = p; }
+      }
+      const total = 8 + k * bps + 8 + Math.ceil(bestRice);
+      if (total < best.bits) best = { bits: total, kind: 'fixed', param: bestP, order: k };
+    }
+    return best;
+  }
+
+  function flacWriteSubframe(bw, signal, bps) {
+    const est = flacEstimateSubframe(signal, bps);
+    const n = signal.length;
+    if (est.kind === 'constant') {
+      bw.writeBits(0, 1); bw.writeBits(0, 6); bw.writeBits(0, 1);
+      bw.writeSigned(signal[0] || 0, bps);
+      return;
+    }
+    if (est.kind === 'verbatim') {
+      bw.writeBits(0, 1); bw.writeBits(1, 6); bw.writeBits(0, 1);
+      for (let i = 0; i < n; i++) bw.writeSigned(signal[i], bps);
+      return;
+    }
+    const k = est.order, p = est.param;
+    bw.writeBits(0, 1); bw.writeBits(8 + k, 6); bw.writeBits(0, 1);
+    for (let i = 0; i < k; i++) bw.writeSigned(signal[i], bps);
+    bw.writeBits(0, 2); // residual coding method: Rice
+    bw.writeBits(0, 4); // partition order 0
+    bw.writeBits(p, 4);
+    const res = flacResiduals(signal, k);
+    for (let i = 0; i < res.length; i++) {
+      const r = res[i];
+      const u = r >= 0 ? 2 * r : -2 * r - 1;
+      bw.writeUnary(Math.floor(u / (1 << p)));
+      if (p > 0) bw.writeBits(u % (1 << p), p);
+    }
+  }
+
+  function flacCodedNumber(value) {
+    // FLAC's UTF-8-style coded frame number.
+    if (value < 0x80) return [value];
+    if (value < 0x800) return [0xC0 | (value >> 6), 0x80 | (value & 0x3F)];
+    if (value < 0x10000) return [0xE0 | (value >> 12), 0x80 | ((value >> 6) & 0x3F), 0x80 | (value & 0x3F)];
+    if (value < 0x200000) return [0xF0 | (value >> 18), 0x80 | ((value >> 12) & 0x3F), 0x80 | ((value >> 6) & 0x3F), 0x80 | (value & 0x3F)];
+    return [0xF8 | (value >> 24), 0x80 | ((value >> 18) & 0x3F), 0x80 | ((value >> 12) & 0x3F), 0x80 | ((value >> 6) & 0x3F), 0x80 | (value & 0x3F)];
+  }
+
+  function createFlacEncoder({ sampleRate, bitDepth, totalFrames }) {
+    const bps = bitDepth;
+    const md5 = createMd5();
+    const frameParts = [];
+    let pendingL = [], pendingR = [];
+    let frameNumber = 0, minFrameSize = Infinity, maxFrameSize = 0;
+
+    function emitFrame(L, R) {
+      const n = L.length;
+      const side = new Int32Array(n), mid = new Int32Array(n);
+      for (let i = 0; i < n; i++) { side[i] = L[i] - R[i]; mid[i] = (L[i] + R[i]) >> 1; }
+      const estL = flacEstimateSubframe(L, bps).bits;
+      const estR = flacEstimateSubframe(R, bps).bits;
+      const estSide = flacEstimateSubframe(side, bps + 1).bits;
+      const estMid = flacEstimateSubframe(mid, bps).bits;
+      const modes = [
+        { code: 1, total: estL + estR, sigs: [L, R], bpss: [bps, bps] },
+        { code: 8, total: estL + estSide, sigs: [L, side], bpss: [bps, bps + 1] },
+        { code: 9, total: estSide + estR, sigs: [side, R], bpss: [bps + 1, bps] },
+        { code: 10, total: estMid + estSide, sigs: [mid, side], bpss: [bps, bps + 1] },
+      ];
+      modes.sort((a, b) => a.total - b.total);
+      const mode = modes[0];
+      const hw = createFlacBitWriter();
+      hw.writeBits(0x3FFE, 14); hw.writeBits(0, 1); hw.writeBits(0, 1);
+      hw.writeBits(7, 4); // blocksize: 16-bit follows
+      hw.writeBits(0, 4); // sample rate: from STREAMINFO
+      hw.writeBits(mode.code, 4);
+      hw.writeBits(bps === 24 ? 6 : 4, 3);
+      hw.writeBits(0, 1);
+      flacCodedNumber(frameNumber).forEach(b => hw.writeBits(b, 8));
+      hw.writeBits(n - 1, 16);
+      const headerBytes = hw.toBytes();
+      const bw = createFlacBitWriter();
+      flacWriteSubframe(bw, mode.sigs[0], mode.bpss[0]);
+      flacWriteSubframe(bw, mode.sigs[1], mode.bpss[1]);
+      const bodyBytes = bw.toBytes();
+      const frame = new Uint8Array(headerBytes.length + 1 + bodyBytes.length + 2);
+      frame.set(headerBytes, 0);
+      frame[headerBytes.length] = flacCrc8(headerBytes);
+      frame.set(bodyBytes, headerBytes.length + 1);
+      const crc = flacCrc16(frame.subarray(0, headerBytes.length + 1 + bodyBytes.length));
+      frame[frame.length - 2] = (crc >> 8) & 0xff;
+      frame[frame.length - 1] = crc & 0xff;
+      frameParts.push(frame);
+      if (frame.length < minFrameSize) minFrameSize = frame.length;
+      if (frame.length > maxFrameSize) maxFrameSize = frame.length;
+      frameNumber++;
+    }
+
+    return {
+      pushPcm(buffer) {
+        const bytes = new Uint8Array(buffer);
+        md5.update(bytes);
+        const view = new DataView(buffer);
+        const bytesPerSample = bps / 8;
+        const frames = Math.floor(bytes.length / (bytesPerSample * 2));
+        for (let i = 0; i < frames; i++) {
+          const off = i * bytesPerSample * 2;
+          let l, r;
+          if (bps === 16) { l = view.getInt16(off, true); r = view.getInt16(off + 2, true); }
+          else {
+            l = view.getUint8(off) | (view.getUint8(off + 1) << 8) | (view.getUint8(off + 2) << 16);
+            if (l >= 8388608) l -= 16777216;
+            const o2 = off + 3;
+            r = view.getUint8(o2) | (view.getUint8(o2 + 1) << 8) | (view.getUint8(o2 + 2) << 16);
+            if (r >= 8388608) r -= 16777216;
+          }
+          pendingL.push(l); pendingR.push(r);
+        }
+        while (pendingL.length >= FLAC_BLOCK) {
+          emitFrame(Int32Array.from(pendingL.splice(0, FLAC_BLOCK)), Int32Array.from(pendingR.splice(0, FLAC_BLOCK)));
+        }
+      },
+      finish() {
+        if (pendingL.length) emitFrame(Int32Array.from(pendingL), Int32Array.from(pendingR));
+        const info = new Uint8Array(4 + 4 + 34);
+        info.set([0x66, 0x4C, 0x61, 0x43], 0); // 'fLaC'
+        info[4] = 0x80; info[5] = 0; info[6] = 0; info[7] = 34; // last-block, type 0, length 34
+        const v = new DataView(info.buffer);
+        const minBlock = Math.min(FLAC_BLOCK, Math.max(1, totalFrames));
+        v.setUint16(8, minBlock, false);
+        v.setUint16(10, minBlock, false);
+        const minFs = frameParts.length ? minFrameSize : 0;
+        const maxFs = frameParts.length ? maxFrameSize : 0;
+        info[12] = (minFs >> 16) & 0xff; info[13] = (minFs >> 8) & 0xff; info[14] = minFs & 0xff;
+        info[15] = (maxFs >> 16) & 0xff; info[16] = (maxFs >> 8) & 0xff; info[17] = maxFs & 0xff;
+        // sampleRate(20) | channels-1(3) | bps-1(5) | totalSamples(36)
+        const sr = sampleRate;
+        const packed = (BigInt(sr) << 44n) | (1n << 41n) | (BigInt(bps - 1) << 36n) | BigInt(totalFrames >>> 0);
+        for (let i = 0; i < 8; i++) info[18 + i] = Number((packed >> BigInt(56 - i * 8)) & 0xffn);
+        info.set(md5.digest(), 26);
+        return [info, ...frameParts];
+      }
+    };
+  }
+
   async function encodeAudioChunked(params, token, onProgress, normalizeGain = 1) {
     const format = getExportFormat(params);
     const sampleRate = getExportSampleRate(params);
@@ -2843,10 +3211,14 @@
     const safetyState = initExportSafetyState(sampleRate, params);
     const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
     const shaper = bitDepth === '32f' ? null : createNoiseShaper(getExportNoiseShaping(params));
-    const header = format === 'aiff'
+    if (format === 'flac' && bitDepth === '32f') throw new Error('FLOAT_REQUIRES_WAV');
+    const flacEncoder = format === 'flac'
+      ? createFlacEncoder({ sampleRate, bitDepth: Number(bitDepth), totalFrames })
+      : null;
+    const header = flacEncoder ? null : (format === 'aiff'
       ? createAiffHeader(totalFrames, sampleRate, bitDepth)
-      : createWavHeader(totalFrames, sampleRate, bitDepth, !!loopPost);
-    const parts = [header];
+      : createWavHeader(totalFrames, sampleRate, bitDepth, !!loopPost));
+    const parts = flacEncoder ? [] : [header];
     const ditherRng = useDither ? new RNG(((params.master_seed >>> 0) ^ 0x9E3779B9) >>> 0) : null;
     let done = 0;
 
@@ -2871,12 +3243,14 @@
       }
       applyLoopHeadMix(left, right, done, loopPost);
       applyExportSafetyBlock(left, right, safetyState);
-      parts.push(encodeAudioChunk(left, right, bitDepth, format, normalizeGain, useDither, ditherRng, shaper));
+      const pcmBuf = encodeAudioChunk(left, right, bitDepth, flacEncoder ? 'wav' : format, normalizeGain, useDither, ditherRng, shaper);
+      if (flacEncoder) flacEncoder.pushPcm(pcmBuf); else parts.push(pcmBuf);
       done += frames;
       onProgress(done, totalFrames, 2, normalizeGain);
       await nextFrame();
     }
 
+    if (flacEncoder) return new Blob(flacEncoder.finish(), { type: 'audio/flac' });
     if (loopPost && format === 'wav') parts.push(createWavSmplChunk(totalFrames, sampleRate));
     return new Blob(parts, { type: format === 'aiff' ? 'audio/aiff' : 'audio/wav' });
   }
@@ -3515,7 +3889,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       if (!(k in DEFAULTS)) continue;
       if (k === 'A_type' || k === 'B_type') { if (typeIds.has(v)) out[k] = v; continue; }
       if (k === 'master_binauralMode') { if (v === 'binaural' || v === 'isochronic' || v === 'monaural') out[k] = v; continue; }
-      if (k === 'master_exportFormat') { if (v === 'wav' || v === 'aiff') out[k] = v; continue; }
+      if (k === 'master_exportFormat') { if (v === 'wav' || v === 'aiff' || v === 'flac') out[k] = v; continue; }
       if (k === 'master_previewQuality' || k === 'master_exportMode' || k === 'master_exportNoiseShaping') { if (typeof v === 'string') out[k] = v; continue; }
       if (typeof DEFAULTS[k] === 'boolean') { out[k] = !!v; continue; }
       if (typeof DEFAULTS[k] === 'number') { const n = Number(v); if (Number.isFinite(n)) out[k] = n; continue; }
@@ -3822,8 +4196,8 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     const totalEstimatedBytes = jobs.reduce((sum, job) => sum + estimateExportBytes(job.params), 0);
 
     if (exportState.running) return;
-    if (format === 'aiff' && exportBit === '32f') {
-      setStatus('AIFFはこの版では16-bit / 24-bit PCMのみ対応です。32-bit floatはWAVを選んでください。', 'err');
+    if ((format === 'aiff' || format === 'flac') && exportBit === '32f') {
+      setStatus('AIFF / FLACは16-bit / 24-bit PCMのみ対応です。32-bit floatはWAVを選んでください。', 'err');
       return;
     }
     if (internalRate > 384000) {
@@ -3875,7 +4249,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 
         if (token.cancelled) throw new Error('__EXPORT_CANCELLED__');
 
-        const ext = format === 'aiff' ? 'aiff' : 'wav';
+        const ext = format === 'aiff' ? 'aiff' : (format === 'flac' ? 'flac' : 'wav');
         triggerBlobDownload(blob, `noise_${job.suffix}_${exportRate}Hz_os${oversampleFactor}x_${exportBit}_${stamp}.${ext}`);
         await nextFrame();
       }
@@ -3884,7 +4258,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       if (err && err.message === '__EXPORT_CANCELLED__') {
         setStatus('保存を中止しました。', '');
       } else if (err && (err.message === 'AIFF_INT_ONLY' || err.message === 'FLOAT_REQUIRES_WAV')) {
-        setStatus('AIFFはこの版では16-bit / 24-bit PCMのみ対応です。32-bit floatはWAVを選んでください。', 'err');
+        setStatus('AIFF / FLACは16-bit / 24-bit PCMのみ対応です。32-bit floatはWAVを選んでください。', 'err');
       } else {
         console.error(err);
         setStatus('保存に失敗しました。書き出し設定を見直して再度試してください。', 'err');
