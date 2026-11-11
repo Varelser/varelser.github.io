@@ -1017,7 +1017,7 @@
     { id:'master_batchCount', type:'select', label:'Batch Seeds', options:[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['7','7'],['8','8']] },
     { id:'master_seedStep', type:'number', label:'Seed Step', min:1, max:1000000, step:1 },
     { id:'master_exportFormat', type:'select', label:'Format', options:[['wav','WAV'],['aiff','AIFF'],['flac','FLAC']] },
-    { id:'master_exportSampleRate', type:'select', label:'Export Rate', options:[['22050','22.05 kHz'],['44100','44.1 kHz'],['48000','48 kHz'],['88200','88.2 kHz'],['96000','96 kHz'],['192000','192 kHz']] },
+    { id:'master_exportSampleRate', type:'select', label:'Export Rate', options:[['22050','22.05 kHz'],['44100','44.1 kHz'],['48000','48 kHz'],['88200','88.2 kHz'],['96000','96 kHz'],['176400','176.4 kHz'],['192000','192 kHz'],['352800','352.8 kHz'],['384000','384 kHz']] },
     { id:'master_exportBitDepth', type:'select', label:'Bit Depth', options:[['16','16-bit PCM'],['24','24-bit PCM'],['32f','32-bit float WAV']] },
     { id:'master_exportDither', type:'checkbox', label:'Dither (PCM only)' },
     { id:'master_exportOversample', type:'select', label:'HQ Oversampling', options:[['1','Off / 1x'],['2','2x'],['4','4x']] },
@@ -1095,8 +1095,8 @@
     master_exportMode: '書き出し形式。Mixは全レイヤー混合、Stemsはレイヤーごとの個別ファイル、Mix + Stemsは両方。',
     master_batchCount: 'シードを変えたバリエーションを何ファイル作るか。Seed Stepずつずらして生成します。',
     master_seedStep: 'バッチ生成でシードをいくつずつ進めるか。',
-    master_exportFormat: '書き出しファイル形式。WAV / AIFF / FLAC(可逆圧縮)。ループ情報(smpl)はWAVのみ付きます。FLACは16/24bitのみ。',
-    master_exportSampleRate: '書き出しのサンプルレート。配布用は48kHz、軽さ優先なら22.05kHzなど。',
+    master_exportFormat: '書き出しファイル形式。WAV(非圧縮、32-bit floatまで) / AIFF(非圧縮) / FLAC(可逆圧縮)。ループ情報(smpl)はWAVのみ付きます。FLACは16/24bitのみ。',
+    master_exportSampleRate: '書き出しのサンプルレート。配布用は48kHz、軽さ優先なら22.05kHz、非圧縮の超高音質なら352.8kHz / 384kHz + WAV 32-bit floatが最大です。',
     master_exportBitDepth: '書き出しのビット深度。16bitが一般的、32fは編集用に余裕を持たせたい時。',
     master_exportDither: '16bitなどPCM書き出し時のディザ。量子化ノイズを目立たなくします。32fでは無効。',
     master_exportOversample: '書き出し時のオーバーサンプリング。高域の折り返しを減らし、歪み系の質が上がります(処理は重くなります)。',
@@ -4200,7 +4200,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       setStatus('AIFF / FLACは16-bit / 24-bit PCMのみ対応です。32-bit floatはWAVを選んでください。', 'err');
       return;
     }
-    if (internalRate > 384000) {
+    if (internalRate > 768000) {
       setStatus(`内部レンダー周波数が高すぎます: ${internalRate.toLocaleString()} Hz。Export RateかOversamplingを下げてください。`, 'err');
       return;
     }
