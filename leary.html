@@ -203,7 +203,7 @@
   .colors{display:flex;flex-direction:column;gap:8px}
   .color-item{
     display:grid;
-    grid-template-columns:minmax(0,1fr) 78px 32px;
+    grid-template-columns:minmax(0,1fr) 62px 62px 32px;
     gap:8px;
     align-items:center;
     padding:6px;
@@ -298,6 +298,10 @@
     border:1px solid rgba(255,255,255,.16);
   }
   .source.dragging{cursor:grabbing}
+  .source:focus-visible{
+    outline:2px solid rgba(255,255,255,.9);
+    outline-offset:3px;
+  }
   .switches{
     display:flex;
     gap:18px;
@@ -428,6 +432,7 @@
       <div class="row"><label>背景色</label><input id="bgColor" type="color" /></div>
       <div class="row"><label>色モード</label><select id="colorMode"><option value="sequence">順番</option><option value="linear">横位置グラデーション</option><option value="weighted">重みランダム</option></select></div>
       <div class="colors" id="colors"></div>
+      <div class="hint" style="margin-bottom:8px">各色の数値: 左＝出現の重み（weightedモード時の選ばれやすさ）／ 右＝太さ係数</div>
       <div class="inline">
         <button class="btn small" id="btnAddColor">色追加</button>
         <button class="btn small" id="btnRemoveColor">色削除</button>
@@ -503,9 +508,9 @@
     view: { x: 0, y: 0, zoom: 1 },
     config: {
       colors: [
-        { hex: '#ffffff', weight: 1 },
-        { hex: '#d0d0d0', weight: 1 },
-        { hex: '#8a8a8a', weight: 1 }
+        { hex: '#ffffff', weight: 1, width: 1 },
+        { hex: '#d0d0d0', weight: 1, width: 1 },
+        { hex: '#8a8a8a', weight: 1, width: 1 }
       ],
       colorMode: 'sequence',
       bgColor: '#000000',
@@ -539,14 +544,14 @@
   };
 
   const PRESETS = {
-    monoBlack: { bgColor: '#ffffff', bgTransparent: false, colors: [{hex:'#000000',weight:1},{hex:'#111111',weight:0.82},{hex:'#2b2b2b',weight:0.56}], lineCount: 950, lineWidthMin: 0.7, lineWidthMax: 3.0, turbulence: 10, swirlStrength: 1.1, batchLines: 300, flowCoverage: 3.8, generationWidth: 4.2, segmentResolution: 1.0, opacity: 0.92, renderShape: 'rect' },
-    monoWhite: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:1},{hex:'#e6e6e6',weight:0.78},{hex:'#8f8f8f',weight:0.36}], lineCount: 1000, lineWidthMin: 0.7, lineWidthMax: 3.4, turbulence: 14, swirlStrength: 1.2, batchLines: 300, flowCoverage: 3.8, generationWidth: 4.2, segmentResolution: 1.0, opacity: 0.94, renderShape: 'rect' },
-    denseInk: { bgColor: '#f7f7f7', bgTransparent: false, colors: [{hex:'#000000',weight:1},{hex:'#000000',weight:1},{hex:'#1a1a1a',weight:0.72}], lineCount: 2200, lineWidthMin: 0.5, lineWidthMax: 2.2, flowCoverage: 4.8, generationWidth: 5.5, segmentResolution: 0.8, turbulence: 8, swirlStrength: 1.0, batchLines: 180, opacity: 0.96, renderShape: 'rect' },
-    silverFog: { bgColor: '#ffffff', bgTransparent: false, colors: [{hex:'#ffffff',weight:0.08},{hex:'#d8d8d8',weight:0.7},{hex:'#909090',weight:0.58},{hex:'#1f1f1f',weight:0.18}], colorMode: 'weighted', lineCount: 1550, lineWidthMin: 0.35, lineWidthMax: 1.9, flowCoverage: 5.0, generationWidth: 5.0, segmentResolution: 0.72, turbulence: 5.8, turbulenceFreq: 0.0072, swirlRadius: 1320, swirlStrength: 0.98, curveTension: 0.68, opacity: 0.34, batchLines: 170, renderShape: 'circle' },
-    ghostField: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:0.16},{hex:'#d2d2d2',weight:0.62},{hex:'#787878',weight:0.44},{hex:'#1b1b1b',weight:0.14}], colorMode: 'weighted', lineCount: 1800, lineWidthMin: 0.3, lineWidthMax: 1.65, flowCoverage: 5.6, generationWidth: 6.0, segmentResolution: 0.68, turbulence: 5, turbulenceFreq: 0.0065, swirlRadius: 1500, swirlStrength: 0.92, curveTension: 0.8, opacity: 0.42, batchLines: 150, renderShape: 'circle' },
-    noirFlow: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:0.9},{hex:'#cfcfcf',weight:0.64},{hex:'#5f5f5f',weight:0.22}], colorMode: 'weighted', lineCount: 1280, lineWidthMin: 0.9, lineWidthMax: 4.2, flowCoverage: 4.1, generationWidth: 4.4, segmentResolution: 0.9, turbulence: 16, turbulenceFreq: 0.0105, swirlRadius: 980, swirlStrength: 1.22, curveTension: 0.52, opacity: 0.9, batchLines: 220, renderShape: 'rect' },
-    paperVeil: { bgColor: '#ffffff', bgTransparent: false, colors: [{hex:'#000000',weight:0.42},{hex:'#4c4c4c',weight:0.36},{hex:'#bdbdbd',weight:0.14}], colorMode: 'weighted', lineCount: 1200, lineWidthMin: 0.28, lineWidthMax: 1.2, flowCoverage: 5.9, generationWidth: 6.3, segmentResolution: 0.7, turbulence: 4.4, turbulenceFreq: 0.0062, swirlRadius: 1620, swirlStrength: 0.84, curveTension: 0.82, opacity: 0.22, batchLines: 160, renderShape: 'circle' },
-    midnightMass: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:1},{hex:'#f2f2f2',weight:0.85},{hex:'#8c8c8c',weight:0.3}], colorMode: 'weighted', lineCount: 2400, lineWidthMin: 0.5, lineWidthMax: 2.6, flowCoverage: 5.2, generationWidth: 5.7, segmentResolution: 0.76, turbulence: 9.5, turbulenceFreq: 0.0084, swirlRadius: 1220, swirlStrength: 1.04, curveTension: 0.63, opacity: 0.88, batchLines: 170, renderShape: 'rect' }
+    monoBlack: { bgColor: '#ffffff', bgTransparent: false, colors: [{hex:'#000000',weight:1,width:1},{hex:'#111111',weight:0.82,width:0.82},{hex:'#2b2b2b',weight:0.56,width:0.56}], lineCount: 950, lineWidthMin: 0.7, lineWidthMax: 3.0, turbulence: 10, swirlStrength: 1.1, batchLines: 300, flowCoverage: 3.8, generationWidth: 4.2, segmentResolution: 1.0, opacity: 0.92, renderShape: 'rect' },
+    monoWhite: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:1,width:1},{hex:'#e6e6e6',weight:0.78,width:0.78},{hex:'#8f8f8f',weight:0.36,width:0.36}], lineCount: 1000, lineWidthMin: 0.7, lineWidthMax: 3.4, turbulence: 14, swirlStrength: 1.2, batchLines: 300, flowCoverage: 3.8, generationWidth: 4.2, segmentResolution: 1.0, opacity: 0.94, renderShape: 'rect' },
+    denseInk: { bgColor: '#f7f7f7', bgTransparent: false, colors: [{hex:'#000000',weight:1,width:1},{hex:'#000000',weight:1,width:1},{hex:'#1a1a1a',weight:0.72,width:0.72}], lineCount: 2200, lineWidthMin: 0.5, lineWidthMax: 2.2, flowCoverage: 4.8, generationWidth: 5.5, segmentResolution: 0.8, turbulence: 8, swirlStrength: 1.0, batchLines: 180, opacity: 0.96, renderShape: 'rect' },
+    silverFog: { bgColor: '#ffffff', bgTransparent: false, colors: [{hex:'#ffffff',weight:0.08,width:0.08},{hex:'#d8d8d8',weight:0.7,width:0.7},{hex:'#909090',weight:0.58,width:0.58},{hex:'#1f1f1f',weight:0.18,width:0.18}], colorMode: 'weighted', lineCount: 1550, lineWidthMin: 0.35, lineWidthMax: 1.9, flowCoverage: 5.0, generationWidth: 5.0, segmentResolution: 0.72, turbulence: 5.8, turbulenceFreq: 0.0072, swirlRadius: 1320, swirlStrength: 0.98, curveTension: 0.68, opacity: 0.34, batchLines: 170, renderShape: 'circle' },
+    ghostField: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:0.16,width:0.16},{hex:'#d2d2d2',weight:0.62,width:0.62},{hex:'#787878',weight:0.44,width:0.44},{hex:'#1b1b1b',weight:0.14,width:0.14}], colorMode: 'weighted', lineCount: 1800, lineWidthMin: 0.3, lineWidthMax: 1.65, flowCoverage: 5.6, generationWidth: 6.0, segmentResolution: 0.68, turbulence: 5, turbulenceFreq: 0.0065, swirlRadius: 1500, swirlStrength: 0.92, curveTension: 0.8, opacity: 0.42, batchLines: 150, renderShape: 'circle' },
+    noirFlow: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:0.9,width:0.9},{hex:'#cfcfcf',weight:0.64,width:0.64},{hex:'#5f5f5f',weight:0.22,width:0.22}], colorMode: 'weighted', lineCount: 1280, lineWidthMin: 0.9, lineWidthMax: 4.2, flowCoverage: 4.1, generationWidth: 4.4, segmentResolution: 0.9, turbulence: 16, turbulenceFreq: 0.0105, swirlRadius: 980, swirlStrength: 1.22, curveTension: 0.52, opacity: 0.9, batchLines: 220, renderShape: 'rect' },
+    paperVeil: { bgColor: '#ffffff', bgTransparent: false, colors: [{hex:'#000000',weight:0.42,width:0.42},{hex:'#4c4c4c',weight:0.36,width:0.36},{hex:'#bdbdbd',weight:0.14,width:0.14}], colorMode: 'weighted', lineCount: 1200, lineWidthMin: 0.28, lineWidthMax: 1.2, flowCoverage: 5.9, generationWidth: 6.3, segmentResolution: 0.7, turbulence: 4.4, turbulenceFreq: 0.0062, swirlRadius: 1620, swirlStrength: 0.84, curveTension: 0.82, opacity: 0.22, batchLines: 160, renderShape: 'circle' },
+    midnightMass: { bgColor: '#000000', bgTransparent: false, colors: [{hex:'#ffffff',weight:1,width:1},{hex:'#f2f2f2',weight:0.85,width:0.85},{hex:'#8c8c8c',weight:0.3,width:0.3}], colorMode: 'weighted', lineCount: 2400, lineWidthMin: 0.5, lineWidthMax: 2.6, flowCoverage: 5.2, generationWidth: 5.7, segmentResolution: 0.76, turbulence: 9.5, turbulenceFreq: 0.0084, swirlRadius: 1220, swirlStrength: 1.04, curveTension: 0.63, opacity: 0.88, batchLines: 170, renderShape: 'rect' }
   };
 
   const $ = (id) => document.getElementById(id);
@@ -558,7 +563,18 @@
 
   function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
   function round(v, d=3){ const p = 10**d; return Math.round(v*p)/p; }
-  function seededRandomFactory(seed){ let s = seed; return () => { const x = Math.sin(s++) * 10000; return x - Math.floor(x); }; }
+  // mulberry32: 決定的で分布の偏りが少ない軽量PRNG。
+  // (以前の Math.sin ベースは連続値同士の相関が強く、線の配置に周期的な偏りが出うるため置き換え。
+  //  Seed と絵の対応はこの変更で変わるので、書き出しファイル名の版表記を v6 に上げた)
+  function seededRandomFactory(seed){
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
   function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
 
   // 入力欄の min/max を JS 側でも強制する (HTML 属性だけでは直接入力を防げない)。
@@ -614,6 +630,13 @@
     $('statusSeed').textContent = String(state.seed);
     const seedEl = $('seedInput');
     if(seedEl && document.activeElement !== seedEl) seedEl.value = String(state.seed);
+  }
+
+  // 線の太さ係数。出現の重み (weight) とは独立に持つ。
+  // width 未設定の旧データでは weight を流用し、従来の見た目を保つ。
+  function colorWidthFactor(c){
+    const w = Number(c && c.width != null ? c.width : c && c.weight);
+    return Number.isFinite(w) && w > 0 ? w : 1;
   }
 
   function chooseColor(i, normalizedPos){
@@ -768,7 +791,7 @@
         if(endY < renderYMin || startY > renderYMax) continue;
         pctx.strokeStyle = colorDef.hex;
         const baseW = previewCfg.lineWidthMin + widths[i] * (previewCfg.lineWidthMax - previewCfg.lineWidthMin);
-        pctx.lineWidth = Math.max(0.01, baseW * (Number(colorDef.weight) || 1));
+        pctx.lineWidth = Math.max(0.01, baseW * colorWidthFactor(colorDef));
         drawPolyline(pctx, linePoints(xs[i], startY, endY, previewCfg, swirls));
       }
       updateStatus('描画中', end / count);
@@ -850,10 +873,12 @@
   }
 
   function updateOverlay(){
+    const activeEl = document.activeElement;
+    const activeId = activeEl && activeEl.dataset && activeEl.dataset.id ? activeEl.dataset.id : null;
     overlay.innerHTML = '';
     $('statusSwirls').textContent = String(state.swirls.length);
     $('viewInfo').textContent = `zoom ${state.view.zoom.toFixed(2)} / x ${Math.round(state.view.x)} / y ${Math.round(state.view.y)}`;
-    state.swirls.forEach(swirl => {
+    state.swirls.forEach((swirl, idx) => {
       const p = worldToScreen(swirl.x, swirl.y);
       const el = document.createElement('div');
       el.className = 'source';
@@ -861,8 +886,14 @@
       el.style.top = p.y + 'px';
       el.style.pointerEvents = 'auto';
       el.dataset.id = String(swirl.id);
+      el.tabIndex = 0;
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-label', `ソース点${idx + 1}（矢印キーで移動、Shift同時押しで10px）`);
       el.addEventListener('pointerdown', onSwirlPointerDown);
+      el.addEventListener('keydown', onSwirlKeyDown);
       overlay.appendChild(el);
+      // 再描画で要素を作り直してもキーボードフォーカスを失わないようにする
+      if(activeId && activeId === String(swirl.id)) el.focus();
     });
   }
 
@@ -875,6 +906,24 @@
     e.currentTarget.classList.add('dragging');
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp, { once: true });
+  }
+
+  function onSwirlKeyDown(e){
+    const step = e.shiftKey ? 10 : 1;
+    let dx = 0, dy = 0;
+    if(e.key === 'ArrowLeft') dx = -step;
+    else if(e.key === 'ArrowRight') dx = step;
+    else if(e.key === 'ArrowUp') dy = -step;
+    else if(e.key === 'ArrowDown') dy = step;
+    else return;
+    e.preventDefault();
+    const s = state.swirls.find(v => v.id === Number(e.currentTarget.dataset.id));
+    if(!s) return;
+    s.x += dx;
+    s.y += dy;
+    state.geometryDirty = true;
+    scheduleComposite();
+    scheduleAfterInteraction();
   }
 
   function onCanvasPointerDown(e){
@@ -964,7 +1013,8 @@
       row.className = 'color-item';
       row.innerHTML = `
         <input type="color" value="${c.hex}" data-role="hex" data-idx="${idx}">
-        <input type="number" min="0.01" max="10" step="0.01" value="${c.weight}" data-role="weight" data-idx="${idx}">
+        <input type="number" min="0.01" max="10" step="0.01" value="${c.weight}" data-role="weight" data-idx="${idx}" title="出現の重み" aria-label="出現の重み">
+        <input type="number" min="0.01" max="10" step="0.01" value="${c.width != null ? c.width : c.weight}" data-role="width" data-idx="${idx}" title="太さ係数" aria-label="太さ係数">
         <button class="btn small danger" data-role="delete" data-idx="${idx}">×</button>`;
       wrap.appendChild(row);
     });
@@ -979,6 +1029,7 @@
     const idx = Number(e.target.dataset.idx);
     if(role === 'hex') state.config.colors[idx].hex = e.target.value;
     if(role === 'weight') state.config.colors[idx].weight = clamp(Number(e.target.value) || 1, 0.01, 10);
+    if(role === 'width') state.config.colors[idx].width = clamp(Number(e.target.value) || 1, 0.01, 10);
     if(role === 'delete'){
       if(state.config.colors.length <= 1) return;
       state.config.colors.splice(idx, 1);
@@ -1019,7 +1070,7 @@
 
     $('exportAutoProtect').addEventListener('change', () => { state.exportAutoProtect = $('exportAutoProtect').checked; updateExportEstimate(); });
     $('bgTransparent').addEventListener('change', () => { state.config.bgTransparent = $('bgTransparent').checked; scheduleGeometryRender(); });
-    $('btnAddColor').addEventListener('click', () => { state.config.colors.push({ hex: '#ffffff', weight: 1 }); renderColorInputs(); scheduleGeometryRender(); });
+    $('btnAddColor').addEventListener('click', () => { state.config.colors.push({ hex: '#ffffff', weight: 1, width: 1 }); renderColorInputs(); scheduleGeometryRender(); });
     $('btnRemoveColor').addEventListener('click', () => { if(state.config.colors.length > 1) state.config.colors.pop(); renderColorInputs(); scheduleGeometryRender(); });
     $('btnAddSwirl').addEventListener('click', () => { state.swirls.push(...generateInitialSwirls(state.size.width, state.size.height, 1)); scheduleGeometryRender(); });
     $('btnRemoveSwirl').addEventListener('click', () => { if(state.swirls.length > 1) state.swirls.pop(); scheduleGeometryRender(); });
@@ -1111,7 +1162,12 @@
     if(Array.isArray(cfg.colors)){
       const colors = cfg.colors
         .filter(c => c && typeof c.hex === 'string' && /^#[0-9a-fA-F]{6}$/.test(c.hex))
-        .map(c => ({ hex: c.hex, weight: clamp(Number(c.weight) || 1, 0.01, 10) }));
+        .map(c => {
+          const weight = clamp(Number(c.weight) || 1, 0.01, 10);
+          // 旧形式 (width なし) では weight を太さ係数にも流用し、従来の見た目を再現する
+          const width = Number.isFinite(Number(c.width)) && Number(c.width) > 0 ? clamp(Number(c.width), 0.01, 10) : weight;
+          return { hex: c.hex, weight, width };
+        });
       if(colors.length) state.config.colors = colors;
     }
   }
@@ -1267,7 +1323,7 @@
         if(endY < renderYMin || startY > renderYMax) continue;
         context.strokeStyle = colorDef.hex;
         const baseW = cfg.lineWidthMin + widths[i] * (cfg.lineWidthMax - cfg.lineWidthMin);
-        context.lineWidth = Math.max(0.01, baseW * (Number(colorDef.weight) || 1));
+        context.lineWidth = Math.max(0.01, baseW * colorWidthFactor(colorDef));
         drawPolyline(context, linePoints(xs[i], startY, endY, cfg, swirls));
       }
       updateStatus(progressLabel, end / Math.max(1, count));
@@ -1341,7 +1397,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = preserveView ? `Leary_fixed_v5_seed${state.seed}_view_${targetWidth}x${targetHeight}.png` : `Leary_fixed_v5_seed${state.seed}_${targetWidth}x${targetHeight}.png`;
+      a.download = preserveView ? `Leary_fixed_v6_seed${state.seed}_view_${targetWidth}x${targetHeight}.png` : `Leary_fixed_v6_seed${state.seed}_${targetWidth}x${targetHeight}.png`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       updateStatus('待機', 1);
@@ -1409,7 +1465,7 @@
         const endY = yCenter + flowHalfLen;
         if(endY < renderYMin || startY > renderYMax) continue;
         const baseW = cfg.lineWidthMin + widths[i] * (cfg.lineWidthMax - cfg.lineWidthMin);
-        const strokeW = Math.max(0.01, baseW * (Number(colorDef.weight) || 1));
+        const strokeW = Math.max(0.01, baseW * colorWidthFactor(colorDef));
         const points = linePoints(xs[i], startY, endY, cfg, state.swirls);
         if(points.length < 2) continue;
         const d = points.map((p, idx) => `${idx===0 ? 'M' : 'L'} ${round(p[0],2)} ${round(p[1],2)}`).join(' ');
@@ -1424,7 +1480,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Leary_fixed_v5_seed${state.seed}_${width}x${height}.svg`;
+    a.download = `Leary_fixed_v6_seed${state.seed}_${width}x${height}.svg`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     updateStatus('待機', 1);
