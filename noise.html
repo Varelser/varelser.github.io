@@ -325,7 +325,7 @@
       <div class="body">
         <div class="help">
           色付きノイズの一部（Grey / Green / Black など）は用途により定義が揺れるため、本作では実用向けの近似実装です。<br>
-          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにノイズ種を38種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
+          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーごとに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を38種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
         </div>
       </div>
     </div>
@@ -494,6 +494,7 @@
     A_density: 0.5,
     A_motion: 0.2,
     A_grain: 0.2,
+    A_stereo: 0,
     B_enabled: false,
     B_type: 'vinyl',
     B_gain: 0.45,
@@ -501,7 +502,8 @@
     B_tone: 0.2,
     B_density: 0.45,
     B_motion: 0.35,
-    B_grain: 0.4
+    B_grain: 0.4,
+    B_stereo: 0
   };
 
   const PRESETS = {
@@ -659,9 +661,9 @@
     },
     'Sleep: Rain Window': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'rain', A_gain: 0.8, A_tone: 0.05, A_density: 0.55, A_motion: 0.3, A_grain: 0.3,
+      A_enabled: true, A_type: 'rain', A_gain: 0.8, A_tone: 0.05, A_density: 0.55, A_motion: 0.3, A_grain: 0.3, A_stereo: 0.75,
       B_enabled: true, B_type: 'pink', B_gain: 0.15, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.06,
-      master_gain: 0.5, master_width: 1.15, master_drive: 0.03, master_highcut: 9000, master_chorus: 0.25, master_space: 0.3
+      master_gain: 0.5, master_width: 1.15, master_drive: 0.03, master_highcut: 9000, master_chorusMix: 0.25, master_space: 0.3
     },
     'Sleep: Fan Room': {
       ...DEFAULTS,
@@ -671,9 +673,9 @@
     },
     'Sleep: Ocean Night': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'ocean', A_gain: 0.9, A_tone: -0.3, A_density: 0.55, A_motion: 0.4, A_grain: 0.12,
+      A_enabled: true, A_type: 'ocean', A_gain: 0.9, A_tone: -0.3, A_density: 0.55, A_motion: 0.4, A_grain: 0.12, A_stereo: 0.7,
       B_enabled: true, B_type: 'brown', B_gain: 0.15, B_tone: -0.6, B_density: 0.3, B_motion: 0.08, B_grain: 0.05,
-      master_gain: 0.5, master_width: 1.1, master_drive: 0.03, master_highcut: 6000, master_chorus: 0.25, master_space: 0.3
+      master_gain: 0.5, master_width: 1.1, master_drive: 0.03, master_highcut: 6000, master_chorusMix: 0.25, master_space: 0.3
     },
     'Binaural: Theta Dream': {
       ...DEFAULTS,
@@ -698,39 +700,39 @@
     },
     'Campfire Night': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'fire', A_gain: 0.9, A_tone: 0.0, A_density: 0.6, A_motion: 0.3, A_grain: 0.5,
+      A_enabled: true, A_type: 'fire', A_gain: 0.9, A_tone: 0.0, A_density: 0.6, A_motion: 0.3, A_grain: 0.5, A_stereo: 0.7,
       B_enabled: true, B_type: 'brown', B_gain: 0.2, B_tone: -0.5, B_density: 0.3, B_motion: 0.1, B_grain: 0.08,
-      master_gain: 0.55, master_width: 1.2, master_drive: 0.05, master_highcut: 10000, master_chorus: 0.3, master_unison: 0.25, master_space: 0.3
+      master_gain: 0.55, master_width: 1.2, master_drive: 0.05, master_highcut: 10000, master_chorusMix: 0.3, master_unison: 0.25, master_space: 0.3
     },
     'Mountain Stream': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'stream', A_gain: 0.85, A_tone: 0.15, A_density: 0.6, A_motion: 0.35, A_grain: 0.3,
+      A_enabled: true, A_type: 'stream', A_gain: 0.85, A_tone: 0.15, A_density: 0.6, A_motion: 0.35, A_grain: 0.3, A_stereo: 0.85,
       B_enabled: true, B_type: 'pink', B_gain: 0.12, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.06,
-      master_gain: 0.52, master_width: 1.25, master_drive: 0.03, master_highcut: 12000, master_chorus: 0.35, master_unison: 0.3, master_space: 0.35
+      master_gain: 0.52, master_width: 1.25, master_drive: 0.03, master_highcut: 12000, master_chorusMix: 0.35, master_unison: 0.3, master_space: 0.35
     },
     'Waterfall Mist': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'waterfall', A_gain: 0.9, A_tone: -0.1, A_density: 0.6, A_motion: 0.2, A_grain: 0.15,
+      A_enabled: true, A_type: 'waterfall', A_gain: 0.9, A_tone: -0.1, A_density: 0.6, A_motion: 0.2, A_grain: 0.15, A_stereo: 0.8,
       B_enabled: false,
-      master_gain: 0.54, master_width: 1.15, master_drive: 0.04, master_highcut: 11000, master_chorus: 0.3, master_unison: 0.3, master_space: 0.3
+      master_gain: 0.54, master_width: 1.15, master_drive: 0.04, master_highcut: 11000, master_chorusMix: 0.3, master_unison: 0.3, master_space: 0.3
     },
     'Thunderstorm Far': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'thunder', A_gain: 0.95, A_tone: -0.3, A_density: 0.55, A_motion: 0.4, A_grain: 0.3,
+      A_enabled: true, A_type: 'thunder', A_gain: 0.95, A_tone: -0.3, A_density: 0.55, A_motion: 0.4, A_grain: 0.3, A_stereo: 0.7,
       B_enabled: true, B_type: 'rain', B_gain: 0.5, B_tone: 0.1, B_density: 0.6, B_motion: 0.4, B_grain: 0.35,
-      master_gain: 0.55, master_width: 1.3, master_drive: 0.06, master_highcut: 9000, master_chorus: 0.3, master_unison: 0.3, master_space: 0.4
+      master_gain: 0.55, master_width: 1.3, master_drive: 0.06, master_highcut: 9000, master_chorusMix: 0.3, master_unison: 0.3, master_space: 0.4
     },
     'Night Train': {
       ...DEFAULTS,
       A_enabled: true, A_type: 'train', A_gain: 0.9, A_tone: -0.2, A_density: 0.55, A_motion: 0.25, A_grain: 0.3,
       B_enabled: true, B_type: 'brown', B_gain: 0.18, B_tone: -0.6, B_density: 0.3, B_motion: 0.08, B_grain: 0.05,
-      master_gain: 0.54, master_width: 1.0, master_drive: 0.05, master_highcut: 8000, master_chorus: 0.25, master_unison: 0.25, master_space: 0.3
+      master_gain: 0.54, master_width: 1.0, master_drive: 0.05, master_highcut: 8000, master_chorusMix: 0.25, master_unison: 0.25, master_space: 0.3
     },
     'Forest Wind': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'forest', A_gain: 0.85, A_tone: 0.2, A_density: 0.55, A_motion: 0.6, A_grain: 0.4,
+      A_enabled: true, A_type: 'forest', A_gain: 0.85, A_tone: 0.2, A_density: 0.55, A_motion: 0.6, A_grain: 0.4, A_stereo: 0.85,
       B_enabled: true, B_type: 'wind', B_gain: 0.3, B_tone: -0.2, B_density: 0.5, B_motion: 0.5, B_grain: 0.2,
-      master_gain: 0.5, master_width: 1.3, master_drive: 0.03, master_highcut: 12000, master_chorus: 0.35, master_unison: 0.3, master_space: 0.35
+      master_gain: 0.5, master_width: 1.3, master_drive: 0.03, master_highcut: 12000, master_chorusMix: 0.35, master_unison: 0.3, master_space: 0.35
     },
     'Ref: Pure White': {
       ...DEFAULTS,
@@ -752,21 +754,21 @@
     },
     'Granular Cloud': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'grains', A_gain: 0.95, A_tone: 0.2, A_density: 0.65, A_motion: 0.3, A_grain: 0.5,
+      A_enabled: true, A_type: 'grains', A_gain: 0.95, A_tone: 0.2, A_density: 0.65, A_motion: 0.3, A_grain: 0.5, A_stereo: 0.8,
       B_enabled: true, B_type: 'pink', B_gain: 0.15, B_tone: -0.2, B_density: 0.3, B_motion: 0.1, B_grain: 0.08,
-      master_gain: 0.52, master_width: 1.4, master_drive: 0.06, master_space: 0.45, master_chorus: 0.35, master_unison: 0.35
+      master_gain: 0.52, master_width: 1.4, master_drive: 0.06, master_space: 0.45, master_chorusMix: 0.35, master_unison: 0.35
     },
     'Resonant Band Sweep': {
       ...DEFAULTS,
       A_enabled: true, A_type: 'band', A_gain: 0.95, A_tone: 0, A_density: 0.6, A_motion: 0.55, A_grain: 0.2,
       B_enabled: true, B_type: 'brown', B_gain: 0.15, B_tone: -0.5, B_density: 0.3, B_motion: 0.1, B_grain: 0.05,
-      master_gain: 0.52, master_width: 1.2, master_drive: 0.08, master_resonatorMix: 0.25, master_resonatorHz: 480, master_chorus: 0.3, master_space: 0.35
+      master_gain: 0.52, master_width: 1.2, master_drive: 0.08, master_resonatorMix: 0.25, master_resonatorHz: 480, master_chorusMix: 0.3, master_space: 0.35
     },
     'Underwater Drone': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'underwater', A_gain: 0.95, A_tone: -0.3, A_density: 0.55, A_motion: 0.3, A_grain: 0.3,
+      A_enabled: true, A_type: 'underwater', A_gain: 0.95, A_tone: -0.3, A_density: 0.55, A_motion: 0.3, A_grain: 0.3, A_stereo: 0.7,
       B_enabled: true, B_type: 'brown', B_gain: 0.2, B_tone: -0.6, B_density: 0.3, B_motion: 0.1, B_grain: 0.05,
-      master_gain: 0.54, master_width: 1.1, master_drive: 0.06, master_highcut: 3000, master_subBody: 0.3, master_chorus: 0.4, master_unison: 0.3, master_space: 0.4
+      master_gain: 0.54, master_width: 1.1, master_drive: 0.06, master_highcut: 3000, master_subBody: 0.3, master_chorusMix: 0.4, master_unison: 0.3, master_space: 0.4
     },
     'Cabin Pressure': {
       ...DEFAULTS,
@@ -776,15 +778,27 @@
     },
     'City Night Traffic': {
       ...DEFAULTS,
-      A_enabled: true, A_type: 'city', A_gain: 0.9, A_tone: -0.25, A_density: 0.55, A_motion: 0.35, A_grain: 0.15,
+      A_enabled: true, A_type: 'city', A_gain: 0.9, A_tone: -0.25, A_density: 0.55, A_motion: 0.35, A_grain: 0.15, A_stereo: 0.6,
       B_enabled: true, B_type: 'pink', B_gain: 0.1, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.05,
-      master_gain: 0.52, master_width: 1.15, master_drive: 0.04, master_highcut: 7000, master_chorus: 0.3, master_space: 0.3
+      master_gain: 0.52, master_width: 1.15, master_drive: 0.04, master_highcut: 7000, master_chorusMix: 0.3, master_space: 0.3
     },
     'Shower Room': {
       ...DEFAULTS,
       A_enabled: true, A_type: 'shower', A_gain: 0.9, A_tone: 0.1, A_density: 0.6, A_motion: 0.2, A_grain: 0.35,
       B_enabled: false,
       master_gain: 0.52, master_width: 1.1, master_drive: 0.03, master_highcut: 14000
+    },
+    'True Stereo Pink': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'pink', A_gain: 0.9, A_tone: -0.1, A_density: 0.5, A_motion: 0.1, A_grain: 0.05, A_stereo: 1,
+      B_enabled: false,
+      master_gain: 0.52, master_width: 1.0, master_drive: 0.02, master_chorusMix: 0, master_unison: 0, master_space: 0
+    },
+    'True Stereo Rain': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'rain', A_gain: 0.88, A_tone: 0.1, A_density: 0.65, A_motion: 0.35, A_grain: 0.35, A_stereo: 1,
+      B_enabled: true, B_type: 'brown', B_gain: 0.15, B_tone: -0.55, B_density: 0.3, B_motion: 0.1, B_grain: 0.06, B_stereo: 0.5,
+      master_gain: 0.54, master_width: 1.05, master_drive: 0.03, master_highcut: 12000, master_chorusMix: 0.08, master_space: 0.12
     }
   };
 
@@ -844,7 +858,8 @@
     { id:'tone', type:'range', label:'Tone', min:-1, max:1, step:0.01 },
     { id:'density', type:'range', label:'Density', min:0, max:1.5, step:0.01 },
     { id:'motion', type:'range', label:'Motion', min:0, max:1.5, step:0.01 },
-    { id:'grain', type:'range', label:'Grain', min:0, max:1.5, step:0.01 }
+    { id:'grain', type:'range', label:'Grain', min:0, max:1.5, step:0.01 },
+    { id:'stereo', type:'range', label:'Stereo（独立L/R）', min:0, max:1, step:0.01 }
   ];
 
   function buildFields(targetId, schema, prefix = '') {
@@ -1810,6 +1825,7 @@
       p[`${prefix}_density`] = clamp(Number(p[`${prefix}_density`]) || 0, 0, 1.5);
       p[`${prefix}_motion`] = clamp(Number(p[`${prefix}_motion`]) || 0, 0, 1.5);
       p[`${prefix}_grain`] = clamp(Number(p[`${prefix}_grain`]) || 0, 0, 1.5);
+      p[`${prefix}_stereo`] = clamp(Number(p[`${prefix}_stereo`]) || 0, 0, 1);
     });
     return p;
   }
@@ -1826,7 +1842,8 @@
       tone: p.A_tone,
       density: p.A_density,
       motion: p.A_motion,
-      grain: p.A_grain
+      grain: p.A_grain,
+      stereo: p.A_stereo
     };
     const pB = {
       enabled: !!p.B_enabled,
@@ -1836,7 +1853,8 @@
       tone: p.B_tone,
       density: p.B_density,
       motion: p.B_motion,
-      grain: p.B_grain
+      grain: p.B_grain,
+      stereo: p.B_stereo
     };
 
     return {
@@ -1844,7 +1862,9 @@
       sampleRate: p.master_sampleRate,
       frame: 0,
       sA: initLayerRuntime('A', pA, p.master_sampleRate, p.master_seed >>> 0, p.master_humHz),
+      sAR: initLayerRuntime('A', pA, p.master_sampleRate, (p.master_seed >>> 0) + 20125, p.master_humHz),
       sB: initLayerRuntime('B', pB, p.master_sampleRate, p.master_seed >>> 0, p.master_humHz),
+      sBR: initLayerRuntime('B', pB, p.master_sampleRate, (p.master_seed >>> 0) + 40503, p.master_humHz),
       masterState: initMasterRuntime(p.master_sampleRate, p)
     };
   }
@@ -1972,16 +1992,30 @@
       if (sA.p.enabled) {
         const raw = nextNoiseRaw(sA, sA.p, t);
         const y = shapeLayerSample(sA, raw, sA.p);
+        let yR = y;
+        if (sA.p.stereo > 0 && renderer.sAR) {
+          const w = sA.p.stereo;
+          const shapedR = shapeLayerSample(renderer.sAR, nextNoiseRaw(renderer.sAR, sA.p, t), sA.p);
+          const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
+          yR = (y * (1 - w) + shapedR * w) * norm;
+        }
         const pan = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22, -1, 1);
         l += y * Math.sqrt((1 - pan) * 0.5);
-        r += y * Math.sqrt((1 + pan) * 0.5);
+        r += yR * Math.sqrt((1 + pan) * 0.5);
       }
       if (sB.p.enabled) {
         const raw = nextNoiseRaw(sB, sB.p, t);
         const y = shapeLayerSample(sB, raw, sB.p);
+        let yR = y;
+        if (sB.p.stereo > 0 && renderer.sBR) {
+          const w = sB.p.stereo;
+          const shapedR = shapeLayerSample(renderer.sBR, nextNoiseRaw(renderer.sBR, sB.p, t), sB.p);
+          const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
+          yR = (y * (1 - w) + shapedR * w) * norm;
+        }
         const pan = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22, -1, 1);
         l += y * Math.sqrt((1 - pan) * 0.5);
-        r += y * Math.sqrt((1 + pan) * 0.5);
+        r += yR * Math.sqrt((1 + pan) * 0.5);
       }
 
       applyMasterFx(masterState, l, r, t);
@@ -2513,6 +2547,7 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sA.p.density = p.A_density;
     this.renderer.sA.p.motion = p.A_motion;
     this.renderer.sA.p.grain = p.A_grain;
+    this.renderer.sA.p.stereo = p.A_stereo;
 
     this.renderer.sB.p.enabled = p.B_enabled;
     this.renderer.sB.p.type = p.B_type;
@@ -2522,6 +2557,7 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sB.p.density = p.B_density;
     this.renderer.sB.p.motion = p.B_motion;
     this.renderer.sB.p.grain = p.B_grain;
+    this.renderer.sB.p.stereo = p.B_stereo;
 
     this.renderer.masterState.p = p;
   }
@@ -2605,7 +2641,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     playing: false,
     params: null,
     sA: null,
+    sAR: null,
     sB: null,
+    sBR: null,
     masterState: null,
     frame: 0,
     rebuildRaf: 0,
@@ -2700,7 +2738,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         const renderer = createStereoRenderer(p, this.ctx ? this.ctx.sampleRate : p.master_sampleRate);
         renderer.frame = (force || HARD_REBUILD_KEYS.has(changedId)) ? 0 : (this.frame || 0);
         this.sA = renderer.sA;
+        this.sAR = renderer.sAR;
         this.sB = renderer.sB;
+        this.sBR = renderer.sBR;
         this.masterState = renderer.masterState;
         return;
       }
@@ -2713,6 +2753,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sA.p.density = p.A_density;
       this.sA.p.motion = p.A_motion;
       this.sA.p.grain = p.A_grain;
+      this.sA.p.stereo = p.A_stereo;
 
       this.sB.p.enabled = p.B_enabled;
       this.sB.p.type = p.B_type;
@@ -2722,6 +2763,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sB.p.density = p.B_density;
       this.sB.p.motion = p.B_motion;
       this.sB.p.grain = p.B_grain;
+      this.sB.p.stereo = p.B_stereo;
 
       this.masterState.p = p;
     },
@@ -2816,34 +2858,18 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
 
       const p = normalizeParams(this.params);
-      const sA = this.sA;
-      const sB = this.sB;
-      const masterState = this.masterState;
-
-      for (let i = 0; i < outL.length; i++, this.frame++) {
-        const t = this.frame / sr;
-        let l = 0;
-        let r = 0;
-
-        if (sA.p.enabled) {
-          const raw = nextNoiseRaw(sA, sA.p, t);
-          const y = shapeLayerSample(sA, raw, sA.p);
-          const pan = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22, -1, 1);
-          l += y * Math.sqrt((1 - pan) * 0.5);
-          r += y * Math.sqrt((1 + pan) * 0.5);
-        }
-        if (sB.p.enabled) {
-          const raw = nextNoiseRaw(sB, sB.p, t);
-          const y = shapeLayerSample(sB, raw, sB.p);
-          const pan = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22, -1, 1);
-          l += y * Math.sqrt((1 - pan) * 0.5);
-          r += y * Math.sqrt((1 + pan) * 0.5);
-        }
-
-        applyMasterFx(masterState, l, r, t);
-        outL[i] = masterState.outL;
-        outR[i] = masterState.outR;
-      }
+      const pseudo = {
+        params: p,
+        sampleRate: sr,
+        frame: this.frame,
+        sA: this.sA,
+        sAR: this.sAR,
+        sB: this.sB,
+        sBR: this.sBR,
+        masterState: this.masterState
+      };
+      renderBlock(pseudo, outL.length, outL, outR);
+      this.frame = pseudo.frame;
     }
   };
 
@@ -2956,6 +2982,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       p.B_motion = 0.12;
       p.B_grain = 0.1;
     }
+    if (['rain', 'ocean', 'wind', 'stream', 'waterfall', 'forest', 'fire', 'thunder', 'underwater'].includes(main)) p.A_stereo = 0.7;
     p.master_seed = aiHashSeed(text);
     p.master_gain = 0.52;
     if (sleep) {
