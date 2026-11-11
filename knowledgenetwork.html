@@ -331,6 +331,49 @@
     .tl-chapter { color: var(--muted); font-size: var(--fs-small); margin-left: auto; flex: none; }
     #empty-msg { padding: 16px 12px; color: var(--muted); border-bottom: 1px solid var(--line); }
     @media (max-width: 980px) { .toolbar { padding: 10px; } .intro { padding: 10px; } .tag-row { padding: 8px 10px; } .content { padding: 10px; } }
+    /* ---- 関連図 (graph view) ---- */
+    #graph { margin: 12px; border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.74); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 12px; }
+    .graph-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; position: sticky; top: 62px; z-index: 20; background: rgba(255,255,255,0.85); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); border-radius: 12px; padding: 6px 8px; }
+    .graph-bar > button, .graph-detail > button { height: 34px; padding: 0 12px; border: 1px solid rgba(0,0,0,0.12); background: rgba(255,255,255,0.65); color: var(--text); font: inherit; cursor: pointer; border-radius: 12px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(0,0,0,0.04); }
+    .graph-bar > button:hover, .graph-detail > button:hover { background: #ffffff; border-color: rgba(0,0,0,0.25); }
+    .graph-bar > button.is-active { color: #ffffff; background: rgba(0,0,0,0.88); border-color: rgba(0,0,0,0.88); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+    .graph-seg { display: inline-flex; border: 1px solid rgba(0,0,0,0.12); background: rgba(255,255,255,0.65); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(0,0,0,0.04); }
+    .graph-bar .graph-seg button { appearance: none; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--muted); height: 34px; min-width: 38px; padding: 0 12px; font: inherit; cursor: pointer; border-radius: 0; box-shadow: none; }
+    .graph-bar .graph-seg button:last-child { border-right: 0; }
+    .graph-bar .graph-seg button:hover { background: rgba(255,255,255,0.9); color: var(--text); }
+    .graph-bar .graph-seg button.is-active { color: #ffffff; background: rgba(0,0,0,0.88); }
+    .graph-center { color: var(--muted); font-size: var(--fs-small); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .graph-center input { height: 34px; width: 210px; padding: 0 10px; border: 1px solid rgba(0,0,0,0.12); background: rgba(255,255,255,0.55); color: var(--text); font: inherit; border-radius: 12px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(0,0,0,0.04); }
+    .graph-center input:focus { outline: none; border-color: rgba(0,0,0,0.35); background: #ffffff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 0 0 3px rgba(0,0,0,0.08); }
+    .graph-center input:disabled, .graph-check input:disabled { opacity: 0.45; }
+    .graph-check { color: var(--muted); font-size: var(--fs-small); display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; cursor: pointer; }
+    #graph-count { color: var(--muted); font-size: var(--fs-small); margin-left: auto; white-space: nowrap; }
+    .graph-main { display: grid; grid-template-columns: minmax(0, 1fr) 252px; gap: 10px; align-items: stretch; }
+    #graph-canvas { width: 100%; height: calc(100vh - 220px); min-height: 480px; display: block; border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; background: rgba(255,255,255,0.55); touch-action: none; cursor: grab; }
+    #graph-canvas:active { cursor: grabbing; }
+    .graph-detail { border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; padding: 12px; overflow: auto; max-height: calc(100vh - 220px); font-size: var(--fs-small); line-height: 1.7; }
+    .graph-detail h3 { margin: 0 0 4px; font-size: var(--fs-body); line-height: 1.4; font-weight: 650; }
+    .graph-detail h3 a { color: var(--text); border-bottom: 1px solid rgba(0,0,0,0.35); }
+    .graph-detail h3 a:hover { border-bottom-color: var(--text); }
+    .graph-detail .gd-meta { color: var(--muted); }
+    .graph-detail .gd-tags { margin: 8px 0; }
+    .graph-detail .gd-tags span { display: inline-block; border: 1px solid rgba(0,0,0,0.14); border-radius: 999px; padding: 1px 8px; margin: 0 4px 4px 0; background: rgba(255,255,255,0.7); color: var(--text); }
+    .graph-detail .gd-links { margin: 8px 0 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+    .graph-detail .gd-note { color: var(--muted); }
+    .graph-detail-empty { color: var(--muted); margin: 0; }
+    .graph-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; color: var(--muted); font-size: var(--fs-small); align-items: center; }
+    .graph-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+    .graph-legend .edge-sample { display: inline-block; width: 22px; height: 0; border-top: 2px solid rgba(0,0,0,0.16); vertical-align: middle; margin-right: 5px; }
+    .graph-legend .edge-sample.mention { border-top: 1px solid rgba(0,0,0,0.45); }
+    .graph-legend .edge-sample.spoke { border-top: 1px solid rgba(0,0,0,0.22); }
+    @media (max-width: 980px) {
+      #graph { margin: 10px; padding: 10px; }
+      .graph-main { grid-template-columns: 1fr; }
+      #graph-canvas { height: 420px; min-height: 320px; }
+      .graph-detail { max-height: none; }
+      .graph-center input { width: 160px; }
+    }
+
   </style>
 </head>
 <body>
@@ -353,6 +396,7 @@
       <button id="random-btn" type="button">ランダム</button>
       <button id="clear-btn" type="button">クリア</button>
       <button id="timeline-btn" type="button" aria-pressed="false">年表</button>
+      <button id="graph-btn" type="button" aria-pressed="false">関連図</button>
       <span id="result-count" aria-live="polite"></span>
     </div>
     <div class="tag-row" id="tag-row" role="group" aria-label="タグで絞り込み"></div>
@@ -360,11 +404,42 @@
     <div class="intro">
       <p><b>このページについて</b> — 変性意識に関わる人物・研究・理論の索引。9章、694件。人物名のリンクはすべて <a href="https://note.com/varelser" target="_blank" rel="noopener noreferrer">note.com</a> です。</p>
       <p><b>凡例</b> — 実線の下線は note記事あり、点線の下線は note内検索へ（まだ記事がない項目）。説明文中の『作品名』なども note内検索へのリンクです。「関連：」は同じテーマで読むべき項目への近道です。</p>
-      <p><b>使い方</b> — 上の検索欄で人物・理論・作品名を絞り込めます。章やタグで絞り込むことも、年表で生没年順に並べることも、ランダムで1件開くこともできます。更新：2026-11-11（検索・絞り込み・関連リンク・生没年・横断タグ・年表を追加、新規50件を追加、重複と空見出しを修正）。UIを白背景のリキッドグラスに刷新、note直リンクを125件に拡充、記述文中の人名・作品名へのリンクを精密化。</p>
+      <p><b>使い方</b> — 上の検索欄で人物・理論・作品名を絞り込めます。章やタグで絞り込むことも、年表で生没年順に並べることも、ランダムで1件開くことも、関連図でつながりを眺めることもできます。更新：2026-11-11（検索・絞り込み・関連リンク・生没年・横断タグ・年表を追加、新規50件を追加、重複と空見出しを修正）。UIを白背景のリキッドグラスに刷新、note直リンクを125件に拡充、記述文中の人名・作品名へのリンクを精密化、関連図を追加。</p>
     </div>
 
 
     <div id="timeline" hidden></div>
+    <div id="graph" hidden>
+      <div class="graph-bar" role="toolbar" aria-label="関連図の操作">
+        <div class="graph-seg" role="group" aria-label="表示範囲">
+          <button type="button" id="graph-view-all" class="is-active" aria-pressed="true">全体図</button>
+          <button type="button" id="graph-view-local" aria-pressed="false">周辺</button>
+        </div>
+        <label class="graph-center">中心 <input id="graph-center" list="graph-names" placeholder="人物・理論名" autocomplete="off" aria-label="中心ノード"></label>
+        <datalist id="graph-names"></datalist>
+        <label class="graph-check"><input type="checkbox" id="graph-depth2"> 2段表示</label>
+        <div class="graph-seg" role="group" aria-label="辺の種類">
+          <button type="button" id="graph-edge-both" class="is-active" aria-pressed="true">両方</button>
+          <button type="button" id="graph-edge-tag" aria-pressed="false">タグ</button>
+          <button type="button" id="graph-edge-mention" aria-pressed="false">言及</button>
+        </div>
+        <div class="graph-seg" role="group" aria-label="次元">
+          <button type="button" id="graph-dim-2d" class="is-active" aria-pressed="true">2D</button>
+          <button type="button" id="graph-dim-3d" aria-pressed="false">3D</button>
+        </div>
+        <button type="button" id="graph-play">一時停止</button>
+        <button type="button" id="graph-reset">リセット</button>
+        <label class="graph-check"><input type="checkbox" id="graph-rotate"> 自動回転</label>
+        <span id="graph-count" aria-live="polite"></span>
+      </div>
+      <div class="graph-main">
+        <canvas id="graph-canvas" width="900" height="560" aria-label="関連図"></canvas>
+        <aside class="graph-detail" id="graph-detail" aria-live="polite">
+          <p class="graph-detail-empty">ノードをクリックすると詳細が表示されます。ドラッグで移動、ホイールでズームできます。3Dではドラッグで回転します。</p>
+        </aside>
+      </div>
+      <div class="graph-legend" id="graph-legend"></div>
+    </div>
     <div class="layout">
       <nav class="toc" aria-label="目次">
 
@@ -2049,6 +2124,1087 @@
     buildTimeline();
     initCounts();
     initSearch();
+
+    /* ---- 関連図 (graph view) ---- */
+    // データは初回表示時にDOMから構築する（ハードコードなし）。
+    // ノード: .layout 内の .person-link 全件。辺: タグ3つ以上共有 / 説明文での
+    // 他項目への言及 / 同行ペア（1つのliを共有）。2D/3Dフォースレイアウトは自作。
+    const GRAPH_CHAPTERS = [
+      { id: 'i-作家-文学-思想', label: 'Ⅰ. 作家・文学・思想', color: '#5b7bc0' },
+      { id: 'ii-視覚芸術-画家', label: 'Ⅱ. 視覚芸術・画家', color: '#b65c7e' },
+      { id: 'iii-映画-映像-パフォーマンス', label: 'Ⅲ. 映画・映像・パフォーマンス', color: '#4e9a8f' },
+      { id: 'iv-音楽-サウンド', label: 'Ⅳ. 音楽・サウンド', color: '#a8893c' },
+      { id: 'v-心理学-神経科学-思想家', label: 'Ⅴ. 心理学・神経科学・思想家', color: '#6d9e57' },
+      { id: 'vi-シャーマニズム-薬物-宗教体験', label: 'Ⅵ. シャーマニズム・薬物・宗教体験', color: '#8a6fc0' },
+      { id: 'vii-瞑想-東洋思想-日本思想-宗教思想', label: 'Ⅶ. 瞑想・東洋思想・日本思想・宗教思想', color: '#c06a3d' },
+      { id: 'viii-テクノロジー-メディア-意識のインターフェイス', label: 'Ⅷ. テクノロジー・メディア・意識のインターフェイス', color: '#3f7f96' },
+      { id: 'ix-学術論文-研究-学説', label: 'Ⅸ. 学術論文・研究・学説', color: '#7a6a5f' },
+    ];
+    const CHAPTER_COLOR = {};
+    GRAPH_CHAPTERS.forEach((c) => { CHAPTER_COLOR[c.id] = c.color; });
+    const chapterLabel = (id) => {
+      const c = GRAPH_CHAPTERS.find((x) => x.id === id);
+      return c ? c.label : (id || '');
+    };
+
+    const G = {
+      built: false, nodes: [], edges: [], edgeByKey: new Map(), adj: [],
+      stats: { nodes: 0, tagEdges: 0, mentionEdges: 0, colocRows: 0, colocPairs: 0, total: 0 },
+      open: false, mode: 'all', center: -1, defaultCenter: -1, depth2: false,
+      edgeFilter: 'both', dim: '2d',
+      running: false, raf: null, autoRotate: false,
+      rotX: -0.32, rotY: 0.55, scale: 1, ox: 0, oy: 0,
+      selected: -1, hover: -1,
+      visible: null, visibleNodes: [], visEdges: [],
+      localHop1: [], localParent: new Map(), degStrong: [],
+      tickCount: 0, calmTicks: 0, maxSpeed: 0,
+    };
+
+    const nextFrame = (typeof window.requestAnimationFrame === 'function')
+      ? window.requestAnimationFrame.bind(window) : (cb) => setTimeout(cb, 16);
+    const cancelFrame = (typeof window.cancelAnimationFrame === 'function')
+      ? window.cancelAnimationFrame.bind(window) : (id) => clearTimeout(id);
+
+    const edgeKey = (a, b) => (a < b ? a + '-' + b : b + '-' + a);
+
+    function chapterAnchor(id) {
+      const idx = GRAPH_CHAPTERS.findIndex((c) => c.id === id);
+      const a = (idx < 0 ? 0 : idx) / GRAPH_CHAPTERS.length * Math.PI * 2;
+      return { x: Math.cos(a) * 300, y: Math.sin(a) * 300, z: 0 };
+    }
+
+    function buildGraph() {
+      if (G.built) return;
+      const anchors = Array.from(document.querySelectorAll('.layout .person-link'));
+      const nodes = anchors.map((a, i) => {
+        const sec = a.closest('.section-block');
+        const name = a.dataset.person || a.textContent.trim();
+        const anchor = chapterAnchor(sec ? sec.id : '');
+        return {
+          i, name,
+          core: name.split('（')[0].split('(')[0].trim(),
+          chapter: sec ? sec.id : '',
+          tags: (a.dataset.tags || '').split(/\s+/).filter(Boolean),
+          birth: a.dataset.birth ? parseInt(a.dataset.birth, 10) : null,
+          death: a.dataset.death ? parseInt(a.dataset.death, 10) : null,
+          href: a.href, article: a.classList.contains('has-article'),
+          el: a,
+          ax: anchor.x, ay: anchor.y, az: anchor.z,
+          x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, fx: 0, fy: 0, fz: 0,
+          fixed: false, sx: 0, sy: 0, sr: 3, sdepth: 0, sf: 1,
+        };
+      });
+      const byCore = new Map();
+      nodes.forEach((n) => {
+        if (!byCore.has(n.core)) byCore.set(n.core, []);
+        byCore.get(n.core).push(n.i);
+      });
+      const cores = Array.from(byCore.keys())
+        .filter((c) => [...c].length >= 2)
+        .sort((a, b) => b.length - a.length);
+
+      // 共有タグ数（全ペア）。タグ辺は3つ以上共有のものだけを辺として保持する。
+      const tagIndex = new Map();
+      nodes.forEach((n) => n.tags.forEach((t) => {
+        if (!tagIndex.has(t)) tagIndex.set(t, []);
+        tagIndex.get(t).push(n.i);
+      }));
+      const shared = new Map();
+      for (const list of tagIndex.values()) {
+        for (let x = 0; x < list.length; x++) {
+          for (let y = x + 1; y < list.length; y++) {
+            const k = edgeKey(list[x], list[y]);
+            shared.set(k, (shared.get(k) || 0) + 1);
+          }
+        }
+      }
+
+      G.degStrong = nodes.map(() => 0);
+      const edges = [];
+      const edgeByKey = new Map();
+      const addEdge = (a, b, patch) => {
+        const k = edgeKey(a, b);
+        let e = edgeByKey.get(k);
+        if (!e) {
+          e = { a: Math.min(a, b), b: Math.max(a, b), tag: 0, mention: false, coloc: false };
+          edgeByKey.set(k, e);
+          edges.push(e);
+          G.degStrong[a]++;
+          G.degStrong[b]++;
+        }
+        Object.assign(e, patch);
+        return e;
+      };
+      let tagEdges = 0;
+      for (const [k, w] of shared) {
+        if (w < 3) continue;
+        const [a, b] = k.split('-').map(Number);
+        addEdge(a, b, { tag: w });
+        tagEdges++;
+      }
+
+      // 言及辺：説明文（liのテキストから項目名・関連・タグ表示を除いたもの）に
+      // 他項目のコア名が含まれるペア。長い名前を優先し、短い名前が長い名前の
+      // 部分文字列としてだけ現れる場合は長い方だけを採用する。
+      const descText = (li) => {
+        const clone = li.cloneNode(true);
+        clone.querySelectorAll('.person-link, .related, .tags').forEach((el) => el.remove());
+        return clone.textContent;
+      };
+      let mentionEdges = 0;
+      const mentionSet = new Set();
+      nodes.forEach((n) => {
+        const li = n.el.closest('li');
+        if (!li) return;
+        const desc = descText(li);
+        const hits = new Set();
+        for (const c of cores) {
+          if (!desc.includes(c)) continue;
+          for (const idx of byCore.get(c)) if (idx !== n.i) hits.add(idx);
+        }
+        const hitArr = Array.from(hits);
+        const drop = new Set();
+        for (const h of hitArr) {
+          for (const o of hitArr) {
+            if (h !== o && nodes[o].core.length > nodes[h].core.length
+              && nodes[o].core.includes(nodes[h].core)) drop.add(h);
+          }
+        }
+        for (const h of hitArr) {
+          if (drop.has(h)) continue;
+          const k = edgeKey(n.i, h);
+          if (mentionSet.has(k)) continue;
+          mentionSet.add(k);
+          addEdge(n.i, h, { mention: true });
+          mentionEdges++;
+        }
+      });
+
+      // 同行ペア：1つのliを2名以上が共有する行の全ペア（言及辺として扱う）。
+      let colocRows = 0, colocPairs = 0;
+      document.querySelectorAll('.person-list li').forEach((li) => {
+        const as = Array.from(li.querySelectorAll('.person-link'));
+        if (as.length < 2) return;
+        colocRows++;
+        const idxs = as.map((a) => anchors.indexOf(a)).filter((v) => v >= 0);
+        for (let x = 0; x < idxs.length; x++) {
+          for (let y = x + 1; y < idxs.length; y++) {
+            addEdge(idxs[x], idxs[y], { coloc: true });
+            colocPairs++;
+          }
+        }
+      });
+
+      // 隣接リスト（周辺表示用。タグは1つ以上の共有で隣接とみなす）
+      const adj = nodes.map(() => new Map());
+      const adjAdd = (a, b, patch) => {
+        let e = adj[a].get(b);
+        if (!e) { e = { to: b, tagW: 0, mention: false, coloc: false }; adj[a].set(b, e); }
+        Object.assign(e, patch);
+        let r = adj[b].get(a);
+        if (!r) { r = { to: a, tagW: 0, mention: false, coloc: false }; adj[b].set(a, r); }
+        Object.assign(r, patch);
+      };
+      for (const [k, w] of shared) {
+        const [a, b] = k.split('-').map(Number);
+        adjAdd(a, b, { tagW: w });
+      }
+      for (const k of mentionSet) {
+        const [a, b] = k.split('-').map(Number);
+        adjAdd(a, b, { mention: true });
+      }
+      document.querySelectorAll('.person-list li').forEach((li) => {
+        const as = Array.from(li.querySelectorAll('.person-link'));
+        if (as.length < 2) return;
+        const idxs = as.map((a) => anchors.indexOf(a)).filter((v) => v >= 0);
+        for (let x = 0; x < idxs.length; x++) {
+          for (let y = x + 1; y < idxs.length; y++) adjAdd(idxs[x], idxs[y], { coloc: true });
+        }
+      });
+
+      G.nodes = nodes;
+      G.edges = edges;
+      G.edgeByKey = edgeByKey;
+      G.adj = adj.map((m) => Array.from(m.values()));
+      G.stats = { nodes: nodes.length, tagEdges, mentionEdges, colocRows, colocPairs, total: edges.length };
+      // 既定の中心：最もつながりの多いノード
+      let best = -1, bestDeg = -1;
+      G.adj.forEach((list, i) => { if (list.length > bestDeg) { bestDeg = list.length; best = i; } });
+      G.defaultCenter = best;
+      G.center = best;
+      // 初期配置：章のアンカー周辺に散らす
+      nodes.forEach((n) => placeAtAnchor(n));
+      G.built = true;
+      // 中心ノード選択用の datalist
+      const dl = document.getElementById('graph-names');
+      if (dl) {
+        const frag = document.createDocumentFragment();
+        nodes.forEach((n) => {
+          const o = document.createElement('option');
+          o.value = n.name;
+          frag.appendChild(o);
+        });
+        dl.appendChild(frag);
+      }
+    }
+
+    function placeAtAnchor(n) {
+      const ang = Math.random() * Math.PI * 2;
+      const r = Math.random() * 80;
+      n.x = n.ax + Math.cos(ang) * r;
+      n.y = n.ay + Math.sin(ang) * r;
+      n.z = (Math.random() - 0.5) * (G.dim === '3d' ? 200 : 0);
+      n.vx = n.vy = n.vz = 0;
+    }
+
+    // 周辺表示の初期配置：中心を原点に固定し、隣接ノードを放射状に置く。
+    function placeLocalRadial() {
+      if (G.mode !== 'local' || G.center < 0) return;
+      const c = G.nodes[G.center];
+      c.x = 0; c.y = 0; c.z = 0; c.vx = 0; c.vy = 0; c.vz = 0; c.fixed = true;
+      const hop1 = G.localHop1 || [];
+      const n1 = hop1.length;
+      hop1.forEach((idx, k) => {
+        const n = G.nodes[idx];
+        const ang = (k / Math.max(1, n1)) * Math.PI * 2 + (Math.random() - 0.5) * 0.25;
+        const r = 185 + (k % 3) * 45 + Math.random() * 20;
+        n.x = Math.cos(ang) * r;
+        n.y = Math.sin(ang) * r;
+        n.z = G.dim === '3d' ? (Math.random() - 0.5) * 160 : 0;
+        n.vx = 0; n.vy = 0; n.vz = 0; n.fixed = false;
+      });
+      for (const [idx, from] of G.localParent) {
+        const n = G.nodes[idx], p = G.nodes[from];
+        const ang = Math.atan2(p.y, p.x) + (Math.random() - 0.5) * 0.5;
+        const r = Math.hypot(p.x, p.y) + 135 + Math.random() * 60;
+        n.x = Math.cos(ang) * r;
+        n.y = Math.sin(ang) * r;
+        n.z = G.dim === '3d' ? (Math.random() - 0.5) * 160 : 0;
+        n.vx = 0; n.vy = 0; n.vz = 0; n.fixed = false;
+      }
+    }
+
+    // 初期表示で大枠ができた状態にするための事前ステップ
+    function warmup(n) {
+      for (let i = 0; i < n; i++) stepSim();
+      G.tickCount = 0;
+      G.calmTicks = 0;
+    }
+
+    function edgeShown(e, mode) {
+      if (G.edgeFilter === 'tag') return e.tag > 0;
+      if (G.edgeFilter === 'mention') return e.mention || e.coloc;
+      return true;
+    }
+
+    function computeVisible() {
+      if (G.mode === 'all') {
+        G.visible = new Set(G.nodes.map((n) => n.i));
+        G.visEdges = G.edges.filter((e) => edgeShown(e, 'all'));
+      } else {
+        const c = G.center;
+        const adj = (c >= 0 && G.adj[c]) ? G.adj[c] : [];
+        const byRel = (a, b) => {
+          const am = (a.mention || a.coloc) ? 1 : 0, bm = (b.mention || b.coloc) ? 1 : 0;
+          if (bm !== am) return bm - am;
+          return b.tagW - a.tagW;
+        };
+        const sorted = [...adj].sort(byRel);
+        // 1段：言及・同行を優先、次に共有タグ数順で最大40件
+        const keep = sorted.slice(0, 40).map((x) => x.to);
+        const vis = new Set([c, ...keep]);
+        G.localHop1 = keep;
+        G.localParent = new Map();
+        if (G.depth2) {
+          const hop2 = [];
+          for (const nIdx of keep) {
+            for (const e of G.adj[nIdx]) {
+              if (!vis.has(e.to)) hop2.push({ e, from: nIdx });
+            }
+          }
+          hop2.sort((x, y) => byRel(x.e, y.e));
+          for (const { e, from } of hop2) {
+            if (vis.size >= 100) break;
+            vis.add(e.to);
+            G.localParent.set(e.to, from);
+          }
+        }
+        G.visible = vis;
+        // 表示する辺（描画するものだけを数える）:
+        //  (a) スポーク — 中心→1段隣接、1段→2段（導入した親から）
+        //  (b) 可視ノード間の強い辺（タグ3つ以上共有／言及／同行）
+        // タグ1〜2つの共有だけのペアは辺を描かない（組み合わせ数を見せない）。
+        const seen = new Set();
+        const visEdges = [];
+        const pushEdge = (e) => {
+          const k = edgeKey(e.a, e.b);
+          if (seen.has(k)) return;
+          seen.add(k);
+          if (edgeShown(e, 'local')) visEdges.push(e);
+        };
+        const relOf = (from, to) => {
+          const list = G.adj[from] || [];
+          for (const x of list) if (x.to === to) return x;
+          return { to, tagW: 0, mention: false, coloc: false };
+        };
+        const spoke = (from, to) => {
+          const r = relOf(from, to);
+          pushEdge({ a: Math.min(from, to), b: Math.max(from, to), tag: r.tagW, mention: !!r.mention, coloc: !!r.coloc, spoke: true });
+        };
+        for (const nIdx of keep) spoke(c, nIdx);
+        for (const [node, from] of G.localParent) spoke(from, node);
+        for (const i of vis) {
+          for (const a of G.adj[i]) {
+            if (!vis.has(a.to)) continue;
+            const e = G.edgeByKey.get(edgeKey(i, a.to));
+            if (e) pushEdge(e);
+          }
+        }
+        G.visEdges = visEdges;
+      }
+      G.visibleNodes = Array.from(G.visible).map((i) => G.nodes[i]);
+      updateCount();
+    }
+
+    function updateCount() {
+      const el = document.getElementById('graph-count');
+      if (!el) return;
+      if (G.mode === 'all') {
+        el.textContent = '全体図：' + G.visibleNodes.length + '件・' + G.visEdges.length + '本';
+        el.title = '本数は描く辺の数（タグ3つ以上共通／言及／同行）';
+      } else {
+        const name = G.center >= 0 ? G.nodes[G.center].name : '';
+        el.textContent = '周辺：' + name + ' — ' + G.visibleNodes.length + '件・' + G.visEdges.length + '本';
+        el.title = '本数は描く辺の数（中心とのスポーク＋隣接間の強い辺）';
+      }
+    }
+
+    /* ---- フォースシミュレーション ---- */
+    function stepSim() {
+      const ns = G.visibleNodes;
+      const dim3 = G.dim === '3d';
+      // 周辺表示はノード数が少なく密集しやすいので、反発を強め・バネを長めに。
+      // 全体図も中心の密集を緩和するため反発を少し強める。
+      const local = G.mode === 'local';
+      const CUTOFF = local ? 220 : 150, CELL = local ? 220 : 150;
+      const REPEL = local ? 8000 : 4500;
+      const REST_STRONG = local ? 95 : 55, REST_LIGHT = local ? 150 : 85;
+      const K_STRONG = local ? 0.05 : 0.045, K_LIGHT = local ? 0.02 : 0.016;
+      const ANCHOR = local ? 0 : 0.0035, CENTER_PULL = local ? 0.0006 : 0.0003;
+      const grid = new Map();
+      for (const n of ns) {
+        const cx = Math.floor(n.x / CELL), cy = Math.floor(n.y / CELL);
+        const cz = dim3 ? Math.floor(n.z / CELL) : 0;
+        const k = cx + ',' + cy + ',' + cz;
+        let arr = grid.get(k);
+        if (!arr) { arr = []; grid.set(k, arr); }
+        arr.push(n);
+      }
+      for (const n of ns) { n.fx = 0; n.fy = 0; n.fz = 0; }
+      for (const n of ns) {
+        const cx = Math.floor(n.x / CELL), cy = Math.floor(n.y / CELL);
+        const cz = dim3 ? Math.floor(n.z / CELL) : 0;
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dz = dim3 ? -1 : 0; dz <= (dim3 ? 1 : 0); dz++) {
+              const arr = grid.get((cx + dx) + ',' + (cy + dy) + ',' + (cz + dz));
+              if (!arr) continue;
+              for (const m of arr) {
+                if (m.i <= n.i) continue;
+                const ddx = n.x - m.x, ddy = n.y - m.y, ddz = dim3 ? n.z - m.z : 0;
+                const d2 = ddx * ddx + ddy * ddy + ddz * ddz;
+                if (d2 > CUTOFF * CUTOFF || d2 < 0.01) continue;
+                const d = Math.sqrt(d2);
+                let f = REPEL / d2;
+                if (f > 60) f = 60;
+                const ux = ddx / d, uy = ddy / d, uz = dim3 ? ddz / d : 0;
+                n.fx += ux * f; n.fy += uy * f; n.fz += uz * f;
+                m.fx -= ux * f; m.fy -= uy * f; m.fz -= uz * f;
+              }
+            }
+          }
+        }
+      }
+      for (const e of G.visEdges) {
+        const a = G.nodes[e.a], b = G.nodes[e.b];
+        const dx = b.x - a.x, dy = b.y - a.y, dz = dim3 ? b.z - a.z : 0;
+        const d = Math.sqrt(dx * dx + dy * dy + dz * dz) || 0.001;
+        const strong = e.mention || e.coloc;
+        const rest = strong ? REST_STRONG : REST_LIGHT;
+        const k = strong ? K_STRONG : K_LIGHT;
+        const f = (d - rest) * k;
+        const ux = dx / d, uy = dy / d, uz = dim3 ? dz / d : 0;
+        a.fx += ux * f; a.fy += uy * f; a.fz += uz * f;
+        b.fx -= ux * f; b.fy -= uy * f; b.fz -= uz * f;
+      }
+      let maxV = 0;
+      for (const n of ns) {
+        if (n.fixed) { n.vx = 0; n.vy = 0; n.vz = 0; continue; }
+        // 章のアンカーへの引力（孤立ノードも章ごとに散らばる）＋ごく弱い中心引力
+        // 周辺表示ではアンカー引力を切る（放射状の配置と干渉するため）
+        n.fx += (n.ax - n.x) * ANCHOR - n.x * CENTER_PULL;
+        n.fy += (n.ay - n.y) * ANCHOR - n.y * CENTER_PULL;
+        n.fz += (n.az - n.z) * ANCHOR - n.z * CENTER_PULL;
+        n.vx = (n.vx + n.fx) * 0.86;
+        n.vy = (n.vy + n.fy) * 0.86;
+        n.vz = dim3 ? (n.vz + n.fz) * 0.86 : 0;
+        const sp = Math.sqrt(n.vx * n.vx + n.vy * n.vy + n.vz * n.vz);
+        if (sp > 14) { n.vx *= 14 / sp; n.vy *= 14 / sp; n.vz *= 14 / sp; }
+        n.x += n.vx; n.y += n.vy;
+        if (dim3) n.z += n.vz;
+        if (!isFinite(n.x) || !isFinite(n.y) || !isFinite(n.z)) {
+          placeAtAnchor(n);
+        }
+        if (sp > maxV) maxV = sp;
+      }
+      G.maxSpeed = maxV;
+      G.tickCount++;
+      if (maxV < 0.06) G.calmTicks++; else G.calmTicks = 0;
+    }
+
+    function reheat() {
+      G.tickCount = 0;
+      G.calmTicks = 0;
+      for (const n of G.visibleNodes) {
+        n.vx += (Math.random() - 0.5) * 2;
+        n.vy += (Math.random() - 0.5) * 2;
+        if (G.dim === '3d') n.vz += (Math.random() - 0.5) * 2;
+      }
+      runSim();
+    }
+
+    function frameLoop() {
+      if (!G.open) { G.running = false; G.raf = null; return; }
+      if (G.running) {
+        for (let s = 0; s < 3; s++) stepSim();
+        if (G.calmTicks >= 12 || G.tickCount > 1500) {
+          G.running = false;
+          updatePlayBtn();
+        }
+      }
+      if (G.dim === '3d' && G.autoRotate) G.rotY += 0.004;
+      draw();
+      if (G.running || (G.dim === '3d' && G.autoRotate)) {
+        G.raf = nextFrame(frameLoop);
+      } else {
+        G.raf = null;
+      }
+    }
+
+    function runSim() {
+      if (!G.open) return;
+      if (!G.running) {
+        G.running = true;
+        G.tickCount = 0;
+        G.calmTicks = 0;
+        updatePlayBtn();
+      }
+      if (G.raf == null) G.raf = nextFrame(frameLoop);
+    }
+
+    function stopSim() {
+      G.running = false;
+      if (G.raf != null) { cancelFrame(G.raf); G.raf = null; }
+      updatePlayBtn();
+    }
+
+    function updatePlayBtn() {
+      const b = document.getElementById('graph-play');
+      if (b) b.textContent = G.running ? '一時停止' : '再生';
+    }
+
+    /* ---- 描画 ---- */
+    let canvas = null, ctx = null;
+    function sizeCanvas() {
+      if (!canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth || 900, h = canvas.clientHeight || 560;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function fitView() {
+      const ns = G.visibleNodes;
+      if (!ns.length || !canvas) return;
+      let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+      for (const n of ns) {
+        if (n.x < minX) minX = n.x;
+        if (n.x > maxX) maxX = n.x;
+        if (n.y < minY) minY = n.y;
+        if (n.y > maxY) maxY = n.y;
+      }
+      const w = canvas.clientWidth || 900, h = canvas.clientHeight || 560;
+      const bw = Math.max(60, maxX - minX), bh = Math.max(60, maxY - minY);
+      const s = Math.min(w / (bw + 90), h / (bh + 90));
+      G.scale = Math.max(0.15, Math.min(4, s));
+      G.ox = -(minX + maxX) / 2 * G.scale;
+      G.oy = -(minY + maxY) / 2 * G.scale;
+    }
+
+    function project(n) {
+      const w = canvas ? (canvas.clientWidth || 900) : 900;
+      const h = canvas ? (canvas.clientHeight || 560) : 560;
+      const cx = w / 2, cy = h / 2;
+      if (G.dim !== '3d') {
+        return { x: cx + n.x * G.scale + G.ox, y: cy + n.y * G.scale + G.oy, f: 1, z: 0 };
+      }
+      const sinX = Math.sin(G.rotX), cosX = Math.cos(G.rotX);
+      const sinY = Math.sin(G.rotY), cosY = Math.cos(G.rotY);
+      const y1 = n.y * cosX - n.z * sinX, z1 = n.y * sinX + n.z * cosX;
+      const x2 = n.x * cosY + z1 * sinY, z2 = -n.x * sinY + z1 * cosY, y2 = y1;
+      let f = 1 / (1 + z2 * 0.0011);
+      if (f < 0.35) f = 0.35;
+      if (f > 2.2) f = 2.2;
+      return { x: cx + x2 * f * G.scale + G.ox, y: cy + y2 * f * G.scale + G.oy, f, z: z2 };
+    }
+
+    function draw() {
+      if (!ctx || !canvas) return;
+      const w = canvas.clientWidth || 900, h = canvas.clientHeight || 560;
+      ctx.clearRect(0, 0, w, h);
+      const dim3 = G.dim === '3d';
+      // 辺
+      for (const e of G.visEdges) {
+        const a = G.nodes[e.a], b = G.nodes[e.b];
+        const pa = project(a), pb = project(b);
+        a.sx = pa.x; a.sy = pa.y; a.sf = pa.f; a.sdepth = pa.z;
+        b.sx = pb.x; b.sy = pb.y; b.sf = pb.f; b.sdepth = pb.z;
+        if (e.mention || e.coloc) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+          ctx.lineWidth = 1;
+        } else if (e.spoke) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+          ctx.lineWidth = 1;
+        } else {
+          ctx.strokeStyle = 'rgba(0,0,0,0.14)';
+          ctx.lineWidth = 1;
+        }
+        ctx.beginPath();
+        ctx.moveTo(pa.x, pa.y);
+        ctx.lineTo(pb.x, pb.y);
+        ctx.stroke();
+      }
+      // ノード（3Dでは奥から描く）
+      const order = dim3
+        ? [...G.visibleNodes].sort((p, q) => q.sdepth - p.sdepth)
+        : G.visibleNodes;
+      for (const n of order) {
+        const p = project(n);
+        n.sx = p.x; n.sy = p.y; n.sf = p.f; n.sdepth = p.z;
+        const r = Math.max(1.2, Math.min(6, 3.5 * p.f));
+        n.sr = r;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = CHAPTER_COLOR[n.chapter] || '#888888';
+        ctx.globalAlpha = dim3 ? Math.max(0.45, Math.min(1, p.f)) : 1;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        if (n.i === G.selected || n.i === G.hover || (G.mode === 'local' && n.i === G.center)) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r + 3, 0, Math.PI * 2);
+          ctx.strokeStyle = n.i === G.selected ? '#111111' : 'rgba(0,0,0,0.45)';
+          ctx.lineWidth = n.i === G.selected ? 2 : 1.4;
+          ctx.stroke();
+        }
+      }
+      // ラベル：重なりを避けるため、描画済みのラベル矩形と重なるものは出さない。
+      // 全体図では選択・ホバー・中心のみ。周辺表示では中心＋ホバー／選択＋
+      // 言及辺の相手を優先し、それ以外のノードにはラベルを出さない。
+      ctx.textBaseline = 'middle';
+      const drawn = [];
+      const label = (n) => {
+        const fs = G.mode === 'local' ? 11 : 12;
+        ctx.font = fs + 'px sans-serif';
+        const x = n.sx + n.sr + 4, y = n.sy + 2;
+        const w = n.name.length * fs;
+        const box = { x0: x, y0: y - fs * 0.7, x1: x + w, y1: y + fs * 0.7 };
+        for (const b of drawn) {
+          if (box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0) return;
+        }
+        drawn.push(box);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctx.strokeText(n.name, x, y);
+        ctx.fillStyle = '#111111';
+        ctx.fillText(n.name, x, y);
+      };
+      if (G.mode === 'local') {
+        const labelSet = new Set();
+        const addMentionPartners = (idx) => {
+          if (idx < 0) return;
+          for (const a of G.adj[idx] || []) {
+            if ((a.mention || a.coloc) && G.visible.has(a.to)) labelSet.add(a.to);
+          }
+        };
+        if (G.center >= 0) labelSet.add(G.center);
+        if (G.hover >= 0) labelSet.add(G.hover);
+        if (G.selected >= 0) labelSet.add(G.selected);
+        addMentionPartners(G.center);
+        addMentionPartners(G.selected);
+        // 中心を先に描いて優先する
+        const order = [G.center, G.selected, G.hover, ...labelSet]
+          .filter((v, i, arr) => v >= 0 && arr.indexOf(v) === i);
+        for (const i of order) if (G.visible.has(i)) label(G.nodes[i]);
+      } else {
+        for (const i of [G.selected, G.hover]) {
+          if (i >= 0 && G.visible.has(i)) label(G.nodes[i]);
+        }
+      }
+    }
+
+    function requestDraw() {
+      if (!G.open) return;
+      if (!G.running && G.raf == null) draw();
+    }
+
+    /* ---- 選択・詳細 ---- */
+    function renderDetail(idx) {
+      const d = document.getElementById('graph-detail');
+      if (!d) return;
+      d.innerHTML = '';
+      if (idx < 0) {
+        const p = document.createElement('p');
+        p.className = 'graph-detail-empty';
+        p.textContent = 'ノードをクリックすると詳細が表示されます。ドラッグで移動、ホイールでズームできます。3Dではドラッグで回転します。';
+        d.appendChild(p);
+        return;
+      }
+      const n = G.nodes[idx];
+      const h = document.createElement('h3');
+      const a = document.createElement('a');
+      a.href = n.href;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = n.name;
+      h.appendChild(a);
+      d.appendChild(h);
+      const meta = document.createElement('div');
+      meta.className = 'gd-meta';
+      meta.textContent = chapterLabel(n.chapter)
+        + '　' + (n.birth != null ? fmtSpan(n.birth, n.death) : '生没年なし');
+      d.appendChild(meta);
+      if (n.tags.length) {
+        const tags = document.createElement('div');
+        tags.className = 'gd-tags';
+        n.tags.forEach((t) => {
+          const s = document.createElement('span');
+          s.textContent = (typeof TAGS !== 'undefined' && TAGS[t]) ? TAGS[t] : t;
+          tags.appendChild(s);
+        });
+        d.appendChild(tags);
+      }
+      const adj = G.adj[idx] || [];
+      // 「つながり」は描画される辺の次数（強い辺：タグ3つ以上／言及／同行）。
+      // タグ1つ以上共有の件数は別行で表示する。
+      const deg = G.degStrong[idx] || 0;
+      const mentions = G.edges.filter((e) => (e.a === idx || e.b === idx) && (e.mention || e.coloc)).length;
+      const tagShared = adj.filter((e) => e.tagW >= 1).length;
+      const info = document.createElement('div');
+      info.className = 'gd-meta';
+      info.textContent = 'つながり：' + deg + '件（うち言及・同行 ' + mentions + '件） — この項目から出る強い辺の数です';
+      d.appendChild(info);
+      const info2 = document.createElement('div');
+      info2.className = 'gd-meta';
+      info2.textContent = 'タグを1つ以上共有：' + tagShared + '件（図の辺は3つ以上共通のみ）';
+      d.appendChild(info2);
+      const links = document.createElement('div');
+      links.className = 'gd-links';
+      const note = document.createElement('a');
+      note.href = n.href;
+      note.target = '_blank';
+      note.rel = 'noopener noreferrer';
+      note.textContent = n.article ? 'note記事を開く' : 'noteで検索する';
+      note.style.cssText = 'color: var(--text); border-bottom: 1px solid rgba(0,0,0,0.35);';
+      links.appendChild(note);
+      const openBtn = document.createElement('button');
+      openBtn.type = 'button';
+      openBtn.textContent = '一覧で開く';
+      openBtn.addEventListener('click', () => openInList(idx));
+      links.appendChild(openBtn);
+      const hint = document.createElement('div');
+      hint.className = 'gd-note';
+      hint.textContent = '周辺表示では、ノードのクリックで中心が切り替わります。';
+      links.appendChild(hint);
+      d.appendChild(links);
+    }
+
+    function selectNode(idx) {
+      G.selected = idx;
+      renderDetail(idx);
+      requestDraw();
+    }
+
+    function openInList(idx) {
+      const n = G.nodes[idx];
+      if (!n) return;
+      setGraphOpen(false);
+      const q = document.getElementById('q');
+      const chapter = document.getElementById('chapter');
+      const onlyArticle = document.getElementById('only-article');
+      if (q) q.value = '';
+      if (chapter) chapter.value = '';
+      if (onlyArticle) onlyArticle.checked = false;
+      activeTag = '';
+      document.querySelectorAll('.tag-chip').forEach((c) => c.classList.remove('is-active'));
+      if (q) q.dispatchEvent(new Event('input'));
+      const li = n.el.closest('li');
+      if (li) {
+        if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
+        li.classList.add('flash');
+        setTimeout(() => li.classList.remove('flash'), 1800);
+      }
+    }
+
+    /* ---- 中心・モード切替 ---- */
+    function findNodeByName(q) {
+      q = (q || '').trim();
+      if (!q) return -1;
+      const exact = G.nodes.find((n) => n.name === q);
+      if (exact) return exact.i;
+      const cands = G.nodes.filter((n) => n.name.includes(q) || n.core.includes(q));
+      if (!cands.length) return -1;
+      cands.sort((a, b) => {
+        const ac = a.core.includes(q) ? 0 : 1, bc = b.core.includes(q) ? 0 : 1;
+        if (ac !== bc) return ac - bc;
+        return a.name.length - b.name.length;
+      });
+      return cands[0].i;
+    }
+
+    function setCenter(idx) {
+      if (idx < 0 || !G.nodes[idx]) return;
+      if (G.center >= 0 && G.nodes[G.center]) G.nodes[G.center].fixed = false;
+      G.center = idx;
+      const input = document.getElementById('graph-center');
+      if (input) input.value = G.nodes[idx].name;
+      if (G.mode !== 'local') setGraphMode('local', true);
+      computeVisible();
+      placeLocalRadial();
+      warmup(120);
+      fitView();
+      selectNode(idx);
+      reheat();
+    }
+
+    function setSeg(groupId, activeId) {
+      document.querySelectorAll('#' + groupId + ' button').forEach((b) => {
+        const on = b.id === activeId;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+    }
+
+    function setGraphMode(mode, silent) {
+      if (mode === 'all' && G.mode === 'local' && G.center >= 0 && G.nodes[G.center]) {
+        G.nodes[G.center].fixed = false;
+      }
+      G.mode = mode;
+      setSeg('graph-view-seg', mode === 'all' ? 'graph-view-all' : 'graph-view-local');
+      const d2 = document.getElementById('graph-depth2');
+      const ci = document.getElementById('graph-center');
+      if (d2) d2.disabled = mode !== 'local';
+      if (ci) ci.disabled = false;
+      if (mode === 'local' && G.center < 0) G.center = G.defaultCenter;
+      computeVisible();
+      if (!silent) {
+        if (mode === 'local') placeLocalRadial();
+        warmup(120);
+        fitView();
+        reheat();
+      }
+    }
+
+    function setEdgeFilter(f) {
+      G.edgeFilter = f;
+      setSeg('graph-edge-seg', 'graph-edge-' + f);
+      computeVisible();
+      reheat();
+    }
+
+    function setDim(dim) {
+      if (G.dim === dim) return;
+      G.dim = dim;
+      setSeg('graph-dim-seg', 'graph-dim-' + dim);
+      if (dim === '3d') {
+        let allFlat = true;
+        for (const n of G.nodes) if (Math.abs(n.z) > 0.01) { allFlat = false; break; }
+        if (allFlat) G.nodes.forEach((n) => { n.z = (Math.random() - 0.5) * 220; });
+      }
+      reheat();
+    }
+
+    /* ---- 開閉（年表と排他） ---- */
+    function setGraphOpen(open) {
+      G.open = open;
+      const btn = document.getElementById('graph-btn');
+      const panel = document.getElementById('graph');
+      const layout = document.querySelector('.layout');
+      const tlBtn = document.getElementById('timeline-btn');
+      const tlRoot = document.getElementById('timeline');
+      if (btn) {
+        btn.classList.toggle('is-active', open);
+        btn.setAttribute('aria-pressed', String(open));
+      }
+      if (panel) panel.hidden = !open;
+      if (open) {
+        if (typeof timelineMode !== 'undefined' && timelineMode) {
+          timelineMode = false;
+          if (tlBtn) {
+            tlBtn.classList.toggle('is-active', false);
+            tlBtn.setAttribute('aria-pressed', 'false');
+          }
+          if (tlRoot) tlRoot.hidden = true;
+          const q = document.getElementById('q');
+          if (q) q.dispatchEvent(new Event('input'));
+        }
+        if (layout) layout.style.display = 'none';
+        if (!G.built) buildGraph();
+        canvas = document.getElementById('graph-canvas');
+        try { ctx = canvas ? canvas.getContext('2d') : null; } catch (_) { ctx = null; }
+        sizeCanvas();
+        computeVisible();
+        if (G.mode === 'local') placeLocalRadial();
+        warmup(120);
+        fitView();
+        reheat();
+      } else {
+        stopSim();
+        if (typeof timelineMode === 'undefined' || !timelineMode) {
+          if (layout) layout.style.display = '';
+        }
+      }
+    }
+
+    /* ---- ポインタ操作 ---- */
+    function canvasPos(e) {
+      if (typeof e.offsetX === 'number' && canvas) {
+        return { x: e.offsetX, y: e.offsetY };
+      }
+      const r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    function hitNode(px, py) {
+      // 狭い画面ではヒット判定を視覚半径より大きくしてタップしやすくする
+      const narrow = canvas && canvas.clientWidth < 700;
+      const base = narrow ? 24 : 12;
+      let best = -1, bestD = Infinity;
+      for (const n of G.visibleNodes) {
+        const d = Math.hypot(n.sx - px, n.sy - py);
+        const lim = Math.max(base, n.sr + (narrow ? 10 : 4));
+        if (d < lim && d < bestD) { bestD = d; best = n.i; }
+      }
+      return best;
+    }
+
+    function screenToWorld(px, py, depthF, depthZ) {
+      const w = canvas ? (canvas.clientWidth || 900) : 900;
+      const h = canvas ? (canvas.clientHeight || 560) : 560;
+      const cx = w / 2, cy = h / 2;
+      if (G.dim !== '3d') {
+        return { x: (px - cx - G.ox) / G.scale, y: (py - cy - G.oy) / G.scale, z: 0 };
+      }
+      const f = depthF || 1, z2 = depthZ || 0;
+      const x2 = (px - cx - G.ox) / (G.scale * f);
+      const y2 = (py - cy - G.oy) / (G.scale * f);
+      const sinX = Math.sin(G.rotX), cosX = Math.cos(G.rotX);
+      const sinY = Math.sin(G.rotY), cosY = Math.cos(G.rotY);
+      const x1 = x2 * cosY - z2 * sinY;
+      const z1 = x2 * sinY + z2 * cosY;
+      const y = y2 * cosX + z1 * sinX;
+      const z = -y2 * sinX + z1 * cosX;
+      return { x: x1, y, z };
+    }
+
+    function initGraph() {
+      const btn = document.getElementById('graph-btn');
+      const panel = document.getElementById('graph');
+      if (!btn || !panel) return;
+      btn.addEventListener('click', () => setGraphOpen(!G.open));
+      const tlBtn = document.getElementById('timeline-btn');
+      if (tlBtn) tlBtn.addEventListener('click', () => { if (G.open) setGraphOpen(false); });
+
+      // セグメントボタン群にグループidを付与（setSeg用）
+      const segOf = (id) => document.getElementById(id).closest('.graph-seg');
+      const viewSeg = segOf('graph-view-all'); if (viewSeg) viewSeg.id = 'graph-view-seg';
+      const edgeSeg = segOf('graph-edge-both'); if (edgeSeg) edgeSeg.id = 'graph-edge-seg';
+      const dimSeg = segOf('graph-dim-2d'); if (dimSeg) dimSeg.id = 'graph-dim-seg';
+
+      document.getElementById('graph-view-all').addEventListener('click', () => setGraphMode('all'));
+      document.getElementById('graph-view-local').addEventListener('click', () => setGraphMode('local'));
+      document.getElementById('graph-center').addEventListener('change', (e) => {
+        const idx = findNodeByName(e.target.value);
+        if (idx >= 0) setCenter(idx);
+      });
+      document.getElementById('graph-depth2').addEventListener('change', (e) => {
+        G.depth2 = e.target.checked;
+        if (G.mode === 'local') { computeVisible(); placeLocalRadial(); warmup(120); fitView(); reheat(); }
+      });
+      document.getElementById('graph-edge-both').addEventListener('click', () => setEdgeFilter('both'));
+      document.getElementById('graph-edge-tag').addEventListener('click', () => setEdgeFilter('tag'));
+      document.getElementById('graph-edge-mention').addEventListener('click', () => setEdgeFilter('mention'));
+      document.getElementById('graph-dim-2d').addEventListener('click', () => setDim('2d'));
+      document.getElementById('graph-dim-3d').addEventListener('click', () => setDim('3d'));
+      document.getElementById('graph-play').addEventListener('click', () => {
+        if (G.running) stopSim(); else runSim();
+      });
+      document.getElementById('graph-reset').addEventListener('click', () => {
+        if (G.mode === 'local') placeLocalRadial();
+        else G.nodes.forEach((n) => placeAtAnchor(n));
+        fitView();
+        reheat();
+      });
+      document.getElementById('graph-rotate').addEventListener('change', (e) => {
+        G.autoRotate = e.target.checked;
+        if (G.autoRotate && G.open && G.raf == null) G.raf = nextFrame(frameLoop);
+      });
+
+      // 凡例（章の色＋辺の種類）
+      const legend = document.getElementById('graph-legend');
+      if (legend) {
+        GRAPH_CHAPTERS.forEach((c) => {
+          const s = document.createElement('span');
+          const sw = document.createElement('span');
+          sw.className = 'sw';
+          sw.style.background = c.color;
+          s.appendChild(sw);
+          s.appendChild(document.createTextNode(c.label));
+          legend.appendChild(s);
+        });
+        const t = document.createElement('span');
+        const tSw = document.createElement('span');
+        tSw.className = 'edge-sample';
+        t.appendChild(tSw);
+        t.appendChild(document.createTextNode('タグ辺（共有タグ3つ以上）'));
+        legend.appendChild(t);
+        const s = document.createElement('span');
+        const sSw = document.createElement('span');
+        sSw.className = 'edge-sample spoke';
+        s.appendChild(sSw);
+        s.appendChild(document.createTextNode('中心とのつながり'));
+        legend.appendChild(s);
+        const m = document.createElement('span');
+        const mSw = document.createElement('span');
+        mSw.className = 'edge-sample mention';
+        m.appendChild(mSw);
+        m.appendChild(document.createTextNode('言及・同行辺'));
+        legend.appendChild(m);
+      }
+
+      canvas = document.getElementById('graph-canvas');
+      let dragNode = -1, viewDrag = false, lastX = 0, lastY = 0, downX = 0, downY = 0, moved = false;
+      if (canvas) {
+        canvas.addEventListener('pointerdown', (e) => {
+          const p = canvasPos(e);
+          downX = p.x; downY = p.y; moved = false;
+          const hit = hitNode(p.x, p.y);
+          if (hit >= 0) {
+            dragNode = hit;
+            const n = G.nodes[hit];
+            n.fixed = true;
+            n.vx = n.vy = n.vz = 0;
+          } else {
+            viewDrag = true;
+          }
+          lastX = p.x; lastY = p.y;
+          try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+        canvas.addEventListener('pointermove', (e) => {
+          const p = canvasPos(e);
+          if (dragNode >= 0) {
+            if (Math.hypot(p.x - downX, p.y - downY) > 4) moved = true;
+            const n = G.nodes[dragNode];
+            const w = screenToWorld(p.x, p.y, n.sf, n.sdepth);
+            n.x = w.x; n.y = w.y;
+            if (G.dim === '3d') n.z = w.z;
+            n.vx = n.vy = n.vz = 0;
+            draw();
+          } else if (viewDrag) {
+            const dx = p.x - lastX, dy = p.y - lastY;
+            if (Math.hypot(p.x - downX, p.y - downY) > 4) moved = true;
+            if (G.dim === '3d') {
+              G.rotY += dx * 0.005;
+              G.rotX += dy * 0.005;
+              if (G.rotX > 1.4) G.rotX = 1.4;
+              if (G.rotX < -1.4) G.rotX = -1.4;
+            } else {
+              G.ox += dx; G.oy += dy;
+            }
+            lastX = p.x; lastY = p.y;
+            draw();
+          } else {
+            const hit = hitNode(p.x, p.y);
+            if (hit !== G.hover) {
+              G.hover = hit;
+              canvas.style.cursor = hit >= 0 ? 'pointer' : 'grab';
+              requestDraw();
+            }
+          }
+        });
+        const endDrag = (e) => {
+          const p = canvasPos(e);
+          if (dragNode >= 0) {
+            const idx = dragNode;
+            // 周辺表示の中心ノードは固定のままにする
+            if (!(G.mode === 'local' && idx === G.center)) G.nodes[idx].fixed = false;
+            dragNode = -1;
+            if (!moved) {
+              if (G.mode === 'local') setCenter(idx);
+              else selectNode(idx);
+            }
+          } else if (viewDrag) {
+            viewDrag = false;
+            if (!moved) selectNode(-1);
+          }
+          draw();
+        };
+        canvas.addEventListener('pointerup', endDrag);
+        canvas.addEventListener('pointercancel', () => {
+          if (dragNode >= 0) {
+            if (!(G.mode === 'local' && dragNode === G.center)) G.nodes[dragNode].fixed = false;
+            dragNode = -1;
+          }
+          viewDrag = false;
+        });
+        canvas.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const p = canvasPos(e);
+          const w = canvas.clientWidth || 900, h = canvas.clientHeight || 560;
+          const cx = w / 2, cy = h / 2;
+          const k = Math.exp(-e.deltaY * 0.001);
+          const ns = Math.max(0.2, Math.min(6, G.scale * k));
+          const r = ns / G.scale;
+          G.ox = (p.x - cx) - ((p.x - cx) - G.ox) * r;
+          G.oy = (p.y - cy) - ((p.y - cy) - G.oy) * r;
+          G.scale = ns;
+          draw();
+        }, { passive: false });
+      }
+      window.addEventListener('resize', () => {
+        if (!G.open) return;
+        sizeCanvas();
+        draw();
+      });
+      // 初期状態：2段表示は周辺モード専用
+      const d2 = document.getElementById('graph-depth2');
+      if (d2) d2.disabled = true;
+    }
+
+    // テスト用フック
+    window.__knGraph = {
+      G, buildGraph, setGraphOpen, setGraphMode, setCenter, setDim, setEdgeFilter,
+      findNodeByName,
+      stats: () => ({ ...G.stats }),
+      visibleCount: () => (G.visible ? G.visible.size : 0),
+      visibleEdgeCount: () => G.visEdges.length,
+      neighborCount: (idx) => (G.adj[idx] ? G.adj[idx].length : 0),
+      strongDegree: (idx) => (G.degStrong[idx] || 0),
+      tagSharedCount: (idx) => (G.adj[idx] ? G.adj[idx].filter((e) => e.tagW >= 1).length : 0),
+      tick: (n) => { for (let i = 0; i < n; i++) stepSim(); draw(); },
+    };
+
+    initGraph();
 
   </script>
 </body>
