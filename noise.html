@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Noise</title>
-<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。24種のノイズを2レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。38種のノイズを2レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="Noise — Noise Generator">
-<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。24種のノイズを2レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。38種のノイズを2レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://varelser.github.io/noise.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -230,6 +230,7 @@
           <button id="saveSessionBtn" class="secondary" type="button">JSON保存</button>
           <button id="loadSessionBtn" class="secondary" type="button">JSON読込</button>
           <button id="copySessionBtn" class="secondary" type="button">JSONコピー</button>
+          <button id="copyUrlBtn" class="secondary" type="button">URLコピー</button>
           <button id="clearAutosaveBtn" class="secondary" type="button">自動保存削除</button>
         </div>
         <div class="help">設定全体をJSONで保存・再読込できます。前回状態は自動保存されます。</div>
@@ -253,11 +254,78 @@
     </div>
 
     <div class="section">
+      <div class="head"><h2>スリープ</h2></div>
+      <div class="body">
+        <div class="grid2">
+          <div class="field">
+            <label><span>スリープタイマー</span></label>
+            <select id="sleepTimer">
+              <option value="0">オフ</option>
+              <option value="15">15分</option>
+              <option value="30">30分</option>
+              <option value="45">45分</option>
+              <option value="60">60分</option>
+              <option value="90">90分</option>
+              <option value="120">120分</option>
+            </select>
+          </div>
+          <div class="field">
+            <label><span>フェードイン</span></label>
+            <select id="sleepFadeIn">
+              <option value="0">なし</option>
+              <option value="10">10秒</option>
+              <option value="30">30秒</option>
+              <option value="60">60秒</option>
+            </select>
+          </div>
+        </div>
+        <div class="help">再生開始と同時にタイマーが動き、終了30秒前からゆっくり音量が下がって自動停止します。長尺の書き出しは Export秒数（最大30分）＋ Loop Crossfade ＋ 22.05 kHz の組み合わせが軽量です。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="head"><h2>AI生成</h2></div>
+      <div class="body">
+        <div class="field">
+          <label><span>作りたい音を言葉で</span></label>
+          <input id="aiPrompt" type="text" placeholder="例: 雨の音でぐっすり眠りたい / 集中できる低音">
+        </div>
+        <div class="grid2">
+          <button id="aiRuleBtn" class="secondary" type="button">ルール生成</button>
+          <button id="aiLlmBtn" class="secondary" type="button">LLM生成 (BYOK)</button>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <label><span>LLM プロバイダ</span></label>
+          <select id="aiProvider">
+            <option value="groq">Groq</option>
+            <option value="gemini">Gemini</option>
+          </select>
+        </div>
+        <div class="field">
+          <label><span>APIキー（このブラウザ内だけに保存）</span></label>
+          <input id="aiApiKey" type="password" placeholder="API key" autocomplete="off">
+        </div>
+        <div class="help">ルール生成はオフラインでキーワードから組み立てます（Enterでも実行）。LLM生成は入力したキーでプロバイダへ直接リクエストし、返ってきたJSONを検証してから適用します。キーは localStorage にのみ保存されます。セッションJSON / URL共有を使えば、外部のAIに作らせた設定も読み込めます。</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="head"><h2>DAW / MIDI</h2></div>
+      <div class="body">
+        <div class="session-actions">
+          <button id="midiBtn" class="secondary" type="button">MIDI入力を開始</button>
+          <label class="check"><input id="midiNoteToggle" type="checkbox" checked><span>ノートで再生/停止</span></label>
+        </div>
+        <div class="help">Web MIDI対応ブラウザで、ノート=再生/停止、CC7=Master Gain、CC1=Width、CC74=Drive、CC20/21=Layer A/B Gain、CC22=Binaural Level、CC23=Space を操作できます。DAW連携の中心は WAV/AIFF 書き出しです（Loop Crossfade 使用時は WAV に smpl ループチャンクが付きます）。同じリポジトリの noise-cli.mjs を使えば、Node.js のある VM / サーバーからも同じプリセット・同じ音をヘッドレスで書き出せます。</div>
+      </div>
+    </div>
+
+    <div class="section">
       <div class="head"><h2>備考</h2></div>
       <div class="body">
         <div class="help">
           色付きノイズの一部（Grey / Green / Black など）は用途により定義が揺れるため、本作では実用向けの近似実装です。<br>
-          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。
+          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにノイズ種を38種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
         </div>
       </div>
     </div>
@@ -355,7 +423,21 @@
     ['staticam', 'Static AM'],
     ['digital', 'Digital / Bitcrush'],
     ['glitch', 'Glitch Burst'],
-    ['sand', 'Resonant Sand']
+    ['sand', 'Resonant Sand'],
+    ['fan', 'Fan'],
+    ['airplane', 'Airplane Cabin'],
+    ['fire', 'Fire / Campfire'],
+    ['stream', 'Stream'],
+    ['waterfall', 'Waterfall'],
+    ['thunder', 'Thunder'],
+    ['forest', 'Forest Leaves'],
+    ['city', 'City Traffic'],
+    ['train', 'Train'],
+    ['shower', 'Shower'],
+    ['underwater', 'Underwater'],
+    ['band', 'Resonant Band'],
+    ['grains', 'Granular Cloud'],
+    ['chaos', 'Chaos (Logistic)']
   ];
 
   const DEFAULTS = {
@@ -398,6 +480,12 @@
     master_lfoDepth: 0.0,
     master_humHz: 50,
     master_normalize: true,
+    master_binauralEnabled: false,
+    master_binauralMode: 'binaural',
+    master_binauralCarrier: 200,
+    master_binauralBeat: 6,
+    master_binauralLevel: 0.25,
+    master_loopFade: 0,
     A_enabled: true,
     A_type: 'pink',
     A_gain: 0.9,
@@ -549,6 +637,154 @@
       B_enabled: true, B_type: 'digital', B_gain: 0.34, B_pan: 0.31, B_tone: 0.74, B_density: 0.74, B_motion: 0.48, B_grain: 0.44,
       master_gain: 0.26, master_width: 3.2, master_space: 0.82, master_air: 1.18, master_drive: 0.14, master_chorusMix: 0.36,
       master_unison: 0.24, master_phaserMix: 0.16, master_highcut: 20000
+    },
+    'Sleep: Deep Brown': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'brown', A_gain: 0.95, A_tone: -0.55, A_density: 0.4, A_motion: 0.1, A_grain: 0.05,
+      B_enabled: true, B_type: 'pink', B_gain: 0.12, B_tone: -0.4, B_density: 0.3, B_motion: 0.08, B_grain: 0.05,
+      master_gain: 0.5, master_width: 0.7, master_drive: 0.03, master_lowcut: 8, master_highcut: 4000
+    },
+    'Sleep: Pink Drift': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'pink', A_gain: 0.85, A_tone: -0.3, A_density: 0.45, A_motion: 0.15, A_grain: 0.06,
+      B_enabled: false,
+      master_gain: 0.5, master_width: 1.0, master_drive: 0.02, master_highcut: 6000, master_lfoRate: 0.07, master_lfoDepth: 0.12
+    },
+    'Sleep: Delta Binaural': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'pink', A_gain: 0.5, A_tone: -0.35, A_density: 0.4, A_motion: 0.1, A_grain: 0.05,
+      B_enabled: false,
+      master_gain: 0.5, master_width: 0.9, master_drive: 0.02, master_highcut: 5000,
+      master_binauralEnabled: true, master_binauralMode: 'binaural', master_binauralCarrier: 180, master_binauralBeat: 2, master_binauralLevel: 0.3
+    },
+    'Sleep: Rain Window': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'rain', A_gain: 0.8, A_tone: 0.05, A_density: 0.55, A_motion: 0.3, A_grain: 0.3,
+      B_enabled: true, B_type: 'pink', B_gain: 0.15, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.06,
+      master_gain: 0.5, master_width: 1.15, master_drive: 0.03, master_highcut: 9000, master_chorus: 0.25, master_space: 0.3
+    },
+    'Sleep: Fan Room': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'fan', A_gain: 0.95, A_tone: -0.15, A_density: 0.55, A_motion: 0.12, A_grain: 0.08,
+      B_enabled: false,
+      master_gain: 0.52, master_width: 0.8, master_drive: 0.03, master_highcut: 7000
+    },
+    'Sleep: Ocean Night': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'ocean', A_gain: 0.9, A_tone: -0.3, A_density: 0.55, A_motion: 0.4, A_grain: 0.12,
+      B_enabled: true, B_type: 'brown', B_gain: 0.15, B_tone: -0.6, B_density: 0.3, B_motion: 0.08, B_grain: 0.05,
+      master_gain: 0.5, master_width: 1.1, master_drive: 0.03, master_highcut: 6000, master_chorus: 0.25, master_space: 0.3
+    },
+    'Binaural: Theta Dream': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'pink', A_gain: 0.42, A_tone: -0.2, A_density: 0.4, A_motion: 0.12, A_grain: 0.06,
+      B_enabled: false,
+      master_gain: 0.5, master_width: 1.0, master_drive: 0.02,
+      master_binauralEnabled: true, master_binauralCarrier: 220, master_binauralBeat: 6, master_binauralLevel: 0.32
+    },
+    'Binaural: Alpha Calm': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'ocean', A_gain: 0.5, A_tone: -0.2, A_density: 0.5, A_motion: 0.3, A_grain: 0.1,
+      B_enabled: false,
+      master_gain: 0.5, master_width: 1.1, master_drive: 0.02,
+      master_binauralEnabled: true, master_binauralCarrier: 240, master_binauralBeat: 10, master_binauralLevel: 0.3
+    },
+    'Binaural: Gamma Focus': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'pink', A_gain: 0.4, A_tone: -0.1, A_density: 0.4, A_motion: 0.08, A_grain: 0.04,
+      B_enabled: false,
+      master_gain: 0.48, master_width: 0.9, master_drive: 0.02,
+      master_binauralEnabled: true, master_binauralCarrier: 200, master_binauralBeat: 40, master_binauralLevel: 0.26
+    },
+    'Campfire Night': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'fire', A_gain: 0.9, A_tone: 0.0, A_density: 0.6, A_motion: 0.3, A_grain: 0.5,
+      B_enabled: true, B_type: 'brown', B_gain: 0.2, B_tone: -0.5, B_density: 0.3, B_motion: 0.1, B_grain: 0.08,
+      master_gain: 0.55, master_width: 1.2, master_drive: 0.05, master_highcut: 10000, master_chorus: 0.3, master_unison: 0.25, master_space: 0.3
+    },
+    'Mountain Stream': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'stream', A_gain: 0.85, A_tone: 0.15, A_density: 0.6, A_motion: 0.35, A_grain: 0.3,
+      B_enabled: true, B_type: 'pink', B_gain: 0.12, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.06,
+      master_gain: 0.52, master_width: 1.25, master_drive: 0.03, master_highcut: 12000, master_chorus: 0.35, master_unison: 0.3, master_space: 0.35
+    },
+    'Waterfall Mist': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'waterfall', A_gain: 0.9, A_tone: -0.1, A_density: 0.6, A_motion: 0.2, A_grain: 0.15,
+      B_enabled: false,
+      master_gain: 0.54, master_width: 1.15, master_drive: 0.04, master_highcut: 11000, master_chorus: 0.3, master_unison: 0.3, master_space: 0.3
+    },
+    'Thunderstorm Far': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'thunder', A_gain: 0.95, A_tone: -0.3, A_density: 0.55, A_motion: 0.4, A_grain: 0.3,
+      B_enabled: true, B_type: 'rain', B_gain: 0.5, B_tone: 0.1, B_density: 0.6, B_motion: 0.4, B_grain: 0.35,
+      master_gain: 0.55, master_width: 1.3, master_drive: 0.06, master_highcut: 9000, master_chorus: 0.3, master_unison: 0.3, master_space: 0.4
+    },
+    'Night Train': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'train', A_gain: 0.9, A_tone: -0.2, A_density: 0.55, A_motion: 0.25, A_grain: 0.3,
+      B_enabled: true, B_type: 'brown', B_gain: 0.18, B_tone: -0.6, B_density: 0.3, B_motion: 0.08, B_grain: 0.05,
+      master_gain: 0.54, master_width: 1.0, master_drive: 0.05, master_highcut: 8000, master_chorus: 0.25, master_unison: 0.25, master_space: 0.3
+    },
+    'Forest Wind': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'forest', A_gain: 0.85, A_tone: 0.2, A_density: 0.55, A_motion: 0.6, A_grain: 0.4,
+      B_enabled: true, B_type: 'wind', B_gain: 0.3, B_tone: -0.2, B_density: 0.5, B_motion: 0.5, B_grain: 0.2,
+      master_gain: 0.5, master_width: 1.3, master_drive: 0.03, master_highcut: 12000, master_chorus: 0.35, master_unison: 0.3, master_space: 0.35
+    },
+    'Ref: Pure White': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'white', A_gain: 0.9, A_tone: 0, A_density: 0.5, A_motion: 0, A_grain: 0,
+      B_enabled: false,
+      master_gain: 0.5, master_width: 1.0, master_drive: 0, master_lowcut: 5, master_highcut: 20000
+    },
+    'Ref: Pure Pink': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'pink', A_gain: 0.9, A_tone: 0, A_density: 0.5, A_motion: 0, A_grain: 0,
+      B_enabled: false,
+      master_gain: 0.5, master_width: 1.0, master_drive: 0, master_lowcut: 5, master_highcut: 20000
+    },
+    'Chaos Logistic': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'chaos', A_gain: 0.9, A_tone: 0.1, A_density: 0.75, A_motion: 0.5, A_grain: 0.3,
+      B_enabled: true, B_type: 'violet', B_gain: 0.1, B_tone: 0.4, B_density: 0.4, B_motion: 0.2, B_grain: 0.3,
+      master_gain: 0.5, master_width: 1.2, master_drive: 0.15, master_resonatorMix: 0.2, master_resonatorHz: 320
+    },
+    'Granular Cloud': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'grains', A_gain: 0.95, A_tone: 0.2, A_density: 0.65, A_motion: 0.3, A_grain: 0.5,
+      B_enabled: true, B_type: 'pink', B_gain: 0.15, B_tone: -0.2, B_density: 0.3, B_motion: 0.1, B_grain: 0.08,
+      master_gain: 0.52, master_width: 1.4, master_drive: 0.06, master_space: 0.45, master_chorus: 0.35, master_unison: 0.35
+    },
+    'Resonant Band Sweep': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'band', A_gain: 0.95, A_tone: 0, A_density: 0.6, A_motion: 0.55, A_grain: 0.2,
+      B_enabled: true, B_type: 'brown', B_gain: 0.15, B_tone: -0.5, B_density: 0.3, B_motion: 0.1, B_grain: 0.05,
+      master_gain: 0.52, master_width: 1.2, master_drive: 0.08, master_resonatorMix: 0.25, master_resonatorHz: 480, master_chorus: 0.3, master_space: 0.35
+    },
+    'Underwater Drone': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'underwater', A_gain: 0.95, A_tone: -0.3, A_density: 0.55, A_motion: 0.3, A_grain: 0.3,
+      B_enabled: true, B_type: 'brown', B_gain: 0.2, B_tone: -0.6, B_density: 0.3, B_motion: 0.1, B_grain: 0.05,
+      master_gain: 0.54, master_width: 1.1, master_drive: 0.06, master_highcut: 3000, master_subBody: 0.3, master_chorus: 0.4, master_unison: 0.3, master_space: 0.4
+    },
+    'Cabin Pressure': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'airplane', A_gain: 0.95, A_tone: -0.2, A_density: 0.55, A_motion: 0.2, A_grain: 0.08,
+      B_enabled: false,
+      master_gain: 0.54, master_width: 0.85, master_drive: 0.04, master_highcut: 8000
+    },
+    'City Night Traffic': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'city', A_gain: 0.9, A_tone: -0.25, A_density: 0.55, A_motion: 0.35, A_grain: 0.15,
+      B_enabled: true, B_type: 'pink', B_gain: 0.1, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.05,
+      master_gain: 0.52, master_width: 1.15, master_drive: 0.04, master_highcut: 7000, master_chorus: 0.3, master_space: 0.3
+    },
+    'Shower Room': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'shower', A_gain: 0.9, A_tone: 0.1, A_density: 0.6, A_motion: 0.2, A_grain: 0.35,
+      B_enabled: false,
+      master_gain: 0.52, master_width: 1.1, master_drive: 0.03, master_highcut: 14000
     }
   };
 
@@ -559,7 +795,7 @@
     { id:'master_batchCount', type:'select', label:'Batch Seeds', options:[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['7','7'],['8','8']] },
     { id:'master_seedStep', type:'number', label:'Seed Step', min:1, max:1000000, step:1 },
     { id:'master_exportFormat', type:'select', label:'Format', options:[['wav','WAV'],['aiff','AIFF']] },
-    { id:'master_exportSampleRate', type:'select', label:'Export Rate', options:[['44100','44.1 kHz'],['48000','48 kHz'],['88200','88.2 kHz'],['96000','96 kHz'],['192000','192 kHz']] },
+    { id:'master_exportSampleRate', type:'select', label:'Export Rate', options:[['22050','22.05 kHz'],['44100','44.1 kHz'],['48000','48 kHz'],['88200','88.2 kHz'],['96000','96 kHz'],['192000','192 kHz']] },
     { id:'master_exportBitDepth', type:'select', label:'Bit Depth', options:[['16','16-bit PCM'],['24','24-bit PCM'],['32f','32-bit float WAV']] },
     { id:'master_exportDither', type:'checkbox', label:'Dither (PCM only)' },
     { id:'master_exportOversample', type:'select', label:'HQ Oversampling', options:[['1','Off / 1x'],['2','2x'],['4','4x']] },
@@ -568,7 +804,7 @@
     { id:'master_exportCeilingDb', type:'range', label:'Ceiling (dB)', min:-6, max:-0.1, step:0.1 },
     { id:'master_exportLimiterRelease', type:'range', label:'Limiter Release (ms)', min:5, max:250, step:1 },
     { id:'master_exportNoiseShaping', type:'select', label:'Noise Shaping', options:[['off','Off'],['gentle','Gentle'],['strong','Strong']] },
-    { id:'master_duration', type:'range', label:'Export秒数', min:1, max:120, step:1 },
+    { id:'master_duration', type:'range', label:'Export秒数（最大30分）', min:5, max:1800, step:5 },
     { id:'master_seed', type:'number', label:'Seed', min:1, max:2147483646, step:1 },
     { id:'master_gain', type:'range', label:'Master Gain', min:0, max:2.2, step:0.01 },
     { id:'master_width', type:'range', label:'Stereo Width', min:0, max:5.5, step:0.01 },
@@ -591,7 +827,13 @@
     { id:'master_lfoRate', type:'range', label:'LFO Rate (Hz)', min:0.01, max:40, step:0.01 },
     { id:'master_lfoDepth', type:'range', label:'LFO Depth', min:0, max:1.8, step:0.01 },
     { id:'master_humHz', type:'select', label:'Hum', options:[['50','50 Hz'],['60','60 Hz']] },
-    { id:'master_normalize', type:'checkbox', label:'Normalize Export' }
+    { id:'master_normalize', type:'checkbox', label:'Normalize Export' },
+    { id:'master_loopFade', type:'select', label:'Loop Crossfade (sec)', options:[['0','Off'],['1','1'],['2','2'],['3','3'],['5','5'],['10','10']] },
+    { id:'master_binauralEnabled', type:'checkbox', label:'Binaural' },
+    { id:'master_binauralMode', type:'select', label:'Binaural Mode', options:[['binaural','Binaural (L/R)'],['isochronic','Isochronic']] },
+    { id:'master_binauralCarrier', type:'range', label:'Carrier (Hz)', min:40, max:600, step:1 },
+    { id:'master_binauralBeat', type:'range', label:'Beat (Hz)', min:0, max:40, step:0.1 },
+    { id:'master_binauralLevel', type:'range', label:'Binaural Level', min:0, max:0.6, step:0.01 }
   ];
 
   const LAYER_SCHEMA = [
@@ -1030,7 +1272,10 @@
       p: params,
       delayL: new Float32Array(maxDelaySamples),
       delayR: new Float32Array(maxDelaySamples),
-      delayIndex: 0
+      delayIndex: 0,
+      binPhaseL: 0,
+      binPhaseR: 0,
+      binGate: 0
     };
   }
 
@@ -1184,6 +1429,12 @@
       resonFreq: 1200,
       holdCounter: 0,
       holdValue: 0,
+      aux1: 0,
+      aux2: 0,
+      aux3: 0,
+      env: 0,
+      env2: 0,
+      sweep: 0,
       velvetCounter: 0,
       velvetInterval: 128,
       phase1: 0,
@@ -1373,6 +1624,132 @@
         const grit = bp(s, 'sd1', 'sd2', rawWhite(s), 800, 6000, sr) * 0.08;
         return ring + grit;
       }
+      case 'fan': {
+        const body = lp(s, 'fan1', rawPink(s), 320 + density * 700, sr);
+        const hiss = lp(s, 'fan2', rawWhite(s), 900 + density * 1500, sr) * 0.3;
+        const wob = 0.88 + 0.12 * Math.sin(TAU * (0.05 + motion * 0.25) * t);
+        const hum = humSample(s, s.humHz) * 0.03;
+        return (body * 0.9 + hiss) * wob + hum;
+      }
+      case 'airplane': {
+        s.surf += ((0.5 + 0.5 * Math.sin(TAU * (0.02 + motion * 0.03) * t + 0.4)) - s.surf) * 0.0008;
+        const rum = lp(s, 'air1', rawBrown(s, motion), 160 + density * 120, sr) * 1.6;
+        const mid = lp(s, 'air2', rawPink(s), 700 + density * 600, sr) * 0.5;
+        const hiss = hp(s, 'air3', rawWhite(s), 2800, sr) * 0.06;
+        return (rum + mid) * (0.75 + s.surf * 0.45) + hiss;
+      }
+      case 'fire': {
+        const body = lp(s, 'fir1', rawBrown(s, motion), 220 + density * 200, sr) * 0.8;
+        if (s.rng.float() < 0.001 + density * 0.035) s.click1 = 0.5 + s.rng.float() * 0.8;
+        s.click1 *= 0.84 - grain * 0.06;
+        const pop = s.click1 * s.rng.signed();
+        const crack = lp(s, 'fir2', rawWhite(s), 1400 + grain * 1600, sr) * (0.10 + grain * 0.22);
+        const target = s.rng.float();
+        s.gust += (target - s.gust) * (0.00005 + motion * 0.0006);
+        const whoosh = lp(s, 'fir3', rawWhite(s), 380, sr) * s.gust * 0.35;
+        return body + pop + crack + whoosh;
+      }
+      case 'stream': {
+        s.tone1 = clamp((s.tone1 || 900) + (s.rng.float() - 0.5) * 14, 300, 3200);
+        const gurgle = bp(s, 'st1', 'st2', rawWhite(s), s.tone1 * 0.45, s.tone1 * 1.6, sr) * 1.6;
+        const flow = lp(s, 'st3', rawWhite(s), 500 + density * 900, sr) * 0.35;
+        if (s.rng.float() < 0.001 + density * 0.02) { s.click1 = 0.7; s.tone2 = 500 + s.rng.float() * 900; }
+        s.click1 *= 0.90 - grain * 0.04;
+        const bubble = bp(s, 'st4', 'st5', rawWhite(s), s.tone2 * 0.5, s.tone2, sr) * s.click1 * 0.8;
+        return gurgle * (0.35 + density * 0.5) + flow + bubble;
+      }
+      case 'waterfall': {
+        const body = lp(s, 'wf1', rawWhite(s), 700 + density * 1500, sr) * 1.1;
+        const deep = lp(s, 'wf2', rawBrown(s, motion), 110, sr) * 1.5;
+        const mist = hp(s, 'wf3', rawWhite(s), 4500, sr) * 0.07;
+        const swell = 0.85 + 0.15 * Math.sin(TAU * (0.03 + motion * 0.08) * t);
+        return (body + deep) * swell + mist;
+      }
+      case 'thunder': {
+        if (s.rng.float() < 0.00004 + density * 0.0004) { s.env = 0.8 + s.rng.float() * 0.4; s.click1 = 0.9; }
+        const dec = Math.exp(-1 / (sr * (0.9 + motion * 2.2)));
+        s.env *= dec;
+        s.click1 *= 0.90 - grain * 0.05;
+        const crack = hp(s, 'th1', s.click1 * s.rng.signed(), 900, sr) * 1.2;
+        const roll = lp(s, 'th2', rawBrown(s, 0.4), 55 + density * 90, sr) * s.env * 4.0;
+        const rainBed = hp(s, 'th3', rawPink(s), 700, sr) * 0.05;
+        return roll + crack + rainBed;
+      }
+      case 'forest': {
+        const target = 0.25 + s.rng.float() * 0.75;
+        s.gust += (target - s.gust) * (0.00006 + motion * 0.0011);
+        const leaves = hp(s, 'fo1', rawWhite(s), 2200 + density * 1500, sr) * (0.12 + s.gust * 0.5);
+        const wind = lp(s, 'fo2', rawPink(s), 300 + motion * 300, sr) * 0.35;
+        return leaves * (0.4 + grain * 0.6) + wind;
+      }
+      case 'city': {
+        const traffic = lp(s, 'ci1', rawBrown(s, motion), 130 + density * 90, sr) * 1.7;
+        s.surf += ((0.5 + 0.5 * Math.sin(TAU * (0.05 + motion * 0.11) * t + 1.9)) - s.surf) * 0.001;
+        s.tone1 = clamp((s.tone1 || 500) + (s.rng.float() - 0.5) * 8, 200, 1400);
+        const pass = bp(s, 'ci2', 'ci3', rawWhite(s), s.tone1 * 0.5, s.tone1 * 1.8, sr) * s.surf * 0.5;
+        const hiss = hp(s, 'ci4', rawWhite(s), 3000, sr) * 0.03;
+        return traffic + pass + hiss;
+      }
+      case 'train': {
+        const rate = 1.6 + density * 4.5;
+        s.phase1 += TAU * rate / sr;
+        if (s.phase1 >= TAU) { s.phase1 -= TAU; s.click1 = 0.95; s.aux1 = Math.floor(sr * 0.09); }
+        if (s.aux1 > 0 && --s.aux1 === 0) s.click2 = 0.8;
+        s.click1 *= 0.86 - grain * 0.05;
+        s.click2 *= 0.86 - grain * 0.05;
+        const clack = bp(s, 'tr1', 'tr2', (s.click1 + s.click2) * s.rng.signed(), 500, 2600, sr) * 1.4;
+        const rumble = lp(s, 'tr3', rawBrown(s, motion), 120, sr) * 1.3;
+        const sway = 0.9 + 0.1 * Math.sin(TAU * rate * 0.5 * t);
+        return rumble * sway + clack;
+      }
+      case 'shower': {
+        const jets = bp(s, 'sh1', 'sh2', rawWhite(s), 1400 + density * 600, 6200, sr) * 1.15;
+        const body = lp(s, 'sh3', rawWhite(s), 750, sr) * 0.3;
+        const patter = hp(s, 'sh4', rawWhite(s), 5200, sr) * grain * 0.12;
+        return jets + body + patter;
+      }
+      case 'underwater': {
+        const muffle = lp(s, 'uw1', rawPink(s), 260 + density * 320, sr) * 1.5;
+        if (s.rng.float() < 0.0006 + density * 0.008) { s.click1 = 0.8; s.tone1 = 300; }
+        if (s.click1 > 0.02) s.tone1 = Math.min(1600, s.tone1 * 1.004);
+        s.click1 *= 0.965 - grain * 0.01;
+        const bubble = bp(s, 'uw2', 'uw3', rawWhite(s), s.tone1 * 0.6, s.tone1 * 1.4, sr) * s.click1 * 0.9;
+        const drift = lp(s, 'uw4', rawBrown(s, motion), 70, sr) * 0.5;
+        return muffle + bubble + drift;
+      }
+      case 'band': {
+        s.sweep += TAU * (0.04 + motion * 0.35) / sr;
+        const f = 160 * Math.pow(28, 0.5 + 0.5 * Math.sin(s.sweep));
+        const tone = bp(s, 'bd1', 'bd2', rawWhite(s), f * 0.7, f * 1.5, sr) * 2.6;
+        const breath = lp(s, 'bd3', rawWhite(s), 300, sr) * 0.12;
+        return tone * (0.4 + density * 0.8) + breath;
+      }
+      case 'grains': {
+        if (s.holdCounter-- <= 0) {
+          s.holdCounter = Math.floor(sr * (0.012 + s.rng.float() * Math.max(0.02, 0.55 - density * 0.38)));
+          s.burst = 1;
+          s.resonFreq = 240 + s.rng.float() * (400 + density * 2600);
+          s.resonPhase = 0;
+        }
+        s.resonPhase += TAU * s.resonFreq / sr;
+        s.burst *= Math.exp(-1 / (sr * (0.03 + grain * 0.12)));
+        const grainTone = Math.sin(s.resonPhase) * s.burst;
+        const grit = bp(s, 'gr1', 'gr2', rawWhite(s), s.resonFreq * 0.6, s.resonFreq * 1.6, sr) * s.burst * 0.5;
+        const bed = lp(s, 'gr3', rawPink(s), 500, sr) * 0.12;
+        return grainTone * 0.7 + grit + bed;
+      }
+      case 'chaos': {
+        if (s.holdCounter-- <= 0) {
+          s.holdCounter = Math.max(1, Math.floor(sr / (300 + motion * 5200)));
+          const r = 3.55 + density * 0.44;
+          const x = (s.aux1 > 0.001 && s.aux1 < 0.999) ? s.aux1 : 0.37;
+          s.aux1 = r * x * (1 - x);
+          s.aux2 = s.aux1 * 2 - 1;
+        }
+        s.aux3 += (s.aux2 - s.aux3) * 0.35;
+        const grit = hp(s, 'ch1', rawWhite(s), 3000, sr) * grain * 0.15;
+        return s.aux3 * 1.1 + grit;
+      }
       default: return rawWhite(s);
     }
   }
@@ -1398,7 +1775,7 @@
     const p = { ...params };
     p.master_seed = Math.max(1, Math.floor(Number(p.master_seed) || 1));
     p.master_humHz = Number(p.master_humHz) === 60 ? 60 : 50;
-    p.master_duration = clamp(Number(p.master_duration) || 10, 1, 120);
+    p.master_duration = clamp(Number(p.master_duration) || 10, 5, 1800);
     p.master_gain = clamp(Number(p.master_gain) || 0, 0, 2.2);
     p.master_width = clamp(Number(p.master_width) || 0, 0, 5.5);
     p.master_space = clamp(Number(p.master_space) || 0, 0, 1.8);
@@ -1420,6 +1797,12 @@
     p.master_lfoRate = clamp(Number(p.master_lfoRate) || 0.18, 0.01, 40);
     p.master_lfoDepth = clamp(Number(p.master_lfoDepth) || 0, 0, 1.8);
     p.master_normalize = !!p.master_normalize;
+    p.master_loopFade = clamp(Number(p.master_loopFade) || 0, 0, 10);
+    p.master_binauralEnabled = !!p.master_binauralEnabled;
+    p.master_binauralMode = p.master_binauralMode === 'isochronic' ? 'isochronic' : 'binaural';
+    p.master_binauralCarrier = clamp(Number(p.master_binauralCarrier) || 200, 40, 600);
+    p.master_binauralBeat = clamp(Number(p.master_binauralBeat) || 0, 0, 40);
+    p.master_binauralLevel = clamp(Number(p.master_binauralLevel) || 0, 0, 0.6);
     ['A', 'B'].forEach(prefix => {
       p[`${prefix}_gain`] = clamp(Number(p[`${prefix}_gain`]) || 0, 0, 2.2);
       p[`${prefix}_pan`] = clamp(Number(p[`${prefix}_pan`]) || 0, -1, 1);
@@ -1605,6 +1988,24 @@
       l = masterState.outL;
       r = masterState.outR;
 
+      if (p.master_binauralEnabled && p.master_binauralLevel > 0) {
+        const lvl = p.master_binauralLevel;
+        const car = p.master_binauralCarrier;
+        if (p.master_binauralMode === 'isochronic') {
+          masterState.binPhaseL += TAU * car / sr;
+          masterState.binGate += TAU * p.master_binauralBeat / sr;
+          const g = Math.pow(0.5 + 0.5 * Math.sin(masterState.binGate), 2);
+          const tone = Math.sin(masterState.binPhaseL) * lvl * g;
+          l += tone;
+          r += tone;
+        } else {
+          masterState.binPhaseL += TAU * car / sr;
+          masterState.binPhaseR += TAU * (car + p.master_binauralBeat) / sr;
+          l += Math.sin(masterState.binPhaseL) * lvl;
+          r += Math.sin(masterState.binPhaseR) * lvl;
+        }
+      }
+
       if (outL) outL[i] = l;
       if (outR) outR[i] = r;
 
@@ -1640,7 +2041,7 @@
     return { left, right, peak };
   }
 
-  function createWavHeader(frameCount, sampleRate, bitDepth = '16') {
+  function createWavHeader(frameCount, sampleRate, bitDepth = '16', loop = false) {
     const bytesPerSample = bytesPerSampleForBitDepth(bitDepth);
     const blockAlign = bytesPerSample * 2;
     const dataBytes = frameCount * blockAlign;
@@ -1652,7 +2053,7 @@
       for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
     };
     writeString(0, 'RIFF');
-    view.setUint32(4, 36 + dataBytes, true);
+    view.setUint32(4, 36 + dataBytes + (loop ? 68 : 0), true);
     writeString(8, 'WAVE');
     writeString(12, 'fmt ');
     view.setUint32(16, 16, true);
@@ -1881,6 +2282,78 @@
     return chunk;
   }
 
+  function getLoopFadeSec(params) {
+    return clamp(Number(params.master_loopFade) || 0, 0, 10);
+  }
+
+  function renderLoopPostTail(params, sampleRate, oversampleFactor) {
+    // For a truly seamless loop the HEAD of the file is crossfaded with the
+    // source material that would follow the end (x[T..T+F)), so rendering it
+    // requires fast-forwarding a throwaway renderer through the whole file.
+    const totalFrames = Math.max(1, Math.floor(params.master_duration * sampleRate));
+    const fadeFrames = Math.min(totalFrames, Math.floor(getLoopFadeSec(params) * sampleRate));
+    if (fadeFrames <= 0) return null;
+    const internalRate = sampleRate * oversampleFactor;
+    const renderer = createStereoRenderer(params, internalRate);
+    const decimator = createDecimator(oversampleFactor);
+    const scratchL = new Float32Array(65536);
+    const scratchR = new Float32Array(65536);
+    let remaining = totalFrames * oversampleFactor;
+    while (remaining > 0) {
+      const n = Math.min(65536, remaining);
+      renderBlock(renderer, n, scratchL, scratchR);
+      remaining -= n;
+    }
+    const tailL = new Float32Array(fadeFrames);
+    const tailR = new Float32Array(fadeFrames);
+    if (oversampleFactor === 1) {
+      renderBlock(renderer, fadeFrames, tailL, tailR);
+    } else {
+      const tempL = new Float32Array(fadeFrames * oversampleFactor);
+      const tempR = new Float32Array(fadeFrames * oversampleFactor);
+      renderBlock(renderer, fadeFrames * oversampleFactor, tempL, tempR);
+      decimateInto(decimator, tempL, tempR, tailL, tailR);
+    }
+    return { tailL, tailR, fadeFrames };
+  }
+
+  function applyLoopHeadMix(left, right, startFrame, post) {
+    if (!post) return;
+    for (let i = 0; i < left.length; i++) {
+      const pos = startFrame + i;
+      if (pos >= post.fadeFrames) break;
+      const w = (pos + 1) / post.fadeFrames;
+      left[i] = left[i] * w + post.tailL[pos] * (1 - w);
+      right[i] = right[i] * w + post.tailR[pos] * (1 - w);
+    }
+  }
+
+  function createWavSmplChunk(frameCount, sampleRate) {
+    const buffer = new ArrayBuffer(68);
+    const view = new DataView(buffer);
+    const writeString = (offset, str) => {
+      for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+    };
+    writeString(0, 'smpl');
+    view.setUint32(4, 60, true);
+    view.setUint32(8, 0, true);
+    view.setUint32(12, 0, true);
+    view.setUint32(16, Math.round(1000000000 / sampleRate), true);
+    view.setUint32(20, 60, true);
+    view.setUint32(24, 0, true);
+    view.setUint32(28, 0, true);
+    view.setUint32(32, 0, true);
+    view.setUint32(36, 1, true);
+    view.setUint32(40, 0, true);
+    view.setUint32(44, 0, true);
+    view.setUint32(48, 0, true);
+    view.setUint32(52, 0, true);
+    view.setUint32(56, Math.max(0, frameCount - 1), true);
+    view.setUint32(60, 0, true);
+    view.setUint32(64, 0, true);
+    return buffer;
+  }
+
   async function scanPeakStreamed(params, token, onProgress) {
     const sampleRate = getExportSampleRate(params);
     const oversampleFactor = getExportOversampleFactor(params);
@@ -1890,6 +2363,7 @@
     const renderer = createStereoRenderer(params, internalRate);
     const decimator = createDecimator(oversampleFactor);
     const safetyState = initExportSafetyState(sampleRate, params);
+    const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
     let done = 0;
     let peak = 0;
 
@@ -1900,6 +2374,7 @@
         const left = new Float32Array(frames);
         const right = new Float32Array(frames);
         renderBlock(renderer, frames, left, right);
+        applyLoopHeadMix(left, right, done, loopPost);
         peak = Math.max(peak, applyExportSafetyBlock(left, right, safetyState));
       } else {
         const tempFrames = frames * oversampleFactor;
@@ -1910,6 +2385,7 @@
         renderBlock(renderer, tempFrames, tempL, tempR);
         const produced = decimateInto(decimator, tempL, tempR, outL, outR);
         if (produced !== frames) throw new Error('DECIMATION_LENGTH_MISMATCH');
+        applyLoopHeadMix(outL, outR, done, loopPost);
         peak = Math.max(peak, applyExportSafetyBlock(outL, outR, safetyState));
       }
       done += frames;
@@ -1931,10 +2407,11 @@
     const renderer = createStereoRenderer(params, internalRate);
     const decimator = createDecimator(oversampleFactor);
     const safetyState = initExportSafetyState(sampleRate, params);
+    const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
     const shaper = bitDepth === '32f' ? null : createNoiseShaper(getExportNoiseShaping(params));
     const header = format === 'aiff'
       ? createAiffHeader(totalFrames, sampleRate, bitDepth)
-      : createWavHeader(totalFrames, sampleRate, bitDepth);
+      : createWavHeader(totalFrames, sampleRate, bitDepth, !!loopPost);
     const parts = [header];
     const ditherRng = useDither ? new RNG(((params.master_seed >>> 0) ^ 0x9E3779B9) >>> 0) : null;
     let done = 0;
@@ -1958,6 +2435,7 @@
         const produced = decimateInto(decimator, tempL, tempR, left, right);
         if (produced !== frames) throw new Error('DECIMATION_LENGTH_MISMATCH');
       }
+      applyLoopHeadMix(left, right, done, loopPost);
       applyExportSafetyBlock(left, right, safetyState);
       parts.push(encodeAudioChunk(left, right, bitDepth, format, normalizeGain, useDither, ditherRng, shaper));
       done += frames;
@@ -1965,13 +2443,14 @@
       await nextFrame();
     }
 
+    if (loopPost && format === 'wav') parts.push(createWavSmplChunk(totalFrames, sampleRate));
     return new Blob(parts, { type: format === 'aiff' ? 'audio/aiff' : 'audio/wav' });
   }
 
   function estimateExportBytes(params) {
     const frameCount = Math.max(1, Math.floor(params.master_duration * getExportSampleRate(params)));
     const bytesPerFrame = bytesPerSampleForBitDepth(getExportBitDepth(params)) * 2;
-    const headerBytes = getExportFormat(params) === 'aiff' ? 54 : 44;
+    const headerBytes = (getExportFormat(params) === 'aiff' ? 54 : 44) + ((getExportFormat(params) === 'wav' && getLoopFadeSec(params) > 0) ? 68 : 0);
     return headerBytes + frameCount * bytesPerFrame;
   }
 
@@ -2314,9 +2793,11 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
       this.playing = true;
       setStatus(this.mode === 'worklet' ? '再生中 / AudioWorklet' : '再生中 / Fallback', 'ok');
+      startSleepCycle();
     },
 
     stop() {
+      stopSleepCycle();
       if (this.node) {
         this.node.port.postMessage({ type: 'stop' });
       }
@@ -2366,6 +2847,316 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     }
   };
 
+
+  // ---- Sleep timer / fade-in ----
+  const sleepState = { timers: [] };
+  function clearSleepTimers() {
+    sleepState.timers.forEach(id => clearTimeout(id));
+    sleepState.timers = [];
+  }
+  function stopSleepCycle() { clearSleepTimers(); }
+  function startSleepCycle() {
+    clearSleepTimers();
+    if (!engine.ctx || !engine.masterGain) return;
+    const ctx = engine.ctx;
+    const gainNode = engine.masterGain;
+    const fadeInSec = Number(($('sleepFadeIn') || {}).value || 0);
+    const minutes = Number(($('sleepTimer') || {}).value || 0);
+    const now = ctx.currentTime;
+    gainNode.gain.cancelScheduledValues(now);
+    if (fadeInSec > 0) {
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.exponentialRampToValueAtTime(1, now + fadeInSec);
+    } else {
+      gainNode.gain.setValueAtTime(1, now);
+    }
+    if (minutes > 0) {
+      const totalMs = minutes * 60 * 1000;
+      const fadeOutMs = 30000;
+      sleepState.timers.push(setTimeout(() => {
+        if (!engine.playing || !engine.ctx || !engine.masterGain) return;
+        const t0 = engine.ctx.currentTime;
+        const g = engine.masterGain.gain;
+        g.cancelScheduledValues(t0);
+        g.setValueAtTime(Math.max(0.0001, g.value), t0);
+        g.linearRampToValueAtTime(0, t0 + fadeOutMs / 1000);
+        setStatus(`スリープタイマー: フェードアウト中（${minutes}分）`);
+      }, Math.max(0, totalMs - fadeOutMs)));
+      sleepState.timers.push(setTimeout(() => {
+        if (engine.playing) engine.stop();
+        if (engine.masterGain && engine.ctx) engine.masterGain.gain.setValueAtTime(1, engine.ctx.currentTime);
+        setStatus('スリープタイマーで停止しました。');
+      }, totalMs + 250));
+      setStatus(`再生中 / ${engine.mode === 'worklet' ? 'AudioWorklet' : 'Fallback'} / スリープ ${minutes}分`, 'ok');
+    }
+  }
+
+  // ---- AI generation (rule-based + BYOK LLM) ----
+  const AI_NOISE_KEYWORDS = [
+    [/雷|thunder/i, 'thunder'],
+    [/焚き火|薪|fire|campfire/i, 'fire'],
+    [/滝|waterfall/i, 'waterfall'],
+    [/川|せせらぎ|渓流|stream|brook/i, 'stream'],
+    [/シャワー|shower/i, 'shower'],
+    [/電車|列車|train/i, 'train'],
+    [/飛行機|機内|フライト|airplane|flight/i, 'airplane'],
+    [/扇風機|ファン|fan/i, 'fan'],
+    [/森|林|木の葉|forest/i, 'forest'],
+    [/街|都会|交通|city|traffic/i, 'city'],
+    [/水中|海中|underwater/i, 'underwater'],
+    [/雨|rain/i, 'rain'],
+    [/嵐|台風|storm/i, 'wind'],
+    [/海|波|ocean|sea|surf/i, 'ocean'],
+    [/風|wind/i, 'wind'],
+    [/テレビ|砂嵐|static/i, 'staticam'],
+    [/レコード|バイナル|vinyl/i, 'vinyl'],
+    [/テープ|tape/i, 'tape'],
+    [/砂|sand/i, 'sand'],
+    [/グリッチ|glitch/i, 'glitch'],
+    [/カオス|混沌|chaos/i, 'chaos'],
+    [/粒|グラニュラー|granular/i, 'grains'],
+    [/共鳴|バンド|resonant/i, 'band'],
+    [/デジタル|digital/i, 'digital'],
+    [/ホワイト|white/i, 'white'],
+    [/ピンク|pink/i, 'pink'],
+    [/ブラウン|brown/i, 'brown']
+  ];
+
+  function aiHashSeed(text) {
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return 1 + (Math.abs(h) % 2147483645);
+  }
+
+  function aiRuleGenerate() {
+    const text = ($('aiPrompt').value || '').trim();
+    if (!text) { setStatus('作りたい音を入力してください。', 'err'); return; }
+    const found = [];
+    for (const [re, type] of AI_NOISE_KEYWORDS) if (re.test(text)) found.push(type);
+    const sleep = /眠|寝|睡眠|スリープ|sleep/i.test(text);
+    const focus = /集中|作業|勉強|読書|focus|work/i.test(text);
+    const relax = /リラックス|瞑想|ヨガ|relax|calm/i.test(text);
+    const mask = /マスキング|遮音|騒音カット|mask/i.test(text);
+    const p = { ...DEFAULTS };
+    const main = found[0] || 'pink';
+    const sub = found[1] || (sleep ? 'brown' : relax ? 'pink' : null);
+    p.A_enabled = true;
+    p.A_type = main;
+    p.A_gain = 0.88;
+    p.A_tone = sleep ? -0.35 : -0.1;
+    p.A_density = 0.55;
+    p.A_motion = (relax || sleep) ? 0.3 : 0.2;
+    p.A_grain = 0.25;
+    if (sub) {
+      p.B_enabled = true;
+      p.B_type = sub;
+      p.B_gain = 0.22;
+      p.B_tone = -0.4;
+      p.B_density = 0.35;
+      p.B_motion = 0.12;
+      p.B_grain = 0.1;
+    }
+    p.master_seed = aiHashSeed(text);
+    p.master_gain = 0.52;
+    if (sleep) {
+      p.master_highcut = Math.min(p.master_highcut, 6000);
+      p.master_binauralEnabled = true;
+      p.master_binauralCarrier = 180;
+      p.master_binauralBeat = 2;
+      p.master_binauralLevel = 0.28;
+      const st = $('sleepTimer');
+      if (st && st.value === '0') st.value = '30';
+    } else if (focus) {
+      p.master_binauralEnabled = true;
+      p.master_binauralCarrier = 210;
+      p.master_binauralBeat = /ガンマ|gamma/i.test(text) ? 40 : 14;
+      p.master_binauralLevel = 0.24;
+      p.master_highcut = Math.min(p.master_highcut, 9000);
+    } else if (relax) {
+      p.master_binauralEnabled = true;
+      p.master_binauralCarrier = 220;
+      p.master_binauralBeat = 6;
+      p.master_binauralLevel = 0.3;
+    }
+    if (/デルタ|delta/i.test(text)) { p.master_binauralEnabled = true; p.master_binauralBeat = 2; }
+    if (/シータ|θ|theta/i.test(text)) { p.master_binauralEnabled = true; p.master_binauralBeat = 6; }
+    if (/アルファ|alpha/i.test(text)) { p.master_binauralEnabled = true; p.master_binauralBeat = 10; }
+    if (mask) {
+      p.A_type = /ピンク|pink/i.test(text) ? 'pink' : 'white';
+      p.master_highcut = 20000;
+      p.master_gain = 0.58;
+    }
+    if (/激し|ハーシュ|harsh/i.test(text)) { p.master_drive = 0.5; p.A_grain = 0.7; }
+    if (/静か|優し|soft|gentle/i.test(text)) { p.master_gain = 0.42; p.master_drive = 0.02; p.A_grain = Math.min(p.A_grain, 0.15); }
+    setParams(p);
+    engine.rebuild();
+    scheduleAutosave();
+    const beatNote = p.master_binauralEnabled ? ` / binaural ${p.master_binauralBeat} Hz` : '';
+    setStatus(`AI生成（ルール）: ${labelOfType(main)}${sub ? ' + ' + labelOfType(sub) : ''}${beatNote} / seed ${p.master_seed}`, 'ok');
+  }
+
+  function aiLoadKey() {
+    try { return JSON.parse(localStorage.getItem('noise_byok_v1') || '{}'); } catch (_) { return {}; }
+  }
+  function aiSaveKey(provider, key) {
+    try {
+      const cur = aiLoadKey();
+      cur[provider] = key;
+      localStorage.setItem('noise_byok_v1', JSON.stringify(cur));
+    } catch (_) {}
+  }
+  function aiSanitizeParams(obj) {
+    if (!obj || typeof obj !== 'object') return null;
+    const out = {};
+    const typeIds = new Set(NOISE_TYPES.map(v => v[0]));
+    for (const [k, v] of Object.entries(obj)) {
+      if (!(k in DEFAULTS)) continue;
+      if (k === 'A_type' || k === 'B_type') { if (typeIds.has(v)) out[k] = v; continue; }
+      if (k === 'master_binauralMode') { if (v === 'binaural' || v === 'isochronic') out[k] = v; continue; }
+      if (k === 'master_exportFormat') { if (v === 'wav' || v === 'aiff') out[k] = v; continue; }
+      if (k === 'master_previewQuality' || k === 'master_exportMode' || k === 'master_exportNoiseShaping') { if (typeof v === 'string') out[k] = v; continue; }
+      if (typeof DEFAULTS[k] === 'boolean') { out[k] = !!v; continue; }
+      if (typeof DEFAULTS[k] === 'number') { const n = Number(v); if (Number.isFinite(n)) out[k] = n; continue; }
+      if (typeof v === 'string' || typeof v === 'number') out[k] = v;
+    }
+    return out;
+  }
+  function aiSchemaHint() {
+    const keys = Object.keys(DEFAULTS).join(', ');
+    const types = NOISE_TYPES.map(v => v[0]).join('|');
+    return `You are a preset designer for a stereo noise generator. Reply with ONE JSON object only (no markdown, no prose). Allowed keys: ${keys}. Layer types: ${types}. Numbers must be plain numbers within UI ranges (gains 0..2.2, pan -1..1, tone -1..1, density/motion/grain 0..1.5, master_width 0..5.5, binaural carrier 40..600, beat 0..40, level 0..0.6). Booleans as true/false. Always include A_enabled, A_type and master_gain (0.35..0.65). Add master_binauralEnabled with carrier/beat/level when the request mentions sleep, focus, meditation or binaural (delta~2Hz, theta~6Hz, alpha~10Hz, beta~20Hz, gamma~40Hz).`;
+  }
+  async function aiLlmGenerate() {
+    const text = ($('aiPrompt').value || '').trim();
+    if (!text) { setStatus('作りたい音を入力してください。', 'err'); return; }
+    const provider = $('aiProvider').value === 'gemini' ? 'gemini' : 'groq';
+    const key = ($('aiApiKey').value || '').trim();
+    if (!key) { setStatus('APIキーを入力してください（このブラウザ内にのみ保存されます）。', 'err'); return; }
+    aiSaveKey(provider, key);
+    setStatus(`LLM生成中 (${provider})...`);
+    try {
+      let raw = '';
+      if (provider === 'groq') {
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+          body: JSON.stringify({
+            model: 'openai/gpt-oss-20b',
+            messages: [
+              { role: 'system', content: aiSchemaHint() },
+              { role: 'user', content: text }
+            ],
+            temperature: 0.4,
+            response_format: { type: 'json_object' }
+          })
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        raw = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '';
+      } else {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: aiSchemaHint() + '\nRequest: ' + text }] }],
+            generationConfig: { responseMimeType: 'application/json', temperature: 0.4 }
+          })
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        raw = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts
+          ? data.candidates[0].content.parts.map(pp => pp.text || '').join('')
+          : '';
+      }
+      const match = String(raw).match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('JSON_NOT_FOUND');
+      const clean = aiSanitizeParams(JSON.parse(match[0]));
+      if (!clean || !Object.keys(clean).length) throw new Error('NO_VALID_KEYS');
+      setParams({ ...DEFAULTS, ...clean });
+      engine.rebuild();
+      scheduleAutosave();
+      setStatus(`AI生成（LLM/${provider}）を適用しました: ${Object.keys(clean).length} keys`, 'ok');
+    } catch (err) {
+      console.error(err);
+      setStatus('LLM生成に失敗しました。キー・通信・応答形式を確認してください。', 'err');
+    }
+  }
+
+  // ---- Web MIDI input ----
+  const MIDI_CC_MAP = [
+    [7, 'master_gain', 2.2],
+    [1, 'master_width', 5.5],
+    [74, 'master_drive', 2.0],
+    [20, 'A_gain', 2.2],
+    [21, 'B_gain', 2.2],
+    [22, 'master_binauralLevel', 0.6],
+    [23, 'master_space', 1.8]
+  ];
+  const midiState = { access: null };
+  function onMidiMessage(e) {
+    const [statusByte, d1, d2] = e.data;
+    const type = statusByte & 0xf0;
+    if (type === 0x90 && d2 > 0) { engine.play(); return; }
+    if ((type === 0x80 || (type === 0x90 && d2 === 0)) && $('midiNoteToggle').checked) { engine.stop(); return; }
+    if (type === 0xb0) {
+      const hit = MIDI_CC_MAP.find(([cc]) => cc === d1);
+      if (!hit) return;
+      const el = $(hit[1]);
+      if (!el) return;
+      el.value = String((d2 / 127) * hit[2]);
+      syncReadouts();
+      engine.updateLiveParams(hit[1]);
+    }
+  }
+  async function toggleMidi() {
+    if (midiState.access) { setStatus('MIDI入力は有効です。'); return; }
+    if (!navigator.requestMIDIAccess) { setStatus('このブラウザは Web MIDI に未対応です（Chrome系で開いてください）。', 'err'); return; }
+    try {
+      const access = await navigator.requestMIDIAccess();
+      midiState.access = access;
+      const names = [];
+      access.inputs.forEach(input => { input.onmidimessage = onMidiMessage; names.push(input.name || 'MIDI device'); });
+      access.onstatechange = () => {
+        access.inputs.forEach(input => { input.onmidimessage = onMidiMessage; });
+      };
+      $('midiBtn').textContent = 'MIDI入力: 有効';
+      setStatus(`MIDI入力を開始しました: ${names.join(', ') || 'デバイス未接続（接続すると有効になります）'}`, 'ok');
+    } catch (err) {
+      console.error(err);
+      setStatus('MIDI入力を開始できませんでした（権限を確認してください）。', 'err');
+    }
+  }
+
+  // ---- URL session sharing ----
+  async function copySessionUrl() {
+    try {
+      const json = serializeSession();
+      const bytes = new TextEncoder().encode(json);
+      let bin = '';
+      bytes.forEach(b => { bin += String.fromCharCode(b); });
+      const b64 = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const url = `${location.origin}${location.pathname}?session=${b64}`;
+      await navigator.clipboard.writeText(url);
+      setStatus('共有URLをコピーしました。', 'ok');
+    } catch (_) {
+      setStatus('URLコピーに失敗しました。', 'err');
+    }
+  }
+  function applyUrlParams() {
+    try {
+      const q = new URLSearchParams(location.search);
+      const preset = q.get('preset');
+      if (preset && PRESETS[preset]) { applyPreset(preset); return; }
+      const s = q.get('session');
+      if (s) {
+        const b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+        const bin = atob(b64);
+        const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+        const json = new TextDecoder().decode(bytes);
+        loadSessionObject(JSON.parse(json), 'URLセッション');
+      }
+    } catch (_) {}
+  }
 
   const exportState = {
     running: false,
@@ -2590,6 +3381,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 
     document.querySelectorAll('input, select').forEach(el => {
       const handler = () => {
+        if (el.id === 'aiPrompt' || el.id === 'aiApiKey' || el.id === 'aiProvider') return;
         syncReadouts();
         engine.updateLiveParams(el.id);
       };
@@ -2618,6 +3410,19 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       setStatus('初期化しました。');
     });
     $('saveSessionBtn').addEventListener('click', saveSessionJson);
+    $('copyUrlBtn').addEventListener('click', copySessionUrl);
+    $('aiRuleBtn').addEventListener('click', aiRuleGenerate);
+    $('aiLlmBtn').addEventListener('click', aiLlmGenerate);
+    $('aiPrompt').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); aiRuleGenerate(); } });
+    $('aiProvider').addEventListener('change', () => {
+      const saved = aiLoadKey();
+      $('aiApiKey').value = saved[$('aiProvider').value] || '';
+    });
+    {
+      const saved = aiLoadKey();
+      if (saved[$('aiProvider').value]) $('aiApiKey').value = saved[$('aiProvider').value];
+    }
+    $('midiBtn').addEventListener('click', toggleMidi);
     $('copySessionBtn').addEventListener('click', copySessionJson);
     $('loadSessionBtn').addEventListener('click', () => $('sessionFile').click());
     $('clearAutosaveBtn').addEventListener('click', () => {
@@ -2657,6 +3462,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   setBusyUI(false);
   drawLoop();
   if (!restoreAutosave()) engine.rebuild();
+  applyUrlParams();
 })();
 
 </script>
