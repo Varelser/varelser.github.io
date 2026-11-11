@@ -2346,7 +2346,10 @@
           c.env *= dec;
           if (c.env < 0.0004) { s.chimes.splice(i, 1); continue; }
           const e2 = c.env * c.env;
-          y += c.vel * (Math.sin(c.ph) * c.env + 0.42 * Math.sin(c.ph * 2.76) * e2 + 0.16 * Math.sin(c.ph * 5.4) * e2 * c.env);
+          // partials above Nyquist are dropped instead of aliasing (low rates)
+          const p2 = c.f * 2.76 < sr * 0.48 ? 0.42 * Math.sin(c.ph * 2.76) * e2 : 0;
+          const p3 = c.f * 5.4 < sr * 0.48 ? 0.16 * Math.sin(c.ph * 5.4) * e2 * c.env : 0;
+          y += c.vel * (Math.sin(c.ph) * c.env + p2 + p3);
         }
         const air = lp(s, 'fu1', rawWhite(s), 800, sr) * 0.03 * breeze;
         return y * 0.8 + air;
@@ -2538,6 +2541,28 @@
       p[`${prefix}_eqMid`] = clamp(Number(p[`${prefix}_eqMid`]) || 0, -1, 1);
       p[`${prefix}_eqHigh`] = clamp(Number(p[`${prefix}_eqHigh`]) || 0, -1, 1);
     });
+    // Enum safety net: any string-enum field arriving here with an invalid
+    // value (crafted session, LLM output, stale storage) falls back to the
+    // default instead of flowing into the renderer/encoders.
+    {
+      const typeIds = new Set(NOISE_TYPES.map(v => v[0]));
+      if (!typeIds.has(p.A_type)) p.A_type = DEFAULTS.A_type;
+      if (!typeIds.has(p.B_type)) p.B_type = DEFAULTS.B_type;
+      if (!typeIds.has(p.C_type)) p.C_type = DEFAULTS.C_type;
+      const enumOk = (key, allowed) => {
+        // keep the value's native type when it names a valid option
+        // (loopFade / bitDepth are numeric in DEFAULTS, strings in the UI)
+        if (!allowed.includes(String(p[key]))) p[key] = DEFAULTS[key];
+      };
+      enumOk('master_binauralMode', ['binaural', 'isochronic', 'monaural']);
+      enumOk('master_exportFormat', ['wav', 'aiff', 'flac']);
+      enumOk('master_exportBitDepth', ['16', '24', '32f']);
+      enumOk('master_loopFade', ['0', '1', '2', '3', '5', '10']);
+      enumOk('master_exportLoudness', ['0', '-23', '-18', '-16', '-14']);
+      enumOk('master_exportNoiseShaping', ['off', 'gentle', 'strong']);
+      enumOk('master_previewQuality', ['eco', 'normal', 'high']);
+      enumOk('master_exportMode', ['mix', 'stems', 'mixstems']);
+    }
     return p;
   }
 
@@ -4229,15 +4254,35 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     if (!obj || typeof obj !== 'object') return null;
     const out = {};
     const typeIds = new Set(NOISE_TYPES.map(v => v[0]));
+    const selectOptions = {};
+    const schemas = [];
+    if (typeof LAYER_SCHEMA !== 'undefined') schemas.push(...LAYER_SCHEMA);
+    if (typeof MASTER_SCHEMA !== 'undefined') schemas.push(...MASTER_SCHEMA);
+    for (const f of schemas) {
+      if (f.type === 'select') selectOptions[f.id] = new Set(f.options.map(o => String(o[0])));
+    }
+    const enumFields = {
+      master_binauralMode: ['binaural', 'isochronic', 'monaural'],
+      master_exportFormat: ['wav', 'aiff', 'flac'],
+      master_exportBitDepth: ['16', '24', '32f'],
+      master_loopFade: ['0', '1', '2', '3', '5', '10'],
+      master_exportLoudness: ['0', '-23', '-18', '-16', '-14'],
+      master_exportNoiseShaping: ['off', 'gentle', 'strong'],
+      master_previewQuality: ['eco', 'normal', 'high'],
+      master_exportMode: ['mix', 'stems', 'mixstems']
+    };
     for (const [k, v] of Object.entries(obj)) {
       if (!(k in DEFAULTS)) continue;
-      if (k === 'A_type' || k === 'B_type') { if (typeIds.has(v)) out[k] = v; continue; }
-      if (k === 'master_binauralMode') { if (v === 'binaural' || v === 'isochronic' || v === 'monaural') out[k] = v; continue; }
-      if (k === 'master_exportFormat') { if (v === 'wav' || v === 'aiff' || v === 'flac') out[k] = v; continue; }
-      if (k === 'master_previewQuality' || k === 'master_exportMode' || k === 'master_exportNoiseShaping') { if (typeof v === 'string') out[k] = v; continue; }
+      if (k === 'A_type' || k === 'B_type' || k === 'C_type') { if (typeIds.has(v)) out[k] = v; continue; }
+      if (enumFields[k]) {
+        const sv = String(v);
+        if (enumFields[k].includes(sv)) out[k] = (typeof DEFAULTS[k] === 'number' && Number.isFinite(Number(v))) ? Number(v) : sv;
+        continue;
+      }
+      if (selectOptions[k]) { const sv = String(v); if (selectOptions[k].has(sv)) out[k] = sv; continue; }
       if (typeof DEFAULTS[k] === 'boolean') { out[k] = !!v; continue; }
       if (typeof DEFAULTS[k] === 'number') { const n = Number(v); if (Number.isFinite(n)) out[k] = n; continue; }
-      if (typeof v === 'string' || typeof v === 'number') out[k] = v;
+      if (typeof DEFAULTS[k] === 'string' && typeof v === 'string') out[k] = v;
     }
     return out;
   }
