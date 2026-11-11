@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import assert from 'node:assert';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -67,6 +68,18 @@ const run = (code) => vm.runInContext(code, ctx);
 let passed = 0;
 let failed = 0;
 function check(name, cond) {
+  // A function condition is an assertion block: it must actually run.
+  // (Passing the function object itself as a boolean would make the
+  // check vacuously "ok" without executing any assertion.)
+  if (typeof cond === 'function') {
+    try {
+      cond();
+      passed++; console.log(`ok - ${name}`);
+    } catch (err) {
+      failed++; console.log(`FAIL - ${name}: ${err && err.message ? err.message : err}`);
+    }
+    return;
+  }
   if (cond) { passed++; console.log(`ok - ${name}`); }
   else { failed++; console.log(`FAIL - ${name}`); }
 }
@@ -346,6 +359,13 @@ check('core LCG random matches real p5 1.6.0 values (golden)', () => {
     got.forEach((v, i) => assert.ok(Math.abs(v - expected[i]) < 1e-9, `seed ${seed} call ${i}: ${v} != ${expected[i]}`));
   }
 });
+
+// Node-side scene checksum (mirrors the vm __checksum helper).
+function sceneChecksum(sd) {
+  let s = 0;
+  for (const c of sd.contours) { s += c.points.length; for (const p of c.points) { s += p.x * 0.1234567 + p.y * 0.7654321; } }
+  return sd.contours.length + ':' + s.toFixed(6) + ':' + sd.gridStep;
+}
 
 const GOLDEN_CHECKSUM = '672:2181243.391762:12'; // 800x600, defaults, seed 777, one centre hole (matches pre-v3 output exactly)
 
