@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lien</title>
   <style>
     :root {
@@ -185,6 +185,39 @@
       color: var(--overlay-fg);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .mini-btn {
+      padding: 4px 10px;
+      font-size: 10px;
+      line-height: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: 1px solid var(--option-inactive-border);
+      border-radius: 6px;
+      color: var(--option-inactive-fg);
+      transition: border-color 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .mini-btn:hover {
+      border-color: var(--option-inactive-hover);
+      color: var(--fg);
+    }
+
+    .share-field {
+      width: 100%;
+      margin-top: 8px;
+      background: var(--control-bg);
+      color: var(--fg);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 11px;
     }
 
     .app-footer {
@@ -540,9 +573,12 @@
     </header>
 
     <div id="wrapper" class="canvas-wrap">
-      <canvas id="viewCanvas" class="view-canvas"></canvas>
+      <canvas id="viewCanvas" class="view-canvas" role="img" aria-label="Lien generative flow-field artwork"></canvas>
       <div id="exportOverlay" class="export-overlay" hidden>
-        <div id="exportMessageCard" class="export-overlay-card">Exporting</div>
+        <div id="exportMessageCard" class="export-overlay-card">
+          <span id="exportMessageText">Exporting</span>
+          <button id="exportCancelBtn" class="mini-btn" type="button">Cancel</button>
+        </div>
       </div>
     </div>
 
@@ -559,6 +595,13 @@
           </button>
         </div>
         <div class="toolbar-right">
+          <button id="undoBtn" class="icon-btn" data-disable-during-export="1" type="button" aria-label="Undo reset" hidden>
+            <span class="icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+              </svg>
+            </span>
+          </button>
           <button id="pauseBtn" class="icon-btn" data-disable-during-export="1" type="button" aria-label="Pause or play"></button>
           <button id="resetBtn" class="icon-btn" data-disable-during-export="1" type="button" aria-label="Reset artwork">
             <span class="icon" aria-hidden="true">
@@ -578,7 +621,7 @@
       </div>
     </footer>
 
-    <div id="savePanel" class="floating-panel save" hidden>
+    <div id="savePanel" class="floating-panel save" role="dialog" aria-label="Export PNG" hidden>
       <div class="panel-shell">
         <div class="panel-header">
           <h2 class="panel-title">Export PNG</h2>
@@ -593,6 +636,7 @@
         <div class="panel-body tight">
           <div class="export-list">
             <div class="meta-note">High quality rerender</div>
+            <div id="exportInfo" class="small-label" style="margin:0;color:var(--muted);"></div>
             <div class="export-grid">
               <button class="export-btn" data-export-transparent="0" data-export-scale="2" data-disable-during-export="1" type="button">Background 2×</button>
               <button class="export-btn" data-export-transparent="1" data-export-scale="2" data-disable-during-export="1" type="button">Transparent 2×</button>
@@ -604,12 +648,17 @@
             <div class="small-label" style="margin:0;color:var(--muted);">
               Export re-renders the artwork from the active seed and frame count at the selected scale, applying the current visual settings to every frame. After a window resize, it exports the current view scaled up instead.
             </div>
+            <div>
+              <button id="shareLinkBtn" class="export-btn" data-disable-during-export="1" type="button" style="width:100%;">Copy Share Link</button>
+              <input id="shareLinkField" class="share-field" type="text" readonly hidden aria-label="Share link" />
+              <div class="small-label" style="margin:4px 0 0;color:var(--muted);">The link encodes the full configuration. Anyone opening it sees the same artwork grow from the same seed.</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="configPanel" class="floating-panel config" hidden>
+    <div id="configPanel" class="floating-panel config" role="dialog" aria-label="Configuration" hidden>
       <div class="panel-shell">
         <div class="panel-header">
           <h2 class="panel-title">Configuration</h2>
@@ -622,6 +671,23 @@
           </button>
         </div>
         <div class="panel-body config-scroll">
+          <section class="group">
+            <h3 class="group-title">Presets</h3>
+            <div class="option-row" id="presetButtons">
+              <button class="option-button" data-preset="drift" data-disable-during-export="1" type="button">Drift</button>
+              <button class="option-button" data-preset="vortex" data-disable-during-export="1" type="button">Vortex</button>
+              <button class="option-button" data-preset="downpour" data-disable-during-export="1" type="button">Downpour</button>
+              <button class="option-button" data-preset="silk" data-disable-during-export="1" type="button">Silk</button>
+              <button class="option-button" data-preset="chaos" data-disable-during-export="1" type="button">Chaos</button>
+              <button class="option-button" data-preset="ridges" data-disable-during-export="1" type="button">Ridges</button>
+              <button class="option-button" data-preset="bloom" data-disable-during-export="1" type="button">Bloom</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;">
+              <div class="small-label" style="margin:0;">Presets restart the artwork. Undo (toolbar) brings it back.</div>
+              <button id="defaultsBtn" class="mini-btn" data-disable-during-export="1" type="button">Defaults</button>
+            </div>
+          </section>
+
           <section class="group">
             <h3 class="group-title">Flow Dynamics</h3>
             <div class="group-stack">
@@ -647,28 +713,28 @@
               </div>
 
               <div class="slider-block">
-                <div class="slider-head"><span>Seed</span><span id="seedValue" class="slider-value"></span></div>
-                <input id="seedInput" class="range-input" type="range" min="1" max="99999" step="1" />
+                <div class="slider-head"><span>Seed</span><span style="display:inline-flex;align-items:center;gap:8px;"><span id="seedValue" class="slider-value"></span><button id="randomSeedBtn" class="mini-btn" data-disable-during-export="1" type="button">Random</button></span></div>
+                <input id="seedInput" aria-label="Seed" class="range-input" type="range" min="1" max="99999" step="1" />
               </div>
 
               <div class="slider-block">
                 <div class="slider-head"><span>Steps per Line</span><span id="stepsPerLineValue" class="slider-value"></span></div>
-                <input id="stepsPerLineInput" class="range-input" type="range" min="100" max="10000" step="100" />
+                <input id="stepsPerLineInput" aria-label="Steps per Line" class="range-input" type="range" min="100" max="10000" step="100" />
               </div>
 
               <div class="slider-block">
                 <div class="slider-head"><span>Speed</span><span id="stepLengthValue" class="slider-value"></span></div>
-                <input id="stepLengthInput" class="range-input" type="range" min="0.5" max="50" step="0.5" />
+                <input id="stepLengthInput" aria-label="Speed" class="range-input" type="range" min="0.5" max="50" step="0.5" />
               </div>
 
               <div class="slider-block">
                 <div class="slider-head"><span>Noise Frequency</span><span id="noiseFreqValue" class="slider-value"></span></div>
-                <input id="noiseFreqInput" class="range-input" type="range" min="0.0001" max="0.02" step="0.0001" />
+                <input id="noiseFreqInput" aria-label="Noise Frequency" class="range-input" type="range" min="0.0001" max="0.02" step="0.0001" />
               </div>
 
               <div class="slider-block">
                 <div class="slider-head"><span>Curl Strength</span><span id="curlStrengthValue" class="slider-value"></span></div>
-                <input id="curlStrengthInput" class="range-input" type="range" min="0.1" max="20" step="0.1" />
+                <input id="curlStrengthInput" aria-label="Curl Strength" class="range-input" type="range" min="0.1" max="20" step="0.1" />
               </div>
             </div>
           </section>
@@ -678,45 +744,56 @@
             <div class="group-stack">
               <div class="slider-block">
                 <div class="slider-head"><span>Line Count</span><span id="particleCountValue" class="slider-value"></span></div>
-                <input id="particleCountInput" class="range-input" type="range" min="100" max="100000" step="100" />
+                <input id="particleCountInput" aria-label="Line Count" class="range-input" type="range" min="100" max="100000" step="100" />
+                <div id="heavyWarn" class="small-label" style="margin:0;color:var(--muted);" hidden>Very heavy at this count: expect a low frame rate, and the image saturates toward solid white.</div>
               </div>
 
               <div class="slider-block">
                 <div class="slider-head"><span>Density Map</span><span id="clusteringValue" class="slider-value"></span></div>
-                <input id="clusteringInput" class="range-input" type="range" min="0" max="0.99" step="0.01" />
+                <input id="clusteringInput" aria-label="Density Map" class="range-input" type="range" min="0" max="0.99" step="0.01" />
               </div>
 
               <div class="slider-block">
                 <div class="slider-head"><span>Line Opacity</span><span id="opacityValue" class="slider-value"></span></div>
-                <input id="opacityInput" class="range-input" type="range" min="1" max="255" step="1" />
+                <input id="opacityInput" aria-label="Line Opacity" class="range-input" type="range" min="1" max="255" step="1" />
               </div>
 
               <div class="dual-grid">
                 <div class="slider-block">
                   <div class="slider-head"><span>Min Width</span><span id="lineWidthMinValue" class="slider-value"></span></div>
-                  <input id="lineWidthMinInput" class="range-input" type="range" min="0.1" max="20" step="0.1" />
+                  <input id="lineWidthMinInput" aria-label="Min Width" class="range-input" type="range" min="0.1" max="20" step="0.1" />
                 </div>
                 <div class="slider-block">
                   <div class="slider-head"><span>Max Width</span><span id="lineWidthMaxValue" class="slider-value"></span></div>
-                  <input id="lineWidthMaxInput" class="range-input" type="range" min="0.1" max="20" step="0.1" />
+                  <input id="lineWidthMaxInput" aria-label="Max Width" class="range-input" type="range" min="0.1" max="20" step="0.1" />
                 </div>
               </div>
 
               <div class="color-block">
                 <div class="slider-head"><span>Line Color</span><span id="lineColorValue" class="slider-value"></span></div>
-                <input id="lineColorInput" class="color-input" type="color" />
+                <input id="lineColorInput" aria-label="Line Color" class="color-input" type="color" />
               </div>
 
               <div class="slider-block">
                 <div class="slider-head"><span>Zoom</span><span id="zoomValue" class="slider-value"></span></div>
-                <input id="zoomInput" class="range-input" type="range" min="0.5" max="10" step="0.01" />
+                <input id="zoomInput" aria-label="Zoom" class="range-input" type="range" min="0.5" max="10" step="0.01" />
               </div>
 
               <label class="checkbox-row" for="colorInvertInput">
                 <span>Invert Background</span>
-                <input id="colorInvertInput" class="checkbox-input" type="checkbox" />
+                <input id="colorInvertInput" aria-label="Invert Background" class="checkbox-input" type="checkbox" />
               </label>
             </div>
+          </section>
+
+          <section class="group">
+            <h3 class="group-title">Shortcuts</h3>
+            <div class="small-label" style="margin:0;line-height:1.7;">
+              Space — play / pause · R — reset (undoable)<br />
+              E — export panel · C — this panel · F — fullscreen<br />
+              Ctrl/⌘+Z — undo reset · Esc — close / cancel export
+            </div>
+            <div class="small-label" style="margin:8px 0 0;">Settings are saved automatically in this browser and restored on reload.</div>
           </section>
         </div>
       </div>
@@ -820,11 +897,90 @@
         'particleCount'
       ]);
 
+      const CONFIG_STORAGE_KEY = 'lien.config.v1';
+      const CONFIG_RANGES = {
+        seed: [1, 99999, true],
+        stepsPerLine: [100, 10000, true],
+        stepLength: [0.5, 50, false],
+        noiseFreq: [0.0001, 0.02, false],
+        curlStrength: [0.1, 20, false],
+        particleCount: [100, 100000, true],
+        clustering: [0, 0.99, false],
+        opacity: [1, 255, true],
+        lineWidthMin: [0.1, 20, false],
+        lineWidthMax: [0.1, 20, false],
+        zoom: [0.5, 10, false]
+      };
+
+      // Accepts only known keys with in-range values; anything else falls
+      // back to the defaults. Used for both the share-link payload and the
+      // locally saved configuration, so a hand-edited link cannot inject
+      // arbitrary state.
+      function sanitizeConfig(raw) {
+        const cfg = { ...PRESET_DEFAULTS };
+        if (!raw || typeof raw !== 'object') return cfg;
+        for (const key in CONFIG_RANGES) {
+          const range = CONFIG_RANGES[key];
+          const value = Number(raw[key]);
+          if (Number.isFinite(value)) {
+            const clamped = clamp(value, range[0], range[1]);
+            cfg[key] = range[2] ? Math.round(clamped) : clamped;
+          }
+        }
+        if (['omni', 'down', 'left', 'diagonal'].indexOf(raw.flowDirection) >= 0) cfg.flowDirection = raw.flowDirection;
+        if (['perlin', 'vortex', 'radial', 'ridge', 'chaos'].indexOf(raw.waveMode) >= 0) cfg.waveMode = raw.waveMode;
+        if (typeof raw.colorInvert === 'boolean') cfg.colorInvert = raw.colorInvert;
+        if (typeof raw.lineColor === 'string' && /^#[0-9a-f]{6}$/i.test(raw.lineColor)) cfg.lineColor = raw.lineColor.toLowerCase();
+        if (cfg.lineWidthMin > cfg.lineWidthMax) cfg.lineWidthMax = cfg.lineWidthMin;
+        return cfg;
+      }
+
+      function encodeConfigForShare(cfg) {
+        const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
+        return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+
+      function decodeSharedConfig(payload) {
+        try {
+          const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+          const json = decodeURIComponent(escape(atob(base64)));
+          return sanitizeConfig(JSON.parse(json));
+        } catch (error) {
+          return null;
+        }
+      }
+
+      // Priority: share link (#c=...) over the locally saved configuration
+      // over the built-in defaults.
+      function loadInitialConfig() {
+        if (window.location.hash.indexOf('#c=') === 0) {
+          const shared = decodeSharedConfig(window.location.hash.slice(3));
+          if (shared) return { config: shared, fromShareLink: true };
+        }
+        try {
+          const saved = window.localStorage.getItem(CONFIG_STORAGE_KEY);
+          if (saved) return { config: sanitizeConfig(JSON.parse(saved)), fromShareLink: false };
+        } catch (error) { /* storage unavailable: fall through to defaults */ }
+        return { config: { ...PRESET_DEFAULTS }, fromShareLink: false };
+      }
+
+      const PRESETS = {
+        drift:    { seed: 1,     flowDirection: 'omni', waveMode: 'perlin', stepsPerLine: 2000, stepLength: 1.0, noiseFreq: 0.0006,  curlStrength: 1.5, particleCount: 6000,  clustering: 0,    opacity: 12, lineWidthMin: 0.5, lineWidthMax: 1.5 },
+        vortex:   { seed: 4211,  flowDirection: 'omni', waveMode: 'vortex', stepsPerLine: 2600, stepLength: 1.2, noiseFreq: 0.0012,  curlStrength: 6,   particleCount: 9000,  clustering: 0,    opacity: 10, lineWidthMin: 0.5, lineWidthMax: 1.5 },
+        downpour: { seed: 730,   flowDirection: 'down',                     stepsPerLine: 1200, stepLength: 3.5, noiseFreq: 0.0009,  curlStrength: 2.5, particleCount: 12000, clustering: 0,    opacity: 16, lineWidthMin: 0.4, lineWidthMax: 1.0 },
+        silk:     { seed: 90210, flowDirection: 'omni', waveMode: 'perlin', stepsPerLine: 4200, stepLength: 0.8, noiseFreq: 0.00035, curlStrength: 1.1, particleCount: 4500,  clustering: 0,    opacity: 7,  lineWidthMin: 0.3, lineWidthMax: 0.9 },
+        chaos:    { seed: 555,   flowDirection: 'omni', waveMode: 'chaos',  stepsPerLine: 1800, stepLength: 1.4, noiseFreq: 0.0016,  curlStrength: 4.5, particleCount: 15000, clustering: 0,    opacity: 9,  lineWidthMin: 0.5, lineWidthMax: 1.5 },
+        ridges:   { seed: 2024,  flowDirection: 'omni', waveMode: 'ridge',  stepsPerLine: 2400, stepLength: 1.1, noiseFreq: 0.0008,  curlStrength: 3,   particleCount: 8000,  clustering: 0.15, opacity: 12, lineWidthMin: 0.5, lineWidthMax: 1.5 },
+        bloom:    { seed: 88,    flowDirection: 'omni', waveMode: 'radial', stepsPerLine: 2200, stepLength: 1.0, noiseFreq: 0.0006,  curlStrength: 2,   particleCount: 10000, clustering: 0.35, opacity: 11, lineWidthMin: 0.5, lineWidthMax: 1.5 }
+      };
+
       const PLAY_ICON = '<span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 0 1 0 1.971l-11.54 6.347a1.125 1.125 0 0 1-1.667-.985V5.653Z" /></svg></span>';
       const PAUSE_ICON = '<span class="icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg></span>';
 
+      const initialConfig = loadInitialConfig();
+
       const state = {
-        config: { ...PRESET_DEFAULTS },
+        config: initialConfig.config,
         isPaused: false,
         isExporting: false,
         exportMessage: '',
@@ -846,6 +1002,16 @@
       const configCloseBtn = document.getElementById('configCloseBtn');
       const saveCloseBtn = document.getElementById('saveCloseBtn');
       const waveModeWrap = document.getElementById('waveModeWrap');
+      const undoBtn = document.getElementById('undoBtn');
+      const exportMessageText = document.getElementById('exportMessageText');
+      const exportCancelBtn = document.getElementById('exportCancelBtn');
+      const exportInfo = document.getElementById('exportInfo');
+      const shareLinkBtn = document.getElementById('shareLinkBtn');
+      const shareLinkField = document.getElementById('shareLinkField');
+      const randomSeedBtn = document.getElementById('randomSeedBtn');
+      const defaultsBtn = document.getElementById('defaultsBtn');
+      const heavyWarn = document.getElementById('heavyWarn');
+      const presetButtons = Array.from(document.querySelectorAll('[data-preset]'));
 
       const inputs = {
         seed: document.getElementById('seedInput'),
@@ -905,18 +1071,39 @@
       const replayableRef = { current: false };
 
       function mulberry32(seed) {
-        let t = seed >>> 0;
-        return function() {
-          t |= 0;
-          t = (t + 0x6D2B79F5) | 0;
-          let r = Math.imul(t ^ (t >>> 15), 1 | t);
+        const box = { t: seed >>> 0 };
+        const rng = function() {
+          box.t |= 0;
+          box.t = (box.t + 0x6D2B79F5) | 0;
+          let r = Math.imul(box.t ^ (box.t >>> 15), 1 | box.t);
           r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
           return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
         };
+        // Exposed so an undo snapshot can capture and restore the exact
+        // random state alongside the particles that consume it.
+        rng.getState = function() { return box.t; };
+        rng.setState = function(value) { box.t = value | 0; };
+        return rng;
       }
 
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
+      }
+
+      // Yielding via rAF can stall indefinitely when the page is not
+      // producing frames (background tab, headless renderer), which would
+      // freeze a long export mid-replay. A MessageChannel macrotask yield
+      // always lets input, progress paints and observers in.
+      function yieldToMain() {
+        return new Promise(function(resolve) {
+          if (typeof MessageChannel !== 'undefined') {
+            const channel = new MessageChannel();
+            channel.port1.onmessage = function() { resolve(); };
+            channel.port2.postMessage(null);
+          } else {
+            setTimeout(resolve, 0);
+          }
+        });
       }
 
       function nextFrame() {
@@ -1186,7 +1373,34 @@
 
       function updateExportOverlay() {
         exportOverlay.hidden = !state.isExporting;
-        exportMessageCard.textContent = state.exportMessage || 'Exporting';
+        exportMessageText.textContent = state.exportMessage || 'Exporting';
+      }
+
+      let exportCancelRequested = false;
+      let undoSnapshot = null;
+
+      function persistConfig() {
+        try {
+          window.localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(state.config));
+        } catch (error) { /* storage unavailable: settings simply do not persist */ }
+      }
+
+      let persistTimer = 0;
+      function persistConfigDebounced() {
+        window.clearTimeout(persistTimer);
+        persistTimer = window.setTimeout(persistConfig, 250);
+      }
+
+      function updateUndoButton() {
+        undoBtn.hidden = !undoSnapshot;
+      }
+
+      function updateExportInfo() {
+        if (replayableRef.current) {
+          exportInfo.textContent = 'Seed ' + state.config.seed + ' · ' + framesRef.current.toLocaleString('en-US') + ' frames drawn so far. A 4× re-render replays every frame, so it takes longer the longer the artwork has been growing.';
+        } else {
+          exportInfo.textContent = 'The artwork was carried over a window resize, so export currently saves the current view scaled up.';
+        }
       }
 
       function updateDisabledState() {
@@ -1201,7 +1415,9 @@
           const btn = optionButtons[i];
           const key = btn.getAttribute('data-config-key');
           const value = btn.getAttribute('data-config-value');
-          btn.classList.toggle('is-active', String(state.config[key]) === value);
+          const active = String(state.config[key]) === value;
+          btn.classList.toggle('is-active', active);
+          btn.setAttribute('aria-pressed', active ? 'true' : 'false');
         }
         waveModeWrap.hidden = state.config.flowDirection !== 'omni';
       }
@@ -1233,6 +1449,7 @@
         valueEls.lineWidthMax.textContent = formatValue('lineWidthMax', state.config.lineWidthMax);
         valueEls.lineColor.textContent = state.config.lineColor;
         valueEls.zoom.textContent = formatValue('zoom', state.config.zoom);
+        heavyWarn.hidden = !(state.config.particleCount >= 50000);
       }
 
       function updateUI() {
@@ -1243,6 +1460,8 @@
         updateDisabledState();
         updateOptionButtons();
         updateInputs();
+        updateUndoButton();
+        updateExportInfo();
       }
 
       function renderView() {
@@ -1441,6 +1660,7 @@
           state.config.lineWidthMin = state.config.lineWidthMax;
         }
 
+        persistConfigDebounced();
         updateUI();
 
         if (options.silent) return;
@@ -1451,6 +1671,90 @@
         }
         // Remaining keys are visual-only: they take effect from the next
         // drawn frame and never erase the accumulated artwork.
+      }
+
+      // Applies several keys at once (presets, defaults). Captures an undo
+      // snapshot first, and resets the simulation only if a
+      // trajectory-defining key actually changed.
+      function applyConfigPatch(patch, snapshot) {
+        if (snapshot) captureUndo();
+        let needsReset = false;
+        let needsComposite = false;
+        for (const key in patch) {
+          if (CONFIG_RESET_KEYS.has(key) && patch[key] !== state.config[key]) needsReset = true;
+          if (key === 'zoom' || key === 'colorInvert') needsComposite = true;
+          state.config[key] = patch[key];
+        }
+        if (state.config.lineWidthMin > state.config.lineWidthMax) {
+          state.config.lineWidthMax = state.config.lineWidthMin;
+        }
+        persistConfig();
+        updateUI();
+        if (!mounted) return;
+        if (needsReset) fullReset(false);
+        else if (needsComposite) renderView();
+      }
+
+      // Captures everything needed to bring the current artwork back exactly:
+      // the bitmap, every particle's state, the shared RNG state, and the
+      // replay bookkeeping used by export.
+      function captureUndo() {
+        if (!artCanvas || !artCanvas.width || !particlesRef.current.length) return;
+        const art = document.createElement('canvas');
+        art.width = artCanvas.width;
+        art.height = artCanvas.height;
+        const artCopyCtx = art.getContext('2d');
+        if (!artCopyCtx) return;
+        artCopyCtx.drawImage(artCanvas, 0, 0);
+        undoSnapshot = {
+          config: { ...state.config },
+          art: art,
+          frames: framesRef.current,
+          replayable: replayableRef.current,
+          rngState: rngRef.current && typeof rngRef.current.getState === 'function' ? rngRef.current.getState() : null,
+          particles: particlesRef.current.map(function(p) {
+            return { x: p.x, y: p.y, prevX: p.prevX, prevY: p.prevY, width: p.width, remainingLife: p.remainingLife, maxLife: p.maxLife };
+          })
+        };
+        updateUndoButton();
+      }
+
+      function restoreUndo() {
+        if (!undoSnapshot || !mounted) return;
+        const snapshot = undoSnapshot;
+        undoSnapshot = null;
+        state.config = { ...snapshot.config };
+        persistConfig();
+        updateUI();
+        fullReset(false);
+
+        const metrics = metricsRef.current;
+        if (artCtx && metrics.logicalWidth && metrics.logicalHeight) {
+          artCtx.save();
+          artCtx.setTransform(1, 0, 0, 1, 0, 0);
+          artCtx.clearRect(0, 0, artCanvas.width, artCanvas.height);
+          artCtx.drawImage(snapshot.art, 0, 0, snapshot.art.width, snapshot.art.height, 0, 0, artCanvas.width, artCanvas.height);
+          artCtx.restore();
+        }
+
+        const particles = particlesRef.current;
+        const count = Math.min(particles.length, snapshot.particles.length);
+        for (let i = 0; i < count; i++) {
+          const saved = snapshot.particles[i];
+          const p = particles[i];
+          p.x = saved.x; p.y = saved.y;
+          p.prevX = saved.prevX; p.prevY = saved.prevY;
+          p.width = saved.width;
+          p.remainingLife = saved.remainingLife;
+          p.maxLife = saved.maxLife;
+        }
+        if (snapshot.rngState !== null && rngRef.current && typeof rngRef.current.setState === 'function') {
+          rngRef.current.setState(snapshot.rngState);
+        }
+        framesRef.current = snapshot.frames;
+        replayableRef.current = snapshot.replayable;
+        updateUI();
+        renderView();
       }
 
       function setPause(nextPaused) {
@@ -1501,6 +1805,7 @@
 
         try {
           state.isExporting = true;
+          exportCancelRequested = false;
           stopAnimationLoop();
           state.exportMessage = (canRerender ? 'Re-rendering ' : 'Exporting current view ') + (transparent ? 'transparent' : 'background') + ' PNG ' + scale + '×';
           updateUI();
@@ -1537,15 +1842,29 @@
             const replaySim = createSimulationState(replayCfg, simWidth, simHeight);
             const replayRgbCache = { current: { hex: '', rgb: hexToRgb(replayCfg.lineColor) } };
 
+            // Check the clock every few frames, not every N frames: a single
+            // frame at a large scale and line count can take over 100 ms, so
+            // a coarse check would block the UI (and the Cancel button) for
+            // seconds at a time.
             let lastYieldAt = performance.now();
+            let cancelled = false;
             for (let frame = 0; frame < framesToReplay; frame++) {
               drawSimulationFrame(replayCtx, replaySim, replayCfg, simWidth, simHeight, replayRgbCache, 100 * scale);
-              if ((frame & 63) === 63 && performance.now() - lastYieldAt > 24) {
-                state.exportMessage = 'Re-rendering ' + (transparent ? 'transparent' : 'background') + ' PNG ' + scale + '× — ' + Math.round(((frame + 1) / framesToReplay) * 100) + '%';
-                updateUI();
-                await nextFrame();
-                lastYieldAt = performance.now();
+              if ((frame & 7) === 7) {
+                if (exportCancelRequested) { cancelled = true; break; }
+                if (performance.now() - lastYieldAt > 16) {
+                  state.exportMessage = 'Re-rendering ' + (transparent ? 'transparent' : 'background') + ' PNG ' + scale + '× — ' + Math.round(((frame + 1) / framesToReplay) * 100) + '%';
+                  updateUI();
+                  await yieldToMain();
+                  lastYieldAt = performance.now();
+                  if (exportCancelRequested) { cancelled = true; break; }
+                }
               }
+            }
+            if (cancelled) {
+              state.exportMessage = 'Export cancelled';
+              updateUI();
+              return;
             }
             sourceCanvas = replayCanvas;
           }
@@ -1616,11 +1935,92 @@
 
         resetBtn.addEventListener('click', function() {
           if (state.isExporting) return;
+          captureUndo();
           fullReset(false);
         });
 
+        undoBtn.addEventListener('click', function() {
+          if (state.isExporting) return;
+          restoreUndo();
+        });
+
+        exportCancelBtn.addEventListener('click', function() {
+          exportCancelRequested = true;
+        });
+
+        randomSeedBtn.addEventListener('click', function() {
+          if (state.isExporting) return;
+          captureUndo();
+          setConfigValue('seed', 1 + Math.floor(Math.random() * 99999));
+        });
+
+        defaultsBtn.addEventListener('click', function() {
+          if (state.isExporting) return;
+          captureUndo();
+          try { window.localStorage.removeItem(CONFIG_STORAGE_KEY); } catch (error) { /* ignore */ }
+          try { window.history.replaceState(null, '', window.location.pathname + window.location.search); } catch (error) { /* ignore */ }
+          applyConfigPatch({ ...PRESET_DEFAULTS }, false);
+        });
+
+        for (let i = 0; i < presetButtons.length; i++) {
+          presetButtons[i].addEventListener('click', function(event) {
+            if (state.isExporting) return;
+            const preset = PRESETS[event.currentTarget.getAttribute('data-preset')];
+            if (preset) applyConfigPatch({ ...preset }, true);
+          });
+        }
+
+        shareLinkBtn.addEventListener('click', function() {
+          const url = window.location.href.split('#')[0] + '#c=' + encodeConfigForShare(state.config);
+          shareLinkField.value = url;
+          shareLinkField.hidden = false;
+          shareLinkField.select();
+          const originalLabel = shareLinkBtn.textContent;
+          const markCopied = function() {
+            shareLinkBtn.textContent = 'Copied';
+            window.setTimeout(function() { shareLinkBtn.textContent = originalLabel; }, 1200);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(markCopied, function() { /* link stays visible in the field for manual copying */ });
+          }
+        });
+
         document.addEventListener('keydown', function(event) {
-          if (event.key === 'Escape') closePanels();
+          if (state.isExporting) {
+            if (event.key === 'Escape') exportCancelRequested = true;
+            return;
+          }
+          if (event.key === 'Escape') {
+            closePanels();
+            return;
+          }
+          const target = event.target;
+          const tag = target && target.tagName;
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (target && target.isContentEditable)) return;
+          if ((event.ctrlKey || event.metaKey) && (event.key === 'z' || event.key === 'Z')) {
+            event.preventDefault();
+            restoreUndo();
+            return;
+          }
+          if (event.ctrlKey || event.metaKey || event.altKey) return;
+          if (event.code === 'Space') {
+            if (tag === 'BUTTON') return;
+            event.preventDefault();
+            if (!state.isExporting) setPause(!state.isPaused);
+          } else if (event.key === 'r' || event.key === 'R') {
+            captureUndo();
+            if (mounted) fullReset(false);
+          } else if (event.key === 'e' || event.key === 'E') {
+            toggleSavePanel();
+          } else if (event.key === 'c' || event.key === 'C') {
+            toggleConfigPanel();
+          } else if (event.key === 'f' || event.key === 'F') {
+            if (document.fullscreenElement) {
+              if (document.exitFullscreen) document.exitFullscreen().catch(function() {});
+            } else if (document.documentElement.requestFullscreen) {
+              document.documentElement.requestFullscreen().catch(function() {});
+            }
+          }
         });
 
         document.addEventListener('pointerdown', function(event) {
@@ -1726,6 +2126,16 @@
       }
 
       function init() {
+        if (initialConfig.fromShareLink) persistConfig();
+        // Opening a share link in a tab that already shows Lien only
+        // changes the hash (no page load), so apply shared configurations
+        // on hashchange too. The previous artwork is captured for Undo.
+        window.addEventListener('hashchange', function() {
+          if (window.location.hash.indexOf('#c=') === 0) {
+            const shared = decodeSharedConfig(window.location.hash.slice(3));
+            if (shared) applyConfigPatch(shared, true);
+          }
+        });
         updateUI();
         attachEvents();
 
