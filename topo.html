@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- TOPO v4 (2026-11-12): parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
+<!-- TOPO v5 (2026-11-12): SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -240,6 +240,10 @@
       <button id="export">PNG 保存 (S)</button>
     </div>
 
+    <div class="row">
+      <button id="exportSvg">SVG 保存 (V)</button>
+    </div>
+
     <div class="row" style="display:flex;gap:6px;">
       <button id="preset1" class="small">密な輪</button>
       <button id="preset2" class="small">粗い／渦</button>
@@ -269,7 +273,7 @@
     </div>
 
     <div class="row">
-      <label for="exportScale">PNG書き出し倍率</label>
+      <label for="exportScale">書き出し倍率</label>
       <select id="exportScale">
         <option value="1">1x</option>
         <option value="2">2x</option>
@@ -304,7 +308,7 @@
     <div class="muted">
       操作: 何もない場所をクリックで穴追加（最大12個）/ 穴をドラッグで移動 / Delete または Backspace で選択穴削除。<br>
       キーボード: キャンバスをクリックしてフォーカスし、[ / ] で穴を選択、矢印キーで選択穴を移動（Shift同時押しで大きく移動）。<br>
-      R=再生成, S=透過PNG保存（高解像度）, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数穴と干渉を同条件で再計算します。
+      R=再生成, S=透過PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数穴と干渉を同条件で再計算します。
     </div>
   </div>
 
@@ -366,6 +370,19 @@ const EXPORT_CONFIRM_PIXELS = 25000000;
 const EXPORT_HARD_CELLS = 900000000;
 const EXPORT_HARD_POINTS = 6000000;
 const EXPORT_HARD_PIXELS = 64000000;
+// SVG output-size guards, applied to the pre-build byte estimate:
+// above SVG_CONFIRM_BYTES the in-page confirm dialog is shown,
+// above SVG_HARD_BYTES the export is refused before building.
+const SVG_CONFIRM_BYTES = 20000000;
+const SVG_HARD_BYTES = 150000000;
+// Emitted bytes per contour point / texture dot in the generated
+// SVG, measured on the golden scene (863,624 actual bytes for
+// 7,796 points x 2 passes + 700 dots) and padded ~8% so the
+// estimate stays on the safe side: one C command is six 2-decimal
+// numbers plus separators, and closed contours emit slightly more
+// segments than they have points.
+const SVG_BYTES_PER_POINT = 56;
+const SVG_BYTES_PER_DOT = 48;
 const DEFAULT_PARAMS = JSON.parse(JSON.stringify(params));
 const PARAM_RANGES = {
   NUM_RINGS: [8, 220],
@@ -494,6 +511,10 @@ function initControls() {
 
   document.getElementById('export').addEventListener('click', () => {
     startExportFromUI();
+  });
+
+  document.getElementById('exportSvg').addEventListener('click', () => {
+    startSvgExportFromUI();
   });
 
   document.getElementById('hidePanel').addEventListener('click', () => {
@@ -681,6 +702,11 @@ function initControls() {
     if (k === 's' || k === 'S') {
       e.preventDefault();
       startExportFromUI();
+      return;
+    }
+    if (k === 'v' || k === 'V') {
+      e.preventDefault();
+      startSvgExportFromUI();
       return;
     }
     if (k === 'h' || k === 'H') {
@@ -1985,27 +2011,52 @@ function buildCurveVertexList(pts, closed) {
   return V;
 }
 
+// The bezier segment stream for one contour, computed exactly the
+// way p5 1.6.0's Renderer2D walks the curveVertex list (start at
+// vertices[1]; endShape(CLOSE) appends vertices[0] twice, then a
+// final lineTo plus close). Shared by the canvas port below and by
+// the SVG export builder, so both emit identical geometry.
+// Returns { start, segments: [{c1, c2, end}], lineTo, closed } or
+// null when the contour is not drawable (mirrors the early returns
+// the canvas port had: fewer than 2 points, or a vertex list of 3
+// or fewer after expansion).
+function curveSegmentStream(pts, closed) {
+  const n = pts.length;
+  if (n < 2) return null;
+  const V = buildCurveVertexList(pts, closed);
+  // endShape(CLOSE) appends vertices[0] twice before rendering.
+  const verts = closed ? V.concat([V[0], V[0]]) : V;
+  const numVerts = verts.length;
+  if (numVerts <= 3) return null;
+  const segments = [];
+  let i = 1;
+  for (; i + 2 < numVerts; i++) {
+    const cp = curveBezierControls(verts[i - 1], verts[i], verts[i + 1], verts[i + 2]);
+    segments.push({ c1: cp[0], c2: cp[1], end: verts[i + 1] });
+  }
+  return {
+    start: verts[1],
+    segments: segments,
+    lineTo: closed ? verts[i + 1] : null,
+    closed: !!closed
+  };
+}
+
 // Stroke one contour into a Canvas2D-like context exactly the way
 // p5 1.6.0's Renderer2D would. The caller sets strokeStyle/lineWidth
 // before calling. Works on any object with the Path2D-style methods
 // (a real ctx, or a recording stub in the tests).
 function strokeCurvePath2D(ctx, pts, closed) {
-  const n = pts.length;
-  if (n < 2) return;
-  const V = buildCurveVertexList(pts, closed);
-  // endShape(CLOSE) appends vertices[0] twice before rendering.
-  const verts = closed ? V.concat([V[0], V[0]]) : V;
-  const numVerts = verts.length;
-  if (numVerts <= 3) return;
+  const stream = curveSegmentStream(pts, closed);
+  if (!stream) return;
   ctx.beginPath();
-  ctx.moveTo(verts[1].x, verts[1].y);
-  let i = 1;
-  for (; i + 2 < numVerts; i++) {
-    const cp = curveBezierControls(verts[i - 1], verts[i], verts[i + 1], verts[i + 2]);
-    ctx.bezierCurveTo(cp[0].x, cp[0].y, cp[1].x, cp[1].y, verts[i + 1].x, verts[i + 1].y);
+  ctx.moveTo(stream.start.x, stream.start.y);
+  for (let i = 0; i < stream.segments.length; i++) {
+    const seg = stream.segments[i];
+    ctx.bezierCurveTo(seg.c1.x, seg.c1.y, seg.c2.x, seg.c2.y, seg.end.x, seg.end.y);
   }
-  if (closed) {
-    ctx.lineTo(verts[i + 1].x, verts[i + 1].y);
+  if (stream.closed) {
+    ctx.lineTo(stream.lineTo.x, stream.lineTo.y);
     ctx.closePath();
   }
   ctx.stroke();
@@ -2065,6 +2116,151 @@ async function renderSceneOffscreen(req) {
   }
 
   return canvas.convertToBlob({ type: 'image/png' });
+}
+
+// ============================================================
+// SVG export (v5). The path geometry comes from the same
+// curveSegmentStream the canvas port strokes, and the paint order
+// and parameters mirror the raster export exactly: optional black
+// background rect, faint texture dots, red shadow pass, white pass.
+// Every interpolated value is a number produced by our own code
+// (formatted by formatSvgNumber / formatSvgAlpha); no
+// user-controlled string ever enters the output, so there is no
+// XML-escaping surface. The export scene is consumed read-only.
+// ============================================================
+
+// Compact number formatting for SVG output: round to 2 decimals
+// and let String() trim trailing zeros (123.456 -> "123.46",
+// 42 -> "42", -0.001 -> "0").
+function formatSvgNumber(value) {
+  if (!Number.isFinite(value)) return '0';
+  return String(Number(value.toFixed(2)));
+}
+
+// Alpha values keep 4 decimals so 6/255 and RED_SHADOW_ALPHA/255
+// survive without visible rounding.
+function formatSvgAlpha(value) {
+  if (!Number.isFinite(value)) return '0';
+  return String(Math.round(value * 10000) / 10000);
+}
+
+// Path data for one contour from the shared segment stream, with
+// coordinates multiplied by coordScale. Closed contours append the
+// same lineTo point the canvas port uses, then Z where it closes.
+function svgContourPathData(pts, closed, coordScale) {
+  const stream = curveSegmentStream(pts, closed);
+  if (!stream) return '';
+  const s = coordScale || 1;
+  const num = (v) => formatSvgNumber(v * s);
+  let d = `M${num(stream.start.x)} ${num(stream.start.y)}`;
+  for (let i = 0; i < stream.segments.length; i++) {
+    const seg = stream.segments[i];
+    d += `C${num(seg.c1.x)} ${num(seg.c1.y)} ${num(seg.c2.x)} ${num(seg.c2.y)} ${num(seg.end.x)} ${num(seg.end.y)}`;
+  }
+  if (stream.closed && stream.lineTo) {
+    d += `L${num(stream.lineTo.x)} ${num(stream.lineTo.y)}Z`;
+  }
+  return d;
+}
+
+// Pre-build byte estimate for the SVG document. Reads only contour
+// point counts and the dot count — never builds any string — so the
+// guard can run (and refuse) before any real work happens.
+function estimateSvgBytes(sceneData, opts) {
+  const options = opts || {};
+  const contours = (sceneData && sceneData.contours) || [];
+  let totalPoints = 0;
+  for (let i = 0; i < contours.length; i++) totalPoints += contours[i].points.length;
+  const passes = options.showRedShadow === false ? 1 : 2;
+  let bytes = 512
+    + contours.length * passes * 16
+    + totalPoints * passes * SVG_BYTES_PER_POINT;
+  if (options.showTexture !== false) {
+    const dots = (sceneData && sceneData.textureDots) || [];
+    bytes += dots.length * SVG_BYTES_PER_DOT;
+  }
+  if (options.transparent === false) bytes += 96;
+  return Math.round(bytes);
+}
+
+// Guard decision for an estimated SVG size: 'ok' to build at once,
+// 'confirm' to ask first, 'refuse' to abort before building.
+function svgSizeDecision(estimatedBytes) {
+  if (estimatedBytes > SVG_HARD_BYTES) return 'refuse';
+  if (estimatedBytes > SVG_CONFIRM_BYTES) return 'confirm';
+  return 'ok';
+}
+
+function formatByteSize(bytes) {
+  if (bytes >= 1000000) return `${(bytes / 1000000).toFixed(1)}MB`;
+  if (bytes >= 1000) return `${(bytes / 1000).toFixed(1)}KB`;
+  return `${Math.round(bytes)}B`;
+}
+
+// Build the SVG document string in chunks (150 contours per
+// macrotask) so the UI stays responsive on huge scenes.
+// opts: { width, height, coordScale, strokeScale, showTexture,
+// showRedShadow, transparent, redShadowAlpha, redShadowScale,
+// whiteStrokeWeight }. Coordinates are scene coordinates times
+// coordScale; stroke widths are the base weights times
+// strokeScale, exactly as the raster export scales them.
+async function buildSvgString(sceneData, opts, onProgress) {
+  const options = opts || {};
+  const width = options.width;
+  const height = options.height;
+  const coordScale = options.coordScale || 1;
+  const strokeScale = options.strokeScale || 1;
+  const baseWeight = options.whiteStrokeWeight || 1;
+  const parts = [];
+  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${formatSvgNumber(width)}" height="${formatSvgNumber(height)}" viewBox="0 0 ${formatSvgNumber(width)} ${formatSvgNumber(height)}">`);
+
+  if (!options.transparent) {
+    parts.push(`<rect x="0" y="0" width="${formatSvgNumber(width)}" height="${formatSvgNumber(height)}" fill="rgb(0, 0, 0)"/>`);
+  }
+
+  if (options.showTexture) {
+    // One <circle> per dot (~40 bytes each) is smaller and simpler
+    // than arc-segment paths at TEXTURE_POINTS scale.
+    const dots = sceneData.textureDots || [];
+    const circles = [];
+    for (let i = 0; i < dots.length; i++) {
+      const d = dots[i];
+      circles.push(`<circle cx="${formatSvgNumber(d.x * coordScale)}" cy="${formatSvgNumber(d.y * coordScale)}" r="${formatSvgNumber(d.s * 0.5 * coordScale)}"/>`);
+    }
+    parts.push(`<g fill="rgb(255, 255, 255)" fill-opacity="${formatSvgAlpha(6 / 255)}">${circles.join('')}</g>`);
+  }
+
+  const passes = [];
+  if (options.showRedShadow) {
+    passes.push({
+      stroke: 'rgb(200, 40, 60)',
+      opacity: formatSvgAlpha((options.redShadowAlpha || 0) / 255),
+      width: baseWeight * (options.redShadowScale || 1) * strokeScale
+    });
+  }
+  passes.push({ stroke: 'rgb(255, 255, 255)', opacity: null, width: baseWeight * strokeScale });
+
+  const contours = sceneData.contours || [];
+  const totalUnits = Math.max(1, contours.length * passes.length);
+  let doneUnits = 0;
+  for (let p = 0; p < passes.length; p++) {
+    const pass = passes[p];
+    parts.push(`<g fill="none" stroke="${pass.stroke}"${pass.opacity !== null ? ` stroke-opacity="${pass.opacity}"` : ''} stroke-width="${formatSvgNumber(pass.width)}" stroke-linecap="round" stroke-linejoin="round">`);
+    for (let i = 0; i < contours.length; i++) {
+      const d = svgContourPathData(contours[i].points, contours[i].closed, coordScale);
+      if (d) parts.push(`<path d="${d}"/>`);
+      doneUnits++;
+      if (i % 150 === 149) {
+        if (typeof onProgress === 'function') onProgress(doneUnits / totalUnits);
+        await yieldToUI();
+      }
+    }
+    parts.push('</g>');
+    if (typeof onProgress === 'function') onProgress(doneUnits / totalUnits);
+  }
+
+  parts.push('</svg>');
+  return parts.join('');
 }
 
 // ============================================================
@@ -2128,7 +2324,7 @@ function getWorkerSourceText() {
   // The render path needs the curve port and the OffscreenCanvas
   // rasterizer in the Worker as well; they are pure (no DOM access
   // at definition time) and join the core functions in the source.
-  const extras = [catmullRomPoint, cubicBezierPoint, curveBezierControls, buildCurveVertexList, strokeCurvePath2D, renderSceneOffscreen];
+  const extras = [catmullRomPoint, cubicBezierPoint, curveBezierControls, buildCurveVertexList, curveSegmentStream, strokeCurvePath2D, renderSceneOffscreen];
   return getCoreSourceText()
     + '\n\n'
     + extras.map((f) => f.toString()).join('\n\n')
@@ -2591,13 +2787,38 @@ function getHoleHandleRadiusPx(hole, targetWidth = width, targetHeight = height)
   return Math.max(params.HANDLE_RADIUS, coreRadiusPx);
 }
 
-function startExportFromUI() {
+function syncExportScaleFromUI() {
   const sel = document.getElementById('exportScale');
   if (sel) {
     const v = parseInt(sel.value, 10);
     params.EXPORT_SCALE = [1, 2, 3, 4].includes(v) ? v : 4;
   }
+}
+
+function startExportFromUI() {
+  syncExportScaleFromUI();
   exportPNG(params.EXPORT_SCALE, params.EXPORT_TRANSPARENT);
+}
+
+function startSvgExportFromUI() {
+  syncExportScaleFromUI();
+  exportSVG(params.EXPORT_SCALE, params.EXPORT_TRANSPARENT);
+}
+
+// Hard compute-load guard shared by the PNG and SVG exports:
+// returns the refusal reasons (empty when the load is acceptable).
+function exportLoadGuardReasons(est, exportW, exportH) {
+  const reasons = [];
+  if (est.cellChecks > EXPORT_HARD_CELLS) {
+    reasons.push(`推定セル走査回数（約 ${formatCount(est.cellChecks)} 回）が上限（約 ${formatCount(EXPORT_HARD_CELLS)} 回）を超えています。輪の数かグリッド解像度、または書き出し倍率を下げてください。`);
+  }
+  if (est.fieldPoints > EXPORT_HARD_POINTS) {
+    reasons.push(`推定グリッド点数（約 ${formatCount(est.fieldPoints)} 点）が上限（約 ${formatCount(EXPORT_HARD_POINTS)} 点）を超えています。グリッド解像度か書き出し倍率を下げてください。`);
+  }
+  if (est.pixels > EXPORT_HARD_PIXELS) {
+    reasons.push(`書き出しサイズ（${exportW}×${exportH} = 約 ${formatCount(est.pixels)} 画素）が上限（約 ${formatCount(EXPORT_HARD_PIXELS)} 画素）を超えています。書き出し倍率を下げてください。`);
+  }
+  return reasons;
 }
 
 async function exportPNG(scale = 4, transparent = true) {
@@ -2609,16 +2830,7 @@ async function exportPNG(scale = 4, transparent = true) {
   const step = getGridStep(exportW, exportH, isFlatFieldMode());
   const est = estimateWork(exportW, exportH, step, params.NUM_RINGS, holes.length);
 
-  const reasons = [];
-  if (est.cellChecks > EXPORT_HARD_CELLS) {
-    reasons.push(`推定セル走査回数（約 ${formatCount(est.cellChecks)} 回）が上限（約 ${formatCount(EXPORT_HARD_CELLS)} 回）を超えています。輪の数かグリッド解像度、または書き出し倍率を下げてください。`);
-  }
-  if (est.fieldPoints > EXPORT_HARD_POINTS) {
-    reasons.push(`推定グリッド点数（約 ${formatCount(est.fieldPoints)} 点）が上限（約 ${formatCount(EXPORT_HARD_POINTS)} 点）を超えています。グリッド解像度か書き出し倍率を下げてください。`);
-  }
-  if (est.pixels > EXPORT_HARD_PIXELS) {
-    reasons.push(`書き出しサイズ（${exportW}×${exportH} = 約 ${formatCount(est.pixels)} 画素）が上限（約 ${formatCount(EXPORT_HARD_PIXELS)} 画素）を超えています。書き出し倍率を下げてください。`);
-  }
+  const reasons = exportLoadGuardReasons(est, exportW, exportH);
   if (reasons.length > 0) {
     setStatus('書き出しを中止しました（負荷上限超過）');
     showDialog({
@@ -2761,6 +2973,175 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
     pg.remove();
     finish();
   });
+}
+
+// SVG export entry point: mirrors exportPNG's pre-flight exactly
+// (same scale selector value, same compute-load hard guard and
+// confirm thresholds). The SVG-specific size guard runs later, in
+// runSvgExport, once the export scene (and its point count) exists.
+async function exportSVG(scale = 4, transparent = true) {
+  if (isExporting) return;
+  const useScale = [1, 2, 3, 4].includes(scale) ? scale : 4;
+  const exportW = Math.max(64, Math.round(width * useScale));
+  const exportH = Math.max(64, Math.round(height * useScale));
+
+  const step = getGridStep(exportW, exportH, isFlatFieldMode());
+  const est = estimateWork(exportW, exportH, step, params.NUM_RINGS, holes.length);
+
+  const reasons = exportLoadGuardReasons(est, exportW, exportH);
+  if (reasons.length > 0) {
+    setStatus('書き出しを中止しました（負荷上限超過）');
+    showDialog({
+      title: '書き出しできません',
+      message: reasons.join('\n'),
+      okLabel: '閉じる',
+      hideCancel: true,
+      onOk: () => true
+    });
+    return;
+  }
+
+  if (est.cellChecks > EXPORT_CONFIRM_CELLS || est.pixels > EXPORT_CONFIRM_PIXELS) {
+    showDialog({
+      title: '書き出しの確認',
+      message: `推定負荷が大きめです。\n書き出しサイズ: ${exportW}×${exportH}（約 ${formatCount(est.pixels)} 画素）\n推定セル走査: 約 ${formatCount(est.cellChecks)} 回\n処理に時間がかかる場合があります。続行しますか？`,
+      okLabel: '書き出す',
+      onOk: () => {
+        runSvgExport(useScale, transparent, exportW, exportH);
+        return true;
+      }
+    });
+    return;
+  }
+
+  runSvgExport(useScale, transparent, exportW, exportH);
+}
+
+async function runSvgExport(scale, transparent, exportW, exportH) {
+  if (isExporting) return;
+  isExporting = true;
+
+  const svgButton = document.getElementById('exportSvg');
+  const prevLabel = svgButton ? svgButton.textContent : '';
+  if (svgButton) {
+    svgButton.disabled = true;
+    svgButton.textContent = '書き出し中… 0%';
+  }
+
+  const finish = () => {
+    if (svgButton) {
+      svgButton.disabled = false;
+      svgButton.textContent = prevLabel;
+    }
+    isExporting = false;
+  };
+
+  const step = getGridStep(exportW, exportH, isFlatFieldMode());
+  const est = estimateWork(exportW, exportH, step, params.NUM_RINGS, holes.length);
+
+  try {
+    // The export scene is computed with the identical request the
+    // PNG export uses, and consumed read-only afterwards.
+    const onComputeProgress = (ratio) => {
+      if (svgButton) svgButton.textContent = `書き出し中… ${Math.round(ratio * 100)}%`;
+    };
+    let exportScene = await buildSceneAuto({
+      params: coreParamsSnapshot(),
+      holes: snapshotSceneHoles(),
+      seed: seedVal,
+      width: exportW,
+      height: exportH,
+      baseW: width,
+      baseH: height,
+      gridStep: step
+    }, est, onComputeProgress);
+    if (!exportScene) {
+      setStatus('Workerを利用できないためメインスレッドで計算しました');
+      exportScene = await buildSceneDataAsync(exportW, exportH, seedVal, (progress) => {
+        if (!progress) return;
+        onComputeProgress(progress.phase === 'field' ? progress.ratio * 0.7 : 0.7 + progress.ratio * 0.3);
+      }, { gridStep: step });
+    }
+
+    // Size guard: estimate first, refuse or confirm before any
+    // string is built. The button state is released here;
+    // buildAndDownloadSvg re-acquires it when the build starts
+    // (the confirm dialog is modal, so no export can slip in).
+    const estBytes = estimateSvgBytes(exportScene, {
+      showTexture: params.SHOW_TEXTURE,
+      showRedShadow: params.SHOW_RED_SHADOW,
+      transparent: transparent
+    });
+    const decision = svgSizeDecision(estBytes);
+    finish();
+
+    if (decision === 'refuse') {
+      setStatus(`SVGの推定サイズ（約 ${formatByteSize(estBytes)}）が上限（約 ${formatByteSize(SVG_HARD_BYTES)}）を超えるため、書き出しを中止しました`);
+      return;
+    }
+    if (decision === 'confirm') {
+      showDialog({
+        title: 'SVG書き出しの確認',
+        message: `SVGの推定サイズは約 ${formatByteSize(estBytes)} です。\n大きなファイルになるため、処理に時間がかかる場合があります。続行しますか？`,
+        okLabel: '書き出す',
+        onOk: () => {
+          buildAndDownloadSvg(exportScene, scale, transparent, exportW, exportH);
+          return true;
+        }
+      });
+      return;
+    }
+    buildAndDownloadSvg(exportScene, scale, transparent, exportW, exportH);
+  } catch (err) {
+    console.error(err);
+    finish();
+  }
+}
+
+// Chunked-build the SVG string for an already-computed export
+// scene and download it as an image/svg+xml Blob.
+async function buildAndDownloadSvg(exportScene, scale, transparent, exportW, exportH) {
+  if (isExporting) return;
+  isExporting = true;
+
+  const svgButton = document.getElementById('exportSvg');
+  const prevLabel = svgButton ? svgButton.textContent : '';
+  if (svgButton) {
+    svgButton.disabled = true;
+    svgButton.textContent = '書き出し中… 0%';
+  }
+
+  try {
+    const svgText = await buildSvgString(exportScene, {
+      width: exportW,
+      height: exportH,
+      // The export scene is already built at export pixel size
+      // (the same request as the PNG export), so scene coordinates
+      // ARE export pixels; stroke widths scale like the raster's.
+      coordScale: 1,
+      strokeScale: scale,
+      showTexture: params.SHOW_TEXTURE,
+      showRedShadow: params.SHOW_RED_SHADOW,
+      transparent: transparent,
+      redShadowAlpha: params.RED_SHADOW_ALPHA,
+      redShadowScale: params.RED_SHADOW_SCALE,
+      whiteStrokeWeight: params.WHITE_STROKE_WEIGHT
+    }, (ratio) => {
+      if (svgButton) svgButton.textContent = `書き出し中… ${Math.round(ratio * 100)}%`;
+    });
+
+    const ts = Date.now();
+    const filename = `TOPO_multihole_refined_${transparent ? 'transparent_' : ''}seed${seedVal}_x${scale}_${ts}.svg`;
+    downloadBlobFile(new Blob([svgText], { type: 'image/svg+xml' }), filename);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (svgButton) {
+      svgButton.disabled = false;
+      svgButton.textContent = prevLabel;
+    }
+    isExporting = false;
+  }
 }
 
 function downloadCanvasPNG(canvasEl, filename, onDone) {
@@ -3224,10 +3605,13 @@ function openSettingsDialog() {
   });
 }
 
-function downloadTextFile(text, filename) {
-  const blob = new Blob([text], { type: 'application/json' });
+function downloadBlobFile(blob, filename) {
   const url = URL.createObjectURL(blob);
   triggerDownload(url, filename, true);
+}
+
+function downloadTextFile(text, filename) {
+  downloadBlobFile(new Blob([text], { type: 'application/json' }), filename);
 }
 </script>
 </body>
