@@ -108,7 +108,7 @@ async function main() {
     loadError = err;
   }
   check('inline script loads without error', loadError === null);
-  if (loadError) { console.error(loadError); finish(); }
+  if (loadError) { console.error(loadError); await finish(); return; }
   check('core functions are defined', run(`typeof buildSceneData === 'function' && typeof estimateWork === 'function' && typeof marchingSquaresPaths === 'function'`));
 
   // 2. same seed -> identical contours
@@ -268,10 +268,19 @@ async function main() {
   const labelFors = new Set([...html.matchAll(/<label for="([^"]+)"/g)].map((m) => m[1]));
   check('every range slider has a matching label for=', rangeIds.length >= 14 && rangeIds.every((id) => labelFors.has(id)));
 
-  finish();
+  await finish();
 }
 
-function finish() {
+async function checkAsync(name, fn) {
+  try {
+    await fn();
+    passed++; console.log(`ok - ${name}`);
+  } catch (err) {
+    failed++; console.log(`FAIL - ${name}: ${err && err.message ? err.message : err}`);
+  }
+}
+
+async function finish() {
   
 // ---------- v3: unified pure core / worker / performance ----------
 
@@ -468,7 +477,10 @@ check('static: single core field implementation, worker assembly present', () =>
   assert.ok(html.includes('getWorkerSourceText'), 'worker source assembly');
   assert.ok(html.includes('new Blob('), 'worker created from Blob URL');
   assert.ok(html.includes('Workerで計算中'), 'worker status indication');
-  assert.ok(html.includes('WORKER_SCREEN_THRESHOLD = 3000000'), 'screen worker threshold');
+  // v4 adaptation: the WORKER_SCREEN_THRESHOLD static assert was
+  // removed because v4 removes that gate entirely (all screen
+  // regenerations now go through the worker). The dedicated v4
+  // checks below assert the gate is gone and dispatch is universal.
   assert.equal(typeof run(`renderArtworkCache`), 'function');
   assert.equal(typeof run(`invalidateArtworkCache`), 'function');
   assert.ok(html.includes('image(artworkCache'), 'draw() blits the artwork cache');
@@ -478,6 +490,278 @@ check('stitch quantization scale matches grid step (v2 key precision)', () => {
   assert.equal(run(`coreStitchScale(12)`), 1000);
   assert.equal(run(`coreStitchScale(4)`), 10000);
   assert.equal(run(`coreStitchScale(18)`), 1000);
+});
+
+// ---------- v4: worker pool / worker rasterization / all-worker regen ----------
+
+// Golden curvePoint(a, b, c, d, t) values captured from the REAL
+// p5.js 1.6.0 (unminified cdnjs build) executed in a Node vm with
+// DOM stubs, via Object.create(p5.prototype) with a stub renderer
+// whose _curveTightness is 0 (the p5 default) — the same capture
+// technique as the noise/random goldens above.
+const P5_CURVE_TS = [0, 0.13, 0.25, 0.5, 0.77, 1];
+const P5_CURVE_GOLDEN = [
+  { q: [5, 73, 73, 15], expected: [73, 76.77188500000001, 79.140625, 80.875, 78.33956500000001, 73] },
+  { q: [26, 24, 61, 65], expected: [24, 27.133858000000004, 31.28125, 42.125, 53.945761999999995, 61] },
+  { q: [0, 100, -40, 33.333], expected: [100, 92.03932245050001, 76.8750078125, 31.666687500000002, -17.457830605500003, -40] },
+  { q: [123.456, -7.89, 0.001, 999.9], expected: [-7.89, -21.0071683565, -38.9575390625, -74.6473125, -72.28827782849999, 0.001] },
+  { q: [3, 3, 3, 3], expected: [3, 3, 3, 3, 3, 3] }
+];
+
+check('curve port: catmullRomPoint matches real p5 1.6.0 curvePoint golden values', () => {
+  for (const { q, expected } of P5_CURVE_GOLDEN) {
+    const got = run(`(${JSON.stringify(P5_CURVE_TS)}).map((t) => catmullRomPoint(${q.join(', ')}, t))`);
+    assert.equal(got.length, expected.length);
+    got.forEach((v, i) => assert.ok(Math.abs(v - expected[i]) < 1e-9, `curvePoint(${q.join(',')}, ${P5_CURVE_TS[i]}): ${v} != ${expected[i]}`));
+  }
+});
+
+check('curve port: bezier through p5 control points equals Catmull-Rom samples within 1e-6', () => {
+  const quads = [
+    [[10, 20], [110, 40], [210, 180], [320, 60]],
+    [[0, 0], [50, 200], [400, 30], [500, 500]],
+    [[-30, 77], [13, -5], [99, 99], [250, -120]],
+    [[7, 7], [7, 7], [7, 7], [7, 7]]
+  ];
+  const maxErr = run(`(() => {
+    const quads = ${JSON.stringify(quads)};
+    const ts = ${JSON.stringify(P5_CURVE_TS)};
+    let maxErr = 0;
+    for (const [pv, cu, nx, n2] of quads) {
+      const P = (a) => ({ x: a[0], y: a[1] });
+      const cp = curveBezierControls(P(pv), P(cu), P(nx), P(n2));
+      for (const t of ts) {
+        const bx = cubicBezierPoint(cu[0], cp[0].x, cp[1].x, nx[0], t);
+        const by = cubicBezierPoint(cu[1], cp[0].y, cp[1].y, nx[1], t);
+        const cx = catmullRomPoint(pv[0], cu[0], nx[0], n2[0], t);
+        const cy = catmullRomPoint(pv[1], cu[1], nx[1], n2[1], t);
+        maxErr = Math.max(maxErr, Math.abs(bx - cx), Math.abs(by - cy));
+      }
+    }
+    return maxErr;
+  })()`);
+  assert.ok(maxErr < 1e-6, `max bezier vs Catmull-Rom deviation ${maxErr}`);
+});
+
+// Reference command stream for p5 1.6.0's Renderer2D curve branch,
+// written directly from the unminified p5 source (independent of
+// the port under test): start at vertices[1], one bezier per span
+// with neighbour-derived control points, CLOSE appends vertices[0]
+// twice up front, then a final lineTo and closePath.
+function refStrokeCommands(pts, closed) {
+  const n = pts.length;
+  const V = [];
+  if (closed) {
+    V.push(pts[n - 1], pts[0]);
+    for (const p of pts) V.push(p);
+    V.push(pts[0], pts[1]);
+  } else {
+    V.push(pts[0], pts[0]);
+    for (let i = 1; i < n; i++) V.push(pts[i]);
+    V.push(pts[n - 1], pts[n - 1]);
+  }
+  const verts = closed ? V.concat([V[0], V[0]]) : V;
+  const numVerts = verts.length;
+  const calls = [['beginPath'], ['moveTo', verts[1].x, verts[1].y]];
+  let i = 1;
+  for (; i + 2 < numVerts; i++) {
+    const prev = verts[i - 1], cur = verts[i], next = verts[i + 1], next2 = verts[i + 2];
+    calls.push(['bezierCurveTo',
+      cur.x + (next.x - prev.x) / 6, cur.y + (next.y - prev.y) / 6,
+      next.x + (cur.x - next2.x) / 6, next.y + (cur.y - next2.y) / 6,
+      next.x, next.y]);
+  }
+  if (closed) calls.push(['lineTo', verts[i + 1].x, verts[i + 1].y], ['closePath']);
+  calls.push(['stroke']);
+  return calls;
+}
+
+function assertCallsClose(got, expected, label) {
+  assert.equal(got.length, expected.length, `${label}: command count ${got.length} != ${expected.length}`);
+  got.forEach((call, i) => {
+    assert.equal(call[0], expected[i][0], `${label}: command ${i} type`);
+    for (let k = 1; k < call.length; k++) {
+      assert.ok(Math.abs(call[k] - expected[i][k]) < 1e-9, `${label}: command ${i} arg ${k}: ${call[k]} != ${expected[i][k]}`);
+    }
+  });
+}
+
+check('curve port: strokeCurvePath2D emits the p5 command stream (open and closed)', () => {
+  const quad = [{ x: 0, y: 0 }, { x: 100, y: 10 }, { x: 90, y: 90 }, { x: 10, y: 100 }];
+  const tri = [{ x: 5, y: 5 }, { x: 60, y: 0 }, { x: 30, y: 40 }];
+  const got = run(`(() => {
+    const record = (pts, closed) => {
+      const calls = [];
+      const ctx = {
+        beginPath: () => calls.push(['beginPath']),
+        moveTo: (x, y) => calls.push(['moveTo', x, y]),
+        bezierCurveTo: (a, b, c, d, x, y) => calls.push(['bezierCurveTo', a, b, c, d, x, y]),
+        lineTo: (x, y) => calls.push(['lineTo', x, y]),
+        closePath: () => calls.push(['closePath']),
+        stroke: () => calls.push(['stroke'])
+      };
+      strokeCurvePath2D(ctx, pts, closed);
+      return calls;
+    };
+    return {
+      closedQuad: record(${JSON.stringify(quad)}, true),
+      openQuad: record(${JSON.stringify(quad)}, false),
+      closedTri: record(${JSON.stringify(tri)}, true),
+      openTri: record(${JSON.stringify(tri)}, false)
+    };
+  })()`);
+  assertCallsClose(got.closedQuad, refStrokeCommands(quad, true), 'closed quad');
+  assertCallsClose(got.openQuad, refStrokeCommands(quad, false), 'open quad');
+  assertCallsClose(got.closedTri, refStrokeCommands(tri, true), 'closed tri');
+  assertCallsClose(got.openTri, refStrokeCommands(tri, false), 'open tri');
+});
+
+check('no WORKER_SCREEN_THRESHOLD gate remains; pool dispatch functions present', () => {
+  assert.ok(!mainScript.includes('WORKER_SCREEN_THRESHOLD'), 'the screen-size worker gate must be gone');
+  assert.equal(typeof run(`buildSceneAuto`), 'function');
+  assert.equal(typeof run(`buildScenePooled`), 'function');
+  assert.equal(typeof run(`partitionThresholdRanges`), 'function');
+  assert.equal(typeof run(`mergeSceneChunks`), 'function');
+  assert.equal(JSON.stringify(run(`partitionThresholdRanges(70, 2)`)), JSON.stringify([{ start: 0, end: 35 }, { start: 35, end: 70 }]));
+  assert.equal(JSON.stringify(run(`partitionThresholdRanges(70, 4)`)), JSON.stringify([{ start: 0, end: 18 }, { start: 18, end: 36 }, { start: 36, end: 53 }, { start: 53, end: 70 }]));
+  assert.equal(JSON.stringify(run(`partitionThresholdRanges(5, 4)`)), JSON.stringify([{ start: 0, end: 2 }, { start: 2, end: 3 }, { start: 3, end: 4 }, { start: 4, end: 5 }]));
+});
+
+check('threshold partition (2-way and 4-way) merged reproduces the golden checksum', () => {
+  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700 });`);
+  run(`__resetState(777)`);
+  const got = run(`(() => {
+    const cp = coreParamsSnapshot();
+    const hs = snapshotSceneHoles();
+    const buildRange = (range) => {
+      const c = createCoreState();
+      return coreBuildScene(c, cp, hs, 777, 800, 600, { baseW: 800, baseH: 600, gridStep: 12, thresholdRange: range });
+    };
+    const full = buildRange(null);
+    const two = mergeSceneChunks(partitionThresholdRanges(70, 2).map(buildRange));
+    const four = mergeSceneChunks(partitionThresholdRanges(70, 4).map(buildRange));
+    return {
+      full: __checksum(full), two: __checksum(two), four: __checksum(four),
+      dotsFull: full.textureDots.length, dotsTwo: two.textureDots.length, dotsFour: four.textureDots.length,
+      contours: full.contours.length, contoursTwo: two.contours.length, contoursFour: four.contours.length
+    };
+  })()`);
+  assert.equal(got.full, GOLDEN_CHECKSUM);
+  assert.equal(got.two, GOLDEN_CHECKSUM);
+  assert.equal(got.four, GOLDEN_CHECKSUM);
+  assert.equal(got.contoursTwo, got.contours);
+  assert.equal(got.contoursFour, got.contours);
+  assert.equal(got.dotsTwo, got.dotsFull);
+  assert.equal(got.dotsFour, got.dotsFull);
+});
+
+check('threshold partition in flat mode matches the full build', () => {
+  const got = run(`(() => {
+    const cp = coreParamsSnapshot();
+    cp.NOISE_AMPLITUDE = 0;
+    const hs = snapshotSceneHoles();
+    const buildRange = (range) => {
+      const c = createCoreState();
+      return coreBuildScene(c, cp, hs, 777, 400, 300, { baseW: 400, baseH: 300, thresholdRange: range });
+    };
+    const full = buildRange(null);
+    const two = mergeSceneChunks(partitionThresholdRanges(cp.NUM_RINGS, 2).map(buildRange));
+    return { full: __checksum(full), two: __checksum(two), contours: full.contours.length };
+  })()`);
+  assert.ok(got.contours > 0, 'flat build must produce contours');
+  assert.equal(got.two, got.full);
+});
+
+await checkAsync('render: capability gate, worker render attempt and main-thread fallback are wired', async () => {
+  const srcText = run(`getWorkerSourceText()`);
+  assert.ok(srcText.includes("req.kind === 'render'"), 'worker source must handle render messages');
+  assert.ok(srcText.includes("req.kind === 'renderCaps'"), 'worker source must answer capability queries');
+  assert.ok(srcText.includes('OffscreenCanvas'), 'render gate must reference OffscreenCanvas');
+  assert.ok(srcText.includes('convertToBlob'), 'render must encode via convertToBlob');
+  assert.equal(typeof run(`renderSceneViaWorker`), 'function');
+  assert.equal(typeof run(`renderExportOnMainThread`), 'function');
+  assert.ok(mainScript.includes('renderSceneViaWorker(exportScene'), 'export must try the worker render path first');
+  assert.ok(mainScript.includes('renderExportOnMainThread(exportScene'), 'export must fall back to the main-thread rasterizer');
+  // Behavioural: this sandbox has no Worker at all, so the worker
+  // render path must decline (resolve null) — that null is exactly
+  // what routes runExport to the main-thread fallback.
+  const blob = await run(`renderSceneViaWorker({ contours: [], textureDots: [], holesPx: [], gridStep: 6 }, { width: 10, height: 10, showTexture: false, showRedShadow: false, redShadowAlpha: 0, redShadowScale: 2.2, whiteStrokeWeight: 1, scale: 1, transparent: true }, null)`);
+  assert.equal(blob, null);
+});
+
+// A Worker stand-in that runs the REAL assembled worker source in a
+// throwaway vm context per instance and delivers replies
+// synchronously. Used to prove dispatch behaviour end to end.
+function makeWorkerContext() {
+  const state = { instances: [], ctx: null };
+  const sb = makeSandbox();
+  class FakeWorker {
+    constructor(url) {
+      this.url = url;
+      this.onmessage = null;
+      this.onerror = null;
+      this.messages = [];
+      const srcText = vm.runInContext('getWorkerSourceText()', state.ctx);
+      const wSandbox = {
+        console,
+        self: {
+          onmessage: null,
+          postMessage: (m) => { if (this.onmessage) this.onmessage({ data: m }); }
+        }
+      };
+      wSandbox.globalThis = wSandbox;
+      const wctx = vm.createContext(wSandbox);
+      vm.runInContext(srcText, wctx);
+      this.__deliver = (msg) => wSandbox.self.onmessage({ data: msg });
+      state.instances.push(this);
+    }
+    postMessage(msg) {
+      this.messages.push(msg);
+      this.__deliver(msg);
+    }
+    terminate() {}
+  }
+  sb.Worker = FakeWorker;
+  sb.Blob = Blob;
+  sb.URL = { createObjectURL: () => 'blob:fake', revokeObjectURL: () => {} };
+  state.ctx = vm.createContext(sb);
+  state.run = (code) => vm.runInContext(code, state.ctx);
+  state.run(mainScript);
+  state.run(HELPERS);
+  return state;
+}
+
+await checkAsync('all screen regenerations dispatch to a worker (small build, no size gate)', async () => {
+  const w = makeWorkerContext();
+  w.run(`__resetState(777)`);
+  w.run(`regenerateScene({ newSeed: false })`);
+  await new Promise((r) => setTimeout(r, 100));
+  assert.ok(w.instances.length >= 1, 'a worker must be created even for a small screen build');
+  const computeMsgs = w.instances.flatMap((i) => i.messages).filter((m) => !m.kind);
+  assert.ok(computeMsgs.length >= 1, 'a compute request must be dispatched to the worker');
+  assert.equal(w.run(`getWorkerState().failed`), false);
+  assert.ok(w.run(`scene.contours.length`) > 0, 'the scene must be populated from the worker result');
+  assert.equal(w.run(`__checksum(scene)`), GOLDEN_CHECKSUM);
+});
+
+await checkAsync('pooled dispatch: heavy build splits thresholds across the pool and matches the single build', async () => {
+  const w = makeWorkerContext();
+  w.run(`__resetState(777)`);
+  w.run(`params.ANGLE_STEPS = 2000; params.NUM_RINGS = 220;`);
+  const direct = w.run(`__checksum(buildSceneData(800, 600, 777))`);
+  w.run(`regenerateScene({ newSeed: false })`);
+  await new Promise((r) => setTimeout(r, 200));
+  // The vm sandbox has no navigator, so the pool size defaults to 2.
+  assert.equal(w.instances.length, 2, 'the pool must top up to 2 workers for the pooled build');
+  const computeMsgs = w.instances.flatMap((i) => i.messages).filter((m) => !m.kind);
+  assert.equal(computeMsgs.length, 2, 'each pooled worker must receive exactly one chunk');
+  const ranges = computeMsgs.map((m) => m.thresholdRange).sort((a, b) => a.start - b.start);
+  assert.ok(ranges.every((r) => r && typeof r.start === 'number' && typeof r.end === 'number'), 'chunks must carry threshold ranges');
+  assert.equal(ranges[0].start, 0);
+  assert.equal(ranges[ranges.length - 1].end, 220);
+  for (let i = 1; i < ranges.length; i++) assert.equal(ranges[i].start, ranges[i - 1].end, 'ranges must be contiguous');
+  assert.equal(w.run(`getWorkerState().failed`), false);
+  assert.equal(w.run(`__checksum(scene)`), direct, 'pooled result must be identical to the single build');
 });
 
 console.log(`\n${passed} passed, ${failed} failed`);
