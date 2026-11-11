@@ -1690,8 +1690,9 @@ function triggerDownload(url, filename, revokeObjectURL) {
   }
 }
 
-function mousePressed() {
+function mousePressed(event) {
   if (mouseButton !== LEFT) return true;
+  if (event && event.target && event.target.tagName && event.target.tagName !== 'CANVAS') return true;
   if (isPointerInsideControls(mouseX, mouseY)) return true;
 
   const hitIndex = hitTestHole(mouseX, mouseY);
@@ -1758,11 +1759,15 @@ function hitTestHole(px, py) {
 }
 
 function isPointerInsideControls(px, py) {
+  const insideRect = (el) => {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return px >= rect.left && px <= rect.right && py >= rect.top && py <= rect.bottom;
+  };
+  const toggle = document.getElementById('panelToggle');
+  if (toggle && toggle.style.display !== 'none' && insideRect(toggle)) return true;
   if (!panelVisible) return false;
-  const controls = document.getElementById('controls');
-  if (!controls) return false;
-  const rect = controls.getBoundingClientRect();
-  return px >= rect.left && px <= rect.right && py >= rect.top && py <= rect.bottom;
+  return insideRect(document.getElementById('controls'));
 }
 
 function clamp(value, minValue, maxValue) {
