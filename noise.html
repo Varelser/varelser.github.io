@@ -381,6 +381,7 @@
         <button id="playBtn" type="button" data-help="再生を開始します(Spaceキーでも可)。AudioWorkletで低遅延再生します。">再生</button>
         <button id="stopBtn" type="button" class="secondary" data-help="再生を停止します(Spaceキーでも可)。">停止</button>
         <button id="exportBtn" type="button" class="secondary" data-help="現在の設定で音声ファイルを書き出します。長さや形式はMasterセクションで指定。">保存</button>
+        <button id="recordBtn" type="button" class="secondary" data-help="再生中の音をそのまま録音します。スライダーを動かしたライブな変化も記録でき、停止すると音声ファイル(WebM等)で保存されます。">● 録音</button>
         <button id="cancelExportBtn" type="button" class="secondary" disabled data-help="書き出しを中止します。">保存中止</button>
         <button id="resetBtn" type="button" class="warn" data-help="全パラメータを初期状態に戻します。">初期化</button>
       </div>
@@ -515,6 +516,7 @@
     master_subBody: 0.0,
     master_lfoRate: 0.18,
     master_lfoDepth: 0.0,
+    master_lfoGain: 0,
     master_humHz: 50,
     master_normalize: true,
     master_binauralEnabled: false,
@@ -532,6 +534,9 @@
     A_motion: 0.2,
     A_grain: 0.2,
     A_stereo: 0,
+    A_eqLow: 0,
+    A_eqMid: 0,
+    A_eqHigh: 0,
     B_enabled: false,
     B_type: 'vinyl',
     B_gain: 0.45,
@@ -541,6 +546,9 @@
     B_motion: 0.35,
     B_grain: 0.4,
     B_stereo: 0,
+    B_eqLow: 0,
+    B_eqMid: 0,
+    B_eqHigh: 0,
     C_enabled: false,
     C_type: 'thunder',
     C_gain: 0.5,
@@ -549,7 +557,10 @@
     C_density: 0.5,
     C_motion: 0.3,
     C_grain: 0.3,
-    C_stereo: 0
+    C_stereo: 0,
+    C_eqLow: 0,
+    C_eqMid: 0,
+    C_eqHigh: 0
   };
 
   const PRESETS = {
@@ -901,6 +912,19 @@
       B_enabled: true, B_type: 'pink', B_gain: 0.28, B_tone: -0.2, B_density: 0.4, B_motion: 0.1, B_grain: 0.06, B_stereo: 0.4,
       master_gain: 0.5, master_width: 1.1, master_drive: 0.03, master_highcut: 11000
     },
+    'Warm Tremolo Room': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'vinyl', A_gain: 0.85, A_tone: -0.15, A_density: 0.55, A_motion: 0.3, A_grain: 0.5, A_eqLow: 0.5, A_eqMid: -0.1, A_eqHigh: -0.45,
+      B_enabled: true, B_type: 'pink', B_gain: 0.12, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.05,
+      master_gain: 0.52, master_width: 1.0, master_drive: 0.08, master_highcut: 7500, master_analog: 0.35,
+      master_lfoRate: 4.2, master_lfoDepth: 0.15, master_lfoGain: 0.35, master_space: 0.3
+    },
+    'Scooped Rain Lab': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'rain', A_gain: 0.9, A_tone: 0.1, A_density: 0.7, A_motion: 0.4, A_grain: 0.4, A_stereo: 0.8, A_eqLow: 0.25, A_eqMid: -0.7, A_eqHigh: 0.4,
+      B_enabled: true, B_type: 'band', B_gain: 0.3, B_tone: 0.3, B_density: 0.5, B_motion: 0.6, B_grain: 0.3, B_stereo: 0.5,
+      master_gain: 0.52, master_width: 1.25, master_drive: 0.04, master_highcut: 13000, master_resonatorMix: 0.2, master_resonatorHz: 900
+    },
     'Full Storm': {
       ...DEFAULTS,
       A_enabled: true, A_type: 'wind', A_gain: 0.85, A_tone: -0.1, A_density: 0.7, A_motion: 0.7, A_grain: 0.25, A_stereo: 0.7,
@@ -948,6 +972,7 @@
     { id:'master_subBody', type:'range', label:'Sub Body', min:0, max:1.8, step:0.01 },
     { id:'master_lfoRate', type:'range', label:'LFO Rate (Hz)', min:0.01, max:40, step:0.01 },
     { id:'master_lfoDepth', type:'range', label:'LFO Depth', min:0, max:1.8, step:0.01 },
+    { id:'master_lfoGain', type:'range', label:'LFO→Gain (Tremolo)', min:0, max:1, step:0.01 },
     { id:'master_humHz', type:'select', label:'Hum', options:[['50','50 Hz'],['60','60 Hz']] },
     { id:'master_normalize', type:'checkbox', label:'Normalize Export' },
     { id:'master_loopFade', type:'select', label:'Loop Crossfade (sec)', options:[['0','Off'],['1','1'],['2','2'],['3','3'],['5','5'],['10','10']] },
@@ -967,7 +992,10 @@
     { id:'density', type:'range', label:'Density', min:0, max:1.5, step:0.01 },
     { id:'motion', type:'range', label:'Motion', min:0, max:1.5, step:0.01 },
     { id:'grain', type:'range', label:'Grain', min:0, max:1.5, step:0.01 },
-    { id:'stereo', type:'range', label:'Stereo（独立L/R）', min:0, max:1, step:0.01 }
+    { id:'stereo', type:'range', label:'Stereo（独立L/R）', min:0, max:1, step:0.01 },
+    { id:'eqLow', type:'range', label:'EQ Low', min:-1, max:1, step:0.01 },
+    { id:'eqMid', type:'range', label:'EQ Mid', min:-1, max:1, step:0.01 },
+    { id:'eqHigh', type:'range', label:'EQ High', min:-1, max:1, step:0.01 }
   ];
 
 
@@ -982,6 +1010,9 @@
     motion: '時間的なうねりや変化の量。風の強弱や波の寄せ引きのような動きが大きくなります。',
     grain: '粒立ちや質感の粗さ。雨粒、焚き火の爆ぜ、レコードのチリチリ感などを強めます。',
     stereo: '右チャンネル専用の独立した生成を混ぜます。0で従来のモノラル、1で完全な独立L/R。ヘッドホンで広がりが分かります。',
+    eqLow: '低域(約220Hz以下)の量を増減します。このレイヤーだけ太くしたり、逆に軽くしたりできます。',
+    eqMid: '中域(約0.5〜2.6kHz)の量を増減します。引っ込めると音が遠く、上げると近くに感じます。',
+    eqHigh: '高域(約3.2kHz以上)の量を増減します。キラキラ感やチリチリ感の調整に。',
     // Master fields
     master_sampleRate: 'プレビュー再生のサンプルレート。通常は48kHzでOK。書き出しのレートとは別です。',
     master_previewQuality: 'プレビューの解析と描画の軽さ。音そのものには影響しません。',
@@ -1027,7 +1058,8 @@
     master_binauralMode: 'Binaural=左右で違う周波数(ヘッドホン必須)、Isochronic=断続音、Monaural=スピーカーでも聞こえる振幅ビート。',
     master_binauralCarrier: 'ビートの土台になる音の高さ。低め(150〜250Hz)が標準的です。',
     master_binauralBeat: 'ビートの速さ。目安: 0.5〜4Hz=深い睡眠δ、4〜8Hz=瞑想θ、8〜13Hz=リラックスα、13〜30Hz=集中β、40Hz=γ。',
-    master_binauralLevel: 'ビート音の音量。ノイズに埋もれるくらい控えめが基本です。'
+    master_binauralLevel: 'ビート音の音量。ノイズに埋もれるくらい控えめが基本です。',
+    master_lfoGain: 'LFOで音量を周期的に揺らすトレモロ。LFO Rateが速さです。ゆっくり上げると呼吸のようなうねり、速くすると古典的なトレモロになります。'
   };
 
   function buildFields(targetId, schema, prefix = '') {
@@ -1324,6 +1356,9 @@
       p[`${prefix}_motion`] = Number((Math.random() * 1.5).toFixed(2));
       p[`${prefix}_grain`] = Number((Math.random() * 1.5).toFixed(2));
       p[`${prefix}_stereo`] = Math.random() < 0.5 ? 0 : Number((Math.random() * 0.9).toFixed(2));
+      p[`${prefix}_eqLow`] = Number((Math.random() * 0.7 - 0.35).toFixed(2));
+      p[`${prefix}_eqMid`] = Number((Math.random() * 0.7 - 0.35).toFixed(2));
+      p[`${prefix}_eqHigh`] = Number((Math.random() * 0.7 - 0.35).toFixed(2));
     });
     p.master_gain = Number((0.22 + Math.random() * 1.15).toFixed(2));
     p.master_width = Number((0.25 + Math.random() * 4.25).toFixed(2));
@@ -1478,8 +1513,9 @@
     const sr = state.sr;
 
     const ampLfo = 1 - p.master_lfoDepth * 0.25 + p.master_lfoDepth * 0.25 * (0.5 + 0.5 * Math.sin(TAU * p.master_lfoRate * t));
-    l *= p.master_gain * ampLfo;
-    r *= p.master_gain * ampLfo;
+    const tremolo = 1 - (p.master_lfoGain || 0) * (0.5 + 0.5 * Math.sin(TAU * p.master_lfoRate * t - Math.PI / 2));
+    l *= p.master_gain * ampLfo * tremolo;
+    r *= p.master_gain * ampLfo * tremolo;
 
     l = hp(state, 'mhl', l, p.master_lowcut, sr);
     r = hp(state, 'mhr', r, p.master_lowcut, sr);
@@ -2059,6 +2095,15 @@
       y = lerp(y, high, p.tone);
     }
     y = softclip(y, p.grain * 0.25);
+    const eqLow = p.eqLow || 0;
+    const eqMid = p.eqMid || 0;
+    const eqHigh = p.eqHigh || 0;
+    if (eqLow !== 0 || eqMid !== 0 || eqHigh !== 0) {
+      const lowBand = lp(s, 'eqLowP', y, 220, sr);
+      const highBand = y - lp(s, 'eqHighP', y, 3200, sr);
+      const midBand = bp(s, 'eqMid1', 'eqMid2', y, 480, 2600, sr);
+      y = y + lowBand * eqLow * 0.9 + midBand * eqMid * 1.1 + highBand * eqHigh * 0.9;
+    }
     return y * p.gain;
   }
 
@@ -2088,6 +2133,7 @@
     p.master_subBody = clamp(Number(p.master_subBody) || 0, 0, 1.8);
     p.master_lfoRate = clamp(Number(p.master_lfoRate) || 0.18, 0.01, 40);
     p.master_lfoDepth = clamp(Number(p.master_lfoDepth) || 0, 0, 1.8);
+    p.master_lfoGain = clamp(Number(p.master_lfoGain) || 0, 0, 1);
     p.master_normalize = !!p.master_normalize;
     p.master_loopFade = clamp(Number(p.master_loopFade) || 0, 0, 10);
     p.master_binauralEnabled = !!p.master_binauralEnabled;
@@ -2103,6 +2149,9 @@
       p[`${prefix}_motion`] = clamp(Number(p[`${prefix}_motion`]) || 0, 0, 1.5);
       p[`${prefix}_grain`] = clamp(Number(p[`${prefix}_grain`]) || 0, 0, 1.5);
       p[`${prefix}_stereo`] = clamp(Number(p[`${prefix}_stereo`]) || 0, 0, 1);
+      p[`${prefix}_eqLow`] = clamp(Number(p[`${prefix}_eqLow`]) || 0, -1, 1);
+      p[`${prefix}_eqMid`] = clamp(Number(p[`${prefix}_eqMid`]) || 0, -1, 1);
+      p[`${prefix}_eqHigh`] = clamp(Number(p[`${prefix}_eqHigh`]) || 0, -1, 1);
     });
     return p;
   }
@@ -2120,7 +2169,10 @@
       density: p.A_density,
       motion: p.A_motion,
       grain: p.A_grain,
-      stereo: p.A_stereo
+      stereo: p.A_stereo,
+      eqLow: p.A_eqLow,
+      eqMid: p.A_eqMid,
+      eqHigh: p.A_eqHigh
     };
     const pB = {
       enabled: !!p.B_enabled,
@@ -2131,7 +2183,10 @@
       density: p.B_density,
       motion: p.B_motion,
       grain: p.B_grain,
-      stereo: p.B_stereo
+      stereo: p.B_stereo,
+      eqLow: p.B_eqLow,
+      eqMid: p.B_eqMid,
+      eqHigh: p.B_eqHigh
     };
     const pC = {
       enabled: !!p.C_enabled,
@@ -2142,7 +2197,10 @@
       density: p.C_density,
       motion: p.C_motion,
       grain: p.C_grain,
-      stereo: p.C_stereo
+      stereo: p.C_stereo,
+      eqLow: p.C_eqLow,
+      eqMid: p.C_eqMid,
+      eqHigh: p.C_eqHigh
     };
 
     return {
@@ -2865,6 +2923,9 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sA.p.motion = p.A_motion;
     this.renderer.sA.p.grain = p.A_grain;
     this.renderer.sA.p.stereo = p.A_stereo;
+    this.renderer.sA.p.eqLow = p.A_eqLow;
+    this.renderer.sA.p.eqMid = p.A_eqMid;
+    this.renderer.sA.p.eqHigh = p.A_eqHigh;
 
     this.renderer.sB.p.enabled = p.B_enabled;
     this.renderer.sB.p.type = p.B_type;
@@ -2875,6 +2936,9 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sB.p.motion = p.B_motion;
     this.renderer.sB.p.grain = p.B_grain;
     this.renderer.sB.p.stereo = p.B_stereo;
+    this.renderer.sB.p.eqLow = p.B_eqLow;
+    this.renderer.sB.p.eqMid = p.B_eqMid;
+    this.renderer.sB.p.eqHigh = p.B_eqHigh;
 
     this.renderer.sC.p.enabled = p.C_enabled;
     this.renderer.sC.p.type = p.C_type;
@@ -2885,6 +2949,9 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sC.p.motion = p.C_motion;
     this.renderer.sC.p.grain = p.C_grain;
     this.renderer.sC.p.stereo = p.C_stereo;
+    this.renderer.sC.p.eqLow = p.C_eqLow;
+    this.renderer.sC.p.eqMid = p.C_eqMid;
+    this.renderer.sC.p.eqHigh = p.C_eqHigh;
 
     this.renderer.masterState.p = p;
   }
@@ -2972,6 +3039,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     sB: null,
     sBR: null,
     safetyComp: null,
+    streamDest: null,
     sC: null,
     sCR: null,
     masterState: null,
@@ -3015,6 +3083,10 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.masterGain.connect(this.analyser);
       this.analyser.connect(this.safetyComp);
       this.safetyComp.connect(this.ctx.destination);
+      if (this.ctx.createMediaStreamDestination) {
+        this.streamDest = this.ctx.createMediaStreamDestination();
+        this.safetyComp.connect(this.streamDest);
+      }
     },
 
     destroyRealtimeNode() {
@@ -3093,6 +3165,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sA.p.motion = p.A_motion;
       this.sA.p.grain = p.A_grain;
       this.sA.p.stereo = p.A_stereo;
+      this.sA.p.eqLow = p.A_eqLow;
+      this.sA.p.eqMid = p.A_eqMid;
+      this.sA.p.eqHigh = p.A_eqHigh;
 
       this.sB.p.enabled = p.B_enabled;
       this.sB.p.type = p.B_type;
@@ -3103,6 +3178,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sB.p.motion = p.B_motion;
       this.sB.p.grain = p.B_grain;
       this.sB.p.stereo = p.B_stereo;
+      this.sB.p.eqLow = p.B_eqLow;
+      this.sB.p.eqMid = p.B_eqMid;
+      this.sB.p.eqHigh = p.B_eqHigh;
 
       this.sC.p.enabled = p.C_enabled;
       this.sC.p.type = p.C_type;
@@ -3113,6 +3191,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sC.p.motion = p.C_motion;
       this.sC.p.grain = p.C_grain;
       this.sC.p.stereo = p.C_stereo;
+      this.sC.p.eqLow = p.C_eqLow;
+      this.sC.p.eqMid = p.C_eqMid;
+      this.sC.p.eqHigh = p.C_eqHigh;
 
       this.masterState.p = p;
     },
@@ -3450,7 +3531,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         const data = await res.json();
         raw = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '';
       } else {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -3865,6 +3946,52 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       addEventListener('focusout', hideTip);
       addEventListener('scroll', () => { if (tipEl.classList.contains('visible')) hideTip(); }, true);
     }
+
+    // ---- Live recording (captures real-time tweaks) ----
+    let mediaRecorder = null;
+    let recordChunks = [];
+    $('recordBtn').addEventListener('click', () => {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        return;
+      }
+      if (!window.MediaRecorder) {
+        setStatus('このブラウザは録音(MediaRecorder)に未対応です。', 'error');
+        return;
+      }
+      if (!engine.playing) engine.play();
+      if (!engine.streamDest) {
+        setStatus('録音用ストリームを作成できませんでした。', 'error');
+        return;
+      }
+      recordChunks = [];
+      try {
+        mediaRecorder = new MediaRecorder(engine.streamDest.stream);
+      } catch (err) {
+        setStatus(`録音を開始できませんでした: ${err && err.message ? err.message : err}`, 'error');
+        return;
+      }
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size) recordChunks.push(e.data);
+      };
+      mediaRecorder.onstop = () => {
+        const type = mediaRecorder.mimeType || 'audio/webm';
+        const blob = new Blob(recordChunks, { type });
+        const ext = type.includes('mp4') ? 'mp4' : type.includes('ogg') ? 'ogg' : 'webm';
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `noise-live-${new Date().toISOString().replace(/[:.]/g, '-')}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        $('recordBtn').textContent = '● 録音';
+        setStatus('ライブ録音を保存しました。', 'ok');
+      };
+      mediaRecorder.start(250);
+      $('recordBtn').textContent = '■ 録音停止';
+      setStatus('ライブ録音中… もう一度押すと停止して保存します。', 'ok');
+    });
 
     $('playBtn').addEventListener('click', () => engine.play());
     $('stopBtn').addEventListener('click', () => engine.stop());
