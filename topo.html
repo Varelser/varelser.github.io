@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- TOPO v3 (2026-11-11): worker + performance update - unified pure core (p5-exact Perlin/LCG ports, bit-identical output), Web Worker scene builds (exports + heavy screen scenes, stale-result discard, main-thread fallback), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
+<!-- TOPO v4 (2026-11-12): parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -358,7 +358,9 @@ const MAX_HOLES = 12;
 const UNDO_MAX = 50;
 const STORAGE_KEY = 'topo-settings-v1';
 const SCREEN_CELL_BUDGET = 50000000;
-const WORKER_SCREEN_THRESHOLD = 3000000;
+// Pool the Worker computation (split by threshold ranges) only when the
+// scene is large enough for the duplicated field sampling to pay off.
+const POOL_MIN_CELL_CHECKS = 6000000;
 const EXPORT_CONFIRM_CELLS = 100000000;
 const EXPORT_CONFIRM_PIXELS = 25000000;
 const EXPORT_HARD_CELLS = 900000000;
@@ -946,44 +948,59 @@ function regenerateScene(options = {}) {
   const eff = getEffectiveGridStep(targetWidth, targetHeight, flat, SCREEN_CELL_BUDGET);
   const reqId = ++sceneRequestSeq;
 
-  if (eff.estimate.cellChecks > WORKER_SCREEN_THRESHOLD) {
-    // Heavy scene: compute in the Worker so the UI stays responsive.
-    // Requests coalesce by sequence number — a stale result that
-    // arrives after a newer request has started is discarded.
-    setStatus('Workerで計算中…');
-    buildSceneViaWorker({
-      params: coreParamsSnapshot(),
-      holes: snapshotSceneHoles(),
-      seed: seedVal,
-      width: targetWidth,
-      height: targetHeight,
-      baseW: width,
-      baseH: height,
-      gridStep: eff.gridStep
-    }, (ratio) => {
-      if (reqId === sceneRequestSeq) {
-        setStatus(`Workerで計算中… ${Math.round(ratio * 100)}%`);
-      }
-    }).then((built) => {
-      if (reqId !== sceneRequestSeq) return;
-      if (built) {
-        scene = built;
-        afterSceneBuilt(eff.adapted);
-        if (!eff.adapted) setStatus('');
-      } else {
-        scene = buildSceneData(targetWidth, targetHeight, seedVal, { budget: SCREEN_CELL_BUDGET });
-        afterSceneBuilt(eff.adapted);
-        if (!eff.adapted) setStatus('Workerを利用できないためメインスレッドで計算しました');
-      }
-      redraw();
-    });
-    syncSelectedHoleControls();
-    updateSeedDisplay();
-    return;
-  }
+  // v4: every screen build goes through the Worker pool (pooled or
+  // single) whenever a worker is available — no size gate. Requests
+  // coalesce by sequence number: a stale result that arrives after a
+  // newer request has started is discarded. The synchronous build
+  // remains only as the fallback when the Worker path is
+  // unavailable or fails.
+  let statusTimer = setTimeout(() => {
+    if (reqId === sceneRequestSeq) setStatus('Workerで計算中…');
+  }, 150);
+  const clearStatusTimer = () => {
+    if (statusTimer) {
+      clearTimeout(statusTimer);
+      statusTimer = null;
+    }
+  };
+  buildSceneAuto({
+    params: coreParamsSnapshot(),
+    holes: snapshotSceneHoles(),
+    seed: seedVal,
+    width: targetWidth,
+    height: targetHeight,
+    baseW: width,
+    baseH: height,
+    gridStep: eff.gridStep
+  }, eff.estimate, (ratio) => {
+    if (reqId !== sceneRequestSeq) return;
+    clearStatusTimer();
+    setStatus(`Workerで計算中… ${Math.round(ratio * 100)}%`);
+  }).then((built) => {
+    clearStatusTimer();
+    if (reqId !== sceneRequestSeq) return;
+    if (built) {
+      scene = built;
+      afterSceneBuilt(eff.adapted);
+      if (!eff.adapted) clearWorkerStatus();
+    } else {
+      scene = buildSceneData(targetWidth, targetHeight, seedVal, { budget: SCREEN_CELL_BUDGET });
+      afterSceneBuilt(eff.adapted);
+      if (!eff.adapted) setStatus('Workerを利用できないためメインスレッドで計算しました');
+    }
+    redraw();
+  });
+  syncSelectedHoleControls();
+  updateSeedDisplay();
+}
 
-  scene = buildSceneData(targetWidth, targetHeight, seedVal, { budget: SCREEN_CELL_BUDGET });
-  afterSceneBuilt(eff.adapted);
+// Clear a leftover "computing" status without touching messages
+// set by other code paths (e.g. the grid-adaptation notice).
+function clearWorkerStatus() {
+  const el = document.getElementById('statusLine');
+  if (el && el.textContent.indexOf('Workerで計算中') === 0) {
+    el.textContent = '';
+  }
 }
 
 // ============================================================
@@ -1652,13 +1669,22 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
   const thresholds = flatMode
     ? coreBuildFlatThresholds(cp, targetWidth, targetHeight, gridStep)
     : coreBuildThresholds(cp, minField, maxField, false);
+  // Optional threshold range for parallel Worker chunks: the field and
+  // the full threshold list are computed identically in every chunk,
+  // only the contour extraction is limited to [rangeStart, rangeEnd).
+  // Per-contour post-processing below applies to the chunk's subset.
+  const range = opts.thresholdRange || null;
+  const rangeStart = range ? Math.max(0, Math.min(thresholds.length, Math.floor(range.start) || 0)) : 0;
+  const rangeEnd = range
+    ? Math.max(rangeStart, Math.min(thresholds.length, typeof range.end === 'number' ? Math.floor(range.end) : thresholds.length))
+    : thresholds.length;
   let contours = [];
-  for (let i = 0; i < thresholds.length; i++) {
+  for (let i = rangeStart; i < rangeEnd; i++) {
     const paths = coreMarchingSquaresPaths(field, cols, rows, gridStep, thresholds[i]);
     for (let j = 0; j < paths.length; j++) {
       if (paths[j].points.length >= 4) contours.push(paths[j]);
     }
-    if (i % 4 === 3) yield { phase: 'contours', ratio: (i + 1) / thresholds.length };
+    if (i % 4 === 3) yield { phase: 'contours', ratio: (i - rangeStart + 1) / Math.max(1, rangeEnd - rangeStart) };
   }
 
   if (flatMode) {
@@ -1670,7 +1696,12 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
     contours = contours.map((path) => coreCircularizePathObject(cp, path, cp.CIRCULARIZE_MIX));
   }
 
-  const textureDots = coreBuildTextureDots(core, targetWidth, targetHeight, cp.TEXTURE_POINTS, seed + 987654321);
+  // Texture dots are produced only by the chunk that starts at
+  // threshold 0 (or by an un-ranged build) so pooled merges keep
+  // exactly one dot set, identical to the single-worker result.
+  const textureDots = range && rangeStart > 0
+    ? []
+    : coreBuildTextureDots(core, targetWidth, targetHeight, cp.TEXTURE_POINTS, seed + 987654321);
   return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep };
 }
 
@@ -1765,7 +1796,8 @@ function* buildSceneSteps(targetWidth, targetHeight, seed, buildOpts = {}) {
     baseW: width,
     baseH: height,
     gridStep: plan.gridStep,
-    cull: buildOpts.cull !== false
+    cull: buildOpts.cull !== false,
+    thresholdRange: buildOpts.thresholdRange || null
   });
   built.adapted = plan.adapted;
   built.estimate = plan.estimate;
@@ -1888,6 +1920,154 @@ function buildTextureDots(w, h, count, seed) {
 }
 
 // ============================================================
+// Curve rendering port (v4): a faithful re-implementation of how
+// p5 1.6.0 (unminified source, Renderer2D.endShape) rasterizes the
+// curveVertex shapes that drawSmoothPath emits, so the export can be
+// rasterized inside a Worker on an OffscreenCanvas with identical
+// output. p5 converts every curve span into a cubic bezier whose
+// control points come from the Catmull-Rom neighbours:
+//   s = 1 - curveTightness (default tightness 0, so s = 1)
+//   cp1 = cur  + (s*next - s*prev) / 6
+//   cp2 = next + (s*cur  - s*next2) / 6
+// The path starts at vertices[1] (vertices[0] is only a neighbour),
+// and endShape(CLOSE) pushes vertices[0] onto the list twice before
+// rendering (once in p5.prototype.endShape, once in
+// Renderer2D.endShape), then a final lineTo plus closePath. The port
+// below mirrors that literal algorithm — including the duplicated
+// anchor points drawSmoothPath itself emits — rather than an
+// idealized closed-curve routine, so pixels match the p5 rendering.
+// p5 also defaults to strokeCap ROUND (lineJoin stays the Canvas2D
+// default, miter).
+// ============================================================
+
+// p5.prototype.curvePoint with the default tightness (s = 0 in p5's
+// notation), evaluated per axis.
+function catmullRomPoint(a, b, c, d, t) {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  const f1 = -0.5 * t3 + t2 - 0.5 * t;
+  const f2 = 1.5 * t3 - 2.5 * t2 + 1;
+  const f3 = -1.5 * t3 + 2 * t2 + 0.5 * t;
+  const f4 = 0.5 * t3 - 0.5 * t2;
+  return a * f1 + b * f2 + c * f3 + d * f4;
+}
+
+// Standard cubic bezier evaluation, per axis. With the control
+// points from curveBezierControls this traces exactly the same
+// curve as catmullRomPoint (verified numerically in the tests
+// against golden values captured from real p5 1.6.0).
+function cubicBezierPoint(p0, p1, p2, p3, t) {
+  const u = 1 - t;
+  return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
+}
+
+function curveBezierControls(prev, cur, next, next2) {
+  return [
+    { x: cur.x + (next.x - prev.x) / 6, y: cur.y + (next.y - prev.y) / 6 },
+    { x: next.x + (cur.x - next2.x) / 6, y: next.y + (cur.y - next2.y) / 6 }
+  ];
+}
+
+// The exact vertex sequence drawSmoothPath hands to p5 via
+// curveVertex calls (duplicated anchors included).
+function buildCurveVertexList(pts, closed) {
+  const n = pts.length;
+  const V = [];
+  if (closed) {
+    V.push(pts[n - 1], pts[0]);
+    for (let i = 0; i < n; i++) V.push(pts[i]);
+    V.push(pts[0], pts[1]);
+  } else {
+    V.push(pts[0], pts[0]);
+    for (let i = 1; i < n; i++) V.push(pts[i]);
+    V.push(pts[n - 1], pts[n - 1]);
+  }
+  return V;
+}
+
+// Stroke one contour into a Canvas2D-like context exactly the way
+// p5 1.6.0's Renderer2D would. The caller sets strokeStyle/lineWidth
+// before calling. Works on any object with the Path2D-style methods
+// (a real ctx, or a recording stub in the tests).
+function strokeCurvePath2D(ctx, pts, closed) {
+  const n = pts.length;
+  if (n < 2) return;
+  const V = buildCurveVertexList(pts, closed);
+  // endShape(CLOSE) appends vertices[0] twice before rendering.
+  const verts = closed ? V.concat([V[0], V[0]]) : V;
+  const numVerts = verts.length;
+  if (numVerts <= 3) return;
+  ctx.beginPath();
+  ctx.moveTo(verts[1].x, verts[1].y);
+  let i = 1;
+  for (; i + 2 < numVerts; i++) {
+    const cp = curveBezierControls(verts[i - 1], verts[i], verts[i + 1], verts[i + 2]);
+    ctx.bezierCurveTo(cp[0].x, cp[0].y, cp[1].x, cp[1].y, verts[i + 1].x, verts[i + 1].y);
+  }
+  if (closed) {
+    ctx.lineTo(verts[i + 1].x, verts[i + 1].y);
+    ctx.closePath();
+  }
+  ctx.stroke();
+}
+
+// Worker-side export rasterization. Receives the flattened scene
+// (same transfer format as the compute result) plus render
+// parameters, draws in the same paint order as the main-thread
+// export (optional black background, faint texture dots, red shadow
+// pass, white pass) and resolves with the PNG Blob.
+// Only ever invoked inside a Worker with OffscreenCanvas support.
+async function renderSceneOffscreen(req) {
+  if (typeof OffscreenCanvas === 'undefined') {
+    throw new Error('OffscreenCanvas is not available');
+  }
+  const canvas = new OffscreenCanvas(req.width, req.height);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('OffscreenCanvas 2d context is not available');
+
+  // unflattenScene is part of the assembled Worker source.
+  const scene = unflattenScene({
+    coords: req.coords,
+    counts: req.counts,
+    closed: req.closed,
+    dots: req.dots,
+    holesPx: [],
+    gridStep: 0
+  });
+
+  if (!req.transparent) {
+    ctx.fillStyle = 'rgb(0, 0, 0)';
+    ctx.fillRect(0, 0, req.width, req.height);
+  }
+
+  if (req.showTexture) {
+    // p5 fill(255, 6): white at alpha 6/255, one filled circle per dot.
+    ctx.fillStyle = 'rgba(255, 255, 255, ' + (6 / 255) + ')';
+    for (let i = 0; i < scene.textureDots.length; i++) {
+      const d = scene.textureDots[i];
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.s / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.lineCap = 'round';
+  for (let i = 0; i < scene.contours.length; i++) {
+    const contour = scene.contours[i];
+    if (req.showRedShadow) {
+      ctx.strokeStyle = 'rgba(200, 40, 60, ' + (req.redShadowAlpha / 255) + ')';
+      ctx.lineWidth = req.whiteStrokeWeight * req.redShadowScale * req.scale;
+      strokeCurvePath2D(ctx, contour.points, contour.closed);
+    }
+    ctx.strokeStyle = 'rgb(255, 255, 255)';
+    ctx.lineWidth = req.whiteStrokeWeight * req.scale;
+    strokeCurvePath2D(ctx, contour.points, contour.closed);
+  }
+
+  return canvas.convertToBlob({ type: 'image/png' });
+}
+
+// ============================================================
 // Web Worker execution. The worker source is assembled from the
 // core functions' own source text plus topoWorkerMain, so the
 // worker runs literally the same code as the main thread.
@@ -1945,7 +2125,14 @@ function getCoreSourceText() {
 }
 
 function getWorkerSourceText() {
-  return getCoreSourceText() + '\n;(' + topoWorkerMain.toString() + ')();\n';
+  // The render path needs the curve port and the OffscreenCanvas
+  // rasterizer in the Worker as well; they are pure (no DOM access
+  // at definition time) and join the core functions in the source.
+  const extras = [catmullRomPoint, cubicBezierPoint, curveBezierControls, buildCurveVertexList, strokeCurvePath2D, renderSceneOffscreen];
+  return getCoreSourceText()
+    + '\n\n'
+    + extras.map((f) => f.toString()).join('\n\n')
+    + '\n;(' + topoWorkerMain.toString() + ')();\n';
 }
 
 // Runs only inside the Worker (never invoked on the main thread).
@@ -1953,13 +2140,40 @@ function topoWorkerMain() {
   self.onmessage = function (e) {
     const req = e.data || {};
     const id = req.id;
+
+    if (req.kind === 'renderCaps') {
+      let offscreen = false;
+      try {
+        offscreen = typeof OffscreenCanvas !== 'undefined'
+          && typeof OffscreenCanvas.prototype.convertToBlob === 'function';
+      } catch (err) {
+        offscreen = false;
+      }
+      self.postMessage({ type: 'renderCaps', id: id, caps: { offscreen: offscreen } });
+      return;
+    }
+
+    if (req.kind === 'render') {
+      renderSceneOffscreen(req).then((blob) => {
+        if (blob) {
+          self.postMessage({ type: 'result', id: id, blob: blob });
+        } else {
+          self.postMessage({ type: 'error', id: id, message: 'render produced no blob' });
+        }
+      }).catch((err) => {
+        self.postMessage({ type: 'error', id: id, message: String((err && err.message) || err) });
+      });
+      return;
+    }
+
     try {
       const core = createCoreState();
       const gen = coreBuildSceneSteps(core, req.params, req.holes, req.seed, req.width, req.height, {
         baseW: req.baseW,
         baseH: req.baseH,
         gridStep: req.gridStep,
-        cull: true
+        cull: true,
+        thresholdRange: req.thresholdRange || null
       });
       let lastPct = -1;
       let result = gen.next();
@@ -1983,25 +2197,22 @@ function topoWorkerMain() {
   };
 }
 
-let topoWorker = null;
+// Worker pool (v4): up to 4 workers share one assembled Blob source.
+// Each record tracks its own pending requests; a record that errors
+// is retired without taking the rest of the pool down.
+let workerPool = [];
 let workerFailed = false;
 let workerRequestSeq = 0;
-const workerPending = new Map();
+let renderCapsCache = null;
 let artworkCache = null;
 
-function markWorkerFailed() {
-  workerFailed = true;
-  workerPending.forEach((entry) => entry.resolve(null));
-  workerPending.clear();
-  if (topoWorker) {
-    try { topoWorker.terminate(); } catch (err) { /* ignore */ }
-    topoWorker = null;
-  }
+function getWorkerPoolSize() {
+  const hc = (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 2;
+  return Math.max(1, Math.min(4, Math.floor(hc) || 1));
 }
 
-function ensureTopoWorker() {
+function createPooledWorker() {
   if (workerFailed) return null;
-  if (topoWorker) return topoWorker;
   try {
     if (typeof Worker === 'undefined' || typeof Blob === 'undefined' || typeof URL === 'undefined' || !URL.createObjectURL) {
       throw new Error('Worker is not available in this browser');
@@ -2009,62 +2220,230 @@ function ensureTopoWorker() {
     const blob = new Blob([getWorkerSourceText()], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);
     const worker = new Worker(url);
-    worker.onmessage = (e) => {
-      const msg = e.data;
-      if (!msg || typeof msg.id === 'undefined') return;
-      const entry = workerPending.get(msg.id);
-      if (!entry) return;
-      if (msg.type === 'progress') {
-        if (entry.onProgress) entry.onProgress(msg.progress);
-      } else if (msg.type === 'result') {
-        workerPending.delete(msg.id);
-        entry.resolve(unflattenScene(msg.payload));
-      } else if (msg.type === 'error') {
-        workerPending.delete(msg.id);
-        entry.resolve(null);
-      }
-    };
-    worker.onerror = () => {
-      markWorkerFailed();
-    };
-    topoWorker = worker;
-    return worker;
+    const rec = { worker: worker, pending: new Map(), dead: false };
+    worker.onmessage = (e) => handleWorkerMessage(rec, e.data);
+    worker.onerror = () => failWorkerRecord(rec);
+    workerPool.push(rec);
+    return rec;
   } catch (err) {
-    workerFailed = true;
     return null;
   }
 }
 
+function failWorkerRecord(rec) {
+  if (rec.dead) return;
+  rec.dead = true;
+  rec.pending.forEach((entry) => entry.resolve(null));
+  rec.pending.clear();
+  try { rec.worker.terminate(); } catch (err) { /* ignore */ }
+  workerPool = workerPool.filter((r) => r !== rec);
+}
+
+function markWorkerFailed() {
+  workerFailed = true;
+  const recs = workerPool.slice();
+  workerPool = [];
+  recs.forEach((rec) => {
+    rec.dead = true;
+    rec.pending.forEach((entry) => entry.resolve(null));
+    rec.pending.clear();
+    try { rec.worker.terminate(); } catch (err) { /* ignore */ }
+  });
+}
+
+function handleWorkerMessage(rec, msg) {
+  if (!msg || typeof msg.id === 'undefined') return;
+  const entry = rec.pending.get(msg.id);
+  if (!entry) return;
+  if (msg.type === 'progress') {
+    if (entry.onProgress) entry.onProgress(msg.progress);
+  } else if (msg.type === 'result') {
+    rec.pending.delete(msg.id);
+    if (entry.kind === 'render') entry.resolve(msg.blob || null);
+    else entry.resolve(unflattenScene(msg.payload));
+  } else if (msg.type === 'renderCaps') {
+    rec.pending.delete(msg.id);
+    entry.resolve(msg.caps || null);
+  } else if (msg.type === 'error') {
+    rec.pending.delete(msg.id);
+    entry.resolve(null);
+  }
+}
+
+// Live worker records, topping the pool up to `count` on demand.
+function getPoolWorkers(count) {
+  const live = workerPool.filter((r) => !r.dead);
+  while (live.length < count) {
+    const rec = createPooledWorker();
+    if (!rec) {
+      if (live.length === 0) workerFailed = true;
+      break;
+    }
+    live.push(rec);
+  }
+  return live;
+}
+
+function dispatchToWorker(rec, message, onProgress, kind, transfers) {
+  const id = ++workerRequestSeq;
+  return new Promise((resolve) => {
+    rec.pending.set(id, { resolve: resolve, onProgress: onProgress, kind: kind || 'compute' });
+    const msg = Object.assign({}, message, { id: id });
+    try {
+      if (transfers && transfers.length) rec.worker.postMessage(msg, transfers);
+      else rec.worker.postMessage(msg);
+    } catch (err) {
+      rec.pending.delete(id);
+      failWorkerRecord(rec);
+      resolve(null);
+    }
+  });
+}
+
+function ensureTopoWorker() {
+  const recs = getPoolWorkers(1);
+  return recs.length ? recs[0].worker : null;
+}
+
 function getWorkerState() {
-  return { failed: workerFailed, active: !!topoWorker, pending: workerPending.size };
+  let pending = 0;
+  workerPool.forEach((rec) => { pending += rec.pending.size; });
+  return { failed: workerFailed, active: workerPool.some((r) => !r.dead), pending: pending };
+}
+
+function computeMessageFor(req, thresholdRange) {
+  return {
+    params: req.params,
+    holes: req.holes,
+    seed: req.seed,
+    width: req.width,
+    height: req.height,
+    baseW: req.baseW,
+    baseH: req.baseH,
+    gridStep: req.gridStep,
+    thresholdRange: thresholdRange || null
+  };
 }
 
 // Resolves to a scene object, or null when the Worker path is
 // unavailable (callers then fall back to the main-thread build).
 function buildSceneViaWorker(req, onProgress) {
-  const worker = ensureTopoWorker();
-  if (!worker) return Promise.resolve(null);
-  const id = ++workerRequestSeq;
-  return new Promise((resolve) => {
-    workerPending.set(id, { resolve: resolve, onProgress: onProgress });
-    try {
-      worker.postMessage({
-        id: id,
-        params: req.params,
-        holes: req.holes,
-        seed: req.seed,
-        width: req.width,
-        height: req.height,
-        baseW: req.baseW,
-        baseH: req.baseH,
-        gridStep: req.gridStep
-      });
-    } catch (err) {
-      workerPending.delete(id);
-      markWorkerFailed();
-      resolve(null);
-    }
-  });
+  const recs = getPoolWorkers(1);
+  if (!recs.length) return Promise.resolve(null);
+  return dispatchToWorker(recs[0], computeMessageFor(req, req.thresholdRange || null), onProgress, 'compute');
+}
+
+// Split `total` thresholds into `count` contiguous ranges, as equal
+// as possible (earlier ranges take the remainder one by one).
+function partitionThresholdRanges(total, count) {
+  const n = Math.max(1, Math.min(Math.max(1, Math.floor(count) || 1), Math.max(1, Math.floor(total) || 1)));
+  const base = Math.floor(total / n);
+  let rem = total - base * n;
+  const ranges = [];
+  let start = 0;
+  for (let i = 0; i < n; i++) {
+    const size = base + (rem > 0 ? 1 : 0);
+    if (rem > 0) rem--;
+    ranges.push({ start: start, end: start + size });
+    start += size;
+  }
+  return ranges;
+}
+
+// Merge per-range scenes back into one: contours concatenate in
+// threshold-range order; texture dots and metadata come from the
+// first chunk (the only one that generates dots).
+function mergeSceneChunks(chunks) {
+  if (!chunks || chunks.length === 0) return null;
+  const contours = [];
+  for (let i = 0; i < chunks.length; i++) {
+    for (let j = 0; j < chunks[i].contours.length; j++) contours.push(chunks[i].contours[j]);
+  }
+  return {
+    contours: contours,
+    textureDots: chunks[0].textureDots || [],
+    holesPx: chunks[0].holesPx,
+    gridStep: chunks[0].gridStep
+  };
+}
+
+// Parallel build: one threshold-range subrequest per pool worker.
+// Each worker recomputes the field (the accepted tradeoff); the
+// contour extraction — the dominant cost — is split. The merged
+// result is bit-identical to the single-worker build. Resolves null
+// if any chunk fails so callers can fall back down the chain.
+async function buildScenePooled(req, onProgress) {
+  const total = Math.max(2, Math.trunc((req.params && req.params.NUM_RINGS) || 0));
+  const recs = getPoolWorkers(getWorkerPoolSize());
+  if (recs.length < 2) return buildSceneViaWorker(req, onProgress);
+  const ranges = partitionThresholdRanges(total, recs.length);
+  const progresses = ranges.map(() => 0);
+  const jobs = ranges.map((range, i) => dispatchToWorker(
+    recs[i],
+    computeMessageFor(req, range),
+    (ratio) => {
+      progresses[i] = ratio;
+      if (onProgress) onProgress(progresses.reduce((a, b) => a + b, 0) / progresses.length);
+    },
+    'compute'
+  ));
+  const chunks = await Promise.all(jobs);
+  if (chunks.some((c) => !c)) return null;
+  return mergeSceneChunks(chunks);
+}
+
+// Choose pooled vs single worker by estimated cost: pooling pays
+// off only for large scenes with enough thresholds to split.
+function buildSceneAuto(req, estimate, onProgress) {
+  const rings = Math.max(2, Math.trunc((req.params && req.params.NUM_RINGS) || 0));
+  const poolSize = getWorkerPoolSize();
+  if (estimate && estimate.cellChecks > POOL_MIN_CELL_CHECKS && poolSize > 1 && rings >= poolSize) {
+    return buildScenePooled(req, onProgress);
+  }
+  return buildSceneViaWorker(req, onProgress);
+}
+
+// Ask a worker once whether worker-side rasterization is possible
+// (OffscreenCanvas + convertToBlob). The answer is cached; any
+// failure means "use the main-thread rasterizer".
+async function queryRenderCaps() {
+  if (renderCapsCache !== null) return renderCapsCache;
+  const recs = getPoolWorkers(1);
+  if (!recs.length) {
+    renderCapsCache = false;
+    return false;
+  }
+  const caps = await dispatchToWorker(recs[0], { kind: 'renderCaps' }, null, 'caps');
+  renderCapsCache = !!(caps && caps.offscreen);
+  return renderCapsCache;
+}
+
+// Rasterize a computed scene to a PNG Blob inside a worker.
+// Resolves the Blob, or null when the capability is missing or the
+// render failed (callers then use the main-thread rasterizer).
+async function renderSceneViaWorker(scene, renderOpts, onProgress) {
+  const supported = await queryRenderCaps();
+  if (!supported) return null;
+  const recs = getPoolWorkers(1);
+  if (!recs.length) return null;
+  const flat = flattenScene(scene);
+  const blob = await dispatchToWorker(recs[0], {
+    kind: 'render',
+    width: renderOpts.width,
+    height: renderOpts.height,
+    coords: flat.coords,
+    counts: flat.counts,
+    closed: flat.closed,
+    dots: flat.dots,
+    showTexture: !!renderOpts.showTexture,
+    showRedShadow: !!renderOpts.showRedShadow,
+    redShadowAlpha: renderOpts.redShadowAlpha,
+    redShadowScale: renderOpts.redShadowScale,
+    whiteStrokeWeight: renderOpts.whiteStrokeWeight,
+    scale: renderOpts.scale,
+    transparent: !!renderOpts.transparent
+  }, onProgress, 'render', [flat.coords.buffer, flat.counts.buffer, flat.closed.buffer, flat.dots.buffer]);
+  return blob || null;
 }
 
 
@@ -2288,20 +2667,16 @@ async function runExport(scale, transparent, exportW, exportH) {
   };
 
   const step = getGridStep(exportW, exportH, isFlatFieldMode());
+  const est = estimateWork(exportW, exportH, step, params.NUM_RINGS, holes.length);
 
   try {
-    const pg = createGraphics(exportW, exportH);
-    pg.pixelDensity(1);
-    pg.clear();
-
-    if (!transparent) {
-      pg.background(0);
-    }
-
     const onExportProgress = (overall) => {
       if (exportButton) exportButton.textContent = `書き出し中… ${Math.round(overall * 100)}%`;
     };
-    let exportScene = await buildSceneViaWorker({
+    // Progress split: scene computation maps to 0–80%, the
+    // rasterization + PNG encode to 80–100%.
+    const onComputeProgress = (ratio) => onExportProgress(ratio * 0.8);
+    let exportScene = await buildSceneAuto({
       params: coreParamsSnapshot(),
       holes: snapshotSceneHoles(),
       seed: seedVal,
@@ -2310,44 +2685,82 @@ async function runExport(scale, transparent, exportW, exportH) {
       baseW: width,
       baseH: height,
       gridStep: step
-    }, onExportProgress);
+    }, est, onComputeProgress);
     if (!exportScene) {
       setStatus('Workerを利用できないためメインスレッドで計算しました');
       exportScene = await buildSceneDataAsync(exportW, exportH, seedVal, (progress) => {
         if (!progress) return;
-        onExportProgress(progress.phase === 'field' ? progress.ratio * 0.7 : 0.7 + progress.ratio * 0.3);
+        onComputeProgress(progress.phase === 'field' ? progress.ratio * 0.7 : 0.7 + progress.ratio * 0.3);
       }, { gridStep: step });
-    }
-
-    if (params.SHOW_TEXTURE) {
-      drawFaintTexture(pg, exportScene.textureDots);
-    }
-
-    for (let i = 0; i < exportScene.contours.length; i++) {
-      const contour = exportScene.contours[i];
-      if (params.SHOW_RED_SHADOW) {
-        pg.stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
-        pg.strokeWeight(params.WHITE_STROKE_WEIGHT * params.RED_SHADOW_SCALE * scale);
-        pg.noFill();
-        drawSmoothPath(pg, contour.points, contour.closed);
-      }
-
-      pg.stroke(255);
-      pg.strokeWeight(params.WHITE_STROKE_WEIGHT * scale);
-      pg.noFill();
-      drawSmoothPath(pg, contour.points, contour.closed);
     }
 
     const ts = Date.now();
     const filename = `TOPO_multihole_refined_${transparent ? 'transparent_' : ''}seed${seedVal}_x${scale}_${ts}.png`;
-    downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
-      pg.remove();
+
+    // v4: rasterize inside a worker (OffscreenCanvas) when the
+    // capability was reported; the main thread then only downloads
+    // the returned Blob. Otherwise fall back to the p5.Graphics
+    // main-thread rasterization below, unchanged.
+    onExportProgress(0.85);
+    const blob = await renderSceneViaWorker(exportScene, {
+      width: exportW,
+      height: exportH,
+      showTexture: params.SHOW_TEXTURE,
+      showRedShadow: params.SHOW_RED_SHADOW,
+      redShadowAlpha: params.RED_SHADOW_ALPHA,
+      redShadowScale: params.RED_SHADOW_SCALE,
+      whiteStrokeWeight: params.WHITE_STROKE_WEIGHT,
+      scale: scale,
+      transparent: transparent
+    }, () => onExportProgress(0.9));
+    if (blob) {
+      onExportProgress(1);
+      triggerDownload(URL.createObjectURL(blob), filename, true);
       finish();
-    });
+      return;
+    }
+
+    renderExportOnMainThread(exportScene, scale, transparent, exportW, exportH, filename, finish);
   } catch (err) {
     console.error(err);
     finish();
   }
+}
+
+// The v3 main-thread export rasterization (p5.Graphics), kept as
+// the fallback when worker-side rendering is unavailable.
+function renderExportOnMainThread(exportScene, scale, transparent, exportW, exportH, filename, finish) {
+  const pg = createGraphics(exportW, exportH);
+  pg.pixelDensity(1);
+  pg.clear();
+
+  if (!transparent) {
+    pg.background(0);
+  }
+
+  if (params.SHOW_TEXTURE) {
+    drawFaintTexture(pg, exportScene.textureDots);
+  }
+
+  for (let i = 0; i < exportScene.contours.length; i++) {
+    const contour = exportScene.contours[i];
+    if (params.SHOW_RED_SHADOW) {
+      pg.stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
+      pg.strokeWeight(params.WHITE_STROKE_WEIGHT * params.RED_SHADOW_SCALE * scale);
+      pg.noFill();
+      drawSmoothPath(pg, contour.points, contour.closed);
+    }
+
+    pg.stroke(255);
+    pg.strokeWeight(params.WHITE_STROKE_WEIGHT * scale);
+    pg.noFill();
+    drawSmoothPath(pg, contour.points, contour.closed);
+  }
+
+  downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
+    pg.remove();
+    finish();
+  });
 }
 
 function downloadCanvasPNG(canvasEl, filename, onDone) {
