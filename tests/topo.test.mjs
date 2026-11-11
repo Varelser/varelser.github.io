@@ -764,6 +764,140 @@ await checkAsync('pooled dispatch: heavy build splits thresholds across the pool
   assert.equal(w.run(`__checksum(scene)`), direct, 'pooled result must be identical to the single build');
 });
 
+// ---------- v5: SVG export ----------
+
+check('svg number formatting trims to 2 decimals', () => {
+  const cases = [
+    [1, '1'], [1.5, '1.5'], [1.25, '1.25'], [1.234, '1.23'], [1.236, '1.24'],
+    [0, '0'], [-0.004, '0'], [100.1, '100.1'], [3.14159, '3.14'], [1234.5, '1234.5'],
+    [-12.345, '-12.35'], [0.005, '0.01']
+  ];
+  for (const [input, expected] of cases) {
+    assert.equal(run(`formatSvgNumber(${input})`), expected, `formatSvgNumber(${input})`);
+  }
+  assert.equal(run(`formatSvgAlpha(6 / 255)`), '0.0235');
+  assert.equal(run(`formatSvgAlpha(42 / 255)`), '0.1647');
+  assert.equal(run(`formatSvgAlpha(1)`), '1');
+  assert.equal(run(`formatSvgAlpha(0)`), '0');
+});
+
+check('svg size estimate and guard decision thresholds', () => {
+  assert.equal(run(`svgSizeDecision(1000)`), 'ok');
+  assert.equal(run(`svgSizeDecision(SVG_CONFIRM_BYTES)`), 'ok');
+  assert.equal(run(`svgSizeDecision(SVG_CONFIRM_BYTES + 1)`), 'confirm');
+  assert.equal(run(`svgSizeDecision(SVG_HARD_BYTES)`), 'confirm');
+  assert.equal(run(`svgSizeDecision(SVG_HARD_BYTES + 1)`), 'refuse');
+  // The estimator reads point counts only and never builds strings:
+  // stub scenes with bare length-carrying arrays price out purely
+  // from their totals, so an oversized scene is refused up front.
+  sandbox.__stubHuge = { contours: [{ points: new Array(2000000) }, { points: new Array(2000000) }], textureDots: [] };
+  sandbox.__stubMid = { contours: [{ points: new Array(200000) }], textureDots: [] };
+  sandbox.__stubSmall = { contours: [{ points: new Array(1000) }], textureDots: new Array(700) };
+  assert.equal(run(`svgSizeDecision(estimateSvgBytes(__stubHuge, { showTexture: true, showRedShadow: true, transparent: true }))`), 'refuse');
+  assert.equal(run(`svgSizeDecision(estimateSvgBytes(__stubMid, { showTexture: true, showRedShadow: true, transparent: true }))`), 'confirm');
+  assert.equal(run(`svgSizeDecision(estimateSvgBytes(__stubSmall, { showTexture: true, showRedShadow: true, transparent: true }))`), 'ok');
+  // Fewer passes / no dots must price lower.
+  const full = run(`estimateSvgBytes(__stubMid, { showTexture: true, showRedShadow: true, transparent: true })`);
+  const lean = run(`estimateSvgBytes(__stubMid, { showTexture: false, showRedShadow: false, transparent: true })`);
+  assert.ok(lean < full, `lean estimate ${lean} must be below full estimate ${full}`);
+});
+
+check('svg export UI wiring present', () => {
+  assert.ok(html.includes('id="exportSvg"'), 'SVG button exists in the panel');
+  assert.ok(html.includes('SVG 保存 (V)'), 'SVG button label');
+  assert.ok(mainScript.includes("getElementById('exportSvg')"), 'SVG button is wired in initControls');
+  assert.ok(mainScript.includes("'image/svg+xml'"), 'SVG download uses the SVG MIME type');
+  assert.equal(typeof run(`exportSVG`), 'function');
+  assert.equal(typeof run(`runSvgExport`), 'function');
+  assert.equal(typeof run(`buildSvgString`), 'function');
+  assert.equal(typeof run(`curveSegmentStream`), 'function');
+  // The shared segment helper must travel into the worker source:
+  // the worker's strokeCurvePath2D depends on it (v3 lesson).
+  const srcText = run(`getWorkerSourceText()`);
+  assert.ok(srcText.includes('function curveSegmentStream'), 'worker source includes curveSegmentStream');
+});
+
+await checkAsync('svg export: golden scene structure mirrors the canvas port', async () => {
+  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700, WHITE_STROKE_WEIGHT: 1.1, RED_SHADOW_ALPHA: 42 });`);
+  run(`__resetState(777)`);
+  const sd = run(`buildSceneData(800, 600, 777)`);
+  assert.equal(sceneChecksum(sd), GOLDEN_CHECKSUM);
+  sandbox.__svgScene = sd;
+
+  // The canvas port's command stream for the first contour, recorded
+  // with the same fake-ctx technique as the v4 curve checks.
+  const recorded = run(`(() => {
+    const nums = [];
+    const ctx = {
+      beginPath: () => {},
+      moveTo: (x, y) => nums.push(x, y),
+      bezierCurveTo: (a, b, c, d, x, y) => nums.push(a, b, c, d, x, y),
+      lineTo: (x, y) => nums.push(x, y),
+      closePath: () => {},
+      stroke: () => {}
+    };
+    const c = __svgScene.contours[0];
+    strokeCurvePath2D(ctx, c.points, c.closed);
+    return nums;
+  })()`);
+  assert.ok(recorded.length > 10, 'recorded command stream must be non-trivial');
+
+  const svgNums = (d) => (d.match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+  const assertStreamMatches = (d, factor, label) => {
+    const nums = svgNums(d);
+    assert.equal(nums.length, recorded.length, `${label}: number count ${nums.length} != ${recorded.length}`);
+    nums.forEach((v, i) => {
+      assert.ok(Math.abs(v - recorded[i] * factor) <= 0.006, `${label}: number ${i}: ${v} != ${recorded[i] * factor} (2-decimal rounding)`);
+    });
+  };
+
+  // Scale 1, transparent, shadow on, texture on.
+  const svg = await run(`buildSvgString(__svgScene, { width: 800, height: 600, coordScale: 1, strokeScale: 1, showTexture: true, showRedShadow: true, transparent: true, redShadowAlpha: 42, redShadowScale: 2.2, whiteStrokeWeight: 1.1 }, null)`);
+  assert.ok(svg.startsWith('<svg '), 'document must start with <svg');
+  assert.ok(svg.includes('xmlns="http://www.w3.org/2000/svg"'), 'xmlns present');
+  assert.ok(svg.includes('width="800" height="600"'), 'width/height attributes at scale 1');
+  assert.ok(svg.includes('viewBox="0 0 800 600"'), 'viewBox at scale 1');
+  assert.ok(svg.endsWith('</svg>'), 'document closes');
+  assert.ok(!svg.includes('<rect'), 'no background rect when transparent');
+  const pathDs = [...svg.matchAll(/<path d="([^"]*)"\/>/g)].map((m) => m[1]);
+  assert.equal(pathDs.length, sd.contours.length * 2, 'one path per contour per pass (shadow + white)');
+  pathDs.forEach((d) => assert.ok(d.startsWith('M'), 'every path starts with M'));
+  for (let j = 0; j < sd.contours.length; j++) {
+    assert.equal(pathDs[j].endsWith('Z'), sd.contours[j].closed, `shadow path ${j} Z matches closed=${sd.contours[j].closed}`);
+    assert.equal(pathDs[j + sd.contours.length].endsWith('Z'), sd.contours[j].closed, `white path ${j} Z matches closed=${sd.contours[j].closed}`);
+  }
+  assert.equal((svg.match(/<circle/g) || []).length, sd.textureDots.length, 'one circle per texture dot');
+  assert.ok(svg.includes('fill-opacity="0.0235"'), 'dot alpha 6/255 as fill-opacity');
+  assert.ok(svg.includes('stroke-opacity="0.1647"'), 'shadow alpha 42/255 as stroke-opacity');
+  assert.ok(svg.includes('stroke-width="2.42"'), 'shadow width = 1.1 * 2.2 * scale');
+  assert.ok(svg.includes('stroke-width="1.1"'), 'white width = 1.1 * scale');
+  assert.ok(svg.includes('stroke-linecap="round"') && svg.includes('stroke-linejoin="round"'), 'round cap/join on contour groups');
+  assertStreamMatches(pathDs[0], 1, 'first contour (shadow pass, scale 1)');
+
+  // The pre-build estimate must cover the actual byte size without
+  // being wildly conservative.
+  const estBytes = run(`estimateSvgBytes(__svgScene, { showTexture: true, showRedShadow: true, transparent: true })`);
+  const actualBytes = Buffer.byteLength(svg, 'utf8');
+  assert.ok(estBytes >= actualBytes, `estimate ${estBytes} must cover actual ${actualBytes}`);
+  assert.ok(estBytes < actualBytes * 1.5, `estimate ${estBytes} must stay within 1.5x of actual ${actualBytes}`);
+  assert.equal(run(`svgSizeDecision(${estBytes})`), 'ok');
+
+  // Scale 2, opaque, no shadow pass.
+  const svg2 = await run(`buildSvgString(__svgScene, { width: 1600, height: 1200, coordScale: 2, strokeScale: 2, showTexture: true, showRedShadow: false, transparent: false, redShadowAlpha: 42, redShadowScale: 2.2, whiteStrokeWeight: 1.1 }, null)`);
+  assert.ok(svg2.includes('width="1600" height="1200"'), 'width/height attributes at scale 2');
+  assert.ok(svg2.includes('viewBox="0 0 1600 1200"'), 'viewBox at scale 2');
+  assert.equal((svg2.match(/<rect/g) || []).length, 1, 'exactly one background rect when opaque');
+  assert.ok(svg2.indexOf('<rect') < svg2.indexOf('<path'), 'background rect precedes contour paths');
+  const pathDs2 = [...svg2.matchAll(/<path d="([^"]*)"\/>/g)].map((m) => m[1]);
+  assert.equal(pathDs2.length, sd.contours.length, 'single pass when shadow is off');
+  assert.ok(svg2.includes('stroke-width="2.2"'), 'white width = 1.1 * scale 2');
+  assertStreamMatches(pathDs2[0], 2, 'first contour (white pass, scale 2)');
+
+  // Texture off -> no circles at all.
+  const svg3 = await run(`buildSvgString(__svgScene, { width: 800, height: 600, coordScale: 1, strokeScale: 1, showTexture: false, showRedShadow: false, transparent: true, redShadowAlpha: 42, redShadowScale: 2.2, whiteStrokeWeight: 1.1 }, null)`);
+  assert.ok(!svg3.includes('<circle'), 'no dot circles when texture is off');
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
   process.exit(failed === 0 ? 0 : 1);
 }
