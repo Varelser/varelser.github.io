@@ -356,6 +356,9 @@
       <button class="btn" id="btnExportSvg">SVG保存</button>
       <button class="btn" id="btnRandomize">Seed変更</button>
       <button class="btn toolbar-wide" id="btnResetView">表示リセット</button>
+      <button class="btn" id="btnExportSettings">設定JSON保存</button>
+      <button class="btn" id="btnImportSettings">設定JSON読込</button>
+      <input type="file" id="settingsFile" accept="application/json,.json" hidden />
     </div>
 
     <div class="section">
@@ -378,8 +381,9 @@
           <div class="metric-value mono" id="statusSwirls">0</div>
         </div>
         <div class="metric" style="grid-column:1 / -1">
-          <div class="metric-label">Seed</div>
-          <div class="metric-value mono" id="statusSeed">0</div>
+          <div class="metric-label">Seed（直接入力で再現可）</div>
+          <input class="metric-value mono" id="seedInput" type="number" min="0" max="2147483647" step="1" style="width:100%;background:transparent;border:none;color:var(--text);padding:0" />
+          <div class="metric-value mono" id="statusSeed" hidden>0</div>
         </div>
       </div>
     </div>
@@ -527,7 +531,6 @@
     baseLines: null,
     drag: { mode: null, swirlId: null, startClientX: 0, startClientY: 0, startViewX: 0, startViewY: 0 },
     compositeQueued: false,
-    geometryVersion: 0,
     currentRenderToken: 0,
     rendering: false,
     interactionTimer: 0,
@@ -557,6 +560,17 @@
   function round(v, d=3){ const p = 10**d; return Math.round(v*p)/p; }
   function seededRandomFactory(seed){ let s = seed; return () => { const x = Math.sin(s++) * 10000; return x - Math.floor(x); }; }
   function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  // 入力欄の min/max を JS 側でも強制する (HTML 属性だけでは直接入力を防げない)。
+  // 空欄・非数のときは現在の値を維持する。
+  function readClampedNumber(el, fallback){
+    if(!el || el.value === '' || el.value == null) return fallback;
+    const v = Number(el.value);
+    if(!Number.isFinite(v)) return fallback;
+    const min = el.min !== '' && el.min != null ? Number(el.min) : -Infinity;
+    const max = el.max !== '' && el.max != null ? Number(el.max) : Infinity;
+    return clamp(v, min, max);
+  }
 
   function updateStatus(text, progress){
     $('statusRender').textContent = text;
@@ -598,6 +612,8 @@
     state.geometryDirty = true;
     $('statusCount').textContent = String(state.config.lineCount);
     $('statusSeed').textContent = String(state.seed);
+    const seedEl = $('seedInput');
+    if(seedEl && document.activeElement !== seedEl) seedEl.value = String(state.seed);
   }
 
   function chooseColor(i, normalizedPos){
@@ -920,6 +936,7 @@
 
   function syncInputs(){
     const map = {
+      seedInput: state.seed,
       width: state.size.width, height: state.size.height, exportScale: state.exportScale, previewScale: state.previewScale,
       exportQuality: state.exportQuality, exportSupersample: state.exportSupersample, exportBatchLines: state.exportBatchLines, exportAutoProtect: state.exportAutoProtect,
       bgTransparent: state.config.bgTransparent, bgColor: state.config.bgColor, colorMode: state.config.colorMode,
@@ -987,7 +1004,12 @@
         else if(id === 'exportBatchLines') state.exportBatchLines = clamp(Math.round(Number($(id).value) || 180), 10, 4000);
         else {
           const numFields = new Set(['lineCount','lineWidthMin','lineWidthMax','opacity','flowCoverage','generationWidth','segmentResolution','batchLines','swirlRadius','swirlStrength','curveTension','turbulence','turbulenceFreq','verticalStretch']);
-          state.config[id] = numFields.has(id) ? Number($(id).value) : $(id).value;
+          if(numFields.has(id)){
+            const v = readClampedNumber($(id), state.config[id]);
+            state.config[id] = (id === 'lineCount' || id === 'batchLines') ? Math.round(v) : v;
+          } else {
+            state.config[id] = $(id).value;
+          }
           if(id === 'lineCount' || id === 'generationWidth') rebuildBaseLines();
         }
         scheduleGeometryRender();
@@ -1003,6 +1025,19 @@
     $('btnRemoveSwirl').addEventListener('click', () => { if(state.swirls.length > 1) state.swirls.pop(); scheduleGeometryRender(); });
     $('btnResetSwirls').addEventListener('click', () => { state.swirls = generateInitialSwirls(state.size.width, state.size.height, Math.max(1, state.swirls.length)); scheduleGeometryRender(); });
     $('btnRandomize').addEventListener('click', () => { state.seed = Math.floor(Math.random() * 1000000); rebuildBaseLines(); scheduleGeometryRender(); });
+    $('seedInput').addEventListener('change', () => {
+      state.seed = Math.round(readClampedNumber($('seedInput'), state.seed));
+      syncInputs();
+      rebuildBaseLines();
+      scheduleGeometryRender();
+    });
+    $('btnExportSettings').addEventListener('click', exportSettingsJSON);
+    $('btnImportSettings').addEventListener('click', () => $('settingsFile').click());
+    $('settingsFile').addEventListener('change', async () => {
+      const file = $('settingsFile').files && $('settingsFile').files[0];
+      $('settingsFile').value = '';
+      if(file) await importSettingsJSON(file);
+    });
     $('btnResetView').addEventListener('click', () => { state.view = { x: 0, y: 0, zoom: 1 }; scheduleComposite(); });
     document.querySelectorAll('[data-preset]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1016,13 +1051,103 @@
     });
     $('btnExportPng').addEventListener('click', exportPNG);
     $('btnExportViewPng').addEventListener('click', exportCurrentViewPNG);
-    $('btnExportSvg').addEventListener('click', exportSVG);
+    $('btnExportSvg').addEventListener('click', () => {
+      exportSVG().catch(err => {
+        console.error(err);
+        updateStatus('エラー');
+        alert('SVG保存中にエラーが発生しました。コンソールを確認してください。');
+      });
+    });
     canvas.addEventListener('pointerdown', onCanvasPointerDown);
     viewer.addEventListener('wheel', onWheel, { passive: false });
     window.addEventListener('resize', () => { updateStageSize(); updateOverlay(); scheduleComposite(); });
   }
 
 
+
+  function collectSettings(){
+    return {
+      app: 'Leary',
+      version: 1,
+      seed: state.seed,
+      size: { ...state.size },
+      exportScale: state.exportScale,
+      previewScale: state.previewScale,
+      exportQuality: state.exportQuality,
+      exportSupersample: state.exportSupersample,
+      exportBatchLines: state.exportBatchLines,
+      exportAutoProtect: state.exportAutoProtect,
+      config: deepCopy(state.config),
+      swirls: state.swirls.map(s => ({ x: s.x, y: s.y })),
+    };
+  }
+
+  function exportSettingsJSON(){
+    const blob = new Blob([JSON.stringify(collectSettings(), null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Leary_settings_seed${state.seed}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function sanitizeImportedConfig(cfg){
+    if(!cfg || typeof cfg !== 'object') return;
+    const ranges = { lineCount:[1,30000], lineWidthMin:[0.1,50], lineWidthMax:[0.1,50], opacity:[0,1], flowCoverage:[0.1,20], generationWidth:[0.1,20], segmentResolution:[0.1,20], batchLines:[10,4000], swirlRadius:[1,10000], swirlStrength:[0,10], curveTension:[0,10], turbulence:[0,200], turbulenceFreq:[0.0001,1], verticalStretch:[0.1,10] };
+    for(const [key, [min, max]] of Object.entries(ranges)){
+      if(cfg[key] != null){
+        const v = Number(cfg[key]);
+        if(Number.isFinite(v)) state.config[key] = clamp(v, min, max);
+      }
+    }
+    state.config.lineCount = Math.round(state.config.lineCount);
+    state.config.batchLines = Math.round(state.config.batchLines);
+    if(['sequence','linear','weighted'].includes(cfg.colorMode)) state.config.colorMode = cfg.colorMode;
+    if(['vortex','attract','repel'].includes(cfg.swirlType)) state.config.swirlType = cfg.swirlType;
+    if(['rect','circle'].includes(cfg.renderShape)) state.config.renderShape = cfg.renderShape;
+    if(typeof cfg.bgColor === 'string' && /^#[0-9a-fA-F]{6}$/.test(cfg.bgColor)) state.config.bgColor = cfg.bgColor;
+    if(cfg.bgTransparent != null) state.config.bgTransparent = !!cfg.bgTransparent;
+    if(Array.isArray(cfg.colors)){
+      const colors = cfg.colors
+        .filter(c => c && typeof c.hex === 'string' && /^#[0-9a-fA-F]{6}$/.test(c.hex))
+        .map(c => ({ hex: c.hex, weight: clamp(Number(c.weight) || 1, 0.01, 10) }));
+      if(colors.length) state.config.colors = colors;
+    }
+  }
+
+  async function importSettingsJSON(file){
+    try {
+      const data = JSON.parse(await file.text());
+      if(!data || typeof data !== 'object' || !data.config) throw new Error('invalid settings file');
+      if(data.size){
+        if(Number.isFinite(Number(data.size.width))) state.size.width = clamp(Math.round(Number(data.size.width)), 64, 16384);
+        if(Number.isFinite(Number(data.size.height))) state.size.height = clamp(Math.round(Number(data.size.height)), 64, 16384);
+      }
+      if(Number.isFinite(Number(data.seed))) state.seed = clamp(Math.round(Number(data.seed)), 0, 2147483647);
+      if(Number.isFinite(Number(data.exportScale))) state.exportScale = clamp(Math.round(Number(data.exportScale)), 1, 8);
+      if(Number.isFinite(Number(data.previewScale))) state.previewScale = clamp(Number(data.previewScale), 0.25, 1);
+      if(['standard','high','ultra'].includes(data.exportQuality)) state.exportQuality = data.exportQuality;
+      if(Number.isFinite(Number(data.exportSupersample))) state.exportSupersample = clamp(Number(data.exportSupersample), 1, 2);
+      if(Number.isFinite(Number(data.exportBatchLines))) state.exportBatchLines = clamp(Math.round(Number(data.exportBatchLines)), 10, 4000);
+      if(data.exportAutoProtect != null) state.exportAutoProtect = !!data.exportAutoProtect;
+      sanitizeImportedConfig(data.config);
+      if(Array.isArray(data.swirls)){
+        const swirls = data.swirls
+          .filter(s => s && Number.isFinite(Number(s.x)) && Number.isFinite(Number(s.y)))
+          .map((s, i) => ({ id: Date.now() + i, x: Number(s.x), y: Number(s.y) }));
+        if(swirls.length) state.swirls = swirls;
+      }
+      syncInputs();
+      rebuildBaseLines();
+      updateExportEstimate();
+      scheduleGeometryRender();
+      updateStatus('設定を読み込みました', 1);
+    } catch(err) {
+      console.error(err);
+      alert('設定JSONの読み込みに失敗しました。ファイル内容を確認してください。');
+    }
+  }
 
   function formatBytes(bytes){
     const units = ['B','KB','MB','GB'];
@@ -1049,8 +1174,6 @@
     };
 
     let profile = applyProfile();
-    const requestedWorkWidth = Math.max(1, Math.round(targetWidth * effectiveSupersample));
-    const requestedWorkHeight = Math.max(1, Math.round(targetHeight * effectiveSupersample));
 
     const estimateBytesFor = (ssaa) => {
       const ww = Math.max(1, Math.round(targetWidth * ssaa));
@@ -1115,10 +1238,16 @@
   }
 
   function getExportProfile(plan){
-    const q = state.exportQuality;
-    if(q === 'ultra') return { detailMultiplier: 0.42, supersample: state.exportSupersample, batchLines: state.exportBatchLines, smoothing: 'high' };
-    if(q === 'high') return { detailMultiplier: 0.6, supersample: Math.max(1, state.exportSupersample), batchLines: state.exportBatchLines, smoothing: 'high' };
-    return { detailMultiplier: 1, supersample: 1, batchLines: Math.max(60, state.exportBatchLines), smoothing: 'medium' };
+    // 自動保護で調整済みのプラン (estimateExportPlan の戻り値) をそのまま使う。
+    // 以前はここで生の設定から取り直していたため、画面に表示される保護内容と
+    // 実際の書き出し (作業キャンバス寸法だけがプラン由来) が食い違い、
+    // 渦の位置や線幅の倍率だけ調整前の値で計算されていた。
+    return {
+      detailMultiplier: plan.detailMultiplier,
+      supersample: plan.effectiveSupersample,
+      batchLines: plan.effectiveBatchLines,
+      smoothing: plan.smoothing,
+    };
   }
 
   async function renderFullToContextBatched(context, width, height, cfg, baseLines, swirls, progressLabel){
@@ -1212,53 +1341,11 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = preserveView ? `Leary_fixed_v5_view_${targetWidth}x${targetHeight}.png` : `Leary_fixed_v5_${targetWidth}x${targetHeight}.png`;
+      a.download = preserveView ? `Leary_fixed_v5_seed${state.seed}_view_${targetWidth}x${targetHeight}.png` : `Leary_fixed_v5_seed${state.seed}_${targetWidth}x${targetHeight}.png`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       updateStatus('待機', 1);
     }, 'image/png');
-  }
-
-  function renderFullToContext(context, width, height, cfg, baseLines, swirls){
-    setupBaseSurface(context, width, height, cfg);
-    const flowHalfLen = (height * cfg.flowCoverage) / 2;
-    const renderYMin = -500;
-    const renderYMax = height + 500;
-    const { xs, yRatios, widths, normalizedPos, count } = baseLines;
-    for(let i=0;i<count;i++){
-      const colorDef = chooseColor(i, normalizedPos[i]);
-      const yCenter = yRatios[i] * height;
-      const startY = yCenter - flowHalfLen;
-      const endY = yCenter + flowHalfLen;
-      if(endY < renderYMin || startY > renderYMax) continue;
-      context.strokeStyle = colorDef.hex;
-      const baseW = cfg.lineWidthMin + widths[i] * (cfg.lineWidthMax - cfg.lineWidthMin);
-      context.lineWidth = Math.max(0.01, baseW * (Number(colorDef.weight) || 1));
-      drawPolyline(context, linePoints(xs[i], startY, endY, cfg, swirls));
-    }
-    finishBaseSurface(context, cfg);
-  }
-
-
-  function renderTransformedImageToContext(outputCtx, sourceCanvas){
-    outputCtx.setTransform(1,0,0,1,0,0);
-    outputCtx.clearRect(0,0,outputCtx.canvas.width, outputCtx.canvas.height);
-    if(!state.config.bgTransparent){
-      outputCtx.fillStyle = state.config.bgColor;
-      outputCtx.fillRect(0,0,outputCtx.canvas.width, outputCtx.canvas.height);
-    }
-    outputCtx.imageSmoothingEnabled = true;
-    outputCtx.imageSmoothingQuality = 'high';
-    outputCtx.setTransform(
-      state.view.zoom,
-      0,
-      0,
-      state.view.zoom,
-      state.view.x * state.exportScale,
-      state.view.y * state.exportScale
-    );
-    outputCtx.drawImage(sourceCanvas, 0, 0);
-    outputCtx.setTransform(1,0,0,1,0,0);
   }
 
   async function exportCurrentViewPNG(){
@@ -1271,7 +1358,7 @@
 
   function svgEsc(str){ return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function exportSVG(){
+  async function exportSVG(){
     updateStatus('SVG出力中', 0);
     const width = state.size.width;
     const height = state.size.height;
@@ -1281,39 +1368,74 @@
     const renderYMin = -500;
     const renderYMax = height + 500;
     const { xs, yRatios, widths, normalizedPos, count } = baseLines;
-    let svg = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    svg += `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">`;
-    if(cfg.renderShape === 'circle'){
-      const r = Math.min(width, height) / 2 - 20;
-      svg += `<defs><clipPath id="clipCircle"><circle cx="${width/2}" cy="${height/2}" r="${r}"/></clipPath></defs><g clip-path="url(#clipCircle)">`;
-    }
-    if(!cfg.bgTransparent) svg += `<rect width="100%" height="100%" fill="${svgEsc(cfg.bgColor)}"/>`;
-    for(let i=0;i<count;i++){
-      const colorDef = chooseColor(i, normalizedPos[i]);
+
+    // まず少量の線で総点数を推定し、巨大なSVGになりそうなら確認する。
+    // (以前は全量を同期生成していたため、大きな設定ではタブが固まっていた)
+    const sampleCount = Math.min(count, 24);
+    let samplePoints = 0;
+    let sampleLines = 0;
+    for(let i=0;i<sampleCount;i++){
       const yCenter = yRatios[i] * height;
       const startY = yCenter - flowHalfLen;
       const endY = yCenter + flowHalfLen;
       if(endY < renderYMin || startY > renderYMax) continue;
-      const baseW = cfg.lineWidthMin + widths[i] * (cfg.lineWidthMax - cfg.lineWidthMin);
-      const strokeW = Math.max(0.01, baseW * (Number(colorDef.weight) || 1));
-      const points = linePoints(xs[i], startY, endY, cfg, state.swirls);
-      if(points.length < 2) continue;
-      const d = points.map((p, idx) => `${idx===0 ? 'M' : 'L'} ${round(p[0],2)} ${round(p[1],2)}`).join(' ');
-      svg += `<path d="${d}" fill="none" stroke="${svgEsc(colorDef.hex)}" stroke-width="${round(strokeW,3)}" stroke-linecap="round" stroke-linejoin="round" opacity="${cfg.opacity}"/>`;
+      samplePoints += linePoints(xs[i], startY, endY, cfg, state.swirls).length;
+      sampleLines++;
     }
-    if(cfg.renderShape === 'circle') svg += `</g>`;
-    svg += `</svg>`;
-    const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+    if(sampleLines > 0){
+      const estimatedPoints = Math.round(samplePoints / sampleLines * count);
+      const estimatedBytes = estimatedPoints * 18;
+      if(estimatedBytes > 32 * 1024 * 1024){
+        const proceed = confirm(`SVGの推定サイズは約 ${formatBytes(estimatedBytes)}（約 ${estimatedPoints.toLocaleString()} 点）です。生成に時間がかかる場合があります。続行しますか？`);
+        if(!proceed){ updateStatus('待機', 1); return; }
+      }
+    }
+
+    const parts = [];
+    parts.push(`<?xml version="1.0" encoding="UTF-8"?>\n`);
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">`);
+    if(cfg.renderShape === 'circle'){
+      const r = Math.min(width, height) / 2 - 20;
+      parts.push(`<defs><clipPath id="clipCircle"><circle cx="${width/2}" cy="${height/2}" r="${r}"/></clipPath></defs><g clip-path="url(#clipCircle)">`);
+    }
+    if(!cfg.bgTransparent) parts.push(`<rect width="100%" height="100%" fill="${svgEsc(cfg.bgColor)}"/>`);
+    const batch = 150;
+    for(let start=0; start<count; start += batch){
+      const end = Math.min(count, start + batch);
+      for(let i=start;i<end;i++){
+        const colorDef = chooseColor(i, normalizedPos[i]);
+        const yCenter = yRatios[i] * height;
+        const startY = yCenter - flowHalfLen;
+        const endY = yCenter + flowHalfLen;
+        if(endY < renderYMin || startY > renderYMax) continue;
+        const baseW = cfg.lineWidthMin + widths[i] * (cfg.lineWidthMax - cfg.lineWidthMin);
+        const strokeW = Math.max(0.01, baseW * (Number(colorDef.weight) || 1));
+        const points = linePoints(xs[i], startY, endY, cfg, state.swirls);
+        if(points.length < 2) continue;
+        const d = points.map((p, idx) => `${idx===0 ? 'M' : 'L'} ${round(p[0],2)} ${round(p[1],2)}`).join(' ');
+        parts.push(`<path d="${d}" fill="none" stroke="${svgEsc(colorDef.hex)}" stroke-width="${round(strokeW,3)}" stroke-linecap="round" stroke-linejoin="round" opacity="${cfg.opacity}"/>`);
+      }
+      updateStatus('SVG出力中', end / Math.max(1, count));
+      await new Promise(requestAnimationFrame);
+    }
+    if(cfg.renderShape === 'circle') parts.push(`</g>`);
+    parts.push(`</svg>`);
+    const blob = new Blob(parts, { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Leary_fixed_v5_${width}x${height}.svg`;
+    a.download = `Leary_fixed_v5_seed${state.seed}_${width}x${height}.svg`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     updateStatus('待機', 1);
   }
 
   function init(){
+    document.querySelectorAll('.row').forEach(row => {
+      const label = row.querySelector('label');
+      const field = row.querySelector('input, select');
+      if(label && field && field.id && !label.htmlFor) label.htmlFor = field.id;
+    });
     state.swirls = generateInitialSwirls(state.size.width, state.size.height, 1);
     syncInputs();
     bindInputs();
