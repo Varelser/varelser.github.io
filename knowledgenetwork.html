@@ -250,6 +250,10 @@
       opacity: 0.85;
       border-bottom-color: rgba(0,0,0,0.35);
     }
+    /* 共通ツールチップ（ホバーで説明を表示）。ガラス風の専用要素。 */
+    #kn-tooltip { position: fixed; z-index: 200; max-width: 320px; padding: 10px 12px; background: rgba(255,255,255,0.68); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); border: 1px solid rgba(0,0,0,0.12); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9); color: var(--text); font-size: var(--fs-small); line-height: 1.6; pointer-events: none; }
+    #kn-tooltip .kn-tip-title { font-weight: 650; font-size: var(--fs-body); line-height: 1.4; margin-bottom: 2px; }
+    #kn-tooltip .kn-tip-body { color: var(--text); }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.22); }
     ::selection { background: rgba(0,0,0,0.14); }
@@ -349,9 +353,9 @@
     .graph-check { color: var(--muted); font-size: var(--fs-small); display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; cursor: pointer; }
     #graph-count { color: var(--muted); font-size: var(--fs-small); margin-left: auto; white-space: nowrap; }
     .graph-main { display: grid; grid-template-columns: minmax(0, 1fr) 252px; gap: 10px; align-items: stretch; }
-    #graph-canvas { width: 100%; height: calc(100vh - 220px); min-height: 480px; display: block; border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; background: rgba(255,255,255,0.55); touch-action: none; cursor: grab; }
+    #graph-canvas { width: 100%; height: calc(100vh - 260px); min-height: 440px; display: block; border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; background: rgba(255,255,255,0.55); touch-action: none; cursor: grab; }
     #graph-canvas:active { cursor: grabbing; }
-    .graph-detail { border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; padding: 12px; overflow: auto; max-height: calc(100vh - 220px); font-size: var(--fs-small); line-height: 1.7; }
+    .graph-detail { border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; padding: 12px; overflow: auto; max-height: calc(100vh - 260px); font-size: var(--fs-small); line-height: 1.7; }
     .graph-detail h3 { margin: 0 0 4px; font-size: var(--fs-body); line-height: 1.4; font-weight: 650; }
     .graph-detail h3 a { color: var(--text); border-bottom: 1px solid rgba(0,0,0,0.35); }
     .graph-detail h3 a:hover { border-bottom-color: var(--text); }
@@ -360,11 +364,17 @@
     .graph-detail .gd-tags span { display: inline-block; border: 1px solid rgba(0,0,0,0.14); border-radius: 999px; padding: 1px 8px; margin: 0 4px 4px 0; background: rgba(255,255,255,0.7); color: var(--text); }
     .graph-detail .gd-links { margin: 8px 0 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
     .graph-detail .gd-note { color: var(--muted); }
+    .graph-detail .gd-rel { display: flex; flex-wrap: wrap; gap: 4px 8px; margin: 2px 0 4px; align-items: center; }
+    .graph-detail .gd-rel-item { appearance: none; border: 1px solid rgba(142,47,60,0.35); background: rgba(255,255,255,0.7); color: var(--text); font: inherit; font-size: var(--fs-small); cursor: pointer; border-radius: 999px; padding: 1px 9px; }
+    .graph-detail .gd-rel-item:hover { background: #ffffff; border-color: rgba(142,47,60,0.7); }
+    .graph-detail .gd-rel a { color: var(--muted); font-size: 0.9em; }
     .graph-detail-empty { color: var(--muted); margin: 0; }
     .graph-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; color: var(--muted); font-size: var(--fs-small); align-items: center; }
     .graph-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
     .graph-legend .edge-sample { display: inline-block; width: 22px; height: 0; border-top: 2px solid rgba(0,0,0,0.16); vertical-align: middle; margin-right: 5px; }
     .graph-legend .edge-sample.mention { border-top: 1px solid rgba(0,0,0,0.45); }
+    .graph-legend .edge-sample.rel { border-top: 2px dashed rgba(142,47,60,0.7); }
+    .graph-legend .edge-sample.weak { border-top: 1px solid rgba(0,0,0,0.08); }
     .graph-legend .edge-sample.spoke { border-top: 1px solid rgba(0,0,0,0.22); }
     @media (max-width: 980px) {
       #graph { margin: 10px; padding: 10px; }
@@ -409,6 +419,7 @@
 
 
     <div id="timeline" hidden></div>
+<script type="application/json" id="kn-relationships">[{"a":"河合隼雄","b":"村上春樹","type":"対談","note":"1995年11月に京都で二晩にわたって対談し、『村上春樹、河合隼雄に会いにいく』（岩波書店、1996）として出版。","source":"https://ja.wikipedia.org/wiki/%E6%9D%91%E4%B8%8A%E6%98%A5%E6%A8%B9%E3%80%81%E6%B2%B3%E5%90%88%E9%9A%BC%E9%9B%84%E3%81%AB%E4%BC%9A%E3%81%84%E3%81%AB%E3%81%84%E3%81%8F"},{"a":"河合隼雄","b":"中沢新一","type":"対談","note":"『ブッダの夢――河合隼雄と中沢新一の対話』（朝日新聞社、1998）をはじめ、長年にわたり対談を重ねた。","source":"https://ja.wikipedia.org/wiki/%E6%B2%B3%E5%90%88%E9%9A%BC%E9%9B%84"},{"a":"土方巽","b":"大野一雄","type":"師弟","note":"土方は大野の舞踊に衝撃を受けて学び、1959年の『禁色』をともに踊って暗黒舞踏を創始した。","source":"https://ja.wikipedia.org/wiki/%E6%9A%97%E9%BB%92%E8%88%9E%E8%B8%8F"},{"a":"鈴木大拙","b":"西田幾多郎","type":"交友","note":"第四高等中学校の同級生として出会い、生涯の親友として交流し、往復書簡も残した。","source":"https://www.bun.kyoto-u.ac.jp/japanese-philosophy/guidance-suzuki/"},{"a":"折口信夫","b":"柳田國男","type":"師弟","note":"折口は柳田の高弟として民俗学の基礎を築いた。","source":"https://ja.wikipedia.org/wiki/%E6%8A%98%E5%8F%A3%E4%BF%A1%E5%A4%AB"},{"a":"南方熊楠","b":"柳田國男","type":"往復書簡","note":"1911年の柳田からの手紙をきっかけに文通を重ね、『柳田国男南方熊楠往復書簡集』（平凡社、1976）として出版。","source":"https://ja.wikipedia.org/wiki/%E5%8D%97%E6%96%B9%E7%86%8A%E6%A5%A0"},{"a":"アンドレ・ブレトン","b":"アントナン・アルトー","type":"協働","note":"アルトーは1924年にシュルレアリスム運動に参加しブレトンのグループで活動したが、衝突の末1928年に除名された。","source":"https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%B3%E3%83%88%E3%83%8A%E3%83%B3%E3%83%BB%E3%82%A2%E3%83%AB%E3%83%88%E3%83%BC"},{"a":"サルバドール・ダリ","b":"ルイス・ブニュエル","type":"協働","note":"学生時代からの友人で、互いの夢を持ち寄って『アンダルシアの犬』（1929）を共同制作し、『黄金時代』（1930）でも協働した。","source":"https://www.britannica.com/topic/An-Andalusian-Dog"},{"a":"マックス・エルンスト","b":"ドロテア・タニング","type":"交友","note":"1946年10月にマン・レイ夫妻との合同結婚式で結婚し、エルンストの没する1976年まで連れ添った。","source":"https://en.wikipedia.org/wiki/Max_Ernst"},{"a":"マックス・エルンスト","b":"レオノーラ・キャリントン","type":"交友","note":"1937年にロンドンで出会って恋仲となり、南仏サン＝マルタン・ダルデシュで共同生活を送った。","source":"https://www.nationalgalleries.org/art-and-artists/164061"},{"a":"レオノーラ・キャリントン","b":"レメディオス・バロ","type":"交友","note":"パリで出会い、メキシコ亡命後にほぼ毎日会う親友となった。","source":"https://nmwa.org/blog/artist-spotlight/artist-friendships-leonora-carrington-and-remedios-varo/"},{"a":"グスタフ・クリムト","b":"エゴン・シーレ","type":"師弟","note":"1907年にシーレがクリムトに弟子入りし、クリムトはモデル料の肩代わりやパトロンの紹介など物心両面で支援した。","source":"https://www.artpedia.asia/egon-schiele/"},{"a":"ジャン・コクトー","b":"パブロ・ピカソ","type":"協働","note":"バレエ『パラード』（1917、台本コクトー・音楽サティ・美術ピカソ）で協働し、生涯の友人だった。","source":"https://museupicassobcn.cat/microsite/picasso-retrats/en/personatge/jean-cocteau/"},{"a":"ジャン・コクトー","b":"エリック・サティ","type":"協働","note":"バレエ『パラード』（1917）で台本と音楽を担当し協働した。","source":"https://museupicassobcn.cat/microsite/picasso-retrats/en/personatge/jean-cocteau/"},{"a":"パブロ・ピカソ","b":"エリック・サティ","type":"協働","note":"バレエ『パラード』（1917）で美術と音楽を担当し協働した。","source":"https://museupicassobcn.cat/microsite/picasso-retrats/en/personatge/jean-cocteau/"},{"a":"パブロ・ピカソ","b":"ドラ・マール","type":"交友","note":"1936年に出会い、約10年にわたり恋人でミューズだった。（記述文中の言及と重複）","source":"https://artnewsjapan.com/article/2367"},{"a":"マン・レイ","b":"ドラ・マール","type":"師弟","note":"ドラ・マールはマン・レイの助手として芸術キャリアをスタートさせた。","source":"https://www.artpedia.asia/dora-maar/"},{"a":"カール・G・ユング","b":"ジークムント・フロイト","type":"師弟","note":"1907年に出会い、フロイトはユングを後継者と期待した。360通の書簡を交わしたが、理論の対立から1913年に決別した。","source":"https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%BC%E3%83%AB%E3%83%BB%E3%82%B0%E3%82%B9%E3%82%BF%E3%83%95%E3%83%BB%E3%83%A6%E3%83%B3%E3%82%B0"},{"a":"アレン・ギンズバーグ","b":"ジャック・ケルアック","type":"交友","note":"1944年にコロンビア大学で出会い、ビート・ジェネレーションの中心人物として生涯交流した。","source":"https://ja.wikipedia.org/wiki/%E3%83%93%E3%83%BC%E3%83%88%E3%83%BB%E3%82%B8%E3%82%A7%E3%83%8D%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"},{"a":"アレン・ギンズバーグ","b":"ウィリアム・S・バロウズ","type":"交友","note":"1944年にコロンビア大学で出会い、ビート・ジェネレーションの中心人物として生涯交流した。","source":"https://ja.wikipedia.org/wiki/%E3%83%93%E3%83%BC%E3%83%88%E3%83%BB%E3%82%B8%E3%82%A7%E3%83%8D%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"},{"a":"ジャック・ケルアック","b":"ウィリアム・S・バロウズ","type":"共著","note":"1944年に出会い、カーメラー事件を題材に『そしてカバたちはタンクで茹で死に』を共著した（1945年完成）。","source":"https://ja.wikipedia.org/wiki/%E3%83%93%E3%83%BC%E3%83%88%E3%83%BB%E3%82%B8%E3%82%A7%E3%83%8D%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3"},{"a":"アルドゥス・ハクスリー","b":"ティモシー・リアリー","type":"共同研究","note":"1960年にハーバード・シロシビン・プロジェクトの創設メンバーとして参加し、リアリーと研究をともにした。","source":"https://ja.wikipedia.org/wiki/%E3%83%8F%E3%83%BC%E3%83%90%E3%83%BC%E3%83%89%E3%83%BB%E3%82%B7%E3%83%AD%E3%82%B7%E3%83%93%E3%83%B3%E8%A8%88%E7%94%BB"},{"a":"ゴードン・ワッソン","b":"アルベルト・ホフマン","type":"共著","note":"ワッソンの採取したキノコからホフマンがシロシビンを分離。『エレウシスの道』（1978）をラックとともに共著した。","source":"https://ja.wikipedia.org/wiki/%E3%83%AD%E3%83%90%E3%83%BC%E3%83%88%E3%83%BB%E3%82%B4%E3%83%BC%E3%83%89%E3%83%B3%E3%83%BB%E3%83%AF%E3%83%83%E3%82%BD%E3%83%B3"},{"a":"カール・G・ユング","b":"ウィリアム・ジェームズ","type":"交友","note":"1909年のクラーク大学会議で出会い、二晩にわたって語り合った。ユングはジェームズを「偏見のない明晰な頭脳」と評した。","source":"https://www.theosophical.org/publications/quest-magazine/sp-1660443348"},{"a":"三島由紀夫","b":"安部公房","type":"対談","note":"1966年に本格的な対談「二十世紀の文学」を行い、『文学者とは何か』（中央公論新社、2024）に収録。","source":"https://hatsumeihakken.com/abe-misima/"},{"a":"河合隼雄","b":"安部公房","type":"対談","note":"『こころの声を聴く―河合隼雄対話集』（新潮社、1995）に、安部公房との対談「境界を越えた世界」を収録。","source":"http://hurec.bz/book-movie/archives/2006/11/571_199501.html"},{"a":"三島由紀夫","b":"寺山修司","type":"対談","note":"三島の死の数ヶ月前、雑誌『潮』に「エロスは抵抗の拠点になり得るか」の対談が掲載された。","source":"https://note.com/caromioben7/n/n473d9ac1f25b"},{"a":"横尾忠則","b":"三島由紀夫","type":"協働","note":"細江英公の写真集『薔薇刑』の装幀や『真夏の死』の装幀、三島の演劇ポスターなどを手がけた。","source":"https://web.pref.hyogo.lg.jp/kk18/documents/thegrandyokoopedia.pdf"},{"a":"筒井康隆","b":"横尾忠則","type":"共著","note":"『美藝公』（1981、文藝春秋）を筒井の作・横尾の挿画による共著として刊行。1979年の『宇宙衛星博覽會』装丁以来の交流。","source":"https://ja.wikipedia.org/wiki/%E7%BE%8E%E8%97%9D%E5%85%AC"},{"a":"ジョン・コルトレーン","b":"マイルス・デイヴィス","type":"協働","note":"1955年にマイルス・デイヴィスの第一期クインテットに加入し、1960年まで共演した。","source":"https://ja.wikipedia.org/wiki/%E3%83%9E%E3%82%A4%E3%83%AB%E3%82%B9%E3%83%BB%E3%83%87%E3%82%A4%E3%83%B4%E3%82%A3%E3%82%B9"},{"a":"安部公房","b":"寺山修司","type":"協働","note":"1962年のテレビドラマ『お気に召すまま』で安部が原案、寺山が脚本を担当した（第7回）。安部は寺山に舞台台本も依頼した。","source":"https://ja.wikipedia.org/wiki/%E3%81%8A%E6%B0%97%E3%81%AB%E5%8F%AC%E3%81%99%E3%81%BE%E3%81%BE_(1962%E5%B9%B4%E3%81%AE%E3%83%86%E3%83%AC%E3%83%93%E3%83%89%E3%83%A9%E3%83%9E)"},{"a":"ティモシー・リアリー","b":"ケン・キージー","type":"交友","note":"1964年、キージー率いるメリー・プランクスターズがバスでミルブルックのリアリーを訪ね、面会した。","source":"https://static.lib.virginia.edu/sixties/experiment/kesey/onthebus.html"},{"a":"ジョン・C・リリー","b":"ティモシー・リアリー","type":"交友","note":"1968年にエサレン研究所で出会い、以後交流した。","source":"https://www.bookclubkai.jp/portfolio/people32/"},{"a":"アルドゥス・ハクスリー","b":"ハンフリー・オズモンド","type":"往復書簡","note":"1953年にオズモンドがハクスリーにメスカリンを投与し『知覚の扉』の体験に。275通超の往復書簡を交わし、書簡の中で「サイケデリック」という語を生み出した。（記述文中の言及と重複）","source":"https://www.histhum.com/review-psychedelic-prophets/"},{"a":"ジョン・ケージ","b":"ラ・モンテ・ヤング","type":"往復書簡","note":"1959年にダルムシュタットでケージの音楽と出会ったヤングは、ケージと文通を始め、互いの作品を演奏し合った。","source":"https://en.wikipedia.org/wiki/La_Monte_Young"},{"a":"フィリップ・グラス","b":"スティーヴ・ライヒ","type":"協働","note":"ジュリアード音楽院の同級生で、1960年代後半に互いの作品を演奏し合い、引っ越し会社を共同経営した。","source":"https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A3%E3%83%AA%E3%83%83%E3%83%97%E3%83%BB%E3%82%B0%E3%83%A9%E3%82%B9"},{"a":"テリー・ライリー","b":"ラ・モンテ・ヤング","type":"協働","note":"1960年にUCバークレーで出会い、生涯の交流を続けた。ヤングのシアター・オブ・エターナル・ミュージックで共演した。","source":"https://www.roomfulofteeth.org/composers/terry-riley"},{"a":"アレン・ギンズバーグ","b":"ティモシー・リアリー","type":"共同研究","note":"1960年11月26日、リアリーのハーバードの自宅でシロシビンをともに服用し、ギンズバーグはハーバード・プロジェクトの「シロシビン大使」となった。（記述文中の言及と重複）","source":"https://beezone.com/hpp_players"},{"a":"ティモシー・リアリー","b":"ラルフ・メッツナー","type":"共著","note":"『チベット死者の書サイケデリック・バージョン』（1964）を共著した。（記述文中の言及と重複）","source":"https://ja.wikipedia.org/wiki/%E3%83%86%E3%82%A3%E3%83%A2%E3%82%B7%E3%83%BC%E3%83%BB%E3%83%AA%E3%82%A2%E3%83%AA%E3%83%BC"},{"a":"スタニスラフ・グロフ","b":"アブラハム・マズロー","type":"協働","note":"1967年にメンロパークで開かれた少人数の作業グループでトランスパーソナル心理学の創設を構想し、1969年にトランスパーソナル心理学会を共同設立した。","source":"https://www.stangrof.com/images/joomgallery/ArticlesPDF/A_Brief_History_of_Transpersonal_Psychology_Grof.pdf"},{"a":"スタニスラフ・グロフ","b":"ジェームズ・ファディマン","type":"協働","note":"1967年のメンロパークの作業グループでトランスパーソナル心理学の創設をともに構想した。","source":"https://www.stangrof.com/images/joomgallery/ArticlesPDF/A_Brief_History_of_Transpersonal_Psychology_Grof.pdf"},{"a":"ジークムント・フロイト","b":"アルフレッド・アドラー","type":"師弟","note":"1902年にフロイトの水曜会に参加し、ウィーン精神分析協会の初代会長を務めたが、理論の対立から1911年に脱退し個人心理学を創始した。（記述文中の言及と重複）","source":"https://www.okbutwhy.org/freuds-wednesday-society/"},{"a":"ジークムント・フロイト","b":"ウィリアム・ジェームズ","type":"交友","note":"1909年のクラーク大学会議で出会い、駅まで一緒に歩きながら語り合った。フロイトはその散歩を自伝に記した。","source":"https://www.encyclopedia.com/psychology/dictionaries-thesauruses-pictures-and-press-releases/clark-university"},{"a":"ジョン・C・リリー","b":"グレゴリー・ベイトソン","type":"共同研究","note":"ベイトソンはリリーのイルカ・コミュニケーション研究所CRIIのディレクターを務めた。","source":"https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%A7%E3%83%B3%E3%83%BBC%E3%83%BB%E3%83%AA%E3%83%AA%E3%83%BC"},{"a":"スティーヴ・ライヒ","b":"テリー・ライリー","type":"協働","note":"1964年の《イン・C》初演に参加し、パルス音の導入をライリーに提案した。","source":"https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%86%E3%82%A3%E3%83%BC%E3%83%B4%E3%83%BB%E3%83%A9%E3%82%A4%E3%83%92"},{"a":"土方巽","b":"寺山修司","type":"協働","note":"土方は俳優として寺山演出の舞台に立ち、1970年には寺山らと演劇理論誌『地下演劇』の鼎談を行った。","source":"https://bijutsutecho.com/artists/183"},{"a":"鈴木大拙","b":"柳宗悦","type":"師弟","note":"大拙は柳の学習院高等科時代の英語教師で、柳は終生大拙を師と仰いで交流した。大拙は柳を「天才の人」と評し、後事を託すほど信頼した。","source":"https://ja.wikipedia.org/wiki/%E6%9F%B3%E5%AE%97%E6%82%A6"},{"a":"岡本太郎","b":"安部公房","type":"対談","note":"1948年の前衛芸術研究会「夜の会」で知り合い、1955年に「岡本太郎の芸術」と題する対談を行った。","source":"https://ja.wikipedia.org/wiki/%E5%B2%A1%E6%9C%AC%E5%A4%AA%E9%83%8E%E8%91%97%E4%BD%9C%E9%9B%86"},{"a":"井筒俊彦","b":"河合隼雄","type":"対談","note":"『河合隼雄全対話2』に井筒との対談が収録され、ジェイムズ・ヒルマンを交えた鼎談も行った。井筒の後を継いで河合はエラノス会議に参加した。","source":"https://ja.wikipedia.org/wiki/%E6%B2%B3%E5%90%88%E9%9A%BC%E9%9B%84"},{"a":"ヘルマン・ヘッセ","b":"カール・G・ユング","type":"交友","note":"1917年秋にベルンのホテルで初めて会い、1921年夏にはユングのキュスナハトの自宅で数週間にわたる分析を受けた。","source":"https://bunsekisinri.com/2021/07/22/hesse_and_jung/"},{"a":"ヴァージニア・ウルフ","b":"ジークムント・フロイト","type":"交友","note":"1939年1月28日、ウルフ夫妻はロンドンのフロイト宅を訪ねてお茶を共にし、フロイトから水仙の花を贈られた。夫妻のホガース・プレスは1924年からフロイトの著作を出版していた。","source":"https://link.springer.com/chapter/10.1057/9781403919366_1"},{"a":"ラルフ・ワルド・エマーソン","b":"ウォルト・ホイットマン","type":"往復書簡","note":"1855年7月21日、エマーソンは『草の葉』を絶賛する手紙をホイットマンに送り、同年12月11日にはブルックリンを訪ねて夕食を共にした。（記述文中の言及と重複）","source":"https://whitmanarchive.org/item/encyclopedia_entry1"},{"a":"マルセル・モース","b":"エミール・デュルケーム","type":"師弟","note":"モースはデュルケームの甥で、直接の指導を受けて『自殺論』の準備を手伝い、後に『社会学年報』の編集を継承した。","source":"https://www.britannica.com/biography/Marcel-Mauss"},{"a":"ヴィルヘルム・ライヒ","b":"ジークムント・フロイト","type":"師弟","note":"1920年代にフロイトの弟子としてウィーンで活動し、後継者と目されたが、理論の対立から1934年に国際精神分析協会から除名された。","source":"https://www.britannica.com/biography/Wilhelm-Reich"},{"a":"クロード・レヴィ＝ストロース","b":"マルセル・モース","type":"師弟","note":"レヴィ＝ストロースはモースの講義を受け、没後に著作集『社会学と人類学』の編集と長大な序文を担当し、自らをモースの継承者として位置づけた。","source":"https://ja.wikipedia.org/wiki/%E3%82%AF%E3%83%AD%E3%83%BC%E3%83%89%E3%83%BB%E3%83%AC%E3%83%B4%E3%82%A3%EF%BC%9D%E3%82%B9%E3%83%88%E3%83%AD%E3%83%BC%E3%82%B9"},{"a":"ジョン・ケージ","b":"鈴木大拙","type":"師弟","note":"ケージは1952年からコロンビア大学で大拙の禅の講義を3年間聴講し、沈黙と無心の思想が『4分33秒』へと結実した。","source":"https://tower.jp/article/series/2012/08/20/silence"},{"a":"ピンク・フロイド","b":"ジミ・ヘンドリックス","type":"協働","note":"1967年11月14日から12月5日まで、ジミ・ヘンドリックス・エクスペリエンスをヘッドライナーとする16日間の英国パッケージツアーを共にした。","source":"https://www.jimihendrix.com/editorial/the-line-up-of-a-lifetime-on-the-road-with-the-jimi-hendrix-experience-second-uk-tour-nov-dec-1967/"},{"a":"スタニスラフ・グロフ","b":"ティモシー・リアリー","type":"交友","note":"グロフはリアリーと直接議論し、リアリーの「誰でもどんな状況でもサイケデリックを取ってよい」という考えに異を唱えた。","source":"https://www.atpweb.org/jtparchive/trps-40-08-02-155.pdf"},{"a":"スタニスラフ・グロフ","b":"アルベルト・ホフマン","type":"交友","note":"グロフはホフマンを「究極の精神的な父」と呼び、1984年にエサレン研究所で対談するなど長年にわたって交流した。","source":"https://maps.org/news-letters/v11n2/11222gro.html"},{"a":"寺山修司","b":"横尾忠則","type":"協働","note":"横尾は1967年の演劇実験室「天井桟敷」の旗揚げメンバーで美術スタッフとして参加し、『毛皮のマリー』などのポスターと舞台装置を手がけた。","source":"https://jbpress.ismedia.jp/articles/-/94476"},{"a":"ウォルター・パーンケ","b":"ティモシー・リアリー","type":"師弟","note":"パーンケはリアリーの指導のもとで博士論文研究として1962年のグッド・フライデー実験（マーシュ礼拝堂実験）を設計・実施した。","source":"https://archives.lib.purdue.edu/agents/people/435"}]</script>
     <div id="graph" hidden>
       <div class="graph-bar" role="toolbar" aria-label="関連図の操作">
         <div class="graph-seg" role="group" aria-label="表示範囲">
@@ -423,6 +434,7 @@
           <button type="button" id="graph-edge-tag" aria-pressed="false">タグ</button>
           <button type="button" id="graph-edge-mention" aria-pressed="false">言及</button>
         </div>
+        <label class="graph-check"><input type="checkbox" id="graph-weak" checked> 弱い辺も表示</label>
         <div class="graph-seg" role="group" aria-label="次元">
           <button type="button" id="graph-dim-2d" class="is-active" aria-pressed="true">2D</button>
           <button type="button" id="graph-dim-3d" aria-pressed="false">3D</button>
@@ -1816,6 +1828,7 @@
           roman: sec ? (ROMAN[sec.id.split('-')[0]] || '') : '',
           article: a.classList.contains('has-article'),
           searchText: li ? li.textContent : a.dataset.person,
+          desc: descOfLi(li),
         });
       });
       const dated = items.filter((it) => it.birth != null).sort((x, y) => x.birth - y.birth || x.name.localeCompare(y.name, 'ja'));
@@ -1844,6 +1857,11 @@
         srch.hidden = true;
         srch.textContent = it.searchText;
         row.append(years, link, chap, srch);
+        row.addEventListener('mouseover', (e) => {
+          if (it.desc) knTipShow(it.name, truncDesc(it.desc, 200), e.clientX, e.clientY);
+        });
+        row.addEventListener('mousemove', (e) => knTipMove(e.clientX, e.clientY));
+        row.addEventListener('mouseleave', knTipHide);
         return row;
       };
       const makeGroup = (label, rows) => {
@@ -2118,8 +2136,112 @@
       });
     };
 
+    // ---- 共通ツールチップ（ホバーで説明を表示） ----
+    // ガラス風の専用要素（title属性は使わない）。カーソルに追従し、
+    // 画面端ではみ出さないよう位置を調整する。マウスが離れるか
+    // スクロールしたら消える。
+    let knTipEl = null;
+    const knTip = () => {
+      if (!knTipEl) {
+        knTipEl = document.createElement('div');
+        knTipEl.id = 'kn-tooltip';
+        knTipEl.setAttribute('role', 'tooltip');
+        knTipEl.hidden = true;
+        document.body.appendChild(knTipEl);
+      }
+      return knTipEl;
+    };
+    const knTipShow = (title, body, x, y) => {
+      const el = knTip();
+      el.innerHTML = '';
+      if (title) {
+        const h = document.createElement('div');
+        h.className = 'kn-tip-title';
+        h.textContent = title;
+        el.appendChild(h);
+      }
+      if (body) {
+        const b = document.createElement('div');
+        b.className = 'kn-tip-body';
+        b.textContent = body;
+        el.appendChild(b);
+      }
+      el.hidden = false;
+      knTipMove(x, y);
+    };
+    const knTipMove = (x, y) => {
+      const el = knTipEl;
+      if (!el || el.hidden) return;
+      const pad = 12, gap = 14;
+      const w = el.offsetWidth, h = el.offsetHeight;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      let left = x + gap, top = y + gap;
+      if (left + w > vw - pad) left = x - w - gap;
+      if (left < pad) left = pad;
+      if (top + h > vh - pad) top = y - h - gap;
+      if (top < pad) top = pad;
+      el.style.left = left + 'px';
+      el.style.top = top + 'px';
+    };
+    const knTipHide = () => { if (knTipEl) knTipEl.hidden = true; };
+    window.addEventListener('scroll', knTipHide, true);
+
+    // liから記述文を取り出す（項目名リンク・関連・タグ表示を除き、
+    // 先頭の（…）：を除く）。論文項目は括弧が項目名リンク内にあって
+    // 残りのテキストが「：」から始まるため、先頭の「：」や「—」も除く。
+    const descOfLi = (li) => {
+      if (!li) return '';
+      const clone = li.cloneNode(true);
+      clone.querySelectorAll('.person-link, .related, .tags').forEach((el) => el.remove());
+      const t = (clone.textContent || '').replace(/\s+/g, ' ').trim();
+      return t.replace(/^（[^）]*）：\s*/, '').replace(/^[：:—―\-–\s]+/, '');
+    };
+    const truncDesc = (t, n) => {
+      const chars = [...(t || '')];
+      if (chars.length <= n) return t || '';
+      return chars.slice(0, n).join('') + '…';
+    };
+
+    // ホバーのツールチップ：文中リンク・関連リンク・見出しリンクに、
+    // 索引の項目名（正式名または括弧なしのコア名）と一致すれば、その項目の
+    // 記述文を出す。一致しないもの（索引にない作品名など）には出さない。
+    // 関連リンクは renderRelated() で後から作られるため、この関数は
+    // renderRelated() の後で呼ぶこと。
+    const initContextTips = () => {
+      const byName = new Map();
+      document.querySelectorAll('.layout .person-link').forEach((a) => {
+        const desc = descOfLi(a.closest('li'));
+        if (!desc) return;
+        const full = a.dataset.person || a.textContent.trim();
+        const core = full.split('（')[0].split('(')[0].trim();
+        if (!byName.has(full)) byName.set(full, desc);
+        if (core && !byName.has(core)) byName.set(core, desc);
+      });
+      const stripMarks = (s) => s.replace(/[『』「」“”‘’"'（）()]/g, '').trim();
+      const bindTip = (el, title, desc) => {
+        if (!desc) return;
+        el.addEventListener('mouseover', (e) => knTipShow(title, truncDesc(desc, 200), e.clientX, e.clientY));
+        el.addEventListener('mousemove', (e) => knTipMove(e.clientX, e.clientY));
+        el.addEventListener('mouseleave', knTipHide);
+      };
+      document.querySelectorAll('.context-link').forEach((a) => {
+        const key = stripMarks(a.textContent);
+        bindTip(a, key, byName.get(key));
+      });
+      document.querySelectorAll('.related a').forEach((a) => {
+        const key = stripMarks(a.textContent);
+        bindTip(a, key, byName.get(key));
+      });
+      // 見出しリンク（各項目の名前そのもの）：自分の項目の記述文を出す。
+      document.querySelectorAll('.layout .person-link').forEach((a) => {
+        const full = a.dataset.person || a.textContent.trim();
+        bindTip(a, full, byName.get(full));
+      });
+    };
+
     linkifyContextText();
     renderRelated();
+    initContextTips();
     renderTags();
     buildTimeline();
     initCounts();
@@ -2128,7 +2250,8 @@
     /* ---- 関連図 (graph view) ---- */
     // データは初回表示時にDOMから構築する（ハードコードなし）。
     // ノード: .layout 内の .person-link 全件。辺: タグ3つ以上共有 / 説明文での
-    // 他項目への言及 / 同行ペア（1つのliを共有）。2D/3Dフォースレイアウトは自作。
+    // 他項目への言及 / 同行ペア（1つのliを共有）/ 交流辺（relationships.json
+    // の調査済み61本）。2D/3Dフォースレイアウトは自作。
     const GRAPH_CHAPTERS = [
       { id: 'i-作家-文学-思想', label: 'Ⅰ. 作家・文学・思想', color: '#5b7bc0' },
       { id: 'ii-視覚芸術-画家', label: 'Ⅱ. 視覚芸術・画家', color: '#b65c7e' },
@@ -2149,14 +2272,15 @@
 
     const G = {
       built: false, nodes: [], edges: [], edgeByKey: new Map(), adj: [],
-      stats: { nodes: 0, tagEdges: 0, mentionEdges: 0, colocRows: 0, colocPairs: 0, total: 0 },
+      stats: { nodes: 0, tagEdges: 0, mentionEdges: 0, colocRows: 0, colocPairs: 0, weakEdges: 0, relEdges: 0, relNew: 0, relUnmatched: 0, total: 0 },
+      relList: [],
       open: false, mode: 'all', center: -1, defaultCenter: -1, depth2: false,
-      edgeFilter: 'both', dim: '2d',
+      edgeFilter: 'both', dim: '2d', showWeak: true,
       running: false, raf: null, autoRotate: false,
-      rotX: -0.32, rotY: 0.55, scale: 1, ox: 0, oy: 0,
+      rotX: -0.32, rotY: 0.55, scale: 1, ox: 0, oy: 0, viewTouched: false,
       selected: -1, hover: -1,
       visible: null, visibleNodes: [], visEdges: [],
-      localHop1: [], localParent: new Map(), degStrong: [],
+      localHop1: [], localParent: new Map(), degStrong: [], degWeak: [],
       tickCount: 0, calmTicks: 0, maxSpeed: 0,
     };
 
@@ -2188,6 +2312,7 @@
           birth: a.dataset.birth ? parseInt(a.dataset.birth, 10) : null,
           death: a.dataset.death ? parseInt(a.dataset.death, 10) : null,
           href: a.href, article: a.classList.contains('has-article'),
+          desc: descOfLi(a.closest('li')),
           el: a,
           ax: anchor.x, ay: anchor.y, az: anchor.z,
           x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, fx: 0, fy: 0, fz: 0,
@@ -2199,9 +2324,50 @@
         if (!byCore.has(n.core)) byCore.set(n.core, []);
         byCore.get(n.core).push(n.i);
       });
-      const cores = Array.from(byCore.keys())
-        .filter((c) => [...c].length >= 2)
-        .sort((a, b) => b.length - a.length);
+      // 別名：名前の最後の区切り（・／空白／＝）の後の部分（2文字以上）。
+      // 2件以上の項目に対応する曖昧な別名と、一般名詞として誤検出しやすい
+      // 別名（サックス＝楽器、行動・マインド＝一般語）は除外する。
+      const EXCLUDED_ALIASES = new Set(['サックス', '行動', 'マインド']);
+      const aliasToIdx = new Map();
+      nodes.forEach((n) => {
+        const parts = n.core.split(/[・ 　＝]/);
+        const last = parts.length > 1 ? parts[parts.length - 1].trim() : '';
+        if ([...last].length >= 2 && last !== n.core) {
+          if (!aliasToIdx.has(last)) aliasToIdx.set(last, new Set());
+          aliasToIdx.get(last).add(n.i);
+        }
+      });
+      // マッチ対象：コア名＋曖昧でない別名（長い順）
+      const matchStrs = [];
+      for (const [c, idxs] of byCore) {
+        if ([...c].length < 2) continue;
+        for (const idx of idxs) matchStrs.push({ str: c, idx, alias: false });
+      }
+      for (const [a, set] of aliasToIdx) {
+        if (set.size === 1 && !EXCLUDED_ALIASES.has(a)) {
+          matchStrs.push({ str: a, idx: [...set][0], alias: true });
+        }
+      }
+      matchStrs.sort((x, y) => [...y.str].length - [...x.str].length);
+      // 別名の一致はカタカナ語の途中に埋もれたものを数えない
+      // （例：「セス」は「プロセス」の一部、「グレイ」は「グレイソン」の一部）。
+      const isKata = (ch) => {
+        const c = ch.charCodeAt(0);
+        return c >= 0x30a0 && c <= 0x30ff;
+      };
+      const aliasHit = (desc, s) => {
+        let start = 0;
+        for (;;) {
+          const i = desc.indexOf(s, start);
+          if (i < 0) return false;
+          const before = i > 0 ? desc[i - 1] : '';
+          const after = i + s.length < desc.length ? desc[i + s.length] : '';
+          const badBefore = before && isKata(before) && isKata(s[0]);
+          const badAfter = after && isKata(after) && isKata(s[s.length - 1]);
+          if (!badBefore && !badAfter) return true;
+          start = i + 1;
+        }
+      };
 
       // 共有タグ数（全ペア）。タグ辺は3つ以上共有のものだけを辺として保持する。
       const tagIndex = new Map();
@@ -2257,17 +2423,21 @@
         const li = n.el.closest('li');
         if (!li) return;
         const desc = descText(li);
-        const hits = new Set();
-        for (const c of cores) {
-          if (!desc.includes(c)) continue;
-          for (const idx of byCore.get(c)) if (idx !== n.i) hits.add(idx);
+        // 最も長い一致文字列を項目ごとに保持する
+        const hitStr = new Map();
+        for (const m of matchStrs) {
+          if (m.idx === n.i) continue;
+          const ok = m.alias ? aliasHit(desc, m.str) : desc.includes(m.str);
+          if (!ok) continue;
+          const prev = hitStr.get(m.idx);
+          if (prev === undefined || [...m.str].length > [...prev].length) hitStr.set(m.idx, m.str);
         }
-        const hitArr = Array.from(hits);
+        const hitArr = Array.from(hitStr.keys());
         const drop = new Set();
         for (const h of hitArr) {
           for (const o of hitArr) {
-            if (h !== o && nodes[o].core.length > nodes[h].core.length
-              && nodes[o].core.includes(nodes[h].core)) drop.add(h);
+            if (h !== o && nodes[o].core.length > [...hitStr.get(h)].length
+              && nodes[o].core.includes(hitStr.get(h))) drop.add(h);
           }
         }
         for (const h of hitArr) {
@@ -2295,6 +2465,56 @@
         }
       });
 
+      // 交流辺：relationships.json（調査済みの交友・交流61本。出典URL付き）。
+      // 既存の辺と重複するペアは1本の辺に「交流」の属性を追加するだけ
+      // （重複除去のルールは既存のものと同じ）。
+      let relEdges = 0, relNew = 0, relUnmatched = 0;
+      let REL_DATA = [];
+      try {
+        const relEl = document.getElementById('kn-relationships');
+        if (relEl) REL_DATA = JSON.parse(relEl.textContent || '[]');
+      } catch (_) { REL_DATA = []; }
+      const byName = new Map();
+      nodes.forEach((n) => { if (!byName.has(n.name)) byName.set(n.name, n.i); });
+      const relList = [];
+      for (const r of REL_DATA) {
+        const a = byName.get(r.a), b = byName.get(r.b);
+        if (a === undefined || b === undefined || a === b) { relUnmatched++; continue; }
+        relEdges++;
+        const before = edgeByKey.size;
+        addEdge(a, b, { rel: { type: r.type || '', note: r.note || '', source: r.source || '' } });
+        if (edgeByKey.size > before) relNew++;
+        relList.push({ a, b, type: r.type || '', note: r.note || '', source: r.source || '' });
+      }
+      G.relList = relList;
+
+      // 弱い辺：タグ2つ以上共有のうち、各項目の共有タグ数上位3件まで。
+      // すでに強い辺（3つ以上共通／言及／同行）のペアは弱い辺にしない。
+      const nbrs = nodes.map(() => []);
+      for (const [k, w] of shared) {
+        if (w < 2) continue;
+        const [a, b] = k.split('-').map(Number);
+        nbrs[a].push([w, b]);
+        nbrs[b].push([w, a]);
+      }
+      let weakEdges = 0;
+      G.degWeak = nodes.map(() => 0);
+      const weakSeen = new Set();
+      for (let i = 0; i < nodes.length; i++) {
+        const top = nbrs[i].sort((x, y) => y[0] - x[0]).slice(0, 3);
+        for (const [w, j] of top) {
+          const k = edgeKey(i, j);
+          if (weakSeen.has(k) || edgeByKey.has(k)) continue;
+          weakSeen.add(k);
+          const e = { a: Math.min(i, j), b: Math.max(i, j), tag: w, weak: true, mention: false, coloc: false };
+          edgeByKey.set(k, e);
+          edges.push(e);
+          G.degWeak[i]++;
+          G.degWeak[j]++;
+          weakEdges++;
+        }
+      }
+
       // 隣接リスト（周辺表示用。タグは1つ以上の共有で隣接とみなす）
       const adj = nodes.map(() => new Map());
       const adjAdd = (a, b, patch) => {
@@ -2321,12 +2541,13 @@
           for (let y = x + 1; y < idxs.length; y++) adjAdd(idxs[x], idxs[y], { coloc: true });
         }
       });
+      for (const r of relList) adjAdd(r.a, r.b, { rel: true });
 
       G.nodes = nodes;
       G.edges = edges;
       G.edgeByKey = edgeByKey;
       G.adj = adj.map((m) => Array.from(m.values()));
-      G.stats = { nodes: nodes.length, tagEdges, mentionEdges, colocRows, colocPairs, total: edges.length };
+      G.stats = { nodes: nodes.length, tagEdges, mentionEdges, colocRows, colocPairs, weakEdges, relEdges, relNew, relUnmatched, total: edges.length };
       // 既定の中心：最もつながりの多いノード
       let best = -1, bestDeg = -1;
       G.adj.forEach((list, i) => { if (list.length > bestDeg) { bestDeg = list.length; best = i; } });
@@ -2392,8 +2613,9 @@
     }
 
     function edgeShown(e, mode) {
+      if (e.weak && !G.showWeak) return false;
       if (G.edgeFilter === 'tag') return e.tag > 0;
-      if (G.edgeFilter === 'mention') return e.mention || e.coloc;
+      if (G.edgeFilter === 'mention') return e.mention || e.coloc || e.rel;
       return true;
     }
 
@@ -2405,7 +2627,7 @@
         const c = G.center;
         const adj = (c >= 0 && G.adj[c]) ? G.adj[c] : [];
         const byRel = (a, b) => {
-          const am = (a.mention || a.coloc) ? 1 : 0, bm = (b.mention || b.coloc) ? 1 : 0;
+          const am = (a.mention || a.coloc || a.rel) ? 1 : 0, bm = (b.mention || b.coloc || b.rel) ? 1 : 0;
           if (bm !== am) return bm - am;
           return b.tagW - a.tagW;
         };
@@ -2449,7 +2671,7 @@
         };
         const spoke = (from, to) => {
           const r = relOf(from, to);
-          pushEdge({ a: Math.min(from, to), b: Math.max(from, to), tag: r.tagW, mention: !!r.mention, coloc: !!r.coloc, spoke: true });
+          pushEdge({ a: Math.min(from, to), b: Math.max(from, to), tag: r.tagW, mention: !!r.mention, coloc: !!r.coloc, rel: !!r.rel, spoke: true, weak: r.tagW <= 2 && !r.mention && !r.coloc && !r.rel });
         };
         for (const nIdx of keep) spoke(c, nIdx);
         for (const [node, from] of G.localParent) spoke(from, node);
@@ -2471,26 +2693,28 @@
       if (!el) return;
       if (G.mode === 'all') {
         el.textContent = '全体図：' + G.visibleNodes.length + '件・' + G.visEdges.length + '本';
-        el.title = '本数は描く辺の数（タグ3つ以上共通／言及／同行）';
+        el.title = '本数は描く辺の数（タグ共通／言及／同行）';
       } else {
         const name = G.center >= 0 ? G.nodes[G.center].name : '';
         el.textContent = '周辺：' + name + ' — ' + G.visibleNodes.length + '件・' + G.visEdges.length + '本';
-        el.title = '本数は描く辺の数（中心とのスポーク＋隣接間の強い辺）';
+        el.title = '本数は描く辺の数（中心とのスポーク＋隣接間の辺）';
       }
     }
 
     /* ---- フォースシミュレーション ---- */
+    // 力のバランス：全体図が収縮してドットの塊にならないよう、反発を強く・
+    // 遠くまで効かせ、バネの自然長を長く、中心への引力をなくし、章アンカー
+    // への引力を強めた。3Dでは反発が体積で薄まるため、さらに強くする。
+    // 周辺表示は放射状配置＋固定中心のため従来の値のまま。
     function stepSim() {
       const ns = G.visibleNodes;
       const dim3 = G.dim === '3d';
-      // 周辺表示はノード数が少なく密集しやすいので、反発を強め・バネを長めに。
-      // 全体図も中心の密集を緩和するため反発を少し強める。
       const local = G.mode === 'local';
-      const CUTOFF = local ? 220 : 150, CELL = local ? 220 : 150;
-      const REPEL = local ? 8000 : 4500;
-      const REST_STRONG = local ? 95 : 55, REST_LIGHT = local ? 150 : 85;
-      const K_STRONG = local ? 0.05 : 0.045, K_LIGHT = local ? 0.02 : 0.016;
-      const ANCHOR = local ? 0 : 0.0035, CENTER_PULL = local ? 0.0006 : 0.0003;
+      const CUTOFF = local ? 220 : dim3 ? 300 : 240, CELL = local ? 220 : dim3 ? 300 : 240;
+      const REPEL = local ? 8000 : dim3 ? 24000 : 9000;
+      const REST_STRONG = local ? 95 : dim3 ? 100 : 90, REST_LIGHT = local ? 150 : dim3 ? 150 : 130, REST_WEAK = local ? 190 : dim3 ? 195 : 170;
+      const K_STRONG = local ? 0.05 : 0.04, K_LIGHT = local ? 0.02 : 0.012, K_WEAK = local ? 0.008 : 0.006;
+      const ANCHOR = local ? 0 : dim3 ? 0.012 : 0.006, CENTER_PULL = local ? 0.0006 : 0;
       const grid = new Map();
       for (const n of ns) {
         const cx = Math.floor(n.x / CELL), cy = Math.floor(n.y / CELL);
@@ -2530,8 +2754,9 @@
         const dx = b.x - a.x, dy = b.y - a.y, dz = dim3 ? b.z - a.z : 0;
         const d = Math.sqrt(dx * dx + dy * dy + dz * dz) || 0.001;
         const strong = e.mention || e.coloc;
-        const rest = strong ? REST_STRONG : REST_LIGHT;
-        const k = strong ? K_STRONG : K_LIGHT;
+        const weak = !!e.weak;
+        const rest = strong ? REST_STRONG : weak ? REST_WEAK : REST_LIGHT;
+        const k = strong ? K_STRONG : weak ? K_WEAK : K_LIGHT;
         const f = (d - rest) * k;
         const ux = dx / d, uy = dy / d, uz = dim3 ? dz / d : 0;
         a.fx += ux * f; a.fy += uy * f; a.fz += uz * f;
@@ -2545,9 +2770,9 @@
         n.fx += (n.ax - n.x) * ANCHOR - n.x * CENTER_PULL;
         n.fy += (n.ay - n.y) * ANCHOR - n.y * CENTER_PULL;
         n.fz += (n.az - n.z) * ANCHOR - n.z * CENTER_PULL;
-        n.vx = (n.vx + n.fx) * 0.86;
-        n.vy = (n.vy + n.fy) * 0.86;
-        n.vz = dim3 ? (n.vz + n.fz) * 0.86 : 0;
+        n.vx = (n.vx + n.fx) * 0.84;
+        n.vy = (n.vy + n.fy) * 0.84;
+        n.vz = dim3 ? (n.vz + n.fz) * 0.84 : 0;
         const sp = Math.sqrt(n.vx * n.vx + n.vy * n.vy + n.vz * n.vz);
         if (sp > 14) { n.vx *= 14 / sp; n.vy *= 14 / sp; n.vz *= 14 / sp; }
         n.x += n.vx; n.y += n.vy;
@@ -2565,6 +2790,7 @@
     function reheat() {
       G.tickCount = 0;
       G.calmTicks = 0;
+      G.viewTouched = false;
       for (const n of G.visibleNodes) {
         n.vx += (Math.random() - 0.5) * 2;
         n.vy += (Math.random() - 0.5) * 2;
@@ -2579,6 +2805,9 @@
         for (let s = 0; s < 3; s++) stepSim();
         if (G.calmTicks >= 12 || G.tickCount > 1500) {
           G.running = false;
+          // 安全策：停止時に一度だけ全体をキャンバスに収める。ユーザーが
+          // ホイールやドラッグで視点を変えていた場合は上書きしない。
+          if (!G.viewTouched) fitView();
           updatePlayBtn();
         }
       }
@@ -2670,8 +2899,15 @@
         const pa = project(a), pb = project(b);
         a.sx = pa.x; a.sy = pa.y; a.sf = pa.f; a.sdepth = pa.z;
         b.sx = pb.x; b.sy = pb.y; b.sf = pb.f; b.sdepth = pb.z;
-        if (e.mention || e.coloc) {
+        if (e.rel) {
+          ctx.strokeStyle = 'rgba(142,47,60,0.7)';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([5, 3]);
+        } else if (e.mention || e.coloc) {
           ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+          ctx.lineWidth = 1;
+        } else if (e.weak) {
+          ctx.strokeStyle = 'rgba(0,0,0,0.08)';
           ctx.lineWidth = 1;
         } else if (e.spoke) {
           ctx.strokeStyle = 'rgba(0,0,0,0.22)';
@@ -2684,6 +2920,7 @@
         ctx.moveTo(pa.x, pa.y);
         ctx.lineTo(pb.x, pb.y);
         ctx.stroke();
+        ctx.setLineDash([]);
       }
       // ノード（3Dでは奥から描く）
       const order = dim3
@@ -2734,7 +2971,7 @@
         const addMentionPartners = (idx) => {
           if (idx < 0) return;
           for (const a of G.adj[idx] || []) {
-            if ((a.mention || a.coloc) && G.visible.has(a.to)) labelSet.add(a.to);
+            if ((a.mention || a.coloc || a.rel) && G.visible.has(a.to)) labelSet.add(a.to);
           }
         };
         if (G.center >= 0) labelSet.add(G.center);
@@ -2804,9 +3041,45 @@
       info.className = 'gd-meta';
       info.textContent = 'つながり：' + deg + '件（うち言及・同行 ' + mentions + '件） — この項目から出る強い辺の数です';
       d.appendChild(info);
+      const degW = G.degWeak[idx] || 0;
+      const infoW = document.createElement('div');
+      infoW.className = 'gd-meta';
+      infoW.textContent = '弱い辺：' + degW + '件（タグ2つ共通の上位3件）';
+      d.appendChild(infoW);
+      // 交流：相手名（type）の一覧。クリックでその項目を中心にした周辺表示へ。
+      const rels = G.edges.filter((e) => e.rel && (e.a === idx || e.b === idx));
+      if (rels.length) {
+        const relHead = document.createElement('div');
+        relHead.className = 'gd-meta';
+        relHead.textContent = '交流：';
+        d.appendChild(relHead);
+        const relList = document.createElement('div');
+        relList.className = 'gd-rel';
+        rels.forEach((e) => {
+          const other = e.a === idx ? e.b : e.a;
+          const on = G.nodes[other];
+          if (!on) return;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'gd-rel-item';
+          btn.textContent = on.name + '（' + e.rel.type + '）';
+          if (e.rel.note) btn.title = e.rel.note;
+          btn.addEventListener('click', () => setCenter(other));
+          relList.appendChild(btn);
+          if (e.rel.source) {
+            const src = document.createElement('a');
+            src.href = e.rel.source;
+            src.target = '_blank';
+            src.rel = 'noopener noreferrer';
+            src.textContent = '出典';
+            relList.appendChild(src);
+          }
+        });
+        d.appendChild(relList);
+      }
       const info2 = document.createElement('div');
       info2.className = 'gd-meta';
-      info2.textContent = 'タグを1つ以上共有：' + tagShared + '件（図の辺は3つ以上共通のみ）';
+      info2.textContent = 'タグを1つ以上共有：' + tagShared + '件（図の辺は3つ以上共通、または2つ共通の上位3件のみ）';
       d.appendChild(info2);
       const links = document.createElement('div');
       links.className = 'gd-links';
@@ -2970,6 +3243,7 @@
         reheat();
       } else {
         stopSim();
+        knTipHide();
         if (typeof timelineMode === 'undefined' || !timelineMode) {
           if (layout) layout.style.display = '';
         }
@@ -3044,6 +3318,11 @@
       document.getElementById('graph-edge-both').addEventListener('click', () => setEdgeFilter('both'));
       document.getElementById('graph-edge-tag').addEventListener('click', () => setEdgeFilter('tag'));
       document.getElementById('graph-edge-mention').addEventListener('click', () => setEdgeFilter('mention'));
+      document.getElementById('graph-weak').addEventListener('change', (e) => {
+        G.showWeak = e.target.checked;
+        computeVisible();
+        reheat();
+      });
       document.getElementById('graph-dim-2d').addEventListener('click', () => setDim('2d'));
       document.getElementById('graph-dim-3d').addEventListener('click', () => setDim('3d'));
       document.getElementById('graph-play').addEventListener('click', () => {
@@ -3078,6 +3357,12 @@
         t.appendChild(tSw);
         t.appendChild(document.createTextNode('タグ辺（共有タグ3つ以上）'));
         legend.appendChild(t);
+        const w = document.createElement('span');
+        const wSw = document.createElement('span');
+        wSw.className = 'edge-sample weak';
+        w.appendChild(wSw);
+        w.appendChild(document.createTextNode('弱い辺（タグ2つ共通・各項目の上位3件）'));
+        legend.appendChild(w);
         const s = document.createElement('span');
         const sSw = document.createElement('span');
         sSw.className = 'edge-sample spoke';
@@ -3090,12 +3375,19 @@
         m.appendChild(mSw);
         m.appendChild(document.createTextNode('言及・同行辺'));
         legend.appendChild(m);
+        const r = document.createElement('span');
+        const rSw = document.createElement('span');
+        rSw.className = 'edge-sample rel';
+        r.appendChild(rSw);
+        r.appendChild(document.createTextNode('交流（対談・交友・師弟など）'));
+        legend.appendChild(r);
       }
 
       canvas = document.getElementById('graph-canvas');
       let dragNode = -1, viewDrag = false, lastX = 0, lastY = 0, downX = 0, downY = 0, moved = false;
       if (canvas) {
         canvas.addEventListener('pointerdown', (e) => {
+          knTipHide();
           const p = canvasPos(e);
           downX = p.x; downY = p.y; moved = false;
           const hit = hitNode(p.x, p.y);
@@ -3130,6 +3422,7 @@
               if (G.rotX < -1.4) G.rotX = -1.4;
             } else {
               G.ox += dx; G.oy += dy;
+              G.viewTouched = true;
             }
             lastX = p.x; lastY = p.y;
             draw();
@@ -3138,7 +3431,16 @@
             if (hit !== G.hover) {
               G.hover = hit;
               canvas.style.cursor = hit >= 0 ? 'pointer' : 'grab';
+              if (hit >= 0) {
+                const n = G.nodes[hit];
+                const body = chapterLabel(n.chapter) + (n.desc ? ' — ' + truncDesc(n.desc, 200) : '');
+                knTipShow(n.name, body, e.clientX, e.clientY);
+              } else {
+                knTipHide();
+              }
               requestDraw();
+            } else if (hit >= 0) {
+              knTipMove(e.clientX, e.clientY);
             }
           }
         });
@@ -3167,8 +3469,14 @@
           }
           viewDrag = false;
         });
+        canvas.addEventListener('pointerleave', () => {
+          if (G.hover >= 0) { G.hover = -1; requestDraw(); }
+          knTipHide();
+        });
         canvas.addEventListener('wheel', (e) => {
           e.preventDefault();
+          knTipHide();
+          G.viewTouched = true;
           const p = canvasPos(e);
           const w = canvas.clientWidth || 900, h = canvas.clientHeight || 560;
           const cx = w / 2, cy = h / 2;
@@ -3182,6 +3490,7 @@
         }, { passive: false });
       }
       window.addEventListener('resize', () => {
+        knTipHide();
         if (!G.open) return;
         sizeCanvas();
         draw();
@@ -3200,8 +3509,21 @@
       visibleEdgeCount: () => G.visEdges.length,
       neighborCount: (idx) => (G.adj[idx] ? G.adj[idx].length : 0),
       strongDegree: (idx) => (G.degStrong[idx] || 0),
+      weakDegree: (idx) => (G.degWeak[idx] || 0),
+      totalDegree: (idx) => (G.degStrong[idx] || 0) + (G.degWeak[idx] || 0),
+      isolatedCount: () => G.nodes.filter((n, i) => (G.degStrong[i] || 0) + (G.degWeak[i] || 0) === 0).length,
+      setWeak: (on) => {
+        G.showWeak = !!on;
+        const cb = document.getElementById('graph-weak');
+        if (cb) cb.checked = G.showWeak;
+        computeVisible();
+      },
       tagSharedCount: (idx) => (G.adj[idx] ? G.adj[idx].filter((e) => e.tagW >= 1).length : 0),
+      relOf: (idx) => (G.relList || []).filter((r) => r.a === idx || r.b === idx)
+        .map((r) => ({ other: r.a === idx ? r.b : r.a, type: r.type, note: r.note, source: r.source })),
+      relStats: () => ({ total: G.stats.relEdges || 0, new: G.stats.relNew || 0, unmatched: G.stats.relUnmatched || 0 }),
       tick: (n) => { for (let i = 0; i < n; i++) stepSim(); draw(); },
+      stepFrame: () => frameLoop(),
     };
 
     initGraph();
