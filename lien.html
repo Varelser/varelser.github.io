@@ -1652,6 +1652,9 @@
 
       function setConfigValue(key, value, opts) {
         const options = opts || {};
+        // Re-selecting the already-active value of a trajectory-defining
+        // setting must not erase the artwork: it changes nothing.
+        if (CONFIG_RESET_KEYS.has(key) && state.config[key] === value) return;
         state.config[key] = value;
         if (key === 'lineWidthMin' && state.config.lineWidthMin > state.config.lineWidthMax) {
           state.config.lineWidthMax = state.config.lineWidthMin;
@@ -1677,7 +1680,11 @@
       // snapshot first, and resets the simulation only if a
       // trajectory-defining key actually changed.
       function applyConfigPatch(patch, snapshot) {
-        if (snapshot) captureUndo();
+        let anyChange = false;
+        for (const changeKey in patch) {
+          if (patch[changeKey] !== state.config[changeKey]) { anyChange = true; break; }
+        }
+        if (snapshot && anyChange) captureUndo();
         let needsReset = false;
         let needsComposite = false;
         for (const key in patch) {
@@ -1700,6 +1707,12 @@
       // replay bookkeeping used by export.
       function captureUndo() {
         if (!artCanvas || !artCanvas.width || !particlesRef.current.length) return;
+        // Never let a younger canvas clobber the snapshot of a more
+        // developed artwork: repeating a destructive action (a second
+        // Reset click, holding R, re-clicking a preset) would otherwise
+        // replace the saved artwork with the near-blank state it just
+        // produced, and Undo would restore the wrong thing.
+        if (undoSnapshot && framesRef.current < undoSnapshot.frames) return;
         const art = document.createElement('canvas');
         art.width = artCanvas.width;
         art.height = artCanvas.height;
@@ -1990,6 +2003,9 @@
             if (event.key === 'Escape') exportCancelRequested = true;
             return;
           }
+          // Held keys auto-repeat: one press must mean one action,
+          // otherwise holding R or Space fires the action many times.
+          if (event.repeat) return;
           if (event.key === 'Escape') {
             closePanels();
             return;
@@ -2060,6 +2076,13 @@
         for (let i = 0; i < sliderKeys.length; i++) {
           const key = sliderKeys[i];
           const input = inputs[key];
+          if (CONFIG_RESET_KEYS.has(key)) {
+            // A drag on a trajectory slider resets the artwork on the
+            // first input event, so the undo snapshot has to be taken
+            // when the interaction starts, not when the value changes.
+            input.addEventListener('pointerdown', function() { captureUndo(); });
+            input.addEventListener('keydown', function() { captureUndo(); });
+          }
           input.addEventListener('input', function(event) {
             const raw = parseFloat(event.target.value);
             let next = raw;
@@ -2102,6 +2125,7 @@
             const key = btn.getAttribute('data-config-key');
             const value = btn.getAttribute('data-config-value');
             if (!key) return;
+            if (CONFIG_RESET_KEYS.has(key) && state.config[key] !== value) captureUndo();
             setConfigValue(key, value);
           });
         }
