@@ -3850,7 +3850,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         if (tipTarget && tipEl.classList.contains('visible')) positionTip(e.clientX, e.clientY);
       });
       addEventListener('mouseout', (e) => {
-        if (!e.relatedTarget) hideTip();
+        if (!e.relatedTarget && tipEl.classList.contains('visible')) hideTip();
       });
       addEventListener('focusin', (e) => {
         const t = e.target && e.target.closest ? e.target.closest('[data-help]') : null;
