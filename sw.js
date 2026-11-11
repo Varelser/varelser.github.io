@@ -1,1 +1,45 @@
-if(!self.define){let e,s={};const i=(i,n)=>(i=new URL(i+".js",n).href,s[i]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=i,e.onload=s,document.head.appendChild(e)}else e=i,importScripts(i),s()}).then(()=>{let e=s[i];if(!e)throw new Error(`Module ${i} didn’t register its module`);return e}));self.define=(n,r)=>{const a=e||("document"in self?document.currentScript.src:"")||location.href;if(s[a])return;let o={};const l=e=>i(e,a),t={module:{uri:a},exports:o,require:l};s[a]=Promise.all(n.map(e=>t[e]||l(e))).then(e=>(r(...e),o))}}define(["./workbox-354287e6"],function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"pwa-screenshot-wide.svg",revision:"d45178d6ddf7fa179cd1f4c603a78657"},{url:"pwa-screenshot-narrow.svg",revision:"6d6fd54ea5bfe268af61685555dd86a5"},{url:"index.html",revision:"589fee0902e5f26a4335abb4de3923c9"},{url:"icon.svg",revision:"414afefc4a0e9305bebd98446e81c330"},{url:"icon-maskable.svg",revision:"2448231fd3890334a11f38f828c6b180"},{url:"favicon.svg",revision:"69053a2454391012046772b714a113ee"},{url:"assets/vendor-runtime-YH0EB74N.js",revision:null},{url:"assets/vendor-pdf-3-Yqd_nx.js",revision:null},{url:"assets/vendor-docio-DJA4Ys-e.js",revision:null},{url:"assets/index-CrmTgDcf.css",revision:null},{url:"assets/index-B4UWUHJ7.js",revision:null},{url:"assets/app-views-D_bt9FrC.js",revision:null},{url:"assets/app-spatial-FOHlRkyY.js",revision:null},{url:"assets/app-panels-deferred-iZhShbs4.js",revision:null},{url:"assets/app-panels-DdV_gvsi.js",revision:null},{url:"assets/app-core-CmBLC1qf.js",revision:null},{url:"favicon.svg",revision:"69053a2454391012046772b714a113ee"},{url:"icon-maskable.svg",revision:"2448231fd3890334a11f38f828c6b180"},{url:"icon.svg",revision:"414afefc4a0e9305bebd98446e81c330"},{url:"pwa-screenshot-narrow.svg",revision:"6d6fd54ea5bfe268af61685555dd86a5"},{url:"pwa-screenshot-wide.svg",revision:"d45178d6ddf7fa179cd1f4c603a78657"},{url:"manifest.webmanifest",revision:"0bd9da0be0d1a4d16407508afb09fa71"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html"))),e.registerRoute(/\.(?:js|css|html)$/,new e.NetworkFirst({cacheName:"thought-workbench-static",plugins:[new e.ExpirationPlugin({maxEntries:60,maxAgeSeconds:2592e3})]}),"GET"),e.registerRoute(/\.(?:png|jpg|jpeg|svg|gif|ico|webp)$/,new e.CacheFirst({cacheName:"thought-workbench-images",plugins:[new e.ExpirationPlugin({maxEntries:60,maxAgeSeconds:7776e3})]}),"GET")});
+// Noise PWA service worker: cache-first for the app shell, stale-while-revalidate.
+const CACHE = 'noise-pwa-v1';
+const CORE = [
+  '/noise.html',
+  '/manifest.webmanifest',
+  '/icon.svg',
+  'https://noise-assets.pages.dev/icon-192.png',
+  'https://noise-assets.pages.dev/icon-512.png',
+  'https://noise-assets.pages.dev/icon-maskable-512.png',
+];
+self.addEventListener('install', (event) => {
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  const isCore = CORE.includes(url.pathname) || CORE.includes(req.url);
+  const isFont = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
+  if (!isCore && !isFont) return; // everything else: default network handling
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    const cached = await cache.match(req, { ignoreSearch: true });
+    const network = fetch(req).then((res) => {
+      if (res && (res.status === 200 || res.type === 'opaque')) cache.put(req, res.clone());
+      return res;
+    });
+    if (cached) {
+      network.catch(() => {});
+      return cached;
+    }
+    try {
+      return await network;
+    } catch (err) {
+      return new Response('Offline', { status: 503, statusText: 'Offline' });
+    }
+  })());
+});

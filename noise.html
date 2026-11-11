@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Noise">
+<link rel="apple-touch-icon" href="https://noise-assets.pages.dev/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
 <title>Noise</title>
 <meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。47種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta name="theme-color" content="#000000">
@@ -4075,6 +4083,16 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   drawLoop();
   if (!restoreAutosave()) engine.rebuild();
   applyUrlParams();
+
+  // PWA: register the service worker (offline + installable). Guarded so
+  // non-secure or unsupported contexts simply skip it.
+  try {
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator && window.isSecureContext) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  } catch (err) { /* PWA is optional */ }
 })();
 
 </script>
