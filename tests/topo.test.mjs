@@ -259,7 +259,208 @@ async function main() {
 }
 
 function finish() {
-  console.log(`\n${passed} passed, ${failed} failed`);
+  
+// ---------- v3: unified pure core / worker / performance ----------
+
+const P5_NOISE_POINTS = [[0, 0], [0.5, 0.5], [1.234, 5.678], [10.3, 7.9], [123.456, 789.012], [0.001, 0.999], [55.5, 44.4], [3.14159, 2.71828], [999.9, 0.1], [42, 42]];
+// Golden values captured from the REAL p5.js 1.6.0 (unminified cdnjs build)
+// executed in a Node vm with DOM stubs (Object.create(p5.prototype)).
+const P5_NOISE_GOLDEN = {
+  42: [0.23657360135985073, 0.545861631151638, 0.5815667471822621, 0.2906978839319886, 0.5438622891067466, 0.3064290981153905, 0.3578792172824211, 0.3614049146345455, 0.6353107637488877, 0.5234830810077256],
+  777: [0.5036214456777088, 0.40333592699607834, 0.5880289597098413, 0.33491501007377406, 0.573929948766857, 0.657538345057417, 0.3291281315626731, 0.3321174385024342, 0.6998523202665139, 0.7894149922649376]
+};
+// random() call sequence: random(), random(800), random(600), random(0.4, 2.0), random()
+const P5_RANDOM_GOLDEN = {
+  987655098: [0.3664631734136492, 279.83546182513237, 383.21164255030453, 0.6692182116210461, 0.5133795489091426],
+  13122: [0.32153092161752284, 394.69870403409004, 336.8900415021926, 1.0345925889909267, 0.7543117993045598]
+};
+
+check('core noise matches real p5 1.6.0 values (golden)', () => {
+  for (const [seedStr, expected] of Object.entries(P5_NOISE_GOLDEN)) {
+    const seed = Number(seedStr);
+    const got = run(`(() => { const c = createCoreState(); coreNoiseSeed(c, ${seed}); return ${JSON.stringify(P5_NOISE_POINTS)}.map(([x, y]) => coreNoise(c, x, y, 0)); })()`);
+    assert.equal(got.length, expected.length);
+    got.forEach((v, i) => assert.ok(Math.abs(v - expected[i]) < 1e-9, `seed ${seed} point ${i}: ${v} != ${expected[i]}`));
+  }
+});
+
+// Independent reference implementation, written directly from the
+// unminified p5 1.6.0 source (separate reading from the core code).
+function makeRefNoise() {
+  const PERLIN_SIZE = 4095;
+  let perlin = null;
+  let z = 0;
+  const next = () => { z = (1664525 * z + 1013904223) % 4294967296; return z / 4294967296; };
+  return {
+    seed(s) { z = s >>> 0; perlin = new Array(PERLIN_SIZE + 1); for (let i = 0; i <= PERLIN_SIZE; i++) perlin[i] = next(); },
+    noise(x, y = 0, zz = 0) {
+      const YWRAP = 1 << 4, ZWRAP = 1 << 8;
+      const sc = (i) => 0.5 * (1.0 - Math.cos(i * Math.PI));
+      if (x < 0) x = -x; if (y < 0) y = -y; if (zz < 0) zz = -zz;
+      let xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(zz);
+      let xf = x - xi, yf = y - yi, zf = zz - zi;
+      let r = 0, ampl = 0.5, n1, n2, n3;
+      for (let o = 0; o < 4; o++) {
+        let of = xi + (yi << 4) + (zi << 8);
+        const rxf = sc(xf), ryf = sc(yf);
+        n1 = perlin[of & PERLIN_SIZE];
+        n1 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n1);
+        n2 = perlin[(of + YWRAP) & PERLIN_SIZE];
+        n2 += rxf * (perlin[(of + YWRAP + 1) & PERLIN_SIZE] - n2);
+        n1 += ryf * (n2 - n1);
+        of += ZWRAP;
+        n2 = perlin[of & PERLIN_SIZE];
+        n2 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n2);
+        n3 = perlin[(of + YWRAP) & PERLIN_SIZE];
+        n3 += rxf * (perlin[(of + YWRAP + 1) & PERLIN_SIZE] - n3);
+        n2 += ryf * (n3 - n2);
+        n1 += sc(zf) * (n2 - n1);
+        r += n1 * ampl;
+        ampl *= 0.5;
+        xi <<= 1; xf *= 2; yi <<= 1; yf *= 2; zi <<= 1; zf *= 2;
+        if (xf >= 1.0) { xi++; xf--; }
+        if (yf >= 1.0) { yi++; yf--; }
+        if (zf >= 1.0) { zi++; zf--; }
+      }
+      return r;
+    }
+  };
+}
+
+check('core noise matches independent reference implementation', () => {
+  const ref = makeRefNoise();
+  for (const seed of [42, 777, 123456789, 5]) {
+    ref.seed(seed);
+    const got = run(`(() => { const c = createCoreState(); coreNoiseSeed(c, ${seed}); return ${JSON.stringify(P5_NOISE_POINTS)}.map(([x, y]) => coreNoise(c, x, y, 0)); })()`);
+    P5_NOISE_POINTS.forEach(([x, y], i) => {
+      const expected = ref.noise(x, y);
+      assert.ok(Math.abs(got[i] - expected) < 1e-9, `seed ${seed} point ${i}: ${got[i]} != ${expected}`);
+    });
+  }
+});
+
+check('core LCG random matches real p5 1.6.0 values (golden)', () => {
+  for (const [seedStr, expected] of Object.entries(P5_RANDOM_GOLDEN)) {
+    const seed = Number(seedStr);
+    const got = run(`(() => { const c = createCoreState(); coreRandomSeed(c, ${seed}); return [coreRandom(c), coreRandom(c, 800), coreRandom(c, 600), coreRandom(c, 0.4, 2.0), coreRandom(c)]; })()`);
+    got.forEach((v, i) => assert.ok(Math.abs(v - expected[i]) < 1e-9, `seed ${seed} call ${i}: ${v} != ${expected[i]}`));
+  }
+});
+
+const GOLDEN_CHECKSUM = '672:2181243.391762:12'; // 800x600, defaults, seed 777, one centre hole (matches pre-v3 output exactly)
+
+check('golden checksum regression: new core reproduces pre-v3 contours', () => {
+  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700 });`);
+  run(`__resetState(777)`);
+  const sd = run(`buildSceneData(800, 600, 777)`);
+  assert.equal(sceneChecksum(sd), GOLDEN_CHECKSUM);
+});
+
+check('worker source assembled from core functions, runs identically in vm', () => {
+  const srcText = run(`getWorkerSourceText()`);
+  assert.equal(typeof srcText, 'string');
+  assert.ok(srcText.includes('function coreSampleFieldAt'), 'worker source must contain the core field sampler');
+  assert.ok(srcText.includes('function coreMarchingSquaresPaths'), 'worker source must contain core marching squares');
+  assert.ok(srcText.includes('self.onmessage'), 'worker source must install the message handler');
+
+  const messages = [];
+  const workerSandbox = {
+    console,
+    self: {
+      onmessage: null,
+      postMessage: (msg) => { messages.push(msg); }
+    }
+  };
+  workerSandbox.globalThis = workerSandbox;
+  const wctx = vm.createContext(workerSandbox);
+  vm.runInContext(srcText, wctx);
+  assert.equal(typeof workerSandbox.self.onmessage, 'function');
+
+  const req = run(`(() => { __resetState(777); return { id: 99, params: coreParamsSnapshot(), holes: snapshotSceneHoles(), seed: 777, width: 800, height: 600, baseW: 800, baseH: 600, gridStep: 12 }; })()`);
+  workerSandbox.self.onmessage({ data: req });
+  const result = messages.find((m) => m.type === 'result');
+  assert.ok(result, 'worker must post a result message');
+  assert.equal(result.id, 99);
+  const payload = result.payload;
+  // Checksum straight from the flattened typed arrays.
+  let sum = 0;
+  let offset = 0;
+  for (let i = 0; i < payload.counts.length; i++) {
+    sum += payload.counts[i];
+    for (let j = 0; j < payload.counts[i]; j++) {
+      sum += payload.coords[offset++] * 0.1234567 + payload.coords[offset++] * 0.7654321;
+    }
+  }
+  const workerChecksum = `${payload.counts.length}:${sum.toFixed(6)}:${payload.gridStep}`;
+  assert.equal(workerChecksum, GOLDEN_CHECKSUM);
+  // Progress messages were throttled to integer-percent changes.
+  const progresses = messages.filter((m) => m.type === 'progress').map((m) => Math.floor(m.progress * 100));
+  assert.ok(progresses.length <= 101, `too many progress messages: ${progresses.length}`);
+  assert.ok(progresses.every((v, i) => i === 0 || v > progresses[i - 1]), 'progress percents must be strictly increasing');
+});
+
+check('worker fallback: no Worker support falls back and is flagged', () => {
+  assert.equal(typeof run(`getWorkerState`), 'function');
+  // The test sandbox has no Worker/Blob/URL.createObjectURL, so creation must fail safe.
+  assert.equal(run(`ensureTopoWorker()`), null);
+  assert.equal(run(`getWorkerState().failed`), true);
+  const promise = run(`buildSceneViaWorker({ params: coreParamsSnapshot(), holes: snapshotSceneHoles(), seed: 1, width: 100, height: 100, baseW: 100, baseH: 100, gridStep: 10 }, null)`);
+  assert.ok(promise && typeof promise.then === 'function', 'buildSceneViaWorker must return a promise');
+  promise.then((res) => assert.equal(res, null));
+});
+
+check('culled field matches non-culled within epsilon 1e-3', () => {
+  const maxDiff = run(`(() => {
+    const cp = { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700 };
+    const holes2 = [
+      { x: 0.12, y: 0.2, radius: 0.55, strength: 1.0, waveAmp: 1.0, phase: 1.1 },
+      { x: 0.88, y: 0.75, radius: 0.6, strength: 1.2, waveAmp: 0.8, phase: 2.6 }
+    ];
+    const core = createCoreState();
+    coreNoiseSeed(core, 777);
+    const prep = corePrepareField(cp, holes2, 1920, 1080, 777);
+    let maxD = 0;
+    for (let gy = 0; gy <= 90; gy++) {
+      for (let gx = 0; gx <= 160; gx++) {
+        const x = gx * 12, y = gy * 12;
+        const d = Math.abs(coreSampleFieldAt(core, prep, x, y, true) - coreSampleFieldAt(core, prep, x, y, false));
+        if (d > maxD) maxD = d;
+      }
+    }
+    return maxD;
+  })()`);
+  assert.ok(maxDiff > 0, 'culling should actually engage somewhere on this grid');
+  assert.ok(maxDiff < 1e-3, `max culled field diff ${maxDiff} exceeds epsilon`);
+});
+
+check('flatten/unflatten round-trip preserves the scene', () => {
+  const before = run(`buildSceneData(400, 300, 42)`);
+  const restored = run(`unflattenScene(flattenScene(buildSceneData(400, 300, 42)))`);
+  assert.equal(sceneChecksum(restored), sceneChecksum(before));
+  assert.equal(restored.textureDots.length, before.textureDots.length);
+  assert.ok(Math.abs(restored.textureDots[0].x - before.textureDots[0].x) < 1e-12);
+});
+
+check('static: single core field implementation, worker assembly present', () => {
+  assert.equal((html.match(/function coreSampleFieldAt/g) || []).length, 1);
+  assert.equal((html.match(/function coreMarchingSquaresPaths/g) || []).length, 1);
+  assert.ok(html.includes('TOPO_CORE_FUNCTIONS'), 'core function list for worker assembly');
+  assert.ok(html.includes('getWorkerSourceText'), 'worker source assembly');
+  assert.ok(html.includes('new Blob('), 'worker created from Blob URL');
+  assert.ok(html.includes('Workerで計算中'), 'worker status indication');
+  assert.ok(html.includes('WORKER_SCREEN_THRESHOLD = 3000000'), 'screen worker threshold');
+  assert.equal(typeof run(`renderArtworkCache`), 'function');
+  assert.equal(typeof run(`invalidateArtworkCache`), 'function');
+  assert.ok(html.includes('image(artworkCache'), 'draw() blits the artwork cache');
+});
+
+check('stitch quantization scale matches grid step (v2 key precision)', () => {
+  assert.equal(run(`coreStitchScale(12)`), 1000);
+  assert.equal(run(`coreStitchScale(4)`), 10000);
+  assert.equal(run(`coreStitchScale(18)`), 1000);
+});
+
+console.log(`\n${passed} passed, ${failed} failed`);
   process.exit(failed === 0 ? 0 : 1);
 }
 
