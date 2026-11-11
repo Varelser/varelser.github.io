@@ -1938,7 +1938,10 @@ const TOPO_CORE_FUNCTIONS = [
 ];
 
 function getCoreSourceText() {
-  return TOPO_CORE_FUNCTIONS.map((f) => f.toString()).join('\n\n');
+  // Core functions reference the CORE_CULL_ND constant; it must travel
+  // with the assembled source or the Worker copy is incomplete.
+  return 'const CORE_CULL_ND = ' + CORE_CULL_ND + ';\n\n'
+    + TOPO_CORE_FUNCTIONS.map((f) => f.toString()).join('\n\n');
 }
 
 function getWorkerSourceText() {
