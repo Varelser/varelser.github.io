@@ -1,0 +1,80 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows:
+      - Update nurse news
+      - Update arXiv digest
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Assemble static site
+        run: |
+          mkdir -p cf-site
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'cf-site/' \
+            --exclude 'backups/' \
+            --exclude 'scripts/' \
+            --exclude 'tests/' \
+            --exclude 'netlify.toml' \
+            --exclude 'requirements.txt' \
+            --exclude 'requirements-nurse-news.txt' \
+            --exclude 'seen_urls.json' \
+            --exclude '.nurse-news-state.json' \
+            --exclude '.arxiv-state.json' \
+            --exclude 'update_news.py' \
+            --exclude 'temp-test-write.txt' \
+            --exclude 'README-arxiv-automation.md' \
+            --exclude 'README-nurse-news-automation.md' \
+            ./ cf-site/
+          echo "Files to deploy:"
+          find cf-site -type f | wc -l
+
+      - name: Check Cloudflare secrets
+        id: cf_secrets
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CF_TOKEN" ] || [ -z "$CF_ACCOUNT" ]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID secrets are not set yet. Skipping deploy."
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "missing=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy
+        if: ${{ steps.cf_secrets.outputs.missing == 'false' }}
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy cf-site --project-name=varelser --branch=main --commit-dirty=true
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
