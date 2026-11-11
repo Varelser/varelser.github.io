@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Punkt v2 (2026-11-11): zero-value sanitize fix, pre-change undo snapshots, true Poisson-disk sampling, unified processing core, export size guards, history mask budget, 20MP input cap. Tests: tests/punkt.test.mjs -->
+<!-- Punkt v2 (2026-11-11): zero-value sanitize fix, pre-change undo snapshots, true Poisson-disk sampling, unified processing core, export size guards, history mask budget, 20MP input cap. Tests: tests/punkt.test.mjs. v3 (2026-11-11): weighted Voronoi stippling, keyboard mask painting. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -706,7 +706,7 @@
       </div>
       <div class="canvas-wrap" id="canvasWrap">
         <div class="canvas-holder" id="canvasHolder">
-          <div class="scene-wrap" id="sceneWrap" aria-label="preview canvas area">
+          <div class="scene-wrap" id="sceneWrap" tabindex="0" aria-label="Preview. When a mask brush mode is active: arrow keys move the brush cursor, holding Space paints, Shift+arrows move faster.">
             <canvas id="previewCanvas"></canvas>
             <canvas id="maskCanvas"></canvas>
             <div class="compare-split" id="compareSplit"></div>
@@ -1110,6 +1110,8 @@
       historyRedo: [],
       suppressHistory: false,
       currentPointer: null,
+      keyboardCursor: null,
+      keyboardPainting: false,
       localPresets: [],
       seedLibrary: [],
       scheduledProcessTimer: 0
@@ -1826,15 +1828,23 @@
         if (v < 100) return v / 100;
         return 1 + ((v - 100) / 100) * 0.75;
       }
-      function evaluate(px, py) {
-        if (px < 0 || py < 0 || px >= width || py >= height) return null;
-        const xi = Math.floor(px), yi = Math.floor(py), flat = yi * width + xi, idx = flat * 4;
+      // Density at an integer pixel, using exactly the formula evaluate() applies
+      // (brightness/contrast/invert/curve/mask/alpha), without the threshold gate
+      // or radius logic. Returns -1 for fully transparent pixels.
+      function densityAt(xi, yi) {
+        const flat = yi * width + xi, idx = flat * 4;
         const alpha = data[idx + 3];
-        if (alpha === 0) { skippedTransparent++; return null; }
+        if (alpha === 0) return -1;
         let gray = brightness(idx);
         let density = invert ? gray : (1 - gray);
         density = curveAdjust(density);
-        density = clamp(density * maskWeight(flat) * (alpha / 255), 0, 1.6);
+        return clamp(density * maskWeight(flat) * (alpha / 255), 0, 1.6);
+      }
+      function evaluate(px, py) {
+        if (px < 0 || py < 0 || px >= width || py >= height) return null;
+        const xi = Math.floor(px), yi = Math.floor(py);
+        const density = densityAt(xi, yi);
+        if (density < 0) { skippedTransparent++; return null; }
         if (density < thresholdGate) return null;
         const edge = edgeAt(xi, yi);
         let radius = minRadius + radiusRange * Math.min(1, density);
@@ -1930,50 +1940,110 @@
         }
       } else {
         const jitterFactor = 0.8;
-        let records = [];
+        // --- Weighted Voronoi stippling (Lloyd relaxation over a density field) ---
+        // Density sample field: same density formula as evaluate() (via densityAt),
+        // without the threshold gate. Following Secord's weighted Voronoi stippling,
+        // the field is sampled per source pixel; the step is only raised as needed to
+        // keep the total at or below ~2,000,000 samples. A coarser discrete field
+        // freezes Lloyd's iteration in an exact fixed point before points can
+        // redistribute toward dense regions, so the fine field is what produces the
+        // density response. Samples with weight <= 0.01 (or alpha 0) are dropped.
+        let sampleStep = 1;
+        while (sampleStep < Math.max(width, height) && Math.ceil(width / sampleStep) * Math.ceil(height / sampleStep) > 2000000) sampleStep++;
+        const sampleCapacity = Math.ceil(width / sampleStep) * Math.ceil(height / sampleStep);
+        const sampleX = new Float32Array(sampleCapacity);
+        const sampleY = new Float32Array(sampleCapacity);
+        const sampleW = new Float32Array(sampleCapacity);
+        let sampleCount = 0;
+        for (let y = 0; y < height; y += sampleStep) {
+          for (let x = 0; x < width; x += sampleStep) {
+            const xi = Math.min(width - 1, Math.floor(x + sampleStep / 2));
+            const yi = Math.min(height - 1, Math.floor(y + sampleStep / 2));
+            const w = densityAt(xi, yi);
+            if (w > 0.01) { sampleX[sampleCount] = xi; sampleY[sampleCount] = yi; sampleW[sampleCount] = w; sampleCount++; }
+          }
+        }
+        // Initial points: jittered grid, filtered by evaluate() as before.
+        let ptsX = [];
+        let ptsY = [];
         for (let y = 0; y < height; y += spacing) {
           for (let x = 0; x < width; x += spacing) {
             const jitter = spacing * jitterFactor;
             const px = x + spacing * 0.5 + (rng() - 0.5) * jitter * 2;
             const py = y + spacing * 0.5 + (rng() - 0.5) * jitter * 2;
-            const rec = evaluate(px, py);
-            if (rec) records.push(rec);
+            if (evaluate(px, py)) { ptsX.push(px); ptsY.push(py); }
           }
         }
-        for (let pass = 0; pass < 2; pass++) {
-          if (records.length < 2) break;
-          const cell = spacing;
-          const hash = new Map();
-          records.forEach((rec, i) => {
-            const key = Math.floor(rec[0] / cell) + ':' + Math.floor(rec[1] / cell);
-            if (!hash.has(key)) hash.set(key, []);
-            hash.get(key).push(i);
-          });
-          const next = records.slice();
-          records.forEach((rec, i) => {
-            const cx = Math.floor(rec[0] / cell), cy = Math.floor(rec[1] / cell);
-            let sw = 0, sx = 0, sy = 0;
-            for (let yy = cy - 1; yy <= cy + 1; yy++) {
-              for (let xx = cx - 1; xx <= cx + 1; xx++) {
-                const bucket = hash.get(xx + ':' + yy);
-                if (!bucket) continue;
-                for (const j of bucket) {
-                  const o = records[j];
-                  const dx = o[0] - rec[0], dy = o[1] - rec[1];
-                  if (dx * dx + dy * dy > spacing * spacing) continue;
-                  const w = Math.max(0.0001, o[3]);
-                  sw += w; sx += o[0] * w; sy += o[1] * w;
+        // Lloyd iterations: assign each sample to its nearest point, then move every
+        // point to the density-weighted centroid of its assigned samples. The work is
+        // budgeted by sample count (small fields run the full 40 iterations, large
+        // fields fewer, with an early stop when movement converges) so big images
+        // stay interactive; a dense grid + linked lists keeps each assignment cheap.
+        const cell = spacing;
+        const gridW = Math.max(1, Math.ceil(width / cell));
+        const gridH = Math.max(1, Math.ceil(height / cell));
+        const sampleCell = new Int32Array(sampleCount);
+        for (let s = 0; s < sampleCount; s++) {
+          sampleCell[s] = Math.floor(sampleY[s] / cell) * gridW + Math.floor(sampleX[s] / cell);
+        }
+        const maxAssignDist2 = (2 * spacing) * (2 * spacing);
+        const iterations = clamp(Math.floor(6000000 / Math.max(1, sampleCount)), 6, 40);
+        for (let iter = 0; iter < iterations; iter++) {
+          const n = ptsX.length;
+          if (n === 0 || sampleCount === 0) break;
+          const head = new Int32Array(gridW * gridH).fill(-1);
+          const next = new Int32Array(n);
+          for (let i = 0; i < n; i++) {
+            const c = Math.floor(ptsY[i] / cell) * gridW + Math.floor(ptsX[i] / cell);
+            next[i] = head[c];
+            head[c] = i;
+          }
+          const sumW = new Float64Array(n);
+          const sumX = new Float64Array(n);
+          const sumY = new Float64Array(n);
+          for (let s = 0; s < sampleCount; s++) {
+            const sx = sampleX[s], sy = sampleY[s];
+            const sc = sampleCell[s];
+            const scx = sc % gridW, scy = Math.floor(sc / gridW);
+            let best = -1, bestD2 = Infinity;
+            for (let ring = 0; ring <= 2; ring++) {
+              const x0 = Math.max(0, scx - ring), x1 = Math.min(gridW - 1, scx + ring);
+              const y0 = Math.max(0, scy - ring), y1 = Math.min(gridH - 1, scy + ring);
+              for (let yy = y0; yy <= y1; yy++) {
+                for (let xx = x0; xx <= x1; xx++) {
+                  if (Math.max(Math.abs(xx - scx), Math.abs(yy - scy)) !== ring) continue;
+                  let j = head[yy * gridW + xx];
+                  while (j >= 0) {
+                    const dx = ptsX[j] - sx, dy = ptsY[j] - sy;
+                    const d2 = dx * dx + dy * dy;
+                    if (d2 < bestD2) { bestD2 = d2; best = j; }
+                    j = next[j];
+                  }
                 }
               }
+              // Points in farther rings are at least ring*cell away, so they cannot win.
+              if (best >= 0 && bestD2 <= (ring * cell) * (ring * cell)) break;
             }
-            if (sw > 0) {
-              const moved = evaluate(sx / sw, sy / sw);
-              if (moved) next[i] = moved;
+            if (best < 0 || bestD2 > maxAssignDist2) continue;
+            const w = sampleW[s];
+            sumW[best] += w;
+            sumX[best] += sx * w;
+            sumY[best] += sy * w;
+          }
+          let maxMove = 0;
+          for (let i = 0; i < n; i++) {
+            if (sumW[i] > 0) {
+              const nx = clamp(sumX[i] / sumW[i], 0, width - 1);
+              const ny = clamp(sumY[i] / sumW[i], 0, height - 1);
+              const moved = Math.abs(nx - ptsX[i]) + Math.abs(ny - ptsY[i]);
+              if (moved > maxMove) maxMove = moved;
+              ptsX[i] = nx;
+              ptsY[i] = ny;
             }
-          });
-          records = next;
+          }
+          if (maxMove < 0.05) break;
         }
-        for (const rec of records) accept(rec);
+        for (let i = 0; i < ptsX.length; i++) accept(evaluate(ptsX[i], ptsY[i]));
       }
       return {
         points: new Float32Array(values),
@@ -2787,6 +2857,8 @@
       state.compareA = null;
       state.compareB = null;
       state.maskData = null;
+      state.keyboardCursor = null;
+      state.keyboardPainting = false;
       state.fit = null;
       state.historyUndo.length = 0;
       state.historyRedo.length = 0;
@@ -2995,6 +3067,54 @@
     els.sceneWrap.addEventListener('pointerup', endMaskStroke);
     els.sceneWrap.addEventListener('pointerleave', () => updateMaskCanvas());
     els.sceneWrap.addEventListener('pointercancel', endMaskStroke);
+
+    // Keyboard mask painting: arrow keys move a brush cursor in source coordinates,
+    // holding Space paints (mirrors beginMaskStroke/endMaskStroke semantics).
+    function ensureKeyboardCursor() {
+      if (!state.source) return null;
+      if (!state.keyboardCursor) {
+        state.keyboardCursor = { x: Math.floor(state.source.width / 2), y: Math.floor(state.source.height / 2) };
+      }
+      state.keyboardCursor.x = clamp(state.keyboardCursor.x, 0, state.source.width - 1);
+      state.keyboardCursor.y = clamp(state.keyboardCursor.y, 0, state.source.height - 1);
+      return state.keyboardCursor;
+    }
+
+    els.sceneWrap.addEventListener('keydown', (event) => {
+      if (!state.source || state.config.maskMode === 'off') return;
+      const cursor = ensureKeyboardCursor();
+      if (!cursor) return;
+      const isSpace = event.key === ' ' || event.code === 'Space';
+      if (isSpace) {
+        event.preventDefault();
+        if (!event.repeat && !state.keyboardPainting) {
+          pushHistory('mask-stroke', { includeMask: true });
+          state.keyboardPainting = true;
+          applyMaskStroke({ x: cursor.x, y: cursor.y });
+          updateMaskCanvas(sourceToPreview(cursor.x, cursor.y));
+        }
+        return;
+      }
+      const step = event.shiftKey ? 32 : 8;
+      let moved = false;
+      if (event.key === 'ArrowLeft') { cursor.x = clamp(cursor.x - step, 0, state.source.width - 1); moved = true; }
+      else if (event.key === 'ArrowRight') { cursor.x = clamp(cursor.x + step, 0, state.source.width - 1); moved = true; }
+      else if (event.key === 'ArrowUp') { cursor.y = clamp(cursor.y - step, 0, state.source.height - 1); moved = true; }
+      else if (event.key === 'ArrowDown') { cursor.y = clamp(cursor.y + step, 0, state.source.height - 1); moved = true; }
+      if (!moved) return;
+      event.preventDefault();
+      if (state.keyboardPainting) applyMaskStroke({ x: cursor.x, y: cursor.y });
+      updateMaskCanvas(sourceToPreview(cursor.x, cursor.y));
+    });
+
+    els.sceneWrap.addEventListener('keyup', (event) => {
+      const isSpace = event.key === ' ' || event.code === 'Space';
+      if (!isSpace || !state.keyboardPainting) return;
+      state.keyboardPainting = false;
+      const cursor = ensureKeyboardCursor();
+      if (cursor) updateMaskCanvas(sourceToPreview(cursor.x, cursor.y));
+      scheduleProcess(20);
+    });
 
     els.curveCanvas.addEventListener('pointerdown', (event) => {
       pushHistory('curve-drag');
