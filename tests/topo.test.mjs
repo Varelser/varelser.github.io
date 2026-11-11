@@ -251,6 +251,42 @@ async function main() {
   `);
   check('applySeed validates and is deterministic', seedApplyResult === true);
 
+  // 14b. v6: deleting a non-last hole, then reloading the saved
+  // settings, reproduces the identical scene (phase is persisted).
+  const deleteReloadResult = run(`
+    (() => {
+      const chk = (sd) => { let v = 0; for (const c of sd.contours) { v += c.points.length; for (const pt of c.points) v += pt.x * 0.123 + pt.y * 0.765; } return sd.contours.length + ':' + v.toFixed(4); };
+      Object.assign(params, JSON.parse(JSON.stringify(DEFAULT_PARAMS)));
+      seedVal = 777;
+      holes = [createHole(0.25, 0.3, {}), createHole(0.5, 0.5, {}), createHole(0.75, 0.7, {})];
+      for (let i = 0; i < holes.length; i++) holes[i].phase = computeHolePhase(i);
+      selectedHoleIndex = 0;
+      deleteSelectedHole();
+      const live = chk(buildSceneData(500, 400, 777));
+      const parsed = parseSettingsJSON(serializeSettings());
+      if (!parsed.ok) return false;
+      applySettingsData(parsed.data);
+      const reloaded = chk(buildSceneData(500, 400, 777));
+      return live === reloaded && holes.length === 2;
+    })()
+  `);
+  check('v6: scene after hole deletion reproduces after settings reload (phase persisted)', deleteReloadResult === true);
+
+  // 14c. v6: legacy settings without phase fall back to index-derived
+  // phases; EXPORT_TRANSPARENT round-trips; hole clamp unified 0.02-0.98.
+  const legacyResult = run(`
+    (() => {
+      const legacy = parseSettingsJSON('{"params":{"EXPORT_TRANSPARENT":false},"holes":[{"x":0.02,"y":0.99,"radius":1,"strength":1,"waveAmp":1},{"x":0.5,"y":0.5,"radius":1,"strength":1,"waveAmp":1}],"seed":777}');
+      if (!legacy.ok) return false;
+      const h0 = legacy.data.holes[0];
+      return legacy.data.params.EXPORT_TRANSPARENT === false &&
+        h0.x === 0.02 && h0.y === 0.98 &&
+        Math.abs(h0.phase - computeHolePhase(0, 777)) < 1e-9 &&
+        Math.abs(legacy.data.holes[1].phase - computeHolePhase(1, 777)) < 1e-9;
+    })()
+  `);
+  check('v6: legacy settings get index-derived phases; hole clamp 0.02-0.98; transparent flag round-trips', legacyResult === true);
+
   // ---- static HTML checks ----
   check('html has lang="ja"', /<html lang="ja">/.test(html));
   check('p5 script tag has SRI integrity sha512', /integrity="sha512-[A-Za-z0-9+/=]+"/.test(html));
@@ -259,6 +295,8 @@ async function main() {
   check('no window.confirm/prompt/alert usage', !/window\.(confirm|prompt|alert)/.test(html) && !/\b(confirm|prompt|alert)\s*\(/.test(mainScript));
   check('unified draw routines only (no old duplicated pairs)', !/drawSmoothPath(Main|OnGraphics)|drawFaintTextureTo(Main|Graphics)/.test(html));
   check('grid resolution label renamed', html.includes('グリッド解像度 (ANGLE_STEPS)') && !html.includes('角度分割相当'));
+  check('v6: ANGLE_STEPS slider step is 1 (default 900 on-step)', /id="a" type="range" min="128" max="2000" step="1" value="900"/.test(html));
+  check('v6: EXPORT_TRANSPARENT has a UI checkbox', html.includes('id="exportTransparent"'));
   check('canvas press guard ignores clicks on UI elements (panel toggle)', /event\.target\.tagName !== 'CANVAS'/.test(mainScript) && mainScript.includes("getElementById('panelToggle')"));
 
   const rangeIds = [...html.matchAll(/<input[^>]*type="range"[^>]*>/g)].map((m) => {

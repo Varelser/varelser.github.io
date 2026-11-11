@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- TOPO v5 (2026-11-12): SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
+<!-- TOPO v6 (2026-11-12): audit fixes — hole phase is persisted in settings JSON and undo snapshots, so seed reproducibility survives hole deletion + reload (previously phases were recomputed by index on load while live holes kept their creation-time phase); ANGLE_STEPS slider step 8 -> 1 (default 900 was off-step: browsers snapped the display to 904 while params stayed 900); hole position clamp unified to 0.02-0.98 (drag/arrows were 0.02-0.98 but create/sanitize were 0.03-0.97, so edge holes shifted on reload); EXPORT_TRANSPARENT gained a UI checkbox (was reachable only by hand-editing settings JSON). v5: SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -178,7 +178,7 @@
 
     <div class="row">
       <label for="a">グリッド解像度 (ANGLE_STEPS) <span id="aVal" class="val"></span></label>
-      <input id="a" type="range" min="128" max="2000" step="8" value="900">
+      <input id="a" type="range" min="128" max="2000" step="1" value="900">
     </div>
 
     <div class="row">
@@ -233,6 +233,7 @@
       <label><input id="showTexture" type="checkbox" checked>背景テクスチャ</label>
       <label><input id="showRedShadow" type="checkbox" checked>赤影</label>
       <label><input id="showHoleGuides" type="checkbox" checked>穴ガイド</label>
+      <label><input id="exportTransparent" type="checkbox" checked>透過で書き出し</label>
     </div>
 
     <div class="row" style="display:flex;gap:6px;">
@@ -308,7 +309,7 @@
     <div class="muted">
       操作: 何もない場所をクリックで穴追加（最大12個）/ 穴をドラッグで移動 / Delete または Backspace で選択穴削除。<br>
       キーボード: キャンバスをクリックしてフォーカスし、[ / ] で穴を選択、矢印キーで選択穴を移動（Shift同時押しで大きく移動）。<br>
-      R=再生成, S=透過PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数穴と干渉を同条件で再計算します。
+      R=再生成, S=PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数穴と干渉を同条件で再計算します。
     </div>
   </div>
 
@@ -503,6 +504,16 @@ function initControls() {
       scheduleSaveSettings();
     });
   });
+
+  const exportTransparentEl = document.getElementById('exportTransparent');
+  if (exportTransparentEl) {
+    exportTransparentEl.checked = !!params.EXPORT_TRANSPARENT;
+    exportTransparentEl.addEventListener('change', () => {
+      pushUndo();
+      params.EXPORT_TRANSPARENT = exportTransparentEl.checked;
+      scheduleSaveSettings();
+    });
+  }
 
   document.getElementById('regen').addEventListener('click', () => {
     regenerateScene({ newSeed: true });
@@ -763,6 +774,8 @@ function syncAllControlValues() {
   document.getElementById('showTexture').checked = !!params.SHOW_TEXTURE;
   document.getElementById('showRedShadow').checked = !!params.SHOW_RED_SHADOW;
   document.getElementById('showHoleGuides').checked = !!params.SHOW_HOLE_GUIDES;
+  const exportTransparentEl2 = document.getElementById('exportTransparent');
+  if (exportTransparentEl2) exportTransparentEl2.checked = !!params.EXPORT_TRANSPARENT;
 
   const exportScaleEl = document.getElementById('exportScale');
   if (exportScaleEl) exportScaleEl.value = String(params.EXPORT_SCALE);
@@ -780,8 +793,8 @@ function initDefaultHoles() {
 
 function createHole(nx, ny, overrides = {}) {
   return {
-    x: clamp(nx, 0.03, 0.97),
-    y: clamp(ny, 0.03, 0.97),
+    x: clamp(nx, 0.02, 0.98),
+    y: clamp(ny, 0.02, 0.98),
     radius: overrides.radius ?? 1.0,
     strength: overrides.strength ?? 1.0,
     waveAmp: overrides.waveAmp ?? 1.0,
@@ -789,8 +802,9 @@ function createHole(nx, ny, overrides = {}) {
   };
 }
 
-function computeHolePhase(index) {
-  const base = (seedVal || 1) * 0.000001 + index * 0.61803398875;
+function computeHolePhase(index, seedOverride) {
+  const seed = Number.isFinite(seedOverride) ? seedOverride : seedVal;
+  const base = (seed || 1) * 0.000001 + index * 0.61803398875;
   return (base - Math.floor(base)) * TWO_PI;
 }
 
@@ -3318,7 +3332,7 @@ function collectSettingsParams(source) {
 function snapshotState() {
   return {
     params: collectSettingsParams(),
-    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp })),
+    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp, phase: h.phase })),
     seed: seedVal,
     selectedHoleIndex
   };
@@ -3409,25 +3423,30 @@ function sanitizeSettings(obj) {
   const scaleValue = Math.round(sanitizeNumber(srcParams.EXPORT_SCALE, 1, 4, DEFAULT_PARAMS.EXPORT_SCALE));
   cleanParams.EXPORT_SCALE = [1, 2, 3, 4].includes(scaleValue) ? scaleValue : DEFAULT_PARAMS.EXPORT_SCALE;
 
+  const seedFallback = Number.isFinite(seedVal) && seedVal > 0 ? seedVal : 1;
+  const cleanSeed = obj && obj.seed !== undefined ? sanitizeSeed(obj.seed, seedFallback) : seedFallback;
+
   let cleanHoles = [];
   if (obj && Array.isArray(obj.holes)) {
-    cleanHoles = obj.holes.slice(0, MAX_HOLES).map((h) => {
+    cleanHoles = obj.holes.slice(0, MAX_HOLES).map((h, idx) => {
       const src = (h && typeof h === 'object') ? h : {};
       return {
-        x: sanitizeNumber(src.x, 0.03, 0.97, 0.5),
-        y: sanitizeNumber(src.y, 0.03, 0.97, 0.5),
+        x: sanitizeNumber(src.x, 0.02, 0.98, 0.5),
+        y: sanitizeNumber(src.y, 0.02, 0.98, 0.5),
         radius: sanitizeNumber(src.radius, 0.10, 4.00, 1.0),
         strength: sanitizeNumber(src.strength, 0.35, 3.00, 1.0),
-        waveAmp: sanitizeNumber(src.waveAmp, 0.00, 2.50, 1.0)
+        waveAmp: sanitizeNumber(src.waveAmp, 0.00, 2.50, 1.0),
+        // Phase is part of the scene identity: persist it so a scene
+        // whose holes were deleted/reordered reproduces exactly after
+        // reload. Settings saved before v6 have no phase; fall back to
+        // the index-derived phase for the saved seed (the old rule).
+        phase: sanitizeNumber(src.phase, 0, Math.PI * 2, computeHolePhase(idx, cleanSeed))
       };
     });
   }
   if (cleanHoles.length === 0) {
-    cleanHoles = [{ x: 0.5, y: 0.5, radius: 1.0, strength: 1.0, waveAmp: 1.0 }];
+    cleanHoles = [{ x: 0.5, y: 0.5, radius: 1.0, strength: 1.0, waveAmp: 1.0, phase: computeHolePhase(0, cleanSeed) }];
   }
-
-  const seedFallback = Number.isFinite(seedVal) && seedVal > 0 ? seedVal : 1;
-  const cleanSeed = obj && obj.seed !== undefined ? sanitizeSeed(obj.seed, seedFallback) : seedFallback;
 
   return { params: cleanParams, holes: cleanHoles, seed: cleanSeed };
 }
@@ -3441,7 +3460,7 @@ function applySettingsData(data) {
     radius: h.radius,
     strength: h.strength,
     waveAmp: h.waveAmp,
-    phase: computeHolePhase(i)
+    phase: Number.isFinite(h.phase) ? h.phase : computeHolePhase(i)
   }));
   selectedHoleIndex = holes.length > 0 ? 0 : -1;
 }
@@ -3450,7 +3469,7 @@ function serializeSettings() {
   return JSON.stringify({
     version: 1,
     params: collectSettingsParams(),
-    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp })),
+    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp, phase: h.phase })),
     seed: seedVal
   }, null, 2);
 }
