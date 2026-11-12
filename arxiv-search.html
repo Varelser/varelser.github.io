@@ -28,7 +28,21 @@
     .summary{font-size:14px;color:#222;margin:0 0 10px}
     .links{font-size:13px;display:flex;gap:14px}
     a{color:#0f766e;text-decoration:none} a:hover{text-decoration:underline}
+    mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
     @media (max-width:720px){.grid{grid-template-columns:1fr}}
+    @media (prefers-color-scheme: dark){
+      body{background:#0f1216;color:#e8eaed}
+      .back{color:#9aa3ad}.desc{color:#9aa3ad}.count{color:#9aa3ad}
+      .panel{background:#171b21;border-color:#2b313a}
+      select,input{background:#171b21;border-color:#3a4149;color:#e8eaed}
+      .label{color:#9aa3ad}
+      article{border-bottom-color:#2b313a}.src{color:#9aa3ad}
+      .title a{color:#e8eaed}
+      .tag{background:#232830;border-color:#2b313a;color:#d4d8dd}
+      .summary{color:#dfe3e8}
+      a{color:#2dd4bf}
+      mark{background:#8a6d00;color:#fff}
+    }
   </style>
 </head>
 <body>
@@ -38,7 +52,7 @@
     <p class="desc">最新80件だけでなく、月別アーカイブを含む全ストックを横断して検索できます。</p>
     <div class="panel">
       <div class="grid">
-        <label><span class="label">キーワード</span><input id="q" type="search" placeholder="タイトル・要約・著者で検索" /></label>
+        <label><span class="label">キーワード</span><input id="q" type="search" placeholder="タイトル・要約で検索" /></label>
         <label><span class="label">ジャンル</span><select id="genre"><option value="">すべて</option></select></label>
         <label><span class="label">月</span><select id="mon"><option value="">すべて</option></select></label>
       </div>
@@ -48,27 +62,22 @@
   </div>
   <script>
     var articles = [];
-    function plain(h) { return (h || "").replace(/<br><br>/g, " ").replace(/<[^>]+>/g, ""); }
     function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
-    // Extract the object of `const DATA = {...};` with a string-aware brace scan.
-    function extractData(text) {
-      var marker = "const DATA = ";
-      var i = text.indexOf(marker);
-      if (i < 0) return null;
-      var start = i + marker.length;
-      var depth = 0, inStr = false, escNext = false;
-      for (var j = start; j < text.length; j++) {
-        var c = text[j];
-        if (inStr) {
-          if (escNext) escNext = false;
-          else if (c === "\\") escNext = true;
-          else if (c === '"') inStr = false;
-        } else if (c === '"') inStr = true;
-        else if (c === "{") depth++;
-        else if (c === "}") { depth--; if (depth === 0) return JSON.parse(text.slice(start, j + 1)); }
-      }
-      return null;
+    // Escape `text` for HTML, then wrap occurrences of the raw query `q`
+    // (HTML-escaped the same way) in <mark>. Case-insensitive.
+    function hl(text, q) {
+      var out = esc(text);
+      if (!q) return out;
+      var pat = esc(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      if (!pat) return out;
+      return out.replace(new RegExp("(" + pat + ")", "gi"), "<mark>$1</mark>");
     }
+    function pageLabel(page) {
+      if (page === "本体") return "本体";
+      var m = /^arxiv-archive-(\d{4})-(\d{2})\.html$/.exec(page || "");
+      return m ? "アーカイブ " + Number(m[1]) + "年" + Number(m[2]) + "月" : String(page || "");
+    }
+    function pageHref(page) { return page === "本体" ? "arxiv.html" : page; }
     function render() {
       var q = document.getElementById("q").value.trim().toLowerCase();
       var genre = document.getElementById("genre").value;
@@ -77,9 +86,9 @@
       for (var i = 0; i < articles.length; i++) {
         var a = articles[i];
         if (genre && a.genre !== genre) continue;
-        if (mon && a.monthKey !== mon) continue;
+        if (mon && (a.publishedAt || "").slice(0, 7) !== mon) continue;
         if (q) {
-          var hay = (a.titleJa + " " + a.title + " " + plain(a.summaryHtml) + " " + (a.authors || []).join(" ") + " " + (a.categories || []).join(" ") + " " + (a.field || "")).toLowerCase();
+          var hay = (a.titleJa + " " + a.title + " " + a.excerpt + " " + (a.field || "") + " " + (a.source || "")).toLowerCase();
           if (hay.indexOf(q) === -1) continue;
         }
         hits.push(a);
@@ -87,12 +96,12 @@
       document.getElementById("count").textContent = hits.length + "件ヒット / 全" + articles.length + "件" + (hits.length > 100 ? "（上位100件を表示）" : "");
       var html = "";
       hits.slice(0, 100).forEach(function (a) {
-        var tags = (a.categories || []).concat(a.field ? [a.field] : []).slice(0, 6).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
-        html += '<article><div class="src">' + esc((a.publishedAt || "").slice(0, 10)) + " ・ " + esc(a.source) + " ・ " + esc(a.genre) + " ・ 掲載: " + esc(a.pageLabel) + '</div>'
-          + '<h2 class="title"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.titleJa) + "</a></h2>"
-          + '<p class="summary">' + esc(plain(a.summaryHtml).slice(0, 240)) + "…</p>"
-          + '<div class="tags">' + tags + "</div>"
-          + '<div class="links"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">原文を読む</a><a href="' + esc(a.pageHref) + '">掲載ページで見る</a></div></article>';
+        var tags = (a.field ? [a.field] : []).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+        html += '<article><div class="src">' + esc((a.publishedAt || "").slice(0, 10)) + " ・ " + esc(a.source) + " ・ " + esc(a.genre) + " ・ 掲載: " + esc(pageLabel(a.page)) + '</div>'
+          + '<h2 class="title"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + hl(a.titleJa, q) + "</a></h2>"
+          + '<p class="summary">' + hl(a.excerpt, q) + (a.excerpt && a.excerpt.length >= 200 ? "…" : "") + "</p>"
+          + (tags ? '<div class="tags">' + tags + "</div>" : "")
+          + '<div class="links"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">原文を読む</a><a href="' + esc(pageHref(a.page)) + '">掲載ページで見る</a></div></article>';
       });
       document.getElementById("results").innerHTML = html || '<p class="count">該当する論文がありません。</p>';
     }
@@ -101,31 +110,19 @@
       values.forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
     }
     function finish() {
-      articles.sort(function (x, y) { return y.timestamp - x.timestamp; });
+      articles.sort(function (x, y) { return String(y.publishedAt || "").localeCompare(String(x.publishedAt || "")); });
       fill("genre", Array.from(new Set(articles.map(function (a) { return a.genre; }).filter(Boolean))).sort());
-      fill("mon", Array.from(new Set(articles.map(function (a) { return a.monthKey; }).filter(Boolean))).sort().reverse());
+      fill("mon", Array.from(new Set(articles.map(function (a) { return (a.publishedAt || "").slice(0, 7); }).filter(Boolean))).sort().reverse());
       ["q", "genre", "mon"].forEach(function (id) {
         document.getElementById(id).addEventListener("input", render);
         document.getElementById(id).addEventListener("change", render);
       });
       render();
     }
-    fetch("arxiv-data.json").then(function (r) { return r.json(); }).then(function (main) {
-      (main || []).forEach(function (a) { a.pageLabel = "本体"; a.pageHref = "arxiv.html"; articles.push(a); });
-      return fetch("arxiv.html").then(function (r) { return r.text(); });
-    }).then(function (mainHtml) {
-      var hrefs = [], m, re = /href="(arxiv-archive-\d{4}-\d{2}\.html)"/g;
-      while ((m = re.exec(mainHtml)) !== null) { if (hrefs.indexOf(m[1]) === -1) hrefs.push(m[1]); }
-      return Promise.all(hrefs.map(function (href) {
-        return fetch(href).then(function (r) { return r.text(); }).then(function (t) {
-          var data = extractData(t);
-          if (!data || !data.articles) return;
-          var mk = href.replace("arxiv-archive-", "").replace(".html", "");
-          var label = "アーカイブ " + Number(mk.slice(0, 4)) + "年" + Number(mk.slice(5, 7)) + "月";
-          data.articles.forEach(function (a) { a.pageLabel = label; a.pageHref = href; articles.push(a); });
-        }).catch(function () {});
-      }));
-    }).then(finish).catch(function () { document.getElementById("count").textContent = "データの読み込みに失敗しました。"; });
+    fetch("arxiv-search-index.json").then(function (r) { return r.json(); }).then(function (data) {
+      articles = Array.isArray(data) ? data : [];
+      finish();
+    }).catch(function () { document.getElementById("count").textContent = "データの読み込みに失敗しました。"; });
   </script>
 </body>
 </html>

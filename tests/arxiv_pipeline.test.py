@@ -229,6 +229,47 @@ def main():
         check("feed rerun: unchanged feed not in changed_files",
               lambda: r2.returncode == 0 and "arxiv-feed.xml" not in rep2.get("changed_files", []))
 
+    # 8. search index + latest: update regenerates arxiv-search-index.json
+    #    (whole stock, slim fields, excerpts capped) and arxiv-latest.json
+    #    (exactly the newest 5); a no-change rerun leaves both unchanged.
+    with tempfile.TemporaryDirectory() as tmp:
+        main_arts = [article(i, f"2026-11-{12 - i:02d}T00:00:00Z") for i in range(6)]
+        arch = {"2026-10": [article(50, "2026-10-05T00:00:00Z"),
+                            article(51, "2026-10-04T00:00:00Z")]}
+        repo = make_repo(tmp, main_arts, arch)
+        r = run(repo, "update", "--dir", str(repo), "--now", NOW)
+        rep = json.loads(r.stdout) if r.returncode == 0 else {}
+        idx_path, lat_path = repo / "arxiv-search-index.json", repo / "arxiv-latest.json"
+        check("index/latest exit 0", lambda: r.returncode == 0)
+        check("index/latest created and reported changed",
+              lambda: idx_path.exists() and lat_path.exists()
+              and "arxiv-search-index.json" in rep.get("changed_files", [])
+              and "arxiv-latest.json" in rep.get("changed_files", []))
+        idx = json.loads(idx_path.read_text(encoding="utf-8")) if idx_path.exists() else []
+        check("index covers whole stock (8)", lambda: len(idx) == 8 == rep.get("total_articles"))
+        check("index newest first with page=本体",
+              lambda: idx and idx[0]["titleJa"] == main_arts[0]["titleJa"] and idx[0]["page"] == "本体")
+        check("index archive entries carry the archive filename",
+              lambda: {e["page"] for e in idx} == {"本体", "arxiv-archive-2026-10.html"})
+        check("index excerpts capped at 200 chars",
+              lambda: all(len(e["excerpt"]) <= 200 for e in idx))
+        check("index has exactly the slim fields",
+              lambda: all(set(e) == {"title", "titleJa", "url", "publishedAt",
+                                     "source", "genre", "field", "page", "excerpt"}
+                          for e in idx))
+        lat = json.loads(lat_path.read_text(encoding="utf-8")) if lat_path.exists() else []
+        expect5 = [a["titleJa"] for a in main_arts[:5]]
+        check("latest has exactly the newest 5 in order",
+              lambda: [e["titleJa"] for e in lat] == expect5)
+        idx_h, lat_h = digest(idx_path), digest(lat_path)
+        r2 = run(repo, "update", "--dir", str(repo), "--now", NOW)
+        rep2 = json.loads(r2.stdout) if r2.returncode == 0 else {}
+        check("index/latest rerun: unchanged files not in changed_files",
+              lambda: r2.returncode == 0
+              and "arxiv-search-index.json" not in rep2.get("changed_files", [])
+              and "arxiv-latest.json" not in rep2.get("changed_files", [])
+              and digest(idx_path) == idx_h and digest(lat_path) == lat_h)
+
     print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
     if FAILED:
         print("FAILED:", FAILED)

@@ -23,6 +23,21 @@
     .summary{font-size:14px;color:#222}.box{margin-top:14px;padding:12px 14px;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa;font-size:13px;color:#555}
     a{color:#0f766e;text-decoration:none} a:hover{text-decoration:underline}
     @media (max-width:720px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}}
+      .foldbtn{margin-top:8px;height:34px;padding:0 14px;border:1px solid #d1d5db;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;color:#111}
+    @media (prefers-color-scheme: dark){
+      body{background:#0f1216;color:#e8eaed}
+      .back{color:#9aa3ad}.desc{color:#9aa3ad}
+      .panel{background:#171b21;border-color:#2b313a}
+      select,input{background:#171b21;border-color:#3a4149;color:#e8eaed}
+      .label{color:#9aa3ad}.meta{color:#9aa3ad}.pager .pageinfo{color:#9aa3ad}
+      .pager button{background:#171b21;border-color:#3a4149;color:#e8eaed}
+      article{border-bottom-color:#2b313a}.src{color:#9aa3ad}
+      .tag{background:#232830;border-color:#2b313a;color:#d4d8dd}
+      .summary{color:#dfe3e8}
+      .box{background:#171b21;border-color:#2b313a;color:#aeb6bf}
+      .foldbtn{background:#171b21;border-color:#3a4149;color:#e8eaed}
+      a{color:#2dd4bf}
+    }
   </style>
 </head>
 <body>
@@ -62,11 +77,24 @@
     const byId = id => document.getElementById(id);
     const norm = s => String(s||'').toLowerCase().normalize('NFKC').replace(/\s+/g,' ').trim();
     const esc = s => String(s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const plainText = h => String(h||'').replace(/<br><br>/g,' ').replace(/<[^>]+>/g,'');
     const months = [...new Set((DATA.articles||[]).map(a => a.monthKey).filter(Boolean))].sort().reverse();
     const genres = [...new Set((DATA.articles||[]).map(a => a.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
     const fields = [...new Set((DATA.articles||[]).map(a => a.field).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
     function fill(select, values){ values.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; select.appendChild(o); }); }
     fill(byId('month'), months); fill(byId('genre'), genres); fill(byId('field'), fields);
+    // ---- filter persistence: URL query params win over localStorage ----
+    const FILTER_IDS = ['month','genre','field','sort','pageSize'];
+    const LS_KEY = 'rd-filters-v1';
+    function readUrlState(){ try { const p = new URLSearchParams(location.search); const s = {}; let any = false; FILTER_IDS.concat(['keyword']).forEach(id=>{ if (p.has(id)) { s[id] = p.get(id); any = true; } }); return any ? s : null; } catch(e){ return null; } }
+    function readLsState(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch(e){ return null; } }
+    function applyState(s){ if (!s) return; FILTER_IDS.forEach(id=>{ if (s[id] != null) byId(id).value = s[id]; }); if (s.keyword != null) byId('keyword').value = s.keyword; }
+    function currentState(){ const s = {}; FILTER_IDS.forEach(id=>{ s[id] = byId(id).value; }); s.keyword = byId('keyword').value; return s; }
+    function persist(){ const s = currentState(); try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch(e){} try { const p = new URLSearchParams(); Object.keys(s).forEach(k=>{ if (s[k]) p.set(k, s[k]); }); const q = p.toString(); history.replaceState(null, '', q ? '?' + q : location.pathname); } catch(e){} }
+    applyState(readUrlState() || readLsState());
+    // ---- summary folding ----
+    const FOLD_CHARS = 180;
+    const expanded = new Set();
     let currentPage = 1;
     function render(){
       const month=byId('month').value, genre=byId('genre').value, field=byId('field').value, sort=byId('sort').value, kw=norm(byId('keyword').value);
@@ -85,19 +113,33 @@
       byId('prevPage').disabled = currentPage <= 1;
       byId('nextPage').disabled = currentPage >= totalPages;
       byId('meta').textContent = `更新: ${DATA.updatedAt || '-'} / 表示件数: ${rows.length}件`;
-      byId('list').innerHTML = pageRows.map(a=>`
+      byId('list').innerHTML = pageRows.map(a=>{
+        const plain = plainText(a.summaryHtml);
+        const isLong = plain.length > FOLD_CHARS;
+        const open = expanded.has(a.url);
+        const summaryHtml = (!isLong || open) ? (a.summaryHtml || '') : esc(plain.slice(0, FOLD_CHARS)) + '…';
+        const btn = isLong ? `<button type="button" class="foldbtn" data-url="${esc(a.url)}">${open ? '閉じる' : '続きを読む'}</button>` : '';
+        return `
         <article>
           <div class="src">${esc(a.source)} / ${esc(a.publishedAt.slice(0,10))}</div>
           <h2 class="title">${esc(a.titleJa)}</h2>
-          <div class="tags"><span class="tag">${esc(a.genre)}</span><span class="tag">${esc(a.field)}</span>${a.categories.slice(0,4).map(c=>`<span class=\"tag\">${esc(c)}</span>`).join('')}</div>
-          <div class="summary">${a.summaryHtml}</div>
+          <div class="tags"><span class="tag">${esc(a.genre)}</span><span class="tag">${esc(a.field)}</span>${a.categories.slice(0,4).map(c=>`<span class="tag">${esc(c)}</span>`).join('')}</div>
+          <div class="summary">${summaryHtml}</div>${btn}
           <div class="box"><strong>ソース・引用元</strong><br>配信元：${esc(a.source)}<br>原題：${esc(a.title)}<br>著者：${esc(a.authors.join(', '))}<br>原文URL：<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.url)}</a></div>
-        </article>`).join('');
+        </article>`;
+      }).join('');
     }
-    function resetAndRender(){ currentPage = 1; render(); }
+    function resetAndRender(){ currentPage = 1; persist(); render(); }
     ['month','genre','field','sort','pageSize'].forEach(id=>byId(id).addEventListener('change',resetAndRender)); byId('keyword').addEventListener('input',resetAndRender);
     byId('prevPage').addEventListener('click',()=>{ if(currentPage>1){ currentPage--; render(); } });
     byId('nextPage').addEventListener('click',()=>{ currentPage++; render(); });
+    byId('list').addEventListener('click',e=>{
+      const btn = e.target && e.target.closest ? e.target.closest('.foldbtn') : null;
+      if (!btn) return;
+      const u = btn.getAttribute('data-url');
+      if (expanded.has(u)) expanded.delete(u); else expanded.add(u);
+      render();
+    });
     render();
   </script>
 </body>

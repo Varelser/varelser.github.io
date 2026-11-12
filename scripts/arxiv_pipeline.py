@@ -18,6 +18,10 @@ mechanical lives here so it is written once, tested, and reused:
   - archive-links line rebuild inside the ARCHIVE_LINKS markers
   - RSS feed regeneration (arxiv-feed.xml: latest 50 across the whole
     stock, main + archives, on every update run)
+  - slim search index regeneration (arxiv-search-index.json: the whole
+    stock with ~200-char excerpts, for arxiv-search.html) and latest-5
+    regeneration (arxiv-latest.json, for the index.html section); both
+    are deterministic and join changed_files only when their bytes differ
   - full validation (the cron job's step-8 checks + structural checks:
     DATA must be followed by ';', page <script> must pass `node --check`
     when node is available, main DATA must equal arxiv-data.json,
@@ -54,6 +58,10 @@ from pathlib import Path
 MAIN_KEEP = 80
 FEED_LIMIT = 50
 FEED_NAME = "arxiv-feed.xml"
+SEARCH_INDEX_NAME = "arxiv-search-index.json"
+LATEST_NAME = "arxiv-latest.json"
+LATEST_LIMIT = 5
+EXCERPT_CHARS = 200
 SUMMARY_MIN, SUMMARY_MAX = 450, 900
 JA_RE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff]")
 DOI_RE = re.compile(r"10\.\d{4,9}/\S+")
@@ -177,6 +185,43 @@ def build_feed(articles, updated_at_iso: str) -> str:
         + "\n".join(items) +
         "\n</channel>\n</rss>\n"
     )
+
+
+# ------------------------------------------------- search index / latest-5
+
+def build_search_index(pairs) -> str:
+    """Slim full-stock index for arxiv-search.html.
+
+    `pairs` is a list of (article, page) tuples, newest first; `page` is
+    '本体' for the main list or the archive filename. Deterministic (no
+    timestamps embedded), so a no-change rerun reproduces identical bytes."""
+    out = []
+    for a, page in pairs:
+        excerpt = re.sub(r"\s+", " ", plain_text(a.get("summaryHtml", ""))).strip()
+        out.append({
+            "title": a.get("title", ""),
+            "titleJa": a.get("titleJa", ""),
+            "url": a.get("url", ""),
+            "publishedAt": a.get("publishedAt", ""),
+            "source": a.get("source", ""),
+            "genre": a.get("genre", ""),
+            "field": a.get("field", ""),
+            "page": page,
+            "excerpt": excerpt[:EXCERPT_CHARS],
+        })
+    return json.dumps(out, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+
+
+def build_latest(pairs) -> str:
+    """Latest LATEST_LIMIT articles for the index.html section."""
+    out = [{
+        "title": a.get("title", ""),
+        "titleJa": a.get("titleJa", ""),
+        "url": a.get("url", ""),
+        "publishedAt": a.get("publishedAt", ""),
+        "source": a.get("source", ""),
+    } for a, _ in pairs[:LATEST_LIMIT]]
+    return json.dumps(out, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
 
 def ts_ms(iso: str) -> int:
@@ -433,16 +478,25 @@ def cmd_update(args) -> int:
     if verrors:
         raise PipelineError("post-merge validation failed: " + "; ".join(verrors))
 
-    # RSS feed: rebuild from the whole post-merge stock (main + archives),
-    # newest first. It joins changed_files only when its bytes differ.
-    stock = list(keep)
-    for st in archives.values():
-        stock += st["obj"]["articles"]
-    stock.sort(key=lambda a: a["timestamp"], reverse=True)
-    feed_xml = build_feed(stock, stamp)
-    feed_path = repo / FEED_NAME
-    feed_changed = (not feed_path.exists()
-                    or feed_path.read_text(encoding="utf-8") != feed_xml)
+    # Generated files: rebuild from the whole post-merge stock (main +
+    # archives), newest first. Each joins changed_files only when its
+    # bytes differ from what is on disk.
+    pairs = [(a, "本体") for a in keep]
+    for mk in sorted(archives):
+        st = archives[mk]
+        pairs += [(a, st["path"].name) for a in st["obj"]["articles"]]
+    pairs.sort(key=lambda p: p[0]["timestamp"], reverse=True)
+    stock = [a for a, _ in pairs]
+    generated = {
+        FEED_NAME: build_feed(stock, stamp),
+        SEARCH_INDEX_NAME: build_search_index(pairs),
+        LATEST_NAME: build_latest(pairs),
+    }
+    gen_changed = []
+    for name, content in generated.items():
+        p = repo / name
+        if not p.exists() or p.read_text(encoding="utf-8") != content:
+            gen_changed.append(name)
 
     report = {
         "added": [a["title"] for a in new],
@@ -452,16 +506,15 @@ def cmd_update(args) -> int:
         "main_total": len(keep),
         "total_articles": len(keep) + sum(counts.values()),
         "checks": checks,
-        "changed_files": ["arxiv.html", "arxiv-data.json"] + changed
-                         + ([FEED_NAME] if feed_changed else []),
+        "changed_files": ["arxiv.html", "arxiv-data.json"] + changed + gen_changed,
         "dry_run": bool(args.dry_run),
     }
     if not args.dry_run:
         (repo / "arxiv-data.json").write_text(
             json.dumps(keep, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         (repo / "arxiv.html").write_text(main_text, encoding="utf-8")
-        if feed_changed:
-            feed_path.write_text(feed_xml, encoding="utf-8")
+        for name in gen_changed:
+            (repo / name).write_text(generated[name], encoding="utf-8")
         for name in changed:
             st = archives[name[len("arxiv-archive-"):-len(".html")]]
             st["path"].write_text(st["text"], encoding="utf-8")

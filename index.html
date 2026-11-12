@@ -207,7 +207,7 @@
     }).catch(function(){});
   </script>
   <script>
-    fetch("arxiv-data.json").then(function(r){ return r.json(); }).then(function(data){
+    fetch("arxiv-latest.json").then(function(r){ return r.json(); }).then(function(data){
       var list = document.getElementById("arxivLatestList");
       var items = (Array.isArray(data) ? data : []).slice(0, 5);
       if (!items.length || !list) return;
