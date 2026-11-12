@@ -154,8 +154,10 @@
   .collapse-btn:hover{color:var(--fg);background:var(--toolbar-hover)}
   .collapse-btn .chev{display:inline-block;transition:transform .15s ease}
   .section.collapsed .collapse-btn .chev{transform:rotate(-90deg)}
-  .panel-tools{display:flex;gap:8px}
-  .panel-tools button{flex:1}
+  .panel-tools{
+    display:flex;gap:8px;grid-column:1/-1;justify-content:flex-start;
+  }
+  .panel-tools button{flex:0 1 auto}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   /* Lien slider-block: muted label left, mono value right */
