@@ -227,6 +227,22 @@ async function main() {
   `);
   check('localStorage save/load round-trip', persistResult === true);
 
+  // 12b. v7 one-time migration: red shadow off for old saved settings
+  const migrationResult = run(`
+    __resetState(777);
+    params.SHOW_RED_SHADOW = true;
+    saveSettings();
+    localStorage.removeItem('topo-migrated-v7');
+    const firstLoad = loadSettings();
+    const afterFirst = params.SHOW_RED_SHADOW;
+    params.SHOW_RED_SHADOW = true;
+    saveSettings();
+    const secondLoad = loadSettings();
+    const afterSecond = params.SHOW_RED_SHADOW;
+    firstLoad === true && afterFirst === false && secondLoad === true && afterSecond === true;
+  `);
+  check('v7 migration turns red shadow off once, re-enabling sticks', migrationResult === true);
+
   // 13. undo restores pre-change snapshot
   const undoResult = run(`
     __resetState(55);

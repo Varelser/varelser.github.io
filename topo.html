@@ -627,6 +627,7 @@ let params = {
 const MAX_HOLES = 12;
 const UNDO_MAX = 50;
 const STORAGE_KEY = 'topo-settings-v1';
+const MIGRATION_KEY_V7 = 'topo-migrated-v7';
 const SCREEN_CELL_BUDGET = 50000000;
 // Pool the Worker computation (split by threshold ranges) only when the
 // scene is large enough for the duplicated field sampling to pay off.
@@ -3799,6 +3800,18 @@ function loadSettings() {
   const result = parseSettingsJSON(raw);
   if (!result.ok) return false;
   applySettingsData(result.data);
+  // v7 migration (one-time): the artwork goes pure white, so turn the
+  // red shadow off once for settings saved by older versions. Other
+  // saved values are untouched, and re-enabling it afterwards sticks.
+  try {
+    if (typeof localStorage !== 'undefined' && !localStorage.getItem(MIGRATION_KEY_V7)) {
+      params.SHOW_RED_SHADOW = false;
+      localStorage.setItem(MIGRATION_KEY_V7, '1');
+      saveSettings();
+    }
+  } catch (err) {
+    // Migration is best-effort; loading continues either way.
+  }
   return true;
 }
 
