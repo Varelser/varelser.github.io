@@ -89,7 +89,7 @@
     order:2;border-top:1px solid var(--border);
     padding:20px 16px 24px;overflow:auto;background:var(--bg);
     display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:16px;align-content:start;
+    gap:16px;align-content:start;align-items:start;
   }
   /* Lien toolbar: transport, fixed to the bottom of the viewport.
      (sticky cannot work here: the toolbar is a grid item of #stage and its
@@ -140,7 +140,7 @@
     text-transform:uppercase;letter-spacing:.12em;
     color:color-mix(in srgb,var(--fg) 72%,transparent);
   }
-  .section .body{padding:20px}
+  .section .body{padding:16px}
   .type-info{font-size:11px;line-height:1.6;color:var(--muted);margin:-4px 0 10px;min-height:18px}
   .section.collapsed > .body{display:none}
   .section.collapsed > .head{border-bottom:none}
@@ -159,7 +159,7 @@
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
   /* Lien slider-block: muted label left, mono value right */
-  .field{display:grid;gap:6px;margin-bottom:12px}
+  .field{display:grid;gap:6px;margin-bottom:10px}
   .field:last-child{margin-bottom:0}
   .field label{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px}
   .field label b{
@@ -258,6 +258,23 @@
     .section .body{padding:16px}
     .readout,.legend{padding-left:16px;padding-right:16px}
     .status{padding-left:16px;padding-right:16px}
+  }
+  /* ==== Dense panel layout ==== */
+  /* Blank inside short cards came from the grid default (stretch): every card
+     in a row grew as tall as Master (~40 fields). align-items:start above
+     makes each card hug its own content. */
+  /* Two-column fields for Master + Layers from tablet widths up. */
+  @media (min-width:768px){
+    #masterFields,#layerAFields,#layerBFields,#layerCFields{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;
+    }
+    #masterFields .field,#layerAFields .field,#layerBFields .field,#layerCFields .field{margin-bottom:0}
+  }
+  /* Wide desktop: 4 columns, Master spans 2. Row order stays as written
+     (preset, session, master / A, B, C, sleep / ai, midi, notes). */
+  @media (min-width:1500px){
+    #panel{grid-template-columns:repeat(4,minmax(0,1fr))}
+    #sec-master{grid-column:span 2}
   }
   /* Lien overlay card for the tooltip */
   #tooltip{
