@@ -1907,6 +1907,52 @@
   },
   {
     "authors": [
+      "Mohammed Nayeem Khan",
+      "Logesh L",
+      "Aliyas Ahmad Misri"
+    ],
+    "categories": [
+      "cs.LG"
+    ],
+    "excerpt": "ローカルでのデコードでは通常、生成全体を通じて重みの精度を一つに固定する。本研究は別の配分を検討する。8ビットの重みを保存し、通常は上位4ビットだけでデコードし、低精度パスの出力分布が不確かに見えるとき（エントロピーがしきい値を超えるか、上位2候補の差が小さいとき）だけ、そのステップを8ビットでやり直す。 量子化はシミュレーションで、モデルはQwen3-0.6B、評価はGSM8K、コストはトークンあたりに読み出す重みのバイト数で測った。36724ステップの再生実験では、低精度パスのエントロピーが正解の反転をAUC 0.93で予測した。15％のエスカレーション予算でエントロピーゲートは反転の78",
+    "field": "cs.LG",
+    "genre": "LLM / NLP",
+    "page": "arxiv-archive-2026-11.html",
+    "publishedAt": "2026-11-09T00:00:00Z",
+    "source": "Hugging Face Papers",
+    "text": "ローカルでのデコードでは通常、生成全体を通じて重みの精度を一つに固定する。本研究は別の配分を検討する。8ビットの重みを保存し、通常は上位4ビットだけでデコードし、低精度パスの出力分布が不確かに見えるとき（エントロピーがしきい値を超えるか、上位2候補の差が小さいとき）だけ、そのステップを8ビットでやり直す。 量子化はシミュレーションで、モデルはQwen3-0.6B、評価はGSM8K、コストはトークンあたりに読み出す重みのバイト数で測った。36724ステップの再生実験では、低精度パスのエントロピーが正解の反転をAUC 0.93で予測した。15％のエスカレーション予算でエントロピーゲートは反転の78％、マージンゲートは94％を捉え、ランダムなゲートの期待値15％を大きく上回った。 150問のライブ評価では、全て高精度が64.0％、全て低精度が55.3％だったのに対し、16％のエスカレーション率のエントロピーゲートは62.7％を記録し、高精度の0.87倍の重みバイト数にとどまった。ただしライブデータではゲートと両端の差は統計的に分離できず、検証済み投機が同程度のバイト数でKLゼロに達することも示された。不確かさに応じた精度配分という発想の検証である。出典：Hugging Face Papers",
+    "title": "Precision on Demand: Escalating Weight Bits at Uncertain Decoding Steps in a Small Local Model",
+    "titleJa": "必要なときだけ高精度に――小規模ローカルモデルの不確かなデコード段階で重みビット数を引き上げる手法",
+    "url": "https://arxiv.org/abs/2611.14418"
+  },
+  {
+    "authors": [
+      "Zhongxi Chen",
+      "Yi Yang",
+      "Xinyi Chen",
+      "Mingzhe Ye",
+      "Yaping Li",
+      "Zhihong Liu",
+      "Congsheng Xu",
+      "Haonan Wang",
+      "Zhijie Deng"
+    ],
+    "categories": [
+      "cs.RO"
+    ],
+    "excerpt": "器用な把持操作には、周囲の環境とロボットハンドの双方に対する豊かな空間的先読みが欠かせない。従来の世界―行動モデルは、未来を明示的に予測することでこの知識を獲得してきた。本研究は、動力学を意識した世界の表現を器用操作ポリシーの潜在空間に注入し、空間的先読みを暗黙的に学ぶ枠組みDexForesightを提案する。 学習では、オフラインの場面深度やハンドの運動学的な形状、実演軌跡から、行動条件付きの空間世界モデルを学ぶ。この世界モデルは3Dのハンドポイントの動きと視覚特徴の変化を予測し、カメラに映らない指の動きも含む。次に世界モデルを固定し、ポリシーのクエリを世界の予測クエリに整合させることで、学",
+    "field": "cs.RO",
+    "genre": "Agents / Robotics",
+    "page": "arxiv-archive-2026-11.html",
+    "publishedAt": "2026-11-09T00:00:00Z",
+    "source": "Hugging Face Papers",
+    "text": "器用な把持操作には、周囲の環境とロボットハンドの双方に対する豊かな空間的先読みが欠かせない。従来の世界―行動モデルは、未来を明示的に予測することでこの知識を獲得してきた。本研究は、動力学を意識した世界の表現を器用操作ポリシーの潜在空間に注入し、空間的先読みを暗黙的に学ぶ枠組みDexForesightを提案する。 学習では、オフラインの場面深度やハンドの運動学的な形状、実演軌跡から、行動条件付きの空間世界モデルを学ぶ。この世界モデルは3Dのハンドポイントの動きと視覚特徴の変化を予測し、カメラに映らない指の動きも含む。次に世界モデルを固定し、ポリシーのクエリを世界の予測クエリに整合させることで、学んだ空間ダイナミクスをポリシーの潜在表現に移し、行動生成の条件づけに用いる。 実行時にはポリシーのみを使い、RGB画像と言語、ロボットの状態だけから動作し、深度入力や明示的な未来予測は不要である。11のDexJoCoシミュレーション課題では成功率が49.4％から60.5％に向上し、実機の3課題では58.3％を達成して最強のベースライン（50.0％）を上回った。出典：Hugging Face Papers",
+    "title": "DexForesight: Grounding Dexterous Policies with Implicit Spatial Foresight",
+    "titleJa": "器用なロボットハンドに空間的先読みを――潜在空間に世界モデルを組み込むDexForesight",
+    "url": "https://arxiv.org/abs/2611.11166"
+  },
+  {
+    "authors": [
       "Adam Nalgiev"
     ],
     "categories": [],
@@ -3012,6 +3058,28 @@
     "title": "Read Less, Solve More: Token-Efficient Sparse Reading of External Content for AI Agents",
     "titleJa": "少なく読んで、多く解く――AIエージェントのトークン効率的な外部情報の読み方",
     "url": "https://arxiv.org/abs/2608.22237"
+  },
+  {
+    "authors": [
+      "Bowen Zuo",
+      "Yue Yu",
+      "Dongruo Zhou",
+      "Yinglun Zhu"
+    ],
+    "categories": [
+      "cs.CL",
+      "cs.LG"
+    ],
+    "excerpt": "拡散型言語モデルはノイズ除去を繰り返して文章を生成するが、どのトークンを確定し、どれを再マスクするかの判断が品質を大きく左右する。従来の確信度やエントロピーにもとづく手法は、その瞬間の局所的な信号に頼るため、難しい推論問題では誤った判断を招きやすかった。本研究はテスト時スケーリングを、推論計算とデコード戦略の適応的な配分として定式化し直す。 提案手法は二段階からなる。まず高速なベースサンプラーで易しい問題を解き、残った難しい問題に頻度認識型の再マスクを適用する。各トークンの予測が除去ステップをまたいで何度変わったかを追跡し、頻繁に変わるトークンを優先的に確定することで、モデルが好む一本の推論経",
+    "field": "cs.CL",
+    "genre": "LLM / NLP",
+    "page": "arxiv-archive-2026-11.html",
+    "publishedAt": "2026-11-06T00:00:00Z",
+    "source": "Hugging Face Papers",
+    "text": "拡散型言語モデルはノイズ除去を繰り返して文章を生成するが、どのトークンを確定し、どれを再マスクするかの判断が品質を大きく左右する。従来の確信度やエントロピーにもとづく手法は、その瞬間の局所的な信号に頼るため、難しい推論問題では誤った判断を招きやすかった。本研究はテスト時スケーリングを、推論計算とデコード戦略の適応的な配分として定式化し直す。 提案手法は二段階からなる。まず高速なベースサンプラーで易しい問題を解き、残った難しい問題に頻度認識型の再マスクを適用する。各トークンの予測が除去ステップをまたいで何度変わったかを追跡し、頻繁に変わるトークンを優先的に確定することで、モデルが好む一本の推論経路に収束せず、別の推論経路の探索を促す。 LLaDA-8B-InstructとDream-7B-Instructでの実験では、強力な適応配分ベースラインを一貫して上回った。MATH-500では正答率が最大で3.73ポイント（LLaDA）、7.33ポイント（Dream）向上し、HumanEvalではカバレッジが最大11ポイント以上改善した。ベース手法が100サンプルでも解けなかった問題のうち3.75〜18.75％を回復した。出典：Hugging Face Papers",
+    "title": "Test-Time Scaling for Diffusion Language Models with Frequency-Aware Remasking",
+    "titleJa": "拡散型言語モデルのテスト時スケーリング――頻度を意識した再マスクで推論を強化",
+    "url": "https://arxiv.org/abs/2611.10486"
   },
   {
     "authors": [
@@ -6896,6 +6964,56 @@
   },
   {
     "authors": [
+      "Elbau, I. G.",
+      "Lee, A. M.",
+      "Chang, M.",
+      "Anderson, E.",
+      "Nilchian, P.",
+      "Victoria, L.",
+      "Manfredi, N.",
+      "Gallagher, N.",
+      "Iatckova, V.",
+      "Sabetfakhri, N.",
+      "Alvarez, J.",
+      "Slepneva, N.",
+      "Summerville, I.",
+      "Chou, J.",
+      "Johnson, M.",
+      "Ho, C.",
+      "Goldwaser, E.",
+      "Rossi, J.",
+      "Khambhati, A.",
+      "Allawalla, A.",
+      "Astudillo Maya, D.",
+      "Moia, S.",
+      "Caballero-Gaudes, C.",
+      "Aloysi, A.",
+      "Murrough, J.",
+      "Gunning, F. M.",
+      "Zebley, B.",
+      "Power, J. D.",
+      "Williams, N.",
+      "Grosenick, L.",
+      "Chang, E.",
+      "Sellers, K. K.",
+      "Krystal, A.",
+      "Lynch, C. J.",
+      "Liston, C."
+    ],
+    "categories": [],
+    "excerpt": "海馬はうつ病と長く関連づけられてきたが、その機序は十分に解明されていない。本研究は、多数回測定した個人の精密な機能マッピングと大規模な横断コホートを用い、頭蓋内脳波の直接記録で主要な結果を検証した。海馬の結合は数分の単位で、デフォルトモードネットワーク（DMN）優位と感覚運動系優位という二つの対照的なネットワーク状態を交互に切り替えることが示された。 この動的な切り替えは、健常な脳とうつ病（MDD）の脳の双方に共通する海馬機能の基本的な性質だった。MDDではこの均衡が崩れ、DMN優位の状態が過剰に現れた。多数回測定した個人では、海馬とDMNの結合が症状の変動を時間とともに追跡し、電気けいれん療",
+    "field": "medRxiv",
+    "genre": "Neuroscience",
+    "page": "arxiv-archive-2026-10.html",
+    "publishedAt": "2026-10-13T00:00:00Z",
+    "source": "medRxiv",
+    "text": "海馬はうつ病と長く関連づけられてきたが、その機序は十分に解明されていない。本研究は、多数回測定した個人の精密な機能マッピングと大規模な横断コホートを用い、頭蓋内脳波の直接記録で主要な結果を検証した。海馬の結合は数分の単位で、デフォルトモードネットワーク（DMN）優位と感覚運動系優位という二つの対照的なネットワーク状態を交互に切り替えることが示された。 この動的な切り替えは、健常な脳とうつ病（MDD）の脳の双方に共通する海馬機能の基本的な性質だった。MDDではこの均衡が崩れ、DMN優位の状態が過剰に現れた。多数回測定した個人では、海馬とDMNの結合が症状の変動を時間とともに追跡し、電気けいれん療法（ECT）後に正常化した。ECTは海馬の結合をDMN優位から感覚運動優位へと切り替え、その効果は治療反応の良さと密接に関連した。 うつ病患者の頭蓋内記録でも、海馬とDMNのシータ同期に同様の変動が見られ、症状の変動を数時間から数日の単位で追跡した。これらの結果は、うつの気分変動の背景にある動的な皮質―海馬の機序を特定し、ECTのような神経調整治療が海馬ネットワークの動的均衡の回復を通じて働くことを示す。出典：medRxiv",
+    "title": "Discrete cortico-hippocampal circuit states underlie mood state transitions in depression",
+    "titleJa": "うつの気分変動を支える海馬回路の二つの状態――デフォルトモード結合と感覚運動結合の切り替え",
+    "url": "https://www.medrxiv.org/content/10.64898/2026.10.11.26365174"
+  },
+  {
+    "authors": [
       "Ellinghorst, A.",
       "Dellert, T.",
       "Zhu, Y.",
@@ -6996,6 +7114,26 @@
     "title": "Institutional betrayal and posttraumatic adaptation among Nova festival survivors following the 7 October 2023 attack.",
     "titleJa": "制度的裏切りと心的外傷後の適応――2023年10月7日の襲撃を生き延びたノヴァ・フェスティバルの生存者たち",
     "url": "https://europepmc.org/article/MED/42847151"
+  },
+  {
+    "authors": [
+      "Thomas Kallstenius",
+      "Basil Duvernoy",
+      "Adam Kallstenius",
+      "Andrea Johansson Capusan",
+      "Adam Williamson"
+    ],
+    "categories": [],
+    "excerpt": "メンタルヘルスの不調は世界の障害の大きな要因だが、AIによる支援の普及に安全性評価が追いついていない。汎用大規模言語モデルは、自殺念慮を示す自然な文章を見落とすことがあり、臨床的に重大な結果を招きうる。本研究は、症状に即した語彙特徴を用いる専門的な自然言語処理分類器と、微調整した大規模言語モデルを組み合わせたアンサンブルを初めて体系的に評価した。 RedditとTwitterの公開テキスト60889件（不安、双極性障害、うつ、正常、パーソナリティ障害、ストレス、自殺念慮、ADHD、自閉スペクトラム症の9カテゴリ）を対象に、プロンプト型GPT-4o-mini、微調整GPT-4o-mini、専門分",
+    "field": "JMIR Mental Health",
+    "genre": "Ethics / Safety",
+    "page": "arxiv-archive-2026-10.html",
+    "publishedAt": "2026-10-08T00:00:00Z",
+    "source": "JMIR Mental Health",
+    "text": "メンタルヘルスの不調は世界の障害の大きな要因だが、AIによる支援の普及に安全性評価が追いついていない。汎用大規模言語モデルは、自殺念慮を示す自然な文章を見落とすことがあり、臨床的に重大な結果を招きうる。本研究は、症状に即した語彙特徴を用いる専門的な自然言語処理分類器と、微調整した大規模言語モデルを組み合わせたアンサンブルを初めて体系的に評価した。 RedditとTwitterの公開テキスト60889件（不安、双極性障害、うつ、正常、パーソナリティ障害、ストレス、自殺念慮、ADHD、自閉スペクトラム症の9カテゴリ）を対象に、プロンプト型GPT-4o-mini、微調整GPT-4o-mini、専門分類器（SVM）、2種類のアンサンブルという5手法を比較した。専門分類器は91.9％の正答率で、ベースモデル（58.7％）と微調整モデル（88.6％）を上回った。 2つのアンサンブルは構成要素のどちらをも上回り、分類器60％・微調整モデル40％の重みで93.9％（ソフト融合）と93.8％（ハイブリッド融合）に達した。ハイブリッド融合では自殺念慮カテゴリの見逃し率が32.5％から1.9％へと17.6分の1に減った。ただしラベルはコミュニティから推定したもので臨床診断ではなく、単一コーパスの結果のため、意思決定支援への利用には臨床的に特徴づけられたデータでの外部検証が必要だと著者らは結論づけている。出典：JMIR Mental Health",
+    "title": "Ensemble of Domain-Specific Natural Language Processing and Large Language Models for Detecting Suicidal Ideation and Mental Health Conditions in Social Media Text: Development and Evaluation Study",
+    "titleJa": "自殺念慮の見逃しを減らす――専門的自然言語処理と大規模言語モデルのアンサンブルによるSNSテキストのメンタルヘルス分類",
+    "url": "https://mental.jmir.org/2026/1/e98925"
   },
   {
     "authors": [
