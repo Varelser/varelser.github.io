@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Music News（音楽ニュース）| VARELSER</title>
+  <meta name="description" content="国内外の最新音楽ニュースを日本語要約し、日付・ジャンル・地域・種別で整理した一覧です。" />
+    <meta property="og:title" content="Music News（音楽ニュース）| VARELSER" />
+    <meta property="og:description" content="国内外の最新音楽ニュースを日本語要約し、日付・ジャンル・地域・種別で整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/music-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Music News RSS" href="music-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#7c2d8e;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+    @media (prefers-color-scheme: dark){
+      :root{--bg:#141216;--fg:#f0eaf2;--muted:rgba(240,234,242,.55);--border:#38303c;--accent:#d18fe0;--card-bg:#1d1920;--chip:#262029;}
+      .chip{color:#ddd;}
+      .summary{color:#e6e0e9;}
+      .source-box{color:#bbb;}
+    }
+  </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の音楽ニュース</p>
+    <p class="page-desc">国内外の音楽ニュースをAIで日本語要約し、日付・ジャンル・地域・種別・配信元で整理しています。情報源は BARKS、Billboard JAPAN、Pitchfork、Bandcamp Daily、Stereogum、Consequence、NME、Rolling Stone、FACT、The Quietus、Aquarium Drunkard、The FADER、NPR Music の13媒体です。</p>
+    <p class="page-desc"><a href="music-search.html">全件検索（全ストックから探す）</a> ・ <a href="music-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option></select></div>
+        <div class="filter-item"><label for="genreFilter">ジャンル</label><select id="genreFilter"><option value="">すべて</option><option value="K-POP">K-POP</option><option value="R&amp;B／ソウル">R&amp;B／ソウル</option><option value="インディー">インディー</option><option value="エレクトロニック">エレクトロニック</option><option value="サウンドトラック">サウンドトラック</option><option value="フォーク／カントリー">フォーク／カントリー</option><option value="ポップス">ポップス</option><option value="ロック">ロック</option><option value="実験音楽">実験音楽</option></select></div>
+        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="BARKS">BARKS</option><option value="Bandcamp Daily">Bandcamp Daily</option><option value="Billboard JAPAN">Billboard JAPAN</option><option value="NPR Music">NPR Music</option><option value="Pitchfork">Pitchfork</option></select></div>
+        <div class="filter-item"><label for="kindFilter">種別</label><select id="kindFilter"><option value="">すべて</option><option value="タイアップ">タイアップ</option><option value="ニュース">ニュース</option><option value="フェス・イベント">フェス・イベント</option><option value="ライブレポート">ライブレポート</option><option value="リリース">リリース</option></select></div>
+        <div class="filter-item"><label for="regionFilter">地域</label><select id="regionFilter"><option value="">すべて</option><option value="国内">国内</option><option value="海外">海外</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全10件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<!-- ARTICLES_START -->
+<article
+  data-id="811e5334bcb7b99e447da59762966af5"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-genres="ポップス"
+  data-region="国内"
+  data-source="Billboard JAPAN"
+  data-kind="ニュース"
+  data-search="藤井 風、1st＆2ndアルバムの公式ピアノスコアをツアー会場で販売 藤井 風、1st＆2ndALの公式ピアノスコアを各会場で販売 藤井 風のオフィシャルスコア4冊が、2026年11月から12月の期間、とピアノリサイタルの各会場で販売される。対象となるのは、1stアルバムと2ndアルバムの公式ピアノスコアだ。 販売期間は2026年11月から12月で、対象はおよびピアノリサイタルの各会場と案内されている。ツアーやリサイタルに足を運ぶ来場者が、会場で直接スコアを入手できる形の販売となる。 Billboard JAPAN ポップス 国内 ニュース">
+  <p class="meta">Billboard JAPAN　2026-11-12 16:50</p>
+  <h2 class="article-title">藤井 風、1st＆2ndアルバムの公式ピアノスコアをツアー会場で販売</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: ポップス</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">藤井 風のオフィシャルスコア4冊が、2026年11月から12月の期間、とピアノリサイタルの各会場で販売される。対象となるのは、1stアルバムと2ndアルバムの公式ピアノスコアだ。<span class="summary-rest" hidden><br><br>販売期間は2026年11月から12月で、対象はおよびピアノリサイタルの各会場と案内されている。ツアーやリサイタルに足を運ぶ来場者が、会場で直接スコアを入手できる形の販売となる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Billboard JAPAN<br>
+    原題：藤井 風、1st＆2ndALの公式ピアノスコアを各会場で販売<br>
+    原文URL：<a href="https://www.billboard-japan.com/d_news/detail/167405" target="_blank" rel="noopener">https://www.billboard-japan.com/d_news/detail/167405</a>
+  </div>
+</article>
+<article
+  data-id="7e84f6685ba396f160a81f9c198bf501"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-genres="ポップス"
+  data-region="国内"
+  data-source="BARKS"
+  data-kind="リリース"
+  data-search="氷川きよし、「ほど酔い酒（ギター・バージョン）」を11月22日に配信リリース 氷川きよし、「ほど酔い酒（ギター・バージョン）」配信決定 「ほっとひと息つく時間に聴いていただけたら嬉しい」 氷川きよしが、シングル「ほど酔い酒」のギター・バージョンを2026年11月22日に配信リリースすることを発表した。「ほど酔い酒」は、生きづらい世の中で小さなしくじりやつまずきを寛容な心で受け止めていこうというメッセージが込められた作品。ギター・バージョンは氷川自身の希望によってギタリスト・斉藤功が演奏を務めており、心地よいギターの響きが楽曲の持つ温もりや人情味を引き立て、肩の力を抜いて楽しめる1曲に仕上がったとのことだ。 配信用のジャケット写真は、CDのパッケージビジュアルをスケッチ調にアレンジしたもの。氷川は「一年の締めくくりに、肩の力を抜いて、ほっとひと息つく時間に聴いていただけたら嬉しいです」とコメントしている。作詩は岸 快生、作曲は水森英夫、編曲は斉藤功。コンサートツアー＜氷川きよしコンサートツアー 2026-2027〜KIINA&#x27;S LAND 2〜＞は、11月22日の大阪・フェスティバルホール公演から始まる。 BARKS ポップス 国内 リリース">
+  <p class="meta">BARKS　2026-11-12 14:30</p>
+  <h2 class="article-title">氷川きよし、「ほど酔い酒（ギター・バージョン）」を11月22日に配信リリース</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: ポップス</span><span class="chip">地域: 国内</span><span class="chip">種別: リリース</span></div>
+  <div class="summary">氷川きよしが、シングル「ほど酔い酒」のギター・バージョンを2026年11月22日に配信リリースすることを発表した。「ほど酔い酒」は、生きづらい世の中で小さなしくじりやつまずきを寛容な心で受け止めていこうというメッセージが込められた作品。ギター・バージョンは氷川自身の希望によってギタリスト・斉藤功が演奏を務めており、心地よいギターの響きが楽曲の持つ温もりや人情味を引き立て、肩の力を抜いて楽しめる1曲に仕上がったとのことだ。<span class="summary-rest" hidden><br><br>配信用のジャケット写真は、CDのパッケージビジュアルをスケッチ調にアレンジしたもの。氷川は「一年の締めくくりに、肩の力を抜いて、ほっとひと息つく時間に聴いていただけたら嬉しいです」とコメントしている。作詩は岸 快生、作曲は水森英夫、編曲は斉藤功。コンサートツアー＜氷川きよしコンサートツアー 2026-2027〜KIINA'S LAND 2〜＞は、11月22日の大阪・フェスティバルホール公演から始まる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：BARKS<br>
+    原題：氷川きよし、「ほど酔い酒（ギター・バージョン）」配信決定 「ほっとひと息つく時間に聴いていただけたら嬉しい」<br>
+    原文URL：<a href="https://barks.jp/news/1103980" target="_blank" rel="noopener">https://barks.jp/news/1103980</a>
+  </div>
+</article>
+<article
+  data-id="8a2f8383d15ee0369b42992a7fc4b134"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-genres="K-POP||ポップス"
+  data-region="国内"
+  data-source="Billboard JAPAN"
+  data-kind="フェス・イベント"
+  data-search="BABYMONSTER、2027年のコーチェラ・フェスティバル出演が決定 BABYMONSTER、出演決定 BABYMONSTERが、米国カリフォルニア州インディオで開催されるへの出演を決めたことが発表された。 コーチェラは世界最大級の音楽フェスティバルのひとつとして知られ、毎年世界各地から多くのアーティストと観客が集まる。その2027年の開催で、BABYMONSTERが出演ラインアップに加わることになった。 Billboard JAPAN K-POP ポップス 国内 フェス・イベント">
+  <p class="meta">Billboard JAPAN　2026-11-12 12:15</p>
+  <h2 class="article-title">BABYMONSTER、2027年のコーチェラ・フェスティバル出演が決定</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: K-POP</span><span class="chip">ジャンル: ポップス</span><span class="chip">地域: 国内</span><span class="chip">種別: フェス・イベント</span></div>
+  <div class="summary">BABYMONSTERが、米国カリフォルニア州インディオで開催されるへの出演を決めたことが発表された。<span class="summary-rest" hidden><br><br>コーチェラは世界最大級の音楽フェスティバルのひとつとして知られ、毎年世界各地から多くのアーティストと観客が集まる。その2027年の開催で、BABYMONSTERが出演ラインアップに加わることになった。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Billboard JAPAN<br>
+    原題：BABYMONSTER、出演決定<br>
+    原文URL：<a href="https://www.billboard-japan.com/d_news/detail/167384" target="_blank" rel="noopener">https://www.billboard-japan.com/d_news/detail/167384</a>
+  </div>
+</article>
+<article
+  data-id="f9ff3f6966de2b493775caaa51bc27a7"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-genres="ロック||サウンドトラック"
+  data-region="国内"
+  data-source="BARKS"
+  data-kind="タイアップ"
+  data-search="Suchmos、新曲「hi-liter」がサッカー日本代表ドキュメンタリー映画のオープニング曲に決定 Suchmos、新曲「hi-liter」がサッカー日本代表ドキュメンタリー映画OP曲に決定 Suchmosの新曲「hi-liter」が、2026年11月20日に公開される映画『サッカー日本代表映画「最高の景色」への挑戦』のオープニング曲に起用されたことが発表された。楽曲は映画公開日となる11月20日に配信リリースされる。 本映画は、中村敬斗、上田綺世、鎌田大地、伊東純也、長友佑都らワールドカップを戦ったメンバーたちのインタビュー映像も交えたドキュメンタリー作品。＜FIFAワールドカップカタール2022＞から4年、ワールドカップ2026ではベスト32で敗退となったチームが感じた新たな試練と、次なる挑戦への想いに迫る内容で、劇中ナレーションは中村倫也が担当する。 BARKS ロック サウンドトラック 国内 タイアップ">
+  <p class="meta">BARKS　2026-11-12 12:00</p>
+  <h2 class="article-title">Suchmos、新曲「hi-liter」がサッカー日本代表ドキュメンタリー映画のオープニング曲に決定</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: ロック</span><span class="chip">ジャンル: サウンドトラック</span><span class="chip">地域: 国内</span><span class="chip">種別: タイアップ</span></div>
+  <div class="summary">Suchmosの新曲「hi-liter」が、2026年11月20日に公開される映画『サッカー日本代表映画「最高の景色」への挑戦』のオープニング曲に起用されたことが発表された。楽曲は映画公開日となる11月20日に配信リリースされる。<span class="summary-rest" hidden><br><br>本映画は、中村敬斗、上田綺世、鎌田大地、伊東純也、長友佑都らワールドカップを戦ったメンバーたちのインタビュー映像も交えたドキュメンタリー作品。＜FIFAワールドカップカタール2022＞から4年、ワールドカップ2026ではベスト32で敗退となったチームが感じた新たな試練と、次なる挑戦への想いに迫る内容で、劇中ナレーションは中村倫也が担当する。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：BARKS<br>
+    原題：Suchmos、新曲「hi-liter」がサッカー日本代表ドキュメンタリー映画OP曲に決定<br>
+    原文URL：<a href="https://barks.jp/news/1103948" target="_blank" rel="noopener">https://barks.jp/news/1103948</a>
+  </div>
+</article>
+<article
+  data-id="16f233799b680192e34691ca8783e24a"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-genres="K-POP||ポップス"
+  data-region="国内"
+  data-source="BARKS"
+  data-kind="ライブレポート"
+  data-search="NMIXX、代々木第一体育館で日本デビューショーケース開催「これからの未来が楽しみです！」 NMIXX、東京・国立代々木競技場第一体育館にてショーケースライブ開催 「これからの未来が楽しみです！」 韓国の6人組ガールズグループ・NMIXXが、日本デビューベストアルバム『N=MIXX』（12月9日発売）を記念して、11月7日・8日に東京・国立代々木競技場第一体育館でショーケース＜NMIXX JAPAN DEBUT SHOWCASE「N=MIXX」＞を開催した。MCに古家正亨を迎え、ライブパフォーマンスとトーク＆ゲームコーナーで構成されたステージとなった。 ショーケースは「Love me Like This」で幕を開け、ベストアルバムに収録される韓国オリジナル楽曲の日本語バージョンも初披露されたほか、緑黄色社会「Mela!」のカバーも披露された。アンコールでは日本デビューを記念したケーキがサプライズで登場。LILYは「幸せなこの2日間、嬉しい思い出が出来たので、これからの未来が楽しみです！」と語った。NMIXXは2025年の「Blue Valentine」が韓国音楽番組で10冠を達成し、「THE FACT MUSIC AWARDS」では大賞のひとつ「SOUND OF THE YEAR」を受賞している。 BARKS K-POP ポップス 国内 ライブレポート">
+  <p class="meta">BARKS　2026-11-12 10:00</p>
+  <h2 class="article-title">NMIXX、代々木第一体育館で日本デビューショーケース開催「これからの未来が楽しみです！」</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: K-POP</span><span class="chip">ジャンル: ポップス</span><span class="chip">地域: 国内</span><span class="chip">種別: ライブレポート</span></div>
+  <div class="summary">韓国の6人組ガールズグループ・NMIXXが、日本デビューベストアルバム『N=MIXX』（12月9日発売）を記念して、11月7日・8日に東京・国立代々木競技場第一体育館でショーケース＜NMIXX JAPAN DEBUT SHOWCASE「N=MIXX」＞を開催した。MCに古家正亨を迎え、ライブパフォーマンスとトーク＆ゲームコーナーで構成されたステージとなった。<span class="summary-rest" hidden><br><br>ショーケースは「Love me Like This」で幕を開け、ベストアルバムに収録される韓国オリジナル楽曲の日本語バージョンも初披露されたほか、緑黄色社会「Mela!」のカバーも披露された。アンコールでは日本デビューを記念したケーキがサプライズで登場。LILYは「幸せなこの2日間、嬉しい思い出が出来たので、これからの未来が楽しみです！」と語った。NMIXXは2025年の「Blue Valentine」が韓国音楽番組で10冠を達成し、「THE FACT MUSIC AWARDS」では大賞のひとつ「SOUND OF THE YEAR」を受賞している。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：BARKS<br>
+    原題：NMIXX、東京・国立代々木競技場第一体育館にてショーケースライブ開催 「これからの未来が楽しみです！」<br>
+    原文URL：<a href="https://barks.jp/news/1103983" target="_blank" rel="noopener">https://barks.jp/news/1103983</a>
+  </div>
+</article>
+<article
+  data-id="dc6fb00d029420502c90aea1847535c5"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-genres="インディー"
+  data-region="海外"
+  data-source="Bandcamp Daily"
+  data-kind="ニュース"
+  data-search="メルボルンのコミュニティラジオ3RRR、開局50周年 Celebrating 50 Years of 3RRR, Melbourne’s Iconic Community Radio Station オーストラリア・メルボルンのコミュニティラジオ局3RRRが、開局50周年を迎えた。Bandcamp Dailyは、インディペンデントな音楽を長年にわたって後押ししてきた同局の半世紀を特集記事で振り返っている。 3RRRは地域の音楽シーンの発信を増幅する存在として知られ、地元アーティストにとっての重要な発信拠点になってきた。開局50年という節目は、コミュニティラジオが地域の音楽文化を支え続ける役割を改めて示すものだ。 Bandcamp Daily インディー 海外 ニュース">
+  <p class="meta">Bandcamp Daily　2026-11-12 04:03</p>
+  <h2 class="article-title">メルボルンのコミュニティラジオ3RRR、開局50周年</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: インディー</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">オーストラリア・メルボルンのコミュニティラジオ局3RRRが、開局50周年を迎えた。Bandcamp Dailyは、インディペンデントな音楽を長年にわたって後押ししてきた同局の半世紀を特集記事で振り返っている。<span class="summary-rest" hidden><br><br>3RRRは地域の音楽シーンの発信を増幅する存在として知られ、地元アーティストにとっての重要な発信拠点になってきた。開局50年という節目は、コミュニティラジオが地域の音楽文化を支え続ける役割を改めて示すものだ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Bandcamp Daily<br>
+    原題：Celebrating 50 Years of 3RRR, Melbourne’s Iconic Community Radio Station<br>
+    原文URL：<a href="https://daily.bandcamp.com/features/3rrr-50th-anniversary-feature" target="_blank" rel="noopener">https://daily.bandcamp.com/features/3rrr-50th-anniversary-feature</a>
+  </div>
+</article>
+<article
+  data-id="ab007aa45dc6fe19e9befceae2ccde2b"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-genres="エレクトロニック||インディー"
+  data-region="海外"
+  data-source="Pitchfork"
+  data-kind="リリース"
+  data-search="ジーン・リヴァー、デビューシングル「PP2」にキャメロン・ウィンターが参加 Jeanne River Recruits Cameron Winter for Debut Single ブルックリンのシンガーで、エレクトロアコースティックの作曲家でもあるジーン・リヴァーが、デビューシングル「PP2」を発表した。Pitchforkはこの曲を、ジーン・リヴァーを紹介する一曲と伝えている。 「PP2」には、Geeseのフロントマンであるキャメロン・ウィンターがプリペアド・ピアノで参加している。ウィンターのピアノが、デビューシングルの顔のひとつになっている。 Pitchfork エレクトロニック インディー 海外 リリース">
+  <p class="meta">Pitchfork　2026-11-12 02:45</p>
+  <h2 class="article-title">ジーン・リヴァー、デビューシングル「PP2」にキャメロン・ウィンターが参加</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: エレクトロニック</span><span class="chip">ジャンル: インディー</span><span class="chip">地域: 海外</span><span class="chip">種別: リリース</span></div>
+  <div class="summary">ブルックリンのシンガーで、エレクトロアコースティックの作曲家でもあるジーン・リヴァーが、デビューシングル「PP2」を発表した。Pitchforkはこの曲を、ジーン・リヴァーを紹介する一曲と伝えている。<span class="summary-rest" hidden><br><br>「PP2」には、Geeseのフロントマンであるキャメロン・ウィンターがプリペアド・ピアノで参加している。ウィンターのピアノが、デビューシングルの顔のひとつになっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Pitchfork<br>
+    原題：Jeanne River Recruits Cameron Winter for Debut Single<br>
+    原文URL：<a href="https://pitchfork.com/story/jeanne-river-recruits-cameron-winter-for-debut-single/" target="_blank" rel="noopener">https://pitchfork.com/story/jeanne-river-recruits-cameron-winter-for-debut-single/</a>
+  </div>
+</article>
+<article
+  data-id="c8b0bef37981fbfeae6880bb3049d673"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-genres="R&B／ソウル||ポップス"
+  data-region="海外"
+  data-source="Pitchfork"
+  data-kind="ニュース"
+  data-search="ビヨンセ、シャーデー『Love Deluxe』のジャケットを再現／i-D誌でダイアナ・ロスへのオマージュも Beyoncé Recreates Sade’s Love Deluxe Album Cover ビヨンセが、シャーデーのアルバム『Love Deluxe』のジャケットを再現したことが報じられた。Pitchforkによると、ビヨンセは新しいi-D誌の特集で、ダイアナ・ロスへのオマージュも披露しているという。 『Love Deluxe』はシャーデーが1992年に発表したアルバムで、そのジャケットイメージは長く記憶されてきた作品だ。ビヨンセによる今回の表現は、往年のアイコンたちへの敬意の表明として注目される。 Pitchfork R&amp;B／ソウル ポップス 海外 ニュース">
+  <p class="meta">Pitchfork　2026-11-12 02:21</p>
+  <h2 class="article-title">ビヨンセ、シャーデー『Love Deluxe』のジャケットを再現／i-D誌でダイアナ・ロスへのオマージュも</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: R&amp;B／ソウル</span><span class="chip">ジャンル: ポップス</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ビヨンセが、シャーデーのアルバム『Love Deluxe』のジャケットを再現したことが報じられた。Pitchforkによると、ビヨンセは新しいi-D誌の特集で、ダイアナ・ロスへのオマージュも披露しているという。<span class="summary-rest" hidden><br><br>『Love Deluxe』はシャーデーが1992年に発表したアルバムで、そのジャケットイメージは長く記憶されてきた作品だ。ビヨンセによる今回の表現は、往年のアイコンたちへの敬意の表明として注目される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Pitchfork<br>
+    原題：Beyoncé Recreates Sade’s Love Deluxe Album Cover<br>
+    原文URL：<a href="https://pitchfork.com/story/beyonce-recreates-sades-love-deluxe-album-cover/" target="_blank" rel="noopener">https://pitchfork.com/story/beyonce-recreates-sades-love-deluxe-album-cover/</a>
+  </div>
+</article>
+<article
+  data-id="2d029e0e1c30f1515b52199254dbe6e3"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-genres="インディー||フォーク／カントリー"
+  data-region="海外"
+  data-source="Pitchfork"
+  data-kind="フェス・イベント"
+  data-search="ヒンターランド・フェスティバル2027、ヘッドライナーにフィービー・ブリジャーズら Phoebe Bridgers, Slayyyter, Billy Strings to Headline Hinterland 2027 米アイオワ州セントチャールズで開かれる音楽フェスティバル、ヒンターランド（Hinterland Music Festival）の2027年ヘッドライナーが発表された。フィービー・ブリジャーズ、スレイター（Slayyyter）、ビリー・ストリングスが名を連ねている。 ヒンターランドは3日間の日程で開かれるフェスティバルで、次回は来年夏にセントチャールズへ戻ってくる。2027年の開催に向けて、まずヘッドライナー3組が明らかになった形だ。 Pitchfork インディー フォーク／カントリー 海外 フェス・イベント">
+  <p class="meta">Pitchfork　2026-11-12 01:26</p>
+  <h2 class="article-title">ヒンターランド・フェスティバル2027、ヘッドライナーにフィービー・ブリジャーズら</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: インディー</span><span class="chip">ジャンル: フォーク／カントリー</span><span class="chip">地域: 海外</span><span class="chip">種別: フェス・イベント</span></div>
+  <div class="summary">米アイオワ州セントチャールズで開かれる音楽フェスティバル、ヒンターランド（Hinterland Music Festival）の2027年ヘッドライナーが発表された。フィービー・ブリジャーズ、スレイター（Slayyyter）、ビリー・ストリングスが名を連ねている。<span class="summary-rest" hidden><br><br>ヒンターランドは3日間の日程で開かれるフェスティバルで、次回は来年夏にセントチャールズへ戻ってくる。2027年の開催に向けて、まずヘッドライナー3組が明らかになった形だ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Pitchfork<br>
+    原題：Phoebe Bridgers, Slayyyter, Billy Strings to Headline Hinterland 2027<br>
+    原文URL：<a href="https://pitchfork.com/story/phoebe-bridgers-slayyyter-billy-strings-hinterland-2027/" target="_blank" rel="noopener">https://pitchfork.com/story/phoebe-bridgers-slayyyter-billy-strings-hinterland-2027/</a>
+  </div>
+</article>
+<article
+  data-id="bf34573fe37c1d33dc1350c0ac66c761"
+  data-date="2026-11-07"
+  data-month="2026-11"
+  data-genres="実験音楽"
+  data-region="海外"
+  data-source="NPR Music"
+  data-kind="ニュース"
+  data-search="「歌う砂丘」の音を楽器に変えた音楽家 How a musician turned singing sands into an instrument ノースカロライナの音楽家が、砂丘が鳴らす「歌う砂」の音に魅了され、その音を楽器へと変える試みに取り組んだとNPR Musicが伝えた。彼は世界各地の研究者に協力を求め、砂の音の仕組みを探りながら制作を進めたという。 「歌う砂」として知られる現象は、砂丘の砂が崩れる際に低い共鳴音を発するもの。その自然の音響そのものを楽器として扱う発想は、フィールドレコーディングや実験的な楽器制作とも響き合う試みだ。 NPR Music 実験音楽 海外 ニュース">
+  <p class="meta">NPR Music　2026-11-08 07:12</p>
+  <h2 class="article-title">「歌う砂丘」の音を楽器に変えた音楽家</h2>
+  <div class="taxonomy"><span class="chip">ジャンル: 実験音楽</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ノースカロライナの音楽家が、砂丘が鳴らす「歌う砂」の音に魅了され、その音を楽器へと変える試みに取り組んだとNPR Musicが伝えた。彼は世界各地の研究者に協力を求め、砂の音の仕組みを探りながら制作を進めたという。<span class="summary-rest" hidden><br><br>「歌う砂」として知られる現象は、砂丘の砂が崩れる際に低い共鳴音を発するもの。その自然の音響そのものを楽器として扱う発想は、フィールドレコーディングや実験的な楽器制作とも響き合う試みだ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：NPR Music<br>
+    原題：How a musician turned singing sands into an instrument<br>
+    原文URL：<a href="https://www.npr.org/2026/11/07/nx-s1-6029751/how-a-musician-turned-singing-sands-into-an-instrument" target="_blank" rel="noopener">https://www.npr.org/2026/11/07/nx-s1-6029751/how-a-musician-turned-singing-sands-into-an-instrument</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- MUSIC_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <ul class="archive-list">
+        <li>まだありません</li>
+      </ul>
+    </section>
+    <!-- MUSIC_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        genre: document.getElementById("genreFilter"),
+        source: document.getElementById("sourceFilter"),
+        kind: document.getElementById("kindFilter"),
+        region: document.getElementById("regionFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-genres"), els.genre.value)
+          && (!els.source.value || article.getAttribute("data-source") === els.source.value)
+          && (!els.kind.value || article.getAttribute("data-kind") === els.kind.value)
+          && (!els.region.value || article.getAttribute("data-region") === els.region.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.genre, els.source, els.kind, els.region].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = ""; els.month.value = ""; els.genre.value = "";
+        els.source.value = ""; els.kind.value = ""; els.region.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Music News 全件検索 | VARELSER</title>
+  <meta name="description" content="Music News の全ストック記事を横断検索できるページです。" />
+  <meta property="og:title" content="Music News 全件検索 | VARELSER" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://varelser.github.io/music-search.html" />
+  <style>
+    :root{ --bg:#fff; --fg:#111; --muted:rgba(0,0,0,.55); --border:#e8e8e8; --accent:#7c2d8e; --chip:#f3f3f3; }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    a{color:var(--accent);}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{padding:16px 0 18px;margin:0 0 20px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .count{font-size:13px;color:var(--muted);margin:6px 0 14px;}
+    article{margin-bottom:24px;padding:22px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 8px;}
+    .article-title{font-size:18px;font-weight:700;margin:0 0 10px;line-height:1.5;}
+    .article-title a{color:var(--fg);text-decoration:none;}
+    .summary{font-size:14px;color:#222;line-height:1.85;margin:0 0 10px;}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+    .tag{font-size:12px;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:2px 9px;color:#333;}
+    .links{font-size:13px;display:flex;gap:14px;}
+    @media (max-width:640px){.container{padding:32px 16px 56px;}}
+  </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="music-news.html" class="back-link">← Music News に戻る</a>
+    <p class="page-title">Music News 全件検索</p>
+    <p class="page-desc">最新80件だけでなく、アーカイブを含む全ストックを横断して検索できます。データは月別ファイルで読み込むため、過去の月はブラウザにキャッシュされます。</p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="q">キーワード</label><input id="q" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="src">配信元</label><select id="src"><option value="">すべて</option></select></div>
+        <div class="filter-item"><label for="mon">月</label><select id="mon"><option value="">すべて</option></select></div>
+      </div>
+    </section>
+    <p class="count" id="count">読み込み中…</p>
+    <div id="results"></div>
+  </div>
+  <script>
+    var articles = [];
+    function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    function render() {
+      var q = document.getElementById("q").value.trim().toLowerCase();
+      var src = document.getElementById("src").value;
+      var mon = document.getElementById("mon").value;
+      var hits = [];
+      for (var i = 0; i < articles.length; i++) {
+        var a = articles[i];
+        if (src && a.s !== src) continue;
+        if (mon && a._m !== mon) continue;
+        if (q && (a.t + " " + a.o + " " + a.b + " " + a.g).toLowerCase().indexOf(q) === -1) continue;
+        hits.push(i);
+      }
+      document.getElementById("count").textContent = hits.length + "件ヒット / 全" + articles.length + "件" + (hits.length > 100 ? "（上位100件を表示）" : "");
+      var html = "";
+      hits.slice(0, 100).forEach(function (idx) {
+        var a = articles[idx];
+        var page = idx < 80 ? { href: "music-news.html", label: "最新ページで見る" }
+                            : { href: "music-archive-" + a._m + ".html", label: "アーカイブで見る" };
+        var tags = a.g.split(" ").filter(Boolean).slice(0, 6).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+        html += '<article><p class="meta">' + esc(a.d) + " ・ " + esc(a.s) + '</p>'
+          + '<h2 class="article-title"><a href="' + esc(a.u) + '" target="_blank" rel="noopener">' + esc(a.t) + "</a></h2>"
+          + '<p class="summary">' + esc(a.b.slice(0, 240)) + "…</p>"
+          + '<div class="tags">' + tags + "</div>"
+          + '<div class="links"><a href="' + esc(a.u) + '" target="_blank" rel="noopener">原文を読む</a><a href="' + page.href + '">' + page.label + "</a></div></article>";
+      });
+      document.getElementById("results").innerHTML = html || '<p class="count">該当する記事がありません。</p>';
+    }
+    function fill(id, values) {
+      var sel = document.getElementById(id);
+      values.forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
+    }
+    fetch("music-search-index.json").then(function (r) { return r.json(); }).then(function (manifest) {
+      var months = manifest.months || [];
+      var loaded = 0;
+      var perMonth = new Array(months.length);
+      return Promise.all(months.map(function (m, i) {
+        return fetch(m.file).then(function (r) { return r.json(); }).then(function (shard) {
+          perMonth[i] = (shard.articles || []).map(function (a) { a._m = m.key; return a; });
+          loaded++;
+          document.getElementById("count").textContent = "読み込み中…（" + loaded + " / " + months.length + " か月分）";
+        });
+      })).then(function () {
+        articles = perMonth.reduce(function (acc, arr) { return acc.concat(arr); }, []);
+        fill("src", Array.from(new Set(articles.map(function (a) { return a.s; }))).sort());
+        fill("mon", months.map(function (m) { return m.key; }));
+        ["q", "src", "mon"].forEach(function (id) {
+          document.getElementById(id).addEventListener("input", render);
+          document.getElementById(id).addEventListener("change", render);
+        });
+        render();
+      });
+    }).catch(function () { document.getElementById("count").textContent = "データの読み込みに失敗しました。"; });
+  </script>
+</body>
+</html>
