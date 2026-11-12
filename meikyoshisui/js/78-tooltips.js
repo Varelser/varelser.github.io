@@ -117,6 +117,8 @@
     s39:'9e31f181-5749-4944-97f3-a19ca5a160b7', s40:'d799253a-8469-45d1-80bf-b8abfc5589e5',
     s41:'09158763-f58a-4505-ad91-09d7dce07677',
     genre:'fb112e38-55d7-445e-91a6-5805dda983a9',
+    poly:'85c34dba-dea8-4836-8248-c79ee8def1ef', blues:'dbe6207b-3777-4a5c-872b-ef4dc779f7c9',
+    world:'ff69e188-0ca5-46bd-896d-0d844678f906', shelf5:'4c3c23b8-bc4e-4197-b8fb-dd3617ff2923',
     p3:'69a710cc-eef8-432a-9ecb-d284ec29c7c4', p4:'40666225-89c9-447e-a785-374598e08486',
     p5:'dc4e62f7-2960-4590-acf8-e6ad5a134951', p6:'8cb68bf9-58cf-450a-b54e-c36f0a639bb5',
     p7:'abec92f6-fc85-4935-a997-61741b8eb98e',
@@ -154,6 +156,22 @@
   };
   /* .tog-name のキーワード → 節 (上から順に照合するので具体的なものを先に) */
   const TOGNAME_NOTE = [
+    /* Theory Pack III〜VI (2026-11-13 追加分): 対応する節があるものだけ。
+       節が無い MICROPOLYPHONY / FRIPPERTRONICS / GENETIC / ORNAMENTS /
+       GRANULAR はリンクなし (従来基準と同じ)。'SEQUENCE' は Attractor
+       Sequencer 行と衝突するので ATTRACTOR ルールより後ろに置く。 */
+    ['CANON FORMS', NA.s13], ['KLANGFARBENMELODIE', NA.s37], ['ADDITIVE PROCESS', NA.s21],
+    ['HOCKET', NA.s20], ['PASSACAGLIA', NA.s14], ['METRIC MODULATION', NA.s19],
+    ['VOICE EXCHANGE', NA.s13], ['CHANGE RINGING', NA.s11], ['COLOTOMIC', NA.s20],
+    ['CHORALE', NA.s9], ['BEBOP', NA.s4], ['VARIATIONS', NA.s14],
+    ['WALKING', NA.s4], ['ORGANUM', NA.s13], ['AKSAK', NA.s20],
+    ['COLTRANE', NA.s4], ['CLICH', NA.s5], ['RONDO', NA.s14],
+    ['CALL & RESPONSE', NA.s15],
+    ['INVERTIBLE', NA.s13], ['TUPLETS', NA.s19], ['DISPLACEMENT', NA.s21],
+    ['GLISSANDO', NA.s37], ['CLUSTERS', NA.s37], ['MESSIAEN', NA.shelf5],
+    ['RAGA', NA.world], ['BLUES', NA.blues], ['UPPER STRUCTURES', NA.poly],
+    ['MEDIANTS', NA.s8], ['SUITE', NA.s14],
+    ['BROWNIAN', NA.s30], ['SONIFICATION', NA.s25], ['TEMPO CANON', NA.s19],
     ['TINTINNABULI', NA.s16], ['PHASING', NA.s21], ['ISORHYTHM', NA.s21],
     ['SHEPARD', NA.s22], ['SPECIES', NA.s13], ['CADENCE', NA.s15],
     ['WORLD RHYTHM', NA.s20], ['RISSET', NA.s22], ['COMBINATION TONES', NA.s37],
@@ -164,6 +182,7 @@
     ['RHYTHMIC CANON', NA.s19], ['CONDUCTOR', NA.s31],
     ['SCALE MUTATION', NA.s6], ['PROGRESSION', NA.s5],
     ['ATTRACTOR', NA.s27], ['LORENZ', NA.s27],
+    ['SEQUENCE', NA.s4],
     ['BOIDS', NA.s28], ['SWARM', NA.s28],
     ['SIEVE', NA.s25], ['CELLULAR AUTOMATON', NA.s26],
     ['EUCLIDEAN', NA.s18], ['MARKOV', NA.s23], ['L-SYSTEM', NA.s24],
