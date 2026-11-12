@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>World News（政治・世界情勢ニュース）| VARELSER</title>
+  <meta name="description" content="国内外の政治・世界情勢・戦争・経済・株価・フィジカルAIの最新ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:title" content="World News（政治・世界情勢ニュース）| VARELSER" />
+    <meta property="og:description" content="国内外の政治・世界情勢・戦争・経済・株価・フィジカルAIの最新ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/world-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="World News RSS" href="world-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+      </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の政治・世界情勢ニュース</p>
+    <p class="page-desc">国内外の政治・世界情勢・安全保障・経済メディアやAI／ロボティクス専門メディアから、政治、国際情勢、戦争・紛争、経済・株価、フィジカルAI／ロボットのニュースをAIで日本語要約し、日付・カテゴリ・種別・配信元で整理しています。情報源はYahoo!ニュース、時事通信、東洋経済オンライン、現代ビジネス、BBC、Al Jazeera、DW、Guardian、NYT、Defense News、Bloomberg、CNBC、The Robot Report、ITmedia AI+ など国内・海外82媒体です。</p>
+    <p class="page-desc"><a href="world-search.html">全件検索（全ストックから探す）</a> ・ <a href="world-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option></select></div>
+        <div class="filter-item"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="AI・テクノロジー">AI・テクノロジー</option><option value="フィジカルAI">フィジカルAI</option><option value="世界情勢">世界情勢</option><option value="戦争・紛争">戦争・紛争</option><option value="政治">政治</option><option value="経済・株価">経済・株価</option></select></div>
+        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="Bloomberg Markets">Bloomberg Markets</option><option value="Breaking Defense">Breaking Defense</option><option value="CNBC Markets">CNBC Markets</option><option value="IEEE Spectrum Robotics">IEEE Spectrum Robotics</option><option value="ITmedia AI+">ITmedia AI+</option><option value="The Robot Report">The Robot Report</option><option value="War on the Rocks">War on the Rocks</option><option value="Yahoo!ニュース 国内">Yahoo!ニュース 国内</option><option value="Yahoo!ニュース 国際">Yahoo!ニュース 国際</option><option value="東洋経済オンライン">東洋経済オンライン</option></select></div>
+        <div class="filter-item"><label for="kindFilter">種別</label><select id="kindFilter"><option value="">すべて</option><option value="インタビュー">インタビュー</option><option value="ニュース">ニュース</option><option value="分析">分析</option><option value="特集">特集</option></select></div>
+        <div class="filter-item"><label for="regionFilter">地域</label><select id="regionFilter"><option value="">すべて</option><option value="国内">国内</option><option value="海外">海外</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全10件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<!-- ARTICLES_START -->
+<article
+  data-id="1ea21919bb0f5edafe0a75e3dda53640"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="政治||世界情勢"
+  data-region="国内"
+  data-source="Yahoo!ニュース 国内"
+  data-kind="ニュース"
+  data-search="ロシアに拘束された今井記者、サハリンで1カ月　樺太出身の祖父を持ち北方領土を取材 「日本の痕跡」探して…露拘束の今井記者「現地でしか見えないものある」 祖父は樺太出身(産経新聞) ロシア極東のサハリン（樺太）州で、北海道新聞ユジノサハリンスク支局記者の今井裕紀さん（34）がロシア側にスパイ名目で拘束されてから、13日で1カ月がたつ。今井さんは樺太出身の祖父を持ち、北方領土に関する取材を精力的に続けてきた記者だ。 現地で「日本の痕跡」を探し、「現地でしか見えないものがある」と語ってきた今井さんの姿勢を通じて、北方領土とサハリンの今を現地から伝えることの意味を伝える記事となっている。 Yahoo!ニュース 国内 政治 世界情勢 国内 ニュース">
+  <p class="meta">Yahoo!ニュース 国内　2026-11-12 20:01</p>
+  <h2 class="article-title">ロシアに拘束された今井記者、サハリンで1カ月　樺太出身の祖父を持ち北方領土を取材</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 政治</span><span class="chip">カテゴリ: 世界情勢</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ロシア極東のサハリン（樺太）州で、北海道新聞ユジノサハリンスク支局記者の今井裕紀さん（34）がロシア側にスパイ名目で拘束されてから、13日で1カ月がたつ。今井さんは樺太出身の祖父を持ち、北方領土に関する取材を精力的に続けてきた記者だ。<span class="summary-rest" hidden><br><br>現地で「日本の痕跡」を探し、「現地でしか見えないものがある」と語ってきた今井さんの姿勢を通じて、北方領土とサハリンの今を現地から伝えることの意味を伝える記事となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Yahoo!ニュース 国内<br>
+    原題：「日本の痕跡」探して…露拘束の今井記者「現地でしか見えないものある」 祖父は樺太出身(産経新聞)<br>
+    原文URL：<a href="https://news.yahoo.co.jp/articles/a5f989459173961382ee6a2364468f1038966fb9?source=rss" target="_blank" rel="noopener">https://news.yahoo.co.jp/articles/a5f989459173961382ee6a2364468f1038966fb9?source=rss</a>
+  </div>
+</article>
+<article
+  data-id="0792375f928f888c8b5efbebbb4e7fde"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="戦争・紛争||世界情勢"
+  data-region="国内"
+  data-source="Yahoo!ニュース 国際"
+  data-kind="ニュース"
+  data-search="ウクライナ軍のスターリンク軍事用サービスが再び制限　ゼレンスキー大統領「迎撃が困難に」 スターリンク再び制限 ウクライナ大統領「迎撃が困難」(共同通信) ウクライナのゼレンスキー大統領は12日、ウクライナ軍が国内で使用している米衛星通信サービス「スターリンク」の軍事用サービス「スターシールド」の利用が、数日間制限されていると発表した。迎撃用無人機の運用などに影響が出ているとみられ、大統領は「迎撃が困難」になっていると述べている。 前線の通信を民間の衛星サービスに依存する体制の脆さが、再び浮き彫りになった形だ。ロシアとの戦争でドローン迎撃が防空の要となる中、通信制限が戦況に与える影響が注視される。 Yahoo!ニュース 国際 戦争・紛争 世界情勢 国内 ニュース">
+  <p class="meta">Yahoo!ニュース 国際　2026-11-12 19:54</p>
+  <h2 class="article-title">ウクライナ軍のスターリンク軍事用サービスが再び制限　ゼレンスキー大統領「迎撃が困難に」</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 戦争・紛争</span><span class="chip">カテゴリ: 世界情勢</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ウクライナのゼレンスキー大統領は12日、ウクライナ軍が国内で使用している米衛星通信サービス「スターリンク」の軍事用サービス「スターシールド」の利用が、数日間制限されていると発表した。迎撃用無人機の運用などに影響が出ているとみられ、大統領は「迎撃が困難」になっていると述べている。<span class="summary-rest" hidden><br><br>前線の通信を民間の衛星サービスに依存する体制の脆さが、再び浮き彫りになった形だ。ロシアとの戦争でドローン迎撃が防空の要となる中、通信制限が戦況に与える影響が注視される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Yahoo!ニュース 国際<br>
+    原題：スターリンク再び制限 ウクライナ大統領「迎撃が困難」(共同通信)<br>
+    原文URL：<a href="https://news.yahoo.co.jp/articles/4dda682e17d653394fe8cfdf1dcb8282b0596182?source=rss" target="_blank" rel="noopener">https://news.yahoo.co.jp/articles/4dda682e17d653394fe8cfdf1dcb8282b0596182?source=rss</a>
+  </div>
+</article>
+<article
+  data-id="8be1d1138aa58b9aeef736a917569bea"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="経済・株価"
+  data-region="海外"
+  data-source="Bloomberg Markets"
+  data-kind="ニュース"
+  data-search="ヘッジファンドのレバレッジ取引に透明化の波　金融安定理事会がデータ収集の協議へ Hedge Funds’ Leveraged Bets Face Global Push for Transparency 金融安定理事会（FSB）は、ヘッジファンドによるレバレッジを効かせた債券取引について、データをどう収集するかを巡る協議（コンサルテーション）の開始を準備している。透明性を高めようとするこれまでの取り組みは、国ごとに定義が異なったり、国境を越えた情報の流れに制限があったりして、思うように進んでこなかったという。 規制当局がシャドーバンキング的な取引の実態把握を急ぐ背景には、市場の急変時にレバレッジ取引が連鎖的な売りを招くリスクへの警戒がある。協議の行方は、ファンドの開示負担と市場の監視体制のバランスを左右しそうだ。 Bloomberg Markets 経済・株価 海外 ニュース">
+  <p class="meta">Bloomberg Markets　2026-11-12 19:53</p>
+  <h2 class="article-title">ヘッジファンドのレバレッジ取引に透明化の波　金融安定理事会がデータ収集の協議へ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 経済・株価</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">金融安定理事会（FSB）は、ヘッジファンドによるレバレッジを効かせた債券取引について、データをどう収集するかを巡る協議（コンサルテーション）の開始を準備している。透明性を高めようとするこれまでの取り組みは、国ごとに定義が異なったり、国境を越えた情報の流れに制限があったりして、思うように進んでこなかったという。<span class="summary-rest" hidden><br><br>規制当局がシャドーバンキング的な取引の実態把握を急ぐ背景には、市場の急変時にレバレッジ取引が連鎖的な売りを招くリスクへの警戒がある。協議の行方は、ファンドの開示負担と市場の監視体制のバランスを左右しそうだ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Bloomberg Markets<br>
+    原題：Hedge Funds’ Leveraged Bets Face Global Push for Transparency<br>
+    原文URL：<a href="https://www.bloomberg.com/news/articles/2026-11-12/hedge-funds-leveraged-bets-face-global-push-for-transparency" target="_blank" rel="noopener">https://www.bloomberg.com/news/articles/2026-11-12/hedge-funds-leveraged-bets-face-global-push-for-transparency</a>
+  </div>
+</article>
+<article
+  data-id="1b1cac6a1ee8ee04d52048edf9f122b5"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="政治||経済・株価"
+  data-region="国内"
+  data-source="東洋経済オンライン"
+  data-kind="インタビュー"
+  data-search="消費税減税の財源「単年度5兆円はやりくり可能」　自民・小野寺五典税調会長に聞く 単年度5兆円の財源は「十分やりくり可能」／石破氏､小渕氏…“造反退席”議員に今思うこと／野党の主張に感じる「矛盾」／物価高対策としての「妥当性」をどう考える？ | ビジネス | 東洋経済オンライン 政治ジャーナリストの青山和弘氏が日本の政治を深掘りする連載「青山和弘の政治の見方」のゲストに、自民党・税制調査会長で衆議院議員の小野寺五典氏が登場した（前編）。消費税減税を巡っては、単年度5兆円規模の財源でも「十分やりくり可能」との見方を示し、物価高対策としての妥当性をどう考えるかが議論の軸となっている。 石破氏や小渕氏ら「造反退席」議員への受け止めや、野党の主張に感じる「矛盾」にも言及するなど、与党の税制責任者としての考えを多角的に語るインタビューだ。年末の税制改正論議に向けた重要な手がかりとなる。 東洋経済オンライン 政治 経済・株価 国内 インタビュー">
+  <p class="meta">東洋経済オンライン　2026-11-12 19:00</p>
+  <h2 class="article-title">消費税減税の財源「単年度5兆円はやりくり可能」　自民・小野寺五典税調会長に聞く</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 政治</span><span class="chip">カテゴリ: 経済・株価</span><span class="chip">地域: 国内</span><span class="chip">種別: インタビュー</span></div>
+  <div class="summary">政治ジャーナリストの青山和弘氏が日本の政治を深掘りする連載「青山和弘の政治の見方」のゲストに、自民党・税制調査会長で衆議院議員の小野寺五典氏が登場した（前編）。消費税減税を巡っては、単年度5兆円規模の財源でも「十分やりくり可能」との見方を示し、物価高対策としての妥当性をどう考えるかが議論の軸となっている。<span class="summary-rest" hidden><br><br>石破氏や小渕氏ら「造反退席」議員への受け止めや、野党の主張に感じる「矛盾」にも言及するなど、与党の税制責任者としての考えを多角的に語るインタビューだ。年末の税制改正論議に向けた重要な手がかりとなる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：東洋経済オンライン<br>
+    原題：単年度5兆円の財源は「十分やりくり可能」／石破氏､小渕氏…“造反退席”議員に今思うこと／野党の主張に感じる「矛盾」／物価高対策としての「妥当性」をどう考える？ | ビジネス | 東洋経済オンライン<br>
+    原文URL：<a href="https://toyokeizai.net/articles/-/964634?utm_source=rss&amp;utm_medium=http&amp;utm_campaign=link_back" target="_blank" rel="noopener">https://toyokeizai.net/articles/-/964634?utm_source=rss&amp;utm_medium=http&amp;utm_campaign=link_back</a>
+  </div>
+</article>
+<article
+  data-id="99badd4f2646d8c9b190d79f68deb437"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="AI・テクノロジー"
+  data-region="国内"
+  data-source="ITmedia AI+"
+  data-kind="ニュース"
+  data-search="AWS、AIエージェント向け軽量VM「Nitro Sandboxes」を提供開始　強力な隔離環境とEC2性能を両立 AWS、AIエージェント向けに強力な隔離環境とネイティブなEC2性能を備えた軽量VM「AWS Nitro Sandboxes」提供開始 米Amazon Web Services（AWS）は、AIエージェント向けの軽量な仮想マシン「AWS Nitro Sandboxes」の提供開始を発表した。Amazon EC2インスタンス上でほぼネイティブのEC2性能で動作しながら、Nitroシステムによるハードウェアレベルの極めて強力な隔離環境を備えるのが特徴だ。 AIエージェントが自律的にコードを実行する場面では、性能と安全性の両立が課題となる。新サービスは、エージェントの実行基盤として隔離性を担保しつつ性能劣化を抑える狙いがあり、エージェント開発のインフラ選択肢として注目される。 ITmedia AI+ AI・テクノロジー 国内 ニュース">
+  <p class="meta">ITmedia AI+　2026-11-12 14:10</p>
+  <h2 class="article-title">AWS、AIエージェント向け軽量VM「Nitro Sandboxes」を提供開始　強力な隔離環境とEC2性能を両立</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: AI・テクノロジー</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">米Amazon Web Services（AWS）は、AIエージェント向けの軽量な仮想マシン「AWS Nitro Sandboxes」の提供開始を発表した。Amazon EC2インスタンス上でほぼネイティブのEC2性能で動作しながら、Nitroシステムによるハードウェアレベルの極めて強力な隔離環境を備えるのが特徴だ。<span class="summary-rest" hidden><br><br>AIエージェントが自律的にコードを実行する場面では、性能と安全性の両立が課題となる。新サービスは、エージェントの実行基盤として隔離性を担保しつつ性能劣化を抑える狙いがあり、エージェント開発のインフラ選択肢として注目される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ITmedia AI+<br>
+    原題：AWS、AIエージェント向けに強力な隔離環境とネイティブなEC2性能を備えた軽量VM「AWS Nitro Sandboxes」提供開始<br>
+    原文URL：<a href="https://www.itmedia.co.jp/news/article/2611/12/2000003139/" target="_blank" rel="noopener">https://www.itmedia.co.jp/news/article/2611/12/2000003139/</a>
+  </div>
+</article>
+<article
+  data-id="7994f9a20c34c0575c29a8f2f3db9e7c"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="経済・株価||AI・テクノロジー"
+  data-region="海外"
+  data-source="CNBC Markets"
+  data-kind="ニュース"
+  data-search="CoreWeave株が24％超の急騰　好決算で2025年4月以来の上昇率、AIトレードへの懸念和らぐ CoreWeave soars more than 24% for best day since April 2025 after strong Q3 report AIクラウドのCoreWeaveの株価が24％を超える急騰となり、2025年4月以来の大きな上昇率を記録した。第3四半期決算が好調だったことが買い材料となった。同社株は決算発表前まで売り込まれていただけに、反発の幅も大きくなった。 CoreWeaveやNebius、IRENといった「ネオクラウド」企業群は今月、AIトレードの持続可能性を見極めようとする投資家から厳しい視線を向けられてきた。今回の決算と株価の反応は、AIインフラ株への信認がひとまず持ち直したことを示している。 CNBC Markets 経済・株価 AI・テクノロジー 海外 ニュース">
+  <p class="meta">CNBC Markets　2026-11-12 06:11</p>
+  <h2 class="article-title">CoreWeave株が24％超の急騰　好決算で2025年4月以来の上昇率、AIトレードへの懸念和らぐ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 経済・株価</span><span class="chip">カテゴリ: AI・テクノロジー</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">AIクラウドのCoreWeaveの株価が24％を超える急騰となり、2025年4月以来の大きな上昇率を記録した。第3四半期決算が好調だったことが買い材料となった。同社株は決算発表前まで売り込まれていただけに、反発の幅も大きくなった。<span class="summary-rest" hidden><br><br>CoreWeaveやNebius、IRENといった「ネオクラウド」企業群は今月、AIトレードの持続可能性を見極めようとする投資家から厳しい視線を向けられてきた。今回の決算と株価の反応は、AIインフラ株への信認がひとまず持ち直したことを示している。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：CNBC Markets<br>
+    原題：CoreWeave soars more than 24% for best day since April 2025 after strong Q3 report<br>
+    原文URL：<a href="https://www.cnbc.com/2026/11/11/coreweave-crwv-outlook-earnings-ai.html" target="_blank" rel="noopener">https://www.cnbc.com/2026/11/11/coreweave-crwv-outlook-earnings-ai.html</a>
+  </div>
+</article>
+<article
+  data-id="10179598d8b98f8017e442d18918bab4"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="戦争・紛争||世界情勢"
+  data-region="海外"
+  data-source="Breaking Defense"
+  data-kind="ニュース"
+  data-search="ポーランド、米軍の常駐基地に国防総省が支持　12月に決定見通し、候補地4カ所 Poland says Pentagon supports permanent US base, with decision expected in December ポーランド政府によれば、米軍の常駐基地の設置について米国防総省の支持が得られており、12月に決定が見込まれている。ワルシャワ側は、米兵5,000人とその家族を受け入れられる基地の候補地を4カ所特定しており、支援インフラに最大44億ドルを投じる用意があるとしている。 NATO東翼の防衛体制を恒常的に強化する動きであり、ロシアへの抑止という観点でも意味が大きい。12月の正式決定と、どの候補地が選ばれるかが焦点となる。 Breaking Defense 戦争・紛争 世界情勢 海外 ニュース">
+  <p class="meta">Breaking Defense　2026-11-12 04:09</p>
+  <h2 class="article-title">ポーランド、米軍の常駐基地に国防総省が支持　12月に決定見通し、候補地4カ所</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 戦争・紛争</span><span class="chip">カテゴリ: 世界情勢</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ポーランド政府によれば、米軍の常駐基地の設置について米国防総省の支持が得られており、12月に決定が見込まれている。ワルシャワ側は、米兵5,000人とその家族を受け入れられる基地の候補地を4カ所特定しており、支援インフラに最大44億ドルを投じる用意があるとしている。<span class="summary-rest" hidden><br><br>NATO東翼の防衛体制を恒常的に強化する動きであり、ロシアへの抑止という観点でも意味が大きい。12月の正式決定と、どの候補地が選ばれるかが焦点となる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Breaking Defense<br>
+    原題：Poland says Pentagon supports permanent US base, with decision expected in December<br>
+    原文URL：<a href="https://breakingdefense.com/2026/11/poland-says-pentagon-supports-permanent-us-base-with-decision-expected-in-december/" target="_blank" rel="noopener">https://breakingdefense.com/2026/11/poland-says-pentagon-supports-permanent-us-base-with-decision-expected-in-december/</a>
+  </div>
+</article>
+<article
+  data-id="c20f7c7ab36f2402a7b0589bf5d90312"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="フィジカルAI"
+  data-region="海外"
+  data-source="The Robot Report"
+  data-kind="ニュース"
+  data-search="Serve Robotics、配送ロボット網を外部に開放　2,000台超のフリートをAPIで提供 Serve Robotics opens robot delivery network for others to build on 配送ロボットのServe Roboticsは、同社のロボットフリートを基盤に第三者が新しい配送サービスを構築できる「オンデマンド配送API」を公開した。同社は2,000台を超える配送ロボットを運用しており、そのネットワークを外部の事業者に開放する形となる。 自前でロボット網を持たない企業でも、API経由でロボット配送を自社サービスに組み込めるようになる。フィジカルAIの社会実装が「ロボットそのもの」から「ネットワークのプラットフォーム化」へ進む動きとして注目される。 The Robot Report フィジカルAI 海外 ニュース">
+  <p class="meta">The Robot Report　2026-11-11 22:43</p>
+  <h2 class="article-title">Serve Robotics、配送ロボット網を外部に開放　2,000台超のフリートをAPIで提供</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: フィジカルAI</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">配送ロボットのServe Roboticsは、同社のロボットフリートを基盤に第三者が新しい配送サービスを構築できる「オンデマンド配送API」を公開した。同社は2,000台を超える配送ロボットを運用しており、そのネットワークを外部の事業者に開放する形となる。<span class="summary-rest" hidden><br><br>自前でロボット網を持たない企業でも、API経由でロボット配送を自社サービスに組み込めるようになる。フィジカルAIの社会実装が「ロボットそのもの」から「ネットワークのプラットフォーム化」へ進む動きとして注目される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Robot Report<br>
+    原題：Serve Robotics opens robot delivery network for others to build on<br>
+    原文URL：<a href="https://www.therobotreport.com/serve-robotics-opens-robot-delivery-network-for-others-to-build-on/" target="_blank" rel="noopener">https://www.therobotreport.com/serve-robotics-opens-robot-delivery-network-for-others-to-build-on/</a>
+  </div>
+</article>
+<article
+  data-id="34750aa0116d225fe69ce10a1de8056a"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="戦争・紛争||政治"
+  data-region="海外"
+  data-source="War on the Rocks"
+  data-kind="分析"
+  data-search="日本の最も危険な軍事的制約は「時間」だ　有事の土地使用を巡る日米共同計画の盲点 Japan’s Most Dangerous Military Constraint Is Time 2022年に筆者が実施した日米の図上演習で、計画担当者たちはおなじみの壁に突き当たった。敵の最初のミサイル一斉射撃の前に、米軍は集中した基地から分散する必要がある。ところが参加者の多くは、日本が民有地への緊急アクセスを認められるのは攻撃を受けた後だけだと考えていた。それでは遅すぎる。認可の発動条件が、そのまま期限になってしまうからだ。 この「政治的制約」は演習後の報告書に記録され、翌年の演習にも引き継がれ、検証されないまま有事計画の中で事実として固まっていく。しかし2022年の演習では、ある参加者が法律を別の角度から読み、内閣によるより早い段階の選択肢を見いだしたという。日本の防衛協力で最も危険な制約は装備ではなく時間だ、と論じる分析である。 War on the Rocks 戦争・紛争 政治 海外 分析">
+  <p class="meta">War on the Rocks　2026-11-11 17:30</p>
+  <h2 class="article-title">日本の最も危険な軍事的制約は「時間」だ　有事の土地使用を巡る日米共同計画の盲点</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 戦争・紛争</span><span class="chip">カテゴリ: 政治</span><span class="chip">地域: 海外</span><span class="chip">種別: 分析</span></div>
+  <div class="summary">2022年に筆者が実施した日米の図上演習で、計画担当者たちはおなじみの壁に突き当たった。敵の最初のミサイル一斉射撃の前に、米軍は集中した基地から分散する必要がある。ところが参加者の多くは、日本が民有地への緊急アクセスを認められるのは攻撃を受けた後だけだと考えていた。それでは遅すぎる。認可の発動条件が、そのまま期限になってしまうからだ。<span class="summary-rest" hidden><br><br>この「政治的制約」は演習後の報告書に記録され、翌年の演習にも引き継がれ、検証されないまま有事計画の中で事実として固まっていく。しかし2022年の演習では、ある参加者が法律を別の角度から読み、内閣によるより早い段階の選択肢を見いだしたという。日本の防衛協力で最も危険な制約は装備ではなく時間だ、と論じる分析である。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：War on the Rocks<br>
+    原題：Japan’s Most Dangerous Military Constraint Is Time<br>
+    原文URL：<a href="https://warontherocks.com/japans-most-dangerous-military-constraint-is-time/" target="_blank" rel="noopener">https://warontherocks.com/japans-most-dangerous-military-constraint-is-time/</a>
+  </div>
+</article>
+<article
+  data-id="f35482d8bf9b7b49880052ea2ec5a34f"
+  data-date="2026-11-09"
+  data-month="2026-11"
+  data-categories="フィジカルAI||AI・テクノロジー"
+  data-region="海外"
+  data-source="IEEE Spectrum Robotics"
+  data-kind="特集"
+  data-search="エージェンティック・ロボティクスはデータ拡張の壁を越えるか　汎用ロボットへの新しいアプローチ Can Agentic Robotics Solve Robotics’ Data-Scaling Problem? ロボット企業は、データこそがロボティクス最難関の問題を解く鍵だという信念のもと、多額の投資を続けている。人間の実演データをAIシステムが大量に学習すれば、ロボットは人間が担う手作業の大半をこなせるようになるはずだ、という考え方だ。訓練データの収集だけを目的とするロボット企業まで現れている。しかし、データが本当に汎用ロボットをもたらすのかは未解決の問題で、どれだけの量が必要か、どんなデータが重要なのか、何か別の要素が欠けているのではないかは誰にも分かっていない。 大量データへの依存には、結果として得られるAIアルゴリズムが本質的にブラックボックスで、人間には理解が難しいという問題もある。柔軟性・信頼性・安全性が求められる商用展開では、この特性への懸念が強まっている。今週開催の Conference on Robot Learning では、UCバークレーとNVIDIAが、日常的な実用タスクのためにAIでロボットをプログラミングする新しいアプローチを共同で発表する予定だ。 IEEE Spectrum Robotics フィジカルAI AI・テクノロジー 海外 特集">
+  <p class="meta">IEEE Spectrum Robotics　2026-11-09 23:00</p>
+  <h2 class="article-title">エージェンティック・ロボティクスはデータ拡張の壁を越えるか　汎用ロボットへの新しいアプローチ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: フィジカルAI</span><span class="chip">カテゴリ: AI・テクノロジー</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">ロボット企業は、データこそがロボティクス最難関の問題を解く鍵だという信念のもと、多額の投資を続けている。人間の実演データをAIシステムが大量に学習すれば、ロボットは人間が担う手作業の大半をこなせるようになるはずだ、という考え方だ。訓練データの収集だけを目的とするロボット企業まで現れている。しかし、データが本当に汎用ロボットをもたらすのかは未解決の問題で、どれだけの量が必要か、どんなデータが重要なのか、何か別の要素が欠けているのではないかは誰にも分かっていない。<span class="summary-rest" hidden><br><br>大量データへの依存には、結果として得られるAIアルゴリズムが本質的にブラックボックスで、人間には理解が難しいという問題もある。柔軟性・信頼性・安全性が求められる商用展開では、この特性への懸念が強まっている。今週開催の Conference on Robot Learning では、UCバークレーとNVIDIAが、日常的な実用タスクのためにAIでロボットをプログラミングする新しいアプローチを共同で発表する予定だ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：IEEE Spectrum Robotics<br>
+    原題：Can Agentic Robotics Solve Robotics’ Data-Scaling Problem?<br>
+    原文URL：<a href="https://spectrum.ieee.org/agentic-robotics" target="_blank" rel="noopener">https://spectrum.ieee.org/agentic-robotics</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- WORLD_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <ul class="archive-list">
+        <li>まだありません</li>
+      </ul>
+    </section>
+    <!-- WORLD_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        genre: document.getElementById("categoryFilter"),
+        source: document.getElementById("sourceFilter"),
+        kind: document.getElementById("kindFilter"),
+        region: document.getElementById("regionFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-categories"), els.genre.value)
+          && (!els.source.value || article.getAttribute("data-source") === els.source.value)
+          && (!els.kind.value || article.getAttribute("data-kind") === els.kind.value)
+          && (!els.region.value || article.getAttribute("data-region") === els.region.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.genre, els.source, els.kind, els.region].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = ""; els.month.value = ""; els.genre.value = "";
+        els.source.value = ""; els.kind.value = ""; els.region.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

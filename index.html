@@ -166,6 +166,9 @@
         <a class="link" href="camera-news.html" target="_blank" rel="noreferrer" aria-label="Camera News">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjZmZmIi8+PGcgZmlsbD0iIzAwMCI+PHJlY3QgeD0iOC42IiB5PSI0LjQiIHdpZHRoPSI2LjgiIGhlaWdodD0iMi44IiByeD0iMC45Ii8+PHJlY3QgeD0iMi40IiB5PSI2LjgiIHdpZHRoPSIxOS4yIiBoZWlnaHQ9IjEyLjQiIHJ4PSIyIi8+PC9nPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTMiIHI9IjMuNyIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTMiIHI9IjEuOSIgZmlsbD0iIzAwMCIvPjwvc3ZnPg==" alt="" loading="lazy" />
         </a>
+        <a class="link" href="world-news.html" target="_blank" rel="noreferrer" aria-label="World News">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjZmZmIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuOCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iOC41Ii8+PGVsbGlwc2UgY3g9IjEyIiBjeT0iMTIiIHJ4PSIzLjgiIHJ5PSI4LjUiLz48cGF0aCBkPSJNMy41IDEyaDE3TTQuOCA3LjVoMTQuNE00LjggMTYuNWgxNC40Ii8+PC9nPjwvc3ZnPg==" alt="" loading="lazy" />
+        </a>
         <a class="link" href="topo.html" target="_blank" rel="noreferrer" aria-label="TOPO">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9IiMwMDAiLz48L3N2Zz4=" alt="" loading="lazy" />
         </a>
@@ -243,6 +246,14 @@
         <li><a href="camera-news.html">最新のカメラニュースを読む</a></li>
       </ul>
       <p class="nurse-latest-more"><a href="camera-news.html">Camera News をすべて見る →</a> ・ <a href="camera-search.html">全件検索</a> ・ <a href="camera-feed.xml">RSS</a></p>
+    </section>
+
+    <section class="nurse-latest" aria-label="World News 最新記事">
+      <h2 class="nurse-latest-title"><a href="world-news.html">World News</a> 最新記事</h2>
+      <ul class="nurse-latest-list" id="worldLatestList">
+        <li><a href="world-news.html">最新の政治・世界情勢ニュースを読む</a></li>
+      </ul>
+      <p class="nurse-latest-more"><a href="world-news.html">World News をすべて見る →</a> ・ <a href="world-search.html">全件検索</a> ・ <a href="world-feed.xml">RSS</a></p>
     </section>
 
     <footer class="foot">
@@ -359,6 +370,25 @@
         meta.textContent = (a.publishedDateKey || "") + " " + (a.sourceName || "");
         var link = document.createElement("a");
         link.href = "camera-news.html";
+        link.textContent = a.titleJa || "";
+        li.appendChild(meta); li.appendChild(link);
+        list.appendChild(li);
+      });
+    }).catch(function(){});
+  </script>
+  <script>
+    fetch("world-news-data.json").then(function(r){ return r.json(); }).then(function(data){
+      var list = document.getElementById("worldLatestList");
+      var items = (data.articles || []).slice(0, 5);
+      if (!items.length || !list) return;
+      list.textContent = "";
+      items.forEach(function(a){
+        var li = document.createElement("li");
+        var meta = document.createElement("span");
+        meta.className = "nurse-latest-meta";
+        meta.textContent = (a.publishedDateKey || "") + " " + (a.sourceName || "");
+        var link = document.createElement("a");
+        link.href = "world-news.html";
         link.textContent = a.titleJa || "";
         li.appendChild(meta); li.appendChild(link);
         list.appendChild(li);
