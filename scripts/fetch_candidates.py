@@ -25,6 +25,7 @@ import urllib.request
 from datetime import date, timedelta
 
 UA = {"User-Agent": "Mozilla/5.0 (research digest fetcher)"}
+BACKFILL = False  # set by main() when --backfill is passed
 TODAY = date.today()
 MIN_DATE = TODAY - timedelta(days=45)
 MAX_DATE = TODAY + timedelta(days=2)
@@ -92,9 +93,15 @@ def cand(source, title, abstract, dt, url, doi="", authors=None, venue=""):
 def fetch_pubmed(out):
     base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
     for q in BIO_QUERIES:
-        d = http_json(base + "/esearch.fcgi?" + urllib.parse.urlencode({
-            "db": "pubmed", "term": q, "retmax": 6, "retmode": "json",
-            "sort": "pub_date", "datetype": "pdat", "reldate": 45}))
+        params = {"db": "pubmed", "term": q, "retmax": 6, "retmode": "json",
+                  "sort": "pub_date", "datetype": "pdat"}
+        if BACKFILL:
+            params["mindate"] = (TODAY - timedelta(days=365 * 7)).isoformat()
+            params["maxdate"] = (TODAY - timedelta(days=46)).isoformat()
+            params["retmax"] = 10
+        else:
+            params["reldate"] = 45
+        d = http_json(base + "/esearch.fcgi?" + urllib.parse.urlencode(params))
         ids = d.get("esearchresult", {}).get("idlist", [])
         if not ids:
             continue
@@ -134,8 +141,13 @@ def fetch_pubmed(out):
 
 def fetch_europepmc(out):
     for q in BIO_QUERIES + X_QUERIES[:2]:
+        query = q
+        if BACKFILL:
+            lo = (TODAY - timedelta(days=365 * 7)).isoformat()
+            hi = (TODAY - timedelta(days=46)).isoformat()
+            query = f"({q}) AND FIRST_PDATE:[{lo} TO {hi}]"
         d = http_json("https://www.ebi.ac.uk/europepmc/webservices/rest/search?" + urllib.parse.urlencode({
-            "query": q, "format": "json", "pageSize": 6,
+            "query": query, "format": "json", "pageSize": 10 if BACKFILL else 6,
             "sort": "P_PDATE_D desc", "resultType": "core"}))
         for r in d.get("resultList", {}).get("result", []):
             out.append(cand(
@@ -287,14 +299,113 @@ def fetch_core(out):
                 (w.get("publisher") or "")))
 
 
+
+# ---------------- RSS / Atom journal feeds (added 2026-11-12) ----------------
+import xml.etree.ElementTree as ET
+
+
+def _strip_html(s):
+    return re.sub(r"<[^>]+>", " ", s or "").strip()
+
+
+def _local(tag):
+    return tag.rsplit("}", 1)[-1].lower()
+
+
+def _kids(node):
+    m = {}
+    for ch in node:
+        m.setdefault(_local(ch.tag), []).append(ch)
+    return m
+
+
+def _feed_date(kids):
+    for key in ("pubdate", "published", "updated", "date"):
+        for el in kids.get(key, []):
+            txt = (el.text or "").strip()
+            m = re.search(r"(\d{4})-(\d{2})-(\d{2})", txt)
+            if m:
+                return m.group(0)
+            m = re.search(r"(\d{1,2})\s+(\w{3})\w*\s+(\d{4})", txt)
+            if m:
+                months = {s: i + 1 for i, s in enumerate(
+                    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])}
+                try:
+                    return date(int(m.group(3)), months.get(m.group(2)[:3], 1), int(m.group(1))).isoformat()
+                except Exception:
+                    return ""
+    return ""
+
+
+def fetch_feed(label, url, page_abstract=False):
+    """One RSS 2.0 / RSS 1.0 (RDF) / Atom journal feed -> normalized
+    candidates (abstract = item description/summary). Element names are
+    matched by local name so namespaces and Frontiers' lowercase <pubdate>
+    all parse. Broad feeds are title-gated in main(). With page_abstract,
+    items lacking a description (Nature Communications RSS) get their
+    abstract from the article page's meta tags."""
+
+    def _fetch(out):
+        xml = http_text(url)
+        root = ET.fromstring(xml)
+        for node in root.iter():
+            if _local(node.tag) not in ("item", "entry"):
+                continue
+            kids = _kids(node)
+            def first(key):
+                els = kids.get(key, [])
+                return (els[0].text or "").strip() if els else ""
+            title = first("title")
+            link = first("link")
+            if not link:  # Atom: link is an element with href
+                for lnk in kids.get("link", []):
+                    if lnk.get("rel") in (None, "alternate") and lnk.get("href"):
+                        link = lnk.get("href")
+                        break
+            abst = _strip_html(first("description") or first("summary") or first("content"))
+            if page_abstract and len(abst) < 200 and link:
+                try:
+                    page = http_text(link)
+                    m = (re.search(r'<meta[^>]+name="description"[^>]+content="([^"]+)"', page)
+                         or re.search(r'<meta[^>]+name="citation_abstract"[^>]+content="([^"]+)"', page)
+                         or re.search(r'<meta[^>]+property="og:description"[^>]+content="([^"]+)"', page))
+                    if m:
+                        abst = _strip_html(m.group(1))
+                except Exception:
+                    pass
+            authors = []
+            for c in kids.get("creator", []):
+                if c.text:
+                    authors.append(c.text.strip())
+            for a in kids.get("author", []):
+                nm = _kids(a).get("name", [])
+                if nm and nm[0].text:
+                    authors.append(nm[0].text.strip())
+                elif a.text:
+                    authors.append(a.text.strip())
+            doi = ""
+            m = re.search(r"10\.\d{4,9}/\S+", (first("guid") + " " + first("id") + " " + link).lower())
+            if m:
+                doi = m.group(0).rstrip("/.")
+            out.append(cand(label, title, abst, _feed_date(kids), link, doi, authors, label))
+
+    return _fetch
+
+
 TITLE_GATE = [
     "consciousness", "psychedelic", "psilocybin", "mdma", "trauma", "ptsd",
     "meditation", "phenomenolog", "ethic", "moral", "philosophy of mind",
-    "cognition", "altered states", "ego dissolution", "near-death",
+    "cognition", "cognitive", "altered states", "ego dissolution", "near-death",
     "mindfulness", "psychedelic-assisted", "entheogen", "ayahuasca", "lsd",
     "ketamine", "意識", "倫理", "トラウマ", "瞑想",
+    "artificial intelligence", "large language model", "language model", "llm",
+    "machine learning", "deep learning", "neural network", "chatbot", "agent",
+    "neuro", "brain", "mental health", "psychiatr", "psycholog", "emotion",
+    "memory", "perception", "sleep", "depression", "anxiety", "ai ",
 ]
-GATED_SOURCES = {"OSF Preprints", "DOAJ"}
+GATED_SOURCES = {"OSF Preprints", "DOAJ", "Frontiers in Psychology",
+                 "Frontiers in Artificial Intelligence", "Frontiers in Neuroscience",
+                 "JMIR Mental Health", "PLOS ONE", "Nature Communications", "ScienceDaily"}
 
 
 def title_gate(c):
@@ -312,13 +423,30 @@ SOURCES = [
     ("ClinicalTrials.gov", fetch_trials),
     ("OSF Preprints", fetch_osf),
     ("DOAJ", fetch_doaj),
+    ("Frontiers in Psychology", fetch_feed("Frontiers in Psychology", "https://www.frontiersin.org/journals/psychology/rss")),
+    ("Frontiers in Artificial Intelligence", fetch_feed("Frontiers in Artificial Intelligence", "https://www.frontiersin.org/journals/artificial-intelligence/rss")),
+    ("Frontiers in Neuroscience", fetch_feed("Frontiers in Neuroscience", "https://www.frontiersin.org/journals/neuroscience/rss")),
+    ("JMIR Mental Health", fetch_feed("JMIR Mental Health", "https://mental.jmir.org/feed/atom")),
+    ("PLOS ONE", fetch_feed("PLOS ONE", "https://journals.plos.org/plosone/feed/atom")),
+    ("Nature Communications", fetch_feed("Nature Communications", "https://www.nature.com/ncomms.rss", page_abstract=True)),
+    ("ScienceDaily", fetch_feed("ScienceDaily", "https://www.sciencedaily.com/rss/mind_brain.xml")),
 ]
 
 
 def main():
+    global BACKFILL, MIN_DATE, MAX_DATE
+    argv = sys.argv[1:]
+    if "--backfill" in argv:
+        BACKFILL = True
+        argv = [a for a in argv if a != "--backfill"]
+        # Backfill window: from 7 years ago up to where the recent window ends.
+        MIN_DATE = TODAY - timedelta(days=365 * 7)
+        MAX_DATE = TODAY - timedelta(days=46)
     wanted = None
-    if len(sys.argv) > 1 and sys.argv[1] == "--sources":
-        wanted = set(sys.argv[2].split(","))
+    if argv and argv[0] == "--sources":
+        wanted = set(argv[1].split(","))
+    if BACKFILL and wanted is None:
+        wanted = {"PubMed", "Europe PMC"}
     raw = []
     report = {}
     for name, fn in SOURCES:
@@ -361,7 +489,7 @@ def main():
         kept.append(c)
     kept.sort(key=lambda c: c["date"], reverse=True)
 
-    out_path = "candidates_extra.json"
+    out_path = "candidates_backfill.json" if BACKFILL else "candidates_extra.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(kept, f, ensure_ascii=False, indent=1)
     for name, msg in report.items():
