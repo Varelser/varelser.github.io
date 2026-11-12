@@ -350,8 +350,6 @@
     .tl-link.has-article { border-bottom-style: solid; border-bottom-color: rgba(0,0,0,0.55); }
     .tl-chapter { color: var(--muted); font-size: var(--fs-small); margin-left: auto; flex: none; }
     #empty-msg { padding: 16px 12px; color: var(--muted); border-bottom: 1px solid var(--line); }
-    .article-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-small); cursor: pointer; }
-    .article-toggle input { width: 17px; height: 17px; accent-color: #333; }
     @media (max-width: 980px) { .toolbar { padding: 10px; } .toolbar button, .toolbar-home, #graph-link { height: 44px; } .toolbar input[type="search"], .toolbar select { height: 44px; } .tag-chip { height: 40px; min-height: 40px; padding: 0 14px; } .intro { padding: 10px; } .tag-row { padding: 8px 10px; } .content { padding: 10px; } }
   </style>
 </head>
@@ -374,9 +372,7 @@
       <button id="random-btn" type="button">ランダム</button>
       <button id="clear-btn" type="button">クリア</button>
       <button id="timeline-btn" type="button" aria-pressed="false">年表</button>
-      <label class="article-toggle"><input type="checkbox" id="article-only"> 記事ありのみ</label>
       <button id="daily-btn" type="button">今日の1件</button>
-      <button id="export-btn" type="button">未執筆リスト</button>
       <a href="knowledgenetwork-graph.html" id="graph-link">関連図</a>
       <a class="toolbar-home" href="https://varelser.github.io/">ホームへ</a>
       <button type="button" id="toolbar-to-list">一覧トップへ</button>
@@ -387,7 +383,7 @@
     <div class="intro">
       <p><b>このページについて</b> — 変性意識に関わる人物・研究・理論の索引。745件。章立ては総本山『慈愛体系』の章立てに沿っています（項目は第2章から第14章まで。序章・第1章・終章に対応する項目はありません）。人物名のリンクはすべて <a href="https://note.com/varelser" target="_blank" rel="noopener noreferrer">note.com</a> です。この索引の各項目は、変性意識をめぐる体系『<a href="https://note.com/varelser/n/n621df6d6feb3" target="_blank" rel="noopener noreferrer">慈愛体系</a>』では語りきれないトピックを、1件ずつ深掘りしたものです。</p>
       <p><b>凡例</b> — 実線の下線は note記事あり、点線の下線は note内検索へ（まだ記事がない項目）。説明文中の『作品名』なども note内検索へのリンクです。「関連：」は同じテーマで読むべき項目への近道です。</p>
-      <p><b>使い方</b> — 上の検索欄で人物・理論・作品名を絞り込めます。章やタグで絞り込むことも、年表で生没年順に並べることも、ランダムで1件開くことも、関連図でつながりを眺めることもできます。更新：2026-11-12（年表の件数表示を絞り込み反映に修正、表記の不整合を修正、note直リンクを161件に拡充、SEO情報を追加、『慈愛体系』へのリンクを追加、IX章に出典（DOI）57件（対象56項目）に拡充）。同日さらに：記事ありのみの絞り込み、表示状態のURL共有と項目への直リンク、「今日の1件」、未執筆リストの書き出し、目次と見出しへの記事あり件数の表示、関連図のPNG保存とEscリセットを追加。あわせて表示の高速化（年表とツールチップの遅延初期化、画面外の項目の描画スキップ）を実施。同日さらに：目次の章立てを分野別（旧Ⅰ〜Ⅸ）から『慈愛体系』の章立て（第2章〜第14章）へ再編。2026-11-11の更新では検索・絞り込み・関連リンク・生没年・横断タグ・年表を追加、新規51件を追加、重複と空見出しを修正。UIを白背景のリキッドグラスに刷新、note直リンクを125件に拡充、記述文中の人名・作品名へのリンクを精密化、関連図を追加。</p>
+      <p><b>使い方</b> — 上の検索欄で人物・理論・作品名を絞り込めます。章やタグで絞り込むことも、年表で生没年順に並べることも、ランダムで1件開くことも、関連図でつながりを眺めることもできます。更新：2026-11-12（年表の件数表示を絞り込み反映に修正、表記の不整合を修正、note直リンクを161件に拡充、SEO情報を追加、『慈愛体系』へのリンクを追加、IX章に出典（DOI）57件（対象56項目）に拡充）。同日さらに：表示状態のURL共有と項目への直リンク、「今日の1件」、目次と見出しへの記事あり件数の表示、関連図のPNG保存とEscリセットを追加。あわせて表示の高速化（年表とツールチップの遅延初期化、画面外の項目の描画スキップ）を実施。同日さらに：目次の章立てを分野別（旧Ⅰ〜Ⅸ）から『慈愛体系』の章立て（第2章〜第14章）へ再編。同日さらに：「記事ありのみ」の絞り込みと「未執筆リスト」の書き出しを削除。2026-11-11の更新では検索・絞り込み・関連リンク・生没年・横断タグ・年表を追加、新規51件を追加、重複と空見出しを修正。UIを白背景のリキッドグラスに刷新、note直リンクを125件に拡充、記述文中の人名・作品名へのリンクを精密化、関連図を追加。</p>
     </div>
 
 
@@ -1979,7 +1975,6 @@
       const chapter = document.getElementById('chapter');
       const rc = document.getElementById('result-count');
       const emptyMsg = document.getElementById('empty-msg');
-      const articleOnly = document.getElementById('article-only');
       const total = document.querySelectorAll('.person-link').length;
       const norm = (s) => (s || '').toLowerCase().replace(/\s+/g, '');
       const apply = () => {
@@ -1989,7 +1984,6 @@
           if (query && !norm(text).includes(query)) return false;
           if (chap && secId !== chap) return false;
           if (activeTag && !tags.includes(activeTag)) return false;
-          if (articleOnly && articleOnly.checked && !hasArt) return false;
           return true;
         };
         let shown = 0;
@@ -1999,7 +1993,7 @@
             row.style.display = ok ? '' : 'none';
             if (ok) shown += 1;
           });
-          const filtered = !!(query || chap || activeTag || (articleOnly && articleOnly.checked));
+          const filtered = !!(query || chap || activeTag);
           const tlRoot = document.getElementById('timeline');
           const tlMax = parseInt((tlRoot && tlRoot.dataset.maxCount) || '1', 10) || 1;
           document.querySelectorAll('#timeline .tl-group').forEach((g) => {
@@ -2030,7 +2024,7 @@
           });
         }
         if (emptyMsg) emptyMsg.hidden = shown !== 0;
-        if (rc) rc.textContent = (query || chap || activeTag || (articleOnly && articleOnly.checked)) ? shown + '件 / 全' + total + '件' : '全' + total + '件';
+        if (rc) rc.textContent = (query || chap || activeTag) ? shown + '件 / 全' + total + '件' : '全' + total + '件';
         syncUrlState();
       };
       function syncUrlState() {
@@ -2039,17 +2033,14 @@
           if (q.value) p.set('q', q.value);
           if (chapter.value) p.set('chapter', chapter.value);
           if (activeTag) p.set('tag', activeTag);
-          if (articleOnly && articleOnly.checked) p.set('article', '1');
           const s = p.toString();
           history.replaceState(null, '', s ? '?' + s : location.pathname);
         } catch (_) {}
       }
       q.addEventListener('input', apply);
       chapter.addEventListener('change', apply);
-      if (articleOnly) articleOnly.addEventListener('change', apply);
       document.getElementById('clear-btn').addEventListener('click', () => {
         q.value = ''; chapter.value = '';
-        if (articleOnly) articleOnly.checked = false;
         activeTag = '';
         document.querySelectorAll('.tag-chip').forEach((c) => c.classList.remove('is-active'));
         apply(); q.focus();
@@ -2077,10 +2068,9 @@
       const dailyBtn = document.getElementById('daily-btn');
       if (dailyBtn) dailyBtn.addEventListener('click', () => {
         if (timelineMode) { const b = document.getElementById('timeline-btn'); if (b) b.click(); }
-        if (q.value || chapter.value || activeTag || (articleOnly && articleOnly.checked)) {
+        if (q.value || chapter.value || activeTag) {
           q.value = ''; chapter.value = '';
-          if (articleOnly) articleOnly.checked = false;
-          activeTag = '';
+            activeTag = '';
           document.querySelectorAll('.tag-chip').forEach((c) => c.classList.remove('is-active'));
           apply();
         }
@@ -2093,30 +2083,6 @@
         if (target && target.scrollIntoView) target.scrollIntoView({ block: 'center' });
         if (target) { target.classList.add('flash'); setTimeout(() => target.classList.remove('flash'), 2200); }
         if (rc) rc.textContent = '今日の1件：' + pick.dataset.person;
-      });
-      const exportBtn = document.getElementById('export-btn');
-      if (exportBtn) exportBtn.addEventListener('click', async () => {
-        const names = [];
-        if (timelineMode) {
-          document.querySelectorAll('#timeline .tl-row').forEach((row) => {
-            if (row.style.display === 'none') return;
-            const a = row.querySelector('.tl-link.needs-link');
-            if (a && a.dataset.person) names.push(a.dataset.person);
-          });
-        } else {
-          document.querySelectorAll('.person-list li').forEach((li) => {
-            if (li.style.display === 'none') return;
-            li.querySelectorAll('.person-link.needs-link').forEach((a) => { if (a.dataset.person) names.push(a.dataset.person); });
-          });
-        }
-        const d = new Date();
-        const head = '# 未執筆リスト（' + d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + '・' + names.length + '件）';
-        const text = head + '\n' + names.map((n) => '- [ ] ' + n).join('\n') + '\n';
-        let ok = false;
-        try { await navigator.clipboard.writeText(text); ok = true; } catch (_) {
-          try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (_) {}
-        }
-        if (rc) rc.textContent = ok ? ('未執筆リスト ' + names.length + ' 件をコピーしました') : 'コピーに失敗しました';
       });
       const tagRow = document.getElementById('tag-row');
       if (tagRow) {
@@ -2193,7 +2159,6 @@
             activeTag = pt;
             document.querySelectorAll('.tag-chip').forEach((c) => c.classList.toggle('is-active', c.dataset.tag === pt));
           }
-          if (params.get('article') === '1' && articleOnly) articleOnly.checked = true;
           apply();
         }
       } catch (_) {}

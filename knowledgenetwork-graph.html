@@ -1208,7 +1208,7 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
         if (!is2d) {
           note.textContent = '3D：力学的シミュレーション';
         } else if (isTree) {
-          note.textContent = '枠ツリー：広がり＝レベル間の距離、枠の間隔＝ボックス間の隙間、切替の速さ＝中心切替アニメーションの速さ。反発力・自動回転は3Dのみ。辺は描かず、件数表示で総数を確認できます。';
+          note.textContent = '枠ツリー：広がり＝レベル間の距離、枠の間隔＝ボックス間の隙間、切替の速さ＝中心切替アニメーションの速さ。反発力・自動回転は3Dのみ。関連線は強い辺（交流・言及・同行・タグ3つ以上共有）のみ、ボックスの下に描きます。';
         } else {
           note.textContent = '2Dマインドマップ：広がり＝全体の半径、円の間隔＝内外の円の間隔、切替の速さ＝中心切替アニメーションの速さ。反発力・自動回転は3Dのみ。';
         }
@@ -2271,8 +2271,8 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
     }
 
     // 枠ツリーの描画（2Dのみ）：章・グループのフレーム、項目ボックス、
-    // 枝（直角のエルボー）。項目間の辺（2,174本）は描かず、件数表示で
-    // 総数を示す（放射状では従来どおり描画する）。文字はボックスに合
+    // 枝（直角のエルボー）。項目間の辺は強い辺（交流・言及・同行・タグ
+    // 3つ以上共有）のみボックスの下に描く（弱い辺は描かない）。文字はボックスに合
     // わせてワールド単位で大きさを決める（ズームで一緒に拡大・縮小する）。
     // 小さすぎる文字は描かない（ボックスだけ）。
     function drawTree() {
@@ -2356,6 +2356,33 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
           drawBoxText(hp.x, hp.y, [f.short + ' ' + f.count + '件'], 12, true, f.color);
           ctx.globalAlpha = 1;
         }
+        // 項目間の関連線（強い辺のみ：交流・言及・同行・タグ3つ以上共有。
+        // 弱い辺は本数が多すぎて枠内が埋まるため描かない。ボックスより
+        // 先に描き、線の端はボックスの下に隠れる）
+        for (const e of G.visEdges) {
+          if (e.weak) continue;
+          const a = G.nodes[e.a], b = G.nodes[e.b];
+          if (!a || !b || !G.treeItems.has(a.i) || !G.treeItems.has(b.i)) continue;
+          const pa = project(a), pb = project(b);
+          if (e.rel) {
+            ctx.strokeStyle = 'rgba(142,47,60,0.6)';
+            ctx.lineWidth = 1.4;
+            ctx.setLineDash([5, 3]);
+          } else if (e.mention || e.coloc) {
+            ctx.strokeStyle = 'rgba(0,0,0,0.32)';
+            ctx.lineWidth = 1;
+          } else {
+            ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+            ctx.lineWidth = 1;
+          }
+          ctx.globalAlpha = (dimCh && a.chapter !== dimCh && b.chapter !== dimCh) ? 0.1 : 1;
+          ctx.beginPath();
+          ctx.moveTo(pa.x, pa.y);
+          ctx.lineTo(pb.x, pb.y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        ctx.globalAlpha = 1;
         // 項目ボックス
         for (const n of G.visibleNodes) {
           const b = G.treeItems.get(n.i);
