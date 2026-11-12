@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 """Instruments News candidate fetcher (fixed script for the hourly update).
 
-Scope: the same 27 sources as the Discord Instruments channel
-(verified 2026-11-08): Japanese gear media and makers plus overseas
-guitar / synth / recording media. Parses RSS/Atom with the stdlib only
+Scope: 45 sources — the Discord Instruments channel's 27 (verified
+2026-11-08) plus 18 more verified 2026-11-12 at the user's request
+(Gearnews, Synth Anatomy, Bedroom Producers Blog, Rekkerd, No Treble,
+Guitar Player, Bass Musician Magazine, Mix Magazine, SonicScoop,
+DJ TechTools, Music Instrument News, Music Connection,
+Performer Magazine, Splice Blog, Amazona, Sleepfreaks,
+イケベ楽器ブログ, 島村楽器 デジランド). Probed and NOT adopted
+(2026-11-12, do not retry): Sonicstate (500/404), Bass Player /
+Keyboard Magazine / KVR (malformed XML for the stdlib parser),
+Ableton Blog / LANDR / UA Blog / Andertons (404), Ask.Audio /
+Reverb News (403), Strings Magazine (malformed), デジマート (403),
+ヤマハ プレスリリース (403). Parses RSS/Atom with the stdlib only
 and writes candidates that are not already in
 instruments-news-data.json (dedupe by URL and normalized title;
 sources are fetched in parallel, dedupe is applied afterwards in
@@ -58,6 +67,24 @@ SOURCES = [
     ('NAMM', "https://www.namm.org/rss.xml", "en"),
     ('Thomann Blog', "https://www.thomann.de/blog/en/feed/", "en"),
     ('Sweetwater InSync', "https://www.sweetwater.com/insync/feed/", "en"),
+    ("Gearnews", "https://www.gearnews.com/feed/", "en"),
+    ("Synth Anatomy", "https://synthanatomy.com/feed", "en"),
+    ("Bedroom Producers Blog", "https://bedroomproducersblog.com/feed/", "en"),
+    ("Rekkerd", "https://rekkerd.org/feed/", "en"),
+    ("No Treble", "https://www.notreble.com/feed/", "en"),
+    ("Guitar Player", "https://www.guitarplayer.com/rss", "en"),
+    ("Bass Musician Magazine", "https://bassmusicianmagazine.com/feed/", "en"),
+    ("Mix Magazine", "https://www.mixonline.com/feed", "en"),
+    ("SonicScoop", "https://sonicscoop.com/feed/", "en"),
+    ("DJ TechTools", "https://djtechtools.com/feed/", "en"),
+    ("Music Instrument News", "https://musicinstrumentnews.co.uk/feed/", "en"),
+    ("Music Connection", "https://www.musicconnection.com/feed/", "en"),
+    ("Performer Magazine", "https://performermag.com/feed/", "en"),
+    ("Splice Blog", "https://splice.com/blog/feed/", "en"),
+    ("Amazona", "https://www.amazona.de/feed/", "de"),
+    ("Sleepfreaks", "https://sleepfreaks-dtm.com/feed/", "ja"),
+    ("イケベ楽器ブログ", "https://www.ikebe-gakki.com/blog/feed/", "ja"),
+    ("島村楽器 デジランド", "https://info.shimamura.co.jp/digital/feed/", "ja"),
 ]
 
 UA = {"User-Agent": "Mozilla/5.0 (compatible; InstrumentsNewsFetch/1.0)"}
