@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="https://noise-assets.pages.dev/apple-touch-icon.png">
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <title>Noise</title>
-<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。52種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。76種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="Noise — Noise Generator">
-<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。52種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。76種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://varelser.github.io/noise.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -660,7 +660,7 @@
       <div class="body">
         <div class="help">
           色付きノイズの一部（Grey / Green / Black など）は用途により定義が揺れるため、本作では実用向けの近似実装です。<br>
-          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を52種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
+          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を76種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
         </div>
       </div>
     </div>
@@ -788,45 +788,69 @@
     ['black', 'Black*'],
     ['rumble', 'Rumble'],
     ['powerhum', 'Power Hum'],
+    ['tinnitus', 'Tinnitus / Ear Ringing'],
     ['vinyl', 'Vinyl'],
     ['tape', 'Tape Hiss'],
     ['wind', 'Wind'],
     ['rain', 'Rain'],
+    ['hail', 'Hail'],
     ['ocean', 'Ocean'],
     ['crackle', 'Crackle'],
     ['dust', 'Dust'],
+    ['paper', 'Paper Rustle'],
     ['shot', 'Shot'],
+    ['geiger', 'Geiger Counter'],
     ['velvet', 'Velvet'],
     ['staticam', 'Static AM'],
+    ['shortwave', 'Shortwave Radio'],
     ['digital', 'Digital / Bitcrush'],
+    ['modem', 'Dial-up Modem'],
     ['glitch', 'Glitch Burst'],
     ['harsh', 'Harsh Noise'],
     ['hnw', 'HNW (Harsh Noise Wall)'],
     ['feedback', 'Feedback'],
+    ['scrape', 'Metal Scrape'],
     ['sand', 'Resonant Sand'],
+    ['desert', 'Desert Wind'],
     ['fan', 'Fan'],
+    ['fridge', 'Refrigerator'],
     ['airplane', 'Airplane Cabin'],
+    ['helicopter', 'Helicopter'],
     ['fire', 'Fire / Campfire'],
     ['stream', 'Stream'],
     ['waterfall', 'Waterfall'],
     ['thunder', 'Thunder'],
     ['forest', 'Forest Leaves'],
+    ['birds', 'Birds / Dawn Chorus'],
     ['snow', 'Snow / Muffled Quiet'],
     ['city', 'City Traffic'],
+    ['crowd', 'Crowd Murmur'],
+    ['applause', 'Applause'],
+    ['highway', 'Highway'],
     ['train', 'Train'],
+    ['subway', 'Subway'],
+    ['construction', 'Construction'],
     ['shower', 'Shower'],
+    ['washer', 'Washing Machine'],
     ['underwater', 'Underwater'],
+    ['sonar', 'Sonar'],
     ['band', 'Resonant Band'],
+    ['organ', 'Organ Drone'],
     ['grains', 'Granular Cloud'],
+    ['shimmer', 'Shimmer'],
     ['furin', 'Furin / Wind Chime'],
+    ['bowl', 'Singing Bowl'],
     ['chaos', 'Chaos (Logistic)'],
+    ['space', 'Space / Whistlers'],
     ['cicadas', 'Cicadas'],
     ['crickets', 'Crickets'],
     ['heartbeat', 'Heartbeat'],
     ['womb', 'Womb'],
+    ['breath', 'Breath'],
     ['purr', 'Cat Purr'],
     ['drops', 'Water Drops'],
     ['dryer', 'Hair Dryer'],
+    ['vacuum', 'Vacuum Cleaner'],
     ['clock', 'Clock Tick'],
     ['typing', 'Typing']
   ];
@@ -884,6 +908,30 @@
     dryer: 'ドライヤーの送風音。強い中高域の持続で周囲をマスクします。',
     clock: '時計のチクタク。一定間隔の小さなクリック。',
     typing: 'キーボードのタイピング音。不規則な打鍵の連なりで、作業の疑似環境音に。',
+    tinnitus: '耳鳴りのような高い持続音と、かすかなヒス。マスキングや参照用の音です。Densityで音程、Motionで揺らぎ、Grainで倍音とヒスの量が変わります。長時間・大音量での使用は避けてください。',
+    hail: '雹（ひょう）の音。雨より硬く速い打撃が、低い唸りの上に降り注ぎます。Densityで降りの密度、Motionで嵐のうねり、Grainで氷の大きさが変わります。',
+    desert: '砂漠の風。低い唸りに、砂の粒が流れる高いざらつきが重なります。Densityで砂の量、Motionで突風の強さが変わります。',
+    birds: '夜明けの鳥のさえずり。柔らかい空気音の上に、短い鳴き声が点々と現れます。Densityで鳴く頻度、Motionでコーラスの盛り上がり、Grainで倍音が変わります。',
+    crowd: '群衆のざわめき。声の帯域が音節のようにうごめくワラ（壁声）です。Densityで音節の速さ、Grainで声の明瞭さが変わります。',
+    applause: '拍手。手拍子の塊が波のように寄せては引き、部屋の残響が重なります。Densityで波の長さと密度、Grainで手拍子の硬さが変わります。',
+    highway: '高速道路の近く。車両が周期的に近づいて通り過ぎるうなりと、路面の低い唸り。Densityで交通量、Motionで通過の速さが変わります。',
+    subway: '地下鉄。レールの継ぎ目音、トンネルの低い唸り、時折ブレーキの金属音が鳴ります。Densityで速度、Grainでブレーキ音の量が変わります。',
+    construction: '工事現場。削岩機の打撃がバースト状に鳴り、低い機械音が続きます。Densityで作業の長さ、Grainで打撃の速さが変わります。音量に注意。',
+    helicopter: 'ヘリコプター。ローターの強い断続（チョップ）が低音を叩き、タービンの唸りが重なります。Densityで回転数、Motionで機体の揺れが変わります。',
+    fridge: '冷蔵庫。コンプレッサーの周期に合わせて低いハムと唸りがついたり消えたりし、時々小さな音がします。Motionで周期の速さ、Grainで小音の量が変わります。',
+    washer: '洗濯機。洗いの水のうねりと回転の重い音、後半は脱水の唸りが上がります。Densityで洗いの速さ、Motionで周期、Grainで脱水の強さが変わります。',
+    vacuum: '掃除機。基本音の倍音を含んだ強い持続音と送風。Densityで音程、Motionでゆらぎ、Grainで風の量が変わります。マスキングに。',
+    shortwave: '短波ラジオ。フェーディングする静電気ノイズに、ヘテロダインの笛音が漂います。Densityで静電気の帯域、Motionでフェーディング、Grainで笛音の量が変わります。',
+    modem: 'ダイヤルアップモデムの接続音。発信音→ダイヤル→ハンドシェイクの悲鳴→接続後の持続音、を周期的に繰り返します。Motionで各段階の長さ、Grainで接続後のチャープが変わります。',
+    geiger: 'ガイガーカウンター。放射線の検出クリックが不規則に鳴ります。Densityで線量（クリック率）、Motionで線源のゆらぎ、Grainでクリックの鋭さが変わります。',
+    sonar: 'ソナー。深い低音の海に、ピング音とその反響が周期的に響きます。Densityでピングの間隔、Grainで反響の長さが変わります。',
+    space: '宇宙空間のソニフィケーション。下降するホイッスラーの音と、プラズマのうねり、深い唸り。Densityでホイッスラーの頻度、Motionでプラズマのうねりが変わります。',
+    bowl: 'シンギングボウル。低い倍音列を持つベルの音が、ゆっくりうなりながら長く響きます。Densityで打つ間隔、Grainで響きの長さが変わります。',
+    shimmer: 'シマー。音程のある短い粒が高い所できらめく雲。Densityで粒の密度、Grainで響きの長さが変わります。Granular Cloudより音楽的です。',
+    organ: 'パイプオルガンのドローン。デチューンしたリードの和音が、ふいごのうねりでゆっくり膨らみます。Densityで音域、Grainでリードの倍音が変わります。',
+    paper: '紙のざわつき。乾いた高域のしわ音が塊で現れます。Densityで塊の多さ、Grainで紙の硬さが変わります。ASMR的な素材にも。',
+    scrape: '金属を擦る音（コンタクトマイク的な質感）。擦過のたびに帯域がうねり、軋みが重なります。Densityで間隔、Grainで擦過の長さと軋みが変わります。音量に注意。',
+    breath: '呼吸の音。吸って吐く周期でノイズが膨らみと収まりを繰り返します。Densityで呼吸の深さ、Motionで呼吸の速さ、Grainで息の質感が変わります。呼吸法や瞑想のお供に。'
   };
 
   const DEFAULTS = {
@@ -1611,6 +1659,94 @@
       B_enabled: true, B_type: 'harsh', B_gain: 0.7, B_tone: 0.35, B_density: 0.9, B_motion: 0.6, B_grain: 1.1, B_stereo: 0.6,
       C_enabled: true, C_type: 'harsh', C_gain: 0.6, C_tone: -0.3, C_density: 1.2, C_motion: 0.4, C_grain: 0.8, C_stereo: 0.5,
       master_gain: 0.37, master_width: 1.5, master_drive: 2.6, master_highcut: 16000, master_space: 0.2
+    },
+    'Sleep: Breath Cycle': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'breath', A_gain: 0.95, A_tone: 0, A_density: 0.85, A_motion: 0.32, A_grain: 0.35, A_stereo: 0.3,
+      B_enabled: true, B_type: 'brown', B_gain: 0.4, B_tone: -0.3, B_density: 0.5, B_motion: 0.2, B_grain: 0.3, B_stereo: 0.4,
+      master_gain: 0.55, master_width: 1.1
+    },
+    'Nature: Hailstorm': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'hail', A_gain: 0.85, A_tone: 0.1, A_density: 0.9, A_motion: 0.5, A_grain: 0.6, A_stereo: 0.5,
+      B_enabled: true, B_type: 'thunder', B_gain: 0.6, B_tone: -0.2, B_density: 0.6, B_motion: 0.4, B_grain: 0.5, B_stereo: 0.6,
+      C_enabled: true, C_type: 'wind', C_gain: 0.4, C_tone: -0.1, C_density: 0.7, C_motion: 0.6, C_grain: 0.4, C_stereo: 0.7,
+      master_gain: 0.5, master_width: 1.3
+    },
+    'Nature: Dawn Chorus': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'birds', A_gain: 0.9, A_tone: 0.15, A_density: 0.7, A_motion: 0.5, A_grain: 0.5, A_stereo: 0.7,
+      B_enabled: true, B_type: 'forest', B_gain: 0.45, B_tone: 0, B_density: 0.6, B_motion: 0.5, B_grain: 0.4, B_stereo: 0.6,
+      C_enabled: true, C_type: 'stream', C_gain: 0.3, C_tone: 0.1, C_density: 0.5, C_motion: 0.4, C_grain: 0.4, C_stereo: 0.5,
+      master_gain: 0.55, master_width: 1.35
+    },
+    'Urban: Night Highway': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'highway', A_gain: 0.9, A_tone: -0.05, A_density: 0.7, A_motion: 0.55, A_grain: 0.4, A_stereo: 0.5,
+      B_enabled: true, B_type: 'city', B_gain: 0.45, B_tone: -0.15, B_density: 0.6, B_motion: 0.4, B_grain: 0.4, B_stereo: 0.6,
+      C_enabled: true, C_type: 'rumble', C_gain: 0.35, C_tone: -0.3, C_density: 0.5, C_motion: 0.3, C_grain: 0.3, C_stereo: 0.3,
+      master_gain: 0.52, master_width: 1.25
+    },
+    'Urban: Subway Depths': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'subway', A_gain: 0.9, A_tone: -0.1, A_density: 0.65, A_motion: 0.4, A_grain: 0.55, A_stereo: 0.5,
+      B_enabled: true, B_type: 'rumble', B_gain: 0.5, B_tone: -0.35, B_density: 0.6, B_motion: 0.3, B_grain: 0.3, B_stereo: 0.4,
+      C_enabled: true, C_type: 'underwater', C_gain: 0.3, C_tone: -0.4, C_density: 0.5, C_motion: 0.3, C_grain: 0.3, C_stereo: 0.5,
+      master_gain: 0.52, master_width: 1.2
+    },
+    'Urban: Crowd Square': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'crowd', A_gain: 0.9, A_tone: 0.05, A_density: 0.7, A_motion: 0.4, A_grain: 0.6, A_stereo: 0.7,
+      B_enabled: true, B_type: 'city', B_gain: 0.4, B_tone: -0.1, B_density: 0.5, B_motion: 0.4, B_grain: 0.4, B_stereo: 0.6,
+      master_gain: 0.52, master_width: 1.3
+    },
+    'Home: Laundry Room': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'washer', A_gain: 0.85, A_tone: -0.05, A_density: 0.7, A_motion: 0.4, A_grain: 0.5, A_stereo: 0.4,
+      B_enabled: true, B_type: 'fridge', B_gain: 0.5, B_tone: -0.2, B_density: 0.5, B_motion: 0.3, B_grain: 0.3, B_stereo: 0.3,
+      C_enabled: true, C_type: 'clock', C_gain: 0.25, C_tone: 0.1, C_density: 0.4, C_motion: 0.2, C_grain: 0.4, C_stereo: 0.4,
+      master_gain: 0.52, master_width: 1.15
+    },
+    'Lab: Shortwave DX': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'shortwave', A_gain: 0.9, A_tone: 0.05, A_density: 0.7, A_motion: 0.55, A_grain: 0.6, A_stereo: 0.5,
+      B_enabled: true, B_type: 'staticam', B_gain: 0.4, B_tone: 0, B_density: 0.6, B_motion: 0.4, B_grain: 0.5, B_stereo: 0.6,
+      C_enabled: true, C_type: 'space', C_gain: 0.3, C_tone: 0.1, C_density: 0.5, C_motion: 0.4, C_grain: 0.4, C_stereo: 0.7,
+      master_gain: 0.52, master_width: 1.3
+    },
+    'Lab: Geiger Field': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'geiger', A_gain: 0.9, A_tone: 0.1, A_density: 0.55, A_motion: 0.4, A_grain: 0.6, A_stereo: 0.4,
+      B_enabled: true, B_type: 'rumble', B_gain: 0.45, B_tone: -0.3, B_density: 0.5, B_motion: 0.3, B_grain: 0.3, B_stereo: 0.3,
+      C_enabled: true, C_type: 'chaos', C_gain: 0.2, C_tone: 0.2, C_density: 0.5, C_motion: 0.5, C_grain: 0.5, C_stereo: 0.6,
+      master_gain: 0.52, master_width: 1.2
+    },
+    'Lab: Modem Nostalgia': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'modem', A_gain: 0.85, A_tone: 0.1, A_density: 0.6, A_motion: 0.4, A_grain: 0.5, A_stereo: 0.3,
+      B_enabled: true, B_type: 'tape', B_gain: 0.35, B_tone: 0.1, B_density: 0.5, B_motion: 0.3, B_grain: 0.5, B_stereo: 0.4,
+      master_gain: 0.5, master_width: 1.1
+    },
+    'Drone: Temple Bowl': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'bowl', A_gain: 0.9, A_tone: 0, A_density: 0.5, A_motion: 0.3, A_grain: 0.8, A_stereo: 0.5,
+      B_enabled: true, B_type: 'organ', B_gain: 0.45, B_tone: -0.1, B_density: 0.4, B_motion: 0.3, B_grain: 0.4, B_stereo: 0.6,
+      C_enabled: true, C_type: 'pink', C_gain: 0.25, C_tone: -0.2, C_density: 0.5, C_motion: 0.2, C_grain: 0.3, C_stereo: 0.5,
+      master_gain: 0.55, master_width: 1.3
+    },
+    'Drone: Deep Space': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'space', A_gain: 0.9, A_tone: 0.05, A_density: 0.6, A_motion: 0.5, A_grain: 0.4, A_stereo: 0.8,
+      B_enabled: true, B_type: 'organ', B_gain: 0.4, B_tone: -0.2, B_density: 0.3, B_motion: 0.3, B_grain: 0.3, B_stereo: 0.6,
+      C_enabled: true, C_type: 'sonar', C_gain: 0.35, C_tone: -0.1, C_density: 0.4, C_motion: 0.3, C_grain: 0.6, C_stereo: 0.7,
+      master_gain: 0.52, master_width: 1.45
+    },
+    'Extreme: Scrape Yard': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'scrape', A_gain: 0.85, A_tone: 0.1, A_density: 0.7, A_motion: 0.4, A_grain: 0.8, A_stereo: 0.6,
+      B_enabled: true, B_type: 'harsh', B_gain: 0.4, B_tone: -0.1, B_density: 0.7, B_motion: 0.4, B_grain: 0.7, B_stereo: 0.5,
+      C_enabled: true, C_type: 'feedback', C_gain: 0.3, C_tone: 0.2, C_density: 0.5, C_motion: 0.5, C_grain: 0.5, C_stereo: 0.6,
+      master_gain: 0.42, master_width: 1.35, master_drive: 1.6
     }
   };
 
@@ -1686,7 +1822,7 @@
   const HELP_TEXTS = {
     // Layer fields (shared by A/B/C)
     enabled: 'このレイヤーを鳴らすかどうか。OFFのレイヤーは音も書き出しも対象外になります。',
-    type: 'ノイズの種類。52種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
+    type: 'ノイズの種類。76種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
     gain: 'このレイヤーの音量。上げすぎるとマスターで歪むことがあるので、全体のバランスで調整を。',
     pan: 'このレイヤーの左右位置。-1で左、+1で右。マスターのLFOでもゆっくり揺れます。',
     move: 'このレイヤーの音を自動で動かします。左右=パン、上下=明るさと距離感（上は明るく近く、下は暗く遠く）の疑似移動、円と8の字はその組み合わせ、漂いは不規則なゆらぎです。',
@@ -1804,7 +1940,20 @@
     'Move: Rising Storm': '風が上下し、雨が漂い、雷が重なります',
     'Extreme: Total Wall': 'HNW2枚＋Harsh、Drive 3.0。全面の壁です（音量注意）',
     'Extreme: Feedback Hell': 'フィードバックの悲鳴にHarshとHNWの土台（音量注意）',
-    'Extreme: Triple Harsh': 'Harsh Noiseを3レイヤー重ね、Drive 2.6で潰します（音量注意）'
+    'Extreme: Triple Harsh': 'Harsh Noiseを3レイヤー重ね、Drive 2.6で潰します（音量注意）',
+    'Sleep: Breath Cycle': '呼吸の周期にBrownの土台。呼吸法・就寝前に',
+    'Nature: Hailstorm': '雹の打撃音に雷と風。激しい嵐の夜です',
+    'Nature: Dawn Chorus': '鳥のさえずりと森と渓流。夜明けの空気です',
+    'Urban: Night Highway': '高速道路の通過音と街と低い唸り。夜のドライブ感覚',
+    'Urban: Subway Depths': '地下鉄の継ぎ目音と地鳴り。トンネルの奥です',
+    'Urban: Crowd Square': '群衆のざわめきと街の空気。広場の昼下がり',
+    'Home: Laundry Room': '洗濯機と冷蔵庫と時計。生活音の詰め合わせ',
+    'Lab: Shortwave DX': '短波のフェーディングと静電気、遠くの宇宙音',
+    'Lab: Geiger Field': 'ガイガーのクリックと地鳴り。計測器の実験室',
+    'Lab: Modem Nostalgia': 'ダイヤルアップの接続音とテープヒス。90年代の通信',
+    'Drone: Temple Bowl': 'シンギングボウルとオルガン。寺院の瞑想空間',
+    'Drone: Deep Space': 'ホイッスラーとオルガンとソナー。深宇宙の漂流',
+    'Extreme: Scrape Yard': '金属スクレイプにHarshとFeedback（音量注意）'
   };
   function presetHelp(name) {
     return PRESET_INFO[name] ? `プリセット「${name}」: ${PRESET_INFO[name]}` : `プリセット「${name}」を適用します`;
@@ -2928,6 +3077,337 @@
         const key = bp(s, 'ty1', 'ty2', s.click1 * s.rng.signed(), 900, 3600, sr) * 1.5;
         const room = lp(s, 'ty3', rawPink(s), 300, sr) * 0.08;
         return key + room;
+      }
+
+      case 'tinnitus': {
+        const f = (3800 + density * 2600) * (1 + 0.01 * Math.sin(TAU * (0.05 + motion * 0.12) * t));
+        s.phase1 += TAU * f / sr;
+        const waver = 0.8 + 0.2 * Math.sin(TAU * (0.11 + motion * 0.2) * t + 1.3);
+        const ring = Math.sin(s.phase1) * 0.5 + Math.sin(s.phase1 * 2) * grain * 0.12;
+        const hiss = hp(s, 'ti1', rawWhite(s), 6000, sr) * (0.015 + grain * 0.03);
+        return ring * waver * 0.55 + hiss;
+      }
+      case 'hail': {
+        s.surf += ((0.5 + 0.5 * Math.sin(TAU * (0.05 + motion * 0.13) * t + 0.4)) - s.surf) * 0.001;
+        if (s.rng.float() < (0.01 + density * 0.16) * (0.35 + s.surf)) s.click1 = 0.5 + s.rng.float() * 0.8;
+        s.click1 *= 0.78 - Math.min(0.2, grain * 0.08);
+        const pat = bp(s, 'ha1', 'ha2', s.click1 * s.rng.signed(), 1800 + grain * 800, 5200 + grain * 1600, sr) * 1.5;
+        const body = lp(s, 'ha3', rawPink(s), 500 + density * 500, sr) * (0.25 + s.surf * 0.35);
+        const roar = lp(s, 'ha4', rawBrown(s, motion), 160, sr) * 0.5;
+        return pat + body + roar;
+      }
+      case 'desert': {
+        s.gust += (s.rng.float() - s.gust) * (0.00004 + motion * 0.0002);
+        const g = clamp(s.gust, 0, 1);
+        const howl = lp(s, 'ds1', rawBrown(s, motion), 90 + g * 160, sr) * (0.8 + g * 0.9);
+        const sandStream = hp(s, 'ds2', rawWhite(s), 3800 + density * 1400, sr) * (0.03 + g * (0.10 + density * 0.16));
+        const mid = bp(s, 'ds3', 'ds4', rawWhite(s), 300, 900, sr) * g * 0.12;
+        return howl + sandStream + mid;
+      }
+      case 'birds': {
+        if (!s.bdv) s.bdv = [];
+        const chorus = 0.5 + 0.5 * Math.sin(TAU * (0.01 + motion * 0.03) * t + 1.2);
+        if (s.rng.float() < 0.00004 + density * 0.0011 * (0.35 + chorus) && s.bdv.length < 6) {
+          const f0 = 2400 + s.rng.float() * 2600;
+          s.bdv.push({ f: f0, df: (s.rng.float() - 0.35) * 1600, ph: 0, age: 0, dur: Math.floor(sr * (0.09 + s.rng.float() * 0.22)), vel: 0.3 + s.rng.float() * 0.5 });
+        }
+        let y = 0;
+        for (let i = s.bdv.length - 1; i >= 0; i--) {
+          const v = s.bdv[i]; v.age++;
+          const k = v.age / v.dur;
+          if (k >= 1) { s.bdv.splice(i, 1); continue; }
+          const env = Math.pow(Math.sin(Math.PI * Math.min(1, k)), 1.5);
+          v.ph += TAU * (v.f + v.df * k) / sr;
+          y += v.vel * env * (Math.sin(v.ph) + grain * 0.3 * Math.sin(v.ph * 2));
+        }
+        const air = lp(s, 'bi1', rawWhite(s), 600, sr) * 0.035;
+        return y * 0.55 + air;
+      }
+      case 'crowd': {
+        s.tone1 = clamp((s.tone1 || 700) + (s.rng.float() - 0.5) * 22, 350, 1500);
+        s.tone2 = clamp((s.tone2 || 1100) + (s.rng.float() - 0.5) * 26, 500, 2100);
+        const syl1 = 0.45 + 0.55 * Math.max(0, Math.sin(TAU * (2.6 + density) * t + Math.sin(TAU * 0.23 * t) * 2.1));
+        const syl2 = 0.45 + 0.55 * Math.max(0, Math.sin(TAU * (3.4 + density * 1.3) * t + 2.0 + Math.sin(TAU * 0.31 * t + 1.0) * 1.8));
+        const v1 = bp(s, 'cw1', 'cw2', rawWhite(s), s.tone1 * 0.62, s.tone1 * 1.45, sr) * syl1;
+        const v2 = bp(s, 'cw3', 'cw4', rawWhite(s), s.tone2 * 0.62, s.tone2 * 1.45, sr) * syl2;
+        const murmur = lp(s, 'cw5', rawPink(s), 420, sr) * 0.35;
+        const room = lp(s, 'cw6', rawBrown(s, motion), 120, sr) * 0.3;
+        return (v1 + v2) * (0.5 + grain * 0.5) + murmur + room;
+      }
+      case 'applause': {
+        if (s.holdCounter-- <= 0) {
+          if (s.aux1 > 0) { s.aux1 = 0; s.holdCounter = Math.floor(sr * (0.4 + s.rng.float() * Math.max(0.2, 1.6 - density * 0.8))); }
+          else { s.aux1 = 1; s.holdCounter = Math.floor(sr * (0.7 + s.rng.float() * (0.8 + density * 1.6))); }
+        }
+        if (s.aux1 > 0 && s.rng.float() < 0.10 + density * 0.30) s.click1 = 0.5 + s.rng.float() * 0.9;
+        s.click1 *= 0.72 - Math.min(0.18, grain * 0.06);
+        const clap = bp(s, 'ap1', 'ap2', s.click1 * s.rng.signed(), 1100, 3400, sr) * 1.7;
+        const hands = hp(s, 'ap3', rawWhite(s), 4200, sr) * (s.aux1 > 0 ? 0.05 + density * 0.05 : 0.012);
+        const room = lp(s, 'ap4', rawPink(s), 380, sr) * 0.16;
+        return clap + hands + room;
+      }
+      case 'highway': {
+        s.surf += ((0.5 + 0.5 * Math.sin(TAU * (0.10 + motion * 0.22) * t)) - s.surf) * 0.0016;
+        const near = Math.pow(Math.max(0, s.surf), 1.6);
+        s.tone1 = clamp((s.tone1 || 800) + (s.rng.float() - 0.5) * 30, 300, 2200);
+        const whoosh = bp(s, 'hy1', 'hy2', rawWhite(s), s.tone1 * 0.5, s.tone1 * 1.7, sr) * (0.12 + near * (0.6 + density * 0.5));
+        const road = lp(s, 'hy3', rawBrown(s, motion), 150 + density * 80, sr) * 1.15;
+        const tire = hp(s, 'hy4', rawWhite(s), 2600, sr) * (0.02 + near * 0.07);
+        return road + whoosh + tire;
+      }
+      case 'subway': {
+        const rate = 2.6 + density * 5.0;
+        s.phase1 += TAU * rate / sr;
+        if (s.phase1 >= TAU) { s.phase1 -= TAU; s.click1 = 0.9; s.aux1 = Math.floor(sr * 0.07); if (s.rng.float() < 0.10 + motion * 0.14) s.aux3 = 1; }
+        if (s.aux1 > 0 && --s.aux1 === 0) s.click2 = 0.75;
+        s.click1 *= 0.84 - grain * 0.04;
+        s.click2 *= 0.84 - grain * 0.04;
+        const clack = bp(s, 'sb1', 'sb2', (s.click1 + s.click2) * s.rng.signed(), 700, 3200, sr) * 1.5;
+        s.aux3 *= 0.9995;
+        s.tone1 = clamp((s.tone1 || 2600) + (s.rng.float() - 0.5) * 36, 1500, 4200);
+        const screech = bp(s, 'sb3', 'sb4', rawWhite(s), s.tone1 * 0.8, s.tone1 * 1.15, sr) * s.aux3 * (0.4 + grain * 0.8);
+        const tunnel = lp(s, 'sb5', rawBrown(s, motion), 110, sr) * 1.25;
+        s.gust += (s.rng.float() - s.gust) * (0.0002 + motion * 0.0004);
+        const air = bp(s, 'sb6', 'sb7', rawWhite(s), 240, 800, sr) * clamp(s.gust, 0, 1) * 0.3;
+        return tunnel + clack + screech + air;
+      }
+      case 'construction': {
+        if (s.holdCounter-- <= 0) {
+          if (s.aux1 > 0) { s.aux1 = 0; s.holdCounter = Math.floor(sr * (0.5 + s.rng.float() * Math.max(0.2, 1.8 - density * 0.9))); }
+          else { s.aux1 = 1; s.holdCounter = Math.floor(sr * (0.6 + s.rng.float() * (0.7 + density * 1.3))); }
+        }
+        if (s.aux1 > 0) {
+          const rate = 15 + grain * 9;
+          s.phase1 += TAU * rate / sr;
+          if (s.phase1 >= TAU) { s.phase1 -= TAU; s.click1 = 0.95; }
+        }
+        s.click1 *= 0.80 - Math.min(0.15, grain * 0.05);
+        const impact = bp(s, 'cn1', 'cn2', s.click1 * s.rng.signed(), 300, 1500, sr) * 1.9;
+        const thud = lp(s, 'cn3', rawBrown(s, 0.2), 110, sr) * s.click1 * 1.4;
+        const body = lp(s, 'cn4', rawBrown(s, motion), 130, sr) * 0.7;
+        const air = hp(s, 'cn5', rawWhite(s), 3600, sr) * 0.02;
+        return impact + thud + body + air;
+      }
+      case 'helicopter': {
+        const chop = 10.5 + density * 3.5;
+        s.phase1 += TAU * chop / sr;
+        const am = Math.pow(0.5 + 0.5 * Math.sin(s.phase1), 1.35);
+        const body = lp(s, 'he1', rawBrown(s, motion), 200 + density * 120, sr) * 1.5;
+        const rush = bp(s, 'he2', 'he3', rawWhite(s), 500, 2400, sr) * 0.5;
+        const turbine = bp(s, 'he4', 'he5', rawWhite(s), 2600 + grain * 900, 4200 + grain * 1200, sr) * 0.16;
+        const sway = 0.85 + 0.15 * Math.sin(TAU * (0.07 + motion * 0.12) * t);
+        return (body + rush) * (0.25 + am * 0.95) * sway + turbine;
+      }
+      case 'fridge': {
+        s.surf += ((0.5 + 0.5 * Math.sin(TAU * (0.006 + motion * 0.010) * t + 0.7)) - s.surf) * 0.0008;
+        const on = s.surf > 0.38 ? 1 : 0.12;
+        const hum = humSample(s, s.humHz) * 0.10 * on;
+        const body = lp(s, 'fr1', rawBrown(s, 0.15), 130, sr) * 0.85 * on;
+        const fan = hp(s, 'fr2', rawWhite(s), 2800, sr) * 0.012 * on * (0.5 + density * 0.5);
+        if (s.rng.float() < 0.00002 + grain * 0.00012) s.click1 = 0.5;
+        s.click1 *= 0.86;
+        const tick = bp(s, 'fr3', 'fr4', s.click1 * s.rng.signed(), 800, 2400, sr) * 0.5;
+        return hum + body + fan + tick;
+      }
+      case 'washer': {
+        const cyc = 0.5 + 0.5 * Math.sin(TAU * (0.016 + motion * 0.02) * t);
+        const sloshGate = 0.5 + 0.5 * Math.sin(TAU * (0.55 + density * 0.5) * t);
+        const slosh = lp(s, 'wa1', rawPink(s), 480 + density * 300, sr) * (0.2 + sloshGate * 0.75) * (1 - cyc * 0.55);
+        const thumpRate = 0.55 + density * 0.5;
+        s.phase1 += TAU * thumpRate / sr;
+        if (s.phase1 >= TAU) { s.phase1 -= TAU; s.env = 1; }
+        s.env *= Math.exp(-1 / (sr * 0.08));
+        const thump = lp(s, 'wa2', rawBrown(s, 0.2), 100, sr) * s.env * (1 - cyc) * 2.6;
+        const spin = bp(s, 'wa3', 'wa4', rawWhite(s), 700 + cyc * 900, 1500 + cyc * 1300, sr) * cyc * (0.25 + grain * 0.3);
+        const motor = humSample(s, s.humHz) * 0.03;
+        return slosh + thump + spin + motor;
+      }
+      case 'vacuum': {
+        const wob = 1 + 0.02 * Math.sin(TAU * (0.3 + motion * 0.7) * t);
+        const f0 = (170 + density * 90) * wob;
+        const body = lp(s, 'vc1', rawPink(s), 700 + density * 500, sr) * 1.0;
+        const h1 = bp(s, 'vc2', 'vc3', rawWhite(s), f0 * 0.85, f0 * 1.2, sr) * 1.5;
+        const h2 = bp(s, 'vc4', 'vc5', rawWhite(s), f0 * 1.8, f0 * 2.3, sr) * 0.8;
+        const air = hp(s, 'vc6', rawWhite(s), 3400, sr) * (0.05 + grain * 0.06);
+        return (body + h1 + h2) * 0.8 + air;
+      }
+      case 'shortwave': {
+        s.gust += (s.rng.float() - s.gust) * (0.00005 + motion * 0.00025);
+        const fade = 0.15 + 0.85 * clamp(s.gust, 0, 1);
+        s.tone1 = clamp((s.tone1 || 1200) + (s.rng.float() - 0.5) * 6, 400, 3400);
+        s.phase1 += TAU * s.tone1 / sr;
+        const whistle = Math.sin(s.phase1) * (0.05 + grain * 0.16) * fade;
+        const stat = bp(s, 'sw1', 'sw2', rawWhite(s), 500 + density * 300, 2600 + density * 900, sr) * (0.25 + fade * 0.95);
+        if (s.rng.float() < 0.0003 + density * 0.0012) s.click1 = 0.6;
+        s.click1 *= 0.82;
+        const pop = bp(s, 'sw3', 'sw4', s.click1 * s.rng.signed(), 900, 3000, sr) * 0.7;
+        return stat + whistle + pop;
+      }
+      case 'modem': {
+        const stageDur = 2.2 + motion * 2.0;
+        const stage = Math.floor(t / stageDur) % 4;
+        let y = 0;
+        if (stage === 0) {
+          s.phase1 += TAU * 400 / sr;
+          y = Math.sin(s.phase1) * 0.30;
+        } else if (stage === 1) {
+          if (s.holdCounter-- <= 0) { s.holdCounter = Math.floor(sr * (0.11 + s.rng.float() * 0.16)); s.tone1 = 700 + Math.floor(s.rng.float() * 6) * 130; s.aux1 = Math.floor(sr * 0.07); }
+          if (s.aux1 > 0) { s.aux1--; s.phase1 += TAU * (s.tone1 || 900) / sr; y = Math.sin(s.phase1) * 0.30; }
+        } else if (stage === 2) {
+          if (s.rng.float() < 0.012 + density * 0.02) s.tone1 = 900 + s.rng.float() * 1600;
+          s.phase1 += TAU * (s.tone1 || 1200) / sr;
+          const chirp = Math.sin(s.phase1) * 0.22;
+          const hiss = bp(s, 'md1', 'md2', rawWhite(s), 800, 3200, sr) * (0.22 + grain * 0.18);
+          y = chirp + hiss;
+        } else {
+          const hiss = bp(s, 'md1', 'md2', rawWhite(s), 700, 3000, sr) * 0.34;
+          if (s.rng.float() < 0.0006 + grain * 0.0012) { s.tone1 = 1800 + s.rng.float() * 500; s.aux1 = Math.floor(sr * 0.05); }
+          if (s.aux1 > 0) { s.aux1--; s.phase1 += TAU * (s.tone1 || 2000) / sr; y = hiss + Math.sin(s.phase1) * 0.16; }
+          else y = hiss;
+        }
+        const room = lp(s, 'md3', rawPink(s), 300, sr) * 0.05;
+        return y + room;
+      }
+      case 'geiger': {
+        s.gust += (s.rng.float() - s.gust) * (0.00004 + motion * 0.0002);
+        const drift = 0.6 + clamp(s.gust, 0, 1) * 0.9;
+        const rate = (0.4 + density * 13) * drift;
+        if (s.rng.float() < rate / sr) s.click1 = 0.9 + s.rng.float() * 0.3;
+        s.click1 *= 0.68 - Math.min(0.2, grain * 0.05);
+        const click = bp(s, 'ge1', 'ge2', s.click1 * s.rng.signed(), 1500 + grain * 900, 4200 + grain * 1400, sr) * 1.8;
+        const room = lp(s, 'ge3', rawPink(s), 260, sr) * 0.05;
+        return click + room;
+      }
+      case 'sonar': {
+        if (s.holdCounter-- <= 0) {
+          s.holdCounter = Math.floor(sr * Math.max(0.8, 3.2 + s.rng.float() * (5.5 - density * 2.5)));
+          s.env = 1; s.aux1 = Math.floor(sr * (0.9 + grain * 0.5)); s.tone1 = 840 + s.rng.float() * 120;
+        }
+        if (s.aux1 > 0 && --s.aux1 === 0 && s.env > 0.2) { s.env *= 0.45; s.aux1 = Math.floor(sr * (0.9 + grain * 0.5)); }
+        s.env *= Math.exp(-1 / (sr * (0.5 + grain * 0.9)));
+        s.phase1 += TAU * (s.tone1 || 880) * (0.94 + 0.06 * s.env) / sr;
+        const ping = Math.sin(s.phase1) * s.env;
+        const deep = lp(s, 'so1', rawBrown(s, motion), 90, sr) * 0.9;
+        const wash = lp(s, 'so2', rawPink(s), 300, sr) * 0.10;
+        return ping * 0.8 + deep + wash;
+      }
+      case 'space': {
+        if (!s.spv) s.spv = [];
+        if (s.rng.float() < 0.00005 + density * 0.0006 && s.spv.length < 3) {
+          s.spv.push({ ph: 0, age: 0, dur: Math.floor(sr * (0.7 + s.rng.float() * 1.1)), f0: 2600 + s.rng.float() * 2200, vel: 0.25 + s.rng.float() * 0.3 });
+        }
+        let y = 0;
+        for (let i = s.spv.length - 1; i >= 0; i--) {
+          const v = s.spv[i]; v.age++;
+          const k = v.age / v.dur;
+          if (k >= 1) { s.spv.splice(i, 1); continue; }
+          const f = v.f0 * (1 - 0.72 * k * k);
+          v.ph += TAU * f / sr;
+          y += v.vel * Math.sin(Math.PI * Math.min(1, k)) * Math.sin(v.ph);
+        }
+        s.gust += (s.rng.float() - s.gust) * (0.00005 + motion * 0.0002);
+        const swell = clamp(s.gust, 0, 1);
+        const plasma = bp(s, 'sp1', 'sp2', rawWhite(s), 300 + swell * 500, 1400 + swell * 900, sr) * (0.10 + swell * 0.30);
+        const hiss = hp(s, 'sp3', rawWhite(s), 5000, sr) * grain * 0.02;
+        const deep = lp(s, 'sp4', rawBrown(s, motion * 0.5), 70, sr) * 0.55;
+        return y * 0.7 + plasma + hiss + deep;
+      }
+      case 'bowl': {
+        if (!s.bwv) s.bwv = [];
+        if (s.holdCounter-- <= 0) {
+          s.holdCounter = Math.floor(sr * Math.max(1.5, (9 - density * 5.5) + s.rng.float() * 5));
+          const f = 172 + s.rng.float() * 90;
+          s.bwv.push({ f, ph: 0, env: 1, vel: 0.5 + s.rng.float() * 0.3 });
+          if (s.bwv.length > 3) s.bwv.shift();
+        }
+        let y = 0;
+        const tau = 2.2 + grain * 4.5;
+        const dec = Math.exp(-1 / (sr * tau));
+        for (let i = s.bwv.length - 1; i >= 0; i--) {
+          const v = s.bwv[i];
+          v.ph += TAU * v.f / sr;
+          v.env *= dec;
+          if (v.env < 0.0005) { s.bwv.splice(i, 1); continue; }
+          const e = v.env;
+          y += v.vel * (Math.sin(v.ph) * e + Math.sin(v.ph * 1.003) * e * 0.6
+            + (v.f * 2.74 < sr * 0.48 ? 0.38 * Math.sin(v.ph * 2.74) * e * e : 0)
+            + (v.f * 5.43 < sr * 0.48 ? 0.13 * Math.sin(v.ph * 5.43) * e * e * e : 0));
+        }
+        const air = lp(s, 'bw1', rawWhite(s), 500, sr) * 0.02;
+        return y * 0.75 + air;
+      }
+      case 'shimmer': {
+        if (s.holdCounter-- <= 0) {
+          s.holdCounter = Math.floor(sr * (0.05 + s.rng.float() * Math.max(0.05, 0.6 - density * 0.45)));
+          s.burst = 0.6 + s.rng.float() * 0.4;
+          const scale = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4];
+          s.resonFreq = 1180 * scale[Math.floor(s.rng.float() * scale.length)] * (0.998 + s.rng.float() * 0.004);
+          s.resonPhase = 0;
+        }
+        s.resonPhase += TAU * s.resonFreq / sr;
+        s.burst *= Math.exp(-1 / (sr * (0.10 + grain * 0.30)));
+        const ping = Math.sin(s.resonPhase) * s.burst + Math.sin(s.resonPhase * 2) * s.burst * s.burst * 0.25;
+        const pad = lp(s, 'sm1', rawPink(s), 600, sr) * 0.06;
+        const air = hp(s, 'sm2', rawWhite(s), 6000, sr) * 0.012;
+        return ping * 0.8 + pad + air;
+      }
+      case 'organ': {
+        const f0 = 55 + density * 49.5;
+        s.phase1 += TAU * f0 / sr;
+        s.phase2 += TAU * f0 * 1.5 / sr;
+        s.resonPhase += TAU * f0 * 2 / sr;
+        s.sweep += TAU * f0 * 1.003 / sr;
+        const bellows = 0.75 + 0.25 * Math.sin(TAU * (0.03 + motion * 0.08) * t + 0.5);
+        const y = Math.sin(s.phase1) * 0.55 + Math.sin(s.sweep) * 0.30 + Math.sin(s.phase2) * 0.26 + Math.sin(s.resonPhase) * 0.20
+          + Math.sin(s.phase1 * 3) * grain * 0.10 + Math.sin(s.phase1 * 4.02) * grain * 0.05;
+        const windNoise = bp(s, 'or1', 'or2', rawWhite(s), 240, 700, sr) * 0.05;
+        return y * bellows * 0.8 + windNoise;
+      }
+      case 'paper': {
+        if (s.holdCounter-- <= 0) {
+          if (s.aux1 > 0) {
+            s.aux1--;
+            s.click1 = 0.4 + s.rng.float() * 0.8;
+            s.holdCounter = Math.floor(sr * (0.015 + s.rng.float() * 0.05));
+          } else if (s.rng.float() < 0.7) {
+            s.aux1 = Math.floor(2 + s.rng.float() * (4 + density * 10));
+            s.click1 = 0.4 + s.rng.float() * 0.8;
+            s.holdCounter = Math.floor(sr * (0.015 + s.rng.float() * 0.05));
+          } else {
+            s.holdCounter = Math.floor(sr * (0.25 + s.rng.float() * Math.max(0.1, 1.2 - density * 0.6)));
+          }
+        }
+        s.click1 *= 0.70 - Math.min(0.2, grain * 0.06);
+        const crinkle = hp(s, 'pa1', s.click1 * s.rng.signed(), 2600 + grain * 1200, sr) * 1.3;
+        const rustle = bp(s, 'pa2', 'pa3', rawWhite(s), 1800, 5200, sr) * (s.aux1 > 0 ? 0.16 : 0.03);
+        return crinkle + rustle;
+      }
+      case 'scrape': {
+        if (s.holdCounter-- <= 0) {
+          if (s.aux1 > 0) { s.aux1 = 0; s.holdCounter = Math.floor(sr * (0.8 + s.rng.float() * Math.max(0.3, 2.6 - density * 1.2))); }
+          else { s.aux1 = Math.floor(sr * (0.35 + s.rng.float() * (0.5 + grain * 0.8))); s.holdCounter = s.aux1; s.tone1 = 500 + s.rng.float() * 900; }
+        }
+        let y = 0;
+        if (s.aux1 > 0) {
+          s.tone1 = clamp((s.tone1 || 800) + (s.rng.float() - 0.48) * 90, 240, 3400);
+          const chatter = 0.55 + 0.45 * Math.sin(TAU * (24 + grain * 22) * t + Math.sin(TAU * 3.1 * t) * 2.0);
+          const scr = bp(s, 'sc1', 'sc2', rawWhite(s), s.tone1 * 0.7, s.tone1 * 1.25, sr) * chatter * 1.6;
+          const edge = hp(s, 'sc3', rawWhite(s), 4200, sr) * 0.05 * chatter;
+          y = scr + edge;
+        }
+        const room = lp(s, 'sc4', rawPink(s), 240, sr) * 0.05;
+        return y + room;
+      }
+      case 'breath': {
+        const rate = 0.07 + motion * 0.22;
+        s.phase1 += TAU * rate / sr;
+        if (s.phase1 >= TAU) s.phase1 -= TAU;
+        const ph = s.phase1 / TAU;
+        const env = ph < 0.42 ? Math.sin(ph / 0.42 * Math.PI * 0.5) : Math.sin((1 - (ph - 0.42) / 0.58) * Math.PI * 0.5);
+        const depth = 0.35 + density * 0.65;
+        const body = lp(s, 'br1', rawPink(s), 300 + env * (500 + density * 700), sr) * (0.25 + env * depth);
+        const air = hp(s, 'br2', rawWhite(s), 2500, sr) * grain * 0.10 * env;
+        return body * 1.6 + air;
       }
       default: return rawWhite(s);
     }
@@ -4728,7 +5208,31 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     [/水滴|滴|drops/i, 'drops'],
     [/ドライヤー|dryer/i, 'dryer'],
     [/時計|秒針|clock/i, 'clock'],
-    [/タイピング|キーボード|typing|keyboard/i, 'typing']
+    [/タイピング|キーボード|typing|keyboard/i, 'typing'],
+    [/呼吸|breath/i, 'breath'],
+    [/雹|あられ|hail/i, 'hail'],
+    [/鳥の声|鳥|birds/i, 'birds'],
+    [/砂漠|desert/i, 'desert'],
+    [/群衆|人混み|crowd|walla/i, 'crowd'],
+    [/拍手|applause/i, 'applause'],
+    [/耳鳴り|tinnitus/i, 'tinnitus'],
+    [/高速道路|ハイウェイ|highway/i, 'highway'],
+    [/地下鉄|subway|metro/i, 'subway'],
+    [/ヘリコプター|ヘリ|helicopter/i, 'helicopter'],
+    [/掃除機|vacuum/i, 'vacuum'],
+    [/洗濯|washer|laundry/i, 'washer'],
+    [/冷蔵庫|fridge|refrigerator/i, 'fridge'],
+    [/工事|建設|construction/i, 'construction'],
+    [/短波|shortwave/i, 'shortwave'],
+    [/モデム|ダイヤルアップ|modem/i, 'modem'],
+    [/ガイガー|geiger|放射線/i, 'geiger'],
+    [/ソナー|sonar/i, 'sonar'],
+    [/宇宙|太陽風|space|cosmic/i, 'space'],
+    [/シンギングボウル|チベタンボウル|singing bowl/i, 'bowl'],
+    [/シマー|shimmer/i, 'shimmer'],
+    [/オルガン|organ/i, 'organ'],
+    [/紙|paper/i, 'paper'],
+    [/スクレイプ|scrape/i, 'scrape']
   ];
 
   function aiHashSeed(text) {
