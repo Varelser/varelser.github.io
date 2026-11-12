@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2025年3月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全3件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="9bb9df518d975f19f8f5ae24b39f5428"
+  data-date="2025-03-11"
+  data-month="2025-03"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="ベルギーとWHO、率直で深い議論により今後の協力の優先事項を描く ベルギーと世界保健機関（WHO）は、3日間にわたる戦略的対話を通じて、長年のパートナーシップの進捗状況を評価し、今後の協力関係をさらに強化することで合意しました。特に、ユニバーサル・ヘルス・カバレッジの達成、医療システムの強化、そして必須ワクチン、医薬品、医療技術への公平なアクセスを重点分野とすることが確認されました。ベルギー代表団は、変化する世界の保健情勢の中で、WHOの戦略的方向性とベルギーの開発協力の優先順位をいかに円滑に連携させるかについて深く議論を交わしました。  この対話では、ベルギーが資金提供している「医薬品アクセスプログラム」の現状と顕著な成果がレビューされました。WHOは、セネガルでの国レベルでの実施事例を通じてその活動と課題を説明し、公平なアクセスと現地生産に関するWHOの政策と取り組みも紹介しました。双方は、医薬品アクセスプログラムの持続可能性が共通の目標であると認識しており、長期的な成功のためには市場形成が不可欠であると強調しました。  また、健康危機に対する予防、準備、対応、回復力のためのグローバルな枠組みを強化する上でのWHOの役割についても議論されました。これには、パンデミック協定の交渉や「ワンヘルス」アプローチが含まれます。特に、ガザでの活動が提示され、健康危機対応におけるWHOの重要な現地活動が示されました。生物学的リスクの加速や人獣共通感染症がもたらす脅威、そしてこれらに対するリスク軽減を含むWHOの取り組みについても話し合われました。  ユニバーサル・ヘルス・カバレッジ（UHC）パートナーシップの進捗状況について、参加者は2021年から2024年の期間にベルギーの支援を受けてWHOが達成した成果、特にベルギーの協力国での実績を評価しました。今後の方向性として、WHOの国別事務所プログラムとベルギーの二国間協力との連携を含め、国レベルでの協力強化の可能性が探られました。その具体例として、コンゴ民主共和国における国レベルでの活動と課題の概要が共有されました。  さらに、参加者はプライマリヘルスケアの文脈におけるWHOの精神保健に関する政策と活動について再確認しました。ベルギーが支援する他のWHOプログラム、例えば顧みられない熱帯病や性と生殖に関する健康と権利といった分野での協力の進捗もレビューされました。これらの分野では、エビデンスに基づいたアプローチの重要性が強調されました。  WHOは、ベルギー連邦政府だけでなく、フランドル地域政府やワロン地域政府の代表者も参加したことに感謝を表明し、ベルギーのコミットメントと献身を高く評価しました。WHOの外部関係担当事務局長補佐であるキャサリン・ベーメ博士は、「皆様の支援、誠実さ、そしてグローバルヘルスへの強い関与に感謝いたします。モザンビークとセネガルでの私たちの活動を支援する皆様の努力は、私たちが共に成し遂げる重要な活動の明確な例です」と述べました。  両パートナーは、ベルギーとWHOの協力枠組みと複数年協定の今後の進め方について議論し、更新されたWHOとベルギーの国別協力戦略に向けた進捗も確認しました。ベルギーとWHOの協力強化は、WHOの第14次一般作業計画（GPW14）の下で強力なグローバルヘルスアジェンダを支援することになります。GPW14の目標の中心であるUHCと医療システム強化は、WHOの今後の優先順位付け作業において不可欠な範囲として捉えられるという共通の認識がありました。ベルギー側の代表者からは、「WHOはグローバルヘルスにおける信頼できるパートナーであると認識しています。私たちの支援がWHOにとってどれほど重要であり、国、地域、そして世界レベルでいかに肯定的な影響を与えているかを聞いて誇りに感じました」との言葉がありました。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2025-03-11 17:49</p>
+  <h2 class="article-title">ベルギーとWHO、率直で深い議論により今後の協力の優先事項を描く</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">ベルギーと世界保健機関（WHO）は、3日間にわたる戦略的対話を通じて、長年のパートナーシップの進捗状況を評価し、今後の協力関係をさらに強化することで合意しました。特に、ユニバーサル・ヘルス・カバレッジの達成、医療システムの強化、そして必須ワクチン、医薬品、医療技術への公平なアクセスを重点分野とすることが確認されました。ベルギー代表団は、変化する世界の保健情勢の中で、WHOの戦略的方向性とベルギーの開発協力の優先順位をいかに円滑に連携させるかについて深く議論を交わしました。<span class="summary-rest" hidden><br><br>この対話では、ベルギーが資金提供している「医薬品アクセスプログラム」の現状と顕著な成果がレビューされました。WHOは、セネガルでの国レベルでの実施事例を通じてその活動と課題を説明し、公平なアクセスと現地生産に関するWHOの政策と取り組みも紹介しました。双方は、医薬品アクセスプログラムの持続可能性が共通の目標であると認識しており、長期的な成功のためには市場形成が不可欠であると強調しました。<br><br>また、健康危機に対する予防、準備、対応、回復力のためのグローバルな枠組みを強化する上でのWHOの役割についても議論されました。これには、パンデミック協定の交渉や「ワンヘルス」アプローチが含まれます。特に、ガザでの活動が提示され、健康危機対応におけるWHOの重要な現地活動が示されました。生物学的リスクの加速や人獣共通感染症がもたらす脅威、そしてこれらに対するリスク軽減を含むWHOの取り組みについても話し合われました。<br><br>ユニバーサル・ヘルス・カバレッジ（UHC）パートナーシップの進捗状況について、参加者は2021年から2024年の期間にベルギーの支援を受けてWHOが達成した成果、特にベルギーの協力国での実績を評価しました。今後の方向性として、WHOの国別事務所プログラムとベルギーの二国間協力との連携を含め、国レベルでの協力強化の可能性が探られました。その具体例として、コンゴ民主共和国における国レベルでの活動と課題の概要が共有されました。<br><br>さらに、参加者はプライマリヘルスケアの文脈におけるWHOの精神保健に関する政策と活動について再確認しました。ベルギーが支援する他のWHOプログラム、例えば顧みられない熱帯病や性と生殖に関する健康と権利といった分野での協力の進捗もレビューされました。これらの分野では、エビデンスに基づいたアプローチの重要性が強調されました。<br><br>WHOは、ベルギー連邦政府だけでなく、フランドル地域政府やワロン地域政府の代表者も参加したことに感謝を表明し、ベルギーのコミットメントと献身を高く評価しました。WHOの外部関係担当事務局長補佐であるキャサリン・ベーメ博士は、「皆様の支援、誠実さ、そしてグローバルヘルスへの強い関与に感謝いたします。モザンビークとセネガルでの私たちの活動を支援する皆様の努力は、私たちが共に成し遂げる重要な活動の明確な例です」と述べました。<br><br>両パートナーは、ベルギーとWHOの協力枠組みと複数年協定の今後の進め方について議論し、更新されたWHOとベルギーの国別協力戦略に向けた進捗も確認しました。ベルギーとWHOの協力強化は、WHOの第14次一般作業計画（GPW14）の下で強力なグローバルヘルスアジェンダを支援することになります。GPW14の目標の中心であるUHCと医療システム強化は、WHOの今後の優先順位付け作業において不可欠な範囲として捉えられるという共通の認識がありました。ベルギー側の代表者からは、「WHOはグローバルヘルスにおける信頼できるパートナーであると認識しています。私たちの支援がWHOにとってどれほど重要であり、国、地域、そして世界レベルでいかに肯定的な影響を与えているかを聞いて誇りに感じました」との言葉がありました。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/11-03-2025-frank--in-depth-discussion-as-belgium-and-who-map-ahead-priorities-for-collaboration" target="_blank" rel="noopener">https://www.who.int/news/item/11-03-2025-frank--in-depth-discussion-as-belgium-and-who-map-ahead-priorities-for-collaboration</a>
+  </div>
+</article>
+<article
+  data-id="aa20401cb179c288979d2ce02c63cd03"
+  data-date="2025-03-07"
+  data-month="2025-03"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="WHOとスイス、2028年までの協力を確固たるものに 世界保健機関（WHO）とスイスは、2024年から2028年までの新たな協力戦略を更新し、その方針を発表しました。これは、グローバルヘルス推進における両者のパートナーシップをより強固にするための重要な一歩となります。  スイスは、2013年にWHO欧州地域において、高所得国として初めてWHOとの協力戦略を試験的に導入した国です。この先駆的な取り組みにより、両者の連携は長年にわたり深められてきました。今回の更新は、これまでの協力の成功に基づき、さらに発展させていくことを目的としています。  この更新された協力戦略は、2022年にWHOとスイスが共同で決定し、2025年3月4日にデンマークのコペンハーゲンにあるWHO欧州地域事務所にて正式に合意されました。スイス連邦公衆衛生局のグローバルヘルス大使であるバーバラ・シェドラー氏と、WHO欧州地域事務局長のアンリ・P・クルーゲ博士が、今後も緊密な連携を進めていくことに合意しました。  この協力戦略は、世界全体の健康問題、特に感染症対策や健康増進、ユニバーサル・ヘルス・カバレッジ（誰もが必要な医療サービスを受けられる状態）の達成など、多岐にわたる分野での連携を強化するものです。例えば、感染症の早期発見や病原体情報の国際的な共有といった、パンデミック対策に不可欠な分野での連携も含まれます。  私たち日本の看護師が日々、患者さんや地域住民の健康を守るために尽力しているように、WHOは国際的な視点から世界の健康課題に取り組んでいます。今回のWHOとスイスの協力戦略の更新は、国境を越えた健康問題に対する共通の目標を達成するために、各国が協力し合うことの重要性を示しています。私たちの仕事も、こうしたグローバルな連携の一環として位置づけられることを改めて認識する機会となるでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2025-03-07 21:38</p>
+  <h2 class="article-title">WHOとスイス、2028年までの協力を確固たるものに</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）とスイスは、2024年から2028年までの新たな協力戦略を更新し、その方針を発表しました。これは、グローバルヘルス推進における両者のパートナーシップをより強固にするための重要な一歩となります。<span class="summary-rest" hidden><br><br>スイスは、2013年にWHO欧州地域において、高所得国として初めてWHOとの協力戦略を試験的に導入した国です。この先駆的な取り組みにより、両者の連携は長年にわたり深められてきました。今回の更新は、これまでの協力の成功に基づき、さらに発展させていくことを目的としています。<br><br>この更新された協力戦略は、2022年にWHOとスイスが共同で決定し、2025年3月4日にデンマークのコペンハーゲンにあるWHO欧州地域事務所にて正式に合意されました。スイス連邦公衆衛生局のグローバルヘルス大使であるバーバラ・シェドラー氏と、WHO欧州地域事務局長のアンリ・P・クルーゲ博士が、今後も緊密な連携を進めていくことに合意しました。<br><br>この協力戦略は、世界全体の健康問題、特に感染症対策や健康増進、ユニバーサル・ヘルス・カバレッジ（誰もが必要な医療サービスを受けられる状態）の達成など、多岐にわたる分野での連携を強化するものです。例えば、感染症の早期発見や病原体情報の国際的な共有といった、パンデミック対策に不可欠な分野での連携も含まれます。<br><br>私たち日本の看護師が日々、患者さんや地域住民の健康を守るために尽力しているように、WHOは国際的な視点から世界の健康課題に取り組んでいます。今回のWHOとスイスの協力戦略の更新は、国境を越えた健康問題に対する共通の目標を達成するために、各国が協力し合うことの重要性を示しています。私たちの仕事も、こうしたグローバルな連携の一環として位置づけられることを改めて認識する機会となるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/07-03-2025-who-and-switzerland-cement-cooperation-until-2028" target="_blank" rel="noopener">https://www.who.int/news/item/07-03-2025-who-and-switzerland-cement-cooperation-until-2028</a>
+  </div>
+</article>
+<article
+  data-id="a9603fc89e8581856ccce76d9f4e4ec0"
+  data-date="2025-03-06"
+  data-month="2025-03"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="WHOとサウジアラビア王国、保健の優先課題を支援する協定に署名 WHOとサウジアラビア王国が国際的な健康課題への支援を強化  2025年2月24日と25日に開催されたリヤド国際人道フォーラムにおいて、世界保健機関（WHO）とサウジアラビア王国が、喫緊の健康および人道問題への対応を強化するための重要な合意を締結しました。このフォーラムには、人道支援分野のグローバルパートナーが一堂に会し、危機の影響を受ける人々の生存、健康外交、福祉、尊厳の向上、そして援助活動者の安全確保について議論しました。特に、キング・サルマン人道援助・救援センター（KSRelief）の設立10周年を記念する場となり、中東およびそれ以外の地域における現在進行中の人道上の課題に対処するための主要な合意と誓約が交わされました。  WHOとKSReliefは、特にイエメンにおける公衆衛生上の緊急事態に対応するための新たな資金協力に合意しました。具体的には、イエメンでのマラリア対策として1200万ドル、コレラ治療の拡大のために210万ドルが供与されます。また、スーダンで続く紛争の影響によりエジプトへ避難しているスーダン難民に対し、透析治療を提供する目的で、KSReliefとWHOエジプト事務所との間で360万ドルの別の合意も締結されました。これらの取り組みは、紛争や災害によって脆弱になったコミュニティにおける基本的な医療サービスへのアクセスを確保する上で極めて重要です。  さらに、サウジアラビア王国は、世界ポリオ根絶イニシアティブ（GPEI）への5億ドルの資金提供を再確認しました。この誓約は2024年4月に当初発表されたもので、今回のフォーラムでWHOに3億ドル、国連児童基金（UNICEF）に2億ドルをそれぞれ拠出する資金協定が署名されました。この多額の貢献は、年間3億7000万人の子どもたちにワクチン接種を行うことで、世界的なポリオ根絶を目指す活動を支援します。特に、パキスタン、アフガニスタン、ガザといった紛争の影響を受ける地域ではポリオウイルスの再燃が見られるため、これらの地域でのワクチン接種活動を強化することが期待されています。  今回のリヤド国際人道フォーラムは、WHOとKSRelief、そしてその他の国際的なパートナーシップの継続的な重要性を強調する場となりました。マラリア、コレラ、ポリオといった重大な感染症との闘い、そして避難民の皆様へのより良い医療の提供を確実にする上で、締結された合意は極めて重要な意味を持ちます。このフォーラムはまた、世界的な人道支援活動に対するサウジアラビアの継続的なコミットメントを明確にし、世界の喫緊の健康危機への対処におけるそのリーダーシップを再確認する機会となりました。国際社会が協力してこれらの課題に取り組むことの重要性が改めて示されたと言えるでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2025-03-06 21:48</p>
+  <h2 class="article-title">WHOとサウジアラビア王国、保健の優先課題を支援する協定に署名</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">WHOとサウジアラビア王国が国際的な健康課題への支援を強化<span class="summary-rest" hidden><br><br>2025年2月24日と25日に開催されたリヤド国際人道フォーラムにおいて、世界保健機関（WHO）とサウジアラビア王国が、喫緊の健康および人道問題への対応を強化するための重要な合意を締結しました。このフォーラムには、人道支援分野のグローバルパートナーが一堂に会し、危機の影響を受ける人々の生存、健康外交、福祉、尊厳の向上、そして援助活動者の安全確保について議論しました。特に、キング・サルマン人道援助・救援センター（KSRelief）の設立10周年を記念する場となり、中東およびそれ以外の地域における現在進行中の人道上の課題に対処するための主要な合意と誓約が交わされました。<br><br>WHOとKSReliefは、特にイエメンにおける公衆衛生上の緊急事態に対応するための新たな資金協力に合意しました。具体的には、イエメンでのマラリア対策として1200万ドル、コレラ治療の拡大のために210万ドルが供与されます。また、スーダンで続く紛争の影響によりエジプトへ避難しているスーダン難民に対し、透析治療を提供する目的で、KSReliefとWHOエジプト事務所との間で360万ドルの別の合意も締結されました。これらの取り組みは、紛争や災害によって脆弱になったコミュニティにおける基本的な医療サービスへのアクセスを確保する上で極めて重要です。<br><br>さらに、サウジアラビア王国は、世界ポリオ根絶イニシアティブ（GPEI）への5億ドルの資金提供を再確認しました。この誓約は2024年4月に当初発表されたもので、今回のフォーラムでWHOに3億ドル、国連児童基金（UNICEF）に2億ドルをそれぞれ拠出する資金協定が署名されました。この多額の貢献は、年間3億7000万人の子どもたちにワクチン接種を行うことで、世界的なポリオ根絶を目指す活動を支援します。特に、パキスタン、アフガニスタン、ガザといった紛争の影響を受ける地域ではポリオウイルスの再燃が見られるため、これらの地域でのワクチン接種活動を強化することが期待されています。<br><br>今回のリヤド国際人道フォーラムは、WHOとKSRelief、そしてその他の国際的なパートナーシップの継続的な重要性を強調する場となりました。マラリア、コレラ、ポリオといった重大な感染症との闘い、そして避難民の皆様へのより良い医療の提供を確実にする上で、締結された合意は極めて重要な意味を持ちます。このフォーラムはまた、世界的な人道支援活動に対するサウジアラビアの継続的なコミットメントを明確にし、世界の喫緊の健康危機への対処におけるそのリーダーシップを再確認する機会となりました。国際社会が協力してこれらの課題に取り組むことの重要性が改めて示されたと言えるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/24-02-2025-who-and-the-kingdom-of-saudi-arabia-sign-agreements-in-support-of-health-priorities" target="_blank" rel="noopener">https://www.who.int/news/item/24-02-2025-who-and-the-kingdom-of-saudi-arabia-sign-agreements-in-support-of-health-priorities</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

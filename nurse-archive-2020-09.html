@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2020年9月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全4件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="5c1d49eaedac582c65982bbf4b3b9b31"
+  data-date="2020-09-28"
+  data-month="2020-09"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="低・中所得国向けに安価で高品質なCOVID-19迅速検査1億2000万回分を供給する国際連携 世界の低・中所得国へCOVID-19迅速検査キットを大規模供給：国際協力の進展  看護師の皆様、新型コロナウイルス感染症（COVID-19）との闘いが続く中、国際的な感染症対策において重要な進展がありましたのでお伝えします。  この度、「COVID-19ツールへのアクセス加速化（ACT-Accelerator）」を通じて、低・中所得国（LMIC）向けに、安価で質の高いCOVID-19抗原迅速検査キット（Ag RDT）を供給する大規模な合意が発表されました。これは、世界保健機関（WHO）やビル＆メリンダ・ゲイツ財団など、多くの主要な国際機関が参加する協力体制です。  具体的には、ビル＆メリンダ・ゲイツ財団が診断薬メーカーのAbbott社とSD Biosensor社と契約を結び、今後6ヶ月間で合計1億2千万個のAg RDTを、1個あたり最大5ドルという低価格でLMICに供給します。これらの検査キットは、PCR検査のように結果を待つ必要がなく、わずか15～30分で結果が得られます。  Ag RDTの利点は、迅速性、携帯性、そして簡便な操作性です。これにより、大規模な検査施設や専門の訓練を受けた医療従事者が不足している国々でも、地域社会や分散型の医療現場で検査を実施しやすくなります。ウイルスの存在をその場で迅速に検出できるため、特に資源が限られた医療システムを持つ地域において、患者の検査、追跡、治療を加速させる上で非常に重要なツールとなります。  この取り組みを後押しするため、世界エイズ・結核・マラリア対策基金（グローバルファンド）は、初期資金として5000万ドルを提供し、LMICが少なくとも1000万個のAg RDTを確約された価格で購入できるよう支援します。WHOと新診断薬基金（FIND）はAg RDTの適切な使用法を確立するための研究を支援。国際医薬品購入機構（Unitaid）とアフリカ疾病対策予防センター（Africa CDC）は、2020年10月からアフリカの最大20カ国でこれらの検査キットの展開を開始しました。  COVID-19対策において、検査はウイルスを追跡し封じ込める上で極めて重要です。また、将来のワクチン展開に備える上でも不可欠な要素です。従来の分子検査（PCR検査）は精度が高い一方で、設備や人員が必要で時間を要します。Ag RDTは、特に地域社会での感染が広範で、PCR検査が利用できない、または結果が大幅に遅れる地域において、WHOもその価値を認めています。これらの迅速検査は、感染経路の遮断、新たなアウトブレイクの特定、調査支援、疾患傾向の監視、そして無症状接触者のスクリーニングにも役立ちます。  ACT-Acceleratorは、公平かつタイムリーな検査へのアクセスを実現するため、30以上のグローバルヘルスパートナーと密接に連携しています。この未曽有の国際協力により、ウイルスが最初に特定されてからわずか8ヶ月という驚異的な速さで、WHO緊急使用リスト（EUL）承認のAg RDTが開発・展開されました。これは、HIVの迅速診断検査開発に約5年かかったことと比較すると、そのスピードが際立っています。ACT-Acceleratorは今後12ヶ月で、LMICに5億個の検査キット供給を目指しています。  WHOのテドロス事務局長は、「質の高い迅速検査は、ウイルスの潜伏場所を特定し、感染経路を断ち切る上で鍵となる」と強調。ゲイツ財団のマーク・スズマンCEOも、「最新の診断法が世界の低所得国にも手頃な価格で利用できるようにする」ことの重要性を述べています。  今回のAg RDTの大規模供給は、国際社会が協力してCOVID-19と闘い、全ての国が公平に新しい検査ツールにアクセスできるよう確保するための、ACT-Acceleratorの重要な成果です。私たち医療従事者も、世界規模で進むこのような感染症対策の動きを理解し、自身の業務に活かしていくことが求められます。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-09-29 03:37</p>
+  <h2 class="article-title">低・中所得国向けに安価で高品質なCOVID-19迅速検査1億2000万回分を供給する国際連携</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界の低・中所得国へCOVID-19迅速検査キットを大規模供給：国際協力の進展<span class="summary-rest" hidden><br><br>看護師の皆様、新型コロナウイルス感染症（COVID-19）との闘いが続く中、国際的な感染症対策において重要な進展がありましたのでお伝えします。<br><br>この度、「COVID-19ツールへのアクセス加速化（ACT-Accelerator）」を通じて、低・中所得国（LMIC）向けに、安価で質の高いCOVID-19抗原迅速検査キット（Ag RDT）を供給する大規模な合意が発表されました。これは、世界保健機関（WHO）やビル＆メリンダ・ゲイツ財団など、多くの主要な国際機関が参加する協力体制です。<br><br>具体的には、ビル＆メリンダ・ゲイツ財団が診断薬メーカーのAbbott社とSD Biosensor社と契約を結び、今後6ヶ月間で合計1億2千万個のAg RDTを、1個あたり最大5ドルという低価格でLMICに供給します。これらの検査キットは、PCR検査のように結果を待つ必要がなく、わずか15～30分で結果が得られます。<br><br>Ag RDTの利点は、迅速性、携帯性、そして簡便な操作性です。これにより、大規模な検査施設や専門の訓練を受けた医療従事者が不足している国々でも、地域社会や分散型の医療現場で検査を実施しやすくなります。ウイルスの存在をその場で迅速に検出できるため、特に資源が限られた医療システムを持つ地域において、患者の検査、追跡、治療を加速させる上で非常に重要なツールとなります。<br><br>この取り組みを後押しするため、世界エイズ・結核・マラリア対策基金（グローバルファンド）は、初期資金として5000万ドルを提供し、LMICが少なくとも1000万個のAg RDTを確約された価格で購入できるよう支援します。WHOと新診断薬基金（FIND）はAg RDTの適切な使用法を確立するための研究を支援。国際医薬品購入機構（Unitaid）とアフリカ疾病対策予防センター（Africa CDC）は、2020年10月からアフリカの最大20カ国でこれらの検査キットの展開を開始しました。<br><br>COVID-19対策において、検査はウイルスを追跡し封じ込める上で極めて重要です。また、将来のワクチン展開に備える上でも不可欠な要素です。従来の分子検査（PCR検査）は精度が高い一方で、設備や人員が必要で時間を要します。Ag RDTは、特に地域社会での感染が広範で、PCR検査が利用できない、または結果が大幅に遅れる地域において、WHOもその価値を認めています。これらの迅速検査は、感染経路の遮断、新たなアウトブレイクの特定、調査支援、疾患傾向の監視、そして無症状接触者のスクリーニングにも役立ちます。<br><br>ACT-Acceleratorは、公平かつタイムリーな検査へのアクセスを実現するため、30以上のグローバルヘルスパートナーと密接に連携しています。この未曽有の国際協力により、ウイルスが最初に特定されてからわずか8ヶ月という驚異的な速さで、WHO緊急使用リスト（EUL）承認のAg RDTが開発・展開されました。これは、HIVの迅速診断検査開発に約5年かかったことと比較すると、そのスピードが際立っています。ACT-Acceleratorは今後12ヶ月で、LMICに5億個の検査キット供給を目指しています。<br><br>WHOのテドロス事務局長は、「質の高い迅速検査は、ウイルスの潜伏場所を特定し、感染経路を断ち切る上で鍵となる」と強調。ゲイツ財団のマーク・スズマンCEOも、「最新の診断法が世界の低所得国にも手頃な価格で利用できるようにする」ことの重要性を述べています。<br><br>今回のAg RDTの大規模供給は、国際社会が協力してCOVID-19と闘い、全ての国が公平に新しい検査ツールにアクセスできるよう確保するための、ACT-Acceleratorの重要な成果です。私たち医療従事者も、世界規模で進むこのような感染症対策の動きを理解し、自身の業務に活かしていくことが求められます。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/28-09-2020-global-partnership-to-make-available-120-million-affordable-quality-covid-19-rapid-tests-for-low--and-middle-income-countries" target="_blank" rel="noopener">https://www.who.int/news/item/28-09-2020-global-partnership-to-make-available-120-million-affordable-quality-covid-19-rapid-tests-for-low--and-middle-income-countries</a>
+  </div>
+</article>
+<article
+  data-id="5344820113659cc0305be309c9f5b979"
+  data-date="2020-09-23"
+  data-month="2020-09"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="COVID-19インフォデミックへの対処：健康的な行動を促し、誤情報の害を和らげる COVID-19インフォデミックの管理：誤情報・偽情報による被害を軽減し、健康的な行動を促進するために  新型コロナウイルス感染症（COVID-19）パンデミックは、私たちが歴史上初めて、テクノロジーとソーシャルメディアを大規模に活用して、人々の安全確保、情報共有、生産性の維持、そしてつながりの維持を図った局面でした。しかし、その一方で、私たちが頼りにするテクノロジーは「インフォデミック」と呼ばれる現象を増幅させ、世界的なパンデミック対策を困難にし、その制御を危うくしています。  インフォデミックとは、オンラインとオフラインの両方で情報が過剰に溢れかえっている状態を指します。これには、公衆衛生への対応を意図的に妨害したり、特定の個人や集団の別の目的を推進したりするために、間違った情報を意図的に広めようとする試みも含まれます。  誤情報や偽情報は、人々の身体的・精神的な健康に悪影響を及ぼし、感染者への差別や偏見（スティグマ）を助長する可能性があります。また、これまでの貴重な公衆衛生上の成果を脅かし、公衆衛生対策への協力が得られにくくなることで、その効果を低下させ、パンデミックを食い止める国の能力を損ないかねません。誤った情報は人命を奪うことにもつながります。適切な信頼と正しい情報がなければ、診断テストは活用されず、効果的なワクチンを推進するキャンペーンも目標を達成できません。その結果、ウイルスは拡散し続けることになります。  さらに、偽情報はCOVID-19関連の公の議論を二極化させ、ヘイトスピーチを増幅させ、紛争や暴力、人権侵害のリスクを高め、長期的には民主主義、人権、社会の結束の進展を脅かす可能性を秘めています。  こうした状況を受け、国連事務総長は2020年4月に誤情報や偽情報の拡散と闘うための「国連コミュニケーション対応イニシアチブ」を開始しました。また、国連は同年5月にCOVID-19関連のヘイトスピーチへの対処に関するガイダンスノートを発行しています。  2020年5月の世界保健総会では、世界保健機関（WHO）の加盟国がCOVID-19対応に関する決議WHA73.1を採択しました。この決議では、インフォデミックの管理がCOVID-19パンデミック制御の重要な一部であると認識し、加盟国に対して信頼できるCOVID-19関連情報を提供し、誤情報や偽情報に対抗するための措置を講じ、デジタル技術を対策全体で活用するよう求めています。  国連システムと市民社会組織は、その集合的な専門知識と知見を活用してインフォデミックに対応していますが、パンデミックが不確実性と不安を生み出し続ける中で、インフォデミックを管理するためのより強力な行動と、各国、多国間組織、市民社会、その他すべての関係者間の協調的なアプローチが喫緊の課題となっています。  私たちは、加盟国に対し、科学的根拠に基づいた正確な情報を、すべてのコミュニティ、特にハイリスクグループに対しタイムリーに広めることで、インフォデミックを管理するための行動計画を策定し、実施するよう求めます。そして、表現の自由を尊重しつつ、誤情報や偽情報の拡散を防ぎ、これらと闘う必要があります。  各国の行動計画を策定する際には、地域社会の声に耳を傾け、彼らが誤情報や偽情報に対する解決策や回復力を養えるよう力を与えることが重要です。また、誤情報や偽情報が拡散されるメディアやソーシャルメディアプラットフォーム、インフォデミックに対応するための効果的な戦略やツールを設計・構築できる研究者や技術者、市民社会のリーダー、インフルエンサーを含むすべてのステークホルダーに対し、国連システムや加盟国と協力し、正確な情報の拡散と誤情報・偽情報の防止に向けた行動をさらに強化するよう強く訴えます。  私たち看護師も、患者さんやご家族と接する中で、日々多くの情報に触れています。インフォデミックは、医療従事者としての私たちの信頼性を揺るがし、患者さんの健康行動に悪影響を及ぼす可能性があります。正確な情報源として、科学的根拠に基づいた適切な情報を伝え、患者さんが誤情報に惑わされないよう支援することは、私たち看護師の重要な役割です。国際社会が連携して取り組む中で、私たち一人ひとりも、この「インフォデミック」の波を乗り越えるために貢献できることを心に留めておきましょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-09-23 22:51</p>
+  <h2 class="article-title">COVID-19インフォデミックへの対処：健康的な行動を促し、誤情報の害を和らげる</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">COVID-19インフォデミックの管理：誤情報・偽情報による被害を軽減し、健康的な行動を促進するために<span class="summary-rest" hidden><br><br>新型コロナウイルス感染症（COVID-19）パンデミックは、私たちが歴史上初めて、テクノロジーとソーシャルメディアを大規模に活用して、人々の安全確保、情報共有、生産性の維持、そしてつながりの維持を図った局面でした。しかし、その一方で、私たちが頼りにするテクノロジーは「インフォデミック」と呼ばれる現象を増幅させ、世界的なパンデミック対策を困難にし、その制御を危うくしています。<br><br>インフォデミックとは、オンラインとオフラインの両方で情報が過剰に溢れかえっている状態を指します。これには、公衆衛生への対応を意図的に妨害したり、特定の個人や集団の別の目的を推進したりするために、間違った情報を意図的に広めようとする試みも含まれます。<br><br>誤情報や偽情報は、人々の身体的・精神的な健康に悪影響を及ぼし、感染者への差別や偏見（スティグマ）を助長する可能性があります。また、これまでの貴重な公衆衛生上の成果を脅かし、公衆衛生対策への協力が得られにくくなることで、その効果を低下させ、パンデミックを食い止める国の能力を損ないかねません。誤った情報は人命を奪うことにもつながります。適切な信頼と正しい情報がなければ、診断テストは活用されず、効果的なワクチンを推進するキャンペーンも目標を達成できません。その結果、ウイルスは拡散し続けることになります。<br><br>さらに、偽情報はCOVID-19関連の公の議論を二極化させ、ヘイトスピーチを増幅させ、紛争や暴力、人権侵害のリスクを高め、長期的には民主主義、人権、社会の結束の進展を脅かす可能性を秘めています。<br><br>こうした状況を受け、国連事務総長は2020年4月に誤情報や偽情報の拡散と闘うための「国連コミュニケーション対応イニシアチブ」を開始しました。また、国連は同年5月にCOVID-19関連のヘイトスピーチへの対処に関するガイダンスノートを発行しています。<br><br>2020年5月の世界保健総会では、世界保健機関（WHO）の加盟国がCOVID-19対応に関する決議WHA73.1を採択しました。この決議では、インフォデミックの管理がCOVID-19パンデミック制御の重要な一部であると認識し、加盟国に対して信頼できるCOVID-19関連情報を提供し、誤情報や偽情報に対抗するための措置を講じ、デジタル技術を対策全体で活用するよう求めています。<br><br>国連システムと市民社会組織は、その集合的な専門知識と知見を活用してインフォデミックに対応していますが、パンデミックが不確実性と不安を生み出し続ける中で、インフォデミックを管理するためのより強力な行動と、各国、多国間組織、市民社会、その他すべての関係者間の協調的なアプローチが喫緊の課題となっています。<br><br>私たちは、加盟国に対し、科学的根拠に基づいた正確な情報を、すべてのコミュニティ、特にハイリスクグループに対しタイムリーに広めることで、インフォデミックを管理するための行動計画を策定し、実施するよう求めます。そして、表現の自由を尊重しつつ、誤情報や偽情報の拡散を防ぎ、これらと闘う必要があります。<br><br>各国の行動計画を策定する際には、地域社会の声に耳を傾け、彼らが誤情報や偽情報に対する解決策や回復力を養えるよう力を与えることが重要です。また、誤情報や偽情報が拡散されるメディアやソーシャルメディアプラットフォーム、インフォデミックに対応するための効果的な戦略やツールを設計・構築できる研究者や技術者、市民社会のリーダー、インフルエンサーを含むすべてのステークホルダーに対し、国連システムや加盟国と協力し、正確な情報の拡散と誤情報・偽情報の防止に向けた行動をさらに強化するよう強く訴えます。<br><br>私たち看護師も、患者さんやご家族と接する中で、日々多くの情報に触れています。インフォデミックは、医療従事者としての私たちの信頼性を揺るがし、患者さんの健康行動に悪影響を及ぼす可能性があります。正確な情報源として、科学的根拠に基づいた適切な情報を伝え、患者さんが誤情報に惑わされないよう支援することは、私たち看護師の重要な役割です。国際社会が連携して取り組む中で、私たち一人ひとりも、この「インフォデミック」の波を乗り越えるために貢献できることを心に留めておきましょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/23-09-2020-managing-the-covid-19-infodemic-promoting-healthy-behaviours-and-mitigating-the-harm-from-misinformation-and-disinformation" target="_blank" rel="noopener">https://www.who.int/news/item/23-09-2020-managing-the-covid-19-infodemic-promoting-healthy-behaviours-and-mitigating-the-harm-from-misinformation-and-disinformation</a>
+  </div>
+</article>
+<article
+  data-id="75a3920ef731b85a128ec6894693dd7b"
+  data-date="2020-09-15"
+  data-month="2020-09"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="第75回国連総会に向けたWHOの3つのメッセージ 国連総会がオンライン開催される中、世界保健機関（WHO）は、今後の世界の健康と医療の方向性を示す三つの重要なメッセージを発信しました。日本の看護師である私たちも、世界の動向を理解し、業務やキャリアを考える上で重要です。  WHOは、新型コロナウイルス感染症（COVID-19）の検査、治療薬、ワクチンの開発、生産、そして世界中への公平なアクセスを加速させる国際協力「ACTアクセラレーター」への支援を強く呼びかけています。このプラットフォームは、ワクチン、治療薬、検査の供給のため、350億ドルの資金を必要としています。この投資は、COVID-19の経済的損失や各国の景気刺激策に比べればはるかに小さく、公平なアクセスが世界の経済回復、サプライチェーンの保護、長期的な成長に不可欠です。私たちも、医療資源の公平な分配の重要性を再認識すべきです。  パンデミックは、数十年にわたる保健と開発分野の進展を揺るがす危機をもたらしています。最近のWHO調査では、90%の国で必須の保健サービスに混乱が生じ、特に定期予防接種、非感染性疾患（NCDs）の診断と治療、家族計画、精神疾患、がんの診断と治療分野で大きな影響が出ています。COVID-19は、ユニバーサルヘルスケア達成とSDGsの健康関連目標達成のために、プライマリヘルスケアを基盤とした、より強固な保健医療システムとデータシステムに投資する必要があることを痛感させました。看護師として、プライマリヘルスケアの重要性を再認識し、多職種連携を通じて持続可能な医療提供体制の構築に貢献することが求められます。  COVID-19は、多くの警告にもかかわらず、世界が来るべきパンデミックに対して著しく準備不足であったことを露呈させました。昨年、「グローバル・プレパードネス・モニタリング・ボード（GPMB）」はパンデミックの脅威を警告し、準備に向けた団結行動を求めていました。今年発表されたGPMBの2020年報告書「無秩序な世界」では、COVID-19によって混乱し、リーダーシップと迅速な行動が欠如している現状が指摘されています。WHOは、この報告書が示す五つの行動、すなわち「責任あるリーダーシップ」「市民の積極的な参加」「健康安全保障のための強力で機敏なシステム」「持続的な投資」「準備のための堅固なグローバルガバナンス」を、全ての市民とリーダーに支持を呼びかけています。私たち看護師も、感染管理や災害対策において、これらの視点を取り入れ、レジリエンス向上に貢献する準備を始めるべきです。  WHOのこれらのメッセージは、現在の危機を乗り越え、将来の健康危機に備える指針です。今日の私たちの行動が、未来の健康と社会を形作ります。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-09-16 01:06</p>
+  <h2 class="article-title">第75回国連総会に向けたWHOの3つのメッセージ</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">国連総会がオンライン開催される中、世界保健機関（WHO）は、今後の世界の健康と医療の方向性を示す三つの重要なメッセージを発信しました。日本の看護師である私たちも、世界の動向を理解し、業務やキャリアを考える上で重要です。<span class="summary-rest" hidden><br><br>WHOは、新型コロナウイルス感染症（COVID-19）の検査、治療薬、ワクチンの開発、生産、そして世界中への公平なアクセスを加速させる国際協力「ACTアクセラレーター」への支援を強く呼びかけています。このプラットフォームは、ワクチン、治療薬、検査の供給のため、350億ドルの資金を必要としています。この投資は、COVID-19の経済的損失や各国の景気刺激策に比べればはるかに小さく、公平なアクセスが世界の経済回復、サプライチェーンの保護、長期的な成長に不可欠です。私たちも、医療資源の公平な分配の重要性を再認識すべきです。<br><br>パンデミックは、数十年にわたる保健と開発分野の進展を揺るがす危機をもたらしています。最近のWHO調査では、90%の国で必須の保健サービスに混乱が生じ、特に定期予防接種、非感染性疾患（NCDs）の診断と治療、家族計画、精神疾患、がんの診断と治療分野で大きな影響が出ています。COVID-19は、ユニバーサルヘルスケア達成とSDGsの健康関連目標達成のために、プライマリヘルスケアを基盤とした、より強固な保健医療システムとデータシステムに投資する必要があることを痛感させました。看護師として、プライマリヘルスケアの重要性を再認識し、多職種連携を通じて持続可能な医療提供体制の構築に貢献することが求められます。<br><br>COVID-19は、多くの警告にもかかわらず、世界が来るべきパンデミックに対して著しく準備不足であったことを露呈させました。昨年、「グローバル・プレパードネス・モニタリング・ボード（GPMB）」はパンデミックの脅威を警告し、準備に向けた団結行動を求めていました。今年発表されたGPMBの2020年報告書「無秩序な世界」では、COVID-19によって混乱し、リーダーシップと迅速な行動が欠如している現状が指摘されています。WHOは、この報告書が示す五つの行動、すなわち「責任あるリーダーシップ」「市民の積極的な参加」「健康安全保障のための強力で機敏なシステム」「持続的な投資」「準備のための堅固なグローバルガバナンス」を、全ての市民とリーダーに支持を呼びかけています。私たち看護師も、感染管理や災害対策において、これらの視点を取り入れ、レジリエンス向上に貢献する準備を始めるべきです。<br><br>WHOのこれらのメッセージは、現在の危機を乗り越え、将来の健康危機に備える指針です。今日の私たちの行動が、未来の健康と社会を形作ります。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/15-09-2020-who-s-three-messages-for-unga75" target="_blank" rel="noopener">https://www.who.int/news/item/15-09-2020-who-s-three-messages-for-unga75</a>
+  </div>
+</article>
+<article
+  data-id="907babd3818a90db9f20c20ce47b9b1d"
+  data-date="2020-09-09"
+  data-month="2020-09"
+  data-topics="小児"
+  data-clinical-areas="患者教育"
+  data-audiences="小児||医療従事者||地域住民"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="COVID-19で予防可能な子どもの死亡削減の数十年の前進が後戻りの恐れ――各機関が警告 「COVID-19が予防可能な子どもの死亡をなくすための数十年にわたる世界の進歩を後退させる可能性がある」という警告が、ユニセフやWHOといった機関から発せられています。  2019年には、5歳未満の子どもの死亡者数が史上最低の520万人にまで減少しました。これは1990年の1250万人から大幅な改善であり、早産、低出生体重、分娩合併症、新生児敗血症、肺炎、下痢、マラリア、そして予防接種といった対策が功を奏した結果です。しかし、COVID-19パンデミックにより、母子保健サービスが大規模に中断され、この長年の努力が危ぶまれています。  ユニセフとWHOの最近の調査によると、多くの国で子どもの健診や予防接種サービス、さらには妊婦健診や産後ケアが中断されていることが明らかになりました。例えば、ユニセフが77カ国を対象に行った調査では、約68パーセントの国で子どもの健診と予防接種に何らかの支障が出ていると報告されています。WHOが105カ国を対象とした調査では、病気の子どものための医療サービスや栄養失調の管理サービスにも、それぞれ約5割の国で混乱が生じていました。  こうしたサービス中断の主な原因は、感染を恐れる親が医療機関の受診を避けること、交通機関の制限、医療サービスや施設の閉鎖、個人用防護具不足などによる医療従事者の減少や感染への懸念、そして財政的な困難などが挙げられます。特にアフガニスタンやカメルーンなど、もともと子どもの死亡率が高かった国々で影響が顕著です。アフガニスタンでは、感染への恐怖から妊娠中や出産後のケアの優先順位が下がり、妊婦や新生児のリスクが増大しています。  特に新生児は、COVID-19以前から最も死亡リスクが高く、2019年には13秒に1人の新生児が亡くなっていました。5歳未満の死亡の約半分が新生児期に発生しています。必須の医療サービスが大きく中断されることで、新生児の死亡リスクはさらに高まると懸念されています。カメルーンでは、新生児ケア、妊婦健診、産科ケア、産後ケアのサービスに75パーセントもの中断が報告され、ジョンズ・ホプキンス大学の初期予測では、COVID-19による混乱で1日あたり約6000人もの子どもが追加で死亡する可能性が示唆されました。  世界銀行の担当者も、「予防可能な子どもの死亡をなくすための長年の世界の進歩が深刻な危機に瀕している」と述べ、子どもの死亡率削減に不可欠な救命サービスを保護することの重要性を強調しています。この状況は、医療従事者がスキルとケアを提供し、親たちの不安を軽減するための緊急の行動が必要であることを浮き彫りにしています。  私たちは、このパンデミックがもたらす医療現場の混乱や、患者さんが医療機関の受診をためらう心理を深く理解し、可能な限り安全な環境を提供し、必要なケアが途切れないよう尽力しなければなりません。子どもたちが適切なケアを受けられるよう、医療システム全体の回復と強化に向けて、私たち看護師もそれぞれの持ち場で貢献していく必要があります。 WHO (World Health Organization) 小児 患者教育 小児 医療従事者 地域住民 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-09-09 09:01</p>
+  <h2 class="article-title">COVID-19で予防可能な子どもの死亡削減の数十年の前進が後戻りの恐れ――各機関が警告</h2>
+  <div class="taxonomy"><span class="chip">トピック: 小児</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 小児</span><span class="chip">対象: 医療従事者</span><span class="chip">対象: 地域住民</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">「COVID-19が予防可能な子どもの死亡をなくすための数十年にわたる世界の進歩を後退させる可能性がある」という警告が、ユニセフやWHOといった機関から発せられています。<span class="summary-rest" hidden><br><br>2019年には、5歳未満の子どもの死亡者数が史上最低の520万人にまで減少しました。これは1990年の1250万人から大幅な改善であり、早産、低出生体重、分娩合併症、新生児敗血症、肺炎、下痢、マラリア、そして予防接種といった対策が功を奏した結果です。しかし、COVID-19パンデミックにより、母子保健サービスが大規模に中断され、この長年の努力が危ぶまれています。<br><br>ユニセフとWHOの最近の調査によると、多くの国で子どもの健診や予防接種サービス、さらには妊婦健診や産後ケアが中断されていることが明らかになりました。例えば、ユニセフが77カ国を対象に行った調査では、約68パーセントの国で子どもの健診と予防接種に何らかの支障が出ていると報告されています。WHOが105カ国を対象とした調査では、病気の子どものための医療サービスや栄養失調の管理サービスにも、それぞれ約5割の国で混乱が生じていました。<br><br>こうしたサービス中断の主な原因は、感染を恐れる親が医療機関の受診を避けること、交通機関の制限、医療サービスや施設の閉鎖、個人用防護具不足などによる医療従事者の減少や感染への懸念、そして財政的な困難などが挙げられます。特にアフガニスタンやカメルーンなど、もともと子どもの死亡率が高かった国々で影響が顕著です。アフガニスタンでは、感染への恐怖から妊娠中や出産後のケアの優先順位が下がり、妊婦や新生児のリスクが増大しています。<br><br>特に新生児は、COVID-19以前から最も死亡リスクが高く、2019年には13秒に1人の新生児が亡くなっていました。5歳未満の死亡の約半分が新生児期に発生しています。必須の医療サービスが大きく中断されることで、新生児の死亡リスクはさらに高まると懸念されています。カメルーンでは、新生児ケア、妊婦健診、産科ケア、産後ケアのサービスに75パーセントもの中断が報告され、ジョンズ・ホプキンス大学の初期予測では、COVID-19による混乱で1日あたり約6000人もの子どもが追加で死亡する可能性が示唆されました。<br><br>世界銀行の担当者も、「予防可能な子どもの死亡をなくすための長年の世界の進歩が深刻な危機に瀕している」と述べ、子どもの死亡率削減に不可欠な救命サービスを保護することの重要性を強調しています。この状況は、医療従事者がスキルとケアを提供し、親たちの不安を軽減するための緊急の行動が必要であることを浮き彫りにしています。<br><br>私たちは、このパンデミックがもたらす医療現場の混乱や、患者さんが医療機関の受診をためらう心理を深く理解し、可能な限り安全な環境を提供し、必要なケアが途切れないよう尽力しなければなりません。子どもたちが適切なケアを受けられるよう、医療システム全体の回復と強化に向けて、私たち看護師もそれぞれの持ち場で貢献していく必要があります。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/09-09-2020-covid-19-could-reverse-decades-of-progress-toward-eliminating-preventable-child-deaths-agencies-warn" target="_blank" rel="noopener">https://www.who.int/news/item/09-09-2020-covid-19-could-reverse-decades-of-progress-toward-eliminating-preventable-child-deaths-agencies-warn</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

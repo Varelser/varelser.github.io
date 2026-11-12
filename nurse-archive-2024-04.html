@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2024年4月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全2件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="0f33c346250ce991e148cc4c467a957d"
+  data-date="2024-04-12"
+  data-month="2024-04"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="世界の健康と福祉の向上へ、WHOとオランダがパートナーシップを強化 世界保健機関（WHO）とオランダは、2024年4月10日にオランダのハーグで戦略対話を行い、長年の協力関係をさらに強化することで合意しました。この対話は、オランダがグローバルヘルス、人権、そして包括的な医療サービスへの普遍的なアクセスに強くコミットしていることを背景に、世界中の人々の健康と福祉を向上させることを目指しています。  紛争や災害、気候変動がもたらす影響が深刻化し、世界中の公衆衛生が相互に深く関連している現代において、このパートナーシップの長期的なビジョンを熟考する重要な場となりました。オランダの保健・福祉・スポーツ省公衆衛生総局長であるマージョライン・ソンネマ氏は、「今回の対話では、WHOとオランダ双方の優先事項と目標が強く連携していることを基盤に、協力とパートナーシップの深化へのコミットメントが示されました」と述べました。  今回の戦略対話の主な成果として、オランダのグローバルヘルス戦略と、WHOが今後発表する第14次作業計画との連携が確認されました。これにより、保健システムの強化、パンデミックへの備え、気候変動と健康、薬剤耐性（AMR）対策、そしてメンタルヘルス支援といった、私たち看護師の業務にも深く関わる重要な分野で、相乗効果が期待されます。  健康や必須医療サービスへのアクセス、経済的保護における不平等が拡大し、特に貧困層や最も脆弱な人々に不均衡な影響が及んでいる中、WHOはオランダをグローバルヘルス分野のリーダーであり、信頼できるパートナーとして高く評価しています。WHOの事務局次長であるブルース・エイルワード博士は、性と生殖に関する権利、ジェンダー平等、保健システム、安全保障、気候変動へのレジリエンス、メンタルヘルスといった共通の優先事項を挙げ、世界中の人々の健康と福祉を向上させるために、パートナーシップを強化していくことへの期待を表明しました。  オランダは、WHOの財政を持続可能なものにするための取り組みである初の「WHO投資ラウンド」を通じ、柔軟な資金提供を行う主要なドナー国として、WHOからそのリーダーシップを高く評価されています。2022年から2023年にかけて、オランダはWHOに総額1億600万ドル以上を拠出し、そのうち約1900万ドルは、WHOの中核的な活動を支える柔軟な任意拠出金でした。  オランダはまた、WHOへの職員派遣（セカンドメント）や、若手専門家プログラムを通じて、WHOの技術的専門知識の強化にも貢献しています。これにより、性と生殖に関する健康、水と衛生、緊急時のメンタルヘルス、緊急事態への備え、結核、ワンヘルス（人と動物と環境の健康を一体的に捉えるアプローチ）、プライマリーヘルスケア、薬剤耐性といった多岐にわたる重要な活動が現場レベルで支援されています。  今回の2024年の対話の成果は、今後のWHOとオランダの協力活動に反映され、取り組みの連携と資源の最適利用を通じて、世界中の健康成果の改善に貢献することが期待されます。私たち看護師にとっても、これらの世界的な健康課題への取り組みは、日々のケアや地域住民の健康支援と密接に関わっています。国際的な協力が進むことで、より良い医療・看護を提供できる未来が築かれることでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2024-04-12 22:57</p>
+  <h2 class="article-title">世界の健康と福祉の向上へ、WHOとオランダがパートナーシップを強化</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）とオランダは、2024年4月10日にオランダのハーグで戦略対話を行い、長年の協力関係をさらに強化することで合意しました。この対話は、オランダがグローバルヘルス、人権、そして包括的な医療サービスへの普遍的なアクセスに強くコミットしていることを背景に、世界中の人々の健康と福祉を向上させることを目指しています。<span class="summary-rest" hidden><br><br>紛争や災害、気候変動がもたらす影響が深刻化し、世界中の公衆衛生が相互に深く関連している現代において、このパートナーシップの長期的なビジョンを熟考する重要な場となりました。オランダの保健・福祉・スポーツ省公衆衛生総局長であるマージョライン・ソンネマ氏は、「今回の対話では、WHOとオランダ双方の優先事項と目標が強く連携していることを基盤に、協力とパートナーシップの深化へのコミットメントが示されました」と述べました。<br><br>今回の戦略対話の主な成果として、オランダのグローバルヘルス戦略と、WHOが今後発表する第14次作業計画との連携が確認されました。これにより、保健システムの強化、パンデミックへの備え、気候変動と健康、薬剤耐性（AMR）対策、そしてメンタルヘルス支援といった、私たち看護師の業務にも深く関わる重要な分野で、相乗効果が期待されます。<br><br>健康や必須医療サービスへのアクセス、経済的保護における不平等が拡大し、特に貧困層や最も脆弱な人々に不均衡な影響が及んでいる中、WHOはオランダをグローバルヘルス分野のリーダーであり、信頼できるパートナーとして高く評価しています。WHOの事務局次長であるブルース・エイルワード博士は、性と生殖に関する権利、ジェンダー平等、保健システム、安全保障、気候変動へのレジリエンス、メンタルヘルスといった共通の優先事項を挙げ、世界中の人々の健康と福祉を向上させるために、パートナーシップを強化していくことへの期待を表明しました。<br><br>オランダは、WHOの財政を持続可能なものにするための取り組みである初の「WHO投資ラウンド」を通じ、柔軟な資金提供を行う主要なドナー国として、WHOからそのリーダーシップを高く評価されています。2022年から2023年にかけて、オランダはWHOに総額1億600万ドル以上を拠出し、そのうち約1900万ドルは、WHOの中核的な活動を支える柔軟な任意拠出金でした。<br><br>オランダはまた、WHOへの職員派遣（セカンドメント）や、若手専門家プログラムを通じて、WHOの技術的専門知識の強化にも貢献しています。これにより、性と生殖に関する健康、水と衛生、緊急時のメンタルヘルス、緊急事態への備え、結核、ワンヘルス（人と動物と環境の健康を一体的に捉えるアプローチ）、プライマリーヘルスケア、薬剤耐性といった多岐にわたる重要な活動が現場レベルで支援されています。<br><br>今回の2024年の対話の成果は、今後のWHOとオランダの協力活動に反映され、取り組みの連携と資源の最適利用を通じて、世界中の健康成果の改善に貢献することが期待されます。私たち看護師にとっても、これらの世界的な健康課題への取り組みは、日々のケアや地域住民の健康支援と密接に関わっています。国際的な協力が進むことで、より良い医療・看護を提供できる未来が築かれることでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/12-04-2024-enhancing-global-health-and-well-being--who-and-the-netherlands-strengthen-their-partnership" target="_blank" rel="noopener">https://www.who.int/news/item/12-04-2024-enhancing-global-health-and-well-being--who-and-the-netherlands-strengthen-their-partnership</a>
+  </div>
+</article>
+<article
+  data-id="bf32f5bec67cecaf29354adf8d15b731"
+  data-date="2024-04-05"
+  data-month="2024-04"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="不作為・不公正・危機の中で健康への権利を守る行動を、WHOが呼びかけ 世界保健機関（WHO）は、世界保健デー（4月7日）に「My health, my right（私の健康、私の権利）」キャンペーンを開始し、すべての人々がどこにいても健康の権利を享受できるよう、その擁護を強く呼びかけています。このキャンペーンは、質の高い保健サービス、教育、情報への普遍的なアクセスだけでなく、安全な飲料水、きれいな空気、適切な栄養、質の高い住居、良好な労働・環境条件、そして差別からの自由が、健康の権利に含まれると提唱しています。  しかし、世界の多くの場所では、健康の権利が危機に瀕しています。政治的無策、説明責任の欠如、資金不足がその主な要因であり、これに不寛容、差別、スティグマが拍車をかけています。特に、貧困の中で暮らす人々、避難を余儀なくされている人々、高齢者、障害を持つ人々といった脆弱な立場にある人々が最も大きな影響を受けています。さらに、紛争は心身の苦痛と死をもたらし、化石燃料の燃焼は気候危機を加速させ、きれいな空気を吸う権利を侵害しています。これらの危機が、基本的なニーズを満たすためのサービスへのアクセスを脅かしているのです。  誰もが差別や経済的困難に直面することなく、質の高い、タイムリーで適切な保健サービスを受ける権利があります。それにもかかわらず、2021年には世界の人口の半数以上にあたる45億人が、必要不可欠な保健サービスを受けられず、病気や災害に対して無防備な状態にありました。また、医療を受けられた人々の中にも、約20億人が医療費のために経済的困難に陥っており、この状況は過去20年間で悪化の一途をたどっています。低・中所得国におけるプライマリヘルスケアの拡充には、年間2000億ドルから3280億ドルの追加投資が必要とされています。  WHOのテドロス事務局長は、健康の権利を実現するためには、各国政府が法律を制定し施行すること、投資を行うこと、差別に対処すること、そして国民に対して説明責任を果たすことが不可欠であると述べています。WHOは、政府、パートナー、地域社会と協力し、健康がすべての人々の基本的権利として、可能な限り最高の水準で享受されるよう尽力しています。健康の権利はWHO憲章に明記され、少なくとも140カ国の憲法で認められていますが、認識するだけでは不十分です。そのためWHOは、各国が保健分野を超えてこの権利を法制化し、人権を保健政策やプログラムに統合するよう支援しています。  この支援の目的は、保健サービスを「利用可能」「アクセス可能」「人々のニーズに応える」ものとし、健康に関する意思決定に地域社会が積極的に参加できる環境を増やすことにあります。WHOは各国政府に対し、プライマリヘルスケアへの実質的な投資、透明性と説明責任の確保、そして個人やコミュニティを健康に関する意思決定に意義ある形で関与させるよう強く呼びかけています。健康の権利は、財政、農業、環境、司法、運輸、労働、社会問題といった他の基本的権利とも深く関連していることも強調されています。  私たち看護師も、日々のケアの中で健康の権利を擁護する重要な役割を担っています。WHOは、安全で質の高いケア、差別ゼロ、プライバシーと守秘義務、情報提供、身体の自律性、意思決定など、私たち自身の健康の権利、そして患者さんの健康の権利を知り、保護し、促進するよう一般市民に強く求めています。この普遍的な権利の実現に向けて、私たち一人ひとりが意識を高め、行動することが求められています。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2024-04-06 01:47</p>
+  <h2 class="article-title">不作為・不公正・危機の中で健康への権利を守る行動を、WHOが呼びかけ</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）は、世界保健デー（4月7日）に「My health, my right（私の健康、私の権利）」キャンペーンを開始し、すべての人々がどこにいても健康の権利を享受できるよう、その擁護を強く呼びかけています。このキャンペーンは、質の高い保健サービス、教育、情報への普遍的なアクセスだけでなく、安全な飲料水、きれいな空気、適切な栄養、質の高い住居、良好な労働・環境条件、そして差別からの自由が、健康の権利に含まれると提唱しています。<span class="summary-rest" hidden><br><br>しかし、世界の多くの場所では、健康の権利が危機に瀕しています。政治的無策、説明責任の欠如、資金不足がその主な要因であり、これに不寛容、差別、スティグマが拍車をかけています。特に、貧困の中で暮らす人々、避難を余儀なくされている人々、高齢者、障害を持つ人々といった脆弱な立場にある人々が最も大きな影響を受けています。さらに、紛争は心身の苦痛と死をもたらし、化石燃料の燃焼は気候危機を加速させ、きれいな空気を吸う権利を侵害しています。これらの危機が、基本的なニーズを満たすためのサービスへのアクセスを脅かしているのです。<br><br>誰もが差別や経済的困難に直面することなく、質の高い、タイムリーで適切な保健サービスを受ける権利があります。それにもかかわらず、2021年には世界の人口の半数以上にあたる45億人が、必要不可欠な保健サービスを受けられず、病気や災害に対して無防備な状態にありました。また、医療を受けられた人々の中にも、約20億人が医療費のために経済的困難に陥っており、この状況は過去20年間で悪化の一途をたどっています。低・中所得国におけるプライマリヘルスケアの拡充には、年間2000億ドルから3280億ドルの追加投資が必要とされています。<br><br>WHOのテドロス事務局長は、健康の権利を実現するためには、各国政府が法律を制定し施行すること、投資を行うこと、差別に対処すること、そして国民に対して説明責任を果たすことが不可欠であると述べています。WHOは、政府、パートナー、地域社会と協力し、健康がすべての人々の基本的権利として、可能な限り最高の水準で享受されるよう尽力しています。健康の権利はWHO憲章に明記され、少なくとも140カ国の憲法で認められていますが、認識するだけでは不十分です。そのためWHOは、各国が保健分野を超えてこの権利を法制化し、人権を保健政策やプログラムに統合するよう支援しています。<br><br>この支援の目的は、保健サービスを「利用可能」「アクセス可能」「人々のニーズに応える」ものとし、健康に関する意思決定に地域社会が積極的に参加できる環境を増やすことにあります。WHOは各国政府に対し、プライマリヘルスケアへの実質的な投資、透明性と説明責任の確保、そして個人やコミュニティを健康に関する意思決定に意義ある形で関与させるよう強く呼びかけています。健康の権利は、財政、農業、環境、司法、運輸、労働、社会問題といった他の基本的権利とも深く関連していることも強調されています。<br><br>私たち看護師も、日々のケアの中で健康の権利を擁護する重要な役割を担っています。WHOは、安全で質の高いケア、差別ゼロ、プライバシーと守秘義務、情報提供、身体の自律性、意思決定など、私たち自身の健康の権利、そして患者さんの健康の権利を知り、保護し、促進するよう一般市民に強く求めています。この普遍的な権利の実現に向けて、私たち一人ひとりが意識を高め、行動することが求められています。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/05-04-2024-who-calls-for-action-to-uphold-right-to-health-amidst-inaction--injustice-and-crises" target="_blank" rel="noopener">https://www.who.int/news/item/05-04-2024-who-calls-for-action-to-uphold-right-to-health-amidst-inaction--injustice-and-crises</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

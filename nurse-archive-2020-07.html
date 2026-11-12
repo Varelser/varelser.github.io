@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2020年7月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全8件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="192bbd970ff1a9e600f5421fd4cac07f"
+  data-date="2020-07-27"
+  data-month="2020-07"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="加熱式たばこ製品と米FDAのアイコスに関する決定についてWHOが声明 WHO（世界保健機関）は、加熱式タバコ（HTP）に関する重要な声明を発表し、米国食品医薬品局（FDA）によるIQOSの販売承認についても言及しました。日本の現役看護師の皆さんにとって、喫煙者への指導や健康教育に役立つ情報として、この内容を共有します。  まず、WHOは加熱式タバコが「タバコ製品」であるという基本的な立場を明確にしています。これは、WHOのタバコ規制枠組条約（FCTC）が加熱式タバコにも完全に適用されることを意味します。FCTCでは、製品の特性、健康への影響、危険性などについて、虚偽や誤解を招くようなタバコの広告、宣伝、後援を禁止する義務が締約国に課されています。  WHOは、加熱式タバコが有害な化学物質への曝露を減らすと主張されても、それが「無害」であるとは全く言えないと強調しています。健康リスクが低減されるわけでもありません。実際には、加熱式タバコから発生するエアロゾルには、従来の紙巻きたばこの煙よりも高レベルで存在する毒素や、紙巻きたばこには存在しない追加の毒素も含まれていることが指摘されています。これらの毒素が人間の健康に与える影響については、まだ分かっていません。  次に、米国FDAのIQOS（加熱式タバコシステム）に関する決定についてです。2020年7月7日、FDAはIQOSの米国市場での販売を承認しました。しかし、FDAはこの承認について非常に厳重な注意を促しています。「たとえこの措置が取られても、これらの製品は安全ではないし、FDAが『承認した』わけでもない」と明確に述べています。  FDAは、IQOSの企業に対して、他のタバコ製品よりも害が少ないとか、健康リスクを低減するといった「修正されたリスク」に関する主張を一切許可していません。また、FDAがこれらの製品を推奨・承認している、または安全であると見なしていると消費者に誤解させるような、あらゆる表現を禁止しています。企業は、若年層の製品認知度や使用状況を監視し、マーケティングが若者の使用に意図しない影響を与えないように努める義務も課されています。  WHOは、加熱式タバコの使用によって追加の毒素に曝露される可能性があるため、「従来の紙巻きたばこに比べて有害化学物質への曝露を減らす」という主張が誤解を招く可能性があると警鐘を鳴らしています。FDAの承認は米国に特化した一時的なものであり、米国はWHO FCTCの締約国ではない点にも留意が必要です。  WHOは、すべてのタバコ製品が健康にリスクをもたらすことを改めて強調し、WHO FCTCの完全な実施を強く求めています。禁煙は、健康を維持するための最も効果的な方法であり、医療従事者による簡単なアドバイス、国の無料禁煙相談窓口、ニコチン代替療法、モバイルメッセージを通じた禁煙支援など、さまざまな介入策が推奨されています。  看護師の皆さんには、患者さんや一般の方々が加熱式タバコについて持つ誤解を解消し、科学的根拠に基づいた正確な情報を提供することが求められます。加熱式タバコも有害であり、禁煙こそが最善の選択肢であるというメッセージを伝え続けていきましょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-27 20:57</p>
+  <h2 class="article-title">加熱式たばこ製品と米FDAのアイコスに関する決定についてWHOが声明</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">WHO（世界保健機関）は、加熱式タバコ（HTP）に関する重要な声明を発表し、米国食品医薬品局（FDA）によるIQOSの販売承認についても言及しました。日本の現役看護師の皆さんにとって、喫煙者への指導や健康教育に役立つ情報として、この内容を共有します。<span class="summary-rest" hidden><br><br>まず、WHOは加熱式タバコが「タバコ製品」であるという基本的な立場を明確にしています。これは、WHOのタバコ規制枠組条約（FCTC）が加熱式タバコにも完全に適用されることを意味します。FCTCでは、製品の特性、健康への影響、危険性などについて、虚偽や誤解を招くようなタバコの広告、宣伝、後援を禁止する義務が締約国に課されています。<br><br>WHOは、加熱式タバコが有害な化学物質への曝露を減らすと主張されても、それが「無害」であるとは全く言えないと強調しています。健康リスクが低減されるわけでもありません。実際には、加熱式タバコから発生するエアロゾルには、従来の紙巻きたばこの煙よりも高レベルで存在する毒素や、紙巻きたばこには存在しない追加の毒素も含まれていることが指摘されています。これらの毒素が人間の健康に与える影響については、まだ分かっていません。<br><br>次に、米国FDAのIQOS（加熱式タバコシステム）に関する決定についてです。2020年7月7日、FDAはIQOSの米国市場での販売を承認しました。しかし、FDAはこの承認について非常に厳重な注意を促しています。「たとえこの措置が取られても、これらの製品は安全ではないし、FDAが『承認した』わけでもない」と明確に述べています。<br><br>FDAは、IQOSの企業に対して、他のタバコ製品よりも害が少ないとか、健康リスクを低減するといった「修正されたリスク」に関する主張を一切許可していません。また、FDAがこれらの製品を推奨・承認している、または安全であると見なしていると消費者に誤解させるような、あらゆる表現を禁止しています。企業は、若年層の製品認知度や使用状況を監視し、マーケティングが若者の使用に意図しない影響を与えないように努める義務も課されています。<br><br>WHOは、加熱式タバコの使用によって追加の毒素に曝露される可能性があるため、「従来の紙巻きたばこに比べて有害化学物質への曝露を減らす」という主張が誤解を招く可能性があると警鐘を鳴らしています。FDAの承認は米国に特化した一時的なものであり、米国はWHO FCTCの締約国ではない点にも留意が必要です。<br><br>WHOは、すべてのタバコ製品が健康にリスクをもたらすことを改めて強調し、WHO FCTCの完全な実施を強く求めています。禁煙は、健康を維持するための最も効果的な方法であり、医療従事者による簡単なアドバイス、国の無料禁煙相談窓口、ニコチン代替療法、モバイルメッセージを通じた禁煙支援など、さまざまな介入策が推奨されています。<br><br>看護師の皆さんには、患者さんや一般の方々が加熱式タバコについて持つ誤解を解消し、科学的根拠に基づいた正確な情報を提供することが求められます。加熱式タバコも有害であり、禁煙こそが最善の選択肢であるというメッセージを伝え続けていきましょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/27-07-2020-who-statement-on-heated-tobacco-products-and-the-us-fda-decision-regarding-iqos" target="_blank" rel="noopener">https://www.who.int/news/item/27-07-2020-who-statement-on-heated-tobacco-products-and-the-us-fda-decision-regarding-iqos</a>
+  </div>
+</article>
+<article
+  data-id="7c997ccda5d0402dcb1bebe31e9b3e5c"
+  data-date="2020-07-27"
+  data-month="2020-07"
+  data-topics="小児"
+  data-clinical-areas="患者教育"
+  data-audiences="小児||医療従事者||地域住民"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="世界肝炎デー：母子におけるB型肝炎の制圧を加速 看護師の皆様、B型肝炎（HBV）の母子感染予防に関する最新情報をお伝えします。世界保健機関（WHO）の新たな推計によると、2019年には5歳未満の乳幼児における慢性HBV感染率が1%未満にまで低下しました。これは、ワクチンが導入されていなかった1980年代から2000年代初頭の約5%という数値から劇的な改善であり、持続可能な開発目標（SDGs）で掲げられた「2020年までに5歳未満児のHBV感染率を1%未満にする」という目標の達成を意味します。  WHO事務局長のテドロス氏は「ワクチン未接種のためにB型肝炎で命を落とす乳幼児がいてはなりません。この成果は、将来の世代における肝臓疾患や肝臓がんの症例数を大幅に減らすことを意味します」と述べました。彼は、B型肝炎の母子感染予防が疾患の抑制と命を救うための最も重要な戦略であり、新型コロナウイルス感染症（COVID-19）のパンデミック下においても、妊婦と新生児がB型肝炎ワクチン接種を含む救命サービスへアクセスできることを確保しなければならないと強調しています。  B型肝炎ウイルスは肝臓を攻撃し、毎年約90万人もの命を奪っています。特に乳児は脆弱で、生後1年以内にHBVに感染した乳児の約90%が慢性HBVキャリアとなります。しかし、安全で効果的なワクチンによって95%以上の高い確率で感染から保護できます。WHOはすべての乳児に対し、生後できるだけ早く、できれば24時間以内にB型肝炎ワクチンの初回接種を受けさせ、その後少なくとも2回の追加接種を推奨しています。  過去20年間のB型肝炎ワクチンの世界的な普及は公衆衛生における大きな成功であり、乳幼児のHBV感染減少に貢献してきました。2019年には、小児期のB型肝炎ワクチン3回接種のカバー率は世界全体で85%に達しましたが、出生後24時間以内の初回接種（birth dose）へのアクセスには依然として地域差が大きく、世界平均で43%に留まります。特にWHOアフリカ地域ではわずか6%と低い現状があります。早急な出生時初回接種の拡大が母子感染予防の要であり、未導入地域での導入が最優先課題です。  WHOは、この成功をさらに発展させるため、新たな推奨も発表しています。妊婦のHBV検査を強化し、必要な妊婦には抗ウイルス薬による予防投与を行うことで、母子感染（垂直感染）をさらに防ぐことができます。これは、低・中所得国で蔓延しているHIV、梅毒、B型肝炎の3つの感染症の母子感染を排除することを目指すグローバルな「トリプル排除」イニシアチブの重要な柱でもあります。  しかし、COVID-19パンデミックはHBV排除の進捗を脅かしています。ある研究によると、パンデミックによるワクチン接種プログラムの中断（出生時初回接種が60%、小児期接種が20%、それぞれ1年間中断する最悪のシナリオ）が続くと、2020年から2030年の間に生まれた子供たちで530万人の追加的な慢性HBV感染と、100万人ものHBV関連死亡が生じる可能性があります。これは、現在の予防機会を逃すことが、子供たちの生涯にわたる長期的な影響をもたらすことを示唆しています。  毎年7月28日は世界肝炎デーであり、今年のテーマは「肝炎のない未来」です。特に母親と新生児におけるB型肝炎予防に焦点が当てられています。私たち看護師は、妊婦健診や新生児ケアの現場で、妊婦さんへのHBV検査の推奨、新生児への初回ワクチン接種の重要性の説明、適切なタイミングでのワクチン接種の実施など、母子感染予防のために重要な役割を担っています。この成果を維持し、さらに広げるために、皆様の専門性と貢献が不可欠です。 WHO (World Health Organization) 小児 患者教育 小児 医療従事者 地域住民 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-27 18:59</p>
+  <h2 class="article-title">世界肝炎デー：母子におけるB型肝炎の制圧を加速</h2>
+  <div class="taxonomy"><span class="chip">トピック: 小児</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 小児</span><span class="chip">対象: 医療従事者</span><span class="chip">対象: 地域住民</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">看護師の皆様、B型肝炎（HBV）の母子感染予防に関する最新情報をお伝えします。世界保健機関（WHO）の新たな推計によると、2019年には5歳未満の乳幼児における慢性HBV感染率が1%未満にまで低下しました。これは、ワクチンが導入されていなかった1980年代から2000年代初頭の約5%という数値から劇的な改善であり、持続可能な開発目標（SDGs）で掲げられた「2020年までに5歳未満児のHBV感染率を1%未満にする」という目標の達成を意味します。<span class="summary-rest" hidden><br><br>WHO事務局長のテドロス氏は「ワクチン未接種のためにB型肝炎で命を落とす乳幼児がいてはなりません。この成果は、将来の世代における肝臓疾患や肝臓がんの症例数を大幅に減らすことを意味します」と述べました。彼は、B型肝炎の母子感染予防が疾患の抑制と命を救うための最も重要な戦略であり、新型コロナウイルス感染症（COVID-19）のパンデミック下においても、妊婦と新生児がB型肝炎ワクチン接種を含む救命サービスへアクセスできることを確保しなければならないと強調しています。<br><br>B型肝炎ウイルスは肝臓を攻撃し、毎年約90万人もの命を奪っています。特に乳児は脆弱で、生後1年以内にHBVに感染した乳児の約90%が慢性HBVキャリアとなります。しかし、安全で効果的なワクチンによって95%以上の高い確率で感染から保護できます。WHOはすべての乳児に対し、生後できるだけ早く、できれば24時間以内にB型肝炎ワクチンの初回接種を受けさせ、その後少なくとも2回の追加接種を推奨しています。<br><br>過去20年間のB型肝炎ワクチンの世界的な普及は公衆衛生における大きな成功であり、乳幼児のHBV感染減少に貢献してきました。2019年には、小児期のB型肝炎ワクチン3回接種のカバー率は世界全体で85%に達しましたが、出生後24時間以内の初回接種（birth dose）へのアクセスには依然として地域差が大きく、世界平均で43%に留まります。特にWHOアフリカ地域ではわずか6%と低い現状があります。早急な出生時初回接種の拡大が母子感染予防の要であり、未導入地域での導入が最優先課題です。<br><br>WHOは、この成功をさらに発展させるため、新たな推奨も発表しています。妊婦のHBV検査を強化し、必要な妊婦には抗ウイルス薬による予防投与を行うことで、母子感染（垂直感染）をさらに防ぐことができます。これは、低・中所得国で蔓延しているHIV、梅毒、B型肝炎の3つの感染症の母子感染を排除することを目指すグローバルな「トリプル排除」イニシアチブの重要な柱でもあります。<br><br>しかし、COVID-19パンデミックはHBV排除の進捗を脅かしています。ある研究によると、パンデミックによるワクチン接種プログラムの中断（出生時初回接種が60%、小児期接種が20%、それぞれ1年間中断する最悪のシナリオ）が続くと、2020年から2030年の間に生まれた子供たちで530万人の追加的な慢性HBV感染と、100万人ものHBV関連死亡が生じる可能性があります。これは、現在の予防機会を逃すことが、子供たちの生涯にわたる長期的な影響をもたらすことを示唆しています。<br><br>毎年7月28日は世界肝炎デーであり、今年のテーマは「肝炎のない未来」です。特に母親と新生児におけるB型肝炎予防に焦点が当てられています。私たち看護師は、妊婦健診や新生児ケアの現場で、妊婦さんへのHBV検査の推奨、新生児への初回ワクチン接種の重要性の説明、適切なタイミングでのワクチン接種の実施など、母子感染予防のために重要な役割を担っています。この成果を維持し、さらに広げるために、皆様の専門性と貢献が不可欠です。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/27-07-2020-world-hepatitis-day-fast-tracking-the-elimination-of-hepatitis-b-among-mothers-and-children" target="_blank" rel="noopener">https://www.who.int/news/item/27-07-2020-world-hepatitis-day-fast-tracking-the-elimination-of-hepatitis-b-among-mothers-and-children</a>
+  </div>
+</article>
+<article
+  data-id="f364d09990c4b770b54ffbd000e0c8d2"
+  data-date="2020-07-22"
+  data-month="2020-07"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="新たな「COVID-19 Law Lab」、世界のCOVID-19対応に不可欠な法情報を提供 新COVID-19法ラボ：世界のパンデミック対応を支える法的情報と支援  本日、COVID-19法ラボという新しい取り組みが開始されました。これは、世界中の190カ国以上から法的文書を集め、共有することで、各国がパンデミックを管理するための強固な法的枠組みを確立し、実施できるよう支援することを目的としています。この取り組みの目標は、法律が個人やコミュニティの健康と幸福を保護し、同時に国際的な人権基準を遵守することを確実にすることです。  この新しいラボは、国連開発計画（UNDP）、世界保健機関（WHO）、国連合同エイズ計画（UNAIDS）、そしてジョージタウン大学のオニール国家・国際保健法研究所による共同プロジェクトです。私たちが医療現場で働く上で、法律の存在は非常に重要です。適切に設計された法律は、強力な保健システムを構築し、安全で効果的な医薬品やワクチンの評価と承認を進め、より健康的で安全な公共空間や職場を作り出すための施策を支えます。  特に、WHOが定める国際保健規則の効果的な実施、具体的には感染症の監視、感染予防と管理、渡航や貿易の管理、そして不可欠な保健サービスを維持するための措置の実施において、法律は重要な役割を果たします。UNDPの管理者であるアヒム・シュタイナー氏は、「科学的根拠と人権に基づいた法律と政策は、人々が医療サービスにアクセスし、COVID-19から身を守り、スティグマや差別、暴力から解放されて生活することを可能にします」と述べています。COVID-19法ラボは、良い実践例を共有するための重要なツールとなるでしょう。  WHOのテドロス事務局長も、「強力な法的枠組みは、各国のCOVID-19対応にとって不可欠です」と強調しています。保健に影響を与える法律は、保健分野以外で制定されることもありますが、保健は地球規模の問題であるため、法的枠組みは国際的なコミットメントと整合している必要があります。健全な保健のための法的な基盤は極めて重要です。  しかし、法律は使い方を誤ると逆効果になる可能性もあります。もし法律が不適切に設計されたり、実施されたり、あるいは執行されたりすると、疎外された人々に害を与え、スティグマや差別を固定化し、パンデミックを終息させるための努力を妨げてしまいます。UNAIDSのウィニー・ビヤニマ事務局長は、「有害な法律は、スティグマや差別を悪化させ、人々の権利を侵害し、公衆衛生への対応を弱体化させる可能性があります。パンデミックへの対応を効果的、人道的、持続可能なものにするためには、政府はCOVID-19の影響を受けた人々の人権と尊厳を擁護するツールとして法律を使用しなければなりません」と警鐘を鳴らしています。  COVID-19法ラボは、各国がパンデミックに対応して実施した法律のデータベースとして機能します。これには、非常事態宣言、隔離措置、疾病監視、マスク着用に関する法的措置、社会的距離の確保、医薬品やワクチンへのアクセスに関するものなどが含まれます。このデータベースは、今後さらに多くの国やテーマが追加されるにつれて拡大していく予定です。また、COVID-19に関するさまざまな法的枠組みについての研究も行われ、公衆衛生法の人間への影響に焦点を当てた分析を通じて、各国が緊急対応や社会経済的復興に向けたベストプラクティスを特定する手助けをします。  これは、権利に基づいた法的枠組みの実施を通じて各国が普遍的医療保障を達成できるよう支援するために設立された「UHC法的ソリューションネットワーク」の活動を発展させたものです。ジョージタウン大学国際保健学部のマシュー・M・カヴァナ博士は、「パンデミック中に法律や政策がどのように使用されているかを追跡し、何が機能しているかを理解するために評価する必要があります」と述べています。オニール研究所のエグゼクティブディレクター、ケイティ・ゴットシャルク氏は、「パンデミック政策の初期段階から教訓を学び、最も効果的な法律を今後実施していく必要があります。COVID-19法ラボはまさにそれを可能にします」と語っています。  私たち看護師は、これらの法律や政策が実際の医療現場や患者さんの健康にどのような影響を与えるかを最も近くで実感する立場にいます。この国際的な取り組みは、地球規模の危機において法的枠組みがいかに重要であるかを再認識させるとともに、私たちの業務や患者さんのケアに直結する政策決定の背景にある考え方を知る上でも貴重な情報源となるでしょう。人権を尊重した医療を提供するためにも、私たち自身が法の動向に関心を持つことの重要性を示唆しています。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-22 23:01</p>
+  <h2 class="article-title">新たな「COVID-19 Law Lab」、世界のCOVID-19対応に不可欠な法情報を提供</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">新COVID-19法ラボ：世界のパンデミック対応を支える法的情報と支援<span class="summary-rest" hidden><br><br>本日、COVID-19法ラボという新しい取り組みが開始されました。これは、世界中の190カ国以上から法的文書を集め、共有することで、各国がパンデミックを管理するための強固な法的枠組みを確立し、実施できるよう支援することを目的としています。この取り組みの目標は、法律が個人やコミュニティの健康と幸福を保護し、同時に国際的な人権基準を遵守することを確実にすることです。<br><br>この新しいラボは、国連開発計画（UNDP）、世界保健機関（WHO）、国連合同エイズ計画（UNAIDS）、そしてジョージタウン大学のオニール国家・国際保健法研究所による共同プロジェクトです。私たちが医療現場で働く上で、法律の存在は非常に重要です。適切に設計された法律は、強力な保健システムを構築し、安全で効果的な医薬品やワクチンの評価と承認を進め、より健康的で安全な公共空間や職場を作り出すための施策を支えます。<br><br>特に、WHOが定める国際保健規則の効果的な実施、具体的には感染症の監視、感染予防と管理、渡航や貿易の管理、そして不可欠な保健サービスを維持するための措置の実施において、法律は重要な役割を果たします。UNDPの管理者であるアヒム・シュタイナー氏は、「科学的根拠と人権に基づいた法律と政策は、人々が医療サービスにアクセスし、COVID-19から身を守り、スティグマや差別、暴力から解放されて生活することを可能にします」と述べています。COVID-19法ラボは、良い実践例を共有するための重要なツールとなるでしょう。<br><br>WHOのテドロス事務局長も、「強力な法的枠組みは、各国のCOVID-19対応にとって不可欠です」と強調しています。保健に影響を与える法律は、保健分野以外で制定されることもありますが、保健は地球規模の問題であるため、法的枠組みは国際的なコミットメントと整合している必要があります。健全な保健のための法的な基盤は極めて重要です。<br><br>しかし、法律は使い方を誤ると逆効果になる可能性もあります。もし法律が不適切に設計されたり、実施されたり、あるいは執行されたりすると、疎外された人々に害を与え、スティグマや差別を固定化し、パンデミックを終息させるための努力を妨げてしまいます。UNAIDSのウィニー・ビヤニマ事務局長は、「有害な法律は、スティグマや差別を悪化させ、人々の権利を侵害し、公衆衛生への対応を弱体化させる可能性があります。パンデミックへの対応を効果的、人道的、持続可能なものにするためには、政府はCOVID-19の影響を受けた人々の人権と尊厳を擁護するツールとして法律を使用しなければなりません」と警鐘を鳴らしています。<br><br>COVID-19法ラボは、各国がパンデミックに対応して実施した法律のデータベースとして機能します。これには、非常事態宣言、隔離措置、疾病監視、マスク着用に関する法的措置、社会的距離の確保、医薬品やワクチンへのアクセスに関するものなどが含まれます。このデータベースは、今後さらに多くの国やテーマが追加されるにつれて拡大していく予定です。また、COVID-19に関するさまざまな法的枠組みについての研究も行われ、公衆衛生法の人間への影響に焦点を当てた分析を通じて、各国が緊急対応や社会経済的復興に向けたベストプラクティスを特定する手助けをします。<br><br>これは、権利に基づいた法的枠組みの実施を通じて各国が普遍的医療保障を達成できるよう支援するために設立された「UHC法的ソリューションネットワーク」の活動を発展させたものです。ジョージタウン大学国際保健学部のマシュー・M・カヴァナ博士は、「パンデミック中に法律や政策がどのように使用されているかを追跡し、何が機能しているかを理解するために評価する必要があります」と述べています。オニール研究所のエグゼクティブディレクター、ケイティ・ゴットシャルク氏は、「パンデミック政策の初期段階から教訓を学び、最も効果的な法律を今後実施していく必要があります。COVID-19法ラボはまさにそれを可能にします」と語っています。<br><br>私たち看護師は、これらの法律や政策が実際の医療現場や患者さんの健康にどのような影響を与えるかを最も近くで実感する立場にいます。この国際的な取り組みは、地球規模の危機において法的枠組みがいかに重要であるかを再認識させるとともに、私たちの業務や患者さんのケアに直結する政策決定の背景にある考え方を知る上でも貴重な情報源となるでしょう。人権を尊重した医療を提供するためにも、私たち自身が法の動向に関心を持つことの重要性を示唆しています。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/22-07-2020-new-covid-19-law-lab-to-provide-vital-legal-information-and-support-for-the-global-covid-19-response" target="_blank" rel="noopener">https://www.who.int/news/item/22-07-2020-new-covid-19-law-lab-to-provide-vital-legal-information-and-support-for-the-global-covid-19-response</a>
+  </div>
+</article>
+<article
+  data-id="7cea4415f1a496be7bbc64a4abc4ff46"
+  data-date="2020-07-16"
+  data-month="2020-07"
+  data-topics="疼痛"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="WHO事務局長、COVID-19に立ち向かったスペインの犠牲とリーダーシップを称える WHO事務局長、COVID-19対策におけるスペインの犠牲とリーダーシップを称賛  世界保健機関（WHO）のテドロス・アダノム・ゲブレイエスス事務局長は、この度スペインを訪問し、同国でCOVID-19により命を落とされた方々に深い哀悼の意を表しました。また、医療従事者の献身的な努力と、感染拡大を抑制するための政府の断固たる対応を高く評価しました。  テドロス事務局長は、スペイン国王、首相、そして政府全体と共に、COVID-19の犠牲となった全ての人々に敬意を表し、スペインそして世界中でこのウイルスにより命を失った方々のご家族に心からの哀悼の意を伝えました。  かつてスペインは、COVID-19のパンデミックにおいて最も深刻な影響を受けた国の一つでした。感染拡大のピーク時には、わずか一日で約1万件もの新規感染症例が報告されるという厳しい状況に直面していました。しかし、その後の集中的な努力により、状況は大きく改善しました。  スペインが感染拡大を抑制できたのは、強力なサーベイランス体制、積極的な検査、綿密な接触者追跡、適切な治療、そして厳格な隔離措置といった多角的な取り組みが功を奏したためです。テドロス事務局長は、この劇的な状況の変化は、スペイン政府が示した強力なリーダーシップと、国民がロックダウンや身体的距離の確保といった厳格な制限措置を遵守した強い決意によるものだと述べました。これらの複合的な努力が、結果としてスペインにおける感染拡大の状況を好転させることに成功したのです。  日本の現役看護師の皆様も、COVID-19パンデミックの最前線で日夜奮闘されていることと存じます。スペインの事例は、強力な公衆衛生対策と国民の協力が一体となることで、困難な状況を乗り越えられることを示しています。皆様が日々実践されている感染対策や、患者さんとの向き合い方一つ一つが、社会全体の健康を守る上でいかに重要であるかを改めて教えてくれます。この報告が、私たち医療従事者の役割の大きさと、連携の重要性を再認識する一助となれば幸いです。 WHO (World Health Organization) 疼痛 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-16 20:36</p>
+  <h2 class="article-title">WHO事務局長、COVID-19に立ち向かったスペインの犠牲とリーダーシップを称える</h2>
+  <div class="taxonomy"><span class="chip">トピック: 疼痛</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">WHO事務局長、COVID-19対策におけるスペインの犠牲とリーダーシップを称賛<span class="summary-rest" hidden><br><br>世界保健機関（WHO）のテドロス・アダノム・ゲブレイエスス事務局長は、この度スペインを訪問し、同国でCOVID-19により命を落とされた方々に深い哀悼の意を表しました。また、医療従事者の献身的な努力と、感染拡大を抑制するための政府の断固たる対応を高く評価しました。<br><br>テドロス事務局長は、スペイン国王、首相、そして政府全体と共に、COVID-19の犠牲となった全ての人々に敬意を表し、スペインそして世界中でこのウイルスにより命を失った方々のご家族に心からの哀悼の意を伝えました。<br><br>かつてスペインは、COVID-19のパンデミックにおいて最も深刻な影響を受けた国の一つでした。感染拡大のピーク時には、わずか一日で約1万件もの新規感染症例が報告されるという厳しい状況に直面していました。しかし、その後の集中的な努力により、状況は大きく改善しました。<br><br>スペインが感染拡大を抑制できたのは、強力なサーベイランス体制、積極的な検査、綿密な接触者追跡、適切な治療、そして厳格な隔離措置といった多角的な取り組みが功を奏したためです。テドロス事務局長は、この劇的な状況の変化は、スペイン政府が示した強力なリーダーシップと、国民がロックダウンや身体的距離の確保といった厳格な制限措置を遵守した強い決意によるものだと述べました。これらの複合的な努力が、結果としてスペインにおける感染拡大の状況を好転させることに成功したのです。<br><br>日本の現役看護師の皆様も、COVID-19パンデミックの最前線で日夜奮闘されていることと存じます。スペインの事例は、強力な公衆衛生対策と国民の協力が一体となることで、困難な状況を乗り越えられることを示しています。皆様が日々実践されている感染対策や、患者さんとの向き合い方一つ一つが、社会全体の健康を守る上でいかに重要であるかを改めて教えてくれます。この報告が、私たち医療従事者の役割の大きさと、連携の重要性を再認識する一助となれば幸いです。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/16-07-2020-who-director-general-pays-tribute-to-spain-s-sacrifices-and-leadership-to-confront-covid-19" target="_blank" rel="noopener">https://www.who.int/news/item/16-07-2020-who-director-general-pays-tribute-to-spain-s-sacrifices-and-leadership-to-confront-covid-19</a>
+  </div>
+</article>
+<article
+  data-id="54bf703f41c156e59f91a38a98fc4875"
+  data-date="2020-07-15"
+  data-month="2020-07"
+  data-topics="感染症"
+  data-clinical-areas="外来||病棟||患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="150カ国超がCOVID-19ワクチンの国際アクセス枠組みに参加 COVID-19ワクチン、150カ国以上が国際的な公平アクセスを目指すCOVAXファシリティに参加  2020年7月15日、COVID-19（新型コロナウイルス感染症）のパンデミックが世界を席巻する中、その解決策として期待されるワクチンの公平な供給を目指す「COVAXファシリティ」に、150カ国以上が参加を表明しました。この国際的な枠組みは、世界中の人々が迅速かつ公平にワクチンを手に入れることを保証するために立ち上げられたものです。  COVAXファシリティは、Gavi（ワクチンアライアンス）、CEPI（感染症流行対策イノベーション連合）、そしてWHO（世界保健機関）が共同で主導しています。その主な目的は、ワクチンの開発と製造を加速させ、すべての国が平等にワクチンにアクセスできるようにすることです。  具体的には、自己資金でワクチンを調達できる75カ国が参加を表明し、さらに最大90の低所得国がGaviのCOVAX AMC（Advance Market Commitment）という資金援助メカニズムを通じて支援を受けることになります。この合計165カ国以上で、世界人口の60%以上をカバーする、まさに地球規模の取り組みです。  なぜこのようなCOVAXファシリティが必要なのでしょうか。GaviのCEOであるセス・バークレー博士は、「COVAXはCOVID-19パンデミックに対する唯一の真にグローバルな解決策である」と強調します。それは、自国でワクチンを購入できる国であろうと、支援が必要な国であろうと、保証された量のワクチンを受け取ることができ、10年前のH1N1パンデミックの際に一部の国が後回しにされたような事態を防ぐためです。また、多様なワクチン候補をポートフォリオとして持つことで、特定のワクチン候補が効果を示せなかったり、規制当局の承認を得られなかったりするリスクを分散し、成功の可能性を高める狙いもあります。  COVAXの具体的な目標は、2021年末までに安全で効果的なワクチンを20億回分提供することです。これらのワクチンは、規制当局の承認またはWHOの事前認証を受けた後、参加国の人口規模に応じて均等に分配されます。最初の段階では、私たち医療従事者を含むエッセンシャルワーカーが優先され、その後、各国の人口の20%をカバーすることを目指します。さらに、緊急事態や人道支援のために予備のワクチンも確保される予定です。  CEPIのCEOであるリチャード・ハチェット博士は、「公平なアクセスを保証することは、単に平等であるというだけでなく、このパンデミックを終わらせる最速の方法である」と述べています。ワクチンがすべての人にとって手頃な価格で利用可能になることで、健康におけるシステム的な不平等の解消にも貢献するとWHOの主任科学者スミヤ・スワミナタン博士は語っています。  この取り組みの成功は、各国の政府からの十分な資金提供と、ワクチンメーカーからの大規模な協力にかかっています。COVAXパートナーは、すでに大きな進歩を遂げており、CEPIが支援する9つのワクチン候補のうち7つが臨床試験の段階に入っています。アストラゼネカ社はCOVAXに3億回分のワクチンを供給することを約束し、低所得国向けのAMCには、すでに初期目標20億ドルに対し約6億ドルが寄付されています。  私たち日本の看護師にとっても、この世界的な取り組みは無関係ではありません。COVAXファシリティを通じてワクチンが公平に供給されることは、世界全体の感染状況を抑制し、ひいては私たちの医療現場にかかる負担を軽減することにも繋がります。公平なワクチン供給は、パンデミックを克服し、誰もが安心して暮らせる世界を取り戻すための重要な一歩となるでしょう。 WHO (World Health Organization) 感染症 外来 病棟 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-15 23:39</p>
+  <h2 class="article-title">150カ国超がCOVID-19ワクチンの国際アクセス枠組みに参加</h2>
+  <div class="taxonomy"><span class="chip">トピック: 感染症</span><span class="chip">領域: 外来</span><span class="chip">領域: 病棟</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">COVID-19ワクチン、150カ国以上が国際的な公平アクセスを目指すCOVAXファシリティに参加<span class="summary-rest" hidden><br><br>2020年7月15日、COVID-19（新型コロナウイルス感染症）のパンデミックが世界を席巻する中、その解決策として期待されるワクチンの公平な供給を目指す「COVAXファシリティ」に、150カ国以上が参加を表明しました。この国際的な枠組みは、世界中の人々が迅速かつ公平にワクチンを手に入れることを保証するために立ち上げられたものです。<br><br>COVAXファシリティは、Gavi（ワクチンアライアンス）、CEPI（感染症流行対策イノベーション連合）、そしてWHO（世界保健機関）が共同で主導しています。その主な目的は、ワクチンの開発と製造を加速させ、すべての国が平等にワクチンにアクセスできるようにすることです。<br><br>具体的には、自己資金でワクチンを調達できる75カ国が参加を表明し、さらに最大90の低所得国がGaviのCOVAX AMC（Advance Market Commitment）という資金援助メカニズムを通じて支援を受けることになります。この合計165カ国以上で、世界人口の60%以上をカバーする、まさに地球規模の取り組みです。<br><br>なぜこのようなCOVAXファシリティが必要なのでしょうか。GaviのCEOであるセス・バークレー博士は、「COVAXはCOVID-19パンデミックに対する唯一の真にグローバルな解決策である」と強調します。それは、自国でワクチンを購入できる国であろうと、支援が必要な国であろうと、保証された量のワクチンを受け取ることができ、10年前のH1N1パンデミックの際に一部の国が後回しにされたような事態を防ぐためです。また、多様なワクチン候補をポートフォリオとして持つことで、特定のワクチン候補が効果を示せなかったり、規制当局の承認を得られなかったりするリスクを分散し、成功の可能性を高める狙いもあります。<br><br>COVAXの具体的な目標は、2021年末までに安全で効果的なワクチンを20億回分提供することです。これらのワクチンは、規制当局の承認またはWHOの事前認証を受けた後、参加国の人口規模に応じて均等に分配されます。最初の段階では、私たち医療従事者を含むエッセンシャルワーカーが優先され、その後、各国の人口の20%をカバーすることを目指します。さらに、緊急事態や人道支援のために予備のワクチンも確保される予定です。<br><br>CEPIのCEOであるリチャード・ハチェット博士は、「公平なアクセスを保証することは、単に平等であるというだけでなく、このパンデミックを終わらせる最速の方法である」と述べています。ワクチンがすべての人にとって手頃な価格で利用可能になることで、健康におけるシステム的な不平等の解消にも貢献するとWHOの主任科学者スミヤ・スワミナタン博士は語っています。<br><br>この取り組みの成功は、各国の政府からの十分な資金提供と、ワクチンメーカーからの大規模な協力にかかっています。COVAXパートナーは、すでに大きな進歩を遂げており、CEPIが支援する9つのワクチン候補のうち7つが臨床試験の段階に入っています。アストラゼネカ社はCOVAXに3億回分のワクチンを供給することを約束し、低所得国向けのAMCには、すでに初期目標20億ドルに対し約6億ドルが寄付されています。<br><br>私たち日本の看護師にとっても、この世界的な取り組みは無関係ではありません。COVAXファシリティを通じてワクチンが公平に供給されることは、世界全体の感染状況を抑制し、ひいては私たちの医療現場にかかる負担を軽減することにも繋がります。公平なワクチン供給は、パンデミックを克服し、誰もが安心して暮らせる世界を取り戻すための重要な一歩となるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/15-07-2020-more-than-150-countries-engaged-in-covid-19-vaccine-global-access-facility" target="_blank" rel="noopener">https://www.who.int/news/item/15-07-2020-more-than-150-countries-engaged-in-covid-19-vaccine-global-access-facility</a>
+  </div>
+</article>
+<article
+  data-id="58d8a7506639361b5b493f014641f434"
+  data-date="2020-07-15"
+  data-month="2020-07"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="WHOとユニセフ、COVID-19下での予防接種の低下に警告 現役看護師の皆様へ  2020年7月、世界保健機関（WHO）と国連児童基金（ユニセフ）は、新型コロナウイルス感染症（COVID-19）のパンデミックが、世界中の子どもたちの命を守る予防接種の実施状況に「憂慮すべき減少」をもたらしていると共同で警鐘を鳴らしました。この状況は、予防接種サービス提供の混乱と、人々が予防接種を受けにくくなったことが主な原因です。  新たなデータによると、この混乱は、これまで懸命に積み上げてきた予防接種の普及に向けた努力を後退させる恐れがあります。特にジフテリア・破傷風・百日咳（DTP3）ワクチンの3回接種完了率については、2020年1月から4月の速報値で大幅な落ち込みが指摘されており、これは過去28年間で初めての減少となる可能性があります。WHOのテドロス事務局長は、「予防接種は公衆衛生史上最も強力なツールのひとつであり、パンデミックがその成果を危険にさらしている。子どもたちが定期予防接種を受けられないことによって生じる避けられるはずの苦しみや死は、COVID-19自体よりもはるかに大きくなる可能性がある」と述べ、パンデミック中でも安全にワクチンを届け、不可欠な救命プログラムを継続するよう各国に強く求めています。  実際に、COVID-19の影響により、少なくとも30の麻しん予防接種キャンペーンが中止または中止の危機に瀕しており、これにより2020年以降、さらなる感染症のアウトブレイクが引き起こされる懸念があります。ユニセフ、WHOなどが実施した調査では、回答した82カ国の4分の3が、2020年5月時点でCOVID-19に関連した予防接種プログラムの混乱を報告しています。  サービスが中断された理由は多岐にわたります。たとえ予防接種サービスが提供されていても、人々は外出をためらう、交通機関の運行が中断される、経済的な困難、移動制限、あるいはCOVID-19への感染を恐れるあまり、医療機関へのアクセスが困難になっています。また、多くの医療従事者が移動制限やCOVID-19対応への配置転換、さらには防護具の不足などにより、予防接種業務に携わることができない状況も報告されています。ユニセフのヘンリエッタ・フォア事務局長は、「COVID-19によって、これまで当たり前だった予防接種が困難な課題となった。子どもたちの命が他の病気によって脅かされる前に、ワクチン接種率のさらなる悪化を防ぎ、予防接種プログラムを緊急に再開しなければならない。私たちは一つの健康危機を別の危機と交換することはできない」と強く訴えています。  このような世界的規模での予防接種の停滞は、実はCOVID-19パンデミック以前から存在していました。DTP3ワクチンと麻しんワクチンの世界的接種率は長らく85%で停滞しており、今日生まれた子どもが5歳までに世界的に推奨される全てのワクチンを完全に接種できる可能性は20%未満とされています。2019年だけでも、約1400万人の子どもたちが、麻しんやDTP3のような救命ワクチンを接種できていませんでした。これらの子どもの大半はアフリカ諸国に住んでおり、他の基本的な医療サービスへのアクセスも不足している状況にあります。  地域によっては、過去10年間で予防接種率が向上した場所もありますが、COVID-19関連の混乱が、その苦労して達成した進歩を帳消しにしてしまう可能性が指摘されています。特にラテンアメリカとカリブ海地域では、かつて高かった接種率がこの10年で低下しており、今回のパンデミックがさらに状況を悪化させています。  WHOとユニセフは、COVID-19による遅れを取り戻し、より良い予防接種体制を再構築するために、各国への支援を強化しています。私たち日本の看護師にとっても、このような国際的な状況は決して無縁ではありません。感染症予防の重要性を改めて認識し、患者さんやご家族への情報提供、そして安心できる医療環境の維持に努めることが、間接的ではありますが、世界の子どもたちの健康を守る一助となることでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-15 21:00</p>
+  <h2 class="article-title">WHOとユニセフ、COVID-19下での予防接種の低下に警告</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">現役看護師の皆様へ<span class="summary-rest" hidden><br><br>2020年7月、世界保健機関（WHO）と国連児童基金（ユニセフ）は、新型コロナウイルス感染症（COVID-19）のパンデミックが、世界中の子どもたちの命を守る予防接種の実施状況に「憂慮すべき減少」をもたらしていると共同で警鐘を鳴らしました。この状況は、予防接種サービス提供の混乱と、人々が予防接種を受けにくくなったことが主な原因です。<br><br>新たなデータによると、この混乱は、これまで懸命に積み上げてきた予防接種の普及に向けた努力を後退させる恐れがあります。特にジフテリア・破傷風・百日咳（DTP3）ワクチンの3回接種完了率については、2020年1月から4月の速報値で大幅な落ち込みが指摘されており、これは過去28年間で初めての減少となる可能性があります。WHOのテドロス事務局長は、「予防接種は公衆衛生史上最も強力なツールのひとつであり、パンデミックがその成果を危険にさらしている。子どもたちが定期予防接種を受けられないことによって生じる避けられるはずの苦しみや死は、COVID-19自体よりもはるかに大きくなる可能性がある」と述べ、パンデミック中でも安全にワクチンを届け、不可欠な救命プログラムを継続するよう各国に強く求めています。<br><br>実際に、COVID-19の影響により、少なくとも30の麻しん予防接種キャンペーンが中止または中止の危機に瀕しており、これにより2020年以降、さらなる感染症のアウトブレイクが引き起こされる懸念があります。ユニセフ、WHOなどが実施した調査では、回答した82カ国の4分の3が、2020年5月時点でCOVID-19に関連した予防接種プログラムの混乱を報告しています。<br><br>サービスが中断された理由は多岐にわたります。たとえ予防接種サービスが提供されていても、人々は外出をためらう、交通機関の運行が中断される、経済的な困難、移動制限、あるいはCOVID-19への感染を恐れるあまり、医療機関へのアクセスが困難になっています。また、多くの医療従事者が移動制限やCOVID-19対応への配置転換、さらには防護具の不足などにより、予防接種業務に携わることができない状況も報告されています。ユニセフのヘンリエッタ・フォア事務局長は、「COVID-19によって、これまで当たり前だった予防接種が困難な課題となった。子どもたちの命が他の病気によって脅かされる前に、ワクチン接種率のさらなる悪化を防ぎ、予防接種プログラムを緊急に再開しなければならない。私たちは一つの健康危機を別の危機と交換することはできない」と強く訴えています。<br><br>このような世界的規模での予防接種の停滞は、実はCOVID-19パンデミック以前から存在していました。DTP3ワクチンと麻しんワクチンの世界的接種率は長らく85%で停滞しており、今日生まれた子どもが5歳までに世界的に推奨される全てのワクチンを完全に接種できる可能性は20%未満とされています。2019年だけでも、約1400万人の子どもたちが、麻しんやDTP3のような救命ワクチンを接種できていませんでした。これらの子どもの大半はアフリカ諸国に住んでおり、他の基本的な医療サービスへのアクセスも不足している状況にあります。<br><br>地域によっては、過去10年間で予防接種率が向上した場所もありますが、COVID-19関連の混乱が、その苦労して達成した進歩を帳消しにしてしまう可能性が指摘されています。特にラテンアメリカとカリブ海地域では、かつて高かった接種率がこの10年で低下しており、今回のパンデミックがさらに状況を悪化させています。<br><br>WHOとユニセフは、COVID-19による遅れを取り戻し、より良い予防接種体制を再構築するために、各国への支援を強化しています。私たち日本の看護師にとっても、このような国際的な状況は決して無縁ではありません。感染症予防の重要性を改めて認識し、患者さんやご家族への情報提供、そして安心できる医療環境の維持に努めることが、間接的ではありますが、世界の子どもたちの健康を守る一助となることでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/15-07-2020-who-and-unicef-warn-of-a-decline-in-vaccinations-during-covid-19" target="_blank" rel="noopener">https://www.who.int/news/item/15-07-2020-who-and-unicef-warn-of-a-decline-in-vaccinations-during-covid-19</a>
+  </div>
+</article>
+<article
+  data-id="0f44af5d62c03063b20c677838651dbb"
+  data-date="2020-07-13"
+  data-month="2020-07"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="飢餓と栄養不良が続き2030年「飢餓ゼロ」達成に暗雲――国連報告が警告 国連は、世界の食料安全保障と栄養に関する年次報告書を発表し、飢餓と栄養不良が深刻化している現状を明らかにしました。特に、2030年までに「飢餓ゼロ」を目指す持続可能な開発目標（SDGs）の達成が危ぶまれていると警鐘を鳴らしています。  報告書によると、2019年には世界中で約6億9000万人が飢餓状態にあり、これは前年より1000万人、過去5年間で約6000万人増加しています。この慢性的な飢餓の増加傾向は2014年から続いており、アジアで最も飢餓人口が多いものの、アフリカでの増加ペースが加速しています。アフリカでは人口の19.1パーセントが栄養不足であり、このままでは2030年までに世界の慢性的な飢餓人口の半分以上をアフリカが占めることになると予測されています。  さらに深刻なのは、新型コロナウイルス感染症（COVID-19）のパンデミックが、この状況に拍車をかけている点です。報告書は、2020年末までにCOVID-19による経済的影響で、新たに1億3000万人以上が慢性的な飢餓に陥る可能性があると警告しています。これは、食料システム全体の脆弱性を露呈させる結果となりました。  飢餓だけでなく、あらゆる形態の栄養不良も世界的な課題です。これは、微量栄養素の欠乏、過体重、そして肥満を含みます。栄養価の高い食事が高価であるため、多くの家庭が健康的な食生活を送ることができていません。例えば、国際貧困ラインである1日1.90ドルでは健康的な食事は手に入らず、デンプンだけでは賄えない、高価な乳製品や果物、野菜、タンパク質源が手頃な価格で手に入らない実態があります。  その結果、世界で30億人以上もの人々が健康的な食事を摂ることができない状況にあります。サハラ以南アフリカや南アジアでは人口の57パーセントがこれに該当し、北米やヨーロッパのような先進国も例外ではありません。このような背景から、2019年には5歳未満の子どもたちの4分の1から3分の1にあたる1億9100万人が発育阻害または消耗症（低身長または低体重）であり、さらに3800万人が過体重であるという厳しい現実が示されています。  国連機関のトップたちは、飢餓、食料不安、あらゆる形態の栄養不良を終わらせるという目標達成から、世界は大きく「コースを外れている」と警鐘を鳴らしています。この状況を打開するためには、食料システムの根本的な変革が不可欠だと提言されています。具体的には、栄養価の高い食品のコストを削減し、健康的な食事が手頃な価格で手に入るようにすること。さらに、持続可能性を考慮した健康的な食生活への世界的な転換は、年間1.3兆ドルに上る不健康な食生活による医療費や、1.7兆ドルに及ぶ温室効果ガス排出による社会コストを大幅に削減できると試算されています。  各国政府は、農業政策に栄養の視点を組み込み、食品の生産から流通までの過程における非効率性や食品ロス、廃棄を削減すること、そして小規模生産者を支援し、子どもの栄養を最優先事項とすることが求められています。また、教育やコミュニケーションを通じて行動変容を促し、国の社会保障システムや投資戦略に栄養を組み込む必要性も強調されています。  私たち看護師は、患者さんの健康状態を評価し、適切な栄養指導を行う上で、このような世界の食料と栄養の現状を理解しておくことが重要です。個々の患者さんの健康を支えることはもちろん、地域や社会全体で食料システムの課題に取り組むことの重要性も、この報告書は示唆しています。持続可能な社会の実現に向けて、食と健康の密接な関係性を改めて認識し、日々の看護実践に活かしていくことが期待されます。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-13 23:00</p>
+  <h2 class="article-title">飢餓と栄養不良が続き2030年「飢餓ゼロ」達成に暗雲――国連報告が警告</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">国連は、世界の食料安全保障と栄養に関する年次報告書を発表し、飢餓と栄養不良が深刻化している現状を明らかにしました。特に、2030年までに「飢餓ゼロ」を目指す持続可能な開発目標（SDGs）の達成が危ぶまれていると警鐘を鳴らしています。<span class="summary-rest" hidden><br><br>報告書によると、2019年には世界中で約6億9000万人が飢餓状態にあり、これは前年より1000万人、過去5年間で約6000万人増加しています。この慢性的な飢餓の増加傾向は2014年から続いており、アジアで最も飢餓人口が多いものの、アフリカでの増加ペースが加速しています。アフリカでは人口の19.1パーセントが栄養不足であり、このままでは2030年までに世界の慢性的な飢餓人口の半分以上をアフリカが占めることになると予測されています。<br><br>さらに深刻なのは、新型コロナウイルス感染症（COVID-19）のパンデミックが、この状況に拍車をかけている点です。報告書は、2020年末までにCOVID-19による経済的影響で、新たに1億3000万人以上が慢性的な飢餓に陥る可能性があると警告しています。これは、食料システム全体の脆弱性を露呈させる結果となりました。<br><br>飢餓だけでなく、あらゆる形態の栄養不良も世界的な課題です。これは、微量栄養素の欠乏、過体重、そして肥満を含みます。栄養価の高い食事が高価であるため、多くの家庭が健康的な食生活を送ることができていません。例えば、国際貧困ラインである1日1.90ドルでは健康的な食事は手に入らず、デンプンだけでは賄えない、高価な乳製品や果物、野菜、タンパク質源が手頃な価格で手に入らない実態があります。<br><br>その結果、世界で30億人以上もの人々が健康的な食事を摂ることができない状況にあります。サハラ以南アフリカや南アジアでは人口の57パーセントがこれに該当し、北米やヨーロッパのような先進国も例外ではありません。このような背景から、2019年には5歳未満の子どもたちの4分の1から3分の1にあたる1億9100万人が発育阻害または消耗症（低身長または低体重）であり、さらに3800万人が過体重であるという厳しい現実が示されています。<br><br>国連機関のトップたちは、飢餓、食料不安、あらゆる形態の栄養不良を終わらせるという目標達成から、世界は大きく「コースを外れている」と警鐘を鳴らしています。この状況を打開するためには、食料システムの根本的な変革が不可欠だと提言されています。具体的には、栄養価の高い食品のコストを削減し、健康的な食事が手頃な価格で手に入るようにすること。さらに、持続可能性を考慮した健康的な食生活への世界的な転換は、年間1.3兆ドルに上る不健康な食生活による医療費や、1.7兆ドルに及ぶ温室効果ガス排出による社会コストを大幅に削減できると試算されています。<br><br>各国政府は、農業政策に栄養の視点を組み込み、食品の生産から流通までの過程における非効率性や食品ロス、廃棄を削減すること、そして小規模生産者を支援し、子どもの栄養を最優先事項とすることが求められています。また、教育やコミュニケーションを通じて行動変容を促し、国の社会保障システムや投資戦略に栄養を組み込む必要性も強調されています。<br><br>私たち看護師は、患者さんの健康状態を評価し、適切な栄養指導を行う上で、このような世界の食料と栄養の現状を理解しておくことが重要です。個々の患者さんの健康を支えることはもちろん、地域や社会全体で食料システムの課題に取り組むことの重要性も、この報告書は示唆しています。持続可能な社会の実現に向けて、食と健康の密接な関係性を改めて認識し、日々の看護実践に活かしていくことが期待されます。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/13-07-2020-as-more-go-hungry-and-malnutrition-persists-achieving-zero-hunger-by-2030-in-doubt-un-report-warns" target="_blank" rel="noopener">https://www.who.int/news/item/13-07-2020-as-more-go-hungry-and-malnutrition-persists-achieving-zero-hunger-by-2030-in-doubt-un-report-warns</a>
+  </div>
+</article>
+<article
+  data-id="565877c1b3051b7862ac9aa2efc10e6c"
+  data-date="2020-07-09"
+  data-month="2020-07"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="世界のCOVID-19対応に関する独立評価の実施を発表 世界保健機関（WHO）は、新型コロナウイルス感染症（COVID-19）パンデミックへの世界の対応を評価するため、「パンデミック準備と対応のための独立パネル（IPPPR）」を立ち上げたと発表しました。これは、将来のパンデミックに備え、より効果的に対応するための重要な一歩となります。  この独立パネルの共同議長には、ニュージーランド元首相のヘレン・クラーク氏と、ノーベル平和賞受賞者であるリベリア元大統領のエレン・ジョンソン・サーリーフ氏が就任します。両氏は加盟国や世界中の専門家との幅広い協議を経て選ばれ、WHO事務局長のテドロス・アダノム・ゲブレイェスス氏は、「この重要な学習プロセスを導くのに、これほど強力で独立したリーダーは想像できない」と述べ、そのリーダーシップに大きな期待を寄せています。パネルは完全に独立して運営され、他のメンバーや事務局の選定も共同議長が主導します。  この独立評価は、今年5月に開催された第73回世界保健総会で、加盟国がCOVID-19への国際的な保健対応から得られた教訓を、独立した包括的な方法で評価するようWHOに求めた画期的な決議に応えるものです。テドロス事務局長は、今回の評価を「自己反省の機会」と位置づけ、世界が直面する現状を見つめ直し、協力体制を強化して人々の命を救い、パンデミックを収束させるための道筋を見つけることが目的であると説明しています。世界中のほぼ全ての人々に影響を与えたパンデミックの規模を考えれば、それに相応しい評価が必要であるという認識です。  評価のスケジュールとしては、まず9月に開催される執行理事会の特別会合で、パネルの進捗状況が議論されます。その後、11月には世界保健総会の再開時に中間報告書が提出される予定です。来年2021年1月には執行理事会の通常会合でパネルの活動がさらに深く議論され、そして2021年5月に開催される世界保健総会において、最終的かつ実質的な報告書が発表されることになっています。WHOの健康緊急プログラムに対する独立監視・諮問委員会も、引き続きその活動を継続します。  テドロス事務局長は、COVID-19との闘いを続けながらも、将来の世界的アウトブレイクや、薬剤耐性、不平等、気候変動といった他の多くの課題にも備える必要があると強調しました。彼は、「COVID-19は私たちから多くのものを奪いましたが、同時に、過去と決別し、より良い未来を築き直す機会も与えてくれました」と述べ、今回の経験を前向きな変化のきっかけと捉える姿勢を示しています。  この独立評価は、私たち看護師が日々の業務で直面する感染症対策や、患者さんへのケアのあり方を考える上で、世界の保健医療体制がどのように変化していくかを知る重要な情報源となります。国際社会がパンデミックから何を学び、どのように次の危機に備えようとしているのか、今後の進展に注目していきましょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2020-07-09 22:40</p>
+  <h2 class="article-title">世界のCOVID-19対応に関する独立評価の実施を発表</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）は、新型コロナウイルス感染症（COVID-19）パンデミックへの世界の対応を評価するため、「パンデミック準備と対応のための独立パネル（IPPPR）」を立ち上げたと発表しました。これは、将来のパンデミックに備え、より効果的に対応するための重要な一歩となります。<span class="summary-rest" hidden><br><br>この独立パネルの共同議長には、ニュージーランド元首相のヘレン・クラーク氏と、ノーベル平和賞受賞者であるリベリア元大統領のエレン・ジョンソン・サーリーフ氏が就任します。両氏は加盟国や世界中の専門家との幅広い協議を経て選ばれ、WHO事務局長のテドロス・アダノム・ゲブレイェスス氏は、「この重要な学習プロセスを導くのに、これほど強力で独立したリーダーは想像できない」と述べ、そのリーダーシップに大きな期待を寄せています。パネルは完全に独立して運営され、他のメンバーや事務局の選定も共同議長が主導します。<br><br>この独立評価は、今年5月に開催された第73回世界保健総会で、加盟国がCOVID-19への国際的な保健対応から得られた教訓を、独立した包括的な方法で評価するようWHOに求めた画期的な決議に応えるものです。テドロス事務局長は、今回の評価を「自己反省の機会」と位置づけ、世界が直面する現状を見つめ直し、協力体制を強化して人々の命を救い、パンデミックを収束させるための道筋を見つけることが目的であると説明しています。世界中のほぼ全ての人々に影響を与えたパンデミックの規模を考えれば、それに相応しい評価が必要であるという認識です。<br><br>評価のスケジュールとしては、まず9月に開催される執行理事会の特別会合で、パネルの進捗状況が議論されます。その後、11月には世界保健総会の再開時に中間報告書が提出される予定です。来年2021年1月には執行理事会の通常会合でパネルの活動がさらに深く議論され、そして2021年5月に開催される世界保健総会において、最終的かつ実質的な報告書が発表されることになっています。WHOの健康緊急プログラムに対する独立監視・諮問委員会も、引き続きその活動を継続します。<br><br>テドロス事務局長は、COVID-19との闘いを続けながらも、将来の世界的アウトブレイクや、薬剤耐性、不平等、気候変動といった他の多くの課題にも備える必要があると強調しました。彼は、「COVID-19は私たちから多くのものを奪いましたが、同時に、過去と決別し、より良い未来を築き直す機会も与えてくれました」と述べ、今回の経験を前向きな変化のきっかけと捉える姿勢を示しています。<br><br>この独立評価は、私たち看護師が日々の業務で直面する感染症対策や、患者さんへのケアのあり方を考える上で、世界の保健医療体制がどのように変化していくかを知る重要な情報源となります。国際社会がパンデミックから何を学び、どのように次の危機に備えようとしているのか、今後の進展に注目していきましょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/09-07-2020-independent-evaluation-of-global-covid-19-response-announced" target="_blank" rel="noopener">https://www.who.int/news/item/09-07-2020-independent-evaluation-of-global-covid-19-response-announced</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

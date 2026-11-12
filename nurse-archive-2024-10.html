@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2024年10月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全3件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="0fef5fd018c507e5e03f568f09da969e"
+  data-date="2024-10-31"
+  data-month="2024-10"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="G20保健相、WHOの投資ラウンドへの支持を結集 G20保健大臣がWHOへの資金援助「投資ラウンド」への支持を表明  本日リオデジャネイロで開催されたG20保健大臣会議において、各国の大臣たちは世界保健機関（WHO）の「投資ラウンド」に対する強い支持を表明しました。この会議はブラジルが議長を務めました。大臣たちは、WHOの新しいグローバルヘルス戦略に資金を提供し、何十億もの人々の生活を改善し、4000万人もの命を救うという目標達成のため、全ての加盟国とパートナーに対し、WHO初の投資ラウンドに貢献するよう呼びかけました。さらに、11月18日と19日に開催されるG20首脳会議において、加盟国からのさらなる資金援助の表明に期待が寄せられています。  WHO事務局長のテドロス・アダノム・ゲブレイェスス博士は、「全ての加盟国とパートナーに、それぞれの能力に応じて投資ラウンドに参加するよう要請してきました」と述べました。これまでに、63の資金援助表明があり、総額は10億ドル（約1500億円）以上に上ります。これらの援助のうち、半数以上が初めての自発的拠出者からのものであり、アフリカ、西太平洋、東南アジアの多くの国々も含まれています。テドロス事務局長は、「一つ一つの貢献が重要です。世界の最も貧しい国々の一部も資金援助を表明しています。これは、彼らがWHOがもたらす変化を直接肌で感じているからです」と強調しました。また、既に資金援助を表明しているドイツ、ノルウェー、シンガポール、南アフリカ、トルコ、欧州連合、ウェルカム・トラストといった加盟国やパートナーに対し、感謝の意を表しました。  2024年11月18日と19日にブラジルのルーラ大統領が議長を務めるG20首脳会議は、追加のG20諸国やその他の参加者が、WHOに対する予測可能で柔軟な資金援助を約束する重要な機会となる見込みです。  ブラジルのニジア・トリンダーデ保健大臣は、「WHOがその使命を果たすためには、強力なWHOが必要です。私たちは、G20首脳会議での約束を含め、WHOの財政的持続可能性に貢献するよう、全ての人に呼びかけます」と語りました。ドイツのカール・ラウターバッハ保健大臣は、「世界にとって強力なWHOは不可欠です。WHOにとって回復力のある持続可能な資金調達は不可欠です。WHOに資金を提供することは、より健康な未来への投資を意味します。私たちは全てのG20パートナーに対し、WHOに対する政治的コミットメントを堅持し、有言実行で、予測可能で柔軟な財政的支援をWHOに増やすよう求めます」と述べ、国際的な協力の重要性を訴えました。  さらに、南アフリカのパキシェ・アーロン・モツォアレディ保健大臣が、南アフリカが来年のG20議長国として、WHOの持続可能な資金調達に向けた取り組みを引き継いでいくと発表したことは、各国大臣から温かく歓迎されました。  この一連の動きは、看護師の皆さんが日々の業務で関わる患者さんの健康だけでなく、世界の公衆衛生や感染症対策、災害医療といった広範な分野において、WHOの役割が不可欠であることを示しています。国際社会が一体となってWHOを支えることは、私たち全員の健康で安全な未来に直結する重要な取り組みと言えるでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2024-11-01 03:48</p>
+  <h2 class="article-title">G20保健相、WHOの投資ラウンドへの支持を結集</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">G20保健大臣がWHOへの資金援助「投資ラウンド」への支持を表明<span class="summary-rest" hidden><br><br>本日リオデジャネイロで開催されたG20保健大臣会議において、各国の大臣たちは世界保健機関（WHO）の「投資ラウンド」に対する強い支持を表明しました。この会議はブラジルが議長を務めました。大臣たちは、WHOの新しいグローバルヘルス戦略に資金を提供し、何十億もの人々の生活を改善し、4000万人もの命を救うという目標達成のため、全ての加盟国とパートナーに対し、WHO初の投資ラウンドに貢献するよう呼びかけました。さらに、11月18日と19日に開催されるG20首脳会議において、加盟国からのさらなる資金援助の表明に期待が寄せられています。<br><br>WHO事務局長のテドロス・アダノム・ゲブレイェスス博士は、「全ての加盟国とパートナーに、それぞれの能力に応じて投資ラウンドに参加するよう要請してきました」と述べました。これまでに、63の資金援助表明があり、総額は10億ドル（約1500億円）以上に上ります。これらの援助のうち、半数以上が初めての自発的拠出者からのものであり、アフリカ、西太平洋、東南アジアの多くの国々も含まれています。テドロス事務局長は、「一つ一つの貢献が重要です。世界の最も貧しい国々の一部も資金援助を表明しています。これは、彼らがWHOがもたらす変化を直接肌で感じているからです」と強調しました。また、既に資金援助を表明しているドイツ、ノルウェー、シンガポール、南アフリカ、トルコ、欧州連合、ウェルカム・トラストといった加盟国やパートナーに対し、感謝の意を表しました。<br><br>2024年11月18日と19日にブラジルのルーラ大統領が議長を務めるG20首脳会議は、追加のG20諸国やその他の参加者が、WHOに対する予測可能で柔軟な資金援助を約束する重要な機会となる見込みです。<br><br>ブラジルのニジア・トリンダーデ保健大臣は、「WHOがその使命を果たすためには、強力なWHOが必要です。私たちは、G20首脳会議での約束を含め、WHOの財政的持続可能性に貢献するよう、全ての人に呼びかけます」と語りました。ドイツのカール・ラウターバッハ保健大臣は、「世界にとって強力なWHOは不可欠です。WHOにとって回復力のある持続可能な資金調達は不可欠です。WHOに資金を提供することは、より健康な未来への投資を意味します。私たちは全てのG20パートナーに対し、WHOに対する政治的コミットメントを堅持し、有言実行で、予測可能で柔軟な財政的支援をWHOに増やすよう求めます」と述べ、国際的な協力の重要性を訴えました。<br><br>さらに、南アフリカのパキシェ・アーロン・モツォアレディ保健大臣が、南アフリカが来年のG20議長国として、WHOの持続可能な資金調達に向けた取り組みを引き継いでいくと発表したことは、各国大臣から温かく歓迎されました。<br><br>この一連の動きは、看護師の皆さんが日々の業務で関わる患者さんの健康だけでなく、世界の公衆衛生や感染症対策、災害医療といった広範な分野において、WHOの役割が不可欠であることを示しています。国際社会が一体となってWHOを支えることは、私たち全員の健康で安全な未来に直結する重要な取り組みと言えるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/01-11-2024-g20-health-ministers-rally-support-for-who-s-investment-round" target="_blank" rel="noopener">https://www.who.int/news/item/01-11-2024-g20-health-ministers-rally-support-for-who-s-investment-round</a>
+  </div>
+</article>
+<article
+  data-id="fff127df3888d237311128deae03f8d0"
+  data-date="2024-10-17"
+  data-month="2024-10"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="WHOとフランスの拠出協定の署名式 WHOとフランス、グローバルヘルス支援で協力協定を締結  2024年10月17日、スイスのジュネーブにある世界保健機関（WHO）本部において、フランスとWHOの間で、グローバルヘルス支援に関する7つの新たな協力協定が署名されました。この協定には、フランス政府の外務省を通じて総額2,400万ユーロ（日本円で約38億円）の拠出が含まれています。  この協力は、2020年から2025年までのフランスとWHOの枠組み合意に基づいており、WHOの優先事項に沿った戦略的な協力体制を提供するとともに、運営面での法務的、行政的、財政的手段を確立するものです。今回の拠出には、WHOの柔軟な活動資金であるコア自主的貢献勘定（CVCA）に充てられる450万ユーロの完全柔軟資金が含まれています。これは、WHOが最も必要な分野に迅速に資金を投入できるため、非常に重要です。  フランスからの支援は、WHOが取り組む喫緊の健康課題の解決に役立てられます。具体的には、非感染性疾患（NCDs）対策、都市の健康に関する研究、人間、動物、環境の健康を一体と捉える「ワンヘルス」アプローチの推進、そして緊急事態に迅速に対応するためのWHO緊急時対応基金（CFE）への資金提供などが挙げられます。  また、ガザ地区でのWHOの対応、コレラのアウトブレイクへの対策、ウクライナにおけるメンタルヘルス支援など、具体的な緊急事態への対応も支援の対象となります。さらに、感染症の流行に対する準備と対応において重要な役割を果たす、フランスのリヨンにあるWHO緊急事態センターへの支援も継続されます。  フランス国連ジュネーブ常駐代表のジェローム・ボンナフォン大使は、この協力の重要性を強調し、フランスがWHOの取り組みを深く支援し、健康格差の是正、緊急事態への対応、そして世界中の医療システム強化という共通の優先事項を反映していると述べました。  WHO事務局長のテドロス・アダノム・ゲブレイェソス博士は、フランス政府の揺るぎない支援、継続的なパートナーシップ、およびグローバルヘルスにおけるリーダーシップに対し深い感謝を表明しました。この貢献が、非感染性疾患から緊急対応に至る主要な健康脅威に対処し、命を救い、最も脆弱な人々を保護するために役立つと期待を述べました。  フランスは、WHOが完全に、そして柔軟に資金を調達できる体制を強く支持しており、WHOへの査定分担金の増額を積極的に推進しています。また、2025年から2028年までのWHOの第14次一般作業計画のコア業務のために、予測可能で柔軟な資源を動員するためのWHO初の投資ラウンドの共同主催国の一つでもあります。  今回の署名式は、WHOとフランスの間の強力で長年にわたるパートナーシップにおける新たな節目となり、より健康で安全な世界を目指す両者の共同のコミットメントを強化するものです。看護師の皆さんにとって、国際社会がこのような形で健康課題に取り組んでいることを理解することは、日々の業務における意義を再確認し、自身の専門性がグローバルな健康にも貢献しうることを示唆していると言えるでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2024-10-17 21:01</p>
+  <h2 class="article-title">WHOとフランスの拠出協定の署名式</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">WHOとフランス、グローバルヘルス支援で協力協定を締結<span class="summary-rest" hidden><br><br>2024年10月17日、スイスのジュネーブにある世界保健機関（WHO）本部において、フランスとWHOの間で、グローバルヘルス支援に関する7つの新たな協力協定が署名されました。この協定には、フランス政府の外務省を通じて総額2,400万ユーロ（日本円で約38億円）の拠出が含まれています。<br><br>この協力は、2020年から2025年までのフランスとWHOの枠組み合意に基づいており、WHOの優先事項に沿った戦略的な協力体制を提供するとともに、運営面での法務的、行政的、財政的手段を確立するものです。今回の拠出には、WHOの柔軟な活動資金であるコア自主的貢献勘定（CVCA）に充てられる450万ユーロの完全柔軟資金が含まれています。これは、WHOが最も必要な分野に迅速に資金を投入できるため、非常に重要です。<br><br>フランスからの支援は、WHOが取り組む喫緊の健康課題の解決に役立てられます。具体的には、非感染性疾患（NCDs）対策、都市の健康に関する研究、人間、動物、環境の健康を一体と捉える「ワンヘルス」アプローチの推進、そして緊急事態に迅速に対応するためのWHO緊急時対応基金（CFE）への資金提供などが挙げられます。<br><br>また、ガザ地区でのWHOの対応、コレラのアウトブレイクへの対策、ウクライナにおけるメンタルヘルス支援など、具体的な緊急事態への対応も支援の対象となります。さらに、感染症の流行に対する準備と対応において重要な役割を果たす、フランスのリヨンにあるWHO緊急事態センターへの支援も継続されます。<br><br>フランス国連ジュネーブ常駐代表のジェローム・ボンナフォン大使は、この協力の重要性を強調し、フランスがWHOの取り組みを深く支援し、健康格差の是正、緊急事態への対応、そして世界中の医療システム強化という共通の優先事項を反映していると述べました。<br><br>WHO事務局長のテドロス・アダノム・ゲブレイェソス博士は、フランス政府の揺るぎない支援、継続的なパートナーシップ、およびグローバルヘルスにおけるリーダーシップに対し深い感謝を表明しました。この貢献が、非感染性疾患から緊急対応に至る主要な健康脅威に対処し、命を救い、最も脆弱な人々を保護するために役立つと期待を述べました。<br><br>フランスは、WHOが完全に、そして柔軟に資金を調達できる体制を強く支持しており、WHOへの査定分担金の増額を積極的に推進しています。また、2025年から2028年までのWHOの第14次一般作業計画のコア業務のために、予測可能で柔軟な資源を動員するためのWHO初の投資ラウンドの共同主催国の一つでもあります。<br><br>今回の署名式は、WHOとフランスの間の強力で長年にわたるパートナーシップにおける新たな節目となり、より健康で安全な世界を目指す両者の共同のコミットメントを強化するものです。看護師の皆さんにとって、国際社会がこのような形で健康課題に取り組んでいることを理解することは、日々の業務における意義を再確認し、自身の専門性がグローバルな健康にも貢献しうることを示唆していると言えるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/17-10-2024-signing-ceremony-for-contribution-agreements-between-who-and-france" target="_blank" rel="noopener">https://www.who.int/news/item/17-10-2024-signing-ceremony-for-contribution-agreements-between-who-and-france</a>
+  </div>
+</article>
+<article
+  data-id="2a8bfebcc404e382deb14eb76e53ba84"
+  data-date="2024-10-10"
+  data-month="2024-10"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="WHOとオランダ、気候変動と健康に関するパートナーシップを更新 WHOとオランダが気候変動と健康の連携強化：看護師が知るべき国際動向  世界保健機関（WHO）とオランダ王国は、地球規模で拡大する気候変動が人々の健康に与える影響に対処するため、戦略的パートナーシップを更新しました。オランダは2024年にWHOへ50万ユーロを新たに拠出し、気候変動に強い持続可能なヘルスケアシステムの構築へのコミットメントを強化しています。この資金は、WHOの「気候と健康に関する変革的行動のためのアライアンス事務局」の強化や、世界的な気候変動と健康プログラムの推進を支援します。  この連携は2023年に始まり、これまでアフリカ、アジア、東地中海地域の国々に対し、気候と健康に関する統合監視・早期警報システムの導入、COP26の健康目標達成に向けた能力向上、健康関連の気候リスクに対する早期警報システムの調和などを支援してきました。これらの取り組みは、各国が気候変動に強い医療システムを整備するための準備を進める上で不可欠です。  オランダは、医療分野における気候変動対策を主導する国の一つです。自国の地球規模保健戦略2023-2030でも気候変動と健康の相互関係を重視し、2024年にはペルーと共に、第77回世界保健総会で気候変動と健康に関する新しい決議の採択を主導しました。この決議は、WHOによる世界的な行動計画、各国の取り組み強化、そしてWHOの新しい第14次一般作業計画への気候変動と健康の組み込みを呼びかけています。  今回のパートナーシップ更新により、2023年以降のオランダからの総支援額は110万ユーロ以上に達します。これは、各国が気候変動による健康課題に直面し、世界の保健コミュニティが2024年のCOP29に向けて議論を深める中で、極めて重要なタイミングで行われました。WHOの推計では、この新しい一般作業計画におけるWHOと加盟国の協力が、今後4年間で750万人の命を救うことに貢献するとされています。  私たち看護師も、気候変動が引き起こす災害、新たな感染症、健康格差の拡大といった課題に、今後ますます直面する可能性があります。WHOとオランダは、気候変動対策において健康が常に中心的な位置を占めるよう、今後も主導的な役割を果たしていくでしょう。脆弱な地域でのレジリエンス（回復力）構築や、持続可能で低炭素なヘルスケアソリューションの導入支援が、引き続き重要な焦点となります。国際的な取り組みを知り、私たちの現場でも気候変動が健康に与える影響を意識し、持続可能な医療を追求していくことが求められています。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2024-10-10 16:47</p>
+  <h2 class="article-title">WHOとオランダ、気候変動と健康に関するパートナーシップを更新</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">WHOとオランダが気候変動と健康の連携強化：看護師が知るべき国際動向<span class="summary-rest" hidden><br><br>世界保健機関（WHO）とオランダ王国は、地球規模で拡大する気候変動が人々の健康に与える影響に対処するため、戦略的パートナーシップを更新しました。オランダは2024年にWHOへ50万ユーロを新たに拠出し、気候変動に強い持続可能なヘルスケアシステムの構築へのコミットメントを強化しています。この資金は、WHOの「気候と健康に関する変革的行動のためのアライアンス事務局」の強化や、世界的な気候変動と健康プログラムの推進を支援します。<br><br>この連携は2023年に始まり、これまでアフリカ、アジア、東地中海地域の国々に対し、気候と健康に関する統合監視・早期警報システムの導入、COP26の健康目標達成に向けた能力向上、健康関連の気候リスクに対する早期警報システムの調和などを支援してきました。これらの取り組みは、各国が気候変動に強い医療システムを整備するための準備を進める上で不可欠です。<br><br>オランダは、医療分野における気候変動対策を主導する国の一つです。自国の地球規模保健戦略2023-2030でも気候変動と健康の相互関係を重視し、2024年にはペルーと共に、第77回世界保健総会で気候変動と健康に関する新しい決議の採択を主導しました。この決議は、WHOによる世界的な行動計画、各国の取り組み強化、そしてWHOの新しい第14次一般作業計画への気候変動と健康の組み込みを呼びかけています。<br><br>今回のパートナーシップ更新により、2023年以降のオランダからの総支援額は110万ユーロ以上に達します。これは、各国が気候変動による健康課題に直面し、世界の保健コミュニティが2024年のCOP29に向けて議論を深める中で、極めて重要なタイミングで行われました。WHOの推計では、この新しい一般作業計画におけるWHOと加盟国の協力が、今後4年間で750万人の命を救うことに貢献するとされています。<br><br>私たち看護師も、気候変動が引き起こす災害、新たな感染症、健康格差の拡大といった課題に、今後ますます直面する可能性があります。WHOとオランダは、気候変動対策において健康が常に中心的な位置を占めるよう、今後も主導的な役割を果たしていくでしょう。脆弱な地域でのレジリエンス（回復力）構築や、持続可能で低炭素なヘルスケアソリューションの導入支援が、引き続き重要な焦点となります。国際的な取り組みを知り、私たちの現場でも気候変動が健康に与える影響を意識し、持続可能な医療を追求していくことが求められています。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/10-10-2024-who-and-the-netherlands-renew-their-partnership-on-climate-change-and-health" target="_blank" rel="noopener">https://www.who.int/news/item/10-10-2024-who-and-the-netherlands-renew-their-partnership-on-climate-change-and-health</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2025年4月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全2件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="8fac90af2ed0197c5b412115a6309e8b"
+  data-date="2025-04-10"
+  data-month="2025-04"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="母子と新生児の健康を訴える世界的な機運が世界保健デー2025を彩る 世界保健機関（WHO）は、2025年の世界保健デーを「より健康的な始まり、希望に満ちた未来」というテーマに掲げ、母子保健の重要性を世界中に訴える大規模な活動を展開しています。WHOの100を超えるグローバルオフィスが、各国の政府機関、地域社会、そして私たち医療従事者、パートナー団体、市民社会組織と連携し、広範な啓発活動を組織しました。  この活動は、世界中の母子保健ケアサービスが、資金不足などの課題により脅かされている現状に強い警鐘を鳴らすものです。国連機関が世界保健デーに発した、母子保健分野が大きく後退する危険性への呼びかけに対し、WHOはこれ以上ない強い姿勢で対応しています。母子保健を守ることは、未来を担う子どもたちの健やかな成長と、その母親たちの健康的な生活を保障するために不可欠です。  2025年の世界保健デーは、WHOの創設77周年という節目の日でもあり、これを機に母子保健に関する一年間のグローバルキャンペーンが開始されます。WHOは、各国の政府や医療コミュニティに対し、予防可能な妊産婦や新生児の死亡を根絶するための努力を一層強化し、女性の長期的な健康とウェルビーイングを最優先するよう強く求めています。  私たち日本の看護師にとっても、この世界的な動きは他人事ではありません。少子化が進む日本でも、妊娠・出産を巡る課題は多岐にわたり、私たち看護師の専門的なケアと支援が不可欠です。WHOが訴える「予防可能な死亡の根絶」や「女性の長期的な健康と幸福の優先」という目標は、日々の業務で妊産婦や新生児と向き合う私たち看護師の使命と深く重なります。  グローバルな視点を持つことで、私たちは自分たちのケアが、より広範な人々の健康に貢献していることを再認識できます。資金不足という課題は日本でも同様に存在し、限られたリソースの中で質の高いケアを提供し続ける工夫が求められます。このキャンペーンを通じて、母子保健の重要性が社会全体に浸透し、私たち看護師が働きやすい環境や、妊産婦と新生児が安心して過ごせる社会が実現することを期待します。日々のケアを通じて、私たち一人ひとりが「より健康的な始まり、希望に満ちた未来」を築くための大切な役割を担っていることを心に留めましょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2025-04-11 00:02</p>
+  <h2 class="article-title">母子と新生児の健康を訴える世界的な機運が世界保健デー2025を彩る</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）は、2025年の世界保健デーを「より健康的な始まり、希望に満ちた未来」というテーマに掲げ、母子保健の重要性を世界中に訴える大規模な活動を展開しています。WHOの100を超えるグローバルオフィスが、各国の政府機関、地域社会、そして私たち医療従事者、パートナー団体、市民社会組織と連携し、広範な啓発活動を組織しました。<span class="summary-rest" hidden><br><br>この活動は、世界中の母子保健ケアサービスが、資金不足などの課題により脅かされている現状に強い警鐘を鳴らすものです。国連機関が世界保健デーに発した、母子保健分野が大きく後退する危険性への呼びかけに対し、WHOはこれ以上ない強い姿勢で対応しています。母子保健を守ることは、未来を担う子どもたちの健やかな成長と、その母親たちの健康的な生活を保障するために不可欠です。<br><br>2025年の世界保健デーは、WHOの創設77周年という節目の日でもあり、これを機に母子保健に関する一年間のグローバルキャンペーンが開始されます。WHOは、各国の政府や医療コミュニティに対し、予防可能な妊産婦や新生児の死亡を根絶するための努力を一層強化し、女性の長期的な健康とウェルビーイングを最優先するよう強く求めています。<br><br>私たち日本の看護師にとっても、この世界的な動きは他人事ではありません。少子化が進む日本でも、妊娠・出産を巡る課題は多岐にわたり、私たち看護師の専門的なケアと支援が不可欠です。WHOが訴える「予防可能な死亡の根絶」や「女性の長期的な健康と幸福の優先」という目標は、日々の業務で妊産婦や新生児と向き合う私たち看護師の使命と深く重なります。<br><br>グローバルな視点を持つことで、私たちは自分たちのケアが、より広範な人々の健康に貢献していることを再認識できます。資金不足という課題は日本でも同様に存在し、限られたリソースの中で質の高いケアを提供し続ける工夫が求められます。このキャンペーンを通じて、母子保健の重要性が社会全体に浸透し、私たち看護師が働きやすい環境や、妊産婦と新生児が安心して過ごせる社会が実現することを期待します。日々のケアを通じて、私たち一人ひとりが「より健康的な始まり、希望に満ちた未来」を築くための大切な役割を担っていることを心に留めましょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/10-04-2025-worldwide-rally-for-maternal-and-newborn-health-marks-world-health-day-2025" target="_blank" rel="noopener">https://www.who.int/news/item/10-04-2025-worldwide-rally-for-maternal-and-newborn-health-marks-world-health-day-2025</a>
+  </div>
+</article>
+<article
+  data-id="6ac3c1d7368c047302b41444ef57df56"
+  data-date="2025-04-01"
+  data-month="2025-04"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="EIBグローバルと連携しレバノン全土の公衆衛生を強化 世界保健機関（WHO）と欧州投資銀行（EIB Global）は、レバノンの公衆衛生を強化するため、1000万ユーロの助成金に関する重要な合意を締結しました。この合意は2025年3月6日にルクセンブルクで開催されたEIBグループフォーラムで、WHO事務局長であるテドロス・アダノム・ゲブレイェソス博士とEIB Global副総裁のトーマス・オストロス氏によって署名されたものです。  今回の取り組みは、深刻な課題に直面しているレバノンの医療システムへの国際的な支援として特に注目されます。主な目的は、レバノンの中央公衆衛生研究所を再建し、その機能を強化することです。公衆衛生研究所は、感染症の診断や予防、薬剤の品質管理、そして公衆衛生に関する調査研究など、国の健康を守る上で基盤となる重要な役割を担っています。この研究所が再生されることで、レバノンは将来的な健康危機への対応能力を高め、国民全体の健康水準の底上げが期待されます。  さらに、この助成金は、糖尿病、心血管疾患、がんといった慢性疾患を抱える5万人以上の人々に対し、医薬品の提供と医療支援を優先的に行うために活用されます。レバノンでは経済危機などの影響により、医薬品の不足や医療サービスへのアクセスが困難な状況が続いています。特に慢性疾患の患者さんにとって、定期的な治療や医薬品の継続的な供給は、症状の管理や重症化予防のために極めて重要です。この支援は、多くの患者さんの生活の質を向上させ、尊い命を守ることに直結するでしょう。  私たち看護師は、患者さんの健康維持や生活支援において重要な役割を担っています。特に慢性疾患の患者さんへの継続的なケア、服薬指導、生活習慣の改善支援などは、日々の業務の中で私たちが実践していることです。今回のレバノンへの支援は、まさにそうした慢性疾患患者さんのニーズに応えるものであり、国際的な視点から見ても、医療従事者の努力が最も必要とされる分野への投資と言えます。  公衆衛生インフラの整備と、特に脆弱な状況にある慢性疾患患者さんへの直接的な支援は、国の医療システム全体の回復力と公平性を高める上で不可欠です。このような国際協力のニュースは、私たち日本の看護師にとっても、世界の医療が抱える課題と、それに向けた取り組みの重要性を再認識する機会となるでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2025-04-01 20:55</p>
+  <h2 class="article-title">EIBグローバルと連携しレバノン全土の公衆衛生を強化</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）と欧州投資銀行（EIB Global）は、レバノンの公衆衛生を強化するため、1000万ユーロの助成金に関する重要な合意を締結しました。この合意は2025年3月6日にルクセンブルクで開催されたEIBグループフォーラムで、WHO事務局長であるテドロス・アダノム・ゲブレイェソス博士とEIB Global副総裁のトーマス・オストロス氏によって署名されたものです。<span class="summary-rest" hidden><br><br>今回の取り組みは、深刻な課題に直面しているレバノンの医療システムへの国際的な支援として特に注目されます。主な目的は、レバノンの中央公衆衛生研究所を再建し、その機能を強化することです。公衆衛生研究所は、感染症の診断や予防、薬剤の品質管理、そして公衆衛生に関する調査研究など、国の健康を守る上で基盤となる重要な役割を担っています。この研究所が再生されることで、レバノンは将来的な健康危機への対応能力を高め、国民全体の健康水準の底上げが期待されます。<br><br>さらに、この助成金は、糖尿病、心血管疾患、がんといった慢性疾患を抱える5万人以上の人々に対し、医薬品の提供と医療支援を優先的に行うために活用されます。レバノンでは経済危機などの影響により、医薬品の不足や医療サービスへのアクセスが困難な状況が続いています。特に慢性疾患の患者さんにとって、定期的な治療や医薬品の継続的な供給は、症状の管理や重症化予防のために極めて重要です。この支援は、多くの患者さんの生活の質を向上させ、尊い命を守ることに直結するでしょう。<br><br>私たち看護師は、患者さんの健康維持や生活支援において重要な役割を担っています。特に慢性疾患の患者さんへの継続的なケア、服薬指導、生活習慣の改善支援などは、日々の業務の中で私たちが実践していることです。今回のレバノンへの支援は、まさにそうした慢性疾患患者さんのニーズに応えるものであり、国際的な視点から見ても、医療従事者の努力が最も必要とされる分野への投資と言えます。<br><br>公衆衛生インフラの整備と、特に脆弱な状況にある慢性疾患患者さんへの直接的な支援は、国の医療システム全体の回復力と公平性を高める上で不可欠です。このような国際協力のニュースは、私たち日本の看護師にとっても、世界の医療が抱える課題と、それに向けた取り組みの重要性を再認識する機会となるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/06-03-2025-strengthening-public-health-across-lebanon-with-eib-global" target="_blank" rel="noopener">https://www.who.int/news/item/06-03-2025-strengthening-public-health-across-lebanon-with-eib-global</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

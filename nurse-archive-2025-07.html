@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2025年7月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全2件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="20cabc43a5908385ba2d940044a12e59"
+  data-date="2025-07-30"
+  data-month="2025-07"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="デイビッド・ナバロ氏への追悼 デイビッド・ナバロ博士への追悼  世界保健機関（WHO）は、デイビッド・ナバロ博士が7月25日金曜日に75歳でご自宅で逝去されたことを深く悲しみ、追悼の意を表します。  ナバロ博士は、WHOにおいてマラリア対策、人道危機対応、感染症アウトブレイクなど、多岐にわたる活動の最前線で活躍されました。直近では、COVID-19に関するWHO事務局長特別代表を務められました。彼を知るすべての人にとって、博士は世界中の健康、公平性、そして恵まれない人々のために尽力した、広く尊敬され、影響力のある、そして愛された擁護者でした。その卓越したビジョン、スキル、思いやり、忍耐力をもって、多くの人々のキャリア形成を支援されました。  WHO事務局長のテドロス・アダノム・ゲブレイェス博士は、「親愛なる友人であり同僚、そしてWHO特別代表であったデイビッド・ナバロの逝去に深く衝撃を受け、悲しんでいます。デイビッドはグローバルヘルスと健康の公平性の偉大な擁護者であり、数えきれない人々にとって賢明で寛大な指導者でした。彼の仕事は世界中の非常に多くの人々の生活に触れ、影響を与えました。WHOを代表して、デイビッドのご家族、ご友人、同僚の方々に心からお悔やみ申し上げます。安らかにお眠りください、親愛なる友人。彼の専門知識、知恵、そして優しさが惜しまれてなりません」との声明を発表しました。  ナバロ博士は、その専門知識、エネルギー、そして貢献への意欲を反映し、保健、栄養、気候変動など幅広い分野で多くの役割を担われました。1999年から2005年にかけては、WHOでマラリア対策プロジェクト「ロールバックマラリア」の事務局長や、危機時における保健活動担当事務局長特別代表といった要職を務めました。  2005年以降は国連に移り、鳥インフルエンザおよびパンデミックインフルエンザ担当シニアコーディネーター（2005-2014年）、食料安全保障および栄養担当事務総長特別代表（2008-2014年）、栄養改善運動コーディネーター（2011-2014年）、西アフリカエボラ出血熱アウトブレイク対応担当事務総長特別代表（2014-2015年）、持続可能な開発のための2030アジェンダおよび気候変動担当特別顧問（2016-2017年）など、重要なポストを歴任しました。  2015年にはWHO事務局長により、アウトブレイクと緊急事態に関するWHOの活動改革専門家グループの議長に任命されました。2018年には栄養分野でのリーダーシップが評価され、世界食料賞を受賞しています。  晩年も、ロンドンのインペリアル・カレッジにあるグローバルヘルス・イノベーション研究所の共同所長兼グローバルヘルス学科長を務める傍ら、持続可能な開発のためのスキルシステムと相乗効果（4SD）財団を設立し、持続可能な開発のリーダー育成に尽力されました。また、フードシステム変革への貢献として「フードシステム対話」を主宰し、国連の食料システムサミットに貢献しました。ウクライナ戦争勃発時には、国連事務総長の食料・エネルギー・金融危機対応グループに加わり、食料分野の主導的な役割を果たしました。2023年には、グローバルヘルスへの多大な貢献が認められ、チャールズ3世国王からナイトの称号を授与されました。  彼の共同設立した4SD財団は、「デイビッドの寛大さと、他者の生活を改善するための揺るぎない献身は、非常に惜しまれます」と追悼の意を表しました。ご遺族は、7月30日に発表した声明で、「デイビッドへの多くの追悼の言葉と、彼を悼むすべての人々への優しさに深く感謝しています。国際開発、特に公衆衛生、食料システム変革、栄養、危機対応といった分野において、彼が残した遺産が、内部からシステムを変革しようと働く多くの思いやりのあるリーダーたちを通じて受け継がれていくことを誇りに思います」と述べました。  葬儀は8月4日月曜日に近親者のみで小規模に行われます。今後数週間のうちに、ナバロ博士に影響を受けた人々が追悼の意を表せるよう、いくつかの追悼式典が開催される予定です。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2025-07-30 17:56</p>
+  <h2 class="article-title">デイビッド・ナバロ氏への追悼</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">デイビッド・ナバロ博士への追悼<span class="summary-rest" hidden><br><br>世界保健機関（WHO）は、デイビッド・ナバロ博士が7月25日金曜日に75歳でご自宅で逝去されたことを深く悲しみ、追悼の意を表します。<br><br>ナバロ博士は、WHOにおいてマラリア対策、人道危機対応、感染症アウトブレイクなど、多岐にわたる活動の最前線で活躍されました。直近では、COVID-19に関するWHO事務局長特別代表を務められました。彼を知るすべての人にとって、博士は世界中の健康、公平性、そして恵まれない人々のために尽力した、広く尊敬され、影響力のある、そして愛された擁護者でした。その卓越したビジョン、スキル、思いやり、忍耐力をもって、多くの人々のキャリア形成を支援されました。<br><br>WHO事務局長のテドロス・アダノム・ゲブレイェス博士は、「親愛なる友人であり同僚、そしてWHO特別代表であったデイビッド・ナバロの逝去に深く衝撃を受け、悲しんでいます。デイビッドはグローバルヘルスと健康の公平性の偉大な擁護者であり、数えきれない人々にとって賢明で寛大な指導者でした。彼の仕事は世界中の非常に多くの人々の生活に触れ、影響を与えました。WHOを代表して、デイビッドのご家族、ご友人、同僚の方々に心からお悔やみ申し上げます。安らかにお眠りください、親愛なる友人。彼の専門知識、知恵、そして優しさが惜しまれてなりません」との声明を発表しました。<br><br>ナバロ博士は、その専門知識、エネルギー、そして貢献への意欲を反映し、保健、栄養、気候変動など幅広い分野で多くの役割を担われました。1999年から2005年にかけては、WHOでマラリア対策プロジェクト「ロールバックマラリア」の事務局長や、危機時における保健活動担当事務局長特別代表といった要職を務めました。<br><br>2005年以降は国連に移り、鳥インフルエンザおよびパンデミックインフルエンザ担当シニアコーディネーター（2005-2014年）、食料安全保障および栄養担当事務総長特別代表（2008-2014年）、栄養改善運動コーディネーター（2011-2014年）、西アフリカエボラ出血熱アウトブレイク対応担当事務総長特別代表（2014-2015年）、持続可能な開発のための2030アジェンダおよび気候変動担当特別顧問（2016-2017年）など、重要なポストを歴任しました。<br><br>2015年にはWHO事務局長により、アウトブレイクと緊急事態に関するWHOの活動改革専門家グループの議長に任命されました。2018年には栄養分野でのリーダーシップが評価され、世界食料賞を受賞しています。<br><br>晩年も、ロンドンのインペリアル・カレッジにあるグローバルヘルス・イノベーション研究所の共同所長兼グローバルヘルス学科長を務める傍ら、持続可能な開発のためのスキルシステムと相乗効果（4SD）財団を設立し、持続可能な開発のリーダー育成に尽力されました。また、フードシステム変革への貢献として「フードシステム対話」を主宰し、国連の食料システムサミットに貢献しました。ウクライナ戦争勃発時には、国連事務総長の食料・エネルギー・金融危機対応グループに加わり、食料分野の主導的な役割を果たしました。2023年には、グローバルヘルスへの多大な貢献が認められ、チャールズ3世国王からナイトの称号を授与されました。<br><br>彼の共同設立した4SD財団は、「デイビッドの寛大さと、他者の生活を改善するための揺るぎない献身は、非常に惜しまれます」と追悼の意を表しました。ご遺族は、7月30日に発表した声明で、「デイビッドへの多くの追悼の言葉と、彼を悼むすべての人々への優しさに深く感謝しています。国際開発、特に公衆衛生、食料システム変革、栄養、危機対応といった分野において、彼が残した遺産が、内部からシステムを変革しようと働く多くの思いやりのあるリーダーたちを通じて受け継がれていくことを誇りに思います」と述べました。<br><br>葬儀は8月4日月曜日に近親者のみで小規模に行われます。今後数週間のうちに、ナバロ博士に影響を受けた人々が追悼の意を表せるよう、いくつかの追悼式典が開催される予定です。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/30-07-2025-paying-tribute-to-david-nabarro" target="_blank" rel="noopener">https://www.who.int/news/item/30-07-2025-paying-tribute-to-david-nabarro</a>
+  </div>
+</article>
+<article
+  data-id="30e9866db9ab58c263629977bb0b3996"
+  data-date="2025-07-23"
+  data-month="2025-07"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="東ティモール、WHOがマラリアフリーを認定 世界保健機関（WHO）は、東ティモールをマラリアフリー国として認定しました。これは、2002年の独立直後からマラリア対策を最優先課題とし、国を挙げての一貫した取り組みを進めてきた同国にとって、極めて顕著な功績です。テドロスWHO事務局長は、「強い政治的意思、賢明な介入、持続的な国内外からの投資、そして献身的な医療従事者の団結があれば、マラリアは食い止められる」と述べ、この重要な節目に対し祝意を表明しました。  今回の発表により、マラリアフリーとしてWHOに認定された国・地域は合計47カ所となります。東ティモールは、WHO東南アジア地域でモルディブ、スリランカに次ぐ3番目の認定国です。WHOによるマラリア排除認定は、国内におけるマラリアの土着感染が3年以上連続して途絶えたことを、疑いの余地なく証明できた場合に与えられます。  東ティモールのエリオ・アントニオ・デ・アラウジョ・ドス・レイス・アマラル保健大臣は、「マラリアは、沈黙し、執拗で、そして致命的な、最も容赦ない敵の一つだった。医療従事者、コミュニティ、パートナーの努力により、22万3千件の症例からゼロへと削減できた。この勝利を守るため、引き続き警戒とコミュニティの行動で再侵入を防がなければならない」と語りました。  2002年の独立以来、東ティモールはマラリアとの闘いにおいて目覚ましい進歩を遂げました。2006年に22万3千件以上を記録した臨床診断例のピークから、2021年以降は土着感染例をゼロに削減しました。この成功を牽引したのは、保健省が2003年に迅速に設立した国家マラリアプログラムです。当初はたった2人の専任職員でしたが、強力な技術的リーダーシップと管理能力により、早期に進歩の基礎を築くことができました。  数年のうちに、東ティモールは迅速診断キット（RDT）とアルテミシニンベースの複合療法（ACT）を国家マラリア治療ガイドラインの一部として導入し、リスクの高いコミュニティに長期間効果のある殺虫剤処理済み蚊帳（LLINs）を無料で配布し始めました。2009年には、エイズ・結核・マラリア対策世界基金（グローバルファンド）の支援を受け、LLINsの配布と屋内残量噴霧を通じて、全国規模で媒介蚊対策を強化しました。また、すべての地方保健ポストで、顕微鏡検査とRDTを用いた医療現場でのマラリア診断を拡大しました。  深刻な医療従事者と医師の不足に直面しながらも、東ティモールは投資を行い、国立病院、紹介病院、地域保健センター、保健ポストからなる3層構造の医療システムを発展させました。これにより、ほとんどの住民が徒歩1時間圏内で医療を受けられるようにしました。さらに、政府の無料ユニバーサルヘルスケア政策の一環として、市民は医療現場で無料の医療サービスを受けられます。月ごとの移動診療や地域アウトリーチプログラムは、農村部の医療サービスをさらに強化しました。  東ティモールのマラリア対策の成功は、国のリーダーシップと、保健省、WHO、地域コミュニティ、非政府組織（NGO）、ドナー、そして複数の政府部門間の強力な協力体制の重要性を浮き彫りにしています。リアルタイムの統合症例ベースサーベイランスシステムは迅速なデータ収集と対応を保証し、訓練された医療従事者は、国境を含むマラリア症例のタイムリーな発見とスクリーニングを確実にしました。これらの統合された努力が、東ティモールが公式にマラリアフリーと認定される道を開いたのです。  WHO東ティモール代表のアルビンド・マスール博士は、「この勝利は、現在と未来の世代を守り、決意を持った国が何を達成できるかを示しています」と述べました。  この東ティモールの事例は、私たち日本の看護師にとっても多くの示唆を与えます。医療資源が限られる状況下での地域に根ざした活動、病気の予防から診断、治療、そしてデータに基づいたサーベイランスまでの一連の流れにおいて、看護師や地域保健従事者が果たす役割の大きさを再認識させられます。また、国際的な協力や、多職種・多機関との連携の重要性も強く感じられます。公衆衛生の達成は、まさに「粘り強さ」と「団結」の賜物であり、私たちの専門職としての使命を改めて問い直す機会となるでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2025-07-23 19:07</p>
+  <h2 class="article-title">東ティモール、WHOがマラリアフリーを認定</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）は、東ティモールをマラリアフリー国として認定しました。これは、2002年の独立直後からマラリア対策を最優先課題とし、国を挙げての一貫した取り組みを進めてきた同国にとって、極めて顕著な功績です。テドロスWHO事務局長は、「強い政治的意思、賢明な介入、持続的な国内外からの投資、そして献身的な医療従事者の団結があれば、マラリアは食い止められる」と述べ、この重要な節目に対し祝意を表明しました。<span class="summary-rest" hidden><br><br>今回の発表により、マラリアフリーとしてWHOに認定された国・地域は合計47カ所となります。東ティモールは、WHO東南アジア地域でモルディブ、スリランカに次ぐ3番目の認定国です。WHOによるマラリア排除認定は、国内におけるマラリアの土着感染が3年以上連続して途絶えたことを、疑いの余地なく証明できた場合に与えられます。<br><br>東ティモールのエリオ・アントニオ・デ・アラウジョ・ドス・レイス・アマラル保健大臣は、「マラリアは、沈黙し、執拗で、そして致命的な、最も容赦ない敵の一つだった。医療従事者、コミュニティ、パートナーの努力により、22万3千件の症例からゼロへと削減できた。この勝利を守るため、引き続き警戒とコミュニティの行動で再侵入を防がなければならない」と語りました。<br><br>2002年の独立以来、東ティモールはマラリアとの闘いにおいて目覚ましい進歩を遂げました。2006年に22万3千件以上を記録した臨床診断例のピークから、2021年以降は土着感染例をゼロに削減しました。この成功を牽引したのは、保健省が2003年に迅速に設立した国家マラリアプログラムです。当初はたった2人の専任職員でしたが、強力な技術的リーダーシップと管理能力により、早期に進歩の基礎を築くことができました。<br><br>数年のうちに、東ティモールは迅速診断キット（RDT）とアルテミシニンベースの複合療法（ACT）を国家マラリア治療ガイドラインの一部として導入し、リスクの高いコミュニティに長期間効果のある殺虫剤処理済み蚊帳（LLINs）を無料で配布し始めました。2009年には、エイズ・結核・マラリア対策世界基金（グローバルファンド）の支援を受け、LLINsの配布と屋内残量噴霧を通じて、全国規模で媒介蚊対策を強化しました。また、すべての地方保健ポストで、顕微鏡検査とRDTを用いた医療現場でのマラリア診断を拡大しました。<br><br>深刻な医療従事者と医師の不足に直面しながらも、東ティモールは投資を行い、国立病院、紹介病院、地域保健センター、保健ポストからなる3層構造の医療システムを発展させました。これにより、ほとんどの住民が徒歩1時間圏内で医療を受けられるようにしました。さらに、政府の無料ユニバーサルヘルスケア政策の一環として、市民は医療現場で無料の医療サービスを受けられます。月ごとの移動診療や地域アウトリーチプログラムは、農村部の医療サービスをさらに強化しました。<br><br>東ティモールのマラリア対策の成功は、国のリーダーシップと、保健省、WHO、地域コミュニティ、非政府組織（NGO）、ドナー、そして複数の政府部門間の強力な協力体制の重要性を浮き彫りにしています。リアルタイムの統合症例ベースサーベイランスシステムは迅速なデータ収集と対応を保証し、訓練された医療従事者は、国境を含むマラリア症例のタイムリーな発見とスクリーニングを確実にしました。これらの統合された努力が、東ティモールが公式にマラリアフリーと認定される道を開いたのです。<br><br>WHO東ティモール代表のアルビンド・マスール博士は、「この勝利は、現在と未来の世代を守り、決意を持った国が何を達成できるかを示しています」と述べました。<br><br>この東ティモールの事例は、私たち日本の看護師にとっても多くの示唆を与えます。医療資源が限られる状況下での地域に根ざした活動、病気の予防から診断、治療、そしてデータに基づいたサーベイランスまでの一連の流れにおいて、看護師や地域保健従事者が果たす役割の大きさを再認識させられます。また、国際的な協力や、多職種・多機関との連携の重要性も強く感じられます。公衆衛生の達成は、まさに「粘り強さ」と「団結」の賜物であり、私たちの専門職としての使命を改めて問い直す機会となるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/24-07-2025-timor-leste-certified-malaria-free-by-who" target="_blank" rel="noopener">https://www.who.int/news/item/24-07-2025-timor-leste-certified-malaria-free-by-who</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>

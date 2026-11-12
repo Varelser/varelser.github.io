@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News アーカイブ 2024年5月 | VARELSER</title>
+  <meta name="description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:title" content="Nurse News（看護・医療ニュース）| VARELSER" />
+    <meta property="og:description" content="海外の最新医療・看護ニュースを日本語要約し、日付・トピック・臨床領域などで整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/nurse-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Nurse News RSS" href="nurse-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .filter-panel{background:rgba(255,255,255,.96);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:#fff;}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .action-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px;line-height:1.7;}
+    .action-box strong{display:inline-block;margin-right:6px;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の医療・看護ニュース</p>
+    <p class="page-desc">海外の最新医療ニュースをAIで要約し、日付・トピック・臨床領域・対象・エビデンス種別・実務影響度で整理しています。</p>
+    <p class="page-desc"><a href="nurse-search.html">全件検索（全ストックから探す）</a> ・ <a href="nurse-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
+        <div class="filter-item"><label for="topicFilter">トピック</label><select id="topicFilter"><option value="">すべて</option><option value="がん">がん</option><option value="リハビリ">リハビリ</option><option value="リハビリテーション">リハビリテーション</option><option value="免疫・炎症">免疫・炎症</option><option value="公衆衛生">公衆衛生</option><option value="医薬品">医薬品</option><option value="呼吸器">呼吸器</option><option value="妊娠・母子">妊娠・母子</option><option value="小児">小児</option><option value="循環器">循環器</option><option value="急性期・クリティカルケア">急性期・クリティカルケア</option><option value="患者安全">患者安全</option><option value="感染症">感染症</option><option value="感染管理">感染管理</option><option value="栄養">栄養</option><option value="歯科・口腔">歯科・口腔</option><option value="疼痛">疼痛</option><option value="看護情報学">看護情報学</option><option value="看護研究">看護研究</option><option value="神経">神経</option><option value="神経・精神">神経・精神</option><option value="精神・メンタルヘルス">精神・メンタルヘルス</option><option value="糖尿病・代謝">糖尿病・代謝</option><option value="緩和ケア">緩和ケア</option><option value="認知症">認知症</option><option value="高齢者">高齢者</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="clinicalFilter">臨床領域</label><select id="clinicalFilter"><option value="">すべて</option><option value="ICU">ICU</option><option value="リハビリ">リハビリ</option><option value="予防">予防</option><option value="在宅">在宅</option><option value="地域・学校保健">地域・学校保健</option><option value="外来">外来</option><option value="急性期">急性期</option><option value="患者教育">患者教育</option><option value="感染対策">感染対策</option><option value="感染管理">感染管理</option><option value="慢性期">慢性期</option><option value="慢性疾患管理">慢性疾患管理</option><option value="手術室・周術期">手術室・周術期</option><option value="施設・高齢者ケア">施設・高齢者ケア</option><option value="母子">母子</option><option value="病棟">病棟</option><option value="精神">精神</option><option value="緩和ケア">緩和ケア</option><option value="薬物療法">薬物療法</option><option value="質改善">質改善</option><option value="高齢者ケア">高齢者ケア</option></select></div>
+        <div class="filter-item"><label for="audienceFilter">対象</label><select id="audienceFilter"><option value="">すべて</option><option value="保護者">保護者</option><option value="医療従事者">医療従事者</option><option value="地域住民">地域住民</option><option value="妊婦">妊婦</option><option value="小児">小児</option><option value="慢性疾患患者">慢性疾患患者</option><option value="成人">成人</option><option value="高齢者">高齢者</option></select></div>
+        <div class="filter-item"><label for="evidenceFilter">エビデンス種別</label><select id="evidenceFilter"><option value="">すべて</option><option value="RCT">RCT</option><option value="ガイドライン">ガイドライン</option><option value="コホート研究">コホート研究</option><option value="システマティックレビュー">システマティックレビュー</option><option value="メタ解析">メタ解析</option><option value="基礎研究">基礎研究</option><option value="実践報告">実践報告</option><option value="政策発表">政策発表</option><option value="横断研究">横断研究</option><option value="総説">総説</option><option value="臨床研究">臨床研究</option><option value="観察研究">観察研究</option><option value="質的研究">質的研究</option></select></div>
+        <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全2件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<article
+  data-id="e71f2e242f454f3a7eac75bdd1f12384"
+  data-date="2024-05-23"
+  data-month="2024-05"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="カタール開発基金、柔軟な資金でWHOの第13次総合事業計画（延長分）の実施を支援 世界保健機関（WHO）とカタール開発基金（QFFD）が、地球規模の健康課題解決に向けた新たな協力関係を発表しました。先日開催された第77回世界保健総会に先立ち、両者はWHOの「第13次作業計画（GPW13）」の延長版の実施を支援するための主要拠出合意に署名しました。この合意により、カタール国はQFFDを通じてWHOに400万米ドルを拠出し、WHOのグローバルな健康課題への取り組みを強化することを目指します。  このパートナーシップは、健康状態の改善と持続可能な開発目標（SDGs）の推進に対するカタール国およびQFFDの揺るぎないコミットメントを示すものです。QFFDの暫定事務局長であるスルタン・アハメド・アル＝アシーリ氏は、「WHOとの連携は、世界中で健康の公平性を追求し、誰も置き去りにしないという私たちの献身の証です。WHOを支援することで、コミュニティを強化し、医療アクセスを向上させ、すべての人にとってより健康な未来に貢献することを目指します」と述べています。  WHOのテドロス・アダノム・ゲブレイェソス事務局長も、柔軟な資金の重要性を強調しました。「柔軟な資金は、WHOの命を救う活動にとって極めて重要です。カタール開発基金のような長年にわたるパートナーのおかげで、WHOはこれらの資金を使い、発生するグローバルな健康ニーズに迅速に対応することができます。カタール国の支援と、私たちの使命と責務を果たすために必要な柔軟性を与えてくれたことに感謝しています」と語りました。  第13次作業計画（GPW13）の延長版は、健康への包括的なアプローチに焦点を当てています。具体的には、感染症と非感染症の両方への対策、保健システムの強化、そして生涯を通じた健康の促進が柱となります。この協力は、特に危機下および危機後の国々への支援を重視しており、支援が最も必要とされる場所へ不可欠な援助を提供するというカタール国とQFFDの使命と合致しています。  世界が複雑な健康課題に直面し続ける中で、QFFDとWHOのパートナーシップは、グローバルヘルス分野における国際協力の模範となり、希望の光を放っています。今回の合意は、より健康で回復力のある世界という共通の目標を達成するための重要な一歩となるでしょう。看護師の皆さんにとっても、このような国際的な取り組みは、世界規模で保健医療の基盤が強化され、より効果的な医療提供体制が構築されることに繋がる可能性があります。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2024-05-23 21:12</p>
+  <h2 class="article-title">カタール開発基金、柔軟な資金でWHOの第13次総合事業計画（延長分）の実施を支援</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界保健機関（WHO）とカタール開発基金（QFFD）が、地球規模の健康課題解決に向けた新たな協力関係を発表しました。先日開催された第77回世界保健総会に先立ち、両者はWHOの「第13次作業計画（GPW13）」の延長版の実施を支援するための主要拠出合意に署名しました。この合意により、カタール国はQFFDを通じてWHOに400万米ドルを拠出し、WHOのグローバルな健康課題への取り組みを強化することを目指します。<span class="summary-rest" hidden><br><br>このパートナーシップは、健康状態の改善と持続可能な開発目標（SDGs）の推進に対するカタール国およびQFFDの揺るぎないコミットメントを示すものです。QFFDの暫定事務局長であるスルタン・アハメド・アル＝アシーリ氏は、「WHOとの連携は、世界中で健康の公平性を追求し、誰も置き去りにしないという私たちの献身の証です。WHOを支援することで、コミュニティを強化し、医療アクセスを向上させ、すべての人にとってより健康な未来に貢献することを目指します」と述べています。<br><br>WHOのテドロス・アダノム・ゲブレイェソス事務局長も、柔軟な資金の重要性を強調しました。「柔軟な資金は、WHOの命を救う活動にとって極めて重要です。カタール開発基金のような長年にわたるパートナーのおかげで、WHOはこれらの資金を使い、発生するグローバルな健康ニーズに迅速に対応することができます。カタール国の支援と、私たちの使命と責務を果たすために必要な柔軟性を与えてくれたことに感謝しています」と語りました。<br><br>第13次作業計画（GPW13）の延長版は、健康への包括的なアプローチに焦点を当てています。具体的には、感染症と非感染症の両方への対策、保健システムの強化、そして生涯を通じた健康の促進が柱となります。この協力は、特に危機下および危機後の国々への支援を重視しており、支援が最も必要とされる場所へ不可欠な援助を提供するというカタール国とQFFDの使命と合致しています。<br><br>世界が複雑な健康課題に直面し続ける中で、QFFDとWHOのパートナーシップは、グローバルヘルス分野における国際協力の模範となり、希望の光を放っています。今回の合意は、より健康で回復力のある世界という共通の目標を達成するための重要な一歩となるでしょう。看護師の皆さんにとっても、このような国際的な取り組みは、世界規模で保健医療の基盤が強化され、より効果的な医療提供体制が構築されることに繋がる可能性があります。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/23-05-2024-Qatar-Fund-for-Development-(QFFD)-supports-the-implementation-of-WHO&#x27;s-extended-13th-General-Programme-of-Work-with-flexible-funding" target="_blank" rel="noopener">https://www.who.int/news/item/23-05-2024-Qatar-Fund-for-Development-(QFFD)-supports-the-implementation-of-WHO&#x27;s-extended-13th-General-Programme-of-Work-with-flexible-funding</a>
+  </div>
+</article>
+<article
+  data-id="0979ed9e1b5858faa7e7713750359816"
+  data-date="2024-05-10"
+  data-month="2024-05"
+  data-topics="公衆衛生"
+  data-clinical-areas="患者教育"
+  data-audiences="成人||医療従事者"
+  data-evidence-type="政策発表"
+  data-practice-impact="high"
+  data-search="世界保健総会を前に、各国政府がパンデミック合意案の着実な前進の継続に合意 世界各国の政府は、5月27日に開幕する第77回世界保健総会を前に、現在提案されているパンデミック協定の交渉を継続し、その草案の最終調整を行うことで合意しました。ジュネーブのWHO本部での会議では、今後数週間にわたり対面とオンラインでの議論を再開し、主要な課題への取り組みを進めることが決定されました。  協定の重要な論点として、救命に関わるワクチン、治療薬、診断薬といった病原体への公平なアクセスとその利益共有に関する新たな国際システムの構築が挙げられます。また、パンデミック予防に向けた「ワンヘルス」（人間、動物、環境の健康を統合的に捉える考え方）のアプローチや、各国がパンデミックへの備えと対応能力を強化するための財政調整も、交渉の中心となっています。  WHO事務局長のテドロス・アダノム・ゲブレイェスス博士は、2年以上にわたる精力的な交渉を通じ、WHO加盟国がCOVID-19パンデミックの悲劇の再発から世界を守るための「世代を超えた合意」形成に揺るぎない決意を示してきたことを歓迎しました。  このパンデミック協定の策定を進めるため、2年以上前に加盟国主導の「政府間交渉機関（INB）」が設立されました。INB議長団は、交渉結果を世界保健総会に提出する予定です。INB共同議長の一人である南アフリカのプレシャス・マツォソ博士は、今回の協議で草案の広範な課題において進展があったと述べ、「全ての市民を守るための拘束力のある協定の実現は、史上初の重要なプロセスである」と強調しました。  INB共同議長であるオランダのローランド・ドリース氏は、この取り組みがCOVID-19パンデミックという前例のない世界的緊急事態への対応として始まったことを改めて指摘しました。そして、「次のパンデミックは、起こるかどうかではなく、いつ起こるかの問題です。我々は、この歴史的な機会を逃さず、世界を次の脅威からより安全にしなければなりません」と、備えの重要性を強く訴えました。  2021年3月には、各国の首脳がパンデミックへの国際協力の必要性を訴える声明を発表し、同年12月にはWHO加盟国が法的拘束力を持つ国際文書の草案作成と交渉を開始することを決定しています。  私たち日本の看護師にとって、このような国際的な合意形成は、将来のパンデミック発生時に医療現場が直面する課題に深く関わります。病原体情報、ワクチン、治療薬の迅速かつ公平な共有、そして「ワンヘルス」に基づいた多角的な予防戦略は、医療従事者の安全確保はもちろん、患者さんへの効果的で倫理的なケア提供に不可欠です。国際社会の協力によって、より強固な医療体制が構築されることは、私たち看護師が職務に安心して専念し、患者さんの命と健康を守り続けるための重要な基盤となるでしょう。 WHO (World Health Organization) 公衆衛生 患者教育 成人 医療従事者 政策発表 原文を確認し、患者教育・観察・ケア計画への影響を検討してください。">
+  <p class="meta">WHO (World Health Organization)　2024-05-11 04:15</p>
+  <h2 class="article-title">世界保健総会を前に、各国政府がパンデミック合意案の着実な前進の継続に合意</h2>
+  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">領域: 患者教育</span><span class="chip">対象: 成人</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策発表</span><span class="chip">実務影響度: 高</span></div>
+  <div class="summary">世界各国の政府は、5月27日に開幕する第77回世界保健総会を前に、現在提案されているパンデミック協定の交渉を継続し、その草案の最終調整を行うことで合意しました。ジュネーブのWHO本部での会議では、今後数週間にわたり対面とオンラインでの議論を再開し、主要な課題への取り組みを進めることが決定されました。<span class="summary-rest" hidden><br><br>協定の重要な論点として、救命に関わるワクチン、治療薬、診断薬といった病原体への公平なアクセスとその利益共有に関する新たな国際システムの構築が挙げられます。また、パンデミック予防に向けた「ワンヘルス」（人間、動物、環境の健康を統合的に捉える考え方）のアプローチや、各国がパンデミックへの備えと対応能力を強化するための財政調整も、交渉の中心となっています。<br><br>WHO事務局長のテドロス・アダノム・ゲブレイェスス博士は、2年以上にわたる精力的な交渉を通じ、WHO加盟国がCOVID-19パンデミックの悲劇の再発から世界を守るための「世代を超えた合意」形成に揺るぎない決意を示してきたことを歓迎しました。<br><br>このパンデミック協定の策定を進めるため、2年以上前に加盟国主導の「政府間交渉機関（INB）」が設立されました。INB議長団は、交渉結果を世界保健総会に提出する予定です。INB共同議長の一人である南アフリカのプレシャス・マツォソ博士は、今回の協議で草案の広範な課題において進展があったと述べ、「全ての市民を守るための拘束力のある協定の実現は、史上初の重要なプロセスである」と強調しました。<br><br>INB共同議長であるオランダのローランド・ドリース氏は、この取り組みがCOVID-19パンデミックという前例のない世界的緊急事態への対応として始まったことを改めて指摘しました。そして、「次のパンデミックは、起こるかどうかではなく、いつ起こるかの問題です。我々は、この歴史的な機会を逃さず、世界を次の脅威からより安全にしなければなりません」と、備えの重要性を強く訴えました。<br><br>2021年3月には、各国の首脳がパンデミックへの国際協力の必要性を訴える声明を発表し、同年12月にはWHO加盟国が法的拘束力を持つ国際文書の草案作成と交渉を開始することを決定しています。<br><br>私たち日本の看護師にとって、このような国際的な合意形成は、将来のパンデミック発生時に医療現場が直面する課題に深く関わります。病原体情報、ワクチン、治療薬の迅速かつ公平な共有、そして「ワンヘルス」に基づいた多角的な予防戦略は、医療従事者の安全確保はもちろん、患者さんへの効果的で倫理的なケア提供に不可欠です。国際社会の協力によって、より強固な医療体制が構築されることは、私たち看護師が職務に安心して専念し、患者さんの命と健康を守り続けるための重要な基盤となるでしょう。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="action-box"><strong>看護アクション</strong>原文を確認し、患者教育・観察・ケア計画への影響を検討してください。</div>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：WHO (World Health Organization)<br>
+    原文URL：<a href="https://www.who.int/news/item/10-05-2024-governments-agree-to-continue-their-steady-progress-on-proposed-pandemic-agreement-ahead-of-the-world-health-assembly" target="_blank" rel="noopener">https://www.who.int/news/item/10-05-2024-governments-agree-to-continue-their-steady-progress-on-proposed-pandemic-agreement-ahead-of-the-world-health-assembly</a>
+  </div>
+</article>
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- NURSE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="nurse-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- NURSE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        topic: document.getElementById("topicFilter"),
+        clinical: document.getElementById("clinicalFilter"),
+        audience: document.getElementById("audienceFilter"),
+        evidence: document.getElementById("evidenceFilter"),
+        impact: document.getElementById("impactFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = "";
+        els.month.value = "";
+        els.topic.value = "";
+        els.clinical.value = "";
+        els.audience.value = "";
+        els.evidence.value = "";
+        els.impact.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>
