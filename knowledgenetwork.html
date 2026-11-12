@@ -2411,10 +2411,15 @@
     initSearch();
     // ツールチップ初期化と年表構築は初期表示の後に回す（高速化）。
     // 年表は初回オープン時にも構築されるため、二重構築は DOM の有無で防ぐ。
+    // ツールチップは最初のホバーに間に合うよう、初回の pointerover でも初期化する。
+    let tipsReady = false;
+    const initTipsOnce = () => { if (tipsReady) return; tipsReady = true; initContextTips(); };
+    const buildTimelineOnce = () => { if (!document.querySelector('#timeline .tl-group')) buildTimeline(); };
+    document.addEventListener('pointerover', initTipsOnce, { once: true });
     if (window.requestIdleCallback) {
-      requestIdleCallback(() => { initContextTips(); if (!document.querySelector('#timeline .tl-group')) buildTimeline(); }, { timeout: 2500 });
+      requestIdleCallback(() => { initTipsOnce(); buildTimelineOnce(); }, { timeout: 2500 });
     } else {
-      setTimeout(() => { initContextTips(); if (!document.querySelector('#timeline .tl-group')) buildTimeline(); }, 0);
+      setTimeout(() => { initTipsOnce(); buildTimelineOnce(); }, 0);
     }
 
   </script>
