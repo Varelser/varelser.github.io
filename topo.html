@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- TOPO v6 (2026-11-12): audit fixes — hole phase is persisted in settings JSON and undo snapshots, so seed reproducibility survives hole deletion + reload (previously phases were recomputed by index on load while live holes kept their creation-time phase); ANGLE_STEPS slider step 8 -> 1 (default 900 was off-step: browsers snapped the display to 904 while params stayed 900); hole position clamp unified to 0.02-0.98 (drag/arrows were 0.02-0.98 but create/sanitize were 0.03-0.97, so edge holes shifted on reload); EXPORT_TRANSPARENT gained a UI checkbox (was reachable only by hand-editing settings JSON). v5: SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
+<!-- TOPO v7 (2026-11-12): Lien-style UI reskin — app header + bottom toolbar chrome, floating configuration panel (hidden by default, opened from the toolbar), Lien slider/option styling and zinc palette via CSS variables; layout is header / canvas-wrap / footer so the canvas fills the space between the bars; computation core, IDs and behaviour are unchanged from v6 except panelToggle now toggles and mousePressed converts to viewport coordinates for the controls hit-test. v6: audit fixes — hole phase is persisted in settings JSON and undo snapshots, so seed reproducibility survives hole deletion + reload (previously phases were recomputed by index on load while live holes kept their creation-time phase); ANGLE_STEPS slider step 8 -> 1 (default 900 was off-step: browsers snapped the display to 904 while params stayed 900); hole position clamp unified to 0.02-0.98 (drag/arrows were 0.02-0.98 but create/sanitize were 0.03-0.97, so edge holes shifted on reload); EXPORT_TRANSPARENT gained a UI checkbox (was reachable only by hand-editing settings JSON). v5: SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -19,107 +19,346 @@
   </script>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    html, body { height: 100%; margin: 0; background: #000; }
+    :root {
+      --bg: #000000;
+      --fg: #ffffff;
+      --muted: #a3a3a3;
+      --muted-2: #737373;
+      --border: #171717;
+      --panel-bg: rgba(0, 0, 0, 0.90);
+      --panel-header-bg: rgba(10, 10, 10, 0.50);
+      --panel-border: #262626;
+      --control-bg: #171717;
+      --control-bg-hover: #262626;
+      --overlay-bg: rgba(0, 0, 0, 0.72);
+      --shadow: 0 25px 50px -12px rgba(0,0,0,0.75);
+      --backdrop: blur(20px);
+      --accent: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+    }
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+    .app-header {
+      flex: 0 0 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: relative;
+      z-index: 30;
+      user-select: none;
+    }
+    .app-title {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      letter-spacing: 0.2em;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.78);
+      margin: 0;
+    }
+    .canvas-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .canvas-wrap canvas {
+      display: block;
+      touch-action: none;
+      outline: none;
+    }
+    .app-footer {
+      flex: 0 0 auto;
+      position: relative;
+      z-index: 30;
+      background: var(--bg);
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 24px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      overflow-x: auto;
+    }
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      align-items: center;
+    }
+    .toolbar-left { gap: 16px; }
+    .toolbar-right { gap: 8px; }
+    .toolbar-label-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1rem;
+      letter-spacing: 0.12em;
+      font-weight: 500;
+      color: var(--fg);
+      background: none;
+      border: 0;
+      padding: 6px 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s ease;
+      width: auto;
+      margin: 0;
+    }
+    .toolbar-label-btn:hover { opacity: 0.7; }
+    .toolbar-label-btn .icon { width: 20px; height: 20px; display: block; }
+    .tool-btn {
+      padding: 6px 8px;
+      font-size: 11px;
+      line-height: 0.875rem;
+      letter-spacing: 0.08em;
+      border: 0;
+      border-radius: 0;
+      color: var(--muted);
+      background: none;
+      cursor: pointer;
+      white-space: nowrap;
+      width: auto;
+      margin: 0;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+    .tool-btn:hover { color: var(--fg); background: none; }
+    .tool-btn:disabled { opacity: 0.4; cursor: default; }
+    .tool-btn:disabled:hover { color: var(--muted); }
+
+    #statusLine {
+      position: fixed;
+      left: 24px;
+      bottom: 76px;
+      z-index: 900;
+      max-width: min(480px, calc(100vw - 48px));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      background: var(--overlay-bg);
+      color: #ffd97a;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    #statusLine:empty { display: none; }
+
     #controls {
       position: fixed;
-      right: 10px;
-      top: 10px;
-      width: min(340px, calc(100vw - 20px));
-      max-height: calc(100vh - 20px);
-      overflow: auto;
-      background: rgba(10, 10, 10, 0.78);
-      color: #eee;
-      padding: 10px;
-      border-radius: 8px;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      right: 24px;
+      bottom: 76px;
       z-index: 1000;
-      backdrop-filter: blur(4px);
-      box-sizing: border-box;
-    }
-    #controls h3 { margin: 0 0 8px 0; font-size: 15px; }
-    #controls h4 { margin: 10px 0 8px 0; font-size: 13px; color: #fff; }
-    .row { margin-bottom: 8px; font-size: 13px; }
-    label { display: block; font-size: 12px; color: #ddd; margin-bottom: 4px; }
-    input[type="range"] { width: 100%; }
-    .val { float: right; font-weight: 600; color: #fff; }
-    button, select {
-      margin-top: 6px;
-      width: 100%;
-      padding: 6px;
-      border-radius: 4px;
+      width: 320px;
+      max-width: calc(100vw - 32px);
       border: 0;
-      background: #222;
-      color: #fff;
-      cursor: pointer;
-      box-sizing: border-box;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--panel-bg);
+      box-shadow: var(--shadow);
+      backdrop-filter: var(--backdrop);
+      -webkit-backdrop-filter: var(--backdrop);
+      animation: slideUpFade 0.2s ease-out forwards;
+      color: var(--fg);
     }
-    button:hover { background: #333; }
-    .small { width: 48%; display: inline-block; margin-right: 4%; }
-    .small:last-child { margin-right: 0; }
-    .muted { color: #9aa; font-size: 11px; line-height: 1.45; }
-    #holeInfo {
-      padding: 6px 8px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 6px;
+    @media (max-width: 767px) {
+      #controls { left: 16px; right: 16px; width: auto; }
+      #statusLine { left: 16px; bottom: 76px; }
+      .toolbar { padding: 12px 16px; }
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 0;
+      background: var(--panel-header-bg);
+    }
+    .panel-title {
+      margin: 0;
       font-size: 12px;
-      color: #eef;
+      line-height: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .panel-close {
+      width: auto;
+      margin: 0;
+      padding: 2px 6px;
+      background: none;
+      border: 0;
+      font-size: 16px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .panel-close:hover { color: var(--fg); background: none; }
+    .panel-body {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .group-title, #controls h4 {
+      margin: 18px 0 10px;
+      font-size: 10px;
+      line-height: 0.875rem;
+      letter-spacing: 0.16em;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .panel-body > .group-title:first-child, .panel-body > h4:first-child { margin-top: 0; }
+    .row { margin-bottom: 12px; font-size: 12px; }
+    .row:last-child { margin-bottom: 0; }
+    label {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .val {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--muted-2);
+      font-variant-numeric: tabular-nums;
+      float: none;
+      font-weight: 400;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      margin: 4px 0 2px;
+      appearance: none;
+      -webkit-appearance: none;
+      border-radius: 9999px;
+      background: var(--control-bg);
+      cursor: pointer;
+      outline: none;
+      accent-color: var(--accent);
+      transition: background-color 0.2s ease;
+      padding: 0;
+      border: 0;
+    }
+    input[type="range"]:hover { background: var(--control-bg-hover); }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 9999px;
+      background: var(--accent);
+      border: 0;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 9999px;
+      background: var(--accent);
+      border: 0;
     }
     .checkrow {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px 10px;
-      font-size: 12px;
-      padding: 6px 0 2px;
+      gap: 8px 10px;
+      padding: 2px 0;
     }
     .checkrow label {
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       gap: 6px;
       margin: 0;
       cursor: pointer;
-    }
-    .checkrow input[type="checkbox"] { margin: 0; }
-    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, canvas:focus-visible {
-      outline: 2px solid #7ab8ff;
-      outline-offset: 2px;
-    }
-    input[type="number"] {
-      width: 100%;
-      padding: 6px;
-      border-radius: 4px;
-      border: 0;
-      background: #222;
-      color: #fff;
-      box-sizing: border-box;
-    }
-    #statusLine {
-      min-height: 1.2em;
       font-size: 12px;
-      color: #ffd97a;
-      line-height: 1.45;
+      color: var(--muted);
     }
-    #statusLine:empty { min-height: 0; margin-bottom: 0; }
-    #panelToggle {
-      position: fixed;
-      left: 10px;
-      top: 10px;
+    .checkrow label:hover { color: var(--fg); }
+    .checkrow input[type="checkbox"] { margin: 0; accent-color: var(--accent); }
+    .small, .panel-btn {
+      flex: 1 1 40%;
+      padding: 6px 10px;
+      font-size: 11px;
+      line-height: 0.875rem;
+      letter-spacing: 0.08em;
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
       width: auto;
-      z-index: 1001;
-      padding: 8px 12px;
-      margin-top: 0;
+      margin: 0;
+      transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+    }
+    .small:hover, .panel-btn:hover { border-color: #525252; color: var(--fg); background: transparent; }
+    #holeInfo {
+      padding: 8px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 0;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #eef;
+    }
+    .muted {
+      color: var(--muted-2);
+      font-size: 10px;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+      margin-top: 14px;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--panel-border);
+      background: var(--control-bg);
+      color: var(--fg);
+      font-size: 12px;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, canvas:focus-visible {
+      outline: 2px solid #f5f5f5;
+      outline-offset: 2px;
     }
     #p5Error {
       position: fixed;
       left: 50%;
-      top: 12px;
+      top: 68px;
       transform: translateX(-50%);
       z-index: 3000;
       background: #7a1622;
       color: #fff;
       padding: 10px 14px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 13px;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
       max-width: calc(100vw - 40px);
     }
     #dialogOverlay {
@@ -136,41 +375,61 @@
       width: min(560px, calc(100vw - 32px));
       max-height: calc(100vh - 40px);
       overflow: auto;
-      background: #141414;
+      background: #0a0a0a;
       color: #eee;
-      border-radius: 8px;
-      padding: 14px;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 16px;
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
     }
-    #dialogBox h3 { margin: 0 0 8px 0; font-size: 15px; }
+    #dialogBox h3 { margin: 0 0 8px 0; font-size: 13px; letter-spacing: 0.08em; }
     #dialogMessage { font-size: 13px; line-height: 1.55; white-space: pre-wrap; margin: 0 0 8px 0; }
     #dialogText {
       width: 100%;
       box-sizing: border-box;
-      background: #0c0c0c;
+      background: #000;
       color: #eee;
       border: 1px solid #333;
-      border-radius: 4px;
-      padding: 6px;
+      border-radius: 8px;
+      padding: 8px;
       font-family: ui-monospace, Menlo, Consolas, monospace;
       font-size: 12px;
     }
     #dialogError { color: #ff8f9a; font-size: 12px; min-height: 1.2em; line-height: 1.45; }
     .dialog-buttons { display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px; }
-    .dialog-buttons button { width: auto; padding: 6px 12px; margin-top: 0; }
+    .dialog-buttons button {
+      width: auto;
+      padding: 6px 12px;
+      margin: 0;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+    .dialog-buttons button:hover { border-color: #525252; color: var(--fg); }
   </style>
 </head>
 <body>
-  <div id="controls" aria-hidden="false">
-    <h3>TOPO</h3>
+  <header class="app-header">
+    <h1 class="app-title">TOPO</h1>
+  </header>
 
-    <div class="row">
-      <button id="hidePanel" type="button">パネルを隠す (H)</button>
+  <main id="canvasWrap" class="canvas-wrap"></main>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <section id="controls" aria-hidden="true" style="display:none">
+    <div class="panel-header">
+      <h2 class="panel-title">設定</h2>
+      <button id="hidePanel" class="panel-close" type="button" aria-label="パネルを隠す (H)">&times;</button>
     </div>
+    <div class="panel-body">
 
-    <div id="statusLine" class="row" role="status" aria-live="polite"></div>
-
+    <h4 style="margin-top:0;">パラメータ</h4>
     <div class="row">
       <label for="r">輪の数 (NUM_RINGS) <span id="rVal" class="val"></span></label>
       <input id="r" type="range" min="8" max="220" step="1" value="70">
@@ -207,7 +466,7 @@
     </div>
 
     <div class="row">
-      <label for="w">白線太さ (WHITE_STROKE_WEIGHT) <span id="wVal" class="val"></span></label>
+      <label for="w">線の太さ (WHITE_STROKE_WEIGHT) <span id="wVal" class="val"></span></label>
       <input id="w" type="range" min="0.3" max="6" step="0.1" value="1.1">
     </div>
 
@@ -231,26 +490,18 @@
       <label><input id="enableInterference" type="checkbox" checked>干渉強化</label>
       <label><input id="enableCircularize" type="checkbox" checked>円形寄せ</label>
       <label><input id="showTexture" type="checkbox" checked>背景テクスチャ</label>
-      <label><input id="showRedShadow" type="checkbox" checked>赤影</label>
+      <label><input id="showRedShadow" type="checkbox">赤影</label>
       <label><input id="showHoleGuides" type="checkbox" checked>穴ガイド</label>
       <label><input id="exportTransparent" type="checkbox" checked>透過で書き出し</label>
     </div>
 
-    <div class="row" style="display:flex;gap:6px;">
-      <button id="regen">再生成 (R)</button>
-      <button id="export">PNG 保存 (S)</button>
-    </div>
-
-    <div class="row">
-      <button id="exportSvg">SVG 保存 (V)</button>
-    </div>
-
-    <div class="row" style="display:flex;gap:6px;">
+    <h4>プリセット</h4>
+    <div class="row" style="display:flex;gap:8px;">
       <button id="preset1" class="small">密な輪</button>
       <button id="preset2" class="small">粗い／渦</button>
     </div>
 
-    <div class="row" style="display:flex;gap:6px;">
+    <div class="row" style="display:flex;gap:8px;">
       <button id="preset3" class="small">波紋</button>
       <button id="preset4" class="small">静かな同心円</button>
     </div>
@@ -263,14 +514,8 @@
       <input id="seedInput" type="number" min="1" max="999999999" step="1" placeholder="例: 12345">
     </div>
 
-    <div class="row" style="display:flex;gap:6px;">
+    <div class="row" style="display:flex;gap:8px;">
       <button id="applySeed" class="small">シード適用</button>
-      <button id="undoBtn" class="small">元に戻す (Ctrl+Z)</button>
-    </div>
-
-    <div class="row" style="display:flex;gap:6px;">
-      <button id="settingsBtn" class="small">設定JSON</button>
-      <button id="resetBtn" class="small">初期化</button>
     </div>
 
     <div class="row">
@@ -286,7 +531,7 @@
     <h4>穴</h4>
     <div id="holeInfo" class="row">選択穴: - / 総数: 0</div>
 
-    <div class="row" style="display:flex;gap:6px;">
+    <div class="row" style="display:flex;gap:8px;">
       <button id="addHole" class="small">穴を中央追加</button>
       <button id="deleteHole" class="small">選択穴を削除</button>
     </div>
@@ -311,9 +556,29 @@
       キーボード: キャンバスをクリックしてフォーカスし、[ / ] で穴を選択、矢印キーで選択穴を移動（Shift同時押しで大きく移動）。<br>
       R=再生成, S=PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数穴と干渉を同条件で再計算します。
     </div>
-  </div>
+    </div>
+  </section>
 
-  <button id="panelToggle" type="button" style="display:none;">TOPO設定を表示 (H)</button>
+  <footer class="app-footer">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button id="panelToggle" class="toolbar-label-btn" type="button" aria-expanded="false">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+          </svg>
+          <span>設定</span>
+        </button>
+      </div>
+      <div class="toolbar-right">
+        <button id="undoBtn" class="tool-btn" type="button">元に戻す</button>
+        <button id="regen" class="tool-btn" type="button">再生成 (R)</button>
+        <button id="settingsBtn" class="tool-btn" type="button">設定JSON</button>
+        <button id="resetBtn" class="tool-btn" type="button">初期化</button>
+        <button id="export" class="tool-btn" type="button">PNG 保存 (S)</button>
+        <button id="exportSvg" class="tool-btn" type="button">SVG 保存 (V)</button>
+      </div>
+    </div>
+  </footer>
 
   <div id="p5Error" hidden role="alert">p5.js の読み込みに失敗しました。通信環境を確認して、ページを再読み込みしてください。</div>
 
@@ -355,7 +620,7 @@ let params = {
   ENABLE_INTERFERENCE: true,
   ENABLE_CIRCULARIZE: true,
   SHOW_TEXTURE: true,
-  SHOW_RED_SHADOW: true,
+  SHOW_RED_SHADOW: false,
   SHOW_HOLE_GUIDES: true
 };
 
@@ -416,15 +681,29 @@ let selectedHoleIndex = -1;
 let dragHoleIndex = -1;
 let undoStack = [];
 let saveSettingsTimer = null;
-let panelVisible = true;
+let panelVisible = false;
 let preChangeSnapshot = null;
 let preChangeCommitted = false;
 let preDragSnapshot = null;
 let arrowUndoSnapshot = null;
 let dialogState = { onOk: null, onDownload: null };
 
+function canvasWrapSize() {
+  const wrap = document.getElementById('canvasWrap');
+  if (wrap && wrap.clientWidth > 0 && wrap.clientHeight > 0) {
+    return { w: wrap.clientWidth, h: wrap.clientHeight };
+  }
+  return { w: window.innerWidth, h: window.innerHeight };
+}
+
 function setup() {
+  const wrapSize = canvasWrapSize();
+  params.CANVAS_W = wrapSize.w;
+  params.CANVAS_H = wrapSize.h;
   const cnv = createCanvas(params.CANVAS_W, params.CANVAS_H);
+  if (cnv && typeof cnv.parent === 'function') {
+    try { cnv.parent('canvasWrap'); } catch (err) { /* keep default parent */ }
+  }
   pixelDensity(1);
   noLoop();
 
@@ -446,8 +725,9 @@ function setup() {
   redraw();
 
   window.addEventListener('resize', () => {
-    params.CANVAS_W = window.innerWidth;
-    params.CANVAS_H = window.innerHeight;
+    const sz = canvasWrapSize();
+    params.CANVAS_W = sz.w;
+    params.CANVAS_H = sz.h;
     resizeCanvas(params.CANVAS_W, params.CANVAS_H);
     invalidateArtworkCache();
     debouncedRegenerate(false);
@@ -533,7 +813,7 @@ function initControls() {
   });
 
   document.getElementById('panelToggle').addEventListener('click', () => {
-    setPanelVisible(true);
+    setPanelVisible(!panelVisible);
   });
 
   document.getElementById('applySeed').addEventListener('click', () => {
@@ -3200,7 +3480,11 @@ function triggerDownload(url, filename, revokeObjectURL) {
 function mousePressed(event) {
   if (mouseButton !== LEFT) return true;
   if (event && event.target && event.target.tagName && event.target.tagName !== 'CANVAS') return true;
-  if (isPointerInsideControls(mouseX, mouseY)) return true;
+  const canvasRect = (event && event.target && typeof event.target.getBoundingClientRect === 'function')
+    ? event.target.getBoundingClientRect() : null;
+  const viewX = mouseX + (canvasRect ? canvasRect.left : 0);
+  const viewY = mouseY + (canvasRect ? canvasRect.top : 0);
+  if (isPointerInsideControls(viewX, viewY)) return true;
 
   const hitIndex = hitTestHole(mouseX, mouseY);
   if (hitIndex >= 0) {
@@ -3306,7 +3590,7 @@ function setPanelVisible(visible) {
     panel.style.display = panelVisible ? '' : 'none';
     panel.setAttribute('aria-hidden', String(!panelVisible));
   }
-  if (toggle) toggle.style.display = panelVisible ? 'none' : '';
+  if (toggle) toggle.setAttribute('aria-expanded', String(panelVisible));
 }
 
 function cycleHoleSelection(dir) {
@@ -3528,8 +3812,9 @@ function resetSettings() {
     // 削除に失敗しても初期化は続行する
   }
   Object.assign(params, JSON.parse(JSON.stringify(DEFAULT_PARAMS)));
-  params.CANVAS_W = window.innerWidth;
-  params.CANVAS_H = window.innerHeight;
+  const sz = canvasWrapSize();
+  params.CANVAS_W = sz.w;
+  params.CANVAS_H = sz.h;
   seedVal = 0;
   holes = [createHole(0.5, 0.5, { radius: 1.0, strength: 1.0, waveAmp: 1.0 })];
   selectedHoleIndex = 0;

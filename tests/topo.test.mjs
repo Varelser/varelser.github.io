@@ -297,6 +297,10 @@ async function main() {
   check('grid resolution label renamed', html.includes('グリッド解像度 (ANGLE_STEPS)') && !html.includes('角度分割相当'));
   check('v6: ANGLE_STEPS slider step is 1 (default 900 on-step)', /id="a" type="range" min="128" max="2000" step="1" value="900"/.test(html));
   check('v6: EXPORT_TRANSPARENT has a UI checkbox', html.includes('id="exportTransparent"'));
+  check('v7: Lien-style chrome (header / canvasWrap / footer toolbar)', html.includes('class="app-header"') && html.includes('id="canvasWrap"') && html.includes('class="toolbar"'));
+  check('v7: settings panel starts hidden like Lien', /id="controls" aria-hidden="true" style="display:none"/.test(html));
+  check('v7: panelToggle toggles and mirrors aria-expanded', mainScript.includes("setPanelVisible(!panelVisible)") && mainScript.includes("setAttribute('aria-expanded'"));
+  check('v7: red shadow off by default so the artwork reads pure white', /SHOW_RED_SHADOW: false/.test(mainScript) && !/id="showRedShadow" type="checkbox" checked/.test(html));
   check('canvas press guard ignores clicks on UI elements (panel toggle)', /event\.target\.tagName !== 'CANVAS'/.test(mainScript) && mainScript.includes("getElementById('panelToggle')"));
 
   const rangeIds = [...html.matchAll(/<input[^>]*type="range"[^>]*>/g)].map((m) => {
