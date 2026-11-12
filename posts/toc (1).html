@@ -65,6 +65,7 @@
       border-bottom: 1px solid var(--border);
       padding-bottom: 48px;
       margin-bottom: 64px;
+      text-align: center;
     }
 
     .intro-label {
@@ -97,8 +98,10 @@
       border-top: 1px solid var(--faint);
       padding: 28px 0;
       display: grid;
-      grid-template-columns: 60px 1fr;
-      gap: 0 24px;
+      grid-template-columns: 1fr;
+      gap: 6px 0;
+      justify-items: center;
+      text-align: center;
       cursor: pointer;
     }
 
@@ -112,7 +115,7 @@
       letter-spacing: .15em;
       color: var(--faint-text);
       padding-top: 4px;
-      text-align: right;
+      text-align: center;
     }
 
     .chapter-title {
@@ -125,7 +128,7 @@
     }
 
     .toggle {
-      float: right;
+      float: none;
       font-size: 10px;
       color: var(--faint-text);
       font-family: 'Unbounded', sans-serif;
@@ -155,14 +158,13 @@
       color: var(--mid);
       letter-spacing: .04em;
       line-height: 1.7;
-      padding-left: 16px;
+      padding-left: 0;
       position: relative;
     }
 
     .sub-list li::before {
-      content: '—';
-      position: absolute;
-      left: 0;
+      content: '— ';
+      position: static;
       color: var(--faint-text);
     }
 
@@ -186,7 +188,9 @@
       border-top: 1px solid var(--border);
       padding: 20px 48px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
       align-items: center;
       font-size: 11px;
       letter-spacing: .15em;
