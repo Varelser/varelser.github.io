@@ -43,6 +43,10 @@
     .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
     .source-box a{color:var(--accent);word-break:break-all;}
     .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
     .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
     .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
     .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
@@ -3456,6 +3460,12 @@
   </div>
 </article>
     </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
     <!-- NURSE_ARCHIVE_LINKS_START -->
     <section class="archive-links">
       <h2>過去のアーカイブ（月別）</h2>
@@ -3475,42 +3485,56 @@
         impact: document.getElementById("impactFilter"),
         reset: document.getElementById("resetFilters"),
         count: document.getElementById("visibleCount"),
-        empty: document.getElementById("emptyState")
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
       };
       const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
       function hasToken(csv, value){
         if(!value) return true;
         const arr = String(csv || "").split("||").filter(Boolean);
         return arr.indexOf(value) !== -1;
       }
-      function apply(){
+      function matches(article){
         const q = String(els.search.value || "").trim().toLowerCase();
-        const month = els.month.value;
-        const topic = els.topic.value;
-        const clinical = els.clinical.value;
-        const audience = els.audience.value;
-        const evidence = els.evidence.value;
-        const impact = els.impact.value;
-        let visible = 0;
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
         articles.forEach(function(article){
-          const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
-          const ok = (!q || haystack.indexOf(q) !== -1)
-            && (!month || article.getAttribute("data-month") === month)
-            && hasToken(article.getAttribute("data-topics"), topic)
-            && hasToken(article.getAttribute("data-clinical-areas"), clinical)
-            && hasToken(article.getAttribute("data-audiences"), audience)
-            && (!evidence || article.getAttribute("data-evidence-type") === evidence)
-            && (!impact || article.getAttribute("data-practice-impact") === impact);
-          article.style.display = ok ? "block" : "none";
-          if (ok) visible += 1;
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
         });
-        els.count.textContent = String(visible);
-        els.empty.style.display = visible ? "none" : "block";
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
       }
       [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
-        el.addEventListener("input", apply);
-        el.addEventListener("change", apply);
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
       });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
       els.reset.addEventListener("click", function(){
         els.search.value = "";
         els.month.value = "";
@@ -3519,9 +3543,9 @@
         els.audience.value = "";
         els.evidence.value = "";
         els.impact.value = "";
-        apply();
+        apply(true);
       });
-      apply();
+      apply(true);
     })();
   </script>
 </body>
