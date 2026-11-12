@@ -3217,13 +3217,21 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
           // 2Dは静的レイアウトのため、物理の再加熱では動きがほぼ見えない。
           // 再生＝配置アニメーションの再生：全ノードを中心へ畳んでから
           // マインドマップ配置へトゥイーンで展開し直す（到達配置は不変）。
-          if (G.mode === 'local') {
-            const c = G.nodes[G.center];
-            if (c) for (const n of G.visibleNodes) { n.x = c.x; n.y = c.y; }
-            tweenToLocalMindmap();
-          } else {
-            for (const n of G.nodes) { n.x = 0; n.y = 0; }
-            tweenToAllMindmap();
+          // 既定のトゥイーンは600msで目視しにくいため、再生時のみ
+          // 速度倍率を一時的に下げて約1.5秒に伸ばす（スライダー値は不変）。
+          const prevSpeed = G.force.speed;
+          G.force.speed = 0.4;
+          try {
+            if (G.mode === 'local') {
+              const c = G.nodes[G.center];
+              if (c) for (const n of G.visibleNodes) { n.x = c.x; n.y = c.y; }
+              tweenToLocalMindmap();
+            } else {
+              for (const n of G.nodes) { n.x = 0; n.y = 0; }
+              tweenToAllMindmap();
+            }
+          } finally {
+            G.force.speed = prevSpeed;
           }
         } else {
           // 3Dは物理シミュレーションが本体なので再加熱で動く
