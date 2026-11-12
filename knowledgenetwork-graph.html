@@ -3212,9 +3212,23 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       document.getElementById('graph-view-radial').addEventListener('click', () => setTreeMode('radial'));
       document.getElementById('graph-view-tree').addEventListener('click', () => setTreeMode('tree'));
       document.getElementById('graph-play').addEventListener('click', () => {
-        // 停止中の再生は reheat でエネルギーを入れ直す（runSim のみでは
-        // 静定済みの配置が即座に再停止し、ラベルも再生へ戻ってしまうため）
-        if (G.running) stopSim(); else reheat();
+        if (G.running) { stopSim(); return; }
+        if (G.dim === '2d') {
+          // 2Dは静的レイアウトのため、物理の再加熱では動きがほぼ見えない。
+          // 再生＝配置アニメーションの再生：全ノードを中心へ畳んでから
+          // マインドマップ配置へトゥイーンで展開し直す（到達配置は不変）。
+          if (G.mode === 'local') {
+            const c = G.nodes[G.center];
+            if (c) for (const n of G.visibleNodes) { n.x = c.x; n.y = c.y; }
+            tweenToLocalMindmap();
+          } else {
+            for (const n of G.nodes) { n.x = 0; n.y = 0; }
+            tweenToAllMindmap();
+          }
+        } else {
+          // 3Dは物理シミュレーションが本体なので再加熱で動く
+          reheat();
+        }
       });
       document.getElementById('graph-reset').addEventListener('click', () => {
         // リセット：中心・選択・詳細を解除し、全体図の初期状態に戻す
