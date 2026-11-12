@@ -418,6 +418,29 @@
   },
   {
     "authors": [
+      "Audrey Huang",
+      "Nan Jiang",
+      "Sham M. Kakade",
+      "Sadhika Malladi",
+      "Akshay Krishnamurthy",
+      "Dylan J. Foster"
+    ],
+    "categories": [
+      "cs.LG"
+    ],
+    "field": "cs.LG",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-10T18:31:36Z",
+    "source": "arXiv cs.LG",
+    "summaryHtml": "言語モデルのポストトレーニングで中心となる方策最適化は、理論的な指針が乏しいまま使われてきた。本研究は、ベースモデルが最適な応答を生成しやすい度合いを示す「応答カバレッジ」で決まるサンプル数と勾配ステップ数で、ほぼ最適な方策を学習できるアルゴリズム――カバレッジ保存的なアルゴリズム――を特定するため、その理論的基盤を再検討した。<br><br>第一の発見は「カバレッジ崩壊」である。PPOやGRPOの基盤であるREINFORCEは、報酬が改善しても最適な応答の確率をほぼゼロまで押し下げ、最適化を停滞させる。収束には指数関数的に多くのステップを要しうる。この失敗は正確な勾配を用いても、ベースモデルへのKL正則化の下でも生じる。第二に、KL参照を最新の方策へ繰り返しリセットすることで崩壊を緩和できる。著者らはこれを近似方策ミラー降下法（APMD）として定式化し、KL正則化された強化学習の部分問題の列を解くことで大域的最適性への収束を示した。<br><br>さらに、事前学習済み特徴量上のソフトマックス線形方策に対し、APMDを用いて、広く使われるポストトレーニング手法の族がカバレッジ保存的である初の大域収束保証を与えた。明示的なKL正則化と参照リセットを備えたPPO・GRPOの様式化版や、それを暗黙に実装する二乗損失アルゴリズム（Kimiモデルの学習に使われたものを含む）が対象である。正則化、クリッピング、目的関数の選択が、ポストトレーニングのサンプリングコストと最適化コストにどう影響するかを明らかにしている。",
+    "timestamp": 1794335496000,
+    "title": "A Theory of Policy Optimization in Post-Training: Coverage Collapse and Reference Resets",
+    "titleJa": "ポストトレーニングにおける方策最適化の理論――カバレッジ崩壊と参照リセット",
+    "url": "https://arxiv.org/abs/2611.14467"
+  },
+  {
+    "authors": [
       "Eugene Jang",
       "Catherine Arnett",
       "Terra Blevins"
@@ -481,6 +504,26 @@
     "title": "Evaluating LLM-Generated World Models for Neuro-Symbolic Reasoning",
     "titleJa": "LLMが生成する世界モデルを評価する――神経記号推論のための形式的モデルはどこまで正しいか",
     "url": "https://arxiv.org/abs/2611.14419"
+  },
+  {
+    "authors": [
+      "Patricio M. Vera"
+    ],
+    "categories": [
+      "cs.CL",
+      "cs.AI",
+      "cs.CV"
+    ],
+    "field": "cs.CL",
+    "genre": "Consciousness / Philosophy",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-10T14:07:17Z",
+    "source": "Hugging Face Papers",
+    "summaryHtml": "二つの物が同じ名前で呼ばれるとき、視覚的な類似性がどれほど説明し、教示例が何を付け加えるのか。本研究は、大規模な成人単語拡張実験（Lewis & Frank, 2018）の試行レベルデータを再分析し、自己教師あり視覚エンコーダ（DINOv2）の空間で各テスト画像と教示例との距離を計算した。距離が大きいほど単語は拡張されにくく（520人、標準偏差あたり対数オッズ -3.23）、この関連は教示された領域内でも、分類レベルや教示条件を統制した探索的分析で残った。例の構成も重要で、例を3つ提示した後、下位範疇の例では上位範疇の項目への拡張は1.1%だったのに対し、上位範疇の例では77.5%に達した。<br><br>同じエンコーダを用いた人工学習者でも、二つの範疇を結ぶ単語は範疇間の距離が遠いほど学習が難しく、近い・中程度・遠いペアで命名精度は84.7%、65.4%、53.0%だった。エンコーダの距離は3つのデータセットにおける人間の類似性・混同しやすさの指標と相関した（ρ=.501–.795）が、人間由来の距離が学習者の困難さを予測するという結論的な証拠にはならず、一人の子どもの経験で学習した第二のエンコーダは順序は再現したがペアレベルの効果は再現しなかった。<br><br>二次的な人間データは、確証的分析の前に内部で固定した計画の下で分析された（外部への事前登録ではない）。視覚的類似性は人間と人工の両システムで般化の組織化の一部を説明する一方、例の構成が、距離では捉えきれない部分を担っている。類似性だけでは般化を説明しきれないことを示す研究である。",
+    "timestamp": 1794319637000,
+    "title": "Visual Similarity in Adult Word Extension and Artificial Word Learning",
+    "titleJa": "視覚的類似性と単語の拡張――成人の単語学習と人工学習者の比較",
+    "url": "https://arxiv.org/abs/2611.14116"
   },
   {
     "authors": [
@@ -1624,53 +1667,5 @@
     "title": "How We Pay Matters: The Ethics of Payment Mechanisms for Research Participants",
     "titleJa": "支払い方が問う倫理――研究参加者への報酬支払いの仕組み",
     "url": "https://doi.org/10.1002/eahr.70026"
-  },
-  {
-    "authors": [
-      "Valeria L. Maucaylli-Campos",
-      "Claudia A. Maucaylli-Campos",
-      "E. Yahir Tongombol-Cholán",
-      "José S. Herrada-Torres",
-      "Jazmín A. León-Huamán"
-    ],
-    "categories": [
-      "clinical ethics",
-      "Latin America",
-      "scoping review"
-    ],
-    "field": "Medicine, Health Care and Philosophy",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-07T02:40:11Z",
-    "source": "Crossref",
-    "summaryHtml": "ラテンアメリカの病院では、臨床倫理支援が委員会やコンサルテーション、統合サービスなど多様な形で提供されているが、その組織実態を示す証拠は各地に散らばっていた。本研究は、そうしたサービスがどのように構成され、どのように利用・提供されているか、また患者固有の倫理的ジレンマにどう貢献しているかを地図化するスコーピングレビューである。JBIの指針とPRISMA-ScRに従い、BVS/VHL、Scopus、PubMed/MEDLINE、Web of Science、SciELOを検索し、引用の前後追跡やグレー文献も補った。<br><br>収集された119件の報告のうち実証研究が50件、制度・記述的なものが27件、概念・理論的なものが42件だった。実際に稼働中のサービスを記述した67件からは重複を除いた47の分析単位が抽出され、委員会中心が41、統合サービスが3、ハイブリッド型・チームコンサルテーション・個人コンサルテーションが各1だった。繰り返し現れたテーマは、終末期の意思決定、治療の比例性、自律性、臨床と家族の意見の対立である。<br><br>一方で、アクセス方法や対応時間、患者・家族の参加、評価されたアウトカムに関するデータは報告がまちまちだった。地域の証拠は臨床倫理支援の多様な組織モデルとその貢献を示す一方で、患者レベルのアウトカムや臨床的有効性についての証拠は限られていると、レビューは結論づけている。",
-    "timestamp": 1794019211000,
-    "title": "Hospital-based clinical ethics support in Latin America: a scoping review of committee, consultation, and hybrid models",
-    "titleJa": "ラテンアメリカにおける病院の臨床倫理支援――委員会・コンサルテーション・ハイブリッド型のスコーピングレビュー",
-    "url": "https://doi.org/10.1007/s11019-026-10420-9"
-  },
-  {
-    "authors": [
-      "Ariana Teodora Minea",
-      "Angeliki Kerasidou",
-      "Charalampia Kerasidou",
-      "Mehrunisha Suleman"
-    ],
-    "categories": [
-      "medical ethics education",
-      "virtual reality",
-      "extended reality",
-      "scoping review"
-    ],
-    "field": "BMC Medical Education",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-07T00:00:00Z",
-    "source": "Crossref",
-    "summaryHtml": "仮想現実（VR）や拡張現実（XR）は医学教育の道具として広がりつつあるが、医学倫理の教育への応用はまだ十分に探られていない。英国の医学倫理教育は今も事例検討やセミナー形式が中心で、倫理的熟慮を実際に練習する機会は限られている。卒業したばかりの医師の多くが、倫理的な意思決定に自信がなく、十分に支えられていないと感じている。安全で没入感のある対話的な体験を提供するXRの教材は、こうした不足を補う可能性を秘めている。<br><br>本論文は、医学倫理の指導にXRを用いた効果を測った文献を調べるスコーピングレビューである。対象となった研究はまだ少なく、その多くはサンプル数の小さいパイロット研究で、統計的な検出力にも限りがあった。得られた限られた証拠からは、XRが学習者の知識や自信の自己評価を高める可能性が示唆される一方で、測定された知識の向上については証拠が一致していない。<br><br>対象研究の数が少なく、内容もばらつきがあり、探索的なものが中心だったため、教育効果についての結論は暫定的なものにとどまる。XRが医学倫理教育にどこまで寄与できるかは、今後の検証にかかっている。",
-    "timestamp": 1794009600000,
-    "title": "The use of Virtual Reality (VR) and Extended Reality (XR) in medical ethics education",
-    "titleJa": "VR・XRを用いた医学倫理教育――没入型ツールは倫理的熟慮を育めるか",
-    "url": "https://doi.org/10.1186/s12909-026-10723-8"
   }
 ]
