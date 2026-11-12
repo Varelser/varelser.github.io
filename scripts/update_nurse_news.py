@@ -1,4 +1,11 @@
 from __future__ import annotations
+# [DEPRECATED 2026-11-12] このスクリプトは旧 Gemini 時代の更新経路。現行の更新は
+# Muse の cron `nurse-news-update` が担っている。誤実行すると現行データを旧形式で
+# 上書きするため、デフォルトでは即時終了する。実行する場合のみ NURSE_ALLOW_LEGACY=1 を付ける。
+import os as _os, sys as _sys
+if _os.getenv("NURSE_ALLOW_LEGACY") != "1":
+    _sys.exit("Deprecated: nurse updates are handled by the nurse-news-update cron. Set NURSE_ALLOW_LEGACY=1 to run anyway.")
+
 
 import hashlib
 import html

@@ -53,7 +53,17 @@
     .link img.raster{filter: grayscale(1) brightness(0); opacity:.92;}
 
     .foot{margin-top:auto; padding:18px 0 24px; color:var(--muted); font-size:12px;}
-  </style>
+  
+    .nurse-latest{width:min(860px, calc(100% - 40px)); margin:8px auto 24px; text-align:left;}
+    .nurse-latest-title{font-size:16px; margin:0 0 10px;}
+    .nurse-latest-title a{color:inherit;}
+    .nurse-latest-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; font-size:14px;}
+    .nurse-latest-list a{color:var(--fg); text-decoration:none;}
+    .nurse-latest-list a:hover{text-decoration:underline;}
+    .nurse-latest-meta{color:var(--muted); font-size:12px; margin-right:8px;}
+    .nurse-latest-more{font-size:13px; margin:12px 0 0;}
+    .nurse-latest-more a{color:var(--fg);}
+</style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798"
      crossorigin="anonymous"></script>
 </head>
@@ -155,11 +165,39 @@
       </nav>
     </header>
 
+
+    <section class="nurse-latest" aria-label="Nurse News 最新記事">
+      <h2 class="nurse-latest-title"><a href="nurse-news.html">Nurse News</a> 最新記事</h2>
+      <ul class="nurse-latest-list" id="nurseLatestList">
+        <li><a href="nurse-news.html">最新の看護ニュースを読む</a></li>
+      </ul>
+      <p class="nurse-latest-more"><a href="nurse-news.html">Nurse News をすべて見る →</a></p>
+    </section>
+
     <footer class="foot">
       <small>© <span id="y"></span> VARELSER</small>
     </footer>
   </main>
 
+  <script>
+    fetch("nurse-news-data.json").then(function(r){ return r.json(); }).then(function(data){
+      var list = document.getElementById("nurseLatestList");
+      var items = (data.articles || []).slice(0, 5);
+      if (!items.length || !list) return;
+      list.textContent = "";
+      items.forEach(function(a){
+        var li = document.createElement("li");
+        var meta = document.createElement("span");
+        meta.className = "nurse-latest-meta";
+        meta.textContent = (a.publishedDateKey || "") + " " + (a.sourceName || "");
+        var link = document.createElement("a");
+        link.href = "nurse-news.html";
+        link.textContent = a.titleJa || "";
+        li.appendChild(meta); li.appendChild(link);
+        list.appendChild(li);
+      });
+    }).catch(function(){});
+  </script>
   <script>document.getElementById("y").textContent = String(new Date().getFullYear());</script>
 </body>
 </html>

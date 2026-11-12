@@ -43,6 +43,10 @@
     .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
     .source-box a{color:var(--accent);word-break:break-all;}
     .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+        .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#111;font-size:13px;}
     .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
     .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
     .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
@@ -68,7 +72,7 @@
         <div class="filter-item"><label for="impactFilter">実務影響度</label><select id="impactFilter"><option value="">すべて</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
       </div>
       <div class="toolbar">
-        <div class="count"><span id="visibleCount">0</span>件表示 / 全86件</div>
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全85件</div>
         <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
       </div>
     </section>
@@ -1020,27 +1024,6 @@
   </div>
 </article>
 <article
-  data-id="7e3d68acfd17d46ad725049fad4daa2e"
-  data-date="2026-07-20"
-  data-month="2026-07"
-  data-topics="公衆衛生||感染症"
-  data-clinical-areas="感染対策||予防"
-  data-audiences="地域住民||医療従事者"
-  data-evidence-type="政策・声明"
-  data-practice-impact="medium"
-  data-search="FIFAワールドカップ2026におけるCDCの公衆衛生対応 2026年FIFAワールドカップは、48チームと数百万人のファンを北米16都市に集めました。  この大規模イベントにおいて、米国疾病予防管理センター（CDC）は、ファン、旅行者、そして開催都市の公衆衛生を守るための継続的な取り組みを実施しました。  この取り組みは長年にわたる準備と、全米50州に及ぶパートナーシップに基づいていました。  看護実務への示唆：大規模イベント開催時には、公衆衛生当局との連携を強化し、感染症やその他の健康リスクに対する監視体制を維持することが重要です。 CDC (Centers for Disease Control and Prevention) 公衆衛生 感染症 感染対策 予防 地域住民 医療従事者 政策・声明 大規模イベント開催時には、公衆衛生当局との連携を強化し、感染症やその他の健康リスクに対する監視体制を維持することが重要です。">
-  <p class="meta">CDC (Centers for Disease Control and Prevention)　2026-07-20 07:30</p>
-  <h2 class="article-title">FIFAワールドカップ2026におけるCDCの公衆衛生対応</h2>
-  <div class="taxonomy"><span class="chip">トピック: 公衆衛生</span><span class="chip">トピック: 感染症</span><span class="chip">領域: 感染対策</span><span class="chip">領域: 予防</span><span class="chip">対象: 地域住民</span><span class="chip">対象: 医療従事者</span><span class="chip">エビデンス: 政策・声明</span><span class="chip">実務影響度: 中</span></div>
-  <div class="summary">2026年FIFAワールドカップは、48チームと数百万人のファンを北米16都市に集めました。<br><br>この大規模イベントにおいて、米国疾病予防管理センター（CDC）は、ファン、旅行者、そして開催都市の公衆衛生を守るための継続的な取り組みを実施しました。<br><br>この取り組みは長年にわたる準備と、全米50州に及ぶパートナーシップに基づいていました。<br><br>看護実務への示唆：大規模イベント開催時には、公衆衛生当局との連携を強化し、感染症やその他の健康リスクに対する監視体制を維持することが重要です。</div>
-  <div class="action-box"><strong>看護アクション</strong>大規模イベント開催時には、公衆衛生当局との連携を強化し、感染症やその他の健康リスクに対する監視体制を維持することが重要です。</div>
-  <div class="source-box">
-    <strong>ソース・引用元</strong>
-    配信元：CDC (Centers for Disease Control and Prevention)<br>
-    原文URL：<a href="https://tools.cdc.gov/api/embed/downloader/download.asp?m=132608&amp;c=766045" target="_blank" rel="noopener">https://tools.cdc.gov/api/embed/downloader/download.asp?m=132608&amp;c=766045</a>
-  </div>
-</article>
-<article
   data-id="b1321a7a5f91c046259580363aafdadd"
   data-date="2026-07-19"
   data-month="2026-07"
@@ -1881,6 +1864,12 @@
   </div>
 </article>
     </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
     <!-- NURSE_ARCHIVE_LINKS_START -->
     <section class="archive-links">
       <h2>過去のアーカイブ（月別）</h2>
@@ -1900,42 +1889,56 @@
         impact: document.getElementById("impactFilter"),
         reset: document.getElementById("resetFilters"),
         count: document.getElementById("visibleCount"),
-        empty: document.getElementById("emptyState")
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
       };
       const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
       function hasToken(csv, value){
         if(!value) return true;
         const arr = String(csv || "").split("||").filter(Boolean);
         return arr.indexOf(value) !== -1;
       }
-      function apply(){
+      function matches(article){
         const q = String(els.search.value || "").trim().toLowerCase();
-        const month = els.month.value;
-        const topic = els.topic.value;
-        const clinical = els.clinical.value;
-        const audience = els.audience.value;
-        const evidence = els.evidence.value;
-        const impact = els.impact.value;
-        let visible = 0;
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-topics"), els.topic.value)
+          && hasToken(article.getAttribute("data-clinical-areas"), els.clinical.value)
+          && hasToken(article.getAttribute("data-audiences"), els.audience.value)
+          && (!els.evidence.value || article.getAttribute("data-evidence-type") === els.evidence.value)
+          && (!els.impact.value || article.getAttribute("data-practice-impact") === els.impact.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
         articles.forEach(function(article){
-          const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
-          const ok = (!q || haystack.indexOf(q) !== -1)
-            && (!month || article.getAttribute("data-month") === month)
-            && hasToken(article.getAttribute("data-topics"), topic)
-            && hasToken(article.getAttribute("data-clinical-areas"), clinical)
-            && hasToken(article.getAttribute("data-audiences"), audience)
-            && (!evidence || article.getAttribute("data-evidence-type") === evidence)
-            && (!impact || article.getAttribute("data-practice-impact") === impact);
-          article.style.display = ok ? "block" : "none";
-          if (ok) visible += 1;
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
         });
-        els.count.textContent = String(visible);
-        els.empty.style.display = visible ? "none" : "block";
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
       }
       [els.search, els.month, els.topic, els.clinical, els.audience, els.evidence, els.impact].forEach(function(el){
-        el.addEventListener("input", apply);
-        el.addEventListener("change", apply);
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
       });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
       els.reset.addEventListener("click", function(){
         els.search.value = "";
         els.month.value = "";
@@ -1944,9 +1947,9 @@
         els.audience.value = "";
         els.evidence.value = "";
         els.impact.value = "";
-        apply();
+        apply(true);
       });
-      apply();
+      apply(true);
     })();
   </script>
 </body>
