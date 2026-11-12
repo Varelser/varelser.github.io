@@ -276,11 +276,21 @@
     }
     #masterFields .field,#layerAFields .field,#layerBFields .field,#layerCFields .field{margin-bottom:0}
   }
-  /* Wide desktop: 4 columns, Master spans 2. Row order stays as written
-     (preset, session, master / A, B, C, sleep / ai, midi, notes). */
-  @media (min-width:1500px){
-    #panel{grid-template-columns:repeat(4,minmax(0,1fr))}
+  /* Desktop: preset becomes a fixed left sidebar (sticky, its own scroll),
+     the rest of the sections fill a grid to its right.
+     1200-1499px: sidebar 300px + 2 content columns; master spans both.
+     1500px+: sidebar 320px + 3 content columns; master spans 2 of 3.
+     Row order on the right stays as written
+     (session, master / A, B, C / sleep, ai, midi / notes). */
+  @media (min-width:1200px){
+    #panel{grid-template-columns:300px repeat(2,minmax(0,1fr))}
+    #sec-preset{grid-column:1;grid-row:2/span 6;position:sticky;top:16px;align-self:start;max-height:calc(100dvh - 32px);display:flex;flex-direction:column}
+    #sec-preset>.body{overflow-y:auto;min-height:0;flex:1 1 auto}
     #sec-master{grid-column:span 2}
+  }
+  @media (min-width:1500px){
+    #panel{grid-template-columns:320px repeat(3,minmax(0,1fr))}
+    #sec-preset{grid-row:2/span 4}
     /* Master is ~40 fields: 3 columns here (~300px each at 1919px wide),
        which cuts its height by another third. Layers stay 2-column. */
     #masterFields{grid-template-columns:repeat(3,1fr)}
