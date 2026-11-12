@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="https://noise-assets.pages.dev/apple-touch-icon.png">
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <title>Noise</title>
-<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。50種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。52種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="Noise — Noise Generator">
-<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。50種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。52種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://varelser.github.io/noise.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -654,7 +654,7 @@
       <div class="body">
         <div class="help">
           色付きノイズの一部（Grey / Green / Black など）は用途により定義が揺れるため、本作では実用向けの近似実装です。<br>
-          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を50種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
+          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を52種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
         </div>
       </div>
     </div>
@@ -785,6 +785,8 @@
     ['digital', 'Digital / Bitcrush'],
     ['glitch', 'Glitch Burst'],
     ['harsh', 'Harsh Noise'],
+    ['hnw', 'HNW (Harsh Noise Wall)'],
+    ['feedback', 'Feedback'],
     ['sand', 'Resonant Sand'],
     ['fan', 'Fan'],
     ['airplane', 'Airplane Cabin'],
@@ -838,6 +840,8 @@
     digital: 'ビットクラッシュした粗い電子ノイズ。量子化の段差が聞こえます。',
     glitch: '短いバーストと途切れを繰り返す、故障したデジタルの質感。',
     harsh: '歪んだノイズの壁。広帯域の轟音に、引き裂くような破裂音が重なります。Densityで壁の密度、Motionでうねりと不安定さ、Grainで歪みの粗さが変わります。音量に注意。',
+    hnw: 'ほとんど動かない、単体のノイズの壁（ハーシュノイズウォール）。低域の塊を強く歪ませ、表面に亀裂のようなクラックルが走ります。Densityで壁の厚み、Motionで質感の変異の速さ、Grainで亀裂の量が変わります。音量に注意。',
+    feedback: '発振寸前のフィードバック音。甲高い悲鳴のような音がうなり、時々破綻します。Motionでピッチの揺れ、Grainで不安定さと破綻の量が変わります。音量と高音に注意。',
     sand: '共鳴した帯域が揺れる、砂のようなシンセパッド的な音。',
     fan: '扇風機・換気扇の回転音。一定で生活感のある持続音です。',
     airplane: '飛行機の機内音。低い轟音と空調の重なりで、眠気を誘います。',
@@ -1570,6 +1574,27 @@
       B_enabled: true, B_type: 'rain', B_gain: 0.55, B_tone: 0.1, B_density: 0.7, B_motion: 0.45, B_grain: 0.35, B_stereo: 0.8, B_move: 'drift', B_moveRate: 0.18, B_moveDepth: 0.7,
       C_enabled: true, C_type: 'thunder', C_gain: 0.7, C_tone: -0.3, C_density: 0.5, C_motion: 0.4, C_grain: 0.3, C_stereo: 0.6,
       master_gain: 0.55, master_width: 1.35, master_drive: 0.06, master_highcut: 10000, master_space: 0.3
+    },
+    'Extreme: Total Wall': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'hnw', A_gain: 0.95, A_tone: -0.2, A_density: 1.2, A_motion: 0.25, A_grain: 0.8, A_stereo: 0.4,
+      B_enabled: true, B_type: 'hnw', B_gain: 0.65, B_tone: -0.5, B_density: 0.9, B_motion: 0.12, B_grain: 0.5, B_stereo: 0.5,
+      C_enabled: true, C_type: 'harsh', C_gain: 0.4, C_tone: 0.2, C_density: 0.9, C_motion: 0.3, C_grain: 0.9, C_stereo: 0.6,
+      master_gain: 0.36, master_width: 1.1, master_drive: 3.0, master_subBody: 0.5, master_highcut: 14000
+    },
+    'Extreme: Feedback Hell': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'feedback', A_gain: 0.8, A_tone: 0.3, A_density: 0.6, A_motion: 1.0, A_grain: 1.0, A_stereo: 0.5,
+      B_enabled: true, B_type: 'harsh', B_gain: 0.45, B_tone: 0.1, B_density: 0.9, B_motion: 0.5, B_grain: 0.8, B_stereo: 0.7,
+      C_enabled: true, C_type: 'hnw', C_gain: 0.35, C_tone: -0.5, C_density: 0.9, C_motion: 0.15, C_grain: 0.4,
+      master_gain: 0.4, master_width: 1.4, master_drive: 2.2, master_highcut: 18000
+    },
+    'Extreme: Triple Harsh': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'harsh', A_gain: 0.8, A_tone: 0.05, A_density: 1.1, A_motion: 0.2, A_grain: 0.95, A_stereo: 0.4,
+      B_enabled: true, B_type: 'harsh', B_gain: 0.7, B_tone: 0.35, B_density: 0.9, B_motion: 0.6, B_grain: 1.1, B_stereo: 0.6,
+      C_enabled: true, C_type: 'harsh', C_gain: 0.6, C_tone: -0.3, C_density: 1.2, C_motion: 0.4, C_grain: 0.8, C_stereo: 0.5,
+      master_gain: 0.37, master_width: 1.5, master_drive: 2.6, master_highcut: 16000, master_space: 0.2
     }
   };
 
@@ -1597,7 +1622,7 @@
     { id:'master_air', type:'range', label:'Air Exciter', min:0, max:1.6, step:0.01 },
     { id:'master_lowcut', type:'range', label:'Low Cut (Hz)', min:5, max:8000, step:1 },
     { id:'master_highcut', type:'range', label:'High Cut (Hz)', min:500, max:20000, step:1 },
-    { id:'master_drive', type:'range', label:'Drive', min:0, max:2.0, step:0.01 },
+    { id:'master_drive', type:'range', label:'Drive', min:0, max:4.0, step:0.01 },
     { id:'master_analog', type:'range', label:'Analog Tone', min:0, max:1.8, step:0.01 },
     { id:'master_unison', type:'range', label:'Unison', min:0, max:1.8, step:0.01 },
     { id:'master_chorusMix', type:'range', label:'Chorus / Ensemble', min:0, max:1.8, step:0.01 },
@@ -1645,7 +1670,7 @@
   const HELP_TEXTS = {
     // Layer fields (shared by A/B/C)
     enabled: 'このレイヤーを鳴らすかどうか。OFFのレイヤーは音も書き出しも対象外になります。',
-    type: 'ノイズの種類。50種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
+    type: 'ノイズの種類。52種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
     gain: 'このレイヤーの音量。上げすぎるとマスターで歪むことがあるので、全体のバランスで調整を。',
     pan: 'このレイヤーの左右位置。-1で左、+1で右。マスターのLFOでもゆっくり揺れます。',
     move: 'このレイヤーの音を自動で動かします。左右=パン、上下=明るさと距離感（上は明るく近く、下は暗く遠く）の疑似移動、円と8の字はその組み合わせ、漂いは不規則なゆらぎです。',
@@ -1683,7 +1708,7 @@
     master_air: '高域の空気感を持ち上げるエキサイター。こもった音が抜けてきます。',
     master_lowcut: 'この周波数以下を切ります。ゴロゴロした不要な低域の除去に。',
     master_highcut: 'この周波数以上を切ります。耳に痛い高域を落として丸くします。',
-    master_drive: '全体に歪みと倍音を足します。アナログ機材のような厚みが出ますが、上げすぎ注意。',
+    master_drive: '全体に歪みと倍音を足します。アナログ機材のような厚みが出ますが、上げすぎ注意。2を超えると極限域の歪みになります（音量注意）。',
     master_analog: 'テープやアナログ回路のような質感。少し丸く、温かくなります。',
     master_unison: 'わずかにずらした音を重ねて厚みと広がりを出す効果。コーラスの仲間です。',
     master_chorusMix: 'コーラスの量。ゆらぎと広がりが出て、モノラル源でもステレオ感が作れます。',
@@ -1756,10 +1781,23 @@
   buildFields('layerCFields', LAYER_SCHEMA, 'C');
   initTypeInfos();
 
+  const PRESET_INFO = {
+    'Harsh Wall': 'Harsh Noiseの壁にBrownの土台。歪んだ轟音の基本形です',
+    'Harsh: Tearing Storm': 'Harsh Noiseにグリッチの破片。引き裂くような嵐です',
+    'Move: Orbit Drone': '波が円を描いて回り、ピンクノイズが左右に揺れます',
+    'Move: Rising Storm': '風が上下し、雨が漂い、雷が重なります',
+    'Extreme: Total Wall': 'HNW2枚＋Harsh、Drive 3.0。全面の壁です（音量注意）',
+    'Extreme: Feedback Hell': 'フィードバックの悲鳴にHarshとHNWの土台（音量注意）',
+    'Extreme: Triple Harsh': 'Harsh Noiseを3レイヤー重ね、Drive 2.6で潰します（音量注意）'
+  };
+  function presetHelp(name) {
+    return PRESET_INFO[name] ? `プリセット「${name}」: ${PRESET_INFO[name]}` : `プリセット「${name}」を適用します`;
+  }
+
   const presetSelect = $('presetSelect');
   presetSelect.innerHTML = Object.keys(PRESETS).map(name => `<option value="${name}">${name}</option>`).join('');
   $('presetPills').innerHTML = Object.keys(PRESETS)
-    .map(name => `<button type="button" class="pill" data-preset="${name}" data-help="プリセット「${name}」を適用します">${name}</button>`)
+    .map(name => `<button type="button" class="pill" data-preset="${name}" data-help="${presetHelp(name)}">${name}</button>`)
     .join('');
 
   function setStatus(msg, cls = '') {
@@ -2565,6 +2603,45 @@
         const swell = 0.82 + 0.18 * Math.sin(TAU * (0.03 + motion * 0.11) * t + 1.1) * (0.4 + drift * 0.6);
         return (wall + tear + edge) * swell * 0.85;
       }
+      case 'hnw': {
+        // Harsh Noise Wall: a near-static monolithic wall. Low mass crushed
+        // through heavy saturation; a crackling crust mutates very slowly.
+        // density = wall thickness, motion = mutation speed,
+        // grain = crackle amount & crust roughness.
+        const target = s.rng.float();
+        s.gust += (target - s.gust) * (0.00001 + motion * 0.00025);
+        const mut = clamp(s.gust, 0, 1);
+        const w = rawWhite(s);
+        const mass = lp(s, 'hw1', w, 240 + mut * 260 + density * 120, sr) * 5.2
+          + lp(s, 'hw2', rawBrown(s, motion), 70 + density * 60, sr) * 3.4;
+        const wall = Math.tanh(Math.tanh(mass * (2.2 + density * 2.6)) * 2.4) * 0.97;
+        if (s.rng.float() < 0.001 + grain * 0.055) s.click1 = 0.7 + s.rng.float() * 0.7;
+        s.click1 *= 0.90 - Math.min(0.25, grain * 0.10);
+        const crustPre = hp(s, 'hw3', s.click1 * s.rng.signed(), 1500, sr) * (0.35 + grain * 0.85)
+          + lp(s, 'hw4', rawWhite(s), 900 + grain * 2600, sr) * (0.05 + grain * 0.13);
+        const crust = Math.tanh(crustPre * 1.6);
+        return wall * 0.95 + crust * 0.38;
+      }
+      case 'feedback': {
+        // Feedback: a near-oscillation squeal on the edge of runaway, with
+        // beating harmonics and grain-driven dropouts. motion = pitch
+        // wobble, grain = instability & breakdown.
+        s.aux2 += (s.rng.float() - s.aux2) * (0.0002 + motion * 0.0012);
+        const wob = clamp(s.aux2, 0, 1);
+        if (s.rng.float() < 0.0004 + grain * 0.0022) s.aux3 = 0.72 + s.rng.float() * 0.55;
+        const mult = s.aux3 >= 0.7 ? s.aux3 : 1;
+        const base = 2100 + wob * 1500 + Math.sin(TAU * (0.05 + motion * 0.2) * t + 0.6) * (120 + motion * 500);
+        const f = clamp(base * mult, 300, Math.min(12000, sr * 0.45));
+        s.phase1 += TAU * f / sr;
+        s.phase2 += TAU * f * 1.007 / sr;
+        const wail = 0.62 + 0.38 * Math.sin(TAU * (0.07 + motion * 0.3) * t + 2.0);
+        let toneFb = (Math.sin(s.phase1) * 0.72 + Math.sin(s.phase2) * 0.38) * wail;
+        toneFb = softclip(toneFb * (1.1 + grain * 1.1), 0.4 + grain * 0.9);
+        if (s.rng.float() < grain * 0.002) s.burst = 1;
+        s.burst *= 0.994;
+        const hiss = hp(s, 'fb1', rawWhite(s), 5000, sr) * 0.05;
+        return toneFb * (1 - s.burst * 0.65) + hiss;
+      }
       case 'sand': {
         if (s.rng.float() < 0.0008 + density * 0.022) {
           s.resonDecay = 1;
@@ -2879,7 +2956,7 @@
     p.master_air = clamp(Number(p.master_air) || 0, 0, 1.6);
     p.master_lowcut = clamp(Number(p.master_lowcut) || 10, 5, 8000);
     p.master_highcut = clamp(Number(p.master_highcut) || 20000, 500, 20000);
-    p.master_drive = clamp(Number(p.master_drive) || 0, 0, 2.0);
+    p.master_drive = clamp(Number(p.master_drive) || 0, 0, 4.0);
     p.master_analog = clamp(Number(p.master_analog) || 0, 0, 1.8);
     p.master_unison = clamp(Number(p.master_unison) || 0, 0, 1.8);
     p.master_chorusMix = clamp(Number(p.master_chorusMix) || 0, 0, 1.8);
@@ -4618,6 +4695,8 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     [/テープ|tape/i, 'tape'],
     [/砂|sand/i, 'sand'],
     [/グリッチ|glitch/i, 'glitch'],
+    [/壁|ウォール|hnw|wall/i, 'hnw'],
+    [/フィードバック|feedback/i, 'feedback'],
     [/カオス|混沌|chaos/i, 'chaos'],
     [/粒|グラニュラー|granular/i, 'grains'],
     [/共鳴|バンド|resonant/i, 'band'],
@@ -4711,6 +4790,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       p.master_gain = 0.58;
     }
     if (/激し|ハーシュ|harsh/i.test(text)) { p.master_drive = 0.5; p.A_grain = 0.7; }
+    if (/極限|限界|extreme/i.test(text)) { p.master_drive = 2.8; p.A_grain = Math.max(p.A_grain, 0.8); }
     if (/回転|回る|orbit|circle/i.test(text)) { p.A_move = 'circle'; p.A_moveRate = 0.15; p.A_moveDepth = 0.85; }
     else if (/左右|行ったり来たり|left.?right/i.test(text)) { p.A_move = 'lr'; p.A_moveRate = 0.12; p.A_moveDepth = 0.9; }
     else if (/上下|up.?down/i.test(text)) { p.A_move = 'ud'; p.A_moveRate = 0.12; p.A_moveDepth = 0.9; }
@@ -4805,7 +4885,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   function aiSchemaHint() {
     const keys = Object.keys(DEFAULTS).join(', ');
     const types = NOISE_TYPES.map(v => v[0]).join('|');
-    return `You are a preset designer for a stereo noise generator. Reply with ONE JSON object only (no markdown, no prose). Allowed keys: ${keys}. Layer types: ${types}. Numbers must be plain numbers within UI ranges (gains 0..2.2, pan -1..1, tone -1..1, density/motion/grain 0..1.5, master_width 0..5.5, binaural carrier 40..600, beat 0..40, level 0..0.6). Booleans as true/false. Always include A_enabled, A_type and master_gain (0.35..0.65). Add master_binauralEnabled with carrier/beat/level when the request mentions sleep, focus, meditation or binaural (delta~2Hz, theta~6Hz, alpha~10Hz, beta~20Hz, gamma~40Hz). Layer movement: A_move/B_move/C_move is one of off|lr|ud|circle|eight|drift, with moveRate 0.01..2 and moveDepth 0..1 per layer (keys like A_moveRate); use it when the request mentions moving, rotating or drifting sound.`;
+    return `You are a preset designer for a stereo noise generator. Reply with ONE JSON object only (no markdown, no prose). Allowed keys: ${keys}. Layer types: ${types}. Numbers must be plain numbers within UI ranges (gains 0..2.2, pan -1..1, tone -1..1, density/motion/grain 0..1.5, master_width 0..5.5, master_drive 0..4, binaural carrier 40..600, beat 0..40, level 0..0.6). Booleans as true/false. Always include A_enabled, A_type and master_gain (0.35..0.65). Add master_binauralEnabled with carrier/beat/level when the request mentions sleep, focus, meditation or binaural (delta~2Hz, theta~6Hz, alpha~10Hz, beta~20Hz, gamma~40Hz). Layer movement: A_move/B_move/C_move is one of off|lr|ud|circle|eight|drift, with moveRate 0.01..2 and moveDepth 0..1 per layer (keys like A_moveRate); use it when the request mentions moving, rotating or drifting sound.`;
   }
   async function aiLlmGenerate() {
     const text = ($('aiPrompt').value || '').trim();
@@ -4899,7 +4979,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   const MIDI_CC_MAP = [
     [7, 'master_gain', 2.2],
     [1, 'master_width', 5.5],
-    [74, 'master_drive', 2.0],
+    [74, 'master_drive', 4.0],
     [20, 'A_gain', 2.2],
     [21, 'B_gain', 2.2],
     [22, 'master_binauralLevel', 0.6],
