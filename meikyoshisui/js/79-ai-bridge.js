@@ -13,6 +13,18 @@
   const SET_KEY = 'meikyoshisui_ai_bridge_v1';
   const KEY_KEY = 'meikyoshisui_ai_key';
   const DEFAULTS = { mode: 'bridge', provider: 'openai', model: '', customUrl: '', bridgeUrl: 'http://127.0.0.1:8766', bridgeToken: '' };
+  /* OpenAI互換プリセット (2026-11-13 拡充): provider値 -> 接続先と既定モデル。
+     URL は全て実地検証済みの公式エンドポイント。cloudflare はアカウントIDが
+     必要なため、カスタムURL欄に完全なURLが入っていればそちらを優先する。 */
+  const COMPAT = {
+    groq: { url: 'https://api.groq.com/openai/v1/chat/completions', model: 'openai/gpt-oss-20b' },
+    openrouter: { url: 'https://openrouter.ai/api/v1/chat/completions', model: '' },
+    requesty: { url: 'https://router.requesty.ai/v1/chat/completions', model: '' },
+    nvidia: { url: 'https://integrate.api.nvidia.com/v1/chat/completions', model: '' },
+    zai: { url: 'https://api.z.ai/api/paas/v4/chat/completions', model: 'glm-4.7-flash' },
+    edenai: { url: 'https://api.edenai.run/v3/chat/completions', model: '' },
+    cloudflare: { url: 'https://api.cloudflare.com/client/v4/accounts/ACCOUNT_ID/ai/v1/chat/completions', model: '@cf/meta/llama-3.1-8b-instruct' },
+  };
   let cfg = { ...DEFAULTS };
   try { Object.assign(cfg, JSON.parse(localStorage.getItem(SET_KEY) || '{}')); } catch (_) {}
   let apiKey = '';
@@ -39,13 +51,27 @@
       if (!r.ok) throw new Error(j.error || ('bridge HTTP ' + r.status));
       return j.text || '';
     }
-    if (cfg.provider === 'openai' || cfg.provider === 'custom') {
-      const url = cfg.provider === 'custom' ? cfg.customUrl.trim() : 'https://api.openai.com/v1/chat/completions';
+    if (cfg.provider === 'gemini') {
+      const m = model || 'gemini-2.5-flash';
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(m) + ':generateContent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        body: JSON.stringify({ system_instruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: { temperature: 0.7 } }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
+      return (j.candidates?.[0]?.content?.parts || []).map(pt => pt.text || '').join('');
+    }
+    if (cfg.provider === 'openai' || cfg.provider === 'custom' || COMPAT[cfg.provider]) {
+      const preset = COMPAT[cfg.provider];
+      const url = cfg.provider === 'custom' ? cfg.customUrl.trim()
+        : (preset && cfg.provider === 'cloudflare' && cfg.customUrl.trim()) ? cfg.customUrl.trim()
+        : preset ? preset.url : 'https://api.openai.com/v1/chat/completions';
       if (!url) throw new Error('カスタムURLが未設定です');
       const r = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(apiKey ? { Authorization: 'Bearer ' + apiKey } : {}) },
-        body: JSON.stringify({ model: model || 'gpt-4o-mini', messages: [{ role: 'system', content: system }, { role: 'user', content: user }], temperature: 0.7 }),
+        body: JSON.stringify({ model: model || (preset && preset.model) || 'gpt-4o-mini', messages: [{ role: 'system', content: system }, { role: 'user', content: user }], temperature: 0.7 }),
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
@@ -282,14 +308,14 @@
       <div class="ab-head">AI / Bridge <span class="badge">LINK</span></div>
       <div class="ab-row">
         <select id="abMode" class="ab-in"><option value="bridge">VMブリッジ経由</option><option value="direct">ブラウザから直接</option></select>
-        <select id="abProvider" class="ab-in"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="ollama">Ollama (local)</option><option value="custom">カスタム互換</option></select>
+        <select id="abProvider" class="ab-in"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="gemini">Gemini</option><option value="groq">Groq (互換)</option><option value="openrouter">OpenRouter (互換)</option><option value="requesty">Requesty (互換)</option><option value="nvidia">NVIDIA NIM (互換)</option><option value="zai">Z.ai / GLM (互換)</option><option value="edenai">Eden AI (互換)</option><option value="cloudflare">Cloudflare Workers AI (互換)</option><option value="ollama">Ollama (local)</option><option value="custom">カスタム互換</option></select>
         <input id="abModel" class="ab-in" size="18" placeholder="モデル名 (空=既定)">
         <input id="abKey" class="ab-in" type="password" size="18" placeholder="APIキー (直接接続時)">
       </div>
       <div class="ab-row">
         <input id="abBridgeUrl" class="ab-in" size="26" placeholder="ブリッジURL">
         <input id="abBridgeToken" class="ab-in" type="password" size="12" placeholder="ブリッジトークン (任意)">
-        <input id="abCustomUrl" class="ab-in" size="26" placeholder="カスタム/Ollama URL (任意)">
+        <input id="abCustomUrl" class="ab-in" size="26" placeholder="カスタム/Ollama/Cloudflare URL (任意)">
       </div>
       <div class="ab-row">
         <input id="abPrompt" class="ab-in" size="52" placeholder="AIへの要望 (例: 雨の夜のドローン、短調で不穏に)">
@@ -303,7 +329,7 @@
         <button class="aib-btn" id="abBtnFiles" type="button">VMのファイル一覧</button>
         <button class="aib-btn" id="abBtnShare" type="button">共有リンクをコピー</button>
       </div>
-      <div class="ab-note">AIキーはこのブラウザ内にのみ保存され、共有リンクや状態には含まれません。VMブリッジ経由ではキーは VM の環境変数に置けます (docs/BRIDGE.md)。 .scl / 状態JSON はこの画面へドラッグ&ドロップでも取り込めます。</div>
+      <div class="ab-note">Cloudflare Workers AI は、カスタムURL欄にアカウントID入りの完全なURL (…/accounts/<ID>/ai/v1/chat/completions) を入れてください。AIキーはこのブラウザ内にのみ保存され、共有リンクや状態には含まれません。VMブリッジ経由ではキーは VM の環境変数に置けます (docs/BRIDGE.md)。 .scl / 状態JSON はこの画面へドラッグ&ドロップでも取り込めます。</div>
       <div id="abStatus"></div><input id="abShareUrl" class="ab-in" readonly style="display:none" placeholder="共有リンク"><div id="abFiles"></div>`;
     const anchor = $('theoryPackSec');
     if (anchor && anchor.parentElement) anchor.parentElement.insertBefore(sec, anchor.nextSibling);
