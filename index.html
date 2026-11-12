@@ -157,6 +157,9 @@
         <a class="link" href="music-news.html" target="_blank" rel="noreferrer" aria-label="Music News">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTEyIDN2MTAuNTVjLS41OS0uMzQtMS4yNy0uNTUtMi0uNTUtMi4yMSAwLTQgMS43OS00IDRzMS43OSA0IDQgNCA0LTEuNzkgNC00VjdoNFYzaC02eiIgZmlsbD0iIzAwMCIvPjwvc3ZnPg==" alt="" loading="lazy" />
         </a>
+        <a class="link" href="instruments-news.html" target="_blank" rel="noreferrer" aria-label="Instruments News">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjZmZmIi8+PGcgZmlsbD0iIzAwMCI+PHJlY3QgeD0iMTAuOSIgeT0iMC44IiB3aWR0aD0iMi4yIiBoZWlnaHQ9IjIuOCIgcng9IjAuNyIvPjxyZWN0IHg9IjExLjMiIHk9IjMuNCIgd2lkdGg9IjEuNCIgaGVpZ2h0PSI2LjQiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyLjYiIHI9IjIuOSIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTciIHI9IjQiLz48L2c+PGNpcmNsZSBjeD0iMTIiIGN5PSIxNC44IiByPSIxLjE1IiBmaWxsPSIjZmZmIi8+PC9zdmc+" alt="" loading="lazy" />
+        </a>
         <a class="link" href="topo.html" target="_blank" rel="noreferrer" aria-label="TOPO">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9IiMwMDAiLz48L3N2Zz4=" alt="" loading="lazy" />
         </a>
@@ -210,6 +213,14 @@
         <li><a href="music-news.html">最新の音楽ニュースを読む</a></li>
       </ul>
       <p class="nurse-latest-more"><a href="music-news.html">Music News をすべて見る →</a> ・ <a href="music-search.html">全件検索</a> ・ <a href="music-feed.xml">RSS</a></p>
+    </section>
+
+    <section class="nurse-latest" aria-label="Instruments News 最新記事">
+      <h2 class="nurse-latest-title"><a href="instruments-news.html">Instruments News</a> 最新記事</h2>
+      <ul class="nurse-latest-list" id="instrumentsLatestList">
+        <li><a href="instruments-news.html">最新の楽器ニュースを読む</a></li>
+      </ul>
+      <p class="nurse-latest-more"><a href="instruments-news.html">Instruments News をすべて見る →</a> ・ <a href="instruments-search.html">全件検索</a> ・ <a href="instruments-feed.xml">RSS</a></p>
     </section>
 
     <footer class="foot">
@@ -269,6 +280,25 @@
         meta.textContent = (a.publishedDateKey || "") + " " + (a.sourceName || "");
         var link = document.createElement("a");
         link.href = "music-news.html";
+        link.textContent = a.titleJa || "";
+        li.appendChild(meta); li.appendChild(link);
+        list.appendChild(li);
+      });
+    }).catch(function(){});
+  </script>
+  <script>
+    fetch("instruments-news-data.json").then(function(r){ return r.json(); }).then(function(data){
+      var list = document.getElementById("instrumentsLatestList");
+      var items = (data.articles || []).slice(0, 5);
+      if (!items.length || !list) return;
+      list.textContent = "";
+      items.forEach(function(a){
+        var li = document.createElement("li");
+        var meta = document.createElement("span");
+        meta.className = "nurse-latest-meta";
+        meta.textContent = (a.publishedDateKey || "") + " " + (a.sourceName || "");
+        var link = document.createElement("a");
+        link.href = "instruments-news.html";
         link.textContent = a.titleJa || "";
         li.appendChild(meta); li.appendChild(link);
         list.appendChild(li);
