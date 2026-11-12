@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Camera News（カメラニュース）| VARELSER</title>
+  <meta name="description" content="国内外の最新カメラ・写真ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:title" content="Camera News（カメラニュース）| VARELSER" />
+    <meta property="og:description" content="国内外の最新カメラ・写真ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/camera-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Camera News RSS" href="camera-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+      </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新のカメラニュース</p>
+    <p class="page-desc">国内外のカメラ専門メディアやメーカー公式情報、写真展情報から、新製品・発売情報、レンズや周辺機材のレビュー、撮影テクニック、写真家の展示会・イベント、中古・フィルムカメラの話題をAIで日本語要約し、日付・カテゴリ・種別・配信元で整理しています。情報源はデジカメWatch、CAPA CAMERA WEB、ニコンイメージングジャパン、PRONEWS、DPReview、PetaPixel、Digital Camera World、Canon Rumors、Nikon Rumors、Sony Alpha Rumors、IMA ONLINE、Magnum Photos など国内・海外45媒体です。</p>
+    <p class="page-desc"><a href="camera-search.html">全件検索（全ストックから探す）</a> ・ <a href="camera-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option></select></div>
+        <div class="filter-item"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="カメラ本体">カメラ本体</option><option value="レンズ">レンズ</option><option value="中古・市場">中古・市場</option><option value="写真・撮影">写真・撮影</option><option value="写真展・イベント">写真展・イベント</option></select></div>
+        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="35mmc">35mmc</option><option value="British Journal of Photography">British Journal of Photography</option><option value="CAPA CAMERA WEB">CAPA CAMERA WEB</option><option value="Camera Jabber">Camera Jabber</option><option value="CineD">CineD</option><option value="Digital Camera World">Digital Camera World</option><option value="PRONEWS">PRONEWS</option><option value="PetaPixel">PetaPixel</option><option value="デジカメWatch">デジカメWatch</option><option value="ニコンイメージングジャパン">ニコンイメージングジャパン</option></select></div>
+        <div class="filter-item"><label for="kindFilter">種別</label><select id="kindFilter"><option value="">すべて</option><option value="イベント">イベント</option><option value="インタビュー">インタビュー</option><option value="ニュース">ニュース</option><option value="レビュー">レビュー</option><option value="新製品">新製品</option><option value="特集">特集</option></select></div>
+        <div class="filter-item"><label for="regionFilter">地域</label><select id="regionFilter"><option value="">すべて</option><option value="国内">国内</option><option value="海外">海外</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全10件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<!-- ARTICLES_START -->
+<article
+  data-id="476815a88d116922aea5f0c4ee0c5010"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="カメラ本体||中古・市場"
+  data-region="海外"
+  data-source="35mmc"
+  data-kind="レビュー"
+  data-search="フィルムカメラZorki 1cレビュー　バルナック型への没入は続く Zorki 1c – Further Down the Barnack Rabbit Hole フィルムカメラ専門ブログ35mmcが、Zorki 1cをめぐるレビューを公開した。筆者はLeica M2の整備（CLA）を待つ間に1953年製のLeica IIIf Red Dialを手に入れ、それが初めてのバルナック型カメラになったと振り返っている。 沈胴式のLeitz Elmar 50mm f3.5を付けたままポケットに入れて散歩に持ち出せる携帯性が気に入り、小さな距離計窓でも99％はピントが合ったという体験が語られている。バルナック型への興味がZorki 1cへどうつながるかを追う、クラシックカメラ愛好家向けの読み物だ。 35mmc カメラ本体 中古・市場 海外 レビュー">
+  <p class="meta">35mmc　2026-11-12 19:00</p>
+  <h2 class="article-title">フィルムカメラZorki 1cレビュー　バルナック型への没入は続く</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: カメラ本体</span><span class="chip">カテゴリ: 中古・市場</span><span class="chip">地域: 海外</span><span class="chip">種別: レビュー</span></div>
+  <div class="summary">フィルムカメラ専門ブログ35mmcが、Zorki 1cをめぐるレビューを公開した。筆者はLeica M2の整備（CLA）を待つ間に1953年製のLeica IIIf Red Dialを手に入れ、それが初めてのバルナック型カメラになったと振り返っている。<span class="summary-rest" hidden><br><br>沈胴式のLeitz Elmar 50mm f3.5を付けたままポケットに入れて散歩に持ち出せる携帯性が気に入り、小さな距離計窓でも99％はピントが合ったという体験が語られている。バルナック型への興味がZorki 1cへどうつながるかを追う、クラシックカメラ愛好家向けの読み物だ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：35mmc<br>
+    原題：Zorki 1c – Further Down the Barnack Rabbit Hole<br>
+    原文URL：<a href="https://www.35mmc.com/12/11/2026/zorki-1c-further-down-the-barnack-rabbit-hole/" target="_blank" rel="noopener">https://www.35mmc.com/12/11/2026/zorki-1c-further-down-the-barnack-rabbit-hole/</a>
+  </div>
+</article>
+<article
+  data-id="6f6fa08632d84a961c1c8672081ed9db"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="写真・撮影"
+  data-region="海外"
+  data-source="Digital Camera World"
+  data-kind="インタビュー"
+  data-search="賞金20万ドルのHIPAグランプリ　焼け跡で寄り添う家族を撮った写真家が語る Photographer who won US$200,000 prize tells the story of his award-winning shot of a family coming together at a time of crisis バングラデシュの写真家ピヌ・ラーマンが、国際写真賞HIPAの2026年版（テーマは「家族」）で賞金20万ドルのグランプリを受賞した。受賞作は、壊滅的な火災で壁だけが残った自宅に身を寄せる両親と子どもたちを写した一枚で、11月10日にドバイで開かれた授賞式でグランプリに選ばれた。 作品『Under the Same Sky』はDJI Mavic 3 Proで撮影された。火災はダッカのコレイル地区で約1,500戸を焼き、ラーマンは火災の翌朝に上空から家族の姿を捉えた。Digital Camera Worldは授賞式後にラーマンへ取材し、受賞作の背景を聞いている。 Digital Camera World 写真・撮影 海外 インタビュー">
+  <p class="meta">Digital Camera World　2026-11-12 18:10</p>
+  <h2 class="article-title">賞金20万ドルのHIPAグランプリ　焼け跡で寄り添う家族を撮った写真家が語る</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 写真・撮影</span><span class="chip">地域: 海外</span><span class="chip">種別: インタビュー</span></div>
+  <div class="summary">バングラデシュの写真家ピヌ・ラーマンが、国際写真賞HIPAの2026年版（テーマは「家族」）で賞金20万ドルのグランプリを受賞した。受賞作は、壊滅的な火災で壁だけが残った自宅に身を寄せる両親と子どもたちを写した一枚で、11月10日にドバイで開かれた授賞式でグランプリに選ばれた。<span class="summary-rest" hidden><br><br>作品『Under the Same Sky』はDJI Mavic 3 Proで撮影された。火災はダッカのコレイル地区で約1,500戸を焼き、ラーマンは火災の翌朝に上空から家族の姿を捉えた。Digital Camera Worldは授賞式後にラーマンへ取材し、受賞作の背景を聞いている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Digital Camera World<br>
+    原題：Photographer who won US$200,000 prize tells the story of his award-winning shot of a family coming together at a time of crisis<br>
+    原文URL：<a href="https://www.digitalcameraworld.com/photography/awards-and-competitions/photographer-who-won-us-usd200-000-prize-tells-the-story-of-his-award-winning-shot-of-a-family-coming-together-at-a-time-of-crisis" target="_blank" rel="noopener">https://www.digitalcameraworld.com/photography/awards-and-competitions/photographer-who-won-us-usd200-000-prize-tells-the-story-of-his-award-winning-shot-of-a-family-coming-together-at-a-time-of-crisis</a>
+  </div>
+</article>
+<article
+  data-id="f71ef8054ff688159fb707cb6d6bce39"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="カメラ本体||レンズ"
+  data-region="海外"
+  data-source="CineD"
+  data-kind="特集"
+  data-search="Camerimage 2026　ゴールデンフロッグ候補15作の使用カメラとレンズを検証 Camerimage 2026 – The Cameras and Lenses Behind the 15 Golden Frog Contenders 撮影監督の祭典Camerimage（ポーランド・トルン）で、ゴールデンフロッグを争う15作品について、CineDが各作品の撮影監督が選んだカメラ、レンズ、フォーマットを調べた。カメラ情報が公表されている11作品のうち8作品でARRIのデジタルカメラが使われており、2作品は主に35mmフィルムで撮影され、15作品中3作品が白黒作品だという。 フェスティバルは今年で34回目を迎え、11月14日までトルンで開催され、その日に審査結果が発表される。受賞を争う作品群の機材選択から、現代の撮影現場の傾向が読み取れる特集だ。 CineD カメラ本体 レンズ 海外 特集">
+  <p class="meta">CineD　2026-11-12 17:33</p>
+  <h2 class="article-title">Camerimage 2026　ゴールデンフロッグ候補15作の使用カメラとレンズを検証</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: カメラ本体</span><span class="chip">カテゴリ: レンズ</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">撮影監督の祭典Camerimage（ポーランド・トルン）で、ゴールデンフロッグを争う15作品について、CineDが各作品の撮影監督が選んだカメラ、レンズ、フォーマットを調べた。カメラ情報が公表されている11作品のうち8作品でARRIのデジタルカメラが使われており、2作品は主に35mmフィルムで撮影され、15作品中3作品が白黒作品だという。<span class="summary-rest" hidden><br><br>フェスティバルは今年で34回目を迎え、11月14日までトルンで開催され、その日に審査結果が発表される。受賞を争う作品群の機材選択から、現代の撮影現場の傾向が読み取れる特集だ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：CineD<br>
+    原題：Camerimage 2026 – The Cameras and Lenses Behind the 15 Golden Frog Contenders<br>
+    原文URL：<a href="https://www.cined.com/camerimage-2026-the-cameras-and-lenses-behind-the-15-golden-frog-contenders/" target="_blank" rel="noopener">https://www.cined.com/camerimage-2026-the-cameras-and-lenses-behind-the-15-golden-frog-contenders/</a>
+  </div>
+</article>
+<article
+  data-id="2a22dd738fcc7b5ce6ad7f666b09dfcb"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="カメラ本体"
+  data-region="国内"
+  data-source="PRONEWS"
+  data-kind="イベント"
+  data-search="富士フイルム、Inter BEE 2026で映像制作用カメラ「GFX ETERNA 55」を実機展示 富士フイルム、Inter BEE 2026で「GFX ETERNA 55」や最広角4Kレンズを実機展示。学生向けツアーも実施 [InterBEE2026] 富士フイルムは、2026年11月18日（水）から20日（金）に幕張メッセで開催されるメディア総合イベント「Inter BEE 2026」に出展する。ブースでは、開発中の映像制作用カメラ「GFX ETERNA 55」をはじめとする機材を実機展示する予定だ。 あわせて「最広角4Kレンズ」の展示や、学生向けのツアーも実施される。映像制作機材の最新動向を実機で確認できる機会として、来場者向けの案内がPRONEWSで紹介されている。 PRONEWS カメラ本体 国内 イベント">
+  <p class="meta">PRONEWS　2026-11-12 17:28</p>
+  <h2 class="article-title">富士フイルム、Inter BEE 2026で映像制作用カメラ「GFX ETERNA 55」を実機展示</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: カメラ本体</span><span class="chip">地域: 国内</span><span class="chip">種別: イベント</span></div>
+  <div class="summary">富士フイルムは、2026年11月18日（水）から20日（金）に幕張メッセで開催されるメディア総合イベント「Inter BEE 2026」に出展する。ブースでは、開発中の映像制作用カメラ「GFX ETERNA 55」をはじめとする機材を実機展示する予定だ。<span class="summary-rest" hidden><br><br>あわせて「最広角4Kレンズ」の展示や、学生向けのツアーも実施される。映像制作機材の最新動向を実機で確認できる機会として、来場者向けの案内がPRONEWSで紹介されている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：PRONEWS<br>
+    原題：富士フイルム、Inter BEE 2026で「GFX ETERNA 55」や最広角4Kレンズを実機展示。学生向けツアーも実施 [InterBEE2026]<br>
+    原文URL：<a href="https://jp.pronews.com/news/202611121728799488.html" target="_blank" rel="noopener">https://jp.pronews.com/news/202611121728799488.html</a>
+  </div>
+</article>
+<article
+  data-id="29a7388285f2f515fb7bdefd0389480d"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="レンズ"
+  data-region="国内"
+  data-source="デジカメWatch"
+  data-kind="新製品"
+  data-search="1980年代の光学部品を再利用　LIGHT LENS LABのライカM用レンズ「M 40mm f/2 華」が発売 1980年代の光学部品を再利用したライカM用レンズ 焦点工房は、LIGHT LENS LABの交換レンズ「M 40mm f/2 “華”」（ライカMマウント用）を11月12日（木）に数量限定で発売した。1980年代の光学部品を再利用したレンズで、カラーはブラックとシルバーの2色が用意される。 直販価格は4万9,800円。往年の光学部品を現代のMマウントで使える形にした、数量限定のユニークな一本としてデジカメWatchが伝えている。 デジカメWatch レンズ 国内 新製品">
+  <p class="meta">デジカメWatch　2026-11-12 14:59</p>
+  <h2 class="article-title">1980年代の光学部品を再利用　LIGHT LENS LABのライカM用レンズ「M 40mm f/2 華」が発売</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: レンズ</span><span class="chip">地域: 国内</span><span class="chip">種別: 新製品</span></div>
+  <div class="summary">焦点工房は、LIGHT LENS LABの交換レンズ「M 40mm f/2 “華”」（ライカMマウント用）を11月12日（木）に数量限定で発売した。1980年代の光学部品を再利用したレンズで、カラーはブラックとシルバーの2色が用意される。<span class="summary-rest" hidden><br><br>直販価格は4万9,800円。往年の光学部品を現代のMマウントで使える形にした、数量限定のユニークな一本としてデジカメWatchが伝えている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：デジカメWatch<br>
+    原題：1980年代の光学部品を再利用したライカM用レンズ<br>
+    原文URL：<a href="https://dc.watch.impress.co.jp/docs/news/2155865.html" target="_blank" rel="noopener">https://dc.watch.impress.co.jp/docs/news/2155865.html</a>
+  </div>
+</article>
+<article
+  data-id="4188128ef1ae3fa568b97c46a61f5f48"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="カメラ本体"
+  data-region="海外"
+  data-source="PetaPixel"
+  data-kind="ニュース"
+  data-search="ウエストレベルファインダーのレトロなデジタルカメラ、Kickstarterで27万ドルを集める This Retro-Inspired Waist-Level Digital Camera Already Raised $270K on Kickstarter ウエストレベル（腰位置）ファインダーを備えたレトロなデザインの新しいデジタルカメラが、Kickstarterで早くも約27万ドルの資金を集めた。目標額はわずか4,996ドルで、それを大きく上回るペースで支援が集まっているとPetaPixelが伝えている。 上から覗き込むクラシックな撮影スタイルをデジタルで再現する試みが、クラウドファンディングで強い支持を集めた形だ。レトロな外観と操作感を持つカメラへの関心の高さを示す動きとなっている。 PetaPixel カメラ本体 海外 ニュース">
+  <p class="meta">PetaPixel　2026-11-12 05:11</p>
+  <h2 class="article-title">ウエストレベルファインダーのレトロなデジタルカメラ、Kickstarterで27万ドルを集める</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: カメラ本体</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ウエストレベル（腰位置）ファインダーを備えたレトロなデザインの新しいデジタルカメラが、Kickstarterで早くも約27万ドルの資金を集めた。目標額はわずか4,996ドルで、それを大きく上回るペースで支援が集まっているとPetaPixelが伝えている。<span class="summary-rest" hidden><br><br>上から覗き込むクラシックな撮影スタイルをデジタルで再現する試みが、クラウドファンディングで強い支持を集めた形だ。レトロな外観と操作感を持つカメラへの関心の高さを示す動きとなっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：PetaPixel<br>
+    原題：This Retro-Inspired Waist-Level Digital Camera Already Raised $270K on Kickstarter<br>
+    原文URL：<a href="https://petapixel.com/2026/11/11/this-retro-inspired-waist-level-digital-camera-already-raised-270k-on-kickstarter/" target="_blank" rel="noopener">https://petapixel.com/2026/11/11/this-retro-inspired-waist-level-digital-camera-already-raised-270k-on-kickstarter/</a>
+  </div>
+</article>
+<article
+  data-id="8b7b4108d7c5851fbd96fc1364d02418"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="レンズ"
+  data-region="海外"
+  data-source="Camera Jabber"
+  data-kind="新製品"
+  data-search="SIRUI、フルサイズ用AF単焦点「Aurora 15mm F1.6」と「24mm F1.4」を発表　価格も公表 SIRUI Aurora 15mm F1.6 and 24mm F1.4 price, specifications and availability announced SIRUIが、フルサイズ対応のAuroraシリーズに、明るい広角オートフォーカス単焦点レンズ2本を追加した。15mm F1.6と24mm F1.4で、価格はそれぞれ599米ドルと499米ドルと公表されている。 発売はまずソニーEマウントとLマウントから始まる。価格、スペック、発売時期を簡潔に伝えるCamera Jabberの製品発表記事で、大口径の広角単焦点を求めるユーザーに向けたラインアップ拡充だ。 Camera Jabber レンズ 海外 新製品">
+  <p class="meta">Camera Jabber　2026-11-12 05:00</p>
+  <h2 class="article-title">SIRUI、フルサイズ用AF単焦点「Aurora 15mm F1.6」と「24mm F1.4」を発表　価格も公表</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: レンズ</span><span class="chip">地域: 海外</span><span class="chip">種別: 新製品</span></div>
+  <div class="summary">SIRUIが、フルサイズ対応のAuroraシリーズに、明るい広角オートフォーカス単焦点レンズ2本を追加した。15mm F1.6と24mm F1.4で、価格はそれぞれ599米ドルと499米ドルと公表されている。<span class="summary-rest" hidden><br><br>発売はまずソニーEマウントとLマウントから始まる。価格、スペック、発売時期を簡潔に伝えるCamera Jabberの製品発表記事で、大口径の広角単焦点を求めるユーザーに向けたラインアップ拡充だ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Camera Jabber<br>
+    原題：SIRUI Aurora 15mm F1.6 and 24mm F1.4 price, specifications and availability announced<br>
+    原文URL：<a href="https://camerajabber.com/photography-news/sirui-aurora-15mm-f1-6-and-24mm-f1-4-price-specifications-and-availability-announced/" target="_blank" rel="noopener">https://camerajabber.com/photography-news/sirui-aurora-15mm-f1-6-and-24mm-f1-4-price-specifications-and-availability-announced/</a>
+  </div>
+</article>
+<article
+  data-id="4482ebec6a224aaacd8e715af12fc7a8"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="写真・撮影"
+  data-region="海外"
+  data-source="British Journal of Photography"
+  data-kind="特集"
+  data-search="写真誕生200年をPrix Pictetから見る　歴代受賞者が示すイメージの力 Photography at 200 through the Prix Pictet 写真の誕生から200年を迎える節目に、British Journal of Photographyが写真賞Prix Pictetの歴代受賞者11人を取り上げた。受賞者たちの作品は、イメージが私たちを環境問題や社会課題へ引き込む多様な方法を示しているという。 写真というメディアが2世紀の間に育ててきた表現の広がりを、世界的な写真賞の受賞作を通じて振り返る特集だ。写真史の節目を意識した企画として紹介されている。 British Journal of Photography 写真・撮影 海外 特集">
+  <p class="meta">British Journal of Photography　2026-11-12 01:02</p>
+  <h2 class="article-title">写真誕生200年をPrix Pictetから見る　歴代受賞者が示すイメージの力</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 写真・撮影</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">写真の誕生から200年を迎える節目に、British Journal of Photographyが写真賞Prix Pictetの歴代受賞者11人を取り上げた。受賞者たちの作品は、イメージが私たちを環境問題や社会課題へ引き込む多様な方法を示しているという。<span class="summary-rest" hidden><br><br>写真というメディアが2世紀の間に育ててきた表現の広がりを、世界的な写真賞の受賞作を通じて振り返る特集だ。写真史の節目を意識した企画として紹介されている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：British Journal of Photography<br>
+    原題：Photography at 200 through the Prix Pictet<br>
+    原文URL：<a href="https://www.1854.photography/2026/11/photography-at-200-through-the-prix-pictet/" target="_blank" rel="noopener">https://www.1854.photography/2026/11/photography-at-200-through-the-prix-pictet/</a>
+  </div>
+</article>
+<article
+  data-id="5ef704f868e9d6c8b821856c2c8a02a6"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="中古・市場||写真展・イベント"
+  data-region="国内"
+  data-source="CAPA CAMERA WEB"
+  data-kind="イベント"
+  data-search="希少なカメラとレンズが集う「池袋クラシックカメラ博」が11月12日から池袋で開催 掘り出し物を見つけよう！ 希少なカメラやレンズが集う「池袋クラシックカメラ博」11/12から開催 「池袋クラシックカメラ博」が、2026年11月12日から16日まで東武百貨店 池袋店で開催される。写真機商振興会が主催する毎年恒例のイベントで、国内外のクラシックカメラやレンズが集う中古カメラの祭典だ。 希少なカメラやレンズの「掘り出し物」を探せる場として、CAPA CAMERA WEBが開催を案内している。クラシックカメラファンや中古機材を探す人にとって恒例のイベントとなっている。 CAPA CAMERA WEB 中古・市場 写真展・イベント 国内 イベント">
+  <p class="meta">CAPA CAMERA WEB　2026-11-11 17:45</p>
+  <h2 class="article-title">希少なカメラとレンズが集う「池袋クラシックカメラ博」が11月12日から池袋で開催</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 中古・市場</span><span class="chip">カテゴリ: 写真展・イベント</span><span class="chip">地域: 国内</span><span class="chip">種別: イベント</span></div>
+  <div class="summary">「池袋クラシックカメラ博」が、2026年11月12日から16日まで東武百貨店 池袋店で開催される。写真機商振興会が主催する毎年恒例のイベントで、国内外のクラシックカメラやレンズが集う中古カメラの祭典だ。<span class="summary-rest" hidden><br><br>希少なカメラやレンズの「掘り出し物」を探せる場として、CAPA CAMERA WEBが開催を案内している。クラシックカメラファンや中古機材を探す人にとって恒例のイベントとなっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：CAPA CAMERA WEB<br>
+    原題：掘り出し物を見つけよう！ 希少なカメラやレンズが集う「池袋クラシックカメラ博」11/12から開催<br>
+    原文URL：<a href="https://getnavi.jp/capa/news/510632/" target="_blank" rel="noopener">https://getnavi.jp/capa/news/510632/</a>
+  </div>
+</article>
+<article
+  data-id="77966441070085dad318f7b94f0415a0"
+  data-date="2026-11-09"
+  data-month="2026-11"
+  data-categories="写真展・イベント"
+  data-region="国内"
+  data-source="ニコンイメージングジャパン"
+  data-kind="イベント"
+  data-search="中野耕志写真展「JETBIRDER」　ニコンプラザのTHE GALLERYで12月8日から開催 THE GALLERY企画展 中野 耕志 写真展「JETBIRDER」を開催 ニコンプラザ東京・大阪の写真展会場「THE GALLERY」で、企画展として中野耕志写真展「JETBIRDER」が2026年12月8日（火）から開催される。本展では、『Jetscape～絶景の飛行機』『Birdscape～絶景の野鳥』をライフワークとする中野氏が、国内外の雄大な自然風景の中で捉えた飛行機と野鳥の作品が展示される。 中野氏は、大きな翼を巧みに操り自由に空を飛ぶ飛行機や野鳥の世界に近づきたくて、ファインダーを通して「翼を持つ美しきもの」を撮影してきたとコメントしている。四季折々の日本の風景とともにある飛行機や野鳥に加え、スコットランドの離島やギリシャの峡谷で撮影した作品も含まれる。 ニコンイメージングジャパン 写真展・イベント 国内 イベント">
+  <p class="meta">ニコンイメージングジャパン　2026-11-09 13:00</p>
+  <h2 class="article-title">中野耕志写真展「JETBIRDER」　ニコンプラザのTHE GALLERYで12月8日から開催</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 写真展・イベント</span><span class="chip">地域: 国内</span><span class="chip">種別: イベント</span></div>
+  <div class="summary">ニコンプラザ東京・大阪の写真展会場「THE GALLERY」で、企画展として中野耕志写真展「JETBIRDER」が2026年12月8日（火）から開催される。本展では、『Jetscape～絶景の飛行機』『Birdscape～絶景の野鳥』をライフワークとする中野氏が、国内外の雄大な自然風景の中で捉えた飛行機と野鳥の作品が展示される。<span class="summary-rest" hidden><br><br>中野氏は、大きな翼を巧みに操り自由に空を飛ぶ飛行機や野鳥の世界に近づきたくて、ファインダーを通して「翼を持つ美しきもの」を撮影してきたとコメントしている。四季折々の日本の風景とともにある飛行機や野鳥に加え、スコットランドの離島やギリシャの峡谷で撮影した作品も含まれる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ニコンイメージングジャパン<br>
+    原題：THE GALLERY企画展 中野 耕志 写真展「JETBIRDER」を開催<br>
+    原文URL：<a href="https://nij.nikon.com/news/enjoy/2026/1109.html" target="_blank" rel="noopener">https://nij.nikon.com/news/enjoy/2026/1109.html</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- CAMERA_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <ul class="archive-list">
+        <li>まだありません</li>
+      </ul>
+    </section>
+    <!-- CAMERA_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        genre: document.getElementById("categoryFilter"),
+        source: document.getElementById("sourceFilter"),
+        kind: document.getElementById("kindFilter"),
+        region: document.getElementById("regionFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-categories"), els.genre.value)
+          && (!els.source.value || article.getAttribute("data-source") === els.source.value)
+          && (!els.kind.value || article.getAttribute("data-kind") === els.kind.value)
+          && (!els.region.value || article.getAttribute("data-region") === els.region.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.genre, els.source, els.kind, els.region].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = ""; els.month.value = ""; els.genre.value = "";
+        els.source.value = ""; els.kind.value = ""; els.region.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>
