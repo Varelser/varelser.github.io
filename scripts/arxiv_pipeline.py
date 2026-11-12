@@ -16,6 +16,8 @@ mechanical lives here so it is written once, tested, and reused:
   - merge, timestamp-desc sort, main keeps the newest 80, overflow moves to
     monthly archives (created from the main shell when a month is new)
   - archive-links line rebuild inside the ARCHIVE_LINKS markers
+  - RSS feed regeneration (arxiv-feed.xml: latest 50 across the whole
+    stock, main + archives, on every update run)
   - full validation (the cron job's step-8 checks + structural checks:
     DATA must be followed by ';', page <script> must pass `node --check`
     when node is available, main DATA must equal arxiv-data.json,
@@ -37,6 +39,7 @@ Reports are printed to stdout as JSON.
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import re
 import shutil
@@ -45,9 +48,12 @@ import sys
 import tempfile
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
+from email.utils import format_datetime
 from pathlib import Path
 
 MAIN_KEEP = 80
+FEED_LIMIT = 50
+FEED_NAME = "arxiv-feed.xml"
 SUMMARY_MIN, SUMMARY_MAX = 450, 900
 JA_RE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff]")
 DOI_RE = re.compile(r"10\.\d{4,9}/\S+")
@@ -132,6 +138,45 @@ def norm_title(t: str) -> str:
 
 def text_len(html: str) -> int:
     return len(re.sub(r"<[^>]+>", "", html or ""))
+
+
+def plain_text(html_str: str) -> str:
+    return re.sub(r"<[^>]+>", "", (html_str or "").replace("<br><br>", " "))
+
+
+def parse_iso(s: str) -> datetime:
+    return datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+# ------------------------------------------------------------------ RSS feed
+
+def build_feed(articles, updated_at_iso: str) -> str:
+    """RSS 2.0 feed of the newest FEED_LIMIT articles (caller sorts desc)."""
+    def xesc(s):
+        return html.escape(str(s), quote=False)
+    items = []
+    for a in articles[:FEED_LIMIT]:
+        pub = format_datetime(parse_iso(a["publishedAt"]))
+        items.append(
+            "  <item>\n"
+            f"   <title>{xesc(a['titleJa'])}</title>\n"
+            f"   <link>{xesc(a['url'])}</link>\n"
+            f"   <guid isPermaLink=\"true\">{xesc(a['url'])}</guid>\n"
+            f"   <pubDate>{pub}</pubDate>\n"
+            f"   <description>{xesc(plain_text(a['summaryHtml'])[:600])}</description>\n"
+            "  </item>")
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0">\n<channel>\n'
+        " <title>Research Digest（研究論文ダイジェスト）</title>\n"
+        " <link>https://varelser.github.io/arxiv.html</link>\n"
+        " <description>arXiv・Crossref・PubMed など複数の学術ソースから集めた研究論文を、"
+        "日本語要約・ジャンル分類付きで届ける Research Digest の新着フィード</description>\n"
+        " <language>ja</language>\n"
+        f" <lastBuildDate>{format_datetime(parse_iso(updated_at_iso))}</lastBuildDate>\n"
+        + "\n".join(items) +
+        "\n</channel>\n</rss>\n"
+    )
 
 
 def ts_ms(iso: str) -> int:
@@ -388,6 +433,17 @@ def cmd_update(args) -> int:
     if verrors:
         raise PipelineError("post-merge validation failed: " + "; ".join(verrors))
 
+    # RSS feed: rebuild from the whole post-merge stock (main + archives),
+    # newest first. It joins changed_files only when its bytes differ.
+    stock = list(keep)
+    for st in archives.values():
+        stock += st["obj"]["articles"]
+    stock.sort(key=lambda a: a["timestamp"], reverse=True)
+    feed_xml = build_feed(stock, stamp)
+    feed_path = repo / FEED_NAME
+    feed_changed = (not feed_path.exists()
+                    or feed_path.read_text(encoding="utf-8") != feed_xml)
+
     report = {
         "added": [a["title"] for a in new],
         "removed_cleaning": removed,
@@ -396,13 +452,16 @@ def cmd_update(args) -> int:
         "main_total": len(keep),
         "total_articles": len(keep) + sum(counts.values()),
         "checks": checks,
-        "changed_files": ["arxiv.html", "arxiv-data.json"] + changed,
+        "changed_files": ["arxiv.html", "arxiv-data.json"] + changed
+                         + ([FEED_NAME] if feed_changed else []),
         "dry_run": bool(args.dry_run),
     }
     if not args.dry_run:
         (repo / "arxiv-data.json").write_text(
             json.dumps(keep, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         (repo / "arxiv.html").write_text(main_text, encoding="utf-8")
+        if feed_changed:
+            feed_path.write_text(feed_xml, encoding="utf-8")
         for name in changed:
             st = archives[name[len("arxiv-archive-"):-len(".html")]]
             st["path"].write_text(st["text"], encoding="utf-8")

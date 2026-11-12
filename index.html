@@ -174,6 +174,14 @@
       <p class="nurse-latest-more"><a href="nurse-news.html">Nurse News をすべて見る →</a> ・ <a href="nurse-search.html">全件検索</a></p>
     </section>
 
+    <section class="nurse-latest" aria-label="Research Digest 最新記事">
+      <h2 class="nurse-latest-title"><a href="arxiv.html">Research Digest</a> 最新記事</h2>
+      <ul class="nurse-latest-list" id="arxivLatestList">
+        <li><a href="arxiv.html">最新の研究論文を読む</a></li>
+      </ul>
+      <p class="nurse-latest-more"><a href="arxiv.html">Research Digest をすべて見る →</a> ・ <a href="arxiv-search.html">全件検索</a> ・ <a href="arxiv-feed.xml">RSS</a></p>
+    </section>
+
     <footer class="foot">
       <small>© <span id="y"></span> VARELSER</small>
     </footer>
@@ -192,6 +200,26 @@
         meta.textContent = (a.publishedDateKey || "") + " " + (a.sourceName || "");
         var link = document.createElement("a");
         link.href = "nurse-news.html";
+        link.textContent = a.titleJa || "";
+        li.appendChild(meta); li.appendChild(link);
+        list.appendChild(li);
+      });
+    }).catch(function(){});
+  </script>
+  <script>
+    fetch("arxiv-data.json").then(function(r){ return r.json(); }).then(function(data){
+      var list = document.getElementById("arxivLatestList");
+      var items = (Array.isArray(data) ? data : []).slice(0, 5);
+      if (!items.length || !list) return;
+      list.textContent = "";
+      items.forEach(function(a){
+        var li = document.createElement("li");
+        var meta = document.createElement("span");
+        meta.className = "nurse-latest-meta";
+        meta.textContent = (a.publishedAt || "").slice(0, 10) + " " + (a.source || "");
+        var link = document.createElement("a");
+        link.href = a.url || "arxiv.html";
+        link.target = "_blank"; link.rel = "noopener";
         link.textContent = a.titleJa || "";
         li.appendChild(meta); li.appendChild(link);
         list.appendChild(li);

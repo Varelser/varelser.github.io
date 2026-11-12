@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Digest 全件検索 | VARELSER</title>
+  <meta name="description" content="Research Digest の全ストック論文（本体＋月別アーカイブ）を横断検索できるページです。" />
+  <meta property="og:title" content="Research Digest 全件検索 | VARELSER" />
+  <meta property="og:description" content="Research Digest の全ストック論文（本体＋月別アーカイブ）を横断検索できるページです。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://varelser.github.io/arxiv-search.html" />
+  <link rel="alternate" type="application/rss+xml" title="Research Digest RSS" href="arxiv-feed.xml" />
+  <style>
+    body{margin:0;background:#fff;color:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.8}
+    .container{max-width:920px;margin:0 auto;padding:40px 18px 56px}
+    .back{display:inline-block;margin-bottom:28px;color:#666;text-decoration:none;font-size:14px}
+    h1{font-size:24px;margin:0 0 8px}.desc{color:#666;font-size:13px;margin:0 0 18px}
+    .panel{border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;margin-bottom:24px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.count{font-size:13px;color:#666;margin:10px 2px}
+    select,input{width:100%;height:42px;padding:0 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
+    .label{display:block;font-size:12px;color:#666;margin:0 0 6px}
+    article{border-bottom:1px solid #e5e7eb;padding-bottom:24px;margin-bottom:24px}
+    .src{font-size:12px;color:#666;margin-bottom:8px}
+    .title{font-size:19px;line-height:1.5;font-weight:700;margin:0 0 10px}
+    .title a{color:#111}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+    .tag{font-size:12px;padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#f3f4f6}
+    .summary{font-size:14px;color:#222;margin:0 0 10px}
+    .links{font-size:13px;display:flex;gap:14px}
+    a{color:#0f766e;text-decoration:none} a:hover{text-decoration:underline}
+    @media (max-width:720px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="arxiv.html" class="back">← Research Digest に戻る</a>
+    <h1>Research Digest 全件検索</h1>
+    <p class="desc">最新80件だけでなく、月別アーカイブを含む全ストックを横断して検索できます。</p>
+    <div class="panel">
+      <div class="grid">
+        <label><span class="label">キーワード</span><input id="q" type="search" placeholder="タイトル・要約・著者で検索" /></label>
+        <label><span class="label">ジャンル</span><select id="genre"><option value="">すべて</option></select></label>
+        <label><span class="label">月</span><select id="mon"><option value="">すべて</option></select></label>
+      </div>
+      <p class="count" id="count">読み込み中…</p>
+    </div>
+    <div id="results"></div>
+  </div>
+  <script>
+    var articles = [];
+    function plain(h) { return (h || "").replace(/<br><br>/g, " ").replace(/<[^>]+>/g, ""); }
+    function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    // Extract the object of `const DATA = {...};` with a string-aware brace scan.
+    function extractData(text) {
+      var marker = "const DATA = ";
+      var i = text.indexOf(marker);
+      if (i < 0) return null;
+      var start = i + marker.length;
+      var depth = 0, inStr = false, escNext = false;
+      for (var j = start; j < text.length; j++) {
+        var c = text[j];
+        if (inStr) {
+          if (escNext) escNext = false;
+          else if (c === "\\") escNext = true;
+          else if (c === '"') inStr = false;
+        } else if (c === '"') inStr = true;
+        else if (c === "{") depth++;
+        else if (c === "}") { depth--; if (depth === 0) return JSON.parse(text.slice(start, j + 1)); }
+      }
+      return null;
+    }
+    function render() {
+      var q = document.getElementById("q").value.trim().toLowerCase();
+      var genre = document.getElementById("genre").value;
+      var mon = document.getElementById("mon").value;
+      var hits = [];
+      for (var i = 0; i < articles.length; i++) {
+        var a = articles[i];
+        if (genre && a.genre !== genre) continue;
+        if (mon && a.monthKey !== mon) continue;
+        if (q) {
+          var hay = (a.titleJa + " " + a.title + " " + plain(a.summaryHtml) + " " + (a.authors || []).join(" ") + " " + (a.categories || []).join(" ") + " " + (a.field || "")).toLowerCase();
+          if (hay.indexOf(q) === -1) continue;
+        }
+        hits.push(a);
+      }
+      document.getElementById("count").textContent = hits.length + "件ヒット / 全" + articles.length + "件" + (hits.length > 100 ? "（上位100件を表示）" : "");
+      var html = "";
+      hits.slice(0, 100).forEach(function (a) {
+        var tags = (a.categories || []).concat(a.field ? [a.field] : []).slice(0, 6).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+        html += '<article><div class="src">' + esc((a.publishedAt || "").slice(0, 10)) + " ・ " + esc(a.source) + " ・ " + esc(a.genre) + " ・ 掲載: " + esc(a.pageLabel) + '</div>'
+          + '<h2 class="title"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.titleJa) + "</a></h2>"
+          + '<p class="summary">' + esc(plain(a.summaryHtml).slice(0, 240)) + "…</p>"
+          + '<div class="tags">' + tags + "</div>"
+          + '<div class="links"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">原文を読む</a><a href="' + esc(a.pageHref) + '">掲載ページで見る</a></div></article>';
+      });
+      document.getElementById("results").innerHTML = html || '<p class="count">該当する論文がありません。</p>';
+    }
+    function fill(id, values) {
+      var sel = document.getElementById(id);
+      values.forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
+    }
+    function finish() {
+      articles.sort(function (x, y) { return y.timestamp - x.timestamp; });
+      fill("genre", Array.from(new Set(articles.map(function (a) { return a.genre; }).filter(Boolean))).sort());
+      fill("mon", Array.from(new Set(articles.map(function (a) { return a.monthKey; }).filter(Boolean))).sort().reverse());
+      ["q", "genre", "mon"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", render);
+        document.getElementById(id).addEventListener("change", render);
+      });
+      render();
+    }
+    fetch("arxiv-data.json").then(function (r) { return r.json(); }).then(function (main) {
+      (main || []).forEach(function (a) { a.pageLabel = "本体"; a.pageHref = "arxiv.html"; articles.push(a); });
+      return fetch("arxiv.html").then(function (r) { return r.text(); });
+    }).then(function (mainHtml) {
+      var hrefs = [], m, re = /href="(arxiv-archive-\d{4}-\d{2}\.html)"/g;
+      while ((m = re.exec(mainHtml)) !== null) { if (hrefs.indexOf(m[1]) === -1) hrefs.push(m[1]); }
+      return Promise.all(hrefs.map(function (href) {
+        return fetch(href).then(function (r) { return r.text(); }).then(function (t) {
+          var data = extractData(t);
+          if (!data || !data.articles) return;
+          var mk = href.replace("arxiv-archive-", "").replace(".html", "");
+          var label = "アーカイブ " + Number(mk.slice(0, 4)) + "年" + Number(mk.slice(5, 7)) + "月";
+          data.articles.forEach(function (a) { a.pageLabel = label; a.pageHref = href; articles.push(a); });
+        }).catch(function () {});
+      }));
+    }).then(finish).catch(function () { document.getElementById("count").textContent = "データの読み込みに失敗しました。"; });
+  </script>
+</body>
+</html>

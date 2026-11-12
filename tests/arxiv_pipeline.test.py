@@ -10,7 +10,9 @@ import json
 import subprocess
 import sys
 import tempfile
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -189,6 +191,43 @@ def main():
         nf.write_text(json.dumps([short]), encoding="utf-8")
         r = run(repo, "update", "--dir", str(repo), "--new", str(nf), "--now", NOW)
         check("short summary rejected with exit 2", lambda: r.returncode == 2)
+
+    # 7. RSS feed: update regenerates arxiv-feed.xml from the whole stock,
+    #    capped at 50 items, newest first, XML-escaped; a rerun with no
+    #    stock change leaves the feed out of changed_files.
+    with tempfile.TemporaryDirectory() as tmp:
+        arts = [article(i, f"2026-11-{(i % 11) + 1:02d}T{i // 11:02d}:00:00Z") for i in range(55)]
+        sp = article(99, "2026-11-12T00:00:00Z")
+        sp["titleJa"] = "A & B <テスト> の論文"
+        sp["url"] = "https://example.org/paper?a=1&b=2"
+        repo = make_repo(tmp, arts + [sp])
+        r = run(repo, "update", "--dir", str(repo), "--now", NOW)
+        rep = json.loads(r.stdout) if r.returncode == 0 else {}
+        feed = repo / "arxiv-feed.xml"
+        check("feed exit 0", lambda: r.returncode == 0)
+        check("feed file created and reported changed",
+              lambda: feed.exists() and "arxiv-feed.xml" in rep.get("changed_files", []))
+        raw = feed.read_text(encoding="utf-8") if feed.exists() else ""
+        items = ET.fromstring(raw).find("channel").findall("item") if raw else []
+        check("feed is valid XML with 50 items (cap)", lambda: len(items) == 50)
+        check("feed newest first",
+              lambda: items and items[0].findtext("title") == "A & B <テスト> の論文")
+        check("feed pubDates non-increasing",
+              lambda: all(parsedate_to_datetime(items[i].findtext("pubDate"))
+                          >= parsedate_to_datetime(items[i + 1].findtext("pubDate"))
+                          for i in range(len(items) - 1)))
+        check("feed escapes title and url",
+              lambda: "A &amp; B &lt;テスト&gt; の論文" in raw
+              and "https://example.org/paper?a=1&amp;b=2" in raw)
+        check("feed link/guid/pubDate present",
+              lambda: items and items[0].findtext("link") == "https://example.org/paper?a=1&b=2"
+              and items[0].findtext("guid") == "https://example.org/paper?a=1&b=2"
+              and parsedate_to_datetime(items[0].findtext("pubDate"))
+              == datetime(2026, 11, 12, tzinfo=timezone.utc))
+        r2 = run(repo, "update", "--dir", str(repo), "--now", NOW)
+        rep2 = json.loads(r2.stdout) if r2.returncode == 0 else {}
+        check("feed rerun: unchanged feed not in changed_files",
+              lambda: r2.returncode == 0 and "arxiv-feed.xml" not in rep2.get("changed_files", []))
 
     print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
     if FAILED:
