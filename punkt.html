@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Punkt v2 (2026-11-11): zero-value sanitize fix, pre-change undo snapshots, true Poisson-disk sampling, unified processing core, export size guards, history mask budget, 20MP input cap. Tests: tests/punkt.test.mjs. v3 (2026-11-11): weighted Voronoi stippling, keyboard mask painting. -->
+<!-- Punkt v2 (2026-11-11): zero-value sanitize fix, pre-change undo snapshots, true Poisson-disk sampling, unified processing core, export size guards, history mask budget, 20MP input cap. Tests: tests/punkt.test.mjs. v3 (2026-11-11): weighted Voronoi stippling, keyboard mask painting. v4-lien-reskin (2026-11-12): Lien-style frameless UI — 56px header, text-only toolbar, floating control panel initially hidden, artwork shifts when the panel opens. Generation core unchanged. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -687,11 +687,197 @@
       .canvas-wrap { padding: 8px; }
       .nodes-pill { top: -34px; }
     }
+
+    /* ==== Lien-style reskin v4 (frameless, = shipped Lien 1654a6e1) ==== */
+    :root {
+      --lien-panel-bg: rgba(0, 0, 0, 0.90);
+      --lien-control-bg: #171717;
+      --lien-control-bg-hover: #262626;
+      --lien-shadow: 0 25px 50px -12px rgba(0,0,0,0.75);
+    }
+    body {
+      background: #000000;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+    @keyframes punktSlideUpFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* header: 56px, centred title, no divider (frameless Lien) */
+    .app-header {
+      flex: 0 0 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 30; user-select: none;
+      background: #000000;
+    }
+    .app-title {
+      font-size: 0.875rem; line-height: 1.25rem;
+      letter-spacing: 0.2em; font-weight: 300;
+      color: rgba(255,255,255,0.78); margin: 0;
+    }
+
+    /* preview info: frameless chip — dark blur fill only, no outline
+       (same treatment as Lien's export overlay card; plain text alone
+       was unreadable over light artwork) */
+    .preview-toolbar {
+      background: rgba(0,0,0,0.46); border: 0; box-shadow: none;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: 12px; padding: 8px 10px;
+    }
+
+    /* artwork area: pure black, fainter checker (transparency cue only) */
+    .canvas-wrap {
+      padding: 18px 16px 12px;
+      background-image:
+        linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.02) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.02) 75%);
+      transition: padding 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    body:not(.dock-collapsed) .canvas-wrap { padding-right: 16px; }
+    @media (min-width: 900px) {
+      body:not(.dock-collapsed) .canvas-wrap { padding-right: calc(340px + 48px); }
+    }
+    .scene-wrap { border: 0; transform: none; }
+    .compare-chip { border: 0; }
+    .overlay { border-radius: 0; }
+    .overlay-card { border: 0; border-radius: 12px; }
+
+    /* status pill: frameless */
+    .nodes-pill { border: 0; top: -38px; }
+
+    /* footer toolbar: dock-top becomes the Lien toolbar */
+    .dock-shell {
+      background: #000000; border-top: 0; box-shadow: none;
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+    }
+    .dock-top {
+      min-height: 0; padding: 12px 24px;
+      border-bottom: 0; background: #000000;
+      overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap;
+    }
+    .dock-top::-webkit-scrollbar { display: none; }
+    .dock-left, .dock-right, .dock-actions { flex-wrap: nowrap; flex: 0 0 auto; }
+    .dock-top .btn, .dock-top .upload-inline span { white-space: nowrap; }
+    .brand, .divider { display: none; }
+
+    /* Load Image: text-only toolbar label (Lien .toolbar-label-btn) */
+    .upload-inline { opacity: 1; gap: 8px; }
+    .upload-chip { background: transparent; color: #ffffff; font-size: 15px; width: auto; height: auto; }
+    .upload-inline:hover .upload-chip, .upload-inline.drag .upload-chip { background: transparent; }
+    .upload-inline span {
+      font-size: 12px; font-weight: 500; letter-spacing: 0.12em; color: #ffffff;
+    }
+    .upload-inline:hover { opacity: 0.7; }
+
+    /* all toolbar / panel buttons: frameless, text-only */
+    .btn, .mode, .toggle, .scale, .toolchip, .pill, .preset-list button, .seed-list button {
+      border: 0; background: transparent; color: #737373;
+      box-shadow: none; min-height: 30px;
+    }
+    .btn:hover, .mode:hover, .toggle:hover, .scale:hover, .toolchip:hover, .pill:hover,
+    .preset-list button:hover, .seed-list button:hover {
+      background: rgba(255,255,255,0.08); color: #ffffff; transform: none;
+    }
+    .mode.active, .toggle.active, .scale.active, .toolchip.active, .pill.active {
+      background: #f5f5f5; color: #000000; border: 0; box-shadow: none;
+    }
+    .mode.active::after { display: none; }
+    .btn.subtle { color: #737373; }
+    .btn.subtle:hover { color: #ffffff; }
+    .btn.danger { color: #ff8b8b; }
+    .btn:disabled, .mode:disabled, .toggle:disabled, .scale:disabled,
+    .toolchip:disabled, .pill:disabled { opacity: 0.35; }
+
+    /* Customize: the existing collapse button, relabelled in CSS only
+       (refreshUi rewrites its textContent to the ▴/▾ arrow) */
+    #collapseBtn {
+      width: auto; min-width: 0; padding: 6px 8px;
+      font-size: 11px; letter-spacing: 0.1em; color: #ffffff;
+    }
+    #collapseBtn::before {
+      content: "Customize";
+      font-size: 12px; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-right: 8px;
+    }
+
+    /* controls: floating panel bottom-right (Lien .floating-panel.config) */
+    .dock-details {
+      position: absolute; right: 24px; bottom: calc(100% + 8px);
+      width: 340px; max-width: calc(100vw - 32px);
+      max-height: min(72vh, calc(100dvh - 190px));
+      overflow-y: auto; overflow-x: hidden;
+      border-radius: 12px;
+      background: var(--lien-panel-bg);
+      box-shadow: var(--lien-shadow);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      z-index: 50;
+    }
+    body.dock-collapsed .dock-details { max-height: 0; opacity: 0; overflow: hidden; }
+    .dock-grid {
+      max-width: none; margin: 0; padding: 20px;
+      grid-template-columns: 1fr; gap: 22px;
+    }
+    .dock-col.bordered { padding-left: 0; border-left: 0; }
+    .grid-2 { gap: 14px 16px; }
+    .grid-3 { grid-template-columns: 1fr; gap: 10px; }
+    @media (max-width: 899px) {
+      .dock-details {
+        left: 16px; right: 16px; width: auto;
+        max-height: min(48vh, calc(100dvh - 190px));
+      }
+      body:not(.dock-collapsed) .canvas-wrap { padding-bottom: calc(min(48vh, 100dvh - 190px) + 24px); }
+      .dock-top { padding: 12px 16px; }
+    }
+
+    /* inside the panel: no square frames (Yayoi round-3 rule) */
+    .dock-details button, .dock-details input, .dock-details select, .dock-details textarea { border: 0; }
+    .card { background: transparent; border: 0; padding: 0; border-radius: 0; }
+    .meta-item { border: 0; border-radius: 10px; }
+    .legend-chip { border: 0; }
+    .curve-canvas { border: 0; }
+    .label-row .value { background: transparent; padding: 0; border-radius: 0; }
+    .section-title { font-size: 10px; letter-spacing: 0.16em; color: #a3a3a3; }
+
+    /* inputs keep a fill so fields stay readable */
+    .number, .text, .select {
+      border: 0; background: rgba(255,255,255,0.06);
+    }
+    .color-field input[type="color"] { border: 0; background: rgba(255,255,255,0.06); }
+
+    /* Lien sliders: 4px track, 14px white thumb, no ring */
+    .range {
+      height: 4px; border-radius: 9999px; background: var(--lien-control-bg);
+    }
+    .range:hover { background: var(--lien-control-bg-hover); }
+    .range::-webkit-slider-thumb {
+      width: 14px; height: 14px; background: #ffffff; box-shadow: none;
+    }
+    .range::-moz-range-thumb { width: 14px; height: 14px; background: #ffffff; }
+
+    /* dialogs / overlays: frameless cards */
+    .json-dialog-card { border: 0; border-radius: 12px; }
+    .json-text { border: 0; }
+
+    button:focus-visible, input:focus-visible, [tabindex]:focus-visible, canvas:focus-visible {
+      outline: 2px solid #f5f5f5; outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
   <div class="app">
     <input id="fileInput" aria-label="Load image file" type="file" accept="image/*" hidden />
+
+    <header class="app-header">
+      <h1 class="app-title">Punkt</h1>
+    </header>
 
     <main class="preview">
       <div class="preview-toolbar">
@@ -1099,7 +1285,7 @@
       workerPending: null,
       lastExpectedSamples: 0,
       objectUrl: null,
-      uiCollapsed: false,
+      uiCollapsed: true,
       previewRaster: null,
       compareA: null,
       compareB: null,
