@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Digest アーカイブ 2026年3月 | VARELSER</title>
+  <meta name="description" content="arXiv・Crossref・PubMed など複数の学術ソースから、AI・意識・哲学・倫理を中心に研究論文を集め、日本語要約・ジャンル分類付きで届けるダイジェストです。" />
+  <meta property="og:title" content="Research Digest（研究論文ダイジェスト）| VARELSER" />
+  <meta property="og:description" content="arXiv・Crossref・PubMed など複数の学術ソースから、AI・意識・哲学・倫理を中心に研究論文を集め、日本語要約・ジャンル分類付きで届けるダイジェストです。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://varelser.github.io/arxiv.html" />
+  <link rel="alternate" type="application/rss+xml" title="Research Digest RSS" href="arxiv-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back,.back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back:hover,.back-link:hover{color:var(--fg);}
+    h1,.page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+          .desc{color:var(--muted);font-size:13px;margin:0 0 18px;}
+    .archive-links .desc{font-size:14px;margin:0;}
+    .filter-item.wide{grid-column:1/-1;}
+    .orig{font-size:13px;color:var(--muted);margin:-6px 0 12px;line-height:1.6;}
+    .links{font-size:13px;display:flex;gap:14px;margin-top:12px;}
+    .links a{color:var(--accent);text-decoration:none;}
+    .links a:hover{text-decoration:underline;}
+    .article-title a{color:var(--fg);text-decoration:none;}
+    .article-title a:hover{text-decoration:underline;}
+    mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px;}
+    .source-box{min-width:0;}
+    article{min-width:0}.box{min-width:0;overflow-wrap:anywhere}article a{overflow-wrap:anywhere}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="arxiv.html" class="back">← Research Digest に戻る</a>
+    <h1>Research Digest アーカイブ 2026年3月</h1>
+    <p class="page-desc">arXiv・Crossref・PubMed など複数の学術ソースから、AI・意識・哲学・倫理を中心に、日本語要約・ジャンル分類付きで整理しています。</p>
+    <p class="page-desc"><a href="arxiv-search.html">全文検索（全ストック横断）</a> ・ <a href="arxiv-feed.xml">RSS フィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="month">月</label><select id="month"><option value="">すべて</option></select></div>
+        <div class="filter-item"><label for="genre">ジャンル</label><select id="genre"><option value="">すべて</option></select></div>
+        <div class="filter-item"><label for="field">主分類・掲載誌</label><select id="field"><option value="">すべて</option></select></div>
+        <div class="filter-item"><label for="sort">並び順</label><select id="sort"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">タイトル順</option></select></div>
+        <div class="filter-item wide"><label for="keyword">キーワード</label><input id="keyword" type="search" placeholder="タイトル・要約・著者・分類を検索" /></div>
+      </div>
+      <div class="toolbar">
+        <div class="count" id="meta"></div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="list"></section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <p class="desc">アーカイブ一覧は本体ページにあります。 <a href="arxiv.html">Research Digest に戻る</a></p>
+  </div>
+  <script>
+    const DATA = {"articles":[{"authors":["Dengzhe Hou","Lingyu Jiang","Deng Li","Zirui Li","Fangzhou Lin","Kazunori D Yamada"],"categories":["cs.AI","cs.CL"],"field":"cs.AI","genre":"LLM / NLP","monthKey":"2026-03","publishedAt":"2026-03-28T17:25:11Z","source":"arXiv","summaryHtml":"人の作動記憶は情報を保持し、更新し続ける。大規模言語モデル（LLM）にも、途中の計算を書き出さずに一つのプロンプト内で更新を追跡する力が求められる。本研究は、作動記憶に着想を得たプローブ「WMIP」を提案する。3回から100回の更新をプログラムで生成し、最終状態・途中状態・複数対象への問いかけで、同一の問題を異なる回答形式で比較できる。<br><br>18のLLMを評価した結果、単一ステップの計算では84.9%の正解率だったが、3～7回の更新を要する中核課題では31.7%まで落ち、50回以上の更新ではどのモデルも10%を超えなかった。一方、手順を書き出し、答えを最後の行に置くよう指示すると、中核課題の正解率は88.0%まで上がった。ただし改善の主因は計算量の増加ではなく、指示の変更だった。<br><br>中核課題の成績は、公開されている関数呼び出しベンチマークのスコアとも正の相関を示した。単発の計算力が高くても、情報を累積して追い続ける力は別物であり、測定方法（回答形式の指示）によって評価結果が大きく変わることを示す。生成器や評価コードも公開され、深さや問い方を変えた再現可能な比較が可能になっている。出典：arXiv","timestamp":1774718711000,"title":"WMIP: A Working-Memory-Inspired Programmable Probe of Cumulative State Tracking in Large Language Models","titleJa":"作動記憶に着想を得たプローブで測る大規模言語モデルの累積状態追跡","url":"https://arxiv.org/abs/2603.27343"}],"updatedAt":"2026-11-12T18:00:51Z","version":1};
+    const byId = id => document.getElementById(id);
+    const norm = s => String(s||'').toLowerCase().normalize('NFKC').replace(/\s+/g,' ').trim();
+    const esc = s => String(s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const plainText = h => String(h||'').replace(/<br><br>/g,' ').replace(/<[^>]+>/g,'');
+    const months = [...new Set((DATA.articles||[]).map(a => a.monthKey).filter(Boolean))].sort().reverse();
+    const genres = [...new Set((DATA.articles||[]).map(a => a.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    const fields = [...new Set((DATA.articles||[]).map(a => a.field).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    function fill(select, values){ values.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; select.appendChild(o); }); }
+    fill(byId('month'), months); fill(byId('genre'), genres); fill(byId('field'), fields);
+    // ---- filter persistence: URL query params win over localStorage ----
+    const FILTER_IDS = ['month','genre','field','sort','pageSize'];
+    const LS_KEY = 'rd-filters-v1';
+    function readUrlState(){ try { const p = new URLSearchParams(location.search); const s = {}; let any = false; FILTER_IDS.concat(['keyword']).forEach(id=>{ if (p.has(id)) { s[id] = p.get(id); any = true; } }); return any ? s : null; } catch(e){ return null; } }
+    function readLsState(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch(e){ return null; } }
+    function applyState(s){ if (!s) return; FILTER_IDS.forEach(id=>{ if (s[id] != null) byId(id).value = s[id]; }); if (s.keyword != null) byId('keyword').value = s.keyword; }
+    function currentState(){ const s = {}; FILTER_IDS.forEach(id=>{ s[id] = byId(id).value; }); s.keyword = byId('keyword').value; return s; }
+    function persist(){ const s = currentState(); try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch(e){} try { const p = new URLSearchParams(); Object.keys(s).forEach(k=>{ if (s[k]) p.set(k, s[k]); }); const q = p.toString(); history.replaceState(null, '', q ? '?' + q : location.pathname); } catch(e){} }
+    applyState(readUrlState() || readLsState());
+    // ---- summary folding ----
+    const FOLD_CHARS = 180;
+    const expanded = new Set();
+    let currentPage = 1;
+    function render(){
+      const month=byId('month').value, genre=byId('genre').value, field=byId('field').value, sort=byId('sort').value, kw=norm(byId('keyword').value);
+      let rows=(DATA.articles||[]).filter(a=>{
+        if(month&&a.monthKey!==month) return false; if(genre&&a.genre!==genre) return false; if(field&&a.field!==field) return false;
+        const hay=norm([a.titleJa,a.title,a.summaryHtml,a.authors.join(' '),a.categories.join(' ')].join(' '));
+        if(kw&& !hay.includes(kw)) return false; return true;
+      });
+      rows = rows.slice().sort((a,b)=> sort==='oldest' ? a.timestamp-b.timestamp : sort==='title' ? a.titleJa.localeCompare(b.titleJa,'ja') : b.timestamp-a.timestamp);
+      const pageSize = parseInt(byId('pageSize').value, 10) || 0;
+      const totalPages = pageSize ? Math.max(1, Math.ceil(rows.length / pageSize)) : 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      const pageRows = pageSize ? rows.slice((currentPage - 1) * pageSize, currentPage * pageSize) : rows;
+      byId('pageInfo').textContent = rows.length ? `${currentPage} / ${totalPages} ページ` : '0 / 0 ページ';
+      byId('prevPage').disabled = currentPage <= 1;
+      byId('nextPage').disabled = currentPage >= totalPages;
+      byId('meta').textContent = `更新: ${DATA.updatedAt || '-'} / 表示件数: ${rows.length}件`;
+      byId('emptyState').style.display = rows.length ? 'none' : 'block';
+      byId('list').innerHTML = pageRows.map(a=>{
+        const plain = plainText(a.summaryHtml);
+        const isLong = plain.length > FOLD_CHARS;
+        const open = expanded.has(a.url);
+        const summaryHtml = (!isLong || open) ? (a.summaryHtml || '') : esc(plain.slice(0, FOLD_CHARS)) + '…';
+        const btn = isLong ? `<button type="button" class="summary-toggle" data-url="${esc(a.url)}" aria-expanded="${open}">${open ? '閉じる' : '続きを読む'}</button>` : '';
+        return `
+        <article>
+          <p class="meta">${esc(a.source)}　${esc(a.publishedAt.slice(0,10))}</p>
+          <h2 class="article-title">${esc(a.titleJa)}</h2>
+          <div class="taxonomy"><span class="chip">${esc(a.genre)}</span><span class="chip">${esc(a.field)}</span>${a.categories.slice(0,4).map(c=>`<span class="chip">${esc(c)}</span>`).join('')}</div>
+          <div class="summary">${summaryHtml}</div>${btn}
+          <div class="source-box"><strong>ソース・引用元</strong>配信元：${esc(a.source)}<br>原題：${esc(a.title)}<br>著者：${esc(a.authors.join(', '))}<br>原文URL：<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.url)}</a></div>
+        </article>`;
+      }).join('');
+    }
+    function resetAndRender(){ currentPage = 1; persist(); render(); }
+    ['month','genre','field','sort','pageSize'].forEach(id=>byId(id).addEventListener('change',resetAndRender)); byId('keyword').addEventListener('input',resetAndRender);
+    byId('prevPage').addEventListener('click',()=>{ if(currentPage>1){ currentPage--; render(); } });
+    byId('nextPage').addEventListener('click',()=>{ currentPage++; render(); });
+    byId('list').addEventListener('click',e=>{
+      const btn = e.target && e.target.closest ? e.target.closest('.summary-toggle') : null;
+      if (!btn) return;
+      const u = btn.getAttribute('data-url');
+      if (expanded.has(u)) expanded.delete(u); else expanded.add(u);
+      render();
+    });
+    byId('resetFilters').addEventListener('click',()=>{
+      byId('month').value=''; byId('genre').value=''; byId('field').value=''; byId('sort').value='newest'; byId('keyword').value=''; byId('pageSize').value='20';
+      try { localStorage.removeItem(LS_KEY); } catch(e){}
+      try { history.replaceState(null, '', location.pathname); } catch(e){}
+      currentPage = 1; render();
+    });
+    render();
+  </script>
+</body>
+</html>
