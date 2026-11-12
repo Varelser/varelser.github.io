@@ -67,6 +67,21 @@
     btnMultiDl: 'レイヤー別（ステム）の MIDI を書き出します。',
     btnMusicXml: 'MusicXML（楽譜データ）として書き出します。',
     btnOscSend: '生成データを OSC で送信します。',
+    ecbPresetFull: 'エンジンプリセット ALL ON — 推奨の基本セットをまとめて ON にします。',
+    ecbPresetMin: 'エンジンプリセット MINIMAL — PC Set と Resolve だけの最小構成にします。',
+    ecbPresetChaos: 'エンジンプリセット CHAOS — カオス系（Lorenz／セルオートマトン／ルバート）を中心に ON にします。',
+    ecbPresetOff: 'エンジンプリセット ALL OFF — 全エンジンを OFF にします。',
+    ecbPresetSerial: 'エンジンプリセット SERIAL — 十二音技法と Integral Serialism の直列系セットです。',
+    ecbPresetXenakis: 'エンジンプリセット XENAKIS — Xenakis の篩（Sieve）理論のセットです。',
+    ecbPresetSwarm: 'エンジンプリセット SWARM — Boids など群れ・カオス系のセットです。',
+    ecbPresetOrganic: 'エンジンプリセット ORGANIC — L-System や Humanizer など有機的な生成のセットです。',
+    ecbPresetSacred: 'エンジンプリセット SACRED — ソルフェジオ周波数など Sacred 系のセットです。',
+  };
+  const ECB_GROUP_TIPS = {
+    THEORY: '理論系エンジン — 和声・音列の規則で生成を支配します。',
+    CHAOS: 'カオス系エンジン — 力学系や確率のゆらぎで変調します。',
+    GENERATE: '生成系エンジン — リズムやフレーズそのものを作ります。',
+    FINISH: '仕上げ系エンジン — 生成後の解決・整形・変調を行います。',
   };
   const THEORY_PACK_TIP = 'Theory Pack — ティンティナブリ／フェイジング／イソリズム／シェパード・トーン／種対位法（第1〜5種＋カノン）／フーガ提示部／ソナタ形式／終止定型／クラーベやターラ／結合音など、追加の音楽理論エンジン群。全て既定 OFF で、ON にしたものだけ生成に加わります。';
 
@@ -163,6 +178,16 @@
     scope.querySelectorAll('button[id], #genBar button').forEach(btn => {
       const key = btn.id || btn.dataset.proxy;
       if (key && BUTTON_TIPS[key]) tag(btn, BUTTON_TIPS[key]);
+    });
+    // Engine Control のエンジン行 (21 が付ける title=desc を引き継ぎ、title は外す)
+    scope.querySelectorAll('.ecb-row[title]').forEach(row => {
+      tag(row, row.getAttribute('title'));
+      row.removeAttribute('title');
+    });
+    // Engine Control のグループ見出し
+    scope.querySelectorAll('.ecb-group-label').forEach(lbl => {
+      const key = Object.keys(ECB_GROUP_TIPS).find(k => (lbl.textContent || '').toUpperCase().includes(k));
+      if (key) tag(lbl, ECB_GROUP_TIPS[key]);
     });
     // 進行チップ (71 の title を引き継ぎ、二重表示を防ぐため title は外す)
     scope.querySelectorAll('.cp-preset-btn[title]').forEach(chip => {

@@ -378,3 +378,17 @@ footer { border-top: 0 !important; letter-spacing: .16em !important; font-size: 
 button:focus-visible, input:focus-visible, select:focus-visible, .sec-label:focus-visible {
   outline: 2px solid rgba(255,255,255,.85) !important; outline-offset: 2px;
 }
+
+/* ── 2026-11-13: 全幅マルチカラムレイアウト (縦の短縮) ─────────────────
+   .wrap を画面幅いっぱいに広げ、広い画面ではパネルを段組みにして
+   縦スクロールを短くする。.full パネルは全幅に通す。単独カラムは
+   従来どおり。CLASSIC 表示ではこのブロックごと無効になる。 */
+.wrap{max-width:none !important;padding-left:28px !important;padding-right:28px !important;}
+@media (min-width:1280px){
+  .wrap{column-count:2;column-gap:20px;}
+  .wrap>.panel{break-inside:avoid;margin-bottom:20px;}
+  .wrap>.panel[data-section="cc-automation"],.wrap>.panel[data-section="lorenz"],.wrap>.panel[data-section="rubato"],.wrap>.panel[data-section="spectral"]{column-span:all;}
+}
+@media (min-width:1800px){
+  .wrap{column-count:3;}
+}
