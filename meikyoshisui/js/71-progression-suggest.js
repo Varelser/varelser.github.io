@@ -108,6 +108,14 @@ const ProgSuggest = (() => {
     { name: '短調下行 (哀愁)', mode: 'minor', steps: [S_(0, 'm'), S_(10, ''), S_(8, ''), S_(5, 'm'), S_(7, '')], note: 'i–VII–VI–iv–V' },
     /* ── ブルース ── */
     { name: '12バー・ブルース', mode: 'major', steps: [S_(0, '7', 4), S_(5, '7', 2), S_(0, '7', 2), S_(7, '7', 1), S_(5, '7', 1), S_(0, '7', 1), S_(7, '7', 1)], note: 'I7–IV7–V7 の12小節定型' },
+    /* ── ボカロ ── */
+    { name: 'ボカロ疾走マイナー', mode: 'minor', steps: [S_(0, 'm'), S_(10, ''), S_(8, ''), S_(10, '')], note: 'i–VII–VI–VII。疾走感のあるマイナー・ループ' },
+    { name: 'ボカロ・サビ (IV始動)', mode: 'major', steps: [S_(5, ''), S_(0, ''), S_(7, ''), S_(9, 'm')], note: 'IV–I–V–vi。サビ頭で多用される始動形' },
+    { name: 'ボカロ・ドライブ', mode: 'minor', steps: [S_(0, 'm'), S_(8, ''), S_(10, ''), S_(7, '')], note: 'i–VI–VII–V。ループ先頭へ戻す緊張感' },
+    { name: '上昇フィニッシュ VI–VII–i', mode: 'minor', steps: [S_(8, ''), S_(10, ''), S_(0, 'm')], note: 'VI–VII–i。駆け上がって主音で締める' },
+    { name: 'ダーク・ループ i–VII', mode: 'minor', steps: [S_(0, 'm'), S_(10, '')], note: 'i–VII。ダーク系ボカロの2コード・ループ' },
+    { name: 'キラキラ進行', mode: 'major', steps: [S_(0, ''), S_(4, 'm'), S_(5, ''), S_(7, '')], note: 'I–iii–IV–V。明るいポップス/キラキラ系' },
+    { name: 'ボカロ・セブンス循環', mode: 'major', steps: [S_(0, 'maj7'), S_(9, 'm7'), S_(2, 'm7'), S_(7, '7')], note: 'Imaj7–vi7–ii7–V7。お洒落系の循環' },
   ];
 
   function qClass(q) {
