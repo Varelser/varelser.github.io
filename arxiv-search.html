@@ -11,41 +11,69 @@
   <meta property="og:url" content="https://varelser.github.io/arxiv-search.html" />
   <link rel="alternate" type="application/rss+xml" title="Research Digest RSS" href="arxiv-feed.xml" />
   <style>
-    body{margin:0;background:#fff;color:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.8}
-    .container{max-width:920px;margin:0 auto;padding:40px 18px 56px}
-    .back{display:inline-block;margin-bottom:28px;color:#666;text-decoration:none;font-size:14px}
-    h1{font-size:24px;margin:0 0 8px}.desc{color:#666;font-size:13px;margin:0 0 18px}
-    .panel{border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff;margin-bottom:24px}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.count{font-size:13px;color:#666;margin:10px 2px}
-    select,input{width:100%;height:42px;padding:0 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
-    .label{display:block;font-size:12px;color:#666;margin:0 0 6px}
-    article{border-bottom:1px solid #e5e7eb;padding-bottom:24px;margin-bottom:24px}
-    .src{font-size:12px;color:#666;margin-bottom:8px}
-    .title{font-size:19px;line-height:1.5;font-weight:700;margin:0 0 10px}
-    .title a{color:#111}
-    .orig{font-size:13px;color:#666;margin:-6px 0 10px;line-height:1.6}
-    .tags{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
-    .tag{font-size:12px;padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#f3f4f6}
-    .summary{font-size:14px;color:#222;margin:0 0 10px}
-    .links{font-size:13px;display:flex;gap:14px}
-    a{color:#0f766e;text-decoration:none} a:hover{text-decoration:underline}
-    mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
-    @media (max-width:720px){.grid{grid-template-columns:1fr}}
-    @media (prefers-color-scheme: dark){
-      body{background:#0f1216;color:#e8eaed}
-      .back{color:#9aa3ad}.desc{color:#9aa3ad}.count{color:#9aa3ad}
-      .panel{background:#171b21;border-color:#2b313a}
-      select,input{background:#171b21;border-color:#3a4149;color:#e8eaed}
-      .label{color:#9aa3ad}
-      article{border-bottom-color:#2b313a}.src{color:#9aa3ad}
-      .title a{color:#e8eaed}
-      .orig{color:#9aa3ad}
-      .tag{background:#232830;border-color:#2b313a;color:#d4d8dd}
-      .summary{color:#dfe3e8}
-      a{color:#2dd4bf}
-      mark{background:#8a6d00;color:#fff}
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
     }
-  </style>
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back,.back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back:hover,.back-link:hover{color:var(--fg);}
+    h1,.page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+          .desc{color:var(--muted);font-size:13px;margin:0 0 18px;}
+    .archive-links .desc{font-size:14px;margin:0;}
+    .filter-item.wide{grid-column:1/-1;}
+    .orig{font-size:13px;color:var(--muted);margin:-6px 0 12px;line-height:1.6;}
+    .links{font-size:13px;display:flex;gap:14px;margin-top:12px;}
+    .links a{color:var(--accent);text-decoration:none;}
+    .links a:hover{text-decoration:underline;}
+    .article-title a{color:var(--fg);text-decoration:none;}
+    .article-title a:hover{text-decoration:underline;}
+    mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px;}
+    .source-box{min-width:0;}
+    article{min-width:0}.box{min-width:0;overflow-wrap:anywhere}article a{overflow-wrap:anywhere}
+</style>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
 <script type="text/javascript">
@@ -60,16 +88,18 @@
   <div class="container">
     <a href="arxiv.html" class="back">← Research Digest に戻る</a>
     <h1>Research Digest 全件検索</h1>
-    <p class="desc">最新80件だけでなく、月別アーカイブを含む全ストックを横断して検索できます。</p>
-    <div class="panel">
-      <div class="grid">
-        <label><span class="label">キーワード</span><input id="q" type="search" placeholder="タイトル・著者・要約で検索" /></label>
-        <label><span class="label">ジャンル</span><select id="genre"><option value="">すべて</option></select></label>
-        <label><span class="label">月</span><select id="mon"><option value="">すべて</option></select></label>
+    <p class="page-desc">最新80件だけでなく、月別アーカイブを含む全ストックを横断して検索できます。</p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item wide"><label for="q">キーワード</label><input id="q" type="search" placeholder="タイトル・著者・要約で検索" /></div>
+        <div class="filter-item"><label for="genre">ジャンル</label><select id="genre"><option value="">すべて</option></select></div>
+        <div class="filter-item"><label for="mon">月</label><select id="mon"><option value="">すべて</option></select></div>
       </div>
-      <p class="count" id="count">読み込み中…</p>
-    </div>
-    <div id="results"></div>
+      <div class="toolbar">
+        <div class="count" id="count">読み込み中…</div>
+      </div>
+    </section>
+    <section class="articles" id="results"></section>
   </div>
   <script>
     var articles = [];
@@ -107,15 +137,15 @@
       document.getElementById("count").textContent = hits.length + "件ヒット / 全" + articles.length + "件" + (hits.length > 100 ? "（上位100件を表示）" : "");
       var html = "";
       hits.slice(0, 100).forEach(function (a) {
-        var tags = (a.field ? [a.field] : []).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
-        html += '<article><div class="src">' + esc((a.publishedAt || "").slice(0, 10)) + " ・ " + esc(a.source) + " ・ " + hl(a.genre, q) + " ・ 掲載: " + esc(pageLabel(a.page)) + '</div>'
-          + '<h2 class="title"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + hl(a.titleJa, q) + "</a></h2>"
+        var tags = (a.field ? [a.field] : []).map(function (t) { return '<span class="chip">' + esc(t) + "</span>"; }).join("");
+        html += '<article><p class="meta">' + esc((a.publishedAt || "").slice(0, 10)) + " ・ " + esc(a.source) + " ・ " + hl(a.genre, q) + " ・ 掲載: " + esc(pageLabel(a.page)) + '</p>'
+          + '<h2 class="article-title"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + hl(a.titleJa, q) + "</a></h2>"
           + (a.title && a.title !== a.titleJa ? '<p class="orig">' + hl(a.title, q) + "</p>" : "")
-          + '<p class="summary">' + hl(a.excerpt, q) + (a.text && a.text.length > (a.excerpt || "").length ? "…" : "") + "</p>"
-          + (tags ? '<div class="tags">' + tags + "</div>" : "")
+          + '<div class="summary">' + hl(a.excerpt, q) + (a.text && a.text.length > (a.excerpt || "").length ? "…" : "") + "</div>"
+          + (tags ? '<div class="taxonomy">' + tags + "</div>" : "")
           + '<div class="links"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">原文を読む</a><a href="' + esc(pageHref(a.page)) + '">掲載ページで見る</a></div></article>';
       });
-      document.getElementById("results").innerHTML = html || '<p class="count">該当する論文がありません。</p>';
+      document.getElementById("results").innerHTML = html || '<div class="empty" style="display:block">該当する論文がありません。</div>';
     }
     function fill(id, values) {
       var sel = document.getElementById(id);
@@ -137,4 +167,3 @@
     }).catch(function () { document.getElementById("count").textContent = "データの読み込みに失敗しました。"; });
   </script>
 </body>
-</html>
