@@ -87,7 +87,11 @@
   }
   #panel{
     order:2;border-top:1px solid var(--border);
-    padding:20px 16px 24px;overflow:auto;background:var(--bg);
+    /* NOTE: no overflow here. #panel used to have overflow:auto, but that
+       makes it a scroll container, and a sticky element inside a
+       non-scrolling container never sticks — the preset sidebar scrolled
+       away with the page. Removing it lets #sec-preset stick to the viewport. */
+    padding:20px 16px 24px;background:var(--bg);
     display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
     gap:16px;align-content:start;align-items:start;
   }
@@ -287,10 +291,12 @@
     #sec-preset{grid-column:1;grid-row:2/span 6;position:sticky;top:16px;align-self:start;max-height:calc(100dvh - 32px);display:flex;flex-direction:column}
     #sec-preset>.body{overflow-y:auto;min-height:0;flex:1 1 auto}
     #sec-master{grid-column:span 2}
+    #sec-notes{grid-column:span 2}
   }
   @media (min-width:1500px){
     #panel{grid-template-columns:320px repeat(3,minmax(0,1fr))}
     #sec-preset{grid-row:2/span 4}
+    #sec-notes{grid-column:span 3}
     /* Master is ~40 fields: 3 columns here (~300px each at 1919px wide),
        which cuts its height by another third. Layers stay 2-column. */
     #masterFields{grid-template-columns:repeat(3,1fr)}
