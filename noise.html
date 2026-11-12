@@ -315,6 +315,144 @@
   #tooltip.visible{opacity:1;transform:translateY(0)}
   [data-help]{cursor:help}
 
+  /* ==== v2-lien-refine: bring Noise to the SHIPPED frameless Lien standard ==== */
+  /* 1. Frameless: remove every remaining square frame / divider line.
+        Fills, radius, blur and shadows stay, exactly as Lien final. */
+  #panel { border-top: 0; }
+  .section { border: 0; animation: none; }
+  .section > .head { border-bottom: 0; }
+  .card { border: 0; background: transparent; box-shadow: none; }
+  .card .ch { border-bottom: 0; padding-left: 2px; background: transparent; }
+  .mini { border: 0; padding: 8px 2px; }
+  .toolbar { border-top: 0; border-bottom: 0; box-shadow: 0 -18px 36px rgba(0,0,0,0.55); }
+  .status { border-bottom: 0; letter-spacing: 0.08em; }
+  .footer { border-top: 0; }
+  #tooltip { border: 0; }
+  /* explicit border:0 guard (Yayoi lesson: a dropped declaration alone
+     can revive the UA default border) */
+  #panel button, #panel input, #panel select, #panel textarea,
+  .toolbar button { border: 0; }
+
+  /* 2. Header: Lien's exact 56px, centred title only. The subtitle is
+        hidden (the same slogan already runs in the stage footer). */
+  .app-header {
+    flex-direction: row; height: 56px; padding: 0 16px; gap: 0;
+  }
+  .app-sub { display: none; }
+
+  /* 3. Legend: 7 items get 7 columns on wide screens, and the items no
+        longer stretch into tall empty boxes. */
+  .legend { grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: start; gap: 8px 16px; padding-top: 4px; }
+  @media (max-width: 1300px) { .legend { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 768px) { .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* 4. Preset pills: names are long, so they get two tidy columns in
+        their natural case instead of Lien's short-label uppercase.
+        Category filters keep the Lien uppercase treatment. */
+  #presetPills { gap: 6px; }
+  #presetPills .pill {
+    flex: 1 1 calc(50% - 3px); max-width: calc(50% - 3px); min-width: 118px;
+    text-transform: none; letter-spacing: 0.02em; font-size: 11px;
+    line-height: 1.35; padding: 7px 10px; text-align: left;
+    white-space: normal; overflow-wrap: break-word;
+  }
+  #presetFilters .pill { flex: 0 1 auto; min-width: 0; }
+
+  /* 5. Preset sidebar (>=1200px): select full-width, buttons under it. */
+  @media (min-width: 1200px) {
+    #sec-preset .body > .grid2 { grid-template-columns: 1fr; }
+  }
+
+  /* 6. Toolbar: one row at every width (Punkt mobile lesson).
+        Overflow scrolls sideways instead of wrapping to two rows,
+        so the reserved bottom space is a constant 76px. */
+  #app { padding-bottom: 76px; }
+  .toolbar { justify-content: center; }
+  .actions { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+  .actions::-webkit-scrollbar { display: none; }
+  .actions button { flex: 0 0 auto; }
+  @media (max-width: 1100px) { .toolbar { justify-content: flex-start; } }
+
+  /* 7. Mobile: visualizers keep presence without 3x280px of scroll. */
+  @media (max-width: 768px) {
+    #app { padding-bottom: 76px; }
+    .card { min-height: 200px; }
+    .readout { gap: 12px; }
+  }
+
+  /* 9. Checkbox rows: buildFields prints the label twice (field label +
+        check label) and the current .check spreads its children to both
+        edges, so the name appeared at the far right, detached from the
+        box. Keep one label, next to the box. */
+  .field .check { justify-content: flex-start; gap: 8px; }
+  .field:has(> .check) > label:first-child { display: none; }
+
+  /* 10. Small screens: the preset select gets the full width too. */
+  @media (max-width: 768px) {
+    #sec-preset .body > .grid2 { grid-template-columns: 1fr; }
+  }
+
+  /* 8. Panel breathing room, matching Lien's 20px panel body. */
+  #panel { gap: 20px; padding: 24px; }
+  @media (max-width: 768px) { #panel { padding: 20px 16px; } }
+
+  /* ==== Visual views: selector bar, view modes, immersive ==== */
+  .vizbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px;
+    padding: 12px 24px 0;
+  }
+  .vizbar .viz-sep { flex: 1 1 auto; }
+  .viz-btn {
+    padding: 6px 10px; font-size: 10px; line-height: 0.875rem;
+    letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+    border: 0; border-radius: 6px; background: transparent;
+    color: var(--option-inactive-fg); cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .viz-btn:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+  .viz-btn.active { background: var(--option-active-bg); color: var(--option-active-fg); }
+  @media (max-width: 768px) { .vizbar { padding: 10px 16px 0; } }
+
+  /* which cards a view shows */
+  .readout[data-view="trio"] .card[data-viz="lissajous"],
+  .readout[data-view="trio"] .card[data-viz="polar"],
+  .readout[data-view="trio"] .card[data-viz="flow"] { display: none; }
+  .readout[data-view="scope"] .card:not([data-viz="scope"]),
+  .readout[data-view="spec"] .card:not([data-viz="spec"]),
+  .readout[data-view="gram"] .card:not([data-viz="gram"]),
+  .readout[data-view="lissajous"] .card:not([data-viz="lissajous"]),
+  .readout[data-view="polar"] .card:not([data-viz="polar"]),
+  .readout[data-view="flow"] .card:not([data-viz="flow"]) { display: none; }
+  /* a single view goes full width and taller */
+  .readout[data-view="scope"] .card, .readout[data-view="spec"] .card,
+  .readout[data-view="gram"] .card, .readout[data-view="lissajous"] .card,
+  .readout[data-view="polar"] .card, .readout[data-view="flow"] .card {
+    grid-column: 1 / -1; min-height: 460px;
+  }
+  @media (max-width: 768px) {
+    .readout[data-view="scope"] .card, .readout[data-view="spec"] .card,
+    .readout[data-view="gram"] .card, .readout[data-view="lissajous"] .card,
+    .readout[data-view="polar"] .card, .readout[data-view="flow"] .card {
+      min-height: 320px;
+    }
+  }
+  @media (max-width: 1300px) {
+    .readout[data-view="grid"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 768px) {
+    .readout[data-view="grid"] { grid-template-columns: 1fr; }
+  }
+  /* immersive: stage fullscreen, chrome hidden, views fill the screen */
+  #stage:fullscreen { background: #000; display: flex; flex-direction: column; }
+  #stage:fullscreen .vizbar, #stage:fullscreen .status,
+  #stage:fullscreen .legend, #stage:fullscreen .footer,
+  #stage:fullscreen .app-header, #stage:fullscreen .card .ch { display: none; }
+  /* the transport toolbar stays in fullscreen on purpose: play/stop
+     without leaving immersion */
+  #stage:fullscreen .readout { flex: 1 1 auto; height: 100%; }
+  #stage:fullscreen .card { height: 100%; min-height: 0; }
+
+
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
@@ -474,18 +612,44 @@
 <h1 class="app-title">Noise</h1>
 <p class="app-sub">Noise generator &mdash; visualizers first &middot; ultra wide &middot; safe export</p>
 </header>
-    <div class="readout">
-      <div class="card">
+    <div class="vizbar" role="toolbar" aria-label="表示切替">
+      <button type="button" class="viz-btn" data-viz-view="trio" data-help="波形・スペクトラム・スペクトログラムの3画面表示（キー: 1）">3画面</button>
+      <button type="button" class="viz-btn" data-viz-view="scope" data-help="波形だけを大きく表示します（キー: 2）">波形</button>
+      <button type="button" class="viz-btn" data-viz-view="spec" data-help="スペクトラムだけを大きく表示します（キー: 3）">スペクトラム</button>
+      <button type="button" class="viz-btn" data-viz-view="gram" data-help="スペクトログラムだけを大きく表示します（キー: 4）">スペクトログラム</button>
+      <button type="button" class="viz-btn" data-viz-view="lissajous" data-help="LとRの位相関係を描くリサージュ図。ステレオの広がりが見えます（キー: 5）">リサージュ</button>
+      <button type="button" class="viz-btn" data-viz-view="polar" data-help="スペクトラムを円形に描きます（キー: 6）">円形</button>
+      <button type="button" class="viz-btn" data-viz-view="flow" data-help="音の低域・高域に反応して流れる流線アート（キー: 7）">フロー</button>
+      <button type="button" class="viz-btn" data-viz-view="grid" data-help="6つの表示を全部並べます（キー: 8）">全表示</button>
+      <span class="viz-sep"></span>
+      <button type="button" class="viz-btn" id="persistBtn" aria-pressed="false" data-help="波形・スペクトラム・リサージュ・円形・フローに残像（蛍光体トレイル）を付けます">残像</button>
+      <button type="button" class="viz-btn" id="posterBtn" data-help="現在の設定で30秒分を描き、スペクトログラムのポスターPNG（2200×1240）を保存します">ポスター保存</button>
+      <button type="button" class="viz-btn" id="immersiveBtn" data-help="表示だけを全画面にします。全画面中はクリックで表示が切り替わります">没入</button>
+    </div>
+    <div class="readout" id="readout" data-view="trio">
+      <div class="card" data-viz="scope">
         <div class="ch">波形</div>
         <canvas id="scope" role="img" aria-label="波形表示" data-help="波形。音の大きさの動きが見えます。"></canvas>
       </div>
-      <div class="card">
+      <div class="card" data-viz="spec">
         <div class="ch">スペクトラム</div>
         <canvas id="spec" role="img" aria-label="スペクトラム表示" data-help="スペクトラム。今鳴っている周波数の分布です。"></canvas>
       </div>
-      <div class="card">
+      <div class="card" data-viz="gram">
         <div class="ch">スペクトログラム</div>
         <canvas id="gram" role="img" aria-label="スペクトログラム表示" data-help="スペクトログラム。周波数の時間変化を色で表示します。"></canvas>
+      </div>
+      <div class="card" data-viz="lissajous">
+        <div class="ch">リサージュ（ステレオ）</div>
+        <canvas id="lissa" role="img" aria-label="リサージュ表示" data-help="リサージュ。横軸=左、縦軸=右。モノラルでは斜めの線、ステレオが広いほど雲のように広がります。"></canvas>
+      </div>
+      <div class="card" data-viz="polar">
+        <div class="ch">円形スペクトラム</div>
+        <canvas id="polar" role="img" aria-label="円形スペクトラム表示" data-help="円形スペクトラム。周波数を円周に並べ、内側から外側へ伸ばします。"></canvas>
+      </div>
+      <div class="card" data-viz="flow">
+        <div class="ch">フロー（音反応アート）</div>
+        <canvas id="flow" role="img" aria-label="フロー表示" data-help="フロー。流れ場を進む粒子が、低域で速く、高域でうねります。Lienの流線の音反応版です。"></canvas>
       </div>
     </div>
     <div class="toolbar" role="toolbar" aria-label="Transport">
@@ -3911,6 +4075,12 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         this.analyser.fftSize = this.previewConfig.fftSize;
         this.analyser.smoothingTimeConstant = this.previewConfig.smoothing;
       }
+      if (this.analyserL && this.analyserR) {
+        this.analyserL.fftSize = this.previewConfig.fftSize;
+        this.analyserR.fftSize = this.previewConfig.fftSize;
+        this.analyserL.smoothingTimeConstant = this.previewConfig.smoothing;
+        this.analyserR.smoothingTimeConstant = this.previewConfig.smoothing;
+      }
     },
 
     canUseAudioWorklet() {
@@ -3938,6 +4108,21 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.masterGain.connect(this.analyser);
       this.analyser.connect(this.safetyComp);
       this.safetyComp.connect(this.ctx.destination);
+      // Silent stereo tap for the Lissajous view: splitter -> L/R
+      // analysers -> zero gain -> destination. Side chain only; the
+      // audible path above is unchanged.
+      this.splitter = this.ctx.createChannelSplitter(2);
+      this.analyserL = this.ctx.createAnalyser();
+      this.analyserR = this.ctx.createAnalyser();
+      this.silentGain = this.ctx.createGain();
+      this.silentGain.gain.value = 0;
+      this.masterGain.connect(this.splitter);
+      this.splitter.connect(this.analyserL, 0);
+      this.splitter.connect(this.analyserR, 1);
+      this.analyserL.connect(this.silentGain);
+      this.analyserR.connect(this.silentGain);
+      this.silentGain.connect(this.ctx.destination);
+      this.applyPreviewQuality();
       if (this.ctx.createMediaStreamDestination) {
         this.streamDest = this.ctx.createMediaStreamDestination();
         this.safetyComp.connect(this.streamDest);
@@ -4551,9 +4736,15 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     const scope = $('scope');
     const spec = $('spec');
     const gram = $('gram');
+    const lissa = $('lissa');
+    const polar = $('polar');
+    const flow = $('flow');
     const ctx1 = scope.getContext('2d');
     const ctx2 = spec.getContext('2d');
     const ctx3 = gram.getContext('2d');
+    const ctxL = lissa.getContext('2d');
+    const ctxP = polar.getContext('2d');
+    const ctxF = flow.getContext('2d');
 
     const gramCol = document.createElement('canvas');
     gramCol.width = 1;
@@ -4563,7 +4754,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 
     const resize = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      for (const c of [scope, spec, gram]) {
+      for (const c of [scope, spec, gram, lissa, polar, flow]) {
         const rect = c.getBoundingClientRect();
         c.width = Math.max(320, Math.floor(rect.width * dpr));
         c.height = Math.max(180, Math.floor(rect.height * dpr));
@@ -4575,9 +4766,19 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     };
     resize();
     addEventListener('resize', resize);
+    // View switches resize the cards, not the window: watch the cards.
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(() => resize());
+      document.querySelectorAll('.readout .card').forEach(card => ro.observe(card));
+    }
 
     let timeData = new Uint8Array(1024);
     let freqData = new Uint8Array(512);
+    let timeL = new Uint8Array(1024);
+    let timeR = new Uint8Array(1024);
+    let flowParts = null;
+    let flowT = 0;
+    let lisPeak = 0.3;
     let lastTs = 0;
 
     const loop = (ts = 0) => {
@@ -4588,14 +4789,23 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       if (ts - lastTs < targetMs) return;
       lastTs = ts;
 
-      ctx1.clearRect(0, 0, scope.width, scope.height);
-      ctx2.clearRect(0, 0, spec.width, spec.height);
+      const persist = !!(window.__noiseViz && window.__noiseViz.persist);
+      if (persist) {
+        ctx1.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx1.fillRect(0, 0, scope.width, scope.height);
+        ctx2.fillStyle = 'rgba(0,0,0,0.30)';
+        ctx2.fillRect(0, 0, spec.width, spec.height);
+      } else {
+        ctx1.clearRect(0, 0, scope.width, scope.height);
+        ctx2.clearRect(0, 0, spec.width, spec.height);
+      }
       ctx1.strokeStyle = '#ffffff';
       ctx2.fillStyle = '#ffffff';
       ctx1.lineWidth = 1.5;
 
       if (!engine.analyser) {
-        for (const ctx of [ctx1, ctx2, ctx3]) {
+        for (const ctx of [ctx1, ctx2, ctx3, ctxL, ctxP, ctxF]) {
+          if (!ctx.canvas.offsetParent) continue;
           ctx.fillStyle = '#666';
           ctx.fillText('未再生', 20, 24);
         }
@@ -4657,6 +4867,103 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         }
         gramColCtx.putImageData(gramColData, 0, 0);
         ctx3.drawImage(gramCol, gram.width - 1, 0);
+      }
+
+      // ---- Lissajous (stereo phase) ----
+      if (lissa.offsetParent && engine.analyserL && engine.analyserR) {
+        const n = engine.analyserL.fftSize;
+        if (timeL.length !== n) { timeL = new Uint8Array(n); timeR = new Uint8Array(n); }
+        engine.analyserL.getByteTimeDomainData(timeL);
+        engine.analyserR.getByteTimeDomainData(timeR);
+        const w = lissa.width, h = lissa.height, cx = w / 2, cy = h / 2;
+        ctxL.fillStyle = persist ? 'rgba(0,0,0,0.16)' : 'rgba(0,0,0,1)';
+        ctxL.fillRect(0, 0, w, h);
+        ctxL.strokeStyle = 'rgba(255,255,255,0.14)';
+        ctxL.lineWidth = 1;
+        ctxL.beginPath();
+        ctxL.moveTo(cx, 8); ctxL.lineTo(cx, h - 8);
+        ctxL.moveTo(8, cy); ctxL.lineTo(w - 8, cy);
+        ctxL.stroke();
+        // Adaptive gain: noise RMS is low, so scale to the decaying
+        // peak or the cloud shrinks to the centre.
+        let framePeak = 0;
+        for (let i = 0; i < n; i += 2) {
+          const a = Math.abs((timeL[i] - 128) / 128), b = Math.abs((timeR[i] - 128) / 128);
+          if (a > framePeak) framePeak = a;
+          if (b > framePeak) framePeak = b;
+        }
+        lisPeak = Math.max(framePeak, lisPeak * 0.998);
+        const gain = 0.92 / Math.min(1, Math.max(0.15, lisPeak));
+        ctxL.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctxL.beginPath();
+        for (let i = 0; i < n; i += 2) {
+          const x = cx + ((timeL[i] - 128) / 128) * cx * gain;
+          const y = cy - ((timeR[i] - 128) / 128) * cy * gain;
+          if (i === 0) ctxL.moveTo(x, y); else ctxL.lineTo(x, y);
+        }
+        ctxL.stroke();
+      }
+
+      // ---- Polar (circular) spectrum ----
+      if (polar.offsetParent) {
+        const w = polar.width, h = polar.height, cx = w / 2, cy = h / 2;
+        ctxP.fillStyle = persist ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,1)';
+        ctxP.fillRect(0, 0, w, h);
+        const r0 = Math.min(w, h) * 0.20;
+        const rMax = Math.min(w, h) * 0.27;
+        ctxP.strokeStyle = 'rgba(255,255,255,0.20)';
+        ctxP.lineWidth = 1;
+        ctxP.beginPath(); ctxP.arc(cx, cy, r0, 0, TAU); ctxP.stroke();
+        const pBars = preview.bars || 144;
+        ctxP.strokeStyle = 'rgba(255,255,255,0.92)';
+        ctxP.lineWidth = Math.max(1.5, (TAU * r0 / pBars) * 0.55);
+        ctxP.beginPath();
+        for (let i = 0; i < pBars; i++) {
+          const idx = Math.floor((i / pBars) ** 1.8 * (freqData.length - 1));
+          const v = freqData[idx] / 255;
+          const a = (i / pBars) * TAU - Math.PI / 2;
+          const r1 = r0 + Math.max(1, v * rMax);
+          ctxP.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
+          ctxP.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+        }
+        ctxP.stroke();
+      }
+
+      // ---- Flow (audio-reactive flow field, Lien-style) ----
+      if (flow.offsetParent) {
+        const w = flow.width, h = flow.height;
+        let bass = 0, treb = 0;
+        for (let i = 0; i < 12; i++) bass += freqData[i] / 255;
+        bass /= 12;
+        for (let i = Math.floor(freqData.length * 0.6); i < freqData.length; i++) treb += freqData[i] / 255;
+        treb /= Math.max(1, freqData.length - Math.floor(freqData.length * 0.6));
+        flowT += 0.016;
+        ctxF.fillStyle = persist ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.09)';
+        ctxF.fillRect(0, 0, w, h);
+        if (!flowParts) {
+          flowParts = [];
+          for (let i = 0; i < 380; i++) {
+            flowParts.push({ x: Math.random() * w, y: Math.random() * h, age: Math.random() * 200, life: 160 + Math.random() * 240 });
+          }
+        }
+        const speed = 0.7 + bass * 3.2;
+        ctxF.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctxF.lineWidth = 1;
+        ctxF.beginPath();
+        for (const pt of flowParts) {
+          const nse = Math.sin(pt.x * 0.008 + flowT * 0.6) + Math.cos(pt.y * 0.0095 - flowT * 0.4) + Math.sin((pt.x + pt.y) * 0.004 + flowT * 0.25);
+          const ang = nse * 1.6 + treb * 1.4;
+          const nx = pt.x + Math.cos(ang) * speed * 1.7;
+          const ny = pt.y + Math.sin(ang) * speed * 1.7;
+          ctxF.moveTo(pt.x, pt.y);
+          ctxF.lineTo(nx, ny);
+          pt.x = nx; pt.y = ny; pt.age++;
+          if (pt.age > pt.life || pt.x < 0 || pt.x > w || pt.y < 0 || pt.y > h) {
+            pt.x = Math.random() * w; pt.y = Math.random() * h; pt.age = 0;
+            pt.life = 160 + Math.random() * 240;
+          }
+        }
+        ctxF.stroke();
       }
     };
     loop();
@@ -4849,8 +5156,8 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     setStatus(dir < 0 ? 'パラメータを元に戻しました。' : 'パラメータをやり直しました。');
   }
   function saveVisualizerPng() {
-    const items = [['Waveform', $('scope')], ['Spectrum', $('spec')], ['Spectrogram', $('gram')]]
-      .filter(([, c]) => c && c.width > 0 && c.height > 0);
+    const items = [['Waveform', $('scope')], ['Spectrum', $('spec')], ['Spectrogram', $('gram')], ['Lissajous', $('lissa')], ['Polar Spectrum', $('polar')], ['Flow', $('flow')]]
+      .filter(([, c]) => c && c.width > 0 && c.height > 0 && c.offsetParent !== null);
     if (!items.length) { setStatus('可視化キャンバスが見つかりません。', 'err'); return; }
     const labelH = 20, pad = 8;
     const w = Math.max(...items.map(([, c]) => c.width));
@@ -5119,11 +5426,180 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     });
   }
 
+
+  // ---- Visual views: selector, persistence, immersive, poster ----
+  const VIZ_VIEWS = ['trio', 'scope', 'spec', 'gram', 'lissajous', 'polar', 'flow', 'grid'];
+  const vizState = { view: 'trio', persist: false };
+  window.__noiseViz = vizState;
+  try {
+    const saved = JSON.parse(localStorage.getItem('noise_viz_v1') || 'null');
+    if (saved && VIZ_VIEWS.includes(saved.view)) vizState.view = saved.view;
+    if (saved && typeof saved.persist === 'boolean') vizState.persist = saved.persist;
+  } catch (_err) { /* storage is optional */ }
+
+  function fftInPlace(re, im) {
+    const n = re.length;
+    for (let i = 1, j = 0; i < n; i++) {
+      let bit = n >> 1;
+      for (; j & bit; bit >>= 1) j ^= bit;
+      j ^= bit;
+      if (i < j) {
+        const tr = re[i]; re[i] = re[j]; re[j] = tr;
+        const ti = im[i]; im[i] = im[j]; im[j] = ti;
+      }
+    }
+    for (let len = 2; len <= n; len <<= 1) {
+      const ang = -TAU / len;
+      const wr = Math.cos(ang), wi = Math.sin(ang);
+      for (let i = 0; i < n; i += len) {
+        let cwr = 1, cwi = 0;
+        for (let j = 0; j < len / 2; j++) {
+          const ur = re[i + j], ui = im[i + j];
+          const vr = re[i + j + len / 2] * cwr - im[i + j + len / 2] * cwi;
+          const vi = re[i + j + len / 2] * cwi + im[i + j + len / 2] * cwr;
+          re[i + j] = ur + vr; im[i + j] = ui + vi;
+          re[i + j + len / 2] = ur - vr; im[i + j + len / 2] = ui - vi;
+          const nwr = cwr * wr - cwi * wi; cwi = cwr * wi + cwi * wr; cwr = nwr;
+        }
+      }
+    }
+  }
+
+  let posterBusy = false;
+  async function savePosterPng() {
+    if (posterBusy) return;
+    posterBusy = true;
+    try {
+      const params = getParams();
+      const sr = 48000, dur = 30, total = sr * dur;
+      const left = new Float32Array(total);
+      const right = new Float32Array(total);
+      const renderer = createStereoRenderer({ ...params, master_sampleRate: sr }, sr);
+      const chunk = 65536;
+      let peak = 0;
+      for (let off = 0; off < total; off += chunk) {
+        const n = Math.min(chunk, total - off);
+        peak = Math.max(peak, renderBlock(renderer, n, left.subarray(off, off + n), right.subarray(off, off + n)));
+        if (off % (chunk * 8) === 0) {
+          setStatus(`ポスター生成中… レンダー ${Math.floor(off / total * 100)}%`);
+          await nextFrame();
+        }
+      }
+      if (params.master_normalize && peak > 0.000001) {
+        const g = Math.min(0.98 / peak, 8);
+        for (let i = 0; i < total; i++) { left[i] *= g; right[i] *= g; }
+      }
+      const W = 2200, H = 1040, FOOT = 200, FFT = 2048;
+      const hop = Math.max(1, Math.floor(total / W));
+      const out = document.createElement('canvas');
+      out.width = W; out.height = H + FOOT;
+      const g2 = out.getContext('2d');
+      if (!g2) { setStatus('ポスターの生成に失敗しました。', 'err'); return; }
+      g2.fillStyle = '#000'; g2.fillRect(0, 0, W, H + FOOT);
+      const img = g2.createImageData(W, H);
+      const re = new Float32Array(FFT), im = new Float32Array(FFT);
+      for (let x = 0; x < W; x++) {
+        const start = x * hop;
+        for (let i = 0; i < FFT; i++) {
+          const idx = start + i;
+          const v = idx < total ? (left[idx] + right[idx]) * 0.5 : 0;
+          const win = 0.5 - 0.5 * Math.cos(TAU * i / (FFT - 1));
+          re[i] = v * win; im[i] = 0;
+        }
+        fftInPlace(re, im);
+        for (let y = 0; y < H; y++) {
+          const frac = 1 - y / Math.max(1, H - 1);
+          const bin = Math.max(0, Math.min(FFT / 2 - 1, Math.floor((frac ** 2.2) * (FFT / 2 - 1))));
+          const mag = Math.sqrt(re[bin] * re[bin] + im[bin] * im[bin]) / FFT;
+          const db = 20 * Math.log10(mag + 1e-9);
+          let v = (db + 86) / 54;
+          v = v < 0 ? 0 : (v > 1 ? 1 : v);
+          v = v ** 1.25;
+          const c = Math.floor(v * 255);
+          const o = (y * W + x) * 4;
+          img.data[o] = c; img.data[o + 1] = c; img.data[o + 2] = c; img.data[o + 3] = 255;
+        }
+        if (x % 220 === 0) {
+          setStatus(`ポスター生成中… 解析 ${Math.floor(x / W * 100)}%`);
+          await nextFrame();
+        }
+      }
+      g2.putImageData(img, 0, 0);
+      const presetName = ($('presetSelect') && $('presetSelect').value) || 'Custom';
+      g2.fillStyle = '#f5f5f5';
+      g2.font = '300 54px system-ui, sans-serif';
+      g2.textBaseline = 'alphabetic';
+      g2.fillText('N O I S E', 48, H + 82);
+      g2.fillStyle = '#a3a3a3';
+      g2.font = '26px system-ui, sans-serif';
+      const layers = [params.A_enabled ? labelOfType(params.A_type) : null, params.B_enabled ? labelOfType(params.B_type) : null, params.C_enabled ? labelOfType(params.C_type) : null].filter(Boolean).join(' + ') || 'No layers';
+      g2.fillText(`${presetName} — ${layers}`, 48, H + 132);
+      g2.fillStyle = '#737373';
+      g2.font = '22px ui-monospace, monospace';
+      const meta = `seed ${params.master_seed} / spectrogram poster / 30 s / 48 kHz / ${new Date().toISOString().slice(0, 10)}`;
+      g2.fillText(meta, 48, H + 172);
+      out.toBlob((blob) => {
+        if (!blob) { setStatus('ポスターの生成に失敗しました。', 'err'); return; }
+        triggerBlobDownload(blob, `noise-poster-${new Date().toISOString().replace(/[:.]/g, '-')}.png`);
+        setStatus('スペクトログラム・ポスターを保存しました。', 'ok');
+      }, 'image/png');
+    } catch (err) {
+      setStatus('ポスターの生成に失敗しました。', 'err');
+    } finally {
+      posterBusy = false;
+    }
+  }
+
+  function initVizUI() {
+    const readout = $('readout');
+    if (!readout) return;
+    const persistBtn = $('persistBtn');
+    const apply = () => {
+      readout.dataset.view = vizState.view;
+      document.querySelectorAll('[data-viz-view]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.vizView === vizState.view);
+      });
+      if (persistBtn) {
+        persistBtn.classList.toggle('active', vizState.persist);
+        persistBtn.setAttribute('aria-pressed', vizState.persist ? 'true' : 'false');
+      }
+      try { localStorage.setItem('noise_viz_v1', JSON.stringify(vizState)); } catch (_err) {}
+    };
+    const setView = (view) => { if (VIZ_VIEWS.includes(view)) { vizState.view = view; apply(); } };
+    document.querySelectorAll('[data-viz-view]').forEach(btn => {
+      btn.addEventListener('click', () => setView(btn.dataset.vizView));
+    });
+    if (persistBtn) persistBtn.addEventListener('click', () => { vizState.persist = !vizState.persist; apply(); });
+    const posterBtn = $('posterBtn');
+    if (posterBtn) posterBtn.addEventListener('click', () => { savePosterPng(); });
+    const immersiveBtn = $('immersiveBtn');
+    if (immersiveBtn) immersiveBtn.addEventListener('click', () => {
+      const stage = $('stage');
+      if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); }
+      else if (stage && stage.requestFullscreen) { stage.requestFullscreen().catch(() => {}); }
+    });
+    readout.addEventListener('click', () => {
+      if (!document.fullscreenElement) return;
+      const singles = ['scope', 'spec', 'gram', 'lissajous', 'polar', 'flow'];
+      const i = singles.indexOf(vizState.view);
+      setView(singles[(i + 1) % singles.length]);
+    });
+    addEventListener('keydown', (e) => {
+      const tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const n = parseInt(e.key, 10);
+      if (n >= 1 && n <= VIZ_VIEWS.length) setView(VIZ_VIEWS[n - 1]);
+    });
+    apply();
+  }
+
   setParams(DEFAULTS);
   initCollapsibleSections();
   wireEvents();
   setBusyUI(false);
   drawLoop();
+  initVizUI();
   if (!restoreAutosave()) engine.rebuild();
   applyUrlParams();
 
