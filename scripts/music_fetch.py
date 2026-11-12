@@ -1,11 +1,23 @@
 #!/usr/bin/env python3
 """Music News candidate fetcher (fixed script for the hourly update).
 
-Fetches the 13 music sources used by the Discord Music channel
-(~/workspace/discord-creative-news/config.json, music category; Natalie
-feeds stay removed per the user's 2026-11-08 instruction), parses
-RSS/Atom with the stdlib only, and writes candidates that are not
-already in music-news-data.json (dedupe by URL and normalized title).
+Scope (user decision 2026-11-12): overseas criticism / review sites and
+Bandcamp-centred sources covering experimental, ambient, noise, drone,
+psychedelic and alternative music. Japanese pops and mainstream-major
+coverage are out of scope, so the Japanese sources (BARKS, Billboard
+JAPAN) and the mainstream wires (Consequence, NME, Rolling Stone) that
+the launch version shared with the Discord Music channel were removed;
+the Discord channel itself is unchanged. Sources that did not respond
+during verification stay out (Boomkat / Norman Records 403, Igloo /
+Textura 406, Resident Advisor / Pitchfork Reviews / Soundohm /
+Sputnikmusic 404, Astral Noize timeout — do not retry).
+
+Parses RSS/Atom with the stdlib only and writes candidates that are
+not already in music-news-data.json (dedupe by URL and normalized
+title; sources are fetched in parallel, dedupe is applied afterwards
+in publishedAt order so runs stay deterministic). Fluid Radio was
+verified reachable on 2026-11-12 but its feed was dominated by
+casino spam posts, so it is excluded as a broken source.
 
 Each candidate: {sourceName, originalTitle, url, publishedAt (ISO UTC),
 description (plain text, <=1200 chars), lang, region}.
@@ -24,24 +36,45 @@ import re
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 
 SOURCES = [
-    ("BARKS", "https://www.barks.jp/rss", "ja"),
-    ("Billboard JAPAN", "https://www.billboard-japan.com/d_news/doc.xml", "ja"),
     ("Pitchfork", "https://pitchfork.com/rss/news/", "en"),
     ("Bandcamp Daily", "https://daily.bandcamp.com/feed", "en"),
     ("Stereogum", "https://www.stereogum.com/feed/", "en"),
-    ("Consequence", "https://consequence.net/feed/", "en"),
-    ("NME", "https://www.nme.com/feed", "en"),
-    ("Rolling Stone Music News",
-     "https://www.rollingstone.com/music/music-news/feed/", "en"),
     ("FACT", "https://www.factmag.com/feed/", "en"),
     ("The Quietus", "https://thequietus.com/feed", "en"),
     ("Aquarium Drunkard", "https://aquariumdrunkard.com/feed/", "en"),
     ("The FADER", "https://www.thefader.com/feed", "en"),
     ("NPR Music", "https://feeds.npr.org/1039/rss.xml", "en"),
+    ("The Wire", "https://www.thewire.co.uk/rss", "en"),
+    ("XLR8R", "https://xlr8r.com/feed/", "en"),
+    ("A Closer Listen", "https://acloserlisten.com/feed/", "en"),
+    ("Headphone Commute", "https://headphonecommute.com/feed/", "en"),
+    ("Foxy Digitalis", "https://foxydigitalis.zone/feed/", "en"),
+    ("Brainwashed", "https://brainwashed.com/index.php?format=feed&type=rss", "en"),
+    ("Raven Sings the Blues", "https://www.ravensingstheblues.com/feed/", "en"),
+    ("The Obelisk", "https://theobelisk.net/obelisk/feed/", "en"),
+    ("Doom Charts", "https://doomcharts.com/feed/", "en"),
+    ("Echoes and Dust", "https://www.echoesanddust.com/feed/", "en"),
+    ("Everything Is Noise", "https://everythingisnoise.net/feed/", "en"),
+    ("CVLT Nation", "https://cvltnation.com/feed/", "en"),
+    ("A Strangely Isolated Place",
+     "https://astrangelyisolatedplace.com/blog?format=rss", "en"),
+    ("Stationary Travels",
+     "https://stationarytravels.wordpress.com/feed/", "en"),
+    ("Post-Punk.com", "https://post-punk.com/feed/", "en"),
+    ("Louder Than War", "https://louderthanwar.com/feed/", "en"),
+    ("Treble", "https://www.treblezine.com/feed/", "en"),
+    ("Beats Per Minute", "https://beatsperminute.com/feed/", "en"),
+    ("The Line of Best Fit", "https://www.thelineofbestfit.com/feed", "en"),
+    ("Crack Magazine", "https://crackmagazine.net/feed/", "en"),
+    ("Loud and Quiet", "https://www.loudandquiet.com/feed/", "en"),
+    ("Gorilla vs Bear", "https://www.gorillavsbear.net/feed/", "en"),
+    ("The Needle Drop", "https://theneedledrop.com/feed/", "en"),
+    ("Side-Line", "https://www.side-line.com/feed/", "en"),
 ]
 
 UA = {"User-Agent": "Mozilla/5.0 (compatible; MusicNewsFetch/1.0)"}
@@ -107,7 +140,8 @@ def child_link(elem):
     return ""
 
 
-def fetch_candidates(name, url, lang, cutoff, seen_urls, seen_titles):
+def fetch_candidates(name, url, lang, cutoff):
+    """Fetch one source's raw candidates (no dedupe; main applies it)."""
     req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=30) as r:
         raw = r.read()
@@ -123,8 +157,6 @@ def fetch_candidates(name, url, lang, cutoff, seen_urls, seen_titles):
                                         "date", "dc:date")))
         if dt is None or dt < cutoff:
             continue
-        if link in seen_urls or norm_title(title) in seen_titles:
-            continue
         desc = plain(child_text(it, ("description", "summary", "content",
                                      "encoded")))
         out.append({
@@ -136,8 +168,6 @@ def fetch_candidates(name, url, lang, cutoff, seen_urls, seen_titles):
             "lang": lang,
             "region": "国内" if lang == "ja" else "海外",
         })
-        seen_urls.add(link)
-        seen_titles.add(norm_title(title))
     return out
 
 
@@ -157,16 +187,30 @@ def main(argv=None):
     seen_titles = {norm_title(a.get("originalTitle")) for a in stock}
     cutoff = datetime.now(timezone.utc) - timedelta(days=args.days)
 
-    candidates, per_source, failed = [], {}, []
-    for name, url, lang in SOURCES:
-        try:
-            got = fetch_candidates(name, url, lang, cutoff,
-                                   seen_urls, seen_titles)
-            candidates.extend(got)
-            per_source[name] = len(got)
-        except Exception as e:  # one source down must not stop the rest
-            failed.append({"source": name, "error": str(e)[:200]})
-            per_source[name] = 0
+    raw, per_source, failed = [], {}, []
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        futures = {name: ex.submit(fetch_candidates, name, url, lang, cutoff)
+                   for name, url, lang in SOURCES}
+        for name, url, lang in SOURCES:
+            try:
+                got = futures[name].result()
+                raw.extend(got)
+                per_source[name] = 0  # counted after dedupe below
+                for c in got:
+                    c["_source_key"] = name
+            except Exception as e:  # one source down must not stop others
+                failed.append({"source": name, "error": str(e)[:200]})
+                per_source[name] = 0
+    # Deterministic dedupe: newest first, against the stock and itself.
+    raw.sort(key=lambda c: c["publishedAt"], reverse=True)
+    candidates = []
+    for c in raw:
+        if c["url"] in seen_urls or norm_title(c["originalTitle"]) in seen_titles:
+            continue
+        seen_urls.add(c["url"])
+        seen_titles.add(norm_title(c["originalTitle"]))
+        per_source[c.pop("_source_key")] += 1
+        candidates.append(c)
     candidates.sort(key=lambda c: c["publishedAt"], reverse=True)
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(candidates, f, ensure_ascii=False, indent=1)
