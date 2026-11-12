@@ -177,3 +177,204 @@ canvas { border-radius: 6px; }
 .ui-view-btn.on { background: #f4f4f5 !important; color: #121215 !important; border-color: #f4f4f5 !important; }
 #genBar button.primary { background: #f4f4f5 !important; color: #121215 !important; border-color: #f4f4f5 !important; font-weight: 650; }
 .status-chip { background: var(--m-raised) !important; border-color: transparent !important; color: var(--m-sub) !important; border-radius: 4px !important; }
+
+/* ════════════════════════════════════════════════════════════════
+   MEIKYOSHISUI — Noise-standard refine (2026-11-13)
+   出荷済み Noise (Lien系) の作法へ寄せる上書きレイヤー:
+   - 56px の静かなセンターヘッダー (細字タイトル + 細いオシロ帯)
+   - フレームレス: 罫線を消し、面・角丸12px・影だけで見せる
+   - ボタンはテキスト型 (塗りだけ)、選択中だけ白反転
+   - 入力は Noise のコントロール面 #171717、フォーカスで #262626
+   - 下部生成バーは Noise ツールバー (blur + 影、1行固定)
+   - セクションは見出しクリックで折りたたみ (84-noise-ui.js)
+   生成・保存・配線には一切触れない。DESIGN: CLASSIC で従来へ戻る。
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── 地と余白: Noise の panel gap 20 / padding 24 ── */
+body { padding-bottom: 76px !important; }
+.wrap { max-width: 1280px !important; padding: 0 24px 32px !important; }
+@media (max-width: 768px) { .wrap { padding: 0 16px 32px !important; } }
+
+/* ── ヘッダー: 56px センタータイトル + 細いオシロ帯 ── */
+header { position: relative; text-align: center !important; padding: 0 0 12px !important; }
+.sys-tag { display: none !important; }
+.sub { display: none !important; }
+h1 {
+  font-size: 15px !important; font-weight: 300 !important;
+  letter-spacing: .2em !important; line-height: 56px !important;
+  color: rgba(255,255,255,.78) !important; -webkit-text-fill-color: rgba(255,255,255,.78) !important;
+  background: none !important; margin: 0 !important; white-space: nowrap;
+}
+#osc { height: 36px !important; margin: 2px 0 0 !important; opacity: .38 !important; border-radius: 0 !important; }
+header .ecb-preset-btn {
+  float: none !important; position: absolute; top: 12px;
+  margin: 0 !important; z-index: 2;
+}
+#readableToggle { right: 0; }
+#designToggle { right: 118px; }
+@media (max-width: 760px) {
+  h1 { line-height: 1.25 !important; padding-top: 46px; font-size: 14px !important; }
+  #designToggle { right: auto; left: 0; }
+  #osc { height: 28px !important; }
+}
+
+/* ── フレームレスな面: パネル / ECB / 注入バー ── */
+.panel, .ecb {
+  border: 0 !important; border-radius: 12px !important;
+  background: #131316 !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.45) !important;
+  padding: 24px !important;
+}
+.ecb::before { display: none !important; }
+.g2, .g3 { gap: 20px !important; margin-bottom: 20px !important; }
+.full, .mb16 { margin-bottom: 20px !important; }
+.panel button, .panel input, .panel select, .panel textarea,
+.ecb button, .ecb input, .ecb select,
+header button, #uiControlBar button, #uiControlBar input {
+  border: 0 !important;
+}
+/* ECB 内部の小グループも面で受ける */
+.ecb-group { border: 0 !important; border-radius: 8px !important; background: rgba(255,255,255,.03) !important; }
+.ecb-status { border-top: 0 !important; }
+.ecb-badge { border: 0 !important; border-radius: 6px !important; background: #1a1a1f !important; }
+.tog-row { border-bottom: 0 !important; }
+.midi-in-box { border-top: 0 !important; }
+.theory-tabs { border: 0 !important; border-radius: 8px !important; background: #171717 !important; }
+.t-tab { border: 0 !important; }
+
+/* ── セクション見出し: Noise の head (12px / 600 / .12em) + 折りたたみ ── */
+.sec-label {
+  font-size: 12px !important; font-weight: 600 !important;
+  letter-spacing: .12em !important; color: rgba(255,255,255,.72) !important;
+  margin-bottom: 16px !important; cursor: pointer; user-select: none;
+}
+.sec-label::after {
+  content: "▾"; margin-left: auto; font-size: 11px;
+  color: rgba(255,255,255,.45); transition: transform .2s ease;
+}
+.panel.collapsed .sec-label { margin-bottom: 0 !important; }
+.panel.collapsed .sec-label::after { transform: rotate(-90deg); }
+.panel.collapsed > *:not(.sec-label) { display: none !important; }
+.ecb-title {
+  font-size: 12px !important; font-weight: 600 !important;
+  letter-spacing: .12em !important; color: rgba(255,255,255,.72) !important;
+}
+.ecb-group-label { font-size: 10px !important; letter-spacing: .14em !important; }
+.ecb-label { font-size: 11px !important; }
+.meikyo-panel-tools { display: flex; gap: 4px; justify-content: flex-end; margin: 0 0 10px; }
+.meikyo-panel-tools button {
+  border: 0; background: transparent; color: rgba(255,255,255,.45);
+  font-size: 10px; letter-spacing: .12em; padding: 6px 10px; border-radius: 6px;
+  cursor: pointer; transition: background-color .2s ease, color .2s ease;
+}
+.meikyo-panel-tools button:hover { color: #fff; background: rgba(255,255,255,.08); }
+
+/* ── ボタン: Noise テキスト型。塗りだけ、選択中は白反転 ── */
+button, .g-btn, .chip, .s-btn, .c-btn, .ep-btn, .oct-pill,
+.ecb-preset-btn, .seed-btn, .midi-in-btn, .btn-gen-ab, .ab-btn {
+  border-radius: 8px !important; box-shadow: none !important; text-shadow: none !important;
+}
+.chip, .s-btn, .c-btn, .ep-btn, .oct-pill, .ecb-preset-btn,
+.seed-btn, .midi-in-btn, .btn-gen-ab, .ab-btn, .ls-pre-btn, .ls-grow-btn,
+.hum-mode-btn, .mkv-bias-btn, .mkv-scale-btn {
+  background: #1a1a1f !important; color: #a3a3ab !important;
+  font-size: 11px !important; letter-spacing: .04em !important;
+  padding: 7px 11px !important;
+}
+.chip:hover, .s-btn:hover, .c-btn:hover, .ep-btn:hover, .oct-pill:hover,
+.ecb-preset-btn:hover, .seed-btn:hover, .midi-in-btn:hover,
+.btn-gen-ab:hover, .ab-btn:hover { background: #26262d !important; color: #fff !important; }
+.g-btn { background: #1a1a1f !important; }
+.g-btn:hover { background: #26262d !important; }
+.chip.on, .s-btn.on, .c-btn.on, .ep-btn.on, .oct-pill.on, .ab-btn.on,
+.g-btn.on, .ls-pre-btn.on, .ls-grow-btn.on, .hum-mode-btn.on,
+.mkv-bias-btn.on, .mkv-scale-btn.on, .at-type-btn.on {
+  background: #f5f5f5 !important; color: #000 !important; font-weight: 600;
+}
+.badge { border: 0 !important; border-radius: 6px !important; background: #1a1a1f !important; }
+
+/* ── 生成ボタン: Noise のプライマリ (白塗り) ── */
+.btn-gen {
+  background: #f5f5f5 !important; color: #000 !important; border: 0 !important;
+  border-radius: 8px !important; font-size: 13px !important; font-weight: 600;
+  letter-spacing: .1em !important; padding: 15px 18px !important;
+}
+.btn-gen::before { display: none !important; }
+.btn-gen:hover { opacity: .88; box-shadow: none !important; }
+.btn-dl {
+  background: #1a1a1f !important; color: #f4f4f5 !important; border: 0 !important;
+  border-radius: 8px !important; font-size: 12px !important; letter-spacing: .08em !important;
+}
+.btn-dl:hover { background: #26262d !important; box-shadow: none !important; }
+
+/* ── 入力: Noise コントロール面 ── */
+input[type="text"], input[type="number"], input[type="search"], select, textarea {
+  border: 0 !important; background: #171717 !important; border-radius: 8px !important;
+}
+input[type="text"]:focus, input[type="number"]:focus, input[type="search"]:focus,
+select:focus, textarea:focus { background: #262626 !important; outline: none !important; }
+.chord-box {
+  background: #171717 !important; font-size: 22px !important;
+  letter-spacing: .04em !important; padding: 14px 16px !important; border-radius: 8px !important;
+}
+.chord-box:focus { background: #262626 !important; box-shadow: none !important; }
+
+/* ── スライダー / トグル: Noise の寸法へ ── */
+.slider, input[type="range"] { height: 4px !important; border-radius: 9999px !important; background: #26262d !important; }
+.slider::-webkit-slider-thumb, input[type="range"]::-webkit-slider-thumb { width: 14px !important; height: 14px !important; box-shadow: none !important; }
+.slider::-moz-range-thumb, input[type="range"]::-moz-range-thumb { width: 14px !important; height: 14px !important; box-shadow: none !important; }
+.param-label { font-size: 12px !important; color: #a3a3ab !important; letter-spacing: .04em !important; }
+.pval { font-size: 12px !important; font-variant-numeric: tabular-nums; }
+.tog-desc { font-size: 11px !important; line-height: 1.55 !important; }
+.param-desc { font-size: 11px !important; line-height: 1.6 !important; }
+
+/* ── 読み出し面 ── */
+.log { border: 0 !important; border-radius: 8px !important; background: #0e0e11 !important; }
+canvas { border-radius: 8px !important; }
+
+/* ── 階層ビュー バー (69 が注入): 浮いたカードに ── */
+#uiControlBar {
+  border: 0 !important; border-radius: 12px !important;
+  background: rgba(10,10,12,.88) !important;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 28px rgba(0,0,0,.45) !important;
+  padding: 12px 14px !important; top: 12px !important;
+}
+.ui-view-btn {
+  border: 0 !important; border-radius: 8px !important; background: transparent !important;
+  color: #a3a3ab !important; font-size: 12px !important; padding: 7px 12px !important; min-height: 36px;
+}
+.ui-view-btn:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
+.ui-view-btn.on { background: #f5f5f5 !important; color: #000 !important; font-weight: 600; }
+#uiSearch { border: 0 !important; border-radius: 8px !important; background: #171717 !important; min-height: 36px; padding: 8px 10px !important; }
+.status-chip { border: 0 !important; border-radius: 6px !important; background: #1a1a1f !important; padding: 4px 8px !important; }
+
+/* ── 生成バー: Noise ツールバー (下部固定・1行・blur + 影) ── */
+#genBar {
+  background: rgba(0,0,0,.90) !important;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 0 !important; box-shadow: 0 -18px 36px rgba(0,0,0,.55) !important;
+  padding: 12px 24px calc(12px + env(safe-area-inset-bottom)) !important;
+  flex-wrap: nowrap !important; overflow-x: auto; justify-content: center;
+  scrollbar-width: none;
+}
+#genBar::-webkit-scrollbar { display: none; }
+#genBar button {
+  border: 0 !important; border-radius: 8px !important; background: transparent !important;
+  color: rgba(255,255,255,.78) !important; font-size: 12px !important;
+  padding: 8px 12px !important; min-height: 36px; white-space: nowrap; flex: 0 0 auto;
+}
+#genBar button:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
+#genBar button.primary { background: #f5f5f5 !important; color: #000 !important; font-weight: 600; }
+#genBar button.primary:hover { background: #f5f5f5 !important; color: #000 !important; opacity: .88; }
+#genBarStatus { font-size: 10px !important; letter-spacing: .08em !important; white-space: nowrap; }
+@media (max-width: 768px) { #genBar { justify-content: flex-start; padding-left: 16px !important; padding-right: 16px !important; } }
+
+/* ── フッター / スクロールバー / フォーカス: Noise 寸法 ── */
+footer { border-top: 0 !important; letter-spacing: .16em !important; font-size: 10px !important; opacity: .55 !important; }
+::-webkit-scrollbar { width: 4px !important; height: 4px !important; }
+::-webkit-scrollbar-thumb { background: #333 !important; border: 0 !important; border-radius: 2px !important; }
+::-webkit-scrollbar-thumb:hover { background: #555 !important; }
+button:focus-visible, input:focus-visible, select:focus-visible, .sec-label:focus-visible {
+  outline: 2px solid rgba(255,255,255,.85) !important; outline-offset: 2px;
+}
