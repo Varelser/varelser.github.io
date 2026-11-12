@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nurse News 全件検索 | VARELSER</title>
+  <meta name="description" content="Nurse News の全ストック記事を横断検索できるページです。" />
+  <meta property="og:title" content="Nurse News 全件検索 | VARELSER" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://varelser.github.io/nurse-search.html" />
+  <style>
+    :root { color-scheme: dark; --bg:#0b1220; --panel:#101a2e; --card:#0f1a2e; --line:#223252; --text:#e8edf7; --muted:#9fb0cc; --accent:#7dd3fc; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif; background: var(--bg); color: var(--text); }
+    .container { max-width: 1080px; margin: 0 auto; padding: 20px 16px 48px; }
+    a { color: var(--accent); }
+    .back-link { font-size: 14px; text-decoration: none; }
+    .page-title { font-size: 28px; font-weight: 800; margin: 14px 0 6px; }
+    .page-desc { color: var(--muted); margin: 0 0 16px; line-height: 1.7; }
+    .filter-panel { background: var(--panel); border:1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+    .filter-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+    .filter-item label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+    .filter-item input, .filter-item select { width:100%; padding:9px 10px; border-radius:10px; border:1px solid var(--line); background:#0d1626; color:var(--text); font-size:14px; }
+    .count { color: var(--muted); font-size: 14px; margin: 10px 2px; }
+    .card { background: var(--card); border:1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+    .card h2 { font-size: 18px; margin: 0 0 6px; line-height: 1.5; }
+    .card h2 a { color: var(--text); text-decoration: none; }
+    .meta { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .summary { font-size: 14px; line-height: 1.8; color: #d5ddef; margin: 0 0 10px; }
+    .tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom: 10px; }
+    .tag { font-size: 12px; border:1px solid var(--line); border-radius: 999px; padding: 2px 9px; color: var(--muted); }
+    .links { font-size: 13px; display:flex; gap: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="nurse-news.html" class="back-link">← Nurse News に戻る</a>
+    <p class="page-title">Nurse News 全件検索</p>
+    <p class="page-desc">最新80件だけでなく、アーカイブを含む全ストックを横断して検索できます。</p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="q">キーワード</label><input id="q" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="src">情報源</label><select id="src"><option value="">すべて</option></select></div>
+        <div class="filter-item"><label for="ev">エビデンス種別</label><select id="ev"><option value="">すべて</option></select></div>
+        <div class="filter-item"><label for="mon">月</label><select id="mon"><option value="">すべて</option></select></div>
+      </div>
+    </section>
+    <p class="count" id="count">読み込み中…</p>
+    <div id="results"></div>
+  </div>
+  <script>
+    var articles = [];
+    function plain(h) { return (h || "").replace(/<br><br>/g, " ").replace(/<[^>]+>/g, ""); }
+    function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    function pageOf(a, idx) {
+      if (idx < 80) return { href: "nurse-news.html", label: "最新ページで見る" };
+      return { href: "nurse-archive-" + a.publishedMonthKey + ".html", label: "アーカイブで見る" };
+    }
+    function render() {
+      var q = document.getElementById("q").value.trim().toLowerCase();
+      var src = document.getElementById("src").value;
+      var ev = document.getElementById("ev").value;
+      var mon = document.getElementById("mon").value;
+      var hits = [];
+      for (var i = 0; i < articles.length; i++) {
+        var a = articles[i];
+        if (src && a.sourceName !== src) continue;
+        if (ev && a.evidenceType !== ev) continue;
+        if (mon && a.publishedMonthKey !== mon) continue;
+        if (q) {
+          var hay = (a.titleJa + " " + a.originalTitle + " " + plain(a.summaryHtml) + " " + (a.topics || []).join(" ") + " " + (a.tags || []).join(" ")).toLowerCase();
+          if (hay.indexOf(q) === -1) continue;
+        }
+        hits.push({ a: a, idx: i });
+      }
+      document.getElementById("count").textContent = hits.length + "件ヒット / 全" + articles.length + "件" + (hits.length > 100 ? "（上位100件を表示）" : "");
+      var html = "";
+      hits.slice(0, 100).forEach(function (h) {
+        var a = h.a, p = pageOf(a, h.idx);
+        var tags = (a.topics || []).concat(a.tags || []).slice(0, 6).map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+        html += '<article class="card"><h2><a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.titleJa) + '</a></h2>'
+          + '<div class="meta">' + esc(a.publishedDateKey) + " ・ " + esc(a.sourceName) + " ・ " + esc(a.evidenceType) + '</div>'
+          + '<p class="summary">' + esc(plain(a.summaryHtml).slice(0, 240)) + "…</p>"
+          + '<div class="tags">' + tags + "</div>"
+          + '<div class="links"><a href="' + esc(a.url) + '" target="_blank" rel="noopener">原文を読む</a><a href="' + p.href + '">' + p.label + "</a></div></article>";
+      });
+      document.getElementById("results").innerHTML = html || '<p class="count">該当する記事がありません。</p>';
+    }
+    fetch("nurse-news-data.json").then(function (r) { return r.json(); }).then(function (d) {
+      articles = d.articles || [];
+      function fill(id, values) {
+        var sel = document.getElementById(id);
+        values.forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
+      }
+      fill("src", Array.from(new Set(articles.map(function (a) { return a.sourceName; }))).sort());
+      fill("ev", Array.from(new Set(articles.map(function (a) { return a.evidenceType; }))).sort());
+      fill("mon", Array.from(new Set(articles.map(function (a) { return a.publishedMonthKey; }))).sort().reverse());
+      ["q", "src", "ev", "mon"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", render);
+        document.getElementById(id).addEventListener("change", render);
+      });
+      render();
+    }).catch(function () { document.getElementById("count").textContent = "データの読み込みに失敗しました。"; });
+  </script>
+</body>
+</html>

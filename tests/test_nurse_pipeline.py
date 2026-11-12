@@ -155,6 +155,63 @@ class TestValidation(FixtureCase):
             pipeline.regenerate("<html><article>x</article></html>", [rec])
 
 
+GOOD_SUMMARY = ("背景の説明です。十分な長さの文章をここに書きます。" * 6 +
+                "<br><br>方法の説明です。対象と手順を具体的に述べます。" * 5 +
+                "<br><br>結果の説明です。数値と限界をあわせて示します。" * 5 +
+                "<br><br>看護実務への示唆としては、日々の観察で変化を早期にとらえることが大切です。")
+
+
+class TestDropAndRevise(FixtureCase):
+    def test_editorial_drop(self):
+        a = make_record("https://example.org/1", "Study A", "研究そのA", "2026-11-10")
+        b = make_record("https://example.org/2", "Study B", "研究そのB", "2026-11-09")
+        write_fixture(self.repo, [a, b])
+        drop_file = os.path.join(self.repo, "drop.json")
+        with open(drop_file, "w", encoding="utf-8") as f:
+            json.dump(["https://example.org/2"], f)
+        summary = pipeline.run(self.repo, now=NOW, drop_path=drop_file)
+        self.assertEqual(summary["total"], 1)
+        self.assertEqual(summary["removed"][0]["reason"], "editorial")
+
+    def test_drop_unknown_url_rejected(self):
+        a = make_record("https://example.org/1", "Study A", "研究そのA", "2026-11-10")
+        write_fixture(self.repo, [a])
+        drop_file = os.path.join(self.repo, "drop.json")
+        with open(drop_file, "w", encoding="utf-8") as f:
+            json.dump(["https://example.org/nope"], f)
+        with self.assertRaises(ValueError):
+            pipeline.run(self.repo, now=NOW, drop_path=drop_file)
+
+    def test_revise_replaces_summary_and_writes_feed(self):
+        a = make_record("https://example.org/1", "Study A", "研究そのA", "2026-11-10",
+                        summary="短い。")
+        write_fixture(self.repo, [a])
+        rev_file = os.path.join(self.repo, "revise.json")
+        with open(rev_file, "w", encoding="utf-8") as f:
+            json.dump([{"url": "https://example.org/1", "summaryHtml": GOOD_SUMMARY}], f)
+        summary = pipeline.run(self.repo, now=NOW, revise_path=rev_file)
+        self.assertEqual(summary["revised"], ["https://example.org/1"])
+        self.assertIn("nurse-feed.xml", summary["files"])
+        import xml.etree.ElementTree as ET
+        feed = ET.parse(os.path.join(self.repo, "nurse-feed.xml"))
+        items = feed.getroot().findall(".//item")
+        self.assertEqual(len(items), 1)
+        with open(os.path.join(self.repo, "nurse-news-data.json"), encoding="utf-8") as f:
+            data = json.load(f)
+        self.assertEqual(data["articles"][0]["summaryHtml"], GOOD_SUMMARY)
+
+    def test_revise_rejects_short_or_misformatted_summary(self):
+        a = make_record("https://example.org/1", "Study A", "研究そのA", "2026-11-10")
+        write_fixture(self.repo, [a])
+        for bad in ("短い。",
+                    GOOD_SUMMARY.replace("看護実務への示唆としては、", "まとめとして、")):
+            rev_file = os.path.join(self.repo, "revise.json")
+            with open(rev_file, "w", encoding="utf-8") as f:
+                json.dump([{"url": "https://example.org/1", "summaryHtml": bad}], f)
+            with self.assertRaises(ValueError):
+                pipeline.run(self.repo, now=NOW, revise_path=rev_file)
+
+
 class TestGoldenIdentity(unittest.TestCase):
     def test_noop_run_is_byte_identical_on_real_files(self):
         src = os.path.join(ROOT, "nurse-news-data.json")

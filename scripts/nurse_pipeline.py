@@ -27,6 +27,19 @@ With no removals and no new records the run is a no-op: nothing is
 written and `updatedAt` is left untouched, so the output is
 byte-identical to the input.
 
+Options:
+  --new FILE     JSON list of new article records to merge.
+  --drop FILE    JSON list of URLs to remove editorially (reason "editorial").
+  --revise FILE  JSON list of {url, summaryHtml, actionPoint?} replacing the
+                 summary (and optionally the action point) of existing
+                 articles. Revised summaries must have >= 4 paragraphs, a
+                 plain-text length >= 350 chars, and a last paragraph
+                 starting with 「看護実務への示唆としては、」.
+  --dry-run      Compute and report without writing.
+  --now ISO8601Z Override the clock (tests).
+
+Every change run also regenerates nurse-feed.xml (RSS 2.0, latest 50).
+
 Usage:
   python3 scripts/nurse_pipeline.py --repo DIR [--new new.json]
                                     [--dry-run] [--now ISO8601Z]
@@ -48,6 +61,9 @@ IMPACT_JA = {"low": "低", "medium": "中", "high": "高"}
 STUB_MARKERS = ("Gemini 無料枠", "生成要約を安定取得できなかった")
 KANA_RE = re.compile(r"[ぁ-んァ-ヶ]")
 MAIN_LIMIT = 80
+MAIN_TITLES = ("Nurse News（看護・医療ニュース）| VARELSER",
+               "Nursing News | VARELSER")
+FEED_LIMIT = 50
 REQUIRED = ("sourceName", "originalTitle", "titleJa", "summaryHtml", "url",
             "publishedAt", "topics", "clinicalAreas", "audiences",
             "evidenceType", "practiceImpact", "actionPoint")
@@ -258,9 +274,12 @@ def regenerate(main_shell, articles):
         recs = months[mk]
         shell = main
         y, mo = mk.split("-")
-        shell = shell.replace(
-            "<title>Nursing News | VARELSER</title>",
-            f"<title>Nurse News アーカイブ {y}年{int(mo)}月 | VARELSER</title>", 1)
+        for main_title in MAIN_TITLES:
+            if f"<title>{main_title}</title>" in shell:
+                shell = shell.replace(
+                    f"<title>{main_title}</title>",
+                    f"<title>Nurse News アーカイブ {y}年{int(mo)}月 | VARELSER</title>", 1)
+                break
         shell = re.sub(r"全\d+件", f"全{len(recs)}件", shell, count=1)
         blocks_m = "\n".join(article_block(a) for a in recs)
         s = shell.index("<article")
@@ -307,7 +326,56 @@ def validate(files, articles):
         raise ValueError("; ".join(problems))
 
 
-def run(repo, new_path=None, dry_run=False, now=None):
+def plain_text(html_str):
+    return re.sub(r"<[^>]+>", "", (html_str or "").replace("<br><br>", " "))
+
+
+def build_feed(articles, updated_at_iso):
+    from email.utils import format_datetime
+    def xesc(s):
+        return html.escape(str(s), quote=False)
+    items = []
+    for a in articles[:FEED_LIMIT]:
+        pub = format_datetime(parse_iso(a["publishedAt"]))
+        items.append(
+            "  <item>\n"
+            f"   <title>{xesc(a['titleJa'])}</title>\n"
+            f"   <link>{xesc(a['url'])}</link>\n"
+            f"   <guid isPermaLink=\"true\">{xesc(a['url'])}</guid>\n"
+            f"   <pubDate>{pub}</pubDate>\n"
+            f"   <description>{xesc(plain_text(a['summaryHtml'])[:600])}</description>\n"
+            "  </item>")
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0">\n<channel>\n'
+        " <title>Nurse News（看護・医療ニュース）</title>\n"
+        " <link>https://varelser.github.io/nurse-news.html</link>\n"
+        " <description>海外の看護・医療ニュースを日本語要約で届ける Nurse News の新着フィード</description>\n"
+        " <language>ja</language>\n"
+        f" <lastBuildDate>{format_datetime(parse_iso(updated_at_iso))}</lastBuildDate>\n"
+        + "\n".join(items) +
+        "\n</channel>\n</rss>\n"
+    )
+
+
+def validate_revision(entry, by_url):
+    url = entry.get("url", "")
+    if url not in by_url:
+        raise ValueError(f"revise target not in stock: {url}")
+    summary = entry.get("summaryHtml", "")
+    if any(m in summary for m in STUB_MARKERS):
+        raise ValueError(f"revise summary contains stub marker: {url}")
+    if len(plain_text(summary)) < 350:
+        raise ValueError(f"revise summary too short (<350 chars): {url}")
+    paras = summary.split("<br><br>")
+    if len(paras) < 4:
+        raise ValueError(f"revise summary has <4 paragraphs: {url}")
+    if not plain_text(paras[-1]).startswith("看護実務への示唆としては、"):
+        raise ValueError(f"revise last paragraph must start with the suggestion lead: {url}")
+    return url
+
+
+def run(repo, new_path=None, dry_run=False, now=None, drop_path=None, revise_path=None):
     import os
     now = now or datetime.now(timezone.utc)
     def read(name):
@@ -347,16 +415,41 @@ def run(repo, new_path=None, dry_run=False, now=None):
             if d:
                 existing_dois.add(d)
 
+    # Editorial drops (--drop): explicit URL list from an audit.
+    if drop_path:
+        with open(drop_path, encoding="utf-8") as f:
+            drop_urls = set(json.load(f))
+        dropped = [a for a in kept if a["url"] in drop_urls]
+        kept = [a for a in kept if a["url"] not in drop_urls]
+        removed.extend((a, "editorial") for a in dropped)
+        missing = drop_urls - {a["url"] for a in dropped}
+        if missing:
+            raise ValueError(f"--drop URLs not in stock: {sorted(missing)[:3]}")
+
+    # Revisions (--revise): replace summaries of existing articles.
+    revised = []
+    if revise_path:
+        with open(revise_path, encoding="utf-8") as f:
+            entries = json.load(f)
+        by_url = {a["url"]: a for a in kept}
+        for entry in entries:
+            url = validate_revision(entry, by_url)
+            by_url[url]["summaryHtml"] = entry["summaryHtml"]
+            if entry.get("actionPoint"):
+                by_url[url]["actionPoint"] = entry["actionPoint"]
+            revised.append(url)
+
     kept.sort(key=lambda a: a["publishedAt"], reverse=True)
 
     summary = {
         "changed": False,
         "added": [a["titleJa"] for a in added],
         "removed": [{"title": a["titleJa"], "reason": r} for a, r in removed],
+        "revised": revised,
         "total": len(kept),
         "files": [],
     }
-    if not removed and not added:
+    if not removed and not added and not revised:
         return summary
 
     data["articles"] = kept
@@ -368,7 +461,8 @@ def run(repo, new_path=None, dry_run=False, now=None):
     validate(files, kept)
     summary["archive_counts"] = {k: len(v) for k, v in months.items()}
 
-    targets = {"nurse-news-data.json": new_json}
+    targets = {"nurse-news-data.json": new_json,
+               "nurse-feed.xml": build_feed(kept, data["updatedAt"])}
     targets.update(files)
     changed = []
     for name, content in sorted(targets.items()):
@@ -392,12 +486,15 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Nurse News fixed pipeline")
     ap.add_argument("--repo", required=True)
     ap.add_argument("--new", default=None)
+    ap.add_argument("--drop", default=None)
+    ap.add_argument("--revise", default=None)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--now", default=None, help="ISO8601 UTC, for tests")
     args = ap.parse_args(argv)
     now = parse_iso(args.now) if args.now else None
     try:
-        summary = run(args.repo, args.new, args.dry_run, now)
+        summary = run(args.repo, args.new, args.dry_run, now,
+                      drop_path=args.drop, revise_path=args.revise)
     except (ValueError, KeyError, json.JSONDecodeError) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         return 2

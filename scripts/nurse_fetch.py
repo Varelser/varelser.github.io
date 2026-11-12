@@ -104,9 +104,27 @@ def fetch_rss(url):
     return items
 
 
+OFFTOPIC_PATTERNS = (
+    "in mice", "in rats", "fruit flies", "fruit fly", "zebrafish",
+    "drosophila", "c. elegans", "caenorhabditis", "fossil", "dinosaur",
+    "exoplanet", "asteroid", "quantum comput", "photosynthesis in",
+    "yeast cells", "in worms",
+)
+HUMAN_CONTEXT = ("patient", "human", "clinical", "people", "adults",
+                 "children", "women", "men ", "trial", "hospital", "care")
+
+
 def src_sciencedaily(days):
-    return [cand("ScienceDaily Health", i["title"], i["link"], i["dt"], i["desc"])
-            for i in fetch_rss("https://www.sciencedaily.com/rss/health_medicine.xml")[:60]]
+    out = []
+    for i in fetch_rss("https://www.sciencedaily.com/rss/health_medicine.xml")[:60]:
+        text = (i["title"] + " " + i["desc"]).lower()
+        # Drop clearly non-clinical items (animal-only / evolution /
+        # non-medical science) unless they carry a human clinical context.
+        if any(p in text for p in OFFTOPIC_PATTERNS) \
+                and not any(h in text for h in HUMAN_CONTEXT):
+            continue
+        out.append(cand("ScienceDaily Health", i["title"], i["link"], i["dt"], i["desc"]))
+    return out
 
 
 def src_who(days):
