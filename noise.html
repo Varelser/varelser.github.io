@@ -604,16 +604,37 @@
         </div>
         <div class="field" style="margin-top:10px">
           <label><span>LLM プロバイダ</span></label>
-          <select id="aiProvider" data-help="LLM生成で使うサービス。キーはこのブラウザ内にだけ保存されます。">
+          <select id="aiProvider" data-help="LLM生成で使うサービス。キーはこのブラウザ内にだけ保存されます。OpenAI互換の窓口で大半のサービスをカバーします。">
             <option value="groq">Groq</option>
             <option value="gemini">Gemini</option>
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI</option>
+            <option value="openrouter">OpenRouter</option>
+            <option value="requesty">Requesty</option>
+            <option value="nvidia">NVIDIA NIM</option>
+            <option value="zai">Z.ai (GLM)</option>
+            <option value="edenai">Eden AI</option>
+            <option value="cloudflare">Cloudflare Workers AI</option>
+            <option value="mistral">Mistral</option>
+            <option value="cohere">Cohere</option>
+            <option value="xai">xAI (Grok)</option>
+            <option value="ollama">Ollama（ローカル）</option>
+            <option value="custom">カスタム (OpenAI互換)</option>
           </select>
         </div>
         <div class="field">
           <label><span>APIキー（このブラウザ内だけに保存）</span></label>
           <input id="aiApiKey" type="password" placeholder="API key" autocomplete="off" data-help="APIキー。localStorageに保存され、外部へは選んだサービスのAPIへだけ送られます。">
         </div>
-        <div class="help">ルール生成はオフラインでキーワードから組み立てます（Enterでも実行）。LLM生成は入力したキーでプロバイダへ直接リクエストし、返ってきたJSONを検証してから適用します。キーは localStorage にのみ保存されます。セッションJSON / URL共有を使えば、外部のAIに作らせた設定も読み込めます。Spaceキーでも再生/停止できます（入力欄にフォーカスがある時を除く）。</div>
+        <div class="field">
+          <label><span>エンドポイントURL（OpenAI互換用）</span></label>
+          <input id="aiBaseUrl" type="text" placeholder="https://.../v1/chat/completions" autocomplete="off" data-help="OpenAI互換プロバイダのURL。プロバイダを選ぶと自動で入ります。CloudflareはURL内のACCOUNT_IDを自分のアカウントIDに書き換えてください。カスタムはここにURLを入れます。">
+        </div>
+        <div class="field">
+          <label><span>モデル名</span></label>
+          <input id="aiModel" type="text" placeholder="model" autocomplete="off" data-help="使うモデル名。プロバイダを選ぶと候補が自動で入ります。別のモデルへの書き換えもできます。">
+        </div>
+        <div class="help">ルール生成はオフラインでキーワードから組み立てます（Enterでも実行）。LLM生成は入力したキーでプロバイダへ直接リクエストし、返ってきたJSONを検証してから適用します。対応形式は OpenAI互換（Groq / OpenRouter / Requesty / NVIDIA NIM / Z.ai / Eden AI / Cloudflare Workers AI / Mistral / Cohere / xAI / OpenAI / Ollama / カスタムURL）＋ Anthropic / Gemini ネイティブで、キー・URL・モデルはプロバイダごとに localStorage へ保存されます。Ollama はキー不要です。ブラウザからの直接リクエストを CORS で弾くサービスは呼べません。その場合はセッションJSON / URL共有で、外部のAIに作らせた設定も読み込めます。Spaceキーでも再生/停止できます（入力欄にフォーカスがある時を除く）。</div>
       </div>
     </div>
 
@@ -897,6 +918,7 @@
     A_type: 'pink',
     A_gain: 0.9,
     A_pan: 0,
+    A_move: 'off', A_moveRate: 0.15, A_moveDepth: 0.7,
     A_tone: -0.2,
     A_density: 0.5,
     A_motion: 0.2,
@@ -909,6 +931,7 @@
     B_type: 'vinyl',
     B_gain: 0.45,
     B_pan: 0,
+    B_move: 'off', B_moveRate: 0.15, B_moveDepth: 0.7,
     B_tone: 0.2,
     B_density: 0.45,
     B_motion: 0.35,
@@ -921,6 +944,7 @@
     C_type: 'thunder',
     C_gain: 0.5,
     C_pan: 0,
+    C_move: 'off', C_moveRate: 0.15, C_moveDepth: 0.7,
     C_tone: -0.2,
     C_density: 0.5,
     C_motion: 0.3,
@@ -1533,6 +1557,19 @@
       A_enabled: true, A_type: 'harsh', A_gain: 0.88, A_tone: 0.3, A_density: 0.85, A_motion: 1.1, A_grain: 1.2, A_stereo: 0.7,
       B_enabled: true, B_type: 'glitch', B_gain: 0.3, B_tone: 0.6, B_density: 0.6, B_motion: 0.8, B_grain: 0.8,
       master_gain: 0.38, master_width: 1.3, master_drive: 0.45, master_highcut: 18000
+    },
+    'Move: Orbit Drone': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'ocean', A_gain: 0.9, A_tone: -0.15, A_density: 0.6, A_motion: 0.4, A_grain: 0.15, A_stereo: 0.7, A_move: 'circle', A_moveRate: 0.08, A_moveDepth: 0.85,
+      B_enabled: true, B_type: 'pink', B_gain: 0.2, B_tone: -0.3, B_density: 0.3, B_motion: 0.1, B_grain: 0.06, B_move: 'lr', B_moveRate: 0.05, B_moveDepth: 0.5,
+      master_gain: 0.52, master_width: 1.3, master_drive: 0.03, master_space: 0.4, master_highcut: 9000
+    },
+    'Move: Rising Storm': {
+      ...DEFAULTS,
+      A_enabled: true, A_type: 'wind', A_gain: 0.85, A_tone: -0.1, A_density: 0.7, A_motion: 0.7, A_grain: 0.25, A_stereo: 0.7, A_move: 'ud', A_moveRate: 0.1, A_moveDepth: 0.9,
+      B_enabled: true, B_type: 'rain', B_gain: 0.55, B_tone: 0.1, B_density: 0.7, B_motion: 0.45, B_grain: 0.35, B_stereo: 0.8, B_move: 'drift', B_moveRate: 0.18, B_moveDepth: 0.7,
+      C_enabled: true, C_type: 'thunder', C_gain: 0.7, C_tone: -0.3, C_density: 0.5, C_motion: 0.4, C_grain: 0.3, C_stereo: 0.6,
+      master_gain: 0.55, master_width: 1.35, master_drive: 0.06, master_highcut: 10000, master_space: 0.3
     }
   };
 
@@ -1591,6 +1628,9 @@
     { id:'type', type:'select', label:'Type', options:NOISE_TYPES.map(([v,l]) => [v,l]) },
     { id:'gain', type:'range', label:'Gain', min:0, max:2.2, step:0.01 },
     { id:'pan', type:'range', label:'Pan', min:-1, max:1, step:0.01 },
+    { id:'move', type:'select', label:'Move（上下左右）', options:[['off','Off'],['lr','←→ 左右'],['ud','↑↓ 上下'],['circle','○ 円'],['eight','∞ 8の字'],['drift','漂い']] },
+    { id:'moveRate', type:'range', label:'Move Rate (Hz)', min:0.01, max:2, step:0.01 },
+    { id:'moveDepth', type:'range', label:'Move Depth', min:0, max:1, step:0.01 },
     { id:'tone', type:'range', label:'Tone', min:-1, max:1, step:0.01 },
     { id:'density', type:'range', label:'Density', min:0, max:1.5, step:0.01 },
     { id:'motion', type:'range', label:'Motion', min:0, max:1.5, step:0.01 },
@@ -1608,6 +1648,9 @@
     type: 'ノイズの種類。50種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
     gain: 'このレイヤーの音量。上げすぎるとマスターで歪むことがあるので、全体のバランスで調整を。',
     pan: 'このレイヤーの左右位置。-1で左、+1で右。マスターのLFOでもゆっくり揺れます。',
+    move: 'このレイヤーの音を自動で動かします。左右=パン、上下=明るさと距離感（上は明るく近く、下は暗く遠く）の疑似移動、円と8の字はその組み合わせ、漂いは不規則なゆらぎです。',
+    moveRate: 'Moveの速さ。0.05前後でゆっくり、1を超えると速く回ります。',
+    moveDepth: 'Moveの大きさ。左右はパンの振れ幅、上下は明るさ・距離の変化量です。',
     tone: '音の明るさ。左で暗く丸く、右で明るく鋭くなります。',
     density: '音の密度や速さ。種類ごとに効き方が違い、雨の強さ、雷の頻度、鼓動の速さなどが変わります。',
     motion: '時間的なうねりや変化の量。風の強弱や波の寄せ引きのような動きが大きくなります。',
@@ -1992,6 +2035,14 @@
       p[`${prefix}_motion`] = Number((Math.random() * 1.5).toFixed(2));
       p[`${prefix}_grain`] = Number((Math.random() * 1.5).toFixed(2));
       p[`${prefix}_stereo`] = Math.random() < 0.5 ? 0 : Number((Math.random() * 0.9).toFixed(2));
+      if (Math.random() < 0.3) {
+        const modes = ['lr', 'ud', 'circle', 'eight', 'drift'];
+        p[`${prefix}_move`] = modes[Math.floor(Math.random() * modes.length)];
+        p[`${prefix}_moveRate`] = Number((0.03 + Math.random() * 0.5).toFixed(2));
+        p[`${prefix}_moveDepth`] = Number((0.3 + Math.random() * 0.7).toFixed(2));
+      } else {
+        p[`${prefix}_move`] = 'off';
+      }
       p[`${prefix}_eqLow`] = Number((Math.random() * 0.7 - 0.35).toFixed(2));
       p[`${prefix}_eqMid`] = Number((Math.random() * 0.7 - 0.35).toFixed(2));
       p[`${prefix}_eqHigh`] = Number((Math.random() * 0.7 - 0.35).toFixed(2));
@@ -2310,7 +2361,8 @@
       phase3: 0,
       humHz,
       pink0:0,pink1:0,pink2:0,pink3:0,pink4:0,pink5:0,pink6:0,
-      lfoPhase: 0
+      lfoPhase: 0,
+      mvPhase: 0
     };
   }
 
@@ -2857,6 +2909,10 @@
       p[`${prefix}_motion`] = clamp(Number(p[`${prefix}_motion`]) || 0, 0, 1.5);
       p[`${prefix}_grain`] = clamp(Number(p[`${prefix}_grain`]) || 0, 0, 1.5);
       p[`${prefix}_stereo`] = clamp(Number(p[`${prefix}_stereo`]) || 0, 0, 1);
+      const _mr = Number(p[`${prefix}_moveRate`]);
+      p[`${prefix}_moveRate`] = clamp(Number.isFinite(_mr) ? _mr : 0.15, 0.01, 2);
+      const _md = Number(p[`${prefix}_moveDepth`]);
+      p[`${prefix}_moveDepth`] = clamp(Number.isFinite(_md) ? _md : 0.7, 0, 1);
       p[`${prefix}_eqLow`] = clamp(Number(p[`${prefix}_eqLow`]) || 0, -1, 1);
       p[`${prefix}_eqMid`] = clamp(Number(p[`${prefix}_eqMid`]) || 0, -1, 1);
       p[`${prefix}_eqHigh`] = clamp(Number(p[`${prefix}_eqHigh`]) || 0, -1, 1);
@@ -2882,6 +2938,9 @@
       enumOk('master_exportNoiseShaping', ['off', 'gentle', 'strong']);
       enumOk('master_previewQuality', ['eco', 'normal', 'high']);
       enumOk('master_exportMode', ['mix', 'stems', 'mixstems']);
+      enumOk('A_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift']);
+      enumOk('B_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift']);
+      enumOk('C_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift']);
     }
     return p;
   }
@@ -2895,6 +2954,7 @@
       type: p.A_type,
       gain: p.A_gain,
       pan: p.A_pan,
+      move: p.A_move, moveRate: p.A_moveRate, moveDepth: p.A_moveDepth,
       tone: p.A_tone,
       density: p.A_density,
       motion: p.A_motion,
@@ -2909,6 +2969,7 @@
       type: p.B_type,
       gain: p.B_gain,
       pan: p.B_pan,
+      move: p.B_move, moveRate: p.B_moveRate, moveDepth: p.B_moveDepth,
       tone: p.B_tone,
       density: p.B_density,
       motion: p.B_motion,
@@ -2923,6 +2984,7 @@
       type: p.C_type,
       gain: p.C_gain,
       pan: p.C_pan,
+      move: p.C_move, moveRate: p.C_moveRate, moveDepth: p.C_moveDepth,
       tone: p.C_tone,
       density: p.C_density,
       motion: p.C_motion,
@@ -3053,6 +3115,38 @@
     }
   }
 
+  // Per-layer spatial movement. layerMove advances the layer's own phase
+  // and returns [dx, dy] in -1..1 (dx = left/right, dy = up/down).
+  // Deterministic (no RNG), so preview / export / CLI / worklet agree.
+  function layerMove(s, lp2, sr) {
+    const mode = lp2.move;
+    if (!mode || mode === 'off') return [0, 0];
+    const rate = clamp(Number(lp2.moveRate) || 0.15, 0.01, 2);
+    s.mvPhase = (s.mvPhase || 0) + TAU * rate / sr;
+    const ph = s.mvPhase;
+    switch (mode) {
+      case 'lr': return [Math.sin(ph), 0];
+      case 'ud': return [0, Math.sin(ph)];
+      case 'circle': return [Math.sin(ph), Math.cos(ph)];
+      case 'eight': return [Math.sin(ph), Math.sin(2 * ph) * 0.7];
+      case 'drift': return [Math.sin(ph * 0.9 + 1.3 * Math.sin(ph * 0.37)) * 0.85, Math.sin(ph * 0.73 + 1.1 * Math.sin(ph * 0.29 + 1.7)) * 0.85];
+      default: return [0, 0];
+    }
+  }
+
+  // Up/down axis: up = brighter + slightly closer, down = darker + farther
+  // (one-pole muffle). Uses only its own filter slots ('mvLo' / 'mvHi').
+  function applyMoveY(s, y, dy, depth, sr) {
+    if (!dy || !depth) return y;
+    const g = 1 + dy * 0.22 * depth;
+    if (dy < 0) {
+      const k = -dy * depth * 0.85;
+      const lo = lp(s, 'mvLo', y, 650 + (1 + dy) * 2600, sr);
+      return y * g * (1 - k) + lo * g * k;
+    }
+    return y * g + hp(s, 'mvHi', y, 5200, sr) * dy * depth * 0.35;
+  }
+
   function renderBlock(renderer, frames, outL = null, outR = null, pcm = null, pcmGain = 1) {
     const p = renderer.params;
     const sA = renderer.sA;
@@ -3070,44 +3164,68 @@
 
       if (sA.p.enabled) {
         const raw = nextNoiseRaw(sA, sA.p, t);
-        const y = shapeLayerSample(sA, raw, sA.p);
-        let yR = y;
+        let y = shapeLayerSample(sA, raw, sA.p);
+        let shapedR = null;
         if (sA.p.stereo > 0 && renderer.sAR) {
+          shapedR = shapeLayerSample(renderer.sAR, nextNoiseRaw(renderer.sAR, sA.p, t), sA.p);
+        }
+        const [mvxA, mvyA] = layerMove(sA, sA.p, sr);
+        if (mvyA) {
+          y = applyMoveY(sA, y, mvyA, sA.p.moveDepth, sr);
+          if (shapedR !== null) shapedR = applyMoveY(renderer.sAR, shapedR, mvyA, sA.p.moveDepth, sr);
+        }
+        let yR = y;
+        if (shapedR !== null) {
           const w = sA.p.stereo;
-          const shapedR = shapeLayerSample(renderer.sAR, nextNoiseRaw(renderer.sAR, sA.p, t), sA.p);
           const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
           yR = (y * (1 - w) + shapedR * w) * norm;
         }
-        const pan = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22, -1, 1);
+        const pan = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22 + mvxA * (sA.p.moveDepth || 0), -1, 1);
         l += y * Math.sqrt((1 - pan) * 0.5);
         r += yR * Math.sqrt((1 + pan) * 0.5);
       }
       if (sB.p.enabled) {
         const raw = nextNoiseRaw(sB, sB.p, t);
-        const y = shapeLayerSample(sB, raw, sB.p);
-        let yR = y;
+        let y = shapeLayerSample(sB, raw, sB.p);
+        let shapedR = null;
         if (sB.p.stereo > 0 && renderer.sBR) {
+          shapedR = shapeLayerSample(renderer.sBR, nextNoiseRaw(renderer.sBR, sB.p, t), sB.p);
+        }
+        const [mvxB, mvyB] = layerMove(sB, sB.p, sr);
+        if (mvyB) {
+          y = applyMoveY(sB, y, mvyB, sB.p.moveDepth, sr);
+          if (shapedR !== null) shapedR = applyMoveY(renderer.sBR, shapedR, mvyB, sB.p.moveDepth, sr);
+        }
+        let yR = y;
+        if (shapedR !== null) {
           const w = sB.p.stereo;
-          const shapedR = shapeLayerSample(renderer.sBR, nextNoiseRaw(renderer.sBR, sB.p, t), sB.p);
           const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
           yR = (y * (1 - w) + shapedR * w) * norm;
         }
-        const pan = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22, -1, 1);
+        const pan = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22 + mvxB * (sB.p.moveDepth || 0), -1, 1);
         l += y * Math.sqrt((1 - pan) * 0.5);
         r += yR * Math.sqrt((1 + pan) * 0.5);
       }
 
       if (sC && sC.p.enabled) {
         const raw = nextNoiseRaw(sC, sC.p, t);
-        const y = shapeLayerSample(sC, raw, sC.p);
-        let yR = y;
+        let y = shapeLayerSample(sC, raw, sC.p);
+        let shapedR = null;
         if (sC.p.stereo > 0 && renderer.sCR) {
+          shapedR = shapeLayerSample(renderer.sCR, nextNoiseRaw(renderer.sCR, sC.p, t), sC.p);
+        }
+        const [mvxC, mvyC] = layerMove(sC, sC.p, sr);
+        if (mvyC) {
+          y = applyMoveY(sC, y, mvyC, sC.p.moveDepth, sr);
+          if (shapedR !== null) shapedR = applyMoveY(renderer.sCR, shapedR, mvyC, sC.p.moveDepth, sr);
+        }
+        let yR = y;
+        if (shapedR !== null) {
           const w = sC.p.stereo;
-          const shapedR = shapeLayerSample(renderer.sCR, nextNoiseRaw(renderer.sCR, sC.p, t), sC.p);
           const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
           yR = (y * (1 - w) + shapedR * w) * norm;
         }
-        const pan = clamp(sC.p.pan + Math.sin(TAU * p.master_lfoRate * t * 0.63 + 2.2) * p.master_lfoDepth * 0.22, -1, 1);
+        const pan = clamp(sC.p.pan + Math.sin(TAU * p.master_lfoRate * t * 0.63 + 2.2) * p.master_lfoDepth * 0.22 + mvxC * (sC.p.moveDepth || 0), -1, 1);
         l += y * Math.sqrt((1 - pan) * 0.5);
         r += yR * Math.sqrt((1 + pan) * 0.5);
       }
@@ -3981,6 +4099,8 @@
     rawViolet.toString(),
     nextNoiseRaw.toString(),
     shapeLayerSample.toString(),
+    layerMove.toString(),
+    applyMoveY.toString(),
     normalizeParams.toString(),
     createStereoRenderer.toString(),
     renderBlock.toString()
@@ -4004,6 +4124,9 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sA.p.type = p.A_type;
     this.renderer.sA.p.gain = p.A_gain;
     this.renderer.sA.p.pan = p.A_pan;
+    this.renderer.sA.p.move = p.A_move;
+    this.renderer.sA.p.moveRate = p.A_moveRate;
+    this.renderer.sA.p.moveDepth = p.A_moveDepth;
     this.renderer.sA.p.tone = p.A_tone;
     this.renderer.sA.p.density = p.A_density;
     this.renderer.sA.p.motion = p.A_motion;
@@ -4017,6 +4140,9 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sB.p.type = p.B_type;
     this.renderer.sB.p.gain = p.B_gain;
     this.renderer.sB.p.pan = p.B_pan;
+    this.renderer.sB.p.move = p.B_move;
+    this.renderer.sB.p.moveRate = p.B_moveRate;
+    this.renderer.sB.p.moveDepth = p.B_moveDepth;
     this.renderer.sB.p.tone = p.B_tone;
     this.renderer.sB.p.density = p.B_density;
     this.renderer.sB.p.motion = p.B_motion;
@@ -4030,6 +4156,9 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     this.renderer.sC.p.type = p.C_type;
     this.renderer.sC.p.gain = p.C_gain;
     this.renderer.sC.p.pan = p.C_pan;
+    this.renderer.sC.p.move = p.C_move;
+    this.renderer.sC.p.moveRate = p.C_moveRate;
+    this.renderer.sC.p.moveDepth = p.C_moveDepth;
     this.renderer.sC.p.tone = p.C_tone;
     this.renderer.sC.p.density = p.C_density;
     this.renderer.sC.p.motion = p.C_motion;
@@ -4267,6 +4396,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sA.p.type = p.A_type;
       this.sA.p.gain = p.A_gain;
       this.sA.p.pan = p.A_pan;
+      this.sA.p.move = p.A_move;
+      this.sA.p.moveRate = p.A_moveRate;
+      this.sA.p.moveDepth = p.A_moveDepth;
       this.sA.p.tone = p.A_tone;
       this.sA.p.density = p.A_density;
       this.sA.p.motion = p.A_motion;
@@ -4280,6 +4412,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sB.p.type = p.B_type;
       this.sB.p.gain = p.B_gain;
       this.sB.p.pan = p.B_pan;
+      this.sB.p.move = p.B_move;
+      this.sB.p.moveRate = p.B_moveRate;
+      this.sB.p.moveDepth = p.B_moveDepth;
       this.sB.p.tone = p.B_tone;
       this.sB.p.density = p.B_density;
       this.sB.p.motion = p.B_motion;
@@ -4293,6 +4428,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.sC.p.type = p.C_type;
       this.sC.p.gain = p.C_gain;
       this.sC.p.pan = p.C_pan;
+      this.sC.p.move = p.C_move;
+      this.sC.p.moveRate = p.C_moveRate;
+      this.sC.p.moveDepth = p.C_moveDepth;
       this.sC.p.tone = p.C_tone;
       this.sC.p.density = p.C_density;
       this.sC.p.motion = p.C_motion;
@@ -4573,6 +4711,11 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       p.master_gain = 0.58;
     }
     if (/激し|ハーシュ|harsh/i.test(text)) { p.master_drive = 0.5; p.A_grain = 0.7; }
+    if (/回転|回る|orbit|circle/i.test(text)) { p.A_move = 'circle'; p.A_moveRate = 0.15; p.A_moveDepth = 0.85; }
+    else if (/左右|行ったり来たり|left.?right/i.test(text)) { p.A_move = 'lr'; p.A_moveRate = 0.12; p.A_moveDepth = 0.9; }
+    else if (/上下|up.?down/i.test(text)) { p.A_move = 'ud'; p.A_moveRate = 0.12; p.A_moveDepth = 0.9; }
+    else if (/漂|ふらふら|drift|wander/i.test(text)) { p.A_move = 'drift'; p.A_moveRate = 0.2; p.A_moveDepth = 0.8; }
+    else if (/動き|動く|move|moving/i.test(text)) { p.A_move = 'eight'; p.A_moveRate = 0.1; p.A_moveDepth = 0.8; }
     if (/静か|優し|soft|gentle/i.test(text)) { p.master_gain = 0.42; p.master_drive = 0.02; p.A_grain = Math.min(p.A_grain, 0.15); }
     setParams(p);
     engine.rebuild();
@@ -4581,15 +4724,47 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     setStatus(`AI生成（ルール）: ${labelOfType(main)}${sub ? ' + ' + labelOfType(sub) : ''}${beatNote} / seed ${p.master_seed}`, 'ok');
   }
 
-  function aiLoadKey() {
+  const AI_PROVIDERS = {
+    groq: { kind: 'openai', url: 'https://api.groq.com/openai/v1/chat/completions', model: 'openai/gpt-oss-20b' },
+    gemini: { kind: 'gemini', url: '', model: 'gemini-2.5-flash' },
+    anthropic: { kind: 'anthropic', url: 'https://api.anthropic.com/v1/messages', model: 'claude-sonnet-4-5' },
+    openai: { kind: 'openai', url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini' },
+    openrouter: { kind: 'openai', url: 'https://openrouter.ai/api/v1/chat/completions', model: 'openai/gpt-oss-20b:free' },
+    requesty: { kind: 'openai', url: 'https://router.requesty.ai/v1/chat/completions', model: 'openai/gpt-4o-mini' },
+    nvidia: { kind: 'openai', url: 'https://integrate.api.nvidia.com/v1/chat/completions', model: 'meta/llama-3.3-70b-instruct' },
+    zai: { kind: 'openai', url: 'https://api.z.ai/api/paas/v4/chat/completions', model: 'glm-4.7-flash' },
+    edenai: { kind: 'openai', url: 'https://api.edenai.run/v3/chat/completions', model: '', modelOptional: true },
+    cloudflare: { kind: 'openai', url: 'https://api.cloudflare.com/client/v4/accounts/ACCOUNT_ID/ai/v1/chat/completions', model: '@cf/meta/llama-3.1-8b-instruct' },
+    mistral: { kind: 'openai', url: 'https://api.mistral.ai/v1/chat/completions', model: 'mistral-small-latest' },
+    cohere: { kind: 'openai', url: 'https://api.cohere.ai/compatibility/v1/chat/completions', model: 'command-a-03-2025' },
+    xai: { kind: 'openai', url: 'https://api.x.ai/v1/chat/completions', model: 'grok-3-mini' },
+    ollama: { kind: 'openai', url: 'http://localhost:11434/v1/chat/completions', model: 'llama3.1', keyOptional: true },
+    custom: { kind: 'openai', url: '', model: '' }
+  };
+  function aiLoadStore() {
     try { return JSON.parse(localStorage.getItem('noise_byok_v1') || '{}'); } catch (_) { return {}; }
   }
-  function aiSaveKey(provider, key) {
+  function aiStoreEntry(provider) {
+    const cur = aiLoadStore();
+    const v = cur[provider];
+    if (typeof v === 'string') return { key: v, url: '', model: '' };
+    if (v && typeof v === 'object') return { key: v.key || '', url: v.url || '', model: v.model || '' };
+    return { key: '', url: '', model: '' };
+  }
+  function aiSaveEntry(provider, entry) {
     try {
-      const cur = aiLoadKey();
-      cur[provider] = key;
+      const cur = aiLoadStore();
+      cur[provider] = entry;
       localStorage.setItem('noise_byok_v1', JSON.stringify(cur));
     } catch (_) {}
+  }
+  function aiApplyProviderToUi() {
+    const provider = $('aiProvider').value;
+    const def = AI_PROVIDERS[provider] || AI_PROVIDERS.groq;
+    const saved = aiStoreEntry(provider);
+    $('aiApiKey').value = saved.key || '';
+    $('aiBaseUrl').value = saved.url || def.url || '';
+    $('aiModel').value = saved.model || def.model || '';
   }
   function aiSanitizeParams(obj) {
     if (!obj || typeof obj !== 'object') return null;
@@ -4630,37 +4805,69 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   function aiSchemaHint() {
     const keys = Object.keys(DEFAULTS).join(', ');
     const types = NOISE_TYPES.map(v => v[0]).join('|');
-    return `You are a preset designer for a stereo noise generator. Reply with ONE JSON object only (no markdown, no prose). Allowed keys: ${keys}. Layer types: ${types}. Numbers must be plain numbers within UI ranges (gains 0..2.2, pan -1..1, tone -1..1, density/motion/grain 0..1.5, master_width 0..5.5, binaural carrier 40..600, beat 0..40, level 0..0.6). Booleans as true/false. Always include A_enabled, A_type and master_gain (0.35..0.65). Add master_binauralEnabled with carrier/beat/level when the request mentions sleep, focus, meditation or binaural (delta~2Hz, theta~6Hz, alpha~10Hz, beta~20Hz, gamma~40Hz).`;
+    return `You are a preset designer for a stereo noise generator. Reply with ONE JSON object only (no markdown, no prose). Allowed keys: ${keys}. Layer types: ${types}. Numbers must be plain numbers within UI ranges (gains 0..2.2, pan -1..1, tone -1..1, density/motion/grain 0..1.5, master_width 0..5.5, binaural carrier 40..600, beat 0..40, level 0..0.6). Booleans as true/false. Always include A_enabled, A_type and master_gain (0.35..0.65). Add master_binauralEnabled with carrier/beat/level when the request mentions sleep, focus, meditation or binaural (delta~2Hz, theta~6Hz, alpha~10Hz, beta~20Hz, gamma~40Hz). Layer movement: A_move/B_move/C_move is one of off|lr|ud|circle|eight|drift, with moveRate 0.01..2 and moveDepth 0..1 per layer (keys like A_moveRate); use it when the request mentions moving, rotating or drifting sound.`;
   }
   async function aiLlmGenerate() {
     const text = ($('aiPrompt').value || '').trim();
     if (!text) { setStatus('作りたい音を入力してください。', 'err'); return; }
-    const provider = $('aiProvider').value === 'gemini' ? 'gemini' : 'groq';
+    const provider = $('aiProvider').value || 'groq';
+    const def = AI_PROVIDERS[provider] || AI_PROVIDERS.groq;
     const key = ($('aiApiKey').value || '').trim();
-    if (!key) { setStatus('APIキーを入力してください（このブラウザ内にのみ保存されます）。', 'err'); return; }
-    aiSaveKey(provider, key);
+    const url = ($('aiBaseUrl').value || '').trim() || def.url || '';
+    const model = ($('aiModel').value || '').trim() || def.model || '';
+    if (!key && !def.keyOptional) { setStatus('APIキーを入力してください（このブラウザ内にのみ保存されます）。', 'err'); return; }
+    if (def.kind === 'openai' && !url) { setStatus('エンドポイントURLを入力してください。', 'err'); return; }
+    if (!model && !def.modelOptional) { setStatus('モデル名を入力してください。', 'err'); return; }
+    aiSaveEntry(provider, { key, url: ($('aiBaseUrl').value || '').trim(), model: ($('aiModel').value || '').trim() });
     setStatus(`LLM生成中 (${provider})...`);
     try {
       let raw = '';
-      if (provider === 'groq') {
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-          body: JSON.stringify({
-            model: 'openai/gpt-oss-20b',
+      if (def.kind === 'openai') {
+        const callApi = async (withFormat) => {
+          const body = {
             messages: [
               { role: 'system', content: aiSchemaHint() },
               { role: 'user', content: text }
             ],
+            temperature: 0.4
+          };
+          if (model) body.model = model;
+          if (withFormat) body.response_format = { type: 'json_object' };
+          const headers = { 'Content-Type': 'application/json' };
+          if (key) headers.Authorization = `Bearer ${key}`;
+          const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        };
+        let data;
+        try { data = await callApi(true); } catch (e) {
+          if (String(e && e.message).includes('400')) data = await callApi(false);
+          else throw e;
+        }
+        raw = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '';
+        if (Array.isArray(raw)) raw = raw.map(part => (part && part.text) || '').join('');
+      } else if (def.kind === 'anthropic') {
+        const res = await fetch(def.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': key,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model,
+            max_tokens: 1024,
             temperature: 0.4,
-            response_format: { type: 'json_object' }
+            system: aiSchemaHint(),
+            messages: [{ role: 'user', content: text }]
           })
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        raw = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '';
+        raw = Array.isArray(data.content) ? data.content.map(b => (b && b.type === 'text' ? b.text : '') || '').join('') : '';
       } else {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -5293,7 +5500,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 
     document.querySelectorAll('input, select').forEach(el => {
       const handler = () => {
-        if (el.id === 'aiPrompt' || el.id === 'aiApiKey' || el.id === 'aiProvider') return;
+        if (el.id === 'aiPrompt' || el.id === 'aiApiKey' || el.id === 'aiProvider' || el.id === 'aiBaseUrl' || el.id === 'aiModel') return;
         syncReadouts();
         engine.updateLiveParams(el.id);
         noteParamEdit();
@@ -5461,14 +5668,8 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     $('aiRuleBtn').addEventListener('click', aiRuleGenerate);
     $('aiLlmBtn').addEventListener('click', aiLlmGenerate);
     $('aiPrompt').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); aiRuleGenerate(); } });
-    $('aiProvider').addEventListener('change', () => {
-      const saved = aiLoadKey();
-      $('aiApiKey').value = saved[$('aiProvider').value] || '';
-    });
-    {
-      const saved = aiLoadKey();
-      if (saved[$('aiProvider').value]) $('aiApiKey').value = saved[$('aiProvider').value];
-    }
+    $('aiProvider').addEventListener('change', aiApplyProviderToUi);
+    aiApplyProviderToUi();
     $('midiBtn').addEventListener('click', toggleMidi);
     $('copySessionBtn').addEventListener('click', copySessionJson);
     $('loadSessionBtn').addEventListener('click', () => $('sessionFile').click());
