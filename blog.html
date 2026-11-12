@@ -165,45 +165,51 @@ const REPO_NAME  = 'varelser.github.io';
 const POSTS_DIR  = 'posts';
 const BRANCH     = 'main';
 
+// 高速化: まず同オリジンの軽量インデックス (blog_index.json / posts-index.json) を読む。
+// 従来は GitHub API + 各記事HTML全文を直列 fetch していたため表示まで数秒かかっていた。
 async function loadPosts() {
   const container = document.getElementById('post-container');
   const loading   = document.getElementById('loading');
 
+  // Step 1: 軽量インデックスを優先 (1リクエスト・約1KB)
+  for (const src of ['blog_index.json', 'posts-index.json']) {
+    try {
+      const res = await fetch(src);
+      if (!res.ok) continue;
+      const raw = await res.json();
+      const posts = raw.map(p => ({
+        title:   (p.title || '').replace(/\s*(?:\||―)\s*VARELSER\s*$/, '').trim() || p.title,
+        date:    p.date || '不明',
+        summary: p.summary || p.description || '',
+        tags:    p.tags || p.category || [],
+        url:     p.url,
+      })).filter(p => p.url);
+      if (posts.length) {
+        posts.sort((a, b) => b.date.localeCompare(a.date));
+        renderPosts(container, posts);
+        loading.style.display = 'none';
+        return;
+      }
+    } catch { /* 次のソースへ */ }
+  }
+
+  // Step 2: フォールバック — GitHub API + 各記事の meta (並列取得)
   try {
-    // Step 1: posts/ フォルダのファイル一覧を取得
     const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${POSTS_DIR}?ref=${BRANCH}`;
     const res = await fetch(apiUrl);
-
-    if (!res.ok) {
-      // API失敗時：ローカルの posts-index.json にフォールバック
-      return await loadFromIndex(container, loading);
-    }
-
+    if (!res.ok) throw new Error('api');
     const files = await res.json();
     const htmlFiles = files.filter(f => f.name.endsWith('.html'));
-
     if (htmlFiles.length === 0) {
       loading.textContent = 'まだ記事がありません。';
       return;
     }
-
-    // Step 2: 各HTMLから meta を取得
-    const posts = [];
-    for (const file of htmlFiles) {
-      const meta = await fetchPostMeta(file);
-      if (meta) posts.push(meta);
-    }
-
-    // Step 3: 日付降順でソート
+    const posts = (await Promise.all(htmlFiles.map(fetchPostMeta))).filter(Boolean);
     posts.sort((a, b) => b.date.localeCompare(a.date));
-
-    // Step 4: レンダリング
     renderPosts(container, posts);
     loading.style.display = 'none';
-
   } catch (err) {
-    console.warn('GitHub API error, trying fallback:', err);
-    await loadFromIndex(container, loading);
+    loading.textContent = '記事の読み込みに失敗しました。ページを再読み込みしてください。';
   }
 }
 
@@ -218,7 +224,7 @@ async function fetchPostMeta(file) {
     const doc = parser.parseFromString(html, 'text/html');
 
     const title   = (doc.querySelector('title')?.textContent || file.name)
-                      .replace(/\s*\|.*$/, ''); // " | VARELSER" を除去
+                      .replace(/\s*\|.*$/, '');
     const date    = doc.querySelector('meta[name="post-date"]')?.content
                     || extractDateFromName(file.name)
                     || '不明';
@@ -235,20 +241,6 @@ async function fetchPostMeta(file) {
 function extractDateFromName(name) {
   const m = name.match(/^(\d{4}-\d{2}-\d{2})/);
   return m ? m[1] : null;
-}
-
-// フォールバック：posts-index.json（GitHub API のレート制限時用）
-async function loadFromIndex(container, loading) {
-  try {
-    const res = await fetch('posts-index.json');
-    if (!res.ok) throw new Error('no index');
-    const posts = await res.json();
-    posts.sort((a, b) => b.date.localeCompare(a.date));
-    renderPosts(container, posts);
-    loading.style.display = 'none';
-  } catch {
-    loading.textContent = '記事の読み込みに失敗しました。ページを再読み込みしてください。';
-  }
 }
 
 function renderPosts(container, posts) {
