@@ -1,0 +1,26 @@
+name: Nurse pipeline tests
+
+on:
+  push:
+    paths:
+      - "scripts/nurse_pipeline.py"
+      - "scripts/nurse_fetch.py"
+      - "tests/test_nurse_pipeline.py"
+      - ".github/workflows/nurse-pipeline-tests.yml"
+  pull_request:
+    paths:
+      - "scripts/nurse_pipeline.py"
+      - "scripts/nurse_fetch.py"
+      - "tests/test_nurse_pipeline.py"
+      - ".github/workflows/nurse-pipeline-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run Nurse pipeline tests
+        run: python3 tests/test_nurse_pipeline.py
