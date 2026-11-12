@@ -7,6 +7,7 @@ condition raises or returns falsy is a failure and makes the exit code 1.
 """
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -251,12 +252,26 @@ def main():
               lambda: idx and idx[0]["titleJa"] == main_arts[0]["titleJa"] and idx[0]["page"] == "本体")
         check("index archive entries carry the archive filename",
               lambda: {e["page"] for e in idx} == {"本体", "arxiv-archive-2026-10.html"})
-        check("index excerpts capped at 200 chars",
-              lambda: all(len(e["excerpt"]) <= 200 for e in idx))
+        check("index excerpts capped at 300 chars",
+              lambda: all(len(e["excerpt"]) <= 300 for e in idx))
         check("index has exactly the slim fields",
               lambda: all(set(e) == {"title", "titleJa", "url", "publishedAt",
-                                     "source", "genre", "field", "page", "excerpt"}
+                                     "source", "genre", "field", "page", "excerpt",
+                                     "authors", "categories", "text"}
                           for e in idx))
+        src_by_title = {a["titleJa"]: a for a in main_arts + arch["2026-10"]}
+        check("index entries carry authors/categories from the source records",
+              lambda: all(e["authors"] == src_by_title[e["titleJa"]]["authors"]
+                          and e["categories"] == src_by_title[e["titleJa"]]["categories"]
+                          for e in idx))
+        check("index text is the full plain-text summary, untruncated",
+              lambda: all(e["text"] == re.sub(r"\s+", " ",
+                                              re.sub(r"<[^>]+>", "",
+                                                     src_by_title[e["titleJa"]]["summaryHtml"]
+                                                     .replace("<br><br>", " "))).strip()
+                          and e["excerpt"] == e["text"][:300]
+                          for e in idx)
+              and any(len(e["text"]) > 300 for e in idx))
         lat = json.loads(lat_path.read_text(encoding="utf-8")) if lat_path.exists() else []
         expect5 = [a["titleJa"] for a in main_arts[:5]]
         check("latest has exactly the newest 5 in order",

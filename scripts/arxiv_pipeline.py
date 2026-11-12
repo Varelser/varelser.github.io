@@ -19,7 +19,8 @@ mechanical lives here so it is written once, tested, and reused:
   - RSS feed regeneration (arxiv-feed.xml: latest 50 across the whole
     stock, main + archives, on every update run)
   - slim search index regeneration (arxiv-search-index.json: the whole
-    stock with ~200-char excerpts, for arxiv-search.html) and latest-5
+    stock with 300-char display excerpts plus the full plain-text summary
+    in `text` for full-text search, for arxiv-search.html) and latest-5
     regeneration (arxiv-latest.json, for the index.html section); both
     are deterministic and join changed_files only when their bytes differ
   - full validation (the cron job's step-8 checks + structural checks:
@@ -61,7 +62,7 @@ FEED_NAME = "arxiv-feed.xml"
 SEARCH_INDEX_NAME = "arxiv-search-index.json"
 LATEST_NAME = "arxiv-latest.json"
 LATEST_LIMIT = 5
-EXCERPT_CHARS = 200
+EXCERPT_CHARS = 300
 SUMMARY_MIN, SUMMARY_MAX = 450, 900
 JA_RE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff]")
 DOI_RE = re.compile(r"10\.\d{4,9}/\S+")
@@ -197,7 +198,7 @@ def build_search_index(pairs) -> str:
     timestamps embedded), so a no-change rerun reproduces identical bytes."""
     out = []
     for a, page in pairs:
-        excerpt = re.sub(r"\s+", " ", plain_text(a.get("summaryHtml", ""))).strip()
+        text = re.sub(r"\s+", " ", plain_text(a.get("summaryHtml", ""))).strip()
         out.append({
             "title": a.get("title", ""),
             "titleJa": a.get("titleJa", ""),
@@ -206,8 +207,11 @@ def build_search_index(pairs) -> str:
             "source": a.get("source", ""),
             "genre": a.get("genre", ""),
             "field": a.get("field", ""),
+            "authors": a.get("authors") or [],
+            "categories": a.get("categories") or [],
             "page": page,
-            "excerpt": excerpt[:EXCERPT_CHARS],
+            "excerpt": text[:EXCERPT_CHARS],
+            "text": text,
         })
     return json.dumps(out, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
