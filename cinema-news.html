@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cinema News（映画ニュース）| VARELSER</title>
+  <meta name="description" content="国内外の最新映画ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:title" content="Cinema News（映画ニュース）| VARELSER" />
+    <meta property="og:description" content="国内外の最新映画ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/cinema-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Cinema News RSS" href="cinema-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+      </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の映画ニュース</p>
+    <p class="page-desc">国内外の映画メディアや映画祭・批評サイトから、新作映画の公開・配信情報、レビュー、監督・俳優のインタビュー、映画祭の話題をAIで日本語要約し、日付・カテゴリ・種別・配信元で整理しています。情報源は映画.com、シネマトゥデイ、Real Sound 映画部、FILMAGA、MOVIE Collection、IndieWire、Variety Film、Deadline Film、The Guardian Film、RogerEbert.com、MUBI Notebook、Cartoon Brew など国内・海外46媒体です。</p>
+    <p class="page-desc"><a href="cinema-search.html">全件検索（全ストックから探す）</a> ・ <a href="cinema-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option></select></div>
+        <div class="filter-item"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="SF・ファンタジー">SF・ファンタジー</option><option value="アニメ">アニメ</option><option value="ドラマ">ドラマ</option></select></div>
+        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="CINRA">CINRA</option><option value="Deadline Film">Deadline Film</option><option value="MOVIE Collection">MOVIE Collection</option><option value="The Hollywood Reporter">The Hollywood Reporter</option><option value="Variety Film">Variety Film</option><option value="シネマトゥデイ">シネマトゥデイ</option><option value="映画.com">映画.com</option></select></div>
+        <div class="filter-item"><label for="kindFilter">種別</label><select id="kindFilter"><option value="">すべて</option><option value="インタビュー">インタビュー</option><option value="ニュース">ニュース</option><option value="公開・配信情報">公開・配信情報</option><option value="映画祭・イベント">映画祭・イベント</option><option value="特集">特集</option></select></div>
+        <div class="filter-item"><label for="regionFilter">地域</label><select id="regionFilter"><option value="">すべて</option><option value="国内">国内</option><option value="海外">海外</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全10件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<!-- ARTICLES_START -->
+<article
+  data-id="5bfd832ba09d6111bcd6205bb660f2fb"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ドラマ"
+  data-region="海外"
+  data-source="Variety Film"
+  data-kind="映画祭・イベント"
+  data-search="ニコール・キッドマン、フランス映画アカデミーから名誉セザール賞を受賞へ Nicole Kidman to Receive Honorary Cesar From French Film Academy ニコール・キッドマンが、フランスのセザール賞で名誉セザール賞を受賞することが決まった。授与は2027年2月25日にパリのオリンピアで開かれる第52回授賞式で行われる。 発表は、賞を主催するフランス映画アカデミー（アカデミー・デ・ザール・エ・テクニック・デュ・シネマ）と放送局Canal+が木曜日に共同で行った。 Variety Film ドラマ 海外 映画祭・イベント">
+  <p class="meta">Variety Film　2026-11-12 19:12</p>
+  <h2 class="article-title">ニコール・キッドマン、フランス映画アカデミーから名誉セザール賞を受賞へ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ドラマ</span><span class="chip">地域: 海外</span><span class="chip">種別: 映画祭・イベント</span></div>
+  <div class="summary">ニコール・キッドマンが、フランスのセザール賞で名誉セザール賞を受賞することが決まった。授与は2027年2月25日にパリのオリンピアで開かれる第52回授賞式で行われる。<span class="summary-rest" hidden><br><br>発表は、賞を主催するフランス映画アカデミー（アカデミー・デ・ザール・エ・テクニック・デュ・シネマ）と放送局Canal+が木曜日に共同で行った。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Variety Film<br>
+    原題：Nicole Kidman to Receive Honorary Cesar From French Film Academy<br>
+    原文URL：<a href="https://variety.com/2026/film/news/nicole-kidman-honorary-cesar-french-film-academy-1236945969/" target="_blank" rel="noopener">https://variety.com/2026/film/news/nicole-kidman-honorary-cesar-french-film-academy-1236945969/</a>
+  </div>
+</article>
+<article
+  data-id="2bfc27aa8e8ac9b03a179264b0cf33dd"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="SF・ファンタジー"
+  data-region="海外"
+  data-source="Deadline Film"
+  data-kind="インタビュー"
+  data-search="イライジャ・ウッド、20年ぶりのフロド役は「筋肉の記憶が戻った」　新作『The Hunt For Gollum』で再演 Elijah Wood Says “Muscle Memory” Kicked In Playing Frodo On ‘The Hunt For Gollum’ Set イライジャ・ウッドがDeadlineに、20年以上ぶりにフロドを再演した感覚を語った。「美しくて非現実的で、まるで時間が経っていないように感じた」と振り返っている。 ウッドは今年、アンディ・サーキス監督による中つ国の新作『The Hunt For Gollum』の撮影でフロド役に戻った。久しぶりの役柄でも「筋肉の記憶」が働いたと語っている。 Deadline Film SF・ファンタジー 海外 インタビュー">
+  <p class="meta">Deadline Film　2026-11-12 19:09</p>
+  <h2 class="article-title">イライジャ・ウッド、20年ぶりのフロド役は「筋肉の記憶が戻った」　新作『The Hunt For Gollum』で再演</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: SF・ファンタジー</span><span class="chip">地域: 海外</span><span class="chip">種別: インタビュー</span></div>
+  <div class="summary">イライジャ・ウッドがDeadlineに、20年以上ぶりにフロドを再演した感覚を語った。「美しくて非現実的で、まるで時間が経っていないように感じた」と振り返っている。<span class="summary-rest" hidden><br><br>ウッドは今年、アンディ・サーキス監督による中つ国の新作『The Hunt For Gollum』の撮影でフロド役に戻った。久しぶりの役柄でも「筋肉の記憶」が働いたと語っている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Deadline Film<br>
+    原題：Elijah Wood Says “Muscle Memory” Kicked In Playing Frodo On ‘The Hunt For Gollum’ Set<br>
+    原文URL：<a href="https://deadline.com/2026/11/elijah-wood-what-it-was-like-playing-frodo-hunt-for-gollum-1237221444/" target="_blank" rel="noopener">https://deadline.com/2026/11/elijah-wood-what-it-was-like-playing-frodo-hunt-for-gollum-1237221444/</a>
+  </div>
+</article>
+<article
+  data-id="39f00cf228a134368afbe591078b43ca"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ドラマ"
+  data-region="海外"
+  data-source="Variety Film"
+  data-kind="インタビュー"
+  data-search="オリバー・ラシェ監督、映画作りは「祈りの行為」　テッサロニキ映画祭で恐れと傷を語る Oliver Laxe on Overcoming His Fears, Making Films as an Act of ‘Prayer’ and Allowing His ‘Wounds’ to Drive Him to ‘Take the Leap’ アカデミー賞候補のスペイン人監督オリバー・ラシェが、テッサロニキ映画祭での個人的な登壇で、自身の映画作りの土台にある恐れ、弱さ、自己不信について率直に語った。キャリアは自分を「守る必要」から生まれた部分があると打ち明けている。 ラシェは映画作りを「祈り」の行為と捉え、自身の傷が「一歩を踏み出す」原動力になってきたと語る。恐怖を克服することと作品との関係を掘り下げたインタビューだ。 Variety Film ドラマ 海外 インタビュー">
+  <p class="meta">Variety Film　2026-11-12 19:09</p>
+  <h2 class="article-title">オリバー・ラシェ監督、映画作りは「祈りの行為」　テッサロニキ映画祭で恐れと傷を語る</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ドラマ</span><span class="chip">地域: 海外</span><span class="chip">種別: インタビュー</span></div>
+  <div class="summary">アカデミー賞候補のスペイン人監督オリバー・ラシェが、テッサロニキ映画祭での個人的な登壇で、自身の映画作りの土台にある恐れ、弱さ、自己不信について率直に語った。キャリアは自分を「守る必要」から生まれた部分があると打ち明けている。<span class="summary-rest" hidden><br><br>ラシェは映画作りを「祈り」の行為と捉え、自身の傷が「一歩を踏み出す」原動力になってきたと語る。恐怖を克服することと作品との関係を掘り下げたインタビューだ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Variety Film<br>
+    原題：Oliver Laxe on Overcoming His Fears, Making Films as an Act of ‘Prayer’ and Allowing His ‘Wounds’ to Drive Him to ‘Take the Leap’<br>
+    原文URL：<a href="https://variety.com/2026/film/global/oliver-laxe-overcoming-fears-films-act-of-prayer-1236945075/" target="_blank" rel="noopener">https://variety.com/2026/film/global/oliver-laxe-overcoming-fears-films-act-of-prayer-1236945075/</a>
+  </div>
+</article>
+<article
+  data-id="760744575fee543f5c8acad7577465f6"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="アニメ"
+  data-region="国内"
+  data-source="シネマトゥデイ"
+  data-kind="公開・配信情報"
+  data-search="アニメ映画『超かぐや姫！』、SCREENXアンコール上映が1週間限定で決定 『アベンジャーズ／ドゥームズデイ』高さ8mの巨大ツリー登場 日比谷がドクター・ドゥーム一色に 山下清悟監督が手掛けたオリジナルアニメーション映画『超かぐや姫！』のSCREENXアンコール上映が、11月20日（金）より1週間限定で実施されることが明らかになった。 あわせて、入場者特典としてキャスト寄せ書きボードの配布も決定した。再上映を望む声に応える形の限定上映となる。 シネマトゥデイ アニメ 国内 公開・配信情報">
+  <p class="meta">シネマトゥデイ　2026-11-12 19:06</p>
+  <h2 class="article-title">アニメ映画『超かぐや姫！』、SCREENXアンコール上映が1週間限定で決定</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: アニメ</span><span class="chip">地域: 国内</span><span class="chip">種別: 公開・配信情報</span></div>
+  <div class="summary">山下清悟監督が手掛けたオリジナルアニメーション映画『超かぐや姫！』のSCREENXアンコール上映が、11月20日（金）より1週間限定で実施されることが明らかになった。<span class="summary-rest" hidden><br><br>あわせて、入場者特典としてキャスト寄せ書きボードの配布も決定した。再上映を望む声に応える形の限定上映となる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：シネマトゥデイ<br>
+    原題：『アベンジャーズ／ドゥームズデイ』高さ8mの巨大ツリー登場 日比谷がドクター・ドゥーム一色に<br>
+    原文URL：<a href="https://www.cinematoday.jp/news/N0157874" target="_blank" rel="noopener">https://www.cinematoday.jp/news/N0157874</a>
+  </div>
+</article>
+<article
+  data-id="c94c3f7e4dbe1f6b94ebb89c0739f4f0"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="SF・ファンタジー"
+  data-region="国内"
+  data-source="MOVIE Collection"
+  data-kind="ニュース"
+  data-search="『ゴジラ-0.0』、北米初週末で外国実写映画の歴代最高記録　日米同時首位に 1000万人が熱狂した公開断罪ショー！ 正義と視聴率に取り憑かれた男の狂気『プライムタイム』 山崎貴監督の最新作『ゴジラ-0.0』が、北米公開初週末の興行収入で、外国実写映画として歴代最高記録を樹立した。日本と北米の週末興行収入ランキングでも同時に首位を獲得している。 世界興収ランキングでも首位が見込まれる好スタートで、山崎貴監督から喜びのコメントが寄せられたとムビコレが伝えている。 MOVIE Collection SF・ファンタジー 国内 ニュース">
+  <p class="meta">MOVIE Collection　2026-11-12 18:07</p>
+  <h2 class="article-title">『ゴジラ-0.0』、北米初週末で外国実写映画の歴代最高記録　日米同時首位に</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: SF・ファンタジー</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">山崎貴監督の最新作『ゴジラ-0.0』が、北米公開初週末の興行収入で、外国実写映画として歴代最高記録を樹立した。日本と北米の週末興行収入ランキングでも同時に首位を獲得している。<span class="summary-rest" hidden><br><br>世界興収ランキングでも首位が見込まれる好スタートで、山崎貴監督から喜びのコメントが寄せられたとムビコレが伝えている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：MOVIE Collection<br>
+    原題：1000万人が熱狂した公開断罪ショー！ 正義と視聴率に取り憑かれた男の狂気『プライムタイム』<br>
+    原文URL：<a href="https://www.moviecollection.jp/news/312618/" target="_blank" rel="noopener">https://www.moviecollection.jp/news/312618/</a>
+  </div>
+</article>
+<article
+  data-id="69b371d4b2c89733f30f09ac896694b3"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ドラマ"
+  data-region="海外"
+  data-source="The Hollywood Reporter"
+  data-kind="特集"
+  data-search="ゴルシフテ・ファラハニ主演『When She Hears the Bells』、タリバン迫るカブールを描くデビュー作 Golshifteh Farahani Is a Widow Fighting the Exploitation of Kids as the Taliban Nears Kabul in ‘When She Hears the Bells’ (Exclusive Clip and Chat) シャブナム・ザリアブ監督の長編デビュー作『When She Hears the Bells』は、タリンで初披露される作品で、アフガニスタンで撮影された映像を含み、女性たちと「タブー」とされるテーマに光を当てる。 ゴルシフテ・ファラハニが、タリバンがカブールに迫るなか子どもの搾取と闘う未亡人を演じる。監督はこの物語を「個人的な責任であり、静かな抵抗の行為」と位置づけている。 The Hollywood Reporter ドラマ 海外 特集">
+  <p class="meta">The Hollywood Reporter　2026-11-12 18:00</p>
+  <h2 class="article-title">ゴルシフテ・ファラハニ主演『When She Hears the Bells』、タリバン迫るカブールを描くデビュー作</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ドラマ</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">シャブナム・ザリアブ監督の長編デビュー作『When She Hears the Bells』は、タリンで初披露される作品で、アフガニスタンで撮影された映像を含み、女性たちと「タブー」とされるテーマに光を当てる。<span class="summary-rest" hidden><br><br>ゴルシフテ・ファラハニが、タリバンがカブールに迫るなか子どもの搾取と闘う未亡人を演じる。監督はこの物語を「個人的な責任であり、静かな抵抗の行為」と位置づけている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Hollywood Reporter<br>
+    原題：Golshifteh Farahani Is a Widow Fighting the Exploitation of Kids as the Taliban Nears Kabul in ‘When She Hears the Bells’ (Exclusive Clip and Chat)<br>
+    原文URL：<a href="https://www.hollywoodreporter.com/movies/movie-news/golshifteh-farahani-film-when-she-hears-the-bells-clip-poff-1236748852/" target="_blank" rel="noopener">https://www.hollywoodreporter.com/movies/movie-news/golshifteh-farahani-film-when-she-hears-the-bells-clip-poff-1236748852/</a>
+  </div>
+</article>
+<article
+  data-id="855085b4db8c9db8dca559a5adb9106d"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ドラマ"
+  data-region="国内"
+  data-source="映画.com"
+  data-kind="映画祭・イベント"
+  data-search="蔦哲一朗監督『黒の牛』、MoMAの特別上映に選出　日本映画の単独上映は10年ぶり 蔦哲⼀朗監督作「黒の牛」、MoMA Presentsに選出 日本映画の単独上映は「ハッピーアワー」以来10年ぶり 1月23日の公開以来、全国でロングラン上映が続いている蔦哲一朗監督作『黒の牛』が、ニューヨーク近代美術館（MoMA）の特別上映企画「MoMA Presents」に選出され、12月2日から8日まで上映される。 MoMA Presentsでの日本映画の単独上映は『ハッピーアワー』以来10年ぶりで、ロングランを続ける作品が海外の美術館上映へ広がる形となった。 映画.com ドラマ 国内 映画祭・イベント">
+  <p class="meta">映画.com　2026-11-12 16:00</p>
+  <h2 class="article-title">蔦哲一朗監督『黒の牛』、MoMAの特別上映に選出　日本映画の単独上映は10年ぶり</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ドラマ</span><span class="chip">地域: 国内</span><span class="chip">種別: 映画祭・イベント</span></div>
+  <div class="summary">1月23日の公開以来、全国でロングラン上映が続いている蔦哲一朗監督作『黒の牛』が、ニューヨーク近代美術館（MoMA）の特別上映企画「MoMA Presents」に選出され、12月2日から8日まで上映される。<span class="summary-rest" hidden><br><br>MoMA Presentsでの日本映画の単独上映は『ハッピーアワー』以来10年ぶりで、ロングランを続ける作品が海外の美術館上映へ広がる形となった。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：映画.com<br>
+    原題：蔦哲⼀朗監督作「黒の牛」、MoMA Presentsに選出 日本映画の単独上映は「ハッピーアワー」以来10年ぶり<br>
+    原文URL：<a href="https://eiga.com/news/20261112/19/" target="_blank" rel="noopener">https://eiga.com/news/20261112/19/</a>
+  </div>
+</article>
+<article
+  data-id="2d209fd8c45fd79e7aa28eccd5261dc3"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ドラマ"
+  data-region="国内"
+  data-source="シネマトゥデイ"
+  data-kind="公開・配信情報"
+  data-search="映画『Michael／マイケル』、12月25日からPrime Videoで見放題独占配信 『Michael／マイケル』Prime Videoで12.25見放題独占配信！ マイケル・ジャクソンの半生を描き、国内で興行収入88億円の大ヒットを記録している映画『Michael／マイケル』が、12月25日（金）0時からPrime Videoで見放題独占配信されることが決定した。 本日0時からは最速レンタル・購入配信もスタートしている。劇場で大ヒット中の作品が、年末に見放題配信へ移る。 シネマトゥデイ ドラマ 国内 公開・配信情報">
+  <p class="meta">シネマトゥデイ　2026-11-12 12:00</p>
+  <h2 class="article-title">映画『Michael／マイケル』、12月25日からPrime Videoで見放題独占配信</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ドラマ</span><span class="chip">地域: 国内</span><span class="chip">種別: 公開・配信情報</span></div>
+  <div class="summary">マイケル・ジャクソンの半生を描き、国内で興行収入88億円の大ヒットを記録している映画『Michael／マイケル』が、12月25日（金）0時からPrime Videoで見放題独占配信されることが決定した。<span class="summary-rest" hidden><br><br>本日0時からは最速レンタル・購入配信もスタートしている。劇場で大ヒット中の作品が、年末に見放題配信へ移る。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：シネマトゥデイ<br>
+    原題：『Michael／マイケル』Prime Videoで12.25見放題独占配信！<br>
+    原文URL：<a href="https://www.cinematoday.jp/news/N0157920" target="_blank" rel="noopener">https://www.cinematoday.jp/news/N0157920</a>
+  </div>
+</article>
+<article
+  data-id="0969eb1c9317c97b2ad9e47b78ed242c"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ドラマ"
+  data-region="国内"
+  data-source="CINRA"
+  data-kind="公開・配信情報"
+  data-search="宮藤官九郎主演の映画『真犯人』、2027年4月公開　主題歌は電気グルーヴ 宮藤官九郎×高橋文哉×松田龍平共演の映画『真犯人』来年4月公開。主題歌は電気グルーヴ 主演に宮藤官九郎、共演に高橋文哉と松田龍平を迎えた映画『真犯人』が、2027年4月に全国公開されることが発表された。 主題歌は電気グルーヴが担当する。宮藤官九郎が主演し、高橋文哉、松田龍平が共演する布陣とあわせ、公開は2027年4月と案内されている。 CINRA ドラマ 国内 公開・配信情報">
+  <p class="meta">CINRA　2026-11-12 11:04</p>
+  <h2 class="article-title">宮藤官九郎主演の映画『真犯人』、2027年4月公開　主題歌は電気グルーヴ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ドラマ</span><span class="chip">地域: 国内</span><span class="chip">種別: 公開・配信情報</span></div>
+  <div class="summary">主演に宮藤官九郎、共演に高橋文哉と松田龍平を迎えた映画『真犯人』が、2027年4月に全国公開されることが発表された。<span class="summary-rest" hidden><br><br>主題歌は電気グルーヴが担当する。宮藤官九郎が主演し、高橋文哉、松田龍平が共演する布陣とあわせ、公開は2027年4月と案内されている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：CINRA<br>
+    原題：宮藤官九郎×高橋文哉×松田龍平共演の映画『真犯人』来年4月公開。主題歌は電気グルーヴ<br>
+    原文URL：<a href="https://www.cinra.net/article/202611-whn-shinhannin_edteam" target="_blank" rel="noopener">https://www.cinra.net/article/202611-whn-shinhannin_edteam</a>
+  </div>
+</article>
+<article
+  data-id="db66cc8ad0aac858e603b87a6b319e4c"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ドラマ"
+  data-region="国内"
+  data-source="映画.com"
+  data-kind="公開・配信情報"
+  data-search="アン・ハサウェイ主演のA24新作、邦題『マザー・メアリーは二度生まれる』で2027年2月26日公開 アン・ハサウェイがスキャンダルで消えた歌姫に 狂気を描くA24の音楽ドラマ「マザー・メアリーは二度生まれる」2月26日公開決定 アン・ハサウェイが世界的歌姫“マザー・メアリー”を演じるA24の新作『Mother Mary』が、邦題を『マザー・メアリーは二度生まれる』として、2027年2月26日（金）より全国公開されることが決定した。 世界的歌姫を主人公とする作品で、邦題と日本公開日が正式に決まった形だ。世界的歌姫を演じるハサウェイの新作として、続報が注目される。 映画.com ドラマ 国内 公開・配信情報">
+  <p class="meta">映画.com　2026-11-12 10:00</p>
+  <h2 class="article-title">アン・ハサウェイ主演のA24新作、邦題『マザー・メアリーは二度生まれる』で2027年2月26日公開</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ドラマ</span><span class="chip">地域: 国内</span><span class="chip">種別: 公開・配信情報</span></div>
+  <div class="summary">アン・ハサウェイが世界的歌姫“マザー・メアリー”を演じるA24の新作『Mother Mary』が、邦題を『マザー・メアリーは二度生まれる』として、2027年2月26日（金）より全国公開されることが決定した。<span class="summary-rest" hidden><br><br>世界的歌姫を主人公とする作品で、邦題と日本公開日が正式に決まった形だ。世界的歌姫を演じるハサウェイの新作として、続報が注目される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：映画.com<br>
+    原題：アン・ハサウェイがスキャンダルで消えた歌姫に 狂気を描くA24の音楽ドラマ「マザー・メアリーは二度生まれる」2月26日公開決定<br>
+    原文URL：<a href="https://eiga.com/news/20261112/5/" target="_blank" rel="noopener">https://eiga.com/news/20261112/5/</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- CINEMA_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <ul class="archive-list">
+        <li>まだありません</li>
+      </ul>
+    </section>
+    <!-- CINEMA_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        genre: document.getElementById("categoryFilter"),
+        source: document.getElementById("sourceFilter"),
+        kind: document.getElementById("kindFilter"),
+        region: document.getElementById("regionFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-categories"), els.genre.value)
+          && (!els.source.value || article.getAttribute("data-source") === els.source.value)
+          && (!els.kind.value || article.getAttribute("data-kind") === els.kind.value)
+          && (!els.region.value || article.getAttribute("data-region") === els.region.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.genre, els.source, els.kind, els.region].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = ""; els.month.value = ""; els.genre.value = "";
+        els.source.value = ""; els.kind.value = ""; els.region.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>
