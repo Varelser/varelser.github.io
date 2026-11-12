@@ -55,6 +55,7 @@ SHELL = """<!doctype html>
 {block}
     </section>
 <nav class="pager"><select id="pageSize"><option value="20" selected>20件</option></select><span id="pageInfo"></span></nav>
+<script>function summaryToggle() {{}}</script>
     <!-- NURSE_ARCHIVE_LINKS_START -->
     <section class="archive-links">
       <h2>過去のアーカイブ（月別）</h2>
@@ -210,6 +211,40 @@ class TestDropAndRevise(FixtureCase):
                 json.dump([{"url": "https://example.org/1", "summaryHtml": bad}], f)
             with self.assertRaises(ValueError):
                 pipeline.run(self.repo, now=NOW, revise_path=rev_file)
+
+
+class TestFoldingAndIndex(FixtureCase):
+    def test_summary_folded_in_rendered_page(self):
+        a = make_record("https://example.org/1", "Study A", "研究そのA", "2026-11-10")
+        write_fixture(self.repo, [a])
+        b = make_record("https://example.org/2", "Study B", "研究そのB", "2026-11-09")
+        new_file = os.path.join(self.repo, "new.json")
+        with open(new_file, "w", encoding="utf-8") as f:
+            json.dump([b], f, ensure_ascii=False)
+        pipeline.run(self.repo, new_path=new_file, now=NOW)
+        with open(os.path.join(self.repo, "nurse-news.html"), encoding="utf-8") as f:
+            html = f.read()
+        self.assertIn('class="summary-rest" hidden', html)
+        self.assertIn('class="summary-toggle"', html)
+        self.assertIn("続きを読む", html)
+
+    def test_search_index_shards_match_stock(self):
+        a = make_record("https://example.org/1", "Study A", "研究そのA", "2026-11-10")
+        b = make_record("https://example.org/2", "Study B", "研究そのB", "2026-10-05")
+        idx = pipeline.build_search_index([a, b], "2026-11-12T00:00:00Z")
+        manifest = json.loads(idx["nurse-search-index.json"])
+        self.assertEqual(manifest["total"], 2)
+        self.assertEqual(sum(m["count"] for m in manifest["months"]), 2)
+        self.assertEqual(manifest["months"][0]["key"], "2026-11")
+        shard = json.loads(idx["nurse-search-2026-10.json"])
+        self.assertEqual(shard["articles"][0]["t"], "研究そのB")
+        self.assertNotIn("<br>", shard["articles"][0]["b"])
+
+    def test_shell_without_folding_rejected(self):
+        a = make_record("https://example.org/1", "Study A", "研究そのA", "2026-11-10")
+        shell = SHELL.replace("summaryToggle", "gone")
+        with self.assertRaises(ValueError):
+            pipeline.regenerate(shell, [a])
 
 
 class TestGoldenIdentity(unittest.TestCase):

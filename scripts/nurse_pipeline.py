@@ -113,6 +113,17 @@ def article_block(a):
         chips.append(f'<span class="chip">対象: {esc(t)}</span>')
     chips.append(f'<span class="chip">エビデンス: {esc(a["evidenceType"])}</span>')
     chips.append(f'<span class="chip">実務影響度: {IMPACT_JA[a["practiceImpact"]]}</span>')
+    # Fold the summary: first paragraph visible, the rest behind a
+    # "続きを読む" toggle (the shell script named summaryToggle handles it).
+    paras = a["summaryHtml"].split("<br><br>")
+    if len(paras) >= 2:
+        summary_div = (
+            f'  <div class="summary">{paras[0]}'
+            f'<span class="summary-rest" hidden><br><br>{"<br><br>".join(paras[1:])}</span></div>\n'
+            '  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>\n'
+        )
+    else:
+        summary_div = f'  <div class="summary">{a["summaryHtml"]}</div>\n'
     return (
         "<article\n"
         f'  data-id="{a["id"]}"\n'
@@ -127,7 +138,7 @@ def article_block(a):
         f'  <p class="meta">{esc(a["sourceName"])}　{jst_meta(a["publishedAt"])}</p>\n'
         f'  <h2 class="article-title">{esc(a["titleJa"])}</h2>\n'
         f'  <div class="taxonomy">{"".join(chips)}</div>\n'
-        f'  <div class="summary">{a["summaryHtml"]}</div>\n'
+        f'{summary_div}'
         f'  <div class="action-box"><strong>看護アクション</strong>{esc(a["actionPoint"])}</div>\n'
         '  <div class="source-box">\n'
         '    <strong>ソース・引用元</strong>\n'
@@ -227,6 +238,8 @@ def regenerate(main_shell, articles):
     """Return {filename: content} for main + archives. Raises on bad shell."""
     if 'id="pageSize"' not in main_shell or 'id="pageInfo"' not in main_shell:
         raise ValueError("shell lost its pager (pageSize/pageInfo missing)")
+    if "summaryToggle" not in main_shell:
+        raise ValueError("shell lost summary folding (summaryToggle missing)")
     if "position: sticky" in main_shell:
         raise ValueError("shell has position: sticky (must stay removed)")
     if not ARCH_RE.search(main_shell):
@@ -358,6 +371,42 @@ def build_feed(articles, updated_at_iso):
     )
 
 
+def build_search_index(articles, updated_at_iso):
+    """Slim per-month search shards + manifest for nurse-search.html.
+
+    Shards are content-addressed by month: closed months never change, so
+    browsers/CDN can cache them long-term; only the current month's shard
+    and the small manifest are re-fetched as the stock grows.
+    Returns {filename: content}.
+    """
+    months = OrderedDict()
+    for a in articles:
+        months.setdefault(a["publishedMonthKey"], []).append({
+            "t": a["titleJa"],
+            "o": a["originalTitle"],
+            "u": a["url"],
+            "d": a["publishedDateKey"],
+            "s": a["sourceName"],
+            "e": a["evidenceType"],
+            "b": plain_text(a["summaryHtml"]),
+            "g": " ".join(a["topics"] + a["clinicalAreas"] + a["audiences"]),
+        })
+    out = {}
+    manifest_months = []
+    for mk in sorted(months, reverse=True):
+        fname = f"nurse-search-{mk}.json"
+        out[fname] = json.dumps(
+            {"month": mk, "articles": months[mk]},
+            ensure_ascii=False, separators=(",", ":"))
+        manifest_months.append(
+            {"key": mk, "file": fname, "count": len(months[mk])})
+    out["nurse-search-index.json"] = json.dumps(
+        {"updatedAt": updated_at_iso, "total": len(articles),
+         "months": manifest_months},
+        ensure_ascii=False, separators=(",", ":"))
+    return out
+
+
 def validate_revision(entry, by_url):
     url = entry.get("url", "")
     if url not in by_url:
@@ -463,6 +512,7 @@ def run(repo, new_path=None, dry_run=False, now=None, drop_path=None, revise_pat
 
     targets = {"nurse-news-data.json": new_json,
                "nurse-feed.xml": build_feed(kept, data["updatedAt"])}
+    targets.update(build_search_index(kept, data["updatedAt"]))
     targets.update(files)
     changed = []
     for name, content in sorted(targets.items()):
