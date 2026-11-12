@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Literature News（文学ニュース）| VARELSER</title>
+  <meta name="description" content="国内外の文学・小説・詩・書評・翻訳文学・出版の最新ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:title" content="Literature News（文学ニュース）| VARELSER" />
+    <meta property="og:description" content="国内外の文学・小説・詩・書評・翻訳文学・出版の最新ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/literature-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Literature News RSS" href="literature-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+      </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の文学ニュース</p>
+    <p class="page-desc">国内外の文学メディア・文芸誌・書評メディアから、小説、詩歌、随筆、評論、翻訳文学、児童文学、SF・ファンタジー、ミステリー、出版、文学賞のニュースをAIで日本語要約し、日付・カテゴリ・種別・配信元で整理しています。情報源は本の話、Book Bang、Web河出、Real Sound ブック、Guardian Books、NYT Books、Literary Hub、Paris Review など国内・海外53媒体です。</p>
+    <p class="page-desc"><a href="literature-search.html">全件検索（全ストックから探す）</a> ・ <a href="literature-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option></select></div>
+        <div class="filter-item"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="ミステリー">ミステリー</option><option value="出版">出版</option><option value="小説">小説</option><option value="文学賞">文学賞</option><option value="翻訳文学">翻訳文学</option><option value="評論">評論</option><option value="詩歌">詩歌</option></select></div>
+        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="Book Bang">Book Bang</option><option value="Brittle Paper">Brittle Paper</option><option value="Chicago Review of Books">Chicago Review of Books</option><option value="Electric Literature">Electric Literature</option><option value="Guardian Books">Guardian Books</option><option value="Literary Hub">Literary Hub</option><option value="NPR Books">NPR Books</option><option value="Real Sound ブック">Real Sound ブック</option><option value="Web河出">Web河出</option><option value="本の話">本の話</option></select></div>
+        <div class="filter-item"><label for="kindFilter">種別</label><select id="kindFilter"><option value="">すべて</option><option value="ニュース">ニュース</option><option value="書評">書評</option><option value="特集">特集</option></select></div>
+        <div class="filter-item"><label for="regionFilter">地域</label><select id="regionFilter"><option value="">すべて</option><option value="国内">国内</option><option value="海外">海外</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全10件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<!-- ARTICLES_START -->
+<article
+  data-id="419833e41d9a02f9c990d8428d75966d"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="文学賞||小説"
+  data-region="海外"
+  data-source="Brittle Paper"
+  data-kind="ニュース"
+  data-search="ゴンクール賞受賞のフィリップ・ジャナダ、受賞翌日にAI使用を認める　審査の二重基準に疑問の声 Prix Goncourt Winner Philippe Jaenada Admits Using AI, a Day After Winning, as Questions of Double Standards Follow 2026年のゴンクール賞を受賞したフィリップ・ジャナダが、小説の執筆に人工知能（AI）を使っていたことを認めた。受賞からわずか1日後の告白だった。賞の審査側は、AI使用の疑いを理由に別の作品を候補から外していた経緯がある。 ジャナダの発言は11月5日にガーディアンが報じたもので、審査基準の二重基準をめぐる議論を再燃させている。文学賞と生成AIの関係をどう線引きするのかが問われる一件となった。 Brittle Paper 文学賞 小説 海外 ニュース">
+  <p class="meta">Brittle Paper　2026-11-12 21:32</p>
+  <h2 class="article-title">ゴンクール賞受賞のフィリップ・ジャナダ、受賞翌日にAI使用を認める　審査の二重基準に疑問の声</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 文学賞</span><span class="chip">カテゴリ: 小説</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">2026年のゴンクール賞を受賞したフィリップ・ジャナダが、小説の執筆に人工知能（AI）を使っていたことを認めた。受賞からわずか1日後の告白だった。賞の審査側は、AI使用の疑いを理由に別の作品を候補から外していた経緯がある。<span class="summary-rest" hidden><br><br>ジャナダの発言は11月5日にガーディアンが報じたもので、審査基準の二重基準をめぐる議論を再燃させている。文学賞と生成AIの関係をどう線引きするのかが問われる一件となった。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Brittle Paper<br>
+    原題：Prix Goncourt Winner Philippe Jaenada Admits Using AI, a Day After Winning, as Questions of Double Standards Follow<br>
+    原文URL：<a href="https://brittlepaper.com/2026/11/prix-goncourt-winner-philippe-jaenada-admits-using-ai-a-day-after-winning-as-questions-of-double-standards-follow/" target="_blank" rel="noopener">https://brittlepaper.com/2026/11/prix-goncourt-winner-philippe-jaenada-admits-using-ai-a-day-after-winning-as-questions-of-double-standards-follow/</a>
+  </div>
+</article>
+<article
+  data-id="fb2514b2a170015c99758ae6deb32c3a"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="詩歌||出版"
+  data-region="海外"
+  data-source="Electric Literature"
+  data-kind="ニュース"
+  data-search="フォレスト・ガンダーの新刊2冊、カバーを一挙公開　詩集と新作が2027年4月に刊行 Exclusive Double Cover Reveal of Two Forthcoming Forrest Gander Titles Electric Literatureが、フォレスト・ガンダーの近刊2冊の表紙を独占公開した。『The Weight of a Frozen Moment』は2027年4月6日にMilkweedから、『Dune Lines: New and Selected Poems』（新旧の詩を収めた選詩集）は同年4月27日にNew Directionsから刊行される予定で、いずれも予約受付が始まっている。 詩人として知られるガンダーの詩集と新作が、名門の文学出版社2社から相次いで刊行されることになる。表紙公開は刊行に先立つ恒例のプロモーションで、読者の期待を高める企画となっている。 Electric Literature 詩歌 出版 海外 ニュース">
+  <p class="meta">Electric Literature　2026-11-12 21:00</p>
+  <h2 class="article-title">フォレスト・ガンダーの新刊2冊、カバーを一挙公開　詩集と新作が2027年4月に刊行</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 詩歌</span><span class="chip">カテゴリ: 出版</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">Electric Literatureが、フォレスト・ガンダーの近刊2冊の表紙を独占公開した。『The Weight of a Frozen Moment』は2027年4月6日にMilkweedから、『Dune Lines: New and Selected Poems』（新旧の詩を収めた選詩集）は同年4月27日にNew Directionsから刊行される予定で、いずれも予約受付が始まっている。<span class="summary-rest" hidden><br><br>詩人として知られるガンダーの詩集と新作が、名門の文学出版社2社から相次いで刊行されることになる。表紙公開は刊行に先立つ恒例のプロモーションで、読者の期待を高める企画となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Electric Literature<br>
+    原題：Exclusive Double Cover Reveal of Two Forthcoming Forrest Gander Titles<br>
+    原文URL：<a href="https://electricliterature.com/exclusive-double-cover-reveal-of-two-forthcoming-forrest-gander-titles/" target="_blank" rel="noopener">https://electricliterature.com/exclusive-double-cover-reveal-of-two-forthcoming-forrest-gander-titles/</a>
+  </div>
+</article>
+<article
+  data-id="bf0ab7cfe92b3e08645e9edc2ce76b25"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="小説||評論"
+  data-region="海外"
+  data-source="Chicago Review of Books"
+  data-kind="特集"
+  data-search="批評家対談：マーロン・ジェームズ『The Disappearers』の暴力と復讐をめぐって Critics in Conversation: On Violence and Revenge in Marlon James’s “The Disappearers” Chicago Review of Booksの名物企画「Critics in Conversation」（紙上のポッドキャストと銘打つ対談シリーズ）が、文学界で話題のマーロン・ジェームズの新作『The Disappearers』を取り上げ、作中の暴力と復讐の主題をめぐって批評家同士が議論した。 ニューヨーク・タイムズの批評家ドワイト・ガーナーは同作について「読み終えるのではない、作品のほうに読了させられる」と評している。対談では、そうした強烈な読書体験を生む作品の構造や主題が掘り下げられている。 Chicago Review of Books 小説 評論 海外 特集">
+  <p class="meta">Chicago Review of Books　2026-11-12 20:00</p>
+  <h2 class="article-title">批評家対談：マーロン・ジェームズ『The Disappearers』の暴力と復讐をめぐって</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 小説</span><span class="chip">カテゴリ: 評論</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">Chicago Review of Booksの名物企画「Critics in Conversation」（紙上のポッドキャストと銘打つ対談シリーズ）が、文学界で話題のマーロン・ジェームズの新作『The Disappearers』を取り上げ、作中の暴力と復讐の主題をめぐって批評家同士が議論した。<span class="summary-rest" hidden><br><br>ニューヨーク・タイムズの批評家ドワイト・ガーナーは同作について「読み終えるのではない、作品のほうに読了させられる」と評している。対談では、そうした強烈な読書体験を生む作品の構造や主題が掘り下げられている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Chicago Review of Books<br>
+    原題：Critics in Conversation: On Violence and Revenge in Marlon James’s “The Disappearers”<br>
+    原文URL：<a href="https://chireviewofbooks.com/2026/11/12/critics-in-conversation-on-violence-and-revenge-in-marlon-jamess-the-disappearers/" target="_blank" rel="noopener">https://chireviewofbooks.com/2026/11/12/critics-in-conversation-on-violence-and-revenge-in-marlon-jamess-the-disappearers/</a>
+  </div>
+</article>
+<article
+  data-id="ed9699ace876bb61d4ae150fc58c6104"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="ミステリー||文学賞"
+  data-region="国内"
+  data-source="Real Sound ブック"
+  data-kind="ニュース"
+  data-search="中島青馬のデビュー長編『星の見えない街で 監察官・白峯の背中』が11月18日刊行　大沢在昌ら5名が推薦 中島青馬のデビュー作『星の見えない街で 監察官・白峯の背中』刊行 大沢在昌ら5名が推薦 第47回小説推理新人賞を受賞した中島青馬のデビュー長編『星の見えない街で 監察官・白峯の背中』が、11月18日に双葉社より刊行される。監察官・白峯を主人公とするミステリーだ。 推薦コメントを寄せたのは、大沢在昌、恩田陸、中山七里、湊かなえ、薬丸岳の5名。小説推理新人賞の受賞者が、人気作家たちの推薦を背に長編デビューを果たす形となった。 Real Sound ブック ミステリー 文学賞 国内 ニュース">
+  <p class="meta">Real Sound ブック　2026-11-12 19:14</p>
+  <h2 class="article-title">中島青馬のデビュー長編『星の見えない街で 監察官・白峯の背中』が11月18日刊行　大沢在昌ら5名が推薦</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ミステリー</span><span class="chip">カテゴリ: 文学賞</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">第47回小説推理新人賞を受賞した中島青馬のデビュー長編『星の見えない街で 監察官・白峯の背中』が、11月18日に双葉社より刊行される。監察官・白峯を主人公とするミステリーだ。<span class="summary-rest" hidden><br><br>推薦コメントを寄せたのは、大沢在昌、恩田陸、中山七里、湊かなえ、薬丸岳の5名。小説推理新人賞の受賞者が、人気作家たちの推薦を背に長編デビューを果たす形となった。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Real Sound ブック<br>
+    原題：中島青馬のデビュー作『星の見えない街で 監察官・白峯の背中』刊行 大沢在昌ら5名が推薦<br>
+    原文URL：<a href="https://realsound.jp/book/2026/11/post-2582083.html" target="_blank" rel="noopener">https://realsound.jp/book/2026/11/post-2582083.html</a>
+  </div>
+</article>
+<article
+  data-id="a3bc382b3531aad109bcccf9935c0101"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="翻訳文学||出版"
+  data-region="国内"
+  data-source="Web河出"
+  data-kind="ニュース"
+  data-search="『チャイナタウンの女武者』が復刊で発売即重版　「海外文学の屋根裏部屋」から試し読み公開 「夢のような復刊」と話題沸騰、発売即重版!!!!『チャイナタウンの女武者』無料ためし読みを公開します マキシーン・ホン・キングストンの『チャイナタウンの女武者』（藤本和子訳）が復刊され、「夢のような復刊」と話題を呼んで発売即重版となった。河出書房新社の「海外文学の屋根裏部屋」シリーズの一冊で、海外文学ファン垂涎の復刊として注目されている。 刊行に合わせて無料の試し読みが公開され、Amazonや楽天ブックスほか全国書店で取り扱われている。長く入手困難だった翻訳文学の名作が、再び読者の手に届く機会となった。 Web河出 翻訳文学 出版 国内 ニュース">
+  <p class="meta">Web河出　2026-11-12 19:00</p>
+  <h2 class="article-title">『チャイナタウンの女武者』が復刊で発売即重版　「海外文学の屋根裏部屋」から試し読み公開</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 翻訳文学</span><span class="chip">カテゴリ: 出版</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">マキシーン・ホン・キングストンの『チャイナタウンの女武者』（藤本和子訳）が復刊され、「夢のような復刊」と話題を呼んで発売即重版となった。河出書房新社の「海外文学の屋根裏部屋」シリーズの一冊で、海外文学ファン垂涎の復刊として注目されている。<span class="summary-rest" hidden><br><br>刊行に合わせて無料の試し読みが公開され、Amazonや楽天ブックスほか全国書店で取り扱われている。長く入手困難だった翻訳文学の名作が、再び読者の手に届く機会となった。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Web河出<br>
+    原題：「夢のような復刊」と話題沸騰、発売即重版!!!!『チャイナタウンの女武者』無料ためし読みを公開します<br>
+    原文URL：<a href="https://web.kawade.co.jp/tameshiyomi/273843/" target="_blank" rel="noopener">https://web.kawade.co.jp/tameshiyomi/273843/</a>
+  </div>
+</article>
+<article
+  data-id="3440970a55b1623769efd159789a0db4"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="小説||評論"
+  data-region="海外"
+  data-source="Literary Hub"
+  data-kind="特集"
+  data-search="アダム・ゴプニックが語る『日はまた昇る』100年　「失われた世代」へのオマージュ An Ode to the Lost Generation: Adam Gopnik on The Sun Also Rises at 100 アーネスト・ヘミングウェイの小説『日はまた昇る』が刊行から100年を迎えた。アダム・ゴプニックが、同作の遺産を振り返るエッセイをLiterary Hubに寄せている。いま初めて読む読者は、時代がかった偏見や差別的な描写に戸惑う場面もあるとゴプニックは指摘する。 冒頭、作家ロバート・コーンをめぐる文章の手触りから説き起こし、「失われた世代」の物語が1世紀を経てなお読み継がれる理由を探る内容だ。古典の今日的読解として注目される。 Literary Hub 小説 評論 海外 特集">
+  <p class="meta">Literary Hub　2026-11-12 18:00</p>
+  <h2 class="article-title">アダム・ゴプニックが語る『日はまた昇る』100年　「失われた世代」へのオマージュ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 小説</span><span class="chip">カテゴリ: 評論</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">アーネスト・ヘミングウェイの小説『日はまた昇る』が刊行から100年を迎えた。アダム・ゴプニックが、同作の遺産を振り返るエッセイをLiterary Hubに寄せている。いま初めて読む読者は、時代がかった偏見や差別的な描写に戸惑う場面もあるとゴプニックは指摘する。<span class="summary-rest" hidden><br><br>冒頭、作家ロバート・コーンをめぐる文章の手触りから説き起こし、「失われた世代」の物語が1世紀を経てなお読み継がれる理由を探る内容だ。古典の今日的読解として注目される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Literary Hub<br>
+    原題：An Ode to the Lost Generation: Adam Gopnik on The Sun Also Rises at 100<br>
+    原文URL：<a href="https://lithub.com/an-ode-to-the-lost-generation-adam-gopnik-on-the-sun-also-rises-at-100/" target="_blank" rel="noopener">https://lithub.com/an-ode-to-the-lost-generation-adam-gopnik-on-the-sun-also-rises-at-100/</a>
+  </div>
+</article>
+<article
+  data-id="b36b6306c056d3cc780d7eae7e677dc0"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="小説"
+  data-region="国内"
+  data-source="Book Bang"
+  data-kind="書評"
+  data-search="書評：『ゾンビ回収婦』は「わたしたち」についての最先端の小説　VRアーティスト雨宮庸介が読む まぎれもなく最先端の「わたしたち」についての小説 『ゾンビ回収婦』をVRアーティスト・雨宮庸介が読む VRアーティストの雨宮庸介が、小説『ゾンビ回収婦』の書評を寄せた。個展の設営を終え、伊勢と岐阜での用事を済ませた帰路、名古屋駅のホームで新幹線を待ちながらこの小説を読んだという導入から、作品世界への没入が語られていく。 雨宮は同作を、まぎれもなく最先端の「わたしたち」についての小説と位置づける。異分野の表現者による書評として、作品の現代性を照らし出す一篇となっている。 Book Bang 小説 国内 書評">
+  <p class="meta">Book Bang　2026-11-12 06:00</p>
+  <h2 class="article-title">書評：『ゾンビ回収婦』は「わたしたち」についての最先端の小説　VRアーティスト雨宮庸介が読む</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 小説</span><span class="chip">地域: 国内</span><span class="chip">種別: 書評</span></div>
+  <div class="summary">VRアーティストの雨宮庸介が、小説『ゾンビ回収婦』の書評を寄せた。個展の設営を終え、伊勢と岐阜での用事を済ませた帰路、名古屋駅のホームで新幹線を待ちながらこの小説を読んだという導入から、作品世界への没入が語られていく。<span class="summary-rest" hidden><br><br>雨宮は同作を、まぎれもなく最先端の「わたしたち」についての小説と位置づける。異分野の表現者による書評として、作品の現代性を照らし出す一篇となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Book Bang<br>
+    原題：まぎれもなく最先端の「わたしたち」についての小説 『ゾンビ回収婦』をVRアーティスト・雨宮庸介が読む<br>
+    原文URL：<a href="https://www.bookbang.jp/review/article/836843" target="_blank" rel="noopener">https://www.bookbang.jp/review/article/836843</a>
+  </div>
+</article>
+<article
+  data-id="284155cc7582458c9568f532fb50ada8"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="翻訳文学"
+  data-region="海外"
+  data-source="Guardian Books"
+  data-kind="書評"
+  data-search="書評：ゲオルギ・ゴスポディノフ短編集『The Man With Many Names』　ブルガリアから届く遊び心と深遠さ The Man With Many Names by Georgi Gospodinov review – playful and profound tales from Bulgaria 国際ブッカー賞受賞作家ゲオルギ・ゴスポディノフ（ブルガリア）の短編集『The Man With Many Names』の書評。40編の短編を収め、創意と温かみに満ちた作品集だと評されている。表題作の語り手は「自分の物語を語ることこそが、結末の決まったゲームを少しでも先延ばしにする唯一の一手だ」と述べる。 本書はブルガリア語で刊行された2冊の短編集を合わせたもので、ポスト共産主義時代のリアリズムから見知らぬ世界を舞台にした実験的な寓話まで幅広い。幼年時代、言語の迷宮性、幻想と現実のせめぎ合いといった、作家の代表作と通底する主題が貫かれている。 Guardian Books 翻訳文学 海外 書評">
+  <p class="meta">Guardian Books　2026-11-11 18:00</p>
+  <h2 class="article-title">書評：ゲオルギ・ゴスポディノフ短編集『The Man With Many Names』　ブルガリアから届く遊び心と深遠さ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 翻訳文学</span><span class="chip">地域: 海外</span><span class="chip">種別: 書評</span></div>
+  <div class="summary">国際ブッカー賞受賞作家ゲオルギ・ゴスポディノフ（ブルガリア）の短編集『The Man With Many Names』の書評。40編の短編を収め、創意と温かみに満ちた作品集だと評されている。表題作の語り手は「自分の物語を語ることこそが、結末の決まったゲームを少しでも先延ばしにする唯一の一手だ」と述べる。<span class="summary-rest" hidden><br><br>本書はブルガリア語で刊行された2冊の短編集を合わせたもので、ポスト共産主義時代のリアリズムから見知らぬ世界を舞台にした実験的な寓話まで幅広い。幼年時代、言語の迷宮性、幻想と現実のせめぎ合いといった、作家の代表作と通底する主題が貫かれている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Guardian Books<br>
+    原題：The Man With Many Names by Georgi Gospodinov review – playful and profound tales from Bulgaria<br>
+    原文URL：<a href="https://www.theguardian.com/books/2026/nov/11/the-man-with-many-names-by-georgi-gospodinov-review-playful-and-profound-tales-from-bulgaria" target="_blank" rel="noopener">https://www.theguardian.com/books/2026/nov/11/the-man-with-many-names-by-georgi-gospodinov-review-playful-and-profound-tales-from-bulgaria</a>
+  </div>
+</article>
+<article
+  data-id="d2ab9b205867ee672c1106bf873431aa"
+  data-date="2026-11-09"
+  data-month="2026-11"
+  data-categories="ミステリー||評論"
+  data-region="海外"
+  data-source="NPR Books"
+  data-kind="書評"
+  data-search="ポーとコナン・ドイルの謎は尽きない　新刊2冊がミステリーの巨匠たちを再び照らす We are still puzzling over the mysteries of Edgar Allan Poe and Arthur Conan Doyle エドガー・アラン・ポーとアーサー・コナン・ドイルについては、長年にわたって膨大な文学研究が積み重ねられてきた。それでも新刊『Darkness Becomes Bright』と『Sleuth-Hound』は、このミステリーの巨匠たちについて、まだ発見すべきことが多く残されていることを示しているという。 NPRの書評は、探偵小説の源流に位置する2人の作家への尽きない関心を取り上げたものだ。古典的な作家像を更新する研究書2冊の刊行が、その関心の持続を物語っている。 NPR Books ミステリー 評論 海外 書評">
+  <p class="meta">NPR Books　2026-11-10 01:31</p>
+  <h2 class="article-title">ポーとコナン・ドイルの謎は尽きない　新刊2冊がミステリーの巨匠たちを再び照らす</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ミステリー</span><span class="chip">カテゴリ: 評論</span><span class="chip">地域: 海外</span><span class="chip">種別: 書評</span></div>
+  <div class="summary">エドガー・アラン・ポーとアーサー・コナン・ドイルについては、長年にわたって膨大な文学研究が積み重ねられてきた。それでも新刊『Darkness Becomes Bright』と『Sleuth-Hound』は、このミステリーの巨匠たちについて、まだ発見すべきことが多く残されていることを示しているという。<span class="summary-rest" hidden><br><br>NPRの書評は、探偵小説の源流に位置する2人の作家への尽きない関心を取り上げたものだ。古典的な作家像を更新する研究書2冊の刊行が、その関心の持続を物語っている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：NPR Books<br>
+    原題：We are still puzzling over the mysteries of Edgar Allan Poe and Arthur Conan Doyle<br>
+    原文URL：<a href="https://www.npr.org/2026/11/09/nx-s1-6032766/edgar-allan-poe-arthur-conan-doyle-sherlock-holmes" target="_blank" rel="noopener">https://www.npr.org/2026/11/09/nx-s1-6032766/edgar-allan-poe-arthur-conan-doyle-sherlock-holmes</a>
+  </div>
+</article>
+<article
+  data-id="37d4b4fcb45694049cfbfdd768a5d526"
+  data-date="2026-11-05"
+  data-month="2026-11"
+  data-categories="小説||文学賞"
+  data-region="国内"
+  data-source="本の話"
+  data-kind="ニュース"
+  data-search="古川真人『近づくと遠ざかる船』刊行　第50回川端康成文学賞の受賞作など3編を収録 第50回川端康成文学賞受賞の表題作他、二編を収録『近づくと遠ざかる船』 ほか 古川真人の短編集『近づくと遠ざかる船』が刊行された。第50回川端康成文学賞を受賞した表題作のほか、2編を収録している。表題作は、普段は大勢の家族や親戚に囲まれている大村家の3きょうだいだけの時間が訪れ、弟の稔がふと口にした問いかけをきっかけに物語が動き出す作品だ。 川端康成文学賞は短編小説を対象とする文学賞で、その節目となる第50回の受賞作を収めた短編集として注目される。家族の時間を描く古川文学の新刊である。 本の話 小説 文学賞 国内 ニュース">
+  <p class="meta">本の話　2026-11-06 07:00</p>
+  <h2 class="article-title">古川真人『近づくと遠ざかる船』刊行　第50回川端康成文学賞の受賞作など3編を収録</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 小説</span><span class="chip">カテゴリ: 文学賞</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">古川真人の短編集『近づくと遠ざかる船』が刊行された。第50回川端康成文学賞を受賞した表題作のほか、2編を収録している。表題作は、普段は大勢の家族や親戚に囲まれている大村家の3きょうだいだけの時間が訪れ、弟の稔がふと口にした問いかけをきっかけに物語が動き出す作品だ。<span class="summary-rest" hidden><br><br>川端康成文学賞は短編小説を対象とする文学賞で、その節目となる第50回の受賞作を収めた短編集として注目される。家族の時間を描く古川文学の新刊である。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：本の話<br>
+    原題：第50回川端康成文学賞受賞の表題作他、二編を収録『近づくと遠ざかる船』 ほか<br>
+    原文URL：<a href="https://books.bunshun.jp/articles/-/11469" target="_blank" rel="noopener">https://books.bunshun.jp/articles/-/11469</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- LITERATURE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <ul class="archive-list">
+        <li>まだありません</li>
+      </ul>
+    </section>
+    <!-- LITERATURE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        genre: document.getElementById("categoryFilter"),
+        source: document.getElementById("sourceFilter"),
+        kind: document.getElementById("kindFilter"),
+        region: document.getElementById("regionFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-categories"), els.genre.value)
+          && (!els.source.value || article.getAttribute("data-source") === els.source.value)
+          && (!els.kind.value || article.getAttribute("data-kind") === els.kind.value)
+          && (!els.region.value || article.getAttribute("data-region") === els.region.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.genre, els.source, els.kind, els.region].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = ""; els.month.value = ""; els.genre.value = "";
+        els.source.value = ""; els.kind.value = ""; els.region.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>
