@@ -1,0 +1,29 @@
+name: arXiv pipeline tests
+
+on:
+  push:
+    paths:
+      - "scripts/arxiv_pipeline.py"
+      - "scripts/fetch_candidates.py"
+      - "tests/arxiv_pipeline.test.py"
+      - ".github/workflows/arxiv-pipeline-tests.yml"
+  pull_request:
+    paths:
+      - "scripts/arxiv_pipeline.py"
+      - "scripts/fetch_candidates.py"
+      - "tests/arxiv_pipeline.test.py"
+      - ".github/workflows/arxiv-pipeline-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run arXiv pipeline tests
+        run: python3 tests/arxiv_pipeline.test.py
