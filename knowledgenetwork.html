@@ -2189,17 +2189,20 @@
           const link = document.querySelector('.person-link[data-person="' + CSS.escape(itemName) + '"]');
           if (link) {
             const li = link.closest('li');
+            // content-visibility の推定サイズでは遠方の項目へ正確に着地できないため、
+            // ディープリンク時のみ全項目を実描画してからスクロールする
+            document.querySelectorAll('.person-list li').forEach((el) => { el.style.contentVisibility = 'visible'; });
             let tries = 0;
             const jump = () => {
               if (!li) return;
               if (li.scrollIntoView) li.scrollIntoView({ block: 'center' });
               const r = li.getBoundingClientRect();
               tries += 1;
-              if ((r.top < 0 || r.bottom > window.innerHeight) && tries < 18) { setTimeout(jump, 120); return; }
+              if ((r.top < 0 || r.bottom > window.innerHeight) && tries < 6) { setTimeout(jump, 200); return; }
               li.classList.add('flash');
               setTimeout(() => li.classList.remove('flash'), 2600);
             };
-            setTimeout(jump, 80);
+            setTimeout(jump, 150);
             if (rc) rc.textContent = '「' + itemName + '」の項目を表示しています';
           }
         } else if (params.get('q') || params.get('chapter') || params.get('tag') || params.get('article')) {
