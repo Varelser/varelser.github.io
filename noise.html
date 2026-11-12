@@ -452,6 +452,38 @@
   #stage:fullscreen .readout { flex: 1 1 auto; height: 100%; }
   #stage:fullscreen .card { height: 100%; min-height: 0; }
 
+  /* ==== Panel order: core four first, session last ==== */
+  #sec-preset { order: 1; }
+  #sec-master { order: 2; }
+  #sec-layerA { order: 3; }
+  #sec-layerB { order: 4; }
+  #sec-layerC { order: 5; }
+  #sec-sleep { order: 6; }
+  #sec-ai { order: 7; }
+  #sec-midi { order: 8; }
+  #sec-notes { order: 9; }
+  #sec-session { order: 99; }
+  @media (min-width: 1200px) {
+    /* Master joins the row instead of spanning the content width;
+       session takes the full content width on the last row. */
+    #sec-master { grid-column: auto; }
+    #sec-session { grid-column: 2 / -1; }
+  }
+  @media (min-width: 1500px) {
+    /* One extra content column so Master + A + B + C sit in a
+       single row next to the sticky preset sidebar. */
+    #panel { grid-template-columns: 320px repeat(4, minmax(0, 1fr)); }
+  }
+  /* Gapless packing: fine row units + dense flow; the spans are set
+     per-section by initPanelMasonry() from measured content heights. */
+  @media (min-width: 1200px) {
+    #panel { grid-auto-rows: 10px; grid-auto-flow: dense; grid-template-rows: auto; }
+    /* The tools bar owns the real (auto-sized) first row. Without this
+       it is a phase-4 item spanning all columns, and the preset's tall
+       span exiles it below the preset, dragging Master with it. */
+    #panel .panel-tools { grid-row: 1; }
+  }
+
 
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
@@ -4752,8 +4784,18 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     const gramColCtx = gramCol.getContext('2d');
     let gramColData = gramColCtx.createImageData(1, 1);
 
+    const gramBackup = document.createElement('canvas');
     const resize = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
+      // The spectrogram is a history: keep its bitmap across resizes
+      // (view switches resize the cards, and losing the accumulated
+      // trace on every switch made the gram view useless).
+      const hasGram = gram.width > 0 && gram.height > 0;
+      if (hasGram) {
+        gramBackup.width = gram.width;
+        gramBackup.height = gram.height;
+        gramBackup.getContext('2d').drawImage(gram, 0, 0);
+      }
       for (const c of [scope, spec, gram, lissa, polar, flow]) {
         const rect = c.getBoundingClientRect();
         c.width = Math.max(320, Math.floor(rect.width * dpr));
@@ -4761,6 +4803,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
       ctx3.fillStyle = '#000';
       ctx3.fillRect(0, 0, gram.width, gram.height);
+      if (hasGram) ctx3.drawImage(gramBackup, 0, 0, gram.width, gram.height);
       gramCol.height = Math.max(1, gram.height);
       gramColData = gramColCtx.createImageData(1, gramCol.height);
     };
@@ -5600,6 +5643,43 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   setBusyUI(false);
   drawLoop();
   initVizUI();
+
+  // ---- Gapless panel packing (masonry spans, desktop only) ----
+  function initPanelMasonry() {
+    const panel = $('panel');
+    if (!panel || !window.ResizeObserver) return;
+    const mq = window.matchMedia('(min-width: 1200px)');
+    const UNIT = 10, GAP = 20;
+    let raf = 0;
+    const layout = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        for (const el of panel.children) {
+          if (el.classList.contains('panel-tools')) {
+            if (el.style.gridRowEnd) el.style.gridRowEnd = '';
+            continue;
+          }
+          if (!mq.matches) {
+            if (el.style.gridRowEnd) el.style.gridRowEnd = '';
+            continue;
+          }
+          const h = el.getBoundingClientRect().height;
+          const span = Math.max(1, Math.ceil((h + GAP) / (UNIT + GAP)));
+          const v = `span ${span}`;
+          if (el.style.gridRowEnd !== v) el.style.gridRowEnd = v;
+        }
+      });
+    };
+    const ro = new ResizeObserver(layout);
+    for (const el of panel.children) ro.observe(el);
+    if (mq.addEventListener) mq.addEventListener('change', layout);
+    addEventListener('resize', layout);
+    addEventListener('load', layout);
+    layout();
+    setTimeout(layout, 350);
+  }
+
+  initPanelMasonry();
   if (!restoreAutosave()) engine.rebuild();
   applyUrlParams();
 
