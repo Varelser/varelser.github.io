@@ -349,6 +349,105 @@
     .viewer-top{top:14px;left:14px;right:14px}
     .canvas-wrap{padding:18px}
   }
+
+  /* ==== leary-noise-refine v1: bring Leary to the SHIPPED Noise standard ====
+     Noise reference points: 56px centred thin title, frameless sections,
+     text-style buttons (white fill = primary/active only), collapsible
+     panel sections with saved state, 4px scrollbar, fills/blur/shadow stay. */
+
+  /* 1. Frameless: remove every square frame / divider line. */
+  .panel { border-right: 0; }
+  .panel::after { display: none; }
+  .section { border: 0; border-radius: 12px; background: rgba(255,255,255,.02); padding: 16px; margin-bottom: 20px; }
+  .section-note { border-top: 0; padding-top: 2px; }
+  .metric { border: 0; border-radius: 12px; background: rgba(255,255,255,.03); }
+  .color-item { border: 0; border-radius: 12px; }
+  .pill { border: 0; }
+  .viewer::before { display: none; }
+  /* explicit border:0 guard (Yayoi lesson: dropping the declaration alone
+     can revive the UA default border on controls) */
+  .panel button, .panel input, .panel select, .panel textarea { border: 0; }
+
+  /* 2. Header: Noise's exact 56px, centred thin title only. */
+  .panel-head {
+    height: 56px; margin: 0 0 6px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .eyebrow { font-size: 14px; font-weight: 300; letter-spacing: .2em; color: rgba(255,255,255,.78); }
+  .eyebrow::before { display: none; }
+
+  /* 2b. Panel tools (Noise: expand/collapse all), injected by the script below. */
+  .leary-panel-tools { display: flex; gap: 4px; justify-content: flex-end; margin: 0 0 10px; }
+  .leary-panel-tools button {
+    border: 0; background: transparent; color: rgba(255,255,255,.45);
+    font-size: 10px; letter-spacing: .12em; padding: 6px 10px; border-radius: 6px; cursor: pointer;
+    transition: background-color .2s ease, color .2s ease;
+  }
+  .leary-panel-tools button:hover { color: #fff; background: rgba(255,255,255,.08); }
+
+  /* 3. Buttons: Noise text style. No lift, no frame; fill only.
+        Primary keeps its white fill (it is the main export action). */
+  .btn {
+    border: 0; border-radius: 8px; background: rgba(255,255,255,.04);
+    padding: 10px 12px; font-size: 12px;
+    transition: background-color .2s ease, color .2s ease;
+  }
+  .btn:hover { background: rgba(255,255,255,.09); border-color: transparent; transform: none; }
+  .btn:active { transform: none; }
+  .btn.primary { background: #f5f5f5; color: #000; border-color: transparent; }
+  .btn.primary:hover { background: #ffffff; }
+  .btn.small { border-radius: 8px; padding: 8px 10px; }
+  .btn.danger:hover { background: rgba(255,107,107,.14); }
+
+  /* 4. Inputs: frameless, Noise control fill (#171717), focus deepens the fill. */
+  .row input[type="number"], .row input[type="text"], .row select,
+  .color-item input[type="number"] {
+    border: 0; border-radius: 8px; background: #171717; box-shadow: none;
+  }
+  .row input[type="number"]:focus, .row input[type="text"]:focus, .row select:focus,
+  .color-item input:focus { border-color: transparent; background: #262626; box-shadow: none; }
+  .row input[type="color"] { border: 0; border-radius: 8px; background: #171717; }
+  button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid rgba(255,255,255,.85); outline-offset: 2px;
+  }
+
+  /* 5. Section heads: Noise head treatment + collapsible (script toggles .collapsed). */
+  .section h3 {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; letter-spacing: .12em; color: rgba(255,255,255,.72);
+    cursor: pointer; user-select: none; margin-bottom: 14px;
+  }
+  .section h3::after {
+    content: "\25BE"; font-size: 11px; color: rgba(255,255,255,.45);
+    transition: transform .2s ease;
+  }
+  .section.collapsed h3 { margin-bottom: 0; }
+  .section.collapsed h3::after { transform: rotate(-90deg); }
+  .section.collapsed > *:not(h3) { display: none !important; }
+
+  /* 6. Artwork first: canvas radius down to the Noise card radius,
+        viewer pills smaller and quieter. */
+  canvas { border-radius: 12px; }
+  .pill { min-height: 34px; padding: 7px 12px; font-size: 11px; letter-spacing: .04em; background: rgba(0,0,0,.62); }
+
+  /* 7. Thin scrollbar, Noise spec. */
+  .panel { scrollbar-width: thin; scrollbar-color: #333 transparent; }
+  .panel::-webkit-scrollbar { width: 4px; }
+  .panel::-webkit-scrollbar-track { background: transparent; }
+  .panel::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  .panel::-webkit-scrollbar-thumb:hover { background: #555; }
+
+  /* 8. Mobile: the help pill wrapped character-by-character over the
+        artwork. Drop it on small screens (the zoom readout stays,
+        right-aligned) and give the canvas its room back. */
+  @media (max-width: 960px) {
+    .panel { border-top: 0; }
+  }
+  @media (max-width: 640px) {
+    .viewer-top { justify-content: flex-end; }
+    .viewer-top .pill:first-child { display: none; }
+    .canvas-wrap { padding: 14px; }
+  }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
@@ -1655,6 +1754,43 @@
   }
 
   init();
+})();
+</script>
+
+<script>
+/* leary-noise-refine: collapsible panel sections, Noise-style.
+   Additive only: generation/rendering code is untouched. State key
+   follows Noise's convention (noise_ui_panels_v1). */
+(() => {
+  'use strict';
+  const KEY = 'leary_ui_panels_v1';
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  const sections = Array.from(document.querySelectorAll('.panel .section'));
+  const persist = () => {
+    const map = {};
+    sections.forEach((sec, i) => { map[i] = sec.classList.contains('collapsed') ? 1 : 0; });
+    try { localStorage.setItem(KEY, JSON.stringify(map)); } catch (e) {}
+  };
+  sections.forEach((sec, i) => {
+    if (saved[i]) sec.classList.add('collapsed');
+    const head = sec.querySelector('h3');
+    if (head) head.addEventListener('click', () => { sec.classList.toggle('collapsed'); persist(); });
+  });
+  const tools = document.createElement('div');
+  tools.className = 'leary-panel-tools';
+  const mk = (label, fn) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = label;
+    b.addEventListener('click', fn);
+    return b;
+  };
+  tools.append(
+    mk('\u5168\u3066\u958b\u304f', () => { sections.forEach(s => s.classList.remove('collapsed')); persist(); }),
+    mk('\u5168\u3066\u9589\u3058\u308b', () => { sections.forEach(s => s.classList.add('collapsed')); persist(); })
+  );
+  const head = document.querySelector('.panel-head');
+  if (head && head.parentNode) head.parentNode.insertBefore(tools, head.nextSibling);
 })();
 </script>
 </body>
