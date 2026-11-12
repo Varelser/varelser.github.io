@@ -3212,27 +3212,22 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       document.getElementById('graph-view-radial').addEventListener('click', () => setTreeMode('radial'));
       document.getElementById('graph-view-tree').addEventListener('click', () => setTreeMode('tree'));
       document.getElementById('graph-play').addEventListener('click', () => {
-        if (G.running) stopSim(); else runSim();
+        // 停止中の再生は reheat でエネルギーを入れ直す（runSim のみでは
+        // 静定済みの配置が即座に再停止し、ラベルも再生へ戻ってしまうため）
+        if (G.running) stopSim(); else reheat();
       });
       document.getElementById('graph-reset').addEventListener('click', () => {
+        // リセット：中心・選択・詳細を解除し、全体図の初期状態に戻す
         cancelTween();
         G.dimChapter = null;
         resetForceSliders();
-        // reheat() はフィット・アニメーションを止めるため、トゥイーン＋
-        // フィットを開始する前に呼ぶ（後だと並行フィットが即キャンセルされる）
-        reheat();
-        if (G.dim === '2d') {
-          if (G.mode === 'local') {
-            tweenToLocalMindmap();
-          } else {
-            layoutMindmapAll();
-            fitView();
-          }
-        } else {
-          if (G.mode === 'local') placeLocalRadial();
-          else G.nodes.forEach((n) => placeAtAnchor(n));
-          fitView();
-        }
+        if (G.center >= 0 && G.nodes[G.center]) G.nodes[G.center].fixed = false;
+        G.center = -1;
+        const ci = document.getElementById('graph-center');
+        if (ci) ci.value = '';
+        G.selected = -1;
+        renderDetail(-1);
+        setGraphMode('all');
       });
       document.getElementById('graph-rotate').addEventListener('change', (e) => {
         G.autoRotate = e.target.checked;
