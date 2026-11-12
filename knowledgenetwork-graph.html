@@ -188,6 +188,7 @@
         </div>
         <button type="button" id="graph-play">一時停止</button>
         <button type="button" id="graph-reset">リセット</button>
+        <button type="button" id="graph-save">PNG保存</button>
         <label class="graph-check"><input type="checkbox" id="graph-rotate"> 自動回転</label>
         <span id="graph-count" aria-live="polite"></span>
       </div>
@@ -2728,7 +2729,7 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       // 一覧ページに埋め込まれている場合は従来どおり一覧で開く。
       if (!n.el) {
         const openLink = document.createElement('a');
-        openLink.href = 'knowledgenetwork.html';
+        openLink.href = 'knowledgenetwork.html?item=' + encodeURIComponent(n.name);
         openLink.textContent = '一覧で開く';
         openLink.style.cssText = 'color: var(--text); border-bottom: 1px solid rgba(0,0,0,0.35);';
         links.appendChild(openLink);
@@ -2756,7 +2757,7 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       const n = G.nodes[idx];
       if (!n) return;
       // 単独ページでは一覧の DOM がないため、一覧ページへ遷移する。
-      if (!n.el) { window.location.href = 'knowledgenetwork.html'; return; }
+      if (!n.el) { window.location.href = 'knowledgenetwork.html?item=' + encodeURIComponent(n.name); return; }
       setGraphOpen(false);
       const q = document.getElementById('q');
       const chapter = document.getElementById('chapter');
@@ -3212,27 +3213,44 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       document.getElementById('graph-view-radial').addEventListener('click', () => setTreeMode('radial'));
       document.getElementById('graph-view-tree').addEventListener('click', () => setTreeMode('tree'));
       document.getElementById('graph-play').addEventListener('click', () => {
-        if (G.running) stopSim(); else runSim();
+        if (G.running) { stopSim(); return; }
+        if (G.dim === '2d') {
+          const targets = G.visibleNodes || [];
+          if (!targets.length) { runSim(); return; }
+          const cx = (canvas ? canvas.clientWidth : 900) / 2, cy = (canvas ? canvas.clientHeight : 560) / 2;
+          const from = targets.map((n) => ({ n, x: n.x, y: n.y }));
+          const t0 = performance.now();
+          const DUR = 600;
+          G.playing = true;
+          const savedSpeed = G.force.speed;
+          G.force.speed = 0.4;
+          const step = (t) => {
+            const k = Math.min(1, (t - t0) / DUR);
+            const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+            const s = k < 0.5 ? 1 - e : e;
+            for (const f of from) { f.n.x = cx + (f.x - cx) * s; f.n.y = cy + (f.y - cy) * s; }
+            draw();
+            if (k < 1) requestAnimationFrame(step);
+            else { G.playing = false; G.force.speed = savedSpeed; runSim(); }
+          };
+          requestAnimationFrame(step);
+        } else {
+          runSim();
+          reheat();
+        }
       });
       document.getElementById('graph-reset').addEventListener('click', () => {
         cancelTween();
         G.dimChapter = null;
+        G.selected = -1;
+        renderDetail(-1);
+        const ci = document.getElementById('graph-center');
+        if (ci) ci.value = '';
+        setGraphMode('all');
+        G.center = -1;
         resetForceSliders();
-        // reheat() はフィット・アニメーションを止めるため、トゥイーン＋
-        // フィットを開始する前に呼ぶ（後だと並行フィットが即キャンセルされる）
         reheat();
-        if (G.dim === '2d') {
-          if (G.mode === 'local') {
-            tweenToLocalMindmap();
-          } else {
-            layoutMindmapAll();
-            fitView();
-          }
-        } else {
-          if (G.mode === 'local') placeLocalRadial();
-          else G.nodes.forEach((n) => placeAtAnchor(n));
-          fitView();
-        }
+        draw();
       });
       document.getElementById('graph-rotate').addEventListener('change', (e) => {
         G.autoRotate = e.target.checked;
@@ -3259,6 +3277,36 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       bindForce('graph-f-rest', 'rest');
       bindForce('graph-f-speed', 'speed');
       updateSliderStates();
+
+      // PNG保存：現在のキャンバスを白背景で書き出す（note記事などの素材用）
+      const saveBtn = document.getElementById('graph-save');
+      if (saveBtn) saveBtn.addEventListener('click', () => {
+        if (!canvas) return;
+        try { draw(); } catch (_) {}
+        try {
+          const out = document.createElement('canvas');
+          out.width = canvas.width; out.height = canvas.height;
+          const octx = out.getContext('2d');
+          octx.fillStyle = '#ffffff'; octx.fillRect(0, 0, out.width, out.height);
+          octx.drawImage(canvas, 0, 0);
+          out.toBlob((blob) => {
+            if (!blob) return;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'knowledge-graph.png';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+          }, 'image/png');
+        } catch (_) {}
+      });
+      // Escキーで全体図へ（リセットボタンと同じ動作）
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const ae = document.activeElement;
+        if (ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && ae.id !== 'graph-center') return;
+        const rb = document.getElementById('graph-reset');
+        if (rb) rb.click();
+      });
 
       // 凡例（章の色＋辺の種類）
       const legend = document.getElementById('graph-legend');
