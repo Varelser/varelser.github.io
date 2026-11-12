@@ -388,8 +388,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, .sec-label:focu
   .wrap{column-count:2;column-gap:20px;}
   .wrap>.panel{break-inside:avoid;margin-bottom:20px;}
   .wrap>div{break-inside:avoid;}
-  .wrap>.panel[data-section="cc-automation"],.wrap>.panel[data-section="lorenz"],.wrap>.panel[data-section="rubato"],.wrap>.panel[data-section="spectral"]{column-span:all;}
+  .wrap>.panel[data-section="cc-automation"],.wrap>.panel[data-section="lorenz"],.wrap>.panel[data-section="rubato"],.wrap>.panel[data-section="spectral"],.wrap>.panel[data-section="rhythmic-canons"]{column-span:all;}
 }
 @media (min-width:1800px){
   .wrap{column-count:3;}
 }
+/* ── Theory Pack II/III (2026-11-13): the packs live in the Rhythmic
+   Canons panel, which now spans all layout columns; inside the packs,
+   the toggle rows flow into 3–4 columns so an opened pack is wide and
+   short instead of one tall single column. ── */
+#theoryPackSec,#theoryPack3Sec{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(430px,100%),1fr));column-gap:28px;align-items:start;}
+#theoryPackSec>.tp-head,#theoryPack3Sec>.tp-head,#theoryPackSec>.tog-desc,#theoryPack3Sec>.tog-desc{grid-column:1/-1;}
