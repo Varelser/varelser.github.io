@@ -82,14 +82,14 @@ function generateForChordCore(c, barCount, barOffset, shared){ /* 2026-11-10: �
   const spectralAnalysis=S.engines.spectral?SpectralEngine.analyze(c.root%12,c.iv,{harmonics:SPECTRAL_PARAMS.harmonics,timbre:SPECTRAL_PARAMS.timbre,rolloff:SPECTRAL_PARAMS.rolloff,threshold:SPECTRAL_PARAMS.threshold}):null;
 
   const rootMidi=(S.rootOct*12)+c.root;
-  const onBassMidi=(typeof c.bass==='number')?((S.rootOct*12)+c.bass):rootMidi; /* onコード: Bass は指定ベース音へ */
+  const onBassMidi=(typeof c.bass==='number')?((S.rootOct*12)+c.bass):rootMidi; /* onコード: Bass/Drone は指定ベース音へ */
   const p={ppq,bars:barCount,genre:S.genre,octLayers:S.octLayers.length?S.octLayers:[S.rootOct],octBias:S.octBias,density:S.density,velocity:S.velocity,humanize:S.humanize,drift:S.drift,dissonance:S.dissonance,polyrhythm:S.polyrhythm,tensionCurve:slicedTension,gateBase:S.gateBase,gateHumanize:S.gateHumanize,eucPattern,resolveThreshold:S.engines.resolution?S.resolveThreshold:1.01,resolveSteps:S.resolveSteps,lorenz,attractor,attractorMap,ca,rubatoDelta,ttForms,pcAnalysis,chordAnalysis,rootPc:c.root%12,isInst,isState,sievePattern,sieveScale,boidsResult,spectralAnalysis,progVelShape,scaleIvAtTick,
     vlVoicing: vlVoicing || null,  /* v25.4: voice-lead 事前計算ボイシング */
     jiPBMap:   jiPBMap   || null,  /* v25.5: JI PitchBend マップ */
     rcTracks:  rcTracks  || null}; /* v25.6: Rhythmic Canons ゲートパターン */
 
   const tracks=[],tn=[];
-  if(S.layers.drone){tracks.push(makeDrone(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Drone');}
+  if(S.layers.drone){tracks.push(makeDrone(onBassMidi,c.iv,effectiveScIv,p,prg));tn.push('Drone');}
   if(S.layers.pad){tracks.push(makePad(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Pad');}
   if(S.layers.arp){tracks.push(makeArp(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Arp');}
   if(S.layers.melody){tracks.push(makeMelody(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Melody');}
