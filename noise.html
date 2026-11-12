@@ -142,7 +142,11 @@
   }
   .section .body{padding:16px}
   .type-info{font-size:11px;line-height:1.6;color:var(--muted);margin:-4px 0 10px;min-height:18px}
-  .section.collapsed > .body{display:none}
+  .section.collapsed > .body{display:none !important}
+  /* !important is required here: #masterFields / #layer*Fields get
+     display:grid from their ID selectors below, and an ID beats the
+     .section.collapsed > .body rule without it — the body would stay
+     visible even though the section is collapsed. */
   .section.collapsed > .head{border-bottom:none}
   .collapse-btn{
     flex:none;width:28px;height:28px;padding:0;border-radius:9999px;
@@ -277,6 +281,9 @@
   @media (min-width:1500px){
     #panel{grid-template-columns:repeat(4,minmax(0,1fr))}
     #sec-master{grid-column:span 2}
+    /* Master is ~40 fields: 3 columns here (~300px each at 1919px wide),
+       which cuts its height by another third. Layers stay 2-column. */
+    #masterFields{grid-template-columns:repeat(3,1fr)}
   }
   /* Lien overlay card for the tooltip */
   #tooltip{
