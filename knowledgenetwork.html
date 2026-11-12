@@ -234,6 +234,8 @@
       padding: 6px 8px;
       border-bottom: 1px solid rgba(0,0,0,0.04);
       border-radius: 8px;
+      content-visibility: auto;
+      contain-intrinsic-size: auto 150px;
     }
     .person-list li:hover { background: rgba(0,0,0,0.03); }
     .person-link {
@@ -383,7 +385,7 @@
     <div class="intro">
       <p><b>このページについて</b> — 変性意識に関わる人物・研究・理論の索引。9章、745件。人物名のリンクはすべて <a href="https://note.com/varelser" target="_blank" rel="noopener noreferrer">note.com</a> です。この索引の各項目は、変性意識をめぐる体系『<a href="https://note.com/varelser/n/n621df6d6feb3" target="_blank" rel="noopener noreferrer">慈愛体系</a>』では語りきれないトピックを、1件ずつ深掘りしたものです。</p>
       <p><b>凡例</b> — 実線の下線は note記事あり、点線の下線は note内検索へ（まだ記事がない項目）。説明文中の『作品名』なども note内検索へのリンクです。「関連：」は同じテーマで読むべき項目への近道です。</p>
-      <p><b>使い方</b> — 上の検索欄で人物・理論・作品名を絞り込めます。章やタグで絞り込むことも、年表で生没年順に並べることも、ランダムで1件開くことも、関連図でつながりを眺めることもできます。更新：2026-11-12（年表の件数表示を絞り込み反映に修正、表記の不整合を修正、note直リンクを161件に拡充、SEO情報を追加、『慈愛体系』へのリンクを追加）。同日さらに：記事ありのみの絞り込み、表示状態のURL共有と項目への直リンク、「今日の1件」、未執筆リストの書き出し、目次と見出しへの記事あり件数の表示、関連図のPNG保存とEscリセットを追加。2026-11-11の更新では検索・絞り込み・関連リンク・生没年・横断タグ・年表を追加、新規51件を追加、重複と空見出しを修正。UIを白背景のリキッドグラスに刷新、note直リンクを125件に拡充、記述文中の人名・作品名へのリンクを精密化、関連図を追加。</p>
+      <p><b>使い方</b> — 上の検索欄で人物・理論・作品名を絞り込めます。章やタグで絞り込むことも、年表で生没年順に並べることも、ランダムで1件開くことも、関連図でつながりを眺めることもできます。更新：2026-11-12（年表の件数表示を絞り込み反映に修正、表記の不整合を修正、note直リンクを161件に拡充、SEO情報を追加、『慈愛体系』へのリンクを追加）。同日さらに：記事ありのみの絞り込み、表示状態のURL共有と項目への直リンク、「今日の1件」、未執筆リストの書き出し、目次と見出しへの記事あり件数の表示、関連図のPNG保存とEscリセットを追加。あわせて表示の高速化（年表とツールチップの遅延初期化、画面外の項目の描画スキップ）を実施。2026-11-11の更新では検索・絞り込み・関連リンク・生没年・横断タグ・年表を追加、新規51件を追加、重複と空見出しを修正。UIを白背景のリキッドグラスに刷新、note直リンクを125件に拡充、記述文中の人名・作品名へのリンクを精密化、関連図を追加。</p>
     </div>
 
 
@@ -2164,6 +2166,7 @@
       const layout = document.querySelector('.layout');
       if (tlBtn && tlRoot && layout) {
         tlBtn.addEventListener('click', () => {
+          if (!timelineMode && !tlRoot.querySelector('.tl-group')) buildTimeline();
           timelineMode = !timelineMode;
           tlBtn.classList.toggle('is-active', timelineMode);
           tlBtn.setAttribute('aria-pressed', String(timelineMode));
@@ -2403,11 +2406,16 @@
 
     linkifyContextText();
     renderRelated();
-    initContextTips();
     renderTags();
-    buildTimeline();
     initCounts();
     initSearch();
+    // ツールチップ初期化と年表構築は初期表示の後に回す（高速化）。
+    // 年表は初回オープン時にも構築されるため、二重構築は DOM の有無で防ぐ。
+    if (window.requestIdleCallback) {
+      requestIdleCallback(() => { initContextTips(); if (!document.querySelector('#timeline .tl-group')) buildTimeline(); }, { timeout: 2500 });
+    } else {
+      setTimeout(() => { initContextTips(); if (!document.querySelector('#timeline .tl-group')) buildTimeline(); }, 0);
+    }
 
   </script>
 </body>
