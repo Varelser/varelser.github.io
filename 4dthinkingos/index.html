@@ -42,7 +42,7 @@
    reads or writes the app's own state. */
 (function(){
   'use strict';
-  var api = { vtInstalled:false, wakeInstalled:false, vtCalls:0, wakeRequests:0, wakeReleases:0, lookInstalled:false, look:null };
+  var api = { vtInstalled:false, wakeInstalled:false, vtCalls:0, wakeRequests:0, wakeReleases:0, lookInstalled:false, look:null, bodyInstalled:false };
   window.__twTierB = api;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -160,7 +160,8 @@
      visible only while the sphere view is on screen. */
   try {
     var LOOKS = [['standard','標準'],['blueprint','設計図'],['orb','天体'],
-                 ['minimal','余白'],['constellation','星座'],['glass','硝子']];
+                 ['minimal','余白'],['constellation','星座'],['glass','硝子'],
+                 ['dots','点描'],['lines','線画'],['orb3d','陰影']];
     var LS_KEY = 'tw.sphere.look.v1';
     var cur = 'standard';
     try {
@@ -204,6 +205,136 @@
     setInterval(syncVis, 600);
     syncVis();
     api.lookInstalled = true;
+
+    /* ------- sphere body engine (dots / lines / orb3d) -------
+       For the three body looks the stylesheet hides the app's own
+       sphere body; this canvas, inserted under the app's SVG,
+       draws a replacement (dot globe / true-3D wireframe with
+       front-back separation / shaded orb) that tracks the app
+       sphere's centre and radius from the shell circle's live
+       rect. It (re)attaches whenever React swaps the container,
+       detaches for non-body looks, and rAF idles cheaply when the
+       sphere view is off screen. Ink colour follows --tw-sphere. */
+    var BODY = { dots: 1, lines: 1, orb3d: 1 };
+    var cv = null, cx2 = null;
+    var inkRGB = [255, 255, 255], inkTick = 0;
+    function refreshInk() {
+      try {
+        var v = getComputedStyle(document.documentElement).getPropertyValue('--tw-sphere').trim();
+        var m = v.match(/^#([0-9a-f]{6})$/i);
+        if (m) { inkRGB = [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16)]; return; }
+        m = v.match(/rgba?\\(([^)]+)\\)/i);
+        if (m) { var p = m[1].split(',').map(Number); if (p.length >= 3) inkRGB = p.slice(0, 3); }
+      } catch (e) {}
+    }
+    function ink(a) { return 'rgba(' + inkRGB[0] + ',' + inkRGB[1] + ',' + inkRGB[2] + ',' + a.toFixed(3) + ')'; }
+    var BN = 1600, bpts = [], BGA = Math.PI * (3 - Math.sqrt(5));
+    for (var bi = 0; bi < BN; bi++) {
+      var by = 1 - (bi / (BN - 1)) * 2, brad = Math.sqrt(Math.max(0, 1 - by * by)), bth = BGA * bi;
+      bpts.push([Math.cos(bth) * brad, by, Math.sin(bth) * brad]);
+    }
+    var BTILT = 0.42, bct = Math.cos(BTILT), bst = Math.sin(BTILT);
+    function brot(x, y, z, a) {
+      var ca = Math.cos(a), sa = Math.sin(a);
+      var x1 = x * ca + z * sa, z1 = -x * sa + z * ca;
+      return [x1, y * bct - z1 * bst, y * bst + z1 * bct];
+    }
+    var bt0 = performance.now();
+    function bframe(now) {
+      requestAnimationFrame(bframe);
+      var look = document.documentElement.getAttribute('data-tw-sphere');
+      if (!BODY[look]) { if (cv && cv.parentElement) cv.remove(); return; }
+      var svg = document.querySelector('#root > main svg:has(#sphereGlow)');
+      if (!svg) { if (cv && cv.parentElement) cv.remove(); return; }
+      var shell = svg.querySelector(':scope > circle:nth-of-type(2)');
+      var cont = svg.parentElement;
+      if (!shell || !cont) return;
+      if (!cv) {
+        cv = document.createElement('canvas');
+        cv.id = 'twSphereBody';
+        cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;';
+        cx2 = cv.getContext('2d');
+      }
+      if (cv.parentElement !== cont) cont.insertBefore(cv, svg);
+      if ((inkTick++ & 63) === 0) refreshInk();
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = cont.clientWidth, h = cont.clientHeight;
+      if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
+        cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      }
+      cx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx2.clearRect(0, 0, w, h);
+      var r = shell.getBoundingClientRect(), cr = cont.getBoundingClientRect();
+      var cx = r.left - cr.left + r.width / 2, cy = r.top - cr.top + r.height / 2, R = r.width / 2;
+      if (R < 10) return;
+      var t = (now - bt0) / 1000, i, j, k, p;
+      if (look === 'dots') {
+        var a = t * 0.07;
+        for (i = 0; i < BN; i++) {
+          p = brot(bpts[i][0], bpts[i][1], bpts[i][2], a);
+          var d = (p[2] + 1) / 2;
+          cx2.globalAlpha = 0.05 + 0.55 * d * d;
+          cx2.fillStyle = ink(1);
+          cx2.beginPath();
+          cx2.arc(cx + p[0] * R, cy + p[1] * R, 0.5 + 1.6 * d, 0, 6.2832);
+          cx2.fill();
+        }
+        cx2.globalAlpha = 1;
+        cx2.strokeStyle = ink(0.28); cx2.lineWidth = 1;
+        cx2.beginPath(); cx2.arc(cx, cy, R, 0, 6.2832); cx2.stroke();
+      } else if (look === 'lines') {
+        var a2 = t * 0.05;
+        cx2.lineWidth = 0.8;
+        var seg = function (q1, q2) {
+          var d = ((q1[2] + q2[2]) / 2 + 1) / 2;
+          cx2.strokeStyle = ink(0.03 + 0.5 * d * d);
+          cx2.beginPath();
+          cx2.moveTo(cx + q1[0] * R, cy + q1[1] * R);
+          cx2.lineTo(cx + q2[0] * R, cy + q2[1] * R);
+          cx2.stroke();
+        };
+        var S = 64, prev, prev2;
+        for (j = 0; j < 14; j++) {
+          var lon = (j / 14) * Math.PI * 2; prev = null;
+          for (k = 0; k <= S; k++) {
+            var lat = (k / S) * Math.PI * 2;
+            p = brot(Math.cos(lon) * Math.sin(lat), Math.cos(lat), Math.sin(lon) * Math.sin(lat), a2);
+            if (prev) seg(prev, p);
+            prev = p;
+          }
+        }
+        for (j = 1; j < 8; j++) {
+          var yy = -1 + (j / 8) * 2, rr = Math.sqrt(1 - yy * yy); prev2 = null;
+          for (k = 0; k <= S; k++) {
+            var th2 = (k / S) * Math.PI * 2;
+            p = brot(Math.cos(th2) * rr, yy, Math.sin(th2) * rr, a2);
+            if (prev2) seg(prev2, p);
+            prev2 = p;
+          }
+        }
+        cx2.strokeStyle = ink(0.4); cx2.lineWidth = 1;
+        cx2.beginPath(); cx2.arc(cx, cy, R, 0, 6.2832); cx2.stroke();
+      } else { /* orb3d */
+        var g = cx2.createRadialGradient(cx - R * 0.45, cy - R * 0.5, R * 0.08, cx, cy, R * 1.02);
+        g.addColorStop(0, ink(0.30)); g.addColorStop(0.45, ink(0.10));
+        g.addColorStop(0.8, ink(0.02)); g.addColorStop(1, ink(0));
+        cx2.fillStyle = g;
+        cx2.beginPath(); cx2.arc(cx, cy, R, 0, 6.2832); cx2.fill();
+        cx2.save();
+        cx2.beginPath(); cx2.arc(cx, cy, R, 0, 6.2832); cx2.clip();
+        var g2 = cx2.createRadialGradient(cx + R * 0.55, cy + R * 0.62, R * 0.15, cx + R * 0.3, cy + R * 0.3, R * 1.25);
+        g2.addColorStop(0, 'rgba(0,0,0,0.62)'); g2.addColorStop(0.55, 'rgba(0,0,0,0.25)'); g2.addColorStop(1, 'rgba(0,0,0,0)');
+        cx2.fillStyle = g2;
+        cx2.fillRect(cx - R, cy - R, R * 2, R * 2);
+        cx2.restore();
+        cx2.strokeStyle = ink(0.5); cx2.lineWidth = 1.1;
+        cx2.beginPath(); cx2.arc(cx, cy, R, 0, 6.2832); cx2.stroke();
+        cx2.strokeStyle = ink(0.10); cx2.lineWidth = 10;
+        cx2.beginPath(); cx2.arc(cx, cy, R + 7, 0, 6.2832); cx2.stroke();
+      }
+    }
+    requestAnimationFrame(bframe);
+    api.bodyInstalled = true;
   } catch (e) { /* look switcher is decorative; never break the app */ }
 })();
 </script>
