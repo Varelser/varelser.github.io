@@ -241,59 +241,173 @@ html.tw-vt-active #root > main > div{ animation:none !important; }
   background:color-mix(in srgb, var(--tw-text) 5%, transparent);
 }
 
-/* === 4DT-RESKIN v4: sphere, "blueprint" look (2026-11-13) ===
-   User picked variant B (設計図) from a six-look gallery. The sphere
-   view is one SVG whose geometry uses presentation attributes driven
-   by the app's theme variables; CSS retunes the mixes/weights
-   through the SAME variables, so every theme keeps its own hue and
-   lightness. Scoped via :has(#sphereGlow); other views untouched.
-   Blueprint character: no glow, no fill, crisp wireframe + dot grid. */
+/* === 4DT-RESKIN v4/v5: sphere looks, switchable (2026-11-13) ===
+   The sphere view is one SVG whose geometry uses presentation
+   attributes driven by the app's theme variables. Six looks are
+   keyed by html[data-tw-sphere] (set + persisted by the Tier B
+   script in index.html; a floating pill bar in the sphere view
+   switches them). All values go through the app's theme vars, so
+   every look follows the active theme. Fallback (no attribute) is
+   the standard look. The shipped "blueprint" values live on as the
+   blueprint look; the new default (standard) drops the dot grid
+   and softens the wireframe after the user called blueprint
+   dirty/cheap-looking. */
+#root > main svg:has(#sphereGlow) line{ stroke-linecap:round; }
+#root > main svg:has(#sphereGlow) polyline{ stroke-linecap:round; stroke-linejoin:round; }
+#root > main svg:has(#sphereGlow) g rect{ stroke-width:.8; stroke-opacity:.9; }
+#root > main svg:has(#sphereGlow) g text[font-size="5.8"]{ font-size:6.2px; letter-spacing:.07em; }
+#root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ letter-spacing:.02em; font-weight:550; }
 
-/* drafting-paper dot grid behind the sphere */
-#root > main > div:has(> svg:has(#sphereGlow)){
+/* ---- standard (default): clean, faint depth, no texture ---- */
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main > div:has(> svg:has(#sphereGlow)){
+  background-image:
+    radial-gradient(90% 75% at 50% 45%, color-mix(in srgb, var(--tw-sphere) 4%, transparent), transparent 60%),
+    radial-gradient(125% 105% at 50% 50%, transparent 62%, color-mix(in srgb, var(--tw-bg) 55%, #000) 100%);
+}
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(1){ stop-color:color-mix(in srgb, var(--tw-sphere) 7%, transparent); }
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(2){ stop-color:color-mix(in srgb, var(--tw-sphere) 2.5%, transparent); }
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
+  stroke:color-mix(in srgb, var(--tw-sphere) 42%, transparent); stroke-width:1.2;
+}
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main svg:has(#sphereGlow) polyline{
+  stroke:color-mix(in srgb, var(--tw-grid) 30%, transparent); stroke-width:.8;
+}
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main svg:has(#sphereGlow) line[stroke-width="1"]{
+  stroke:color-mix(in srgb, var(--tw-edge) 62%, transparent); stroke-width:1;
+}
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:3.3px; }
+html:where(:not([data-tw-sphere]),[data-tw-sphere="standard"]) #root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ font-size:8.2px; }
+
+/* ---- blueprint (設計図): no glow, crisp wireframe, dot grid ---- */
+html[data-tw-sphere="blueprint"] #root > main > div:has(> svg:has(#sphereGlow)){
   background-image:radial-gradient(circle, color-mix(in srgb, var(--tw-sphere) 7%, transparent) 1px, transparent 1.4px);
   background-size:26px 26px;
 }
-/* glow off: gradient stops transparent, halo disc hidden */
-#root > main svg:has(#sphereGlow) #sphereGlow stop{ stop-color:transparent; }
-#root > main svg:has(#sphereGlow) > circle:nth-of-type(1){ opacity:0; }
-/* shell: thin, firm rim, no fill */
-#root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
-  stroke:color-mix(in srgb, var(--tw-sphere) 55%, transparent);
-  stroke-width:1;
-  fill:transparent;
+html[data-tw-sphere="blueprint"] #root > main svg:has(#sphereGlow) #sphereGlow stop{ stop-color:transparent; }
+html[data-tw-sphere="blueprint"] #root > main svg:has(#sphereGlow) > circle:nth-of-type(1){ opacity:0; }
+html[data-tw-sphere="blueprint"] #root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
+  stroke:color-mix(in srgb, var(--tw-sphere) 55%, transparent); stroke-width:1; fill:transparent;
 }
-/* graticule: the drawing itself — strong, clean, round joins */
-#root > main svg:has(#sphereGlow) polyline{
-  stroke:color-mix(in srgb, var(--tw-grid) 50%, transparent);
-  stroke-width:.9;
-  stroke-linecap:round;
-  stroke-linejoin:round;
+html[data-tw-sphere="blueprint"] #root > main svg:has(#sphereGlow) polyline{
+  stroke:color-mix(in srgb, var(--tw-grid) 50%, transparent); stroke-width:.9;
 }
-/* edges: near-full strength, round-capped */
-#root > main svg:has(#sphereGlow) line{ stroke-linecap:round; }
-#root > main svg:has(#sphereGlow) line[stroke-width="1"]{
-  stroke:color-mix(in srgb, var(--tw-edge) 82%, transparent);
-  stroke-width:1.1;
+html[data-tw-sphere="blueprint"] #root > main svg:has(#sphereGlow) line[stroke-width="1"]{
+  stroke:color-mix(in srgb, var(--tw-edge) 82%, transparent); stroke-width:1.1;
 }
-/* node dots: base size (rings and the glowing centre excluded) */
-#root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){
-  r:3px;
+html[data-tw-sphere="blueprint"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:3px; }
+html[data-tw-sphere="blueprint"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ font-size:7.9px; }
+
+/* ---- orb (天体): lit core, big soft halo, faint graticule ---- */
+html[data-tw-sphere="orb"] #root > main > div:has(> svg:has(#sphereGlow)){
+  background-image:
+    radial-gradient(90% 75% at 50% 45%, color-mix(in srgb, var(--tw-sphere) 8%, transparent), transparent 60%),
+    radial-gradient(125% 105% at 50% 50%, transparent 45%, color-mix(in srgb, var(--tw-bg) 12%, #000) 100%);
 }
-/* node labels: finer frame */
-#root > main svg:has(#sphereGlow) g rect{
-  stroke-width:.8;
-  stroke-opacity:.9;
+html[data-tw-sphere="orb"] #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(1){ stop-color:color-mix(in srgb, var(--tw-sphere) 30%, transparent); }
+html[data-tw-sphere="orb"] #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(2){ stop-color:color-mix(in srgb, var(--tw-sphere) 10%, transparent); }
+html[data-tw-sphere="orb"] #root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
+  stroke:color-mix(in srgb, var(--tw-sphere) 24%, transparent); stroke-width:2.2;
+  filter:drop-shadow(0 0 34px color-mix(in srgb, var(--tw-sphere) 22%, transparent));
 }
-/* label type line + title: slightly larger, airier */
-#root > main svg:has(#sphereGlow) g text[font-size="7.6"]{
-  font-size:7.9px;
-  letter-spacing:.02em;
-  font-weight:550;
+html[data-tw-sphere="orb"] #root > main svg:has(#sphereGlow) polyline{
+  stroke:color-mix(in srgb, var(--tw-grid) 9%, transparent); stroke-width:.6;
 }
-#root > main svg:has(#sphereGlow) g text[font-size="5.8"]{
-  font-size:6.2px;
-  letter-spacing:.07em;
+html[data-tw-sphere="orb"] #root > main svg:has(#sphereGlow) line[stroke-width="1"]{
+  stroke:color-mix(in srgb, var(--tw-edge) 45%, transparent);
+}
+html[data-tw-sphere="orb"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:3.4px; }
+html[data-tw-sphere="orb"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ font-size:8.4px; }
+
+/* ---- minimal (余白): sphere nearly vanishes ---- */
+html[data-tw-sphere="minimal"] #root > main > div:has(> svg:has(#sphereGlow)){
+  background-image:radial-gradient(90% 75% at 50% 45%, color-mix(in srgb, var(--tw-sphere) 3%, transparent), transparent 60%);
+}
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(1){ stop-color:color-mix(in srgb, var(--tw-sphere) 5%, transparent); }
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(2){ stop-color:color-mix(in srgb, var(--tw-sphere) 2%, transparent); }
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
+  stroke:color-mix(in srgb, var(--tw-sphere) 15%, transparent); stroke-width:1;
+}
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) polyline{
+  stroke:color-mix(in srgb, var(--tw-grid) 6%, transparent); stroke-width:.6;
+}
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) line[stroke-width="1"]{
+  stroke:color-mix(in srgb, var(--tw-edge) 30%, transparent); stroke-width:.9;
+}
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:3.2px; }
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) g rect{ stroke-opacity:.5; }
+html[data-tw-sphere="minimal"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ font-size:8px; }
+
+/* ---- constellation (星座): sphere off, network is the star ---- */
+html[data-tw-sphere="constellation"] #root > main > div:has(> svg:has(#sphereGlow)){
+  background-image:
+    radial-gradient(circle, color-mix(in srgb, var(--tw-sphere) 9%, transparent) 1px, transparent 1.5px),
+    radial-gradient(circle, color-mix(in srgb, var(--tw-sphere) 5%, transparent) 1px, transparent 1.5px);
+  background-size:90px 90px, 150px 150px;
+  background-position:0 0, 40px 60px;
+}
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) #sphereGlow stop{ stop-color:transparent; }
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) > circle:nth-of-type(1){ opacity:0; }
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
+  stroke:color-mix(in srgb, var(--tw-sphere) 9%, transparent); stroke-width:1; fill:transparent;
+}
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) polyline{
+  stroke:color-mix(in srgb, var(--tw-grid) 4%, transparent);
+}
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) line[stroke-width="1"]{
+  stroke:color-mix(in srgb, var(--tw-edge) 88%, transparent); stroke-width:1.15;
+}
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) line[stroke-width="1.6"]{ stroke-width:2; }
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:4.8px; }
+html[data-tw-sphere="constellation"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ font-size:9.2px; }
+
+/* ---- glass (硝子): bright rim, translucent body, cast shadow ---- */
+html[data-tw-sphere="glass"] #root > main > div:has(> svg:has(#sphereGlow)){
+  background-image:
+    radial-gradient(90% 75% at 50% 45%, color-mix(in srgb, var(--tw-sphere) 6%, transparent), transparent 60%),
+    radial-gradient(125% 105% at 50% 50%, transparent 62%, color-mix(in srgb, var(--tw-bg) 45%, #000) 100%);
+}
+html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(1){ stop-color:color-mix(in srgb, var(--tw-sphere) 13%, transparent); }
+html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) #sphereGlow stop:nth-child(2){ stop-color:color-mix(in srgb, var(--tw-sphere) 5%, transparent); }
+html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
+  stroke:color-mix(in srgb, var(--tw-sphere) 62%, transparent); stroke-width:1.6;
+  fill:color-mix(in srgb, var(--tw-sphere) 7%, transparent);
+  filter:drop-shadow(0 12px 24px color-mix(in srgb, var(--tw-sphere) 16%, transparent));
+}
+html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) polyline{
+  stroke:color-mix(in srgb, var(--tw-grid) 16%, transparent); stroke-width:.7;
+}
+html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) line[stroke-width="1"]{
+  stroke:color-mix(in srgb, var(--tw-edge) 55%, transparent);
+}
+html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:3.6px; }
+html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ font-size:8.4px; }
+
+/* ---- look switcher pill (element is created by the Tier B script) ---- */
+#twSphereBar{
+  position:fixed; left:50%; bottom:66px; transform:translateX(-50%);
+  z-index:40; display:none; align-items:center; gap:2px; padding:3px;
+  border-radius:999px;
+  background:color-mix(in srgb, var(--tw-panel) 82%, transparent);
+  -webkit-backdrop-filter:blur(18px) saturate(150%);
+  backdrop-filter:blur(18px) saturate(150%);
+  box-shadow:0 10px 32px rgba(0,0,0,.35), inset 0 0 0 1px color-mix(in srgb, var(--tw-text) 8%, transparent);
+}
+#twSphereBar .cap{
+  font:600 10px/1 var(--tw-font); letter-spacing:.14em;
+  color:var(--tw-muted); padding:0 6px 0 9px; user-select:none;
+}
+#twSphereBar button{
+  appearance:none; border:0; background:transparent; cursor:pointer;
+  color:var(--tw-muted); font:500 11px/1 var(--tw-font); letter-spacing:.06em;
+  padding:7px 12px; border-radius:999px; white-space:nowrap;
+  transition:background-color .18s cubic-bezier(.22,1,.36,1), color .18s cubic-bezier(.22,1,.36,1), transform .12s cubic-bezier(.22,1,.36,1);
+}
+#twSphereBar button:hover{ color:var(--tw-text); }
+#twSphereBar button:active{ transform:scale(.96); }
+#twSphereBar button.on{ background:var(--tw-text); color:var(--tw-bg); }
+@media (max-width:760px){
+  #twSphereBar{ bottom:118px; max-width:94vw; overflow-x:auto; scrollbar-width:none; }
+  #twSphereBar::-webkit-scrollbar{ display:none; }
 }
 
 @media (prefers-reduced-motion: reduce){

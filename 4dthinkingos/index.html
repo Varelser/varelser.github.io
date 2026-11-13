@@ -42,7 +42,7 @@
    reads or writes the app's own state. */
 (function(){
   'use strict';
-  var api = { vtInstalled:false, wakeInstalled:false, vtCalls:0, wakeRequests:0, wakeReleases:0 };
+  var api = { vtInstalled:false, wakeInstalled:false, vtCalls:0, wakeRequests:0, wakeReleases:0, lookInstalled:false, look:null };
   window.__twTierB = api;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -151,6 +151,60 @@
       api.wakeInstalled = true;
     }
   } catch(e) {}
+
+  /* ---------- sphere look switcher ----------
+     Six looks keyed by html[data-tw-sphere]; CSS lives in the
+     reskin stylesheet. Choice persists in localStorage
+     'tw.sphere.look.v1' (default 'standard'). The pill bar is our
+     own element appended to <body> (React never touches it) and is
+     visible only while the sphere view is on screen. */
+  try {
+    var LOOKS = [['standard','標準'],['blueprint','設計図'],['orb','天体'],
+                 ['minimal','余白'],['constellation','星座'],['glass','硝子']];
+    var LS_KEY = 'tw.sphere.look.v1';
+    var cur = 'standard';
+    try {
+      var savedLook = localStorage.getItem(LS_KEY);
+      if (savedLook && LOOKS.some(function(l){ return l[0] === savedLook; })) cur = savedLook;
+    } catch (e) { /* storage unavailable: keep default */ }
+    var applyLook = function(k) {
+      cur = k;
+      document.documentElement.setAttribute('data-tw-sphere', k);
+      api.look = k;
+    };
+    applyLook(cur);
+    var bar = document.createElement('div');
+    bar.id = 'twSphereBar';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', '球体の見た目');
+    var cap = document.createElement('span');
+    cap.className = 'cap';
+    cap.textContent = '球体';
+    bar.appendChild(cap);
+    LOOKS.forEach(function(l) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = l[1];
+      b.setAttribute('data-look', l[0]);
+      if (l[0] === cur) b.classList.add('on');
+      b.addEventListener('click', function() {
+        applyLook(l[0]);
+        try { localStorage.setItem(LS_KEY, l[0]); } catch (e) {}
+        bar.querySelectorAll('button').forEach(function(x) {
+          x.classList.toggle('on', x.getAttribute('data-look') === l[0]);
+        });
+      });
+      bar.appendChild(b);
+    });
+    document.body.appendChild(bar);
+    var syncVis = function() {
+      var on = !!document.querySelector('#root > main svg #sphereGlow');
+      bar.style.display = on ? 'flex' : 'none';
+    };
+    setInterval(syncVis, 600);
+    syncVis();
+    api.lookInstalled = true;
+  } catch (e) { /* look switcher is decorative; never break the app */ }
 })();
 </script>
 </body>
