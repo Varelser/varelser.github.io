@@ -6097,8 +6097,112 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     let freqData = new Uint8Array(512);
     let timeL = new Uint8Array(1024);
     let timeR = new Uint8Array(1024);
-    let flowParts = null;
-    let flowT = 0;
+    // ---- Fix4: flow field + individual particles (typed arrays) ----
+    const FLOW_DEF = 340, FLOW_FLOOR = 150, FLOW_H = 18;
+    let flowHist = null, flowAge = null, flowLife = null;
+    let flowGridC = null, flowGridF = null, flowW = 0, flowHh = 0, flowTime = 0, flowAcc = 0, flowDefN = FLOW_DEF;
+    const flowFV = [0, 0], flowFW = [0, 0];
+    const PART_MAX = 650, PART_FLOOR = 180;
+    let partX = null, partY = null, partVX = null, partVY = null, partAX = null, partAY = null;
+    let partRad = null, partPhase = null, partMisc = null, partSizeA = null;
+    let partAgeA = null, partLifeA = null, partCool = null, partLvl = null;
+    let partBandA = null, partKindA = null, partW = 0, partHh = 0, partDefN = 0, partPrevOnset = 0;
+    // Adaptive perf controller (fix4): keeps the art views at a healthy
+    // frame interval by stepping their counts down/up in x0.75/x1.25
+    // steps. Read-only snapshot exposed for verification.
+    let vizPerfScale = 1, perfBodyEma = 8, perfIntEma = 16.7, perfFrames = 0, perfLastAdj = 0;
+    window.__noiseVizPerf = { bodyMs: 0, intervalMs: 0, scale: 1, flowN: 0, partN: 0 };
+    function vizRand(seed) {
+      let a = seed >>> 0;
+      return () => {
+        a |= 0; a = (a + 0x6D2B79F5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    function flowMakeGrid(cs, w, h, seed) {
+      const gw = Math.max(2, Math.ceil(w / cs)), gh = Math.max(2, Math.ceil(h / cs));
+      const base = new Float32Array(gw * gh), rate = new Float32Array(gw * gh);
+      const rnd = vizRand(seed);
+      for (let gy = 0; gy < gh; gy++) for (let gx = 0; gx < gw; gx++) {
+        const i = gy * gw + gx;
+        base[i] = Math.sin(gx * 0.85 + seed * 0.013) * 1.5 + Math.cos(gy * 1.05 - seed * 0.007) * 1.5 + (rnd() - 0.5) * 1.6;
+        rate[i] = (rnd() - 0.5) * 0.16;
+      }
+      return { cs, gw, gh, base, rate };
+    }
+    function flowSample(g, x, y, t, out) {
+      const gx = x / g.cs, gy = y / g.cs;
+      let ix = Math.floor(gx), iy = Math.floor(gy);
+      let fx = gx - ix, fy = gy - iy;
+      fx = fx * fx * (3 - 2 * fx); fy = fy * fy * (3 - 2 * fy);
+      ix = ((ix % g.gw) + g.gw) % g.gw; iy = ((iy % g.gh) + g.gh) % g.gh;
+      const ix1 = (ix + 1) % g.gw, iy1 = (iy + 1) % g.gh;
+      const i00 = iy * g.gw + ix, i10 = iy * g.gw + ix1, i01 = iy1 * g.gw + ix, i11 = iy1 * g.gw + ix1;
+      const w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
+      let a = g.base[i00] + g.rate[i00] * t;
+      let vx = Math.cos(a) * w00, vy = Math.sin(a) * w00;
+      a = g.base[i10] + g.rate[i10] * t; vx += Math.cos(a) * w10; vy += Math.sin(a) * w10;
+      a = g.base[i01] + g.rate[i01] * t; vx += Math.cos(a) * w01; vy += Math.sin(a) * w01;
+      a = g.base[i11] + g.rate[i11] * t; vx += Math.cos(a) * w11; vy += Math.sin(a) * w11;
+      out[0] = vx; out[1] = vy;
+    }
+    function flowRespawn(i, w, h, cluster) {
+      const base = i * FLOW_H * 2;
+      let x, y;
+      if (cluster && Math.random() < 0.4) {
+        const jb = ((Math.random() * FLOW_DEF) | 0) * FLOW_H * 2;
+        x = flowHist[jb] + (Math.random() - 0.5) * 60;
+        y = flowHist[jb + 1] + (Math.random() - 0.5) * 60;
+        if (x < 0 || x > w || y < 0 || y > h) { x = Math.random() * w; y = Math.random() * h; }
+      } else { x = Math.random() * w; y = Math.random() * h; }
+      for (let k = 0; k < FLOW_H; k++) { flowHist[base + k * 2] = x; flowHist[base + k * 2 + 1] = y; }
+      flowAge[i] = 0;
+      flowLife[i] = 6 + Math.random() * 8;
+    }
+    function flowInit(w, h) {
+      flowW = w; flowHh = h; flowAcc = 0;
+      flowDefN = (w * h >= 380000) ? FLOW_DEF : 250;
+      flowGridC = flowMakeGrid(170, w, h, 1234567);
+      flowGridF = flowMakeGrid(46, w, h, 7654321);
+      if (!flowHist) {
+        flowHist = new Float32Array(FLOW_DEF * FLOW_H * 2);
+        flowAge = new Float32Array(FLOW_DEF);
+        flowLife = new Float32Array(FLOW_DEF);
+      }
+      for (let i = 0; i < FLOW_DEF; i++) { flowRespawn(i, w, h, false); flowAge[i] = Math.random() * 6; }
+    }
+    function partRespawn(i, w, h) {
+      partX[i] = Math.random() * w; partY[i] = Math.random() * h;
+      partVX[i] = 0; partVY[i] = 0;
+      partAX[i] = partX[i]; partAY[i] = partY[i];
+      partAgeA[i] = 0; partLifeA[i] = 2 + Math.random() * 3.5;
+    }
+    function partInit(w, h) {
+      partW = w; partHh = h;
+      if (!partX) {
+        partX = new Float32Array(PART_MAX); partY = new Float32Array(PART_MAX);
+        partVX = new Float32Array(PART_MAX); partVY = new Float32Array(PART_MAX);
+        partAX = new Float32Array(PART_MAX); partAY = new Float32Array(PART_MAX);
+        partRad = new Float32Array(PART_MAX); partPhase = new Float32Array(PART_MAX);
+        partMisc = new Float32Array(PART_MAX); partSizeA = new Float32Array(PART_MAX);
+        partAgeA = new Float32Array(PART_MAX); partLifeA = new Float32Array(PART_MAX);
+        partCool = new Float32Array(PART_MAX); partLvl = new Uint8Array(PART_MAX);
+        partBandA = new Uint8Array(PART_MAX); partKindA = new Uint8Array(PART_MAX);
+        for (let i = 0; i < PART_MAX; i++) {
+          partBandA[i] = i % 6;
+          const r = Math.random();
+          partKindA[i] = r < 0.68 ? 0 : (r < 0.88 ? 1 : 2);
+          partSizeA[i] = 0.6 + Math.random() * 1.5;
+          partPhase[i] = Math.random() * 6.2832;
+          partMisc[i] = 0.4 + Math.random() * 0.9;
+          partRad[i] = 12 + Math.random() * 46;
+        }
+      }
+      partDefN = Math.min(PART_MAX, Math.max(240, Math.floor(w * h / 1500)));
+      for (let i = 0; i < PART_MAX; i++) { partRespawn(i, w, h); partAgeA[i] = Math.random() * partLifeA[i]; }
+    }
     let lisPeak = 0.3;
     let prevFreq = null;
     const bandEnv = [0, 0, 0, 0, 0, 0];
@@ -6106,7 +6210,6 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     let widthEnv = 0.3;
     let centroidEnv = 0.4;
     let specPeak = 0.3;
-    let partParts = null;
     let liqT = 0;
     let levelEnv = 0;
     let vizGate = 0;
@@ -6124,6 +6227,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       lastTs = ts;
       const dtMs = lastDrawTs ? Math.min(100, ts - lastDrawTs) : 16.7;
       lastDrawTs = ts;
+      const perfT0 = performance.now();
       const dtScale = dtMs / 33.333;
       const sens = (window.__noiseViz && typeof window.__noiseViz.sens === 'number') ? window.__noiseViz.sens : 1.5;
 
@@ -6352,89 +6456,178 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         ctxP.stroke();
       }
 
-      // ---- Flow (audio-reactive flow field, Lien-style) ----
+      // ---- Flow (multi-scale flow field, Lien-style) ----
+      // Two octaves of seeded value-noise vector grids (coarse 170px +
+      // fine 46px); every cell vector rotates slowly at its own rate and
+      // bilinear smoothstep interpolation keeps the field continuous as
+      // it evolves. Streamlines keep an 18-point history recorded on a
+      // fixed 26ms time slot (trail span ~0.47s at any frame rate) and
+      // are stroked in 5 age buckets, so each line tapers (bright thick
+      // head -> faint thin tail) in 5 strokes total: no shadowBlur, no
+      // colour, no per-frame allocation. Band energies warp the field:
+      // bass -> advection speed + sample zoom, mids -> curl rotation,
+      // highs -> fine-octave turbulence weight. An onset fires a
+      // travelling radial ripple through the field, a speed surge and
+      // scattered re-seeds; silence settles it to a slow drift.
       if (flow.offsetParent) {
         const w = flow.width, h = flow.height;
-        let bass = 0, treb = 0;
-        for (let i = 0; i < 12; i++) bass += freqData[i] / 255;
-        bass /= 12;
-        for (let i = Math.floor(freqData.length * 0.6); i < freqData.length; i++) treb += freqData[i] / 255;
-        treb /= Math.max(1, freqData.length - Math.floor(freqData.length * 0.6));
-        flowT += 0.016 * dtScale;
-        ctxF.fillStyle = persist ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.09)';
+        const dtSec = Math.min(0.05, dtMs / 1000);
+        flowTime += dtSec;
+        if (flowW !== w || flowHh !== h || !flowHist) flowInit(w, h);
+        ctxF.fillStyle = '#000';
         ctxF.fillRect(0, 0, w, h);
-        if (!flowParts) {
-          flowParts = [];
-          for (let i = 0; i < 380; i++) {
-            flowParts.push({ x: Math.random() * w, y: Math.random() * h, age: Math.random() * 200, life: 160 + Math.random() * 240 });
+        const n = Math.min(flowDefN, Math.max(Math.min(FLOW_FLOOR, flowDefN), Math.round(flowDefN * vizPerfScale)));
+        if (window.__noiseVizPerf) window.__noiseVizPerf.flowN = n;
+        const spd = (26 + bandEnv[0] * 95 + bandEnv[1] * 40 + fluxEnv * 70) * (0.22 + 0.78 * vizGate) * (1 + onsetEnv * 1.15);
+        const curlAmt = 0.45 + bandEnv[2] * 0.7 + bandEnv[3] * 1.5;
+        const fineW = Math.min(0.60, 0.12 + bandEnv[4] * 0.22 + bandEnv[5] * 0.32);
+        const zoom = 0.85 + bandEnv[0] * 0.35;
+        const ccx = w / 2, ccy = h / 2;
+        flowAcc += dtSec;
+        let slots = Math.min(3, Math.floor(flowAcc / 0.026));
+        if (slots > 0) flowAcc -= slots * 0.026; else flowAcc = Math.min(flowAcc, 0.026);
+        for (let i = 0; i < n; i++) {
+          const base = i * FLOW_H * 2;
+          const x0 = flowHist[base], y0 = flowHist[base + 1];
+          flowSample(flowGridC, x0 * zoom, y0 * zoom, flowTime, flowFV);
+          flowSample(flowGridF, x0 * zoom, y0 * zoom, flowTime, flowFW);
+          const vx = flowFV[0] * (1 - fineW) + flowFW[0] * fineW;
+          const vy = flowFV[1] * (1 - fineW) + flowFW[1] * fineW;
+          const rot = flowFV[1] * curlAmt * 0.8;
+          const cr = Math.cos(rot), sr = Math.sin(rot);
+          const rx = vx * cr - vy * sr, ry = vx * sr + vy * cr;
+          let ang = Math.atan2(ry, rx);
+          if (onsetEnv > 0.02) {
+            const dx = x0 - ccx, dy = y0 - ccy;
+            ang += onsetEnv * 1.3 * Math.sin(Math.sqrt(dx * dx + dy * dy) * 0.02 - flowTime * 20);
+          }
+          const mag = Math.min(1.25, Math.sqrt(rx * rx + ry * ry));
+          const step = spd * (0.45 + mag) * dtSec;
+          const nx = x0 + Math.cos(ang) * step, ny = y0 + Math.sin(ang) * step;
+          for (let sh = 0; sh < slots; sh++) {
+            for (let k = FLOW_H - 1; k > 0; k--) {
+              flowHist[base + k * 2] = flowHist[base + (k - 1) * 2];
+              flowHist[base + k * 2 + 1] = flowHist[base + (k - 1) * 2 + 1];
+            }
+          }
+          flowHist[base] = nx; flowHist[base + 1] = ny;
+          flowAge[i] += dtSec;
+          if (flowAge[i] > flowLife[i] || nx < -12 || nx > w + 12 || ny < -12 || ny > h + 12 || (onsetEnv > 0.5 && Math.random() < 0.006)) {
+            flowRespawn(i, w, h, true);
           }
         }
-        const speed = (0.5 + bandEnv[0] * 2.2 + bandEnv[1] * 2.4 + fluxEnv * 5.0) * (0.3 + 0.7 * vizGate) * (1 + onsetEnv * 1.1);
-        ctxF.strokeStyle = 'rgba(255,255,255,' + (0.55 * (0.12 + 0.88 * vizGate)).toFixed(3) + ')';
-        ctxF.lineWidth = 1;
-        ctxF.beginPath();
-        for (const pt of flowParts) {
-          const nse = Math.sin(pt.x * 0.008 + flowT * 0.6) + Math.cos(pt.y * 0.0095 - flowT * 0.4) + Math.sin((pt.x + pt.y) * 0.004 + flowT * 0.25);
-          const ang = nse * (1.2 + bandEnv[3] * 1.6) + treb * 1.2 + fluxEnv * 1.8;
-          const nx = pt.x + Math.cos(ang) * speed * 1.7 * dtScale;
-          const ny = pt.y + Math.sin(ang) * speed * 1.7 * dtScale;
-          ctxF.moveTo(pt.x, pt.y);
-          ctxF.lineTo(nx, ny);
-          pt.x = nx; pt.y = ny; pt.age++;
-          if (pt.age > pt.life || pt.x < 0 || pt.x > w || pt.y < 0 || pt.y > h) {
-            pt.x = Math.random() * w; pt.y = Math.random() * h; pt.age = 0;
-            pt.life = 160 + Math.random() * 240;
+        const gateA = 0.10 + 0.90 * vizGate;
+        const bA = [0.95, 0.78, 0.60, 0.44, 0.30], bWd = [1.7, 1.4, 1.1, 0.85, 0.6];
+        const bS = [0, 4, 8, 12, 15], bE = [3, 7, 11, 14, 16];
+        ctxF.lineCap = 'round';
+        for (let b = 0; b < 5; b++) {
+          ctxF.strokeStyle = 'rgba(255,255,255,' + (bA[b] * gateA).toFixed(3) + ')';
+          ctxF.lineWidth = bWd[b];
+          ctxF.beginPath();
+          for (let i = 0; i < n; i++) {
+            const base = i * FLOW_H * 2;
+            for (let k = bS[b]; k <= bE[b]; k++) {
+              ctxF.moveTo(flowHist[base + k * 2], flowHist[base + k * 2 + 1]);
+              ctxF.lineTo(flowHist[base + (k + 1) * 2], flowHist[base + (k + 1) * 2 + 1]);
+            }
           }
+          ctxF.stroke();
         }
-        ctxF.stroke();
       }
 
-      // ---- Particle (per-band particle field) ----
+      // ---- Particle (individual per-band particles) ----
+      // Every particle is its own agent in typed arrays: own band, own
+      // velocity with per-particle Brownian jitter, own size (0.6-2.1px),
+      // own lifetime (2-5.5s) and staggered uniform respawn — no centre
+      // clustering, no shared heading, no global radial kick. Three
+      // behaviours mix: drifters follow a private wandering heading
+      // pulled by their band envelope, orbiters circle a private anchor,
+      // darters sit quiet until their band spikes and then dart in an
+      // individual random direction. The canvas fade is deliberately
+      // fast here (0.55/frame, 0.30 with trails ON) and each particle
+      // draws as a head dot + a <=13px velocity streak (~2-4 frames of
+      // travel), batched into 3 brightness buckets: discrete points,
+      // not comet blobs. Onset bursts scatter 56 sparks, each with its
+      // own random direction and speed.
       if (part.offsetParent) {
         const w = part.width, h = part.height;
-        ctxPart.fillStyle = persist ? 'rgba(0,0,0,0.10)' : 'rgba(0,0,0,0.16)';
+        const dtSec = Math.min(0.05, dtMs / 1000);
+        if (partW !== w || partHh !== h || !partX) partInit(w, h);
+        ctxPart.fillStyle = persist ? 'rgba(0,0,0,0.30)' : 'rgba(0,0,0,0.55)';
         ctxPart.fillRect(0, 0, w, h);
-        if (!partParts) {
-          partParts = [];
-          const count = Math.min(650, Math.max(240, Math.floor(w * h / 2600)));
-          for (let i = 0; i < count; i++) {
-            partParts.push({ x: Math.random() * w, y: Math.random() * h, vx: 0, vy: 0, band: i % 6, age: Math.random() * 160, life: 120 + Math.random() * 220, size: 0.8 + Math.random() * 1.7 });
+        const n = Math.min(partDefN, Math.max(Math.min(PART_FLOOR, partDefN), Math.round(partDefN * vizPerfScale)));
+        if (window.__noiseVizPerf) window.__noiseVizPerf.partN = n;
+        if (onsetEnv > 0.4 && partPrevOnset <= 0.4) {
+          for (let j = 0; j < 56; j++) {
+            const i = (Math.random() * n) | 0;
+            const a = Math.random() * 6.2832, m = 150 + Math.random() * 240;
+            partVX[i] += Math.cos(a) * m; partVY[i] += Math.sin(a) * m;
           }
         }
-        const cx = w / 2, cy = h / 2;
-        const kick = fluxEnv * 3.4 + onsetEnv * 5.0;
-        for (const p of partParts) {
-          const e = bandEnv[p.band];
-          const nse = Math.sin(p.x * 0.006 + liqT * 0.7) + Math.cos(p.y * 0.0075 - liqT * 0.5);
-          const ang = nse * 1.9 + p.band * 0.35;
-          const sp = 0.25 + e * 2.6;
-          p.vx += Math.cos(ang) * sp * 0.12;
-          p.vy += Math.sin(ang) * sp * 0.12;
-          const dx = p.x - cx, dy = p.y - cy;
-          const dist = Math.max(24, Math.hypot(dx, dy));
-          p.vx += (dx / dist) * (kick * 0.14 - bandEnv[1] * 0.012);
-          p.vy += (dy / dist) * (kick * 0.14 - bandEnv[1] * 0.012);
-          p.vx += dx * widthEnv * 0.0006;
-          const dampF = Math.pow(0.94, dtScale); p.vx *= dampF; p.vy *= dampF;
-          const px = p.x, py = p.y;
-          p.x += p.vx * (1 + e * 1.6) * dtScale;
-          p.y += p.vy * (1 + e * 1.6) * dtScale;
-          p.age++;
-          ctxPart.globalAlpha = Math.max(0.02, Math.min(0.9, 0.25 + e * 0.9) * (0.15 + 0.85 * vizGate));
+        partPrevOnset = onsetEnv;
+        for (let i = 0; i < n; i++) {
+          const b = partBandA[i], e = bandEnv[b], kind = partKindA[i];
+          if (kind === 1) {
+            partPhase[i] += dtSec * partMisc[i] * ((i & 1) ? -1 : 1) * (0.45 + e * 1.7);
+            const r = partRad[i] * (1 + 0.14 * Math.sin(partPhase[i] * 2.7 + i));
+            const nx = partAX[i] + Math.cos(partPhase[i]) * r;
+            const ny = partAY[i] + Math.sin(partPhase[i]) * r * 0.82;
+            partVX[i] = (nx - partX[i]) / Math.max(0.008, dtSec);
+            partVY[i] = (ny - partY[i]) / Math.max(0.008, dtSec);
+            partX[i] = nx; partY[i] = ny;
+          } else {
+            if (kind === 2) {
+              partCool[i] -= dtSec;
+              if (e > 0.5 && partCool[i] <= 0) {
+                const a = Math.random() * 6.2832, m = 230 + Math.random() * 230;
+                partVX[i] += Math.cos(a) * m; partVY[i] += Math.sin(a) * m;
+                partCool[i] = 0.25 + Math.random() * 0.9;
+              }
+              const dampD = Math.exp(-dtSec / 0.45);
+              partVX[i] *= dampD; partVY[i] *= dampD;
+            } else {
+              partPhase[i] += dtSec * (0.3 + e * 1.1) * partMisc[i];
+              const heading = partPhase[i] + b * 0.55;
+              const dvx = Math.cos(heading) * (15 + e * 95), dvy = Math.sin(heading) * (15 + e * 95);
+              const kk = 1 - Math.exp(-dtSec / 0.45);
+              partVX[i] += (dvx - partVX[i]) * kk;
+              partVY[i] += (dvy - partVY[i]) * kk;
+            }
+            const jit = 300 * partMisc[i] * (0.2 + e) * dtSec;
+            partVX[i] += (Math.random() - 0.5) * jit;
+            partVY[i] += (Math.random() - 0.5) * jit;
+            partX[i] += partVX[i] * dtSec;
+            partY[i] += partVY[i] * dtSec;
+          }
+          const sp2 = partVX[i] * partVX[i] + partVY[i] * partVY[i];
+          const br = 0.22 + e * 0.85 + Math.min(0.35, sp2 * 0.000004);
+          partLvl[i] = br < 0.5 ? 0 : (br < 0.85 ? 1 : 2);
+          partAgeA[i] += dtSec;
+          if (partAgeA[i] > partLifeA[i] || partX[i] < -30 || partX[i] > w + 30 || partY[i] < -30 || partY[i] > h + 30) partRespawn(i, w, h);
+        }
+        const gateA = 0.15 + 0.85 * vizGate;
+        const streakT = persist ? 0.075 : 0.045;
+        const lvlA = [0.40, 0.70, 1.0];
+        for (let lv = 0; lv < 3; lv++) {
+          const aL = lvlA[lv] * gateA;
+          ctxPart.strokeStyle = 'rgba(255,255,255,' + (aL * 0.8).toFixed(3) + ')';
+          ctxPart.lineWidth = 1;
           ctxPart.beginPath();
-          ctxPart.moveTo(px, py);
-          ctxPart.lineTo(p.x, p.y);
-          ctxPart.lineWidth = p.size * (0.7 + e * 1.1);
-          ctxPart.strokeStyle = 'rgba(255,255,255,0.8)';
+          for (let i = 0; i < n; i++) {
+            if (partLvl[i] !== lv) continue;
+            const sp = Math.sqrt(partVX[i] * partVX[i] + partVY[i] * partVY[i]);
+            const st = Math.min(streakT, 13 / Math.max(1, sp));
+            ctxPart.moveTo(partX[i] - partVX[i] * st, partY[i] - partVY[i] * st);
+            ctxPart.lineTo(partX[i], partY[i]);
+          }
           ctxPart.stroke();
-          if (p.age > p.life || p.x < -20 || p.x > w + 20 || p.y < -20 || p.y > h + 20) {
-            p.x = cx + (Math.random() - 0.5) * w * 0.4;
-            p.y = cy + (Math.random() - 0.5) * h * 0.4;
-            p.vx = 0; p.vy = 0; p.age = 0;
-            p.life = 120 + Math.random() * 220;
+          ctxPart.fillStyle = 'rgba(255,255,255,' + aL.toFixed(3) + ')';
+          for (let i = 0; i < n; i++) {
+            if (partLvl[i] !== lv) continue;
+            const sz = Math.max(0.6, partSizeA[i] * (0.8 + bandEnv[partBandA[i]] * 0.6));
+            ctxPart.fillRect(partX[i] - sz / 2, partY[i] - sz / 2, sz, sz);
           }
         }
-        ctxPart.globalAlpha = 1;
       }
 
       // ---- Liquid (Leary-style flowing line field) ----
@@ -6468,6 +6661,36 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
             if (x === 0) ctxLiq.moveTo(x, y); else ctxLiq.lineTo(x, y);
           }
           ctxLiq.stroke();
+        }
+      }
+
+      // ---- Adaptive perf (fix4): while flow/particle are on screen,
+      // every 90 drawn frames the shared count scale steps down x0.75
+      // (floor 0.45) ONLY when the JS draw body itself eats the frame:
+      // body >0.9x target, or interval >1.6x target AND body >0.45x
+      // target. A long interval caused by the compositor/raster alone
+      // (this VM: interval ~27ms with body 1-2ms) must not punish the
+      // counts — reducing them buys no fps there. Sustained headroom
+      // (body <0.5x and interval <1.12x target, 5s after the last
+      // change) restores x1.25 up to 1. Snapshot: window.__noiseVizPerf
+      // {bodyMs, intervalMs, scale, flowN, partN}. ----
+      {
+        perfBodyEma = perfBodyEma * 0.95 + (performance.now() - perfT0) * 0.05;
+        perfIntEma = perfIntEma * 0.95 + dtMs * 0.05;
+        if (window.__noiseVizPerf) {
+          window.__noiseVizPerf.bodyMs = +perfBodyEma.toFixed(2);
+          window.__noiseVizPerf.intervalMs = +perfIntEma.toFixed(1);
+          window.__noiseVizPerf.scale = vizPerfScale;
+        }
+        if (flow.offsetParent || part.offsetParent) {
+          perfFrames++;
+          if (perfFrames >= 90) {
+            perfFrames = 0;
+            const nowMs = performance.now();
+            const bodyBound = perfBodyEma > targetMs * 0.9 || (perfIntEma > targetMs * 1.6 && perfBodyEma > targetMs * 0.45);
+            if (bodyBound && vizPerfScale > 0.45) { vizPerfScale = Math.max(0.45, vizPerfScale * 0.75); perfLastAdj = nowMs; }
+            else if (perfBodyEma < targetMs * 0.5 && perfIntEma < targetMs * 1.12 && vizPerfScale < 1 && nowMs - perfLastAdj > 5000) { vizPerfScale = Math.min(1, vizPerfScale * 1.25); perfLastAdj = nowMs; }
+          }
         }
       }
     };
