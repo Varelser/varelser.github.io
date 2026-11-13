@@ -1670,6 +1670,117 @@
   <div class="prev-mixer" id="prevMixer" style="display:none;"></div>
 </div>
 
+<!-- ═══ VISUALIZER (js/93) ═══ -->
+<div id="vizPanel" style="display:none;margin:0 0 12px;">
+<style>
+  #vizPanel{font-family:'Share Tech Mono',monospace;color:#e8e8ec}
+  #vizPanel .viz-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  #vizPanel .viz-title{font-size:10px;letter-spacing:3px;color:#e8e8ec}
+  #vizPanel .viz-badge{font-size:8px;letter-spacing:2px;color:#8b8b95;border:1px solid rgba(255,255,255,.14);padding:2px 7px;border-radius:99px}
+  #vizPanel .viz-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  #vizPanel .viz-seg{display:inline-flex;gap:2px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);padding:3px;border-radius:99px;flex-wrap:wrap;max-width:100%}
+  #vizPanel .viz-seg button{background:transparent;border:none;color:#8b8b95;font-family:inherit;font-size:10px;letter-spacing:1px;padding:6px 10px;border-radius:99px;cursor:pointer;white-space:nowrap}
+  #vizPanel .viz-seg button:hover{color:#fff}
+  #vizPanel .viz-seg button.on{background:#f4f4f6;color:#000;font-weight:bold}
+  #vizPanel .viz-mini{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);color:#8b8b95;font-family:inherit;font-size:10px;letter-spacing:1px;padding:7px 11px;border-radius:99px;cursor:pointer}
+  #vizPanel .viz-mini:hover{color:#fff}
+  #vizPanel .viz-mini.on{background:#f4f4f6;border-color:#f4f4f6;color:#000;font-weight:bold}
+  #vizPanel input[type=range]{accent-color:#e8e8ec;width:100px}
+  #vizPanels.all{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+  #vizPanels.all .viz-view{margin-bottom:0}
+  #vizPanels.all canvas{height:190px !important}
+  #vizPanel .viz-view{display:none;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:13px 13px 9px;margin-bottom:12px}
+  #vizPanel .viz-view.show{display:block}
+  #vizPanel .viz-sec{font-size:9px;letter-spacing:3px;color:#8b8b95;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  #vizPanel .viz-sec .now{color:#e8e8ec;letter-spacing:1px;text-align:right}
+  #vizPanel canvas{display:block;width:100%;background:#060607;border:1px solid rgba(255,255,255,.05);border-radius:8px}
+  #vizCvRoll{height:250px;cursor:pointer} #vizCvOrbit{height:340px} #vizCvFifths{height:320px} #vizCvSurface{height:260px}
+  #vizCvSpec{height:176px} #vizCvSg{height:210px} #vizCvPolar{height:300px} #vizCvFlow{height:280px} #vizCvPhase{height:280px}
+  #vizCvParticle{height:300px} #vizCvPsyche{height:340px}
+  #vizPanel .viz-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:9.5px;color:#8b8b95;margin-top:8px;letter-spacing:.5px;line-height:1.7}
+  #vizPanel .viz-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+  #vizPanel:fullscreen{background:#080809;padding:16px;overflow:auto}
+</style>
+  <div class="viz-head"><span class="viz-title">◉ VISUALIZER</span><span class="viz-badge">MONOCHROME · 11 VIEWS</span></div>
+  <div class="viz-bar">
+    <div class="viz-seg" role="tablist" aria-label="Visualizer 表示切替">
+      <button data-view="roll" class="viz-vbtn">1 ROLL</button>
+      <button data-view="orbit" class="viz-vbtn">2 ORBIT</button>
+      <button data-view="fifths" class="viz-vbtn">3 FIFTHS</button>
+      <button data-view="surface" class="viz-vbtn">4 SURFACE</button>
+      <button data-view="spec" class="viz-vbtn">5 SPECTRUM</button>
+      <button data-view="sg" class="viz-vbtn">6 SPECTROGRAM</button>
+      <button data-view="polar" class="viz-vbtn">7 POLAR</button>
+      <button data-view="flow" class="viz-vbtn">8 FLOW</button>
+      <button data-view="phase" class="viz-vbtn">9 PHASE</button>
+      <button data-view="particle" class="viz-vbtn">Q PARTICLE</button>
+      <button data-view="psyche" class="viz-vbtn">W PSYCHE</button>
+      <button data-view="all" class="viz-vbtn on">0 ALL</button>
+    </div>
+    <button id="vizTrail" class="viz-mini on">残像</button>
+    <span style="font-size:10px;color:#8b8b95">感度 <input type="range" id="vizSens" min="50" max="250" value="150"> <span id="vizSensV" style="color:#fff">×1.5</span></span>
+    <button id="vizPng" class="viz-mini">PNG保存</button>
+    <button id="vizFull" class="viz-mini">没入</button>
+  </div>
+  <div id="vizPanels">
+    <section class="viz-view" data-panel="roll">
+      <div class="viz-sec"><span>PIANO ROLL — 生成ノートそのもの</span><span class="now" id="vizRollInfo">—</span></div>
+      <canvas id="vizCvRoll"></canvas>
+      <div class="viz-legend" id="vizLegend"></div>
+    </section>
+    <section class="viz-view" data-panel="orbit">
+      <div class="viz-sec"><span>ORBIT — 12音の円環と波紋</span><span class="now" id="vizOrbitInfo">—</span></div>
+      <canvas id="vizCvOrbit"></canvas>
+      <div class="viz-legend"><span>円周 = 音名（半音順）／ 半径 = オクターブ ／ 波紋 = 発音の瞬間</span></div>
+    </section>
+    <section class="viz-view" data-panel="fifths">
+      <div class="viz-sec"><span>FIFTHS — 五度圏と旋律の軌跡</span><span class="now" id="vizFifthsInfo">—</span></div>
+      <canvas id="vizCvFifths"></canvas>
+      <div class="viz-legend"><span>円周 = 五度圏（C→G→D→…）／ 軌跡 = 旋律系レイヤーが辿った音の順路</span></div>
+    </section>
+    <section class="viz-view" data-panel="surface">
+      <div class="viz-sec"><span>SURFACE — 水面の波紋</span><span class="now" id="vizSurfaceInfo">—</span></div>
+      <canvas id="vizCvSurface"></canvas>
+      <div class="viz-legend"><span>横 = 音高 ／ 縦 = レイヤー ／ 鳴った場所から波紋が広がる</span></div>
+    </section>
+    <section class="viz-view" data-panel="spec">
+      <div class="viz-sec"><span>SPECTRUM — 実際の再生音</span><span class="now" id="vizSpecInfo">—</span></div>
+      <canvas id="vizCvSpec"></canvas>
+      <div class="viz-legend"><span>バー = 周波数（白いキャップ = ピーク保持）／ 下 = 波形</span></div>
+    </section>
+    <section class="viz-view" data-panel="sg">
+      <div class="viz-sec"><span>SPECTROGRAM — 周波数の時間変化</span><span class="now" id="vizSgInfo">—</span></div>
+      <canvas id="vizCvSg"></canvas>
+      <div class="viz-legend"><span>横 = 時間（右が今）／ 縦 = 周波数 ／ 明るさ = 強さ</span></div>
+    </section>
+    <section class="viz-view" data-panel="polar">
+      <div class="viz-sec"><span>POLAR — 円形スペクトラム</span><span class="now" id="vizPolarInfo">—</span></div>
+      <canvas id="vizCvPolar"></canvas>
+      <div class="viz-legend"><span>放射バー = 周波数 ／ 長さ = 強さ</span></div>
+    </section>
+    <section class="viz-view" data-panel="flow">
+      <div class="viz-sec"><span>FLOW — 音に押される流線</span><span class="now" id="vizFlowInfo">—</span></div>
+      <canvas id="vizCvFlow"></canvas>
+      <div class="viz-legend"><span>粒子の流れ：低音で速く、高音でうねる</span></div>
+    </section>
+    <section class="viz-view" data-panel="phase">
+      <div class="viz-sec"><span>PHASE — 位相スコープ</span><span class="now" id="vizPhaseInfo">—</span></div>
+      <canvas id="vizCvPhase"></canvas>
+      <div class="viz-legend"><span>波形と少し遅れた自分の軌跡（x[t] × x[t−k]）</span></div>
+    </section>
+    <section class="viz-view" data-panel="particle">
+      <div class="viz-sec"><span>PARTICLE — 粒子の噴き上がりと拡散</span><span class="now" id="vizParticleInfo">—</span></div>
+      <canvas id="vizCvParticle"></canvas>
+      <div class="viz-legend"><span>発音で粒子が弾け、音の変化（フラックス）で中心から拡散</span></div>
+    </section>
+    <section class="viz-view" data-panel="psyche">
+      <div class="viz-sec"><span>PSYCHE — 万華鏡フィードバック</span><span class="now" id="vizPsycheInfo">—</span></div>
+      <canvas id="vizCvPsyche"></canvas>
+      <div class="viz-legend"><span>同時発音の模様を8分割の万華鏡に映し、画面自体を拡大・回転させて戻すフィードバック</span></div>
+    </section>
+  </div>
+</div>
+
 <!-- ═══ MULTI-FILE EXPORT ═══ -->
 <div class="panel full" style="margin:12px 0 10px;">
   <div class="panel-top teal"></div>
@@ -1825,5 +1936,6 @@
 <script src="js/86-theory-pack-4.js"></script>
 <script src="js/87-theory-pack-5.js"></script>
 <script src="js/88-theory-pack-6.js"></script>
+<script src="js/93-visualizer.js"></script>
 </body>
 </html>

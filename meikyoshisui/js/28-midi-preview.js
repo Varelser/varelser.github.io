@@ -126,6 +126,7 @@ const TIMBRE = {
 
 /* ── 状態 ─────────────────────────────────────── */
 let _ac = null;      /* AudioContext */
+let _analyser = null; /* 93-visualizer 用 AnalyserNode（play ごとに生成） */
 let _parsed = null;  /* parseMidi() の結果 */
 let _bpm = 60;
 let _startAt = 0;    /* AudioContext.currentTime のオフセット */
@@ -209,10 +210,14 @@ function play() {
 
   const secPerTick = 60 / (_bpm * _parsed.ppq);
 
-  /* マスターゲイン */
+  /* マスターゲイン（93-visualizer 用に AnalyserNode 経由で接続） */
   const masterGain = ac.createGain();
   masterGain.gain.value = 0.6;
-  masterGain.connect(ac.destination);
+  _analyser = ac.createAnalyser();
+  _analyser.fftSize = 2048;
+  _analyser.smoothingTimeConstant = 0.84;
+  masterGain.connect(_analyser);
+  _analyser.connect(ac.destination);
 
   /* チャンネル別ゲイン */
   const chGains = {};
@@ -383,6 +388,11 @@ function _updateUI() {
 /* ── 外部公開 ─────────────────────────────────── */
 function isPlaying() { return _playing; }
 function getDuration() { return _duration; }
+/* 93-visualizer 用の読み取り専用アクセサ（既存APIは不変） */
+function getAnalyser() { return _analyser; }
+function getElapsed() { return _playing && _ac ? Math.max(0, _ac.currentTime - _startAt) : (_pausedAt || 0); }
+function getParsed() { return _parsed; }
+function getBpm() { return _bpm; }
 
-return { load, play, pause, stop, seek, setChVol, isPlaying, getDuration };
+return { load, play, pause, stop, seek, setChVol, isPlaying, getDuration, getAnalyser, getElapsed, getParsed, getBpm };
 })();

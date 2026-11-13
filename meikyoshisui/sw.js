@@ -1,6 +1,6 @@
 /* MEIKYOSHISUI Service Worker — cache-first for same-origin GET.
    Bump CACHE_VERSION on every release so clients pick up new files. */
-const CACHE_VERSION = 'meikyoshisui-v24-20261113';
+const CACHE_VERSION = 'meikyoshisui-v25-20261113';
 const CORE = [
  "./",
  "./index.html",
@@ -101,7 +101,8 @@ const CORE = [
  "./js/88-theory-pack-6.js",
  "./js/90-patch-shared.js",
  "./js/91-patch-engine-fixes.js",
- "./js/92-patch-state-ui.js"
+ "./js/92-patch-state-ui.js",
+ "./js/93-visualizer.js"
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
