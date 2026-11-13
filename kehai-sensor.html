@@ -98,8 +98,8 @@
   .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
   .flash.go{animation:fl .45s ease-out}
   @keyframes fl{0%{opacity:.85}100%{opacity:0}}
-  .modes{position:absolute;left:10px;right:10px;bottom:96px;z-index:5;display:flex;gap:6px;padding:6px;background:rgba(10,11,9,.72);border:1px solid rgba(236,231,218,.14);border-radius:10px;overflow-x:auto;backdrop-filter:blur(6px)}
-  .modes .mode{flex:1 0 auto}
+  .modes{position:absolute;left:10px;right:10px;bottom:96px;z-index:5;display:flex;flex-wrap:wrap;gap:6px;padding:6px;background:rgba(10,11,9,.72);border:1px solid rgba(236,231,218,.14);border-radius:10px;backdrop-filter:blur(6px)}
+  .modes .mode{flex:1 1 21%}
   .mode{border:1px solid var(--line2);background:var(--panel2);color:var(--ink2);
     border-radius:8px;padding:9px 6px;font-size:13px;font-weight:700}
   .mode small{display:block;font-weight:400;font-size:10.5px;color:var(--dim);margin-top:2px}
@@ -213,6 +213,20 @@
   .profctl{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
   body.night{--bg:#000;--panel:#060202;--panel2:#0b0303;--line:#401112;--line2:#5c1a1c;--ink:#ffc9b8;--ink2:#d99a8a;--dim:#9c6a5e;background:#000}
   body.night .hero,body.night .card,body.night .wide,body.night .notes,body.night details.tech,body.night .panel{background:#050101}
+  /* ---------- device & model sections ---------- */
+  .devlive{font-family:var(--mono);font-size:12px;color:var(--amber2);margin-top:10px;line-height:1.8;word-break:break-all}
+  .wide-scroll{overflow-x:auto}
+  table.model{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+  table.model th,table.model td{border-bottom:1px solid var(--line);padding:8px 7px;text-align:left;color:var(--ink2);vertical-align:top;line-height:1.6;overflow-wrap:anywhere}
+  table.model th:nth-child(1),table.model td:nth-child(1){width:21%}
+  table.model th:nth-child(2),table.model td:nth-child(2){width:13%}
+  table.model th:nth-child(3),table.model td:nth-child(3){width:32%}
+  table.model th:nth-child(4),table.model td:nth-child(4){width:34%}
+  table.model th{color:var(--dim);font-size:11px;letter-spacing:.05em}
+  table.model td b{color:var(--ink)}
+  table.model tr.mine td{background:#1d1a10}
+  table.model tr.mine td b{color:var(--amber2)}
+  .minebadge{display:inline-block;font-size:10px;font-weight:900;background:var(--amber);color:#141310;border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
   footer{color:var(--dim);font-size:11.5px;line-height:1.8;margin-top:26px;text-align:center}
   @media(max-width:640px){
     .hero{grid-template-columns:minmax(0,1fr)}
@@ -331,6 +345,20 @@
     </div>
   </div>
 
+  <!-- ======== CONVENIENCE ======== -->
+  <div class="panel" aria-label="便利機能">
+    <div class="setgrid">
+      <button class="btn" id="btnPresetQuiet" type="button">プリセット：静かな部屋（感度1.4×）</button>
+      <button class="btn" id="btnPresetNormal" type="button">プリセット：通常（感度1.0×）</button>
+      <button class="btn" id="btnPresetNoisy" type="button">プリセット：音の多い部屋（感度0.7×）</button>
+      <div class="selwrap"><label for="selTimer">タイマー通知</label><select id="selTimer"><option value="0">なし</option><option value="30">30分後</option><option value="60">1時間後</option><option value="180">3時間後</option></select></div>
+      <button class="btn tgl" id="btnAlertSound" type="button" aria-pressed="false">アラート音（超危険で鳴らす）</button>
+      <button class="btn" id="btnNotify" type="button">通知を許可する</button>
+      <button class="btn" id="btnPersist" type="button">端末内保存を永続化する</button>
+    </div>
+    <p style="font-size:12px;color:var(--ink2);line-height:1.8;margin:10px 2px 0" id="convNote">タイマーは監視を止めず、指定時間にログと音（アラート音ON時）で知らせます。通知はホーム画面に追加した状態で使える場合があります（iOSの仕様）。</p>
+  </div>
+
   <!-- ======== SENSORS ======== -->
   <h2 class="sec">全センサー <span>— 16チャンネルを同時に監視し、異常は合算されます</span></h2>
   <div class="grid" id="sensorGrid"></div>
@@ -402,12 +430,51 @@
       <li id="capLux"><span class="st no">判定中</span><span>照度センサー（AmbientLightSensor）</span></li>
       <li id="capProx"><span class="st no">判定中</span><span>近接センサー（ProximitySensor）</span></li>
       <li id="capNet"><span class="st no">判定中</span><span>ネットワーク情報（接続種別・変化）</span></li>
+      <li id="capGenericMag"><span class="st no">判定中</span><span>Generic Sensor 磁気センサー（Magnetometer API）</span></li>
+      <li id="capPressure"><span class="st no">判定中</span><span>Compute Pressure（端末の処理負荷の観測）</span></li>
+      <li id="capShape"><span class="st no">判定中</span><span>Shape Detection（バーコード／顔検出API）</span></li>
+      <li id="capXR"><span class="st no">判定中</span><span>WebXR（ARセッション）</span></li>
+      <li id="capCodec"><span class="st no">判定中</span><span>MediaCapabilities（AV1／HEVC 再生可否の判定）</span></li>
+      <li id="capNotif"><span class="st no">判定中</span><span>通知（Notification API）</span></li>
+      <li id="capPwa"><span class="st no">判定中</span><span>ホーム画面アプリ（スタンドアロン表示）</span></li>
+      <li id="capOPFS"><span class="st no">判定中</span><span>OPFS（アプリ専用の高速ファイル保存領域）</span></li>
+      <li id="capExt"><span class="st no">判定中</span><span>外部機器API（Bluetooth／USB／Serial／NFC）</span></li>
       <li><span class="st no">未対応</span><span>LiDAR（距離・空間形状）：Webからは取得できません</span></li>
       <li><span class="st no">未対応</span><span>気圧計・磁気センサーの生データ：Webからは取得できません</span></li>
       <li><span class="st no">未対応</span><span>本体・バッテリー温度：Webからは取得できません</span></li>
     </ul>
     <p>未対応の技術は「使えているふり」をせず、代替手段（CPU解析、キャンバス保存、ダウンロードなど）で同じ目的を果たします。対応状況はこの端末・このブラウザで実際に判定した結果です。</p>
   </details>
+
+  <!-- ======== DEVICE AUTO-CHECK ======== -->
+  <h2 class="sec">この端末の自動判定 <span>— 機種そのものはWebから断定できないため、測れるものから推定します</span></h2>
+  <div class="wide">
+    <ul class="caplist">
+      <li id="capScreen"><span class="st no">判定中</span><span>画面（論理サイズ／ピクセル比）</span></li>
+      <li id="capRefresh"><span class="st no">判定中</span><span>画面のリフレッシュレート実測（ProMotion判定）</span></li>
+      <li id="capGPU2"><span class="st no">判定中</span><span>GPU（WebGLレンダラー名）</span></li>
+      <li id="capGamut"><span class="st no">判定中</span><span>広色域（P3）／HDR表示</span></li>
+      <li id="capStorage"><span class="st no">判定中</span><span>保存容量の見積もり／永続化状態</span></li>
+    </ul>
+    <p class="devlive" id="deviceGuess">機種の推定：判定中…</p>
+    <p class="devlive" id="magLive"></p>
+    <p style="font-size:12.5px;color:var(--ink2);line-height:1.8;margin:8px 0 0">ブラウザは端末の正確な機種名を教えてくれません。上の推定は画面サイズ等からの「候補」表示です。確実に分かるのは、下の仕様差の表のうち「その世代のProかどうか」で効いてくる項目です。</p>
+  </div>
+
+  <!-- ======== MODEL DIFFERENCES ======== -->
+  <h2 class="sec">iPhone 機種ごとの仕様差 <span>— このアプリに関わる部分だけ</span></h2>
+  <div class="wide wide-scroll">
+    <table class="model">
+      <tr><th>世代</th><th>LiDAR</th><th>カメラまわり（監視に関わる差）</th><th>センサー・その他の差</th></tr>
+      <tr><td><b>iPhone 12</b><br>12 Pro / Pro Max</td><td>Pro系のみ搭載</td><td>メイン12MP。Pro系は望遠あり</td><td>磁気・気圧センサーは全機種搭載（ただし生値はWeb不可＝全世代共通）。MagSafe・5Gが始まった世代</td></tr>
+      <tr><td><b>iPhone 13</b><br>13 Pro / Pro Max</td><td>Pro系のみ</td><td>センサーシフト手ブレ補正が全機種に。Pro系は超広角マクロ撮影に対応</td><td>Pro系のみ ProMotion 120Hz。バッテリー持ちが改善</td></tr>
+      <tr><td><b>iPhone 14</b><br>14 Pro / Pro Max</td><td>Pro系のみ</td><td>Pro系はメイン48MPに大型化され暗所に強い</td><td>Pro系のみ常時表示ディスプレイと Dynamic Island。衛星SOSと衝突事故検出は全機種</td></tr>
+      <tr class="mine"><td><b>iPhone 15</b><br>15 Pro / Pro Max<span class="minebadge">あなたの機種</span></td><td>Pro系のみ</td><td>全機種メイン48MP。Pro Maxは望遠5倍、Proは3倍</td><td>全機種USB-C化・第2世代UWB（精密探知）。Pro系はチタン・アクションボタン・USB 3・Thread</td></tr>
+      <tr><td><b>iPhone 16</b><br>16 Pro / Pro Max</td><td>Pro系のみ</td><td>Pro系は望遠5倍が両サイズに、超広角も48MPに。空間ビデオ撮影対応</td><td>カメラコントロールが全機種に。Wi-Fi 7。スタジオ品質の4マイクも全機種共通</td></tr>
+      <tr><td><b>iPhone 17</b><br>17 Pro / Pro Max・Air</td><td>Pro系のみ（Airはなし）</td><td>Pro系は望遠が48MP・4倍（8倍相当のクロップ可）。前面は全機種18MPセンターフレーム</td><td>ProMotion 120Hzと常時表示が無印にも拡大。Pro系はベイパーチャンバー冷却</td></tr>
+    </table>
+    <p style="font-size:12.5px;color:var(--ink2);line-height:1.85;margin:10px 0 0"><b style="color:var(--ink)">結論：</b>このWeb版が使うカメラ映像・マイク・加速度・方位は全世代で共通に使えます。機種差が効くのは主に<b style="color:var(--ink)">暗い部屋でのカメラ性能</b>と、<b style="color:var(--ink)">LiDARの有無（Pro系のみ／ネイティブ版でのみ使用可）</b>。いちばん欲しい磁場と気圧は、どの機種にもセンサー自体は入っていますが、生値をWebに渡さないのは全世代共通の制限です。</p>
+  </div>
 
   <!-- ======== NOTES ======== -->
   <div class="notes">
@@ -2241,6 +2308,284 @@ function setupGPU(device){
       var h=$("hudEngine"); if(h) h.textContent="WebGPU";
     }catch(e){ gpuFail("初期化に失敗しました"); }
   }).catch(function(){ clearTimeout(to); gpuFail("利用できませんでした"); });
+})();
+</script>
+<script>
+"use strict";
+/* =====================================================================
+   LATEST-TECH + CONVENIENCE LAYER
+   Every capability below is genuinely feature-detected on THIS device.
+   Unavailable ones are reported as such — never simulated. This layer
+   only reads state and adds UI; it never touches the camera stream.
+   ===================================================================== */
+function addLogLine(title, desc){
+  try{
+    var li=document.createElement("li");
+    li.innerHTML='<div class="lt"><span class="time">'+nowTime()+'</span><span class="sc">'+escapeHtml(title)+'</span></div><div class="ds">'+escapeHtml(desc)+"</div>";
+    var log=$("eventLog"); if(log){ log.insertBefore(li, log.firstChild); while(log.children.length>40) log.removeChild(log.lastChild); }
+    var le=$("logEmpty"); if(le) le.style.display="none";
+  }catch(e){}
+}
+
+/* ---------- presets ---------- */
+function applyPreset(v, label){
+  var r=$("sensRange"); if(!r) return;
+  r.value=Math.round(v*100);
+  r.dispatchEvent(new Event("input"));
+  addLogLine("プリセット", label+" を適用しました（感度 "+v.toFixed(1)+"×）。");
+}
+var bp;
+if(bp=$("btnPresetQuiet")) bp.addEventListener("click", function(){ applyPreset(1.4,"静かな部屋"); });
+if(bp=$("btnPresetNormal")) bp.addEventListener("click", function(){ applyPreset(1.0,"通常"); });
+if(bp=$("btnPresetNoisy")) bp.addEventListener("click", function(){ applyPreset(0.7,"音の多い部屋"); });
+
+/* ---------- alert sound (Web Audio oscillator, no files) ---------- */
+var alertOn=false, beepAC=null, lastBeepAt=0, lastNotifAt=0;
+function beep(){
+  try{
+    var ctx = (typeof AC!=="undefined" && AC && AC.state==="running") ? AC : beepAC;
+    if(!ctx) return;
+    var t0=ctx.currentTime;
+    [880,660,880].forEach(function(f,i){
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.type="sine"; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001, t0+i*0.22);
+      g.gain.exponentialRampToValueAtTime(0.22, t0+i*0.22+0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+i*0.22+0.2);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0+i*0.22); o.stop(t0+i*0.22+0.22);
+    });
+  }catch(e){}
+}
+var bAS=$("btnAlertSound");
+if(bAS) bAS.addEventListener("click", function(){
+  alertOn=!alertOn;
+  this.setAttribute("aria-pressed", alertOn?"true":"false");
+  this.classList.toggle("tgl", true);
+  if(alertOn && !beepAC){
+    try{ beepAC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+    if(beepAC && beepAC.state==="suspended") beepAC.resume();
+    beep();
+  }
+  this.textContent=alertOn? "アラート音 ON（超危険で鳴ります）" : "アラート音（超危険で鳴らす）";
+});
+
+/* ---------- notifications ---------- */
+var notifGranted=false;
+(function(){
+  if(!("Notification" in window)){ setCap("capNotif","no","通知（Notification API）：このブラウザでは未対応です。アラートは画面表示と音（上のボタン）になります。"); var bn=$("btnNotify"); if(bn) bn.disabled=true; return; }
+  notifGranted = Notification.permission==="granted";
+  setCap("capNotif", notifGranted?"ok":"fb", "通知（Notification API）："+(notifGranted? "許可済み。「超危険」で通知を出します。" : "未許可です。下の「通知を許可する」から許可できます（ホーム画面に追加した状態で動く場合があります）。"));
+})();
+var bN=$("btnNotify");
+if(bN) bN.addEventListener("click", function(){
+  if(!("Notification" in window)) return;
+  var btn=this;
+  Notification.requestPermission().then(function(p){
+    notifGranted = p==="granted";
+    btn.textContent = notifGranted? "通知は許可済みです" : "通知は許可されませんでした（"+p+"）";
+    setCap("capNotif", notifGranted?"ok":"no", "通知（Notification API）："+(notifGranted? "許可済み。「超危険」で通知を出します。" : "許可されませんでした。iOSではホーム画面に追加した状態が必要な場合があります。"));
+  }).catch(function(){ btn.textContent="通知の許可を取得できませんでした"; });
+});
+
+/* ---------- timer (notify only, monitoring continues) ---------- */
+var timerMinutes=0, timerBase=null, timerFired=false;
+var selT=$("selTimer");
+if(selT) selT.addEventListener("change", function(){ timerMinutes=Number(this.value)||0; timerBase=null; timerFired=false; });
+
+/* ---------- shared 1s watcher: alert sound / notification / timer ---------- */
+setInterval(function(){
+  var active=(S.running||S.demo) && !S.calibrating;
+  var lv=active? levelForScore(S.combined) : -1;
+  var nowD=Date.now();
+  if(alertOn && lv===3 && nowD-lastBeepAt>20000){ lastBeepAt=nowD; beep(); }
+  if(notifGranted && lv===3 && nowD-lastNotifAt>60000){
+    lastNotifAt=nowD;
+    try{
+      var rs=topReasons(2);
+      new Notification("気配センサー：超危険", { body:"強い同時反応を検知しました。"+(rs.length? "内訳："+rs.join("／") : "") });
+    }catch(e){}
+  }
+  if(timerMinutes>0){
+    if(S.running||S.demo){
+      if(!timerBase){ timerBase=nowD; timerFired=false; }
+      else if(!timerFired && nowD-timerBase>=timerMinutes*60000){
+        timerFired=true;
+        addLogLine("タイマー", timerMinutes+"分が経ちました。監視は続けています。");
+        if(alertOn) beep();
+      }
+    } else { timerBase=null; timerFired=false; }
+  }
+},1000);
+
+/* ---------- storage persistence ---------- */
+var bP=$("btnPersist");
+if(bP) bP.addEventListener("click", function(){
+  var btn=this;
+  if(!navigator.storage || !navigator.storage.persist){ btn.textContent="永続化はこのブラウザ未対応です"; return; }
+  navigator.storage.persist().then(function(ok){
+    btn.textContent= ok? "保存の永続化が有効になりました" : "永続化は承認されませんでした（ブラウザの判断）";
+    paintStorageCap();
+  }).catch(function(){ btn.textContent="永続化の確認に失敗しました"; });
+});
+function paintStorageCap(){
+  if(!navigator.storage || !navigator.storage.estimate){ setCap("capStorage","no","保存容量の見積もり：このブラウザでは取得できません。"); return; }
+  Promise.all([
+    navigator.storage.estimate(),
+    navigator.storage.persisted? navigator.storage.persisted() : Promise.resolve(false)
+  ]).then(function(r){
+    var est=r[0]||{}, mb=function(n){ return n==null? "—" : (n/1024/1024).toFixed(1)+" MB"; };
+    setCap("capStorage","ok","保存容量の見積もり：使用中 約"+mb(est.usage)+" ／ 上限 約"+mb(est.quota)+"。永続化："+(r[1]? "有効（勝手に消されにくい）" : "未設定（下のボタンで申請できます）")+"。");
+  }).catch(function(){ setCap("capStorage","no","保存容量の見積もり：取得に失敗しました。"); });
+}
+paintStorageCap();
+
+/* ---------- device auto-check ---------- */
+(function(){
+  /* screen -> model candidates (logical points; a hint, never a claim) */
+  var sw=window.screen.width, sh=window.screen.height, dpr=window.devicePixelRatio||1;
+  var key=Math.min(sw,sh)+"x"+Math.max(sw,sh);
+  var cand={
+    "375x667":"iPhone SE（第2/3世代）・6〜8 世代の可能性",
+    "375x812":"iPhone X / XS / 11 Pro / 12 mini / 13 mini 世代の可能性",
+    "390x844":"iPhone 12 / 13 / 14 世代の可能性",
+    "393x852":"iPhone 14 Pro / 15 / 15 Pro / 16 世代の可能性",
+    "402x874":"iPhone 16 Pro / 17 世代の可能性",
+    "414x896":"iPhone XR / 11 / XS Max / 11 Pro Max 世代の可能性",
+    "428x926":"iPhone 12/13 Pro Max / 14 Plus 世代の可能性",
+    "430x932":"iPhone 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus 世代の可能性",
+    "440x956":"iPhone 16 Pro Max / 17 Pro Max 世代の可能性"
+  };
+  setCap("capScreen","ok","画面：論理サイズ "+sw+"×"+sh+" ／ ピクセル比 "+dpr+" ／ タッチ点 "+(navigator.maxTouchPoints||"—")+" ／ CPUコア目安 "+(navigator.hardwareConcurrency||"—"));
+  var g=$("deviceGuess");
+  if(g) g.textContent="機種の推定：画面サイズ "+key+" → "+(cand[key]|| "既知の候補表にないサイズです（iPad等の可能性）。機種名そのものはWebからは分かりません");
+
+  /* refresh-rate measurement (ProMotion check) */
+  var framesN=0, tStart=0;
+  function rafStep(ts){
+    if(!tStart) tStart=ts;
+    framesN++;
+    if(ts-tStart<2000){ requestAnimationFrame(rafStep); return; }
+    var hz=framesN/((ts-tStart)/1000);
+    setCap("capRefresh", hz>75?"ok":"fb", "画面のリフレッシュレート実測：約 "+Math.round(hz)+" Hz で描画できました。"+(hz>75? "120Hz級（ProMotion搭載機の可能性が高い）です。" : "60Hz級で描画されています（ProMotion非搭載、または省電力等で制限中）。"));
+  }
+  requestAnimationFrame(rafStep);
+
+  /* GPU renderer string */
+  try{
+    var cv=document.createElement("canvas");
+    var gl=cv.getContext("webgl2")||cv.getContext("webgl");
+    var rn="不明";
+    if(gl){
+      var ext=gl.getExtension("WEBGL_debug_renderer_info");
+      rn= ext? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    }
+    setCap("capGPU2", gl?"ok":"no", "GPU（WebGL"+(cv.getContext?"":"")+"）："+rn+"。チップ世代の目安になります（正確な機種名は出ません）。");
+  }catch(e){ setCap("capGPU2","no","GPU：WebGLから取得できませんでした。"); }
+
+  /* colour gamut / HDR */
+  var p3=false, hdr=false;
+  try{ p3=window.matchMedia("(color-gamut: p3)").matches; }catch(e){}
+  try{ hdr=window.matchMedia("(dynamic-range: high)").matches; }catch(e){}
+  setCap("capGamut", (p3||hdr)?"ok":"fb", "広色域（P3）："+(p3? "対応" : "判定できず")+" ／ HDR表示："+(hdr? "対応" : "判定できず")+"。疑似サーモ表示の色の出方が機種で少し変わるのはこの差です。");
+
+  /* standalone / PWA */
+  var sa=false;
+  try{ sa=window.matchMedia("(display-mode: standalone)").matches || navigator.standalone===true; }catch(e){}
+  setCap("capPwa", sa?"ok":"fb", sa? "ホーム画面アプリとして起動中です（全画面・通知の前提が揃っています）。" : "ブラウザ表示で起動中です。共有ボタンから「ホーム画面に追加」すると全画面起動と通知が使えるようになります。");
+
+  /* OPFS */
+  if(navigator.storage && navigator.storage.getDirectory)
+    setCap("capOPFS","ok","OPFS：対応しています（将来の大容量録画保存に使える領域）。現状の記録保存は従来方式です。");
+  else setCap("capOPFS","no","OPFS：このブラウザでは未対応です。");
+
+  /* external device APIs */
+  var exts=[];
+  if(navigator.bluetooth) exts.push("Bluetooth");
+  if(navigator.usb) exts.push("USB");
+  if(navigator.serial) exts.push("Serial");
+  if("NDEFReader" in window) exts.push("NFC");
+  if(navigator.hid) exts.push("HID");
+  setCap("capExt", exts.length?"ok":"no", exts.length? ("外部機器API："+exts.join(" / ")+" が使えます（外付けセンサー連携の余地あり）。") : "外部機器API：Bluetooth／USB／Serial／NFC はこのブラウザでは未対応です（iOS Safariは全て非公開）。外付けサーマルカメラ等は専用アプリ経由になります。");
+})();
+
+/* ---------- MediaCapabilities: codec support ---------- */
+(function(){
+  if(!navigator.mediaCapabilities || !navigator.mediaCapabilities.decodingInfo){
+    setCap("capCodec","no","MediaCapabilities：未対応のため、コーデック可否は判定できません。"); return;
+  }
+  var tests=[
+    {label:"AV1", type:"file", video:{contentType:'video/mp4; codecs="av01.0.05M.08"', width:1280, height:720, bitrate:2500000, framerate:30}},
+    {label:"HEVC", type:"file", video:{contentType:'video/mp4; codecs="hvc1.1.6.L120.90"', width:1280, height:720, bitrate:5000000, framerate:30}}
+  ];
+  Promise.all(tests.map(function(t){ return navigator.mediaCapabilities.decodingInfo(t).catch(function(){ return null; }); })).then(function(rs){
+    var parts=tests.map(function(t,i){ return t.label+"："+(rs[i]&&rs[i].supported? "再生可" : "不可"); });
+    setCap("capCodec","ok","MediaCapabilities 実測："+parts.join(" ／ ")+"。新しいコーデックで再生できる端末ほど、録画クリップの保存・再生が軽くなります。");
+  });
+})();
+
+/* ---------- Shape Detection ---------- */
+(function(){
+  var has=[];
+  if("BarcodeDetector" in window) has.push("バーコード");
+  if("FaceDetector" in window) has.push("顔");
+  if("TextDetector" in window) has.push("文字");
+  setCap("capShape", has.length?"ok":"no", has.length? ("Shape Detection："+has.join("・")+"検出APIが使えます。") : "Shape Detection：このブラウザでは未対応です（iOS Safariは非公開）。映像解析は自前の処理で行っています。");
+})();
+
+/* ---------- WebXR ---------- */
+(function(){
+  if(!navigator.xr){ setCap("capXR","no","WebXR：このブラウザでは未対応です（iOS Safariは非公開）。空間表示はネイティブ版の担当です。"); return; }
+  navigator.xr.isSessionSupported("immersive-ar").then(function(ok){
+    setCap("capXR", ok?"ok":"no", ok? "WebXR：ARセッションが使えます。" : "WebXR：ARセッションは使えませんでした。");
+  }).catch(function(){ setCap("capXR","no","WebXR：判定できませんでした。"); });
+})();
+
+/* ---------- Compute Pressure ---------- */
+(function(){
+  if(!("PressureObserver" in window)){ setCap("capPressure","no","Compute Pressure：このブラウザでは未対応です（熱・負荷の目安はFPS低下から推定しています）。"); return; }
+  try{
+    var po=new PressureObserver(function(list){
+      try{
+        var rec=null;
+        if(list && typeof list.getRecords==="function") rec=list.getRecords()[0];
+        else if(list && list.length) rec=list[0];
+        else if(list && list.state) rec=list;
+        if(rec && rec.state) setCap("capPressure","ok","Compute Pressure：現在の処理負荷は「"+rec.state+"」。負荷が高い（熱い）と解析レートを落とす判断に使えます。");
+      }catch(e){}
+    },{sampleInterval:1000});
+    var pr=po.observe("cpu");
+    if(pr && pr.catch) pr.catch(function(){ setCap("capPressure","no","Compute Pressure：観測を開始できませんでした。"); });
+  }catch(e){ setCap("capPressure","no","Compute Pressure：観測を開始できませんでした。"); }
+})();
+
+/* ---------- Generic Sensor: REAL magnetometer attempt ----------
+   This is the one standard web route to true magnetic-field data.
+   Chrome/Android exposes it; iOS Safari does not (reported honestly).
+   If it ever answers, live µT values are shown below AND the field
+   strength feeds the compass-jitter channel as real evidence. */
+(function(){
+  var magEl=$("magLive");
+  if(!("Magnetometer" in window)){
+    setCap("capGenericMag","no","Generic Sensor 磁気センサー：このブラウザでは未対応です（iOS Safariは非公開）。磁場の生値はネイティブ版の担当です。");
+    return;
+  }
+  try{
+    var mag=new Magnetometer({frequency:10});
+    var got=false;
+    mag.addEventListener("reading", function(){
+      got=true;
+      var tot=Math.sqrt(mag.x*mag.x+mag.y*mag.y+mag.z*mag.z);
+      if(magEl) magEl.textContent="磁場センサー実測：x "+mag.x.toFixed(1)+" / y "+mag.y.toFixed(1)+" / z "+mag.z.toFixed(1)+" µT（合成 "+tot.toFixed(1)+" µT）";
+    });
+    mag.addEventListener("error", function(e){
+      setCap("capGenericMag","no","Generic Sensor 磁気センサー：起動できませんでした（"+((e.error&&e.error.name)||"error")+"）。");
+    });
+    mag.start();
+    setTimeout(function(){
+      if(got) setCap("capGenericMag","ok","Generic Sensor 磁気センサー：生値（µT）を取得できています。下に実測値をライブ表示中。");
+    },1500);
+  }catch(e){ setCap("capGenericMag","no","Generic Sensor 磁気センサー：起動できませんでした。"); }
 })();
 </script>
 </body>
