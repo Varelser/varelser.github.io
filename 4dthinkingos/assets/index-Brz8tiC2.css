@@ -241,6 +241,27 @@ html.tw-vt-active #root > main > div{ animation:none !important; }
   background:color-mix(in srgb, var(--tw-text) 5%, transparent);
 }
 
+/* === 4DT-RESKIN v6: theme changes crossfade (2026-11-13) ===
+   Registering the theme colour vars as <color> makes the browser
+   interpolate them when the app swaps themes (the vars are set
+   inline on <html>), so every surface that reads them — panels,
+   bars, the sphere — fades instead of snapping. Browsers without
+   @property just switch instantly, as before. */
+@property --tw-bg{ syntax:'<color>'; inherits:true; initial-value:#000000; }
+@property --tw-panel{ syntax:'<color>'; inherits:true; initial-value:#111111; }
+@property --tw-text{ syntax:'<color>'; inherits:true; initial-value:#ffffff; }
+@property --tw-muted{ syntax:'<color>'; inherits:true; initial-value:#888888; }
+@property --tw-accent{ syntax:'<color>'; inherits:true; initial-value:#ffffff; }
+@property --tw-accent-2{ syntax:'<color>'; inherits:true; initial-value:#8888ff; }
+@property --tw-sphere{ syntax:'<color>'; inherits:true; initial-value:#ffffff; }
+@property --tw-grid{ syntax:'<color>'; inherits:true; initial-value:#888888; }
+@property --tw-edge{ syntax:'<color>'; inherits:true; initial-value:#ffffff; }
+html{
+  transition:--tw-bg .3s ease, --tw-panel .3s ease, --tw-text .3s ease,
+    --tw-muted .3s ease, --tw-accent .3s ease, --tw-accent-2 .3s ease,
+    --tw-sphere .3s ease, --tw-grid .3s ease, --tw-edge .3s ease;
+}
+
 /* === 4DT-RESKIN v4/v5: sphere looks, switchable (2026-11-13) ===
    The sphere view is one SVG whose geometry uses presentation
    attributes driven by the app's theme variables. Six looks are
@@ -426,6 +447,10 @@ html[data-tw-sphere="orb3d"] #root > main svg:has(#sphereGlow) g text[font-size=
 #twSphereBar .cap{
   font:600 10px/1 var(--tw-font); letter-spacing:.14em;
   color:var(--tw-muted); padding:0 6px 0 9px; user-select:none;
+}
+#twSphereBar .sep{
+  flex:none; align-self:center; width:1px; height:16px; margin:0 4px;
+  background:color-mix(in srgb, var(--tw-text) 14%, transparent);
 }
 #twSphereBar button{
   appearance:none; border:0; background:transparent; cursor:pointer;
