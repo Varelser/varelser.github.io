@@ -42,7 +42,7 @@
    reads or writes the app's own state. */
 (function(){
   'use strict';
-  var api = { vtInstalled:false, wakeInstalled:false, vtCalls:0, wakeRequests:0, wakeReleases:0, lookInstalled:false, look:null, bodyInstalled:false, persist:null, badge:null, pip:false };
+  var api = { vtInstalled:false, wakeInstalled:false, vtCalls:0, wakeRequests:0, wakeReleases:0, lookInstalled:false, look:null, bodyInstalled:false, persist:null, badge:null, pip:false, guideInstalled:false, guideLinks:0 };
   window.__twTierB = api;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -558,6 +558,49 @@
       else if (key === 's' || key === 'S') clickAct('png');
       else if (key === 'c' || key === 'C') clickAct('copy');
     });
+    /* ------- guide: note A table of contents (UUID links) ------- */
+    var GUIDE = [{"t":"はじめに —— 4D Thinking OSとは何か","a":"d972c116-7b0b-4528-a900-58dc75a6e058","lv":2},{"t":"中心の問いとトピック","a":"ca3a7484-c5db-418c-b63f-aa4a1e8be065","lv":2},{"t":"ノードという形態","a":"ba49e597-3063-42b5-a69f-514b920879b2","lv":2},{"t":"論証の形態 —— トゥールミン・モデル","a":"6389492e-68fd-4833-bf8d-0b7f777d1edc","lv":2},{"t":"主張（Claim）","a":"e6460229-408d-4b7a-b077-917b0e727a9a","lv":3},{"t":"根拠（Grounds）","a":"124f6b23-8a7d-4c8d-b54d-7290a2b93f5d","lv":3},{"t":"論拠（Warrant）","a":"b058f00a-8000-43d2-b2d9-2e10e7751125","lv":3},{"t":"裏付け（Backing）","a":"92b552da-b6c5-4c1f-9979-191974baad4a","lv":3},{"t":"限定（Qualifier）","a":"b3c2f93c-a1db-463f-a848-ae5517feee15","lv":3},{"t":"反駁（Rebuttal）","a":"b6163288-fa85-4d78-9fa9-bf0bd71893ba","lv":3},{"t":"問い（Question）と選択肢（Option）","a":"990fdcdc-9403-49ce-be4d-28e86a7f9edb","lv":3},{"t":"ノードのテンプレート —— 反対意見・問い返し・接続理由","a":"feb70cff-3b0b-40da-bcd1-9f1ec7521f2e","lv":2},{"t":"反対意見テンプレート","a":"c558b542-e77f-4f8f-9b42-b1d40733aaf7","lv":3},{"t":"問い返しテンプレート","a":"e784fc2d-1e86-4afd-ac7f-dc2279f62f71","lv":3},{"t":"接続理由テンプレート","a":"29e479a8-4751-4a6f-87e5-739d24d739d7","lv":3},{"t":"レイヤーという形態","a":"cba73cd8-b3c1-4f9d-9ce6-9c6df291beef","lv":2},{"t":"境界思考 —— 中核・周辺・境界・外側・一時的","a":"5eae6262-6e00-4e84-97df-9c9a33abb3b5","lv":2},{"t":"球体という形態 —— ポアンカレ球体モデル","a":"46f22f5e-9754-4d23-9bf3-da30f12e4e97","lv":2},{"t":"時間という第4の軸","a":"aa4fe698-955d-4ed9-bce7-fe9d06b5f9ef","lv":2},{"t":"過去・現在・未来のレイヤー","a":"e7cf1d22-0857-4bd0-9302-8c719165e960","lv":3},{"t":"タイムラインと再評価","a":"56dd4d6e-936c-4cad-a434-132b9a2e06a1","lv":3},{"t":"時間堆積","a":"e44bf5e1-78d6-495b-823b-c7aadf72c4d7","lv":3},{"t":"眺めの形態 —— ビュー群","a":"3f0f49da-35ca-48c2-b67b-c6311f2543e9","lv":2},{"t":"空間として眺める","a":"5558145c-569d-4124-8e97-8ce1795df0cc","lv":3},{"t":"判断のために眺める","a":"a1a2f749-c548-41b5-b6a9-03a2c8256b11","lv":3},{"t":"構造として眺める","a":"bf81298f-3720-4ac0-97a6-576dfd6cf3f9","lv":3},{"t":"蓄積として眺める","a":"1193ae3c-5d42-4f01-91cd-31034247d233","lv":3},{"t":"処理のために眺める","a":"39c81323-59cb-4bdb-87eb-091237f25154","lv":3},{"t":"比べて、数えて眺める","a":"fbdc64d5-5f06-486f-88f4-38f532f205cf","lv":3},{"t":"管理法という型","a":"fd5b1c71-943e-4413-88bc-0a74c67172a7","lv":2},{"t":"GTD","a":"db6f310b-8575-4387-a51a-077ef27f8249","lv":3},{"t":"アイゼンハワー・マトリクス","a":"3e853247-9af5-487e-b6dc-526e4a43b2bf","lv":3},{"t":"ツェッテルカステン","a":"2865dfa9-8b59-4e13-baee-d97774ffa3e5","lv":3},{"t":"PARA","a":"5909cc7e-ff16-47cc-b14b-e1ad7a6fd527","lv":3},{"t":"Map of Content（索引）","a":"0e1dbaeb-a529-468c-96e3-bf5cce790d22","lv":3},{"t":"KJ法（親和図法）","a":"944a4426-7896-4741-8962-33e1e9ba110e","lv":3},{"t":"9マス（マンダラート）","a":"d47a384b-275d-441e-9a9b-385630e0b14b","lv":3},{"t":"SCAMPER","a":"a018fde3-7f52-4d51-9ced-2d517e222de5","lv":3},{"t":"六つの帽子","a":"eac471c7-f514-4a0f-9dc2-b74480c94200","lv":3},{"t":"仮説管理","a":"fc08a1db-4fe3-4d1d-9e82-b1ff44c6eadc","lv":3},{"t":"Issue Tree","a":"e667e997-0ac4-42ff-a229-202cede33dd1","lv":3},{"t":"Cynefin","a":"8bd59cdc-19f5-47cf-99ad-47cbcde10aa9","lv":3},{"t":"物語レイヤーと身体トラッキング","a":"cbd38093-2ee9-45fe-ad8e-cc9f5f82edf0","lv":3},{"t":"出典管理","a":"8557a1b2-6815-4e55-b4e4-b706e083fc0d","lv":3},{"t":"システマティックレビューと図書館分類","a":"de7a027d-48ad-422e-89fa-e905921678f2","lv":3},{"t":"Must One","a":"5516748e-9617-4419-a64b-43b1ac7a28c5","lv":3},{"t":"作業セット —— 目的別の束","a":"14e80b90-09dc-4382-9f05-fd0ec6ef4ff0","lv":2},{"t":"文献レビュー","a":"779ee7fa-9780-4fe9-a636-f4955c92dc3f","lv":3},{"t":"意思決定","a":"1d22c2e9-e5d2-4e33-b00e-f5bccd5c9b51","lv":3},{"t":"アイデア発散","a":"3c94731e-3f1b-4278-b2bb-bb279c34db89","lv":3},{"t":"研究ノート","a":"0191bc5d-42a2-48f7-86d1-7fd44c14f625","lv":3},{"t":"ふりかえり","a":"fdd86044-899d-44b7-b9f9-e106bdd956b8","lv":3},{"t":"プリセットの体系","a":"1346421a-ec57-4b0d-8a51-168191d9779b","lv":2},{"t":"レイアウトプリセット","a":"daa452af-9dd4-46e3-a66a-7ee94f6c7e3e","lv":3},{"t":"スマートフォルダとそのプリセット","a":"894c8f57-152f-4f25-93ee-ed6bafac7fd7","lv":3},{"t":"AI接続プリセット","a":"424bb98b-3c48-4a79-8c09-af998210c5ca","lv":3},{"t":"AIとの思考","a":"a737c003-b19b-4bbc-bfe1-5d3d2b42ad28","lv":2},{"t":"要約とタグ提案","a":"5bf700d4-c9ba-461d-9895-6fb818ce43ff","lv":3},{"t":"反証・別解釈・批判","a":"a8c86864-40aa-4816-990d-8c6af385481d","lv":3},{"t":"アーカイブに質問","a":"6bbd6d9e-3257-4238-92da-199358cf3093","lv":3},{"t":"リンク候補","a":"a941d719-d98d-49cc-ad05-1de83c133de7","lv":3},{"t":"PageRank分析","a":"878b714d-5c40-4e5f-8d81-b3c744106a2c","lv":3},{"t":"スナップショットと分岐 —— 状態の複製という形態","a":"5b408699-2bdc-4c1e-8891-99b02a164784","lv":2},{"t":"データの置き場所","a":"b248e93e-a3e6-4137-aa5f-d5c09ed46ecf","lv":2},{"t":"テーマ —— 見た目の形態","a":"ac6a7eb1-6e21-428e-aff2-1f6666f1e6ad","lv":2}];
+    var NOTE_A = 'https://note.com/varelser/n/nae30d950c041';
+    var gPanel = document.createElement('div');
+    gPanel.id = 'twGuidePanel';
+    gPanel.style.display = 'none';
+    var gHead = document.createElement('div');
+    gHead.className = 'g-head';
+    var gTitle = document.createElement('span');
+    gTitle.textContent = '思考法・形態の完全解説';
+    var gClose = document.createElement('button');
+    gClose.type = 'button'; gClose.textContent = '\u00d7'; gClose.title = '閉じる';
+    gClose.addEventListener('click', function() { gPanel.style.display = 'none'; });
+    gHead.appendChild(gTitle); gHead.appendChild(gClose);
+    gPanel.appendChild(gHead);
+    var gList = document.createElement('div');
+    gList.className = 'g-list';
+    GUIDE.forEach(function(g) {
+      var a = document.createElement('a');
+      a.href = NOTE_A + '#' + g.a;
+      a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = g.t;
+      a.className = g.lv === 2 ? 'g-sec' : 'g-item';
+      gList.appendChild(a);
+    });
+    gPanel.appendChild(gList);
+    document.body.appendChild(gPanel);
+    var toggleGuide = function() {
+      gPanel.style.display = gPanel.style.display === 'none' ? 'flex' : 'none';
+    };
+    barBtn('解説', '思考法・形態の完全解説を note で読む', function() { toggleGuide(); }, 'guide');
+    var gChip = document.createElement('button');
+    gChip.id = 'twGuideBtn'; gChip.type = 'button'; gChip.textContent = '解説';
+    gChip.title = '思考法・形態の完全解説を note で読む';
+    gChip.addEventListener('click', toggleGuide);
+    document.body.appendChild(gChip);
+    setInterval(function() {
+      if (!gChip.isConnected) document.body.appendChild(gChip);
+      if (!gPanel.isConnected) document.body.appendChild(gPanel);
+      var barVis = bar.isConnected && bar.style.display !== 'none';
+      gChip.style.display = barVis ? 'none' : 'flex';
+    }, 900);
+    api.guideInstalled = true; api.guideLinks = GUIDE.length;
     setInterval(syncVis2, 900);
   } catch (e) { /* look switcher is decorative; never break the app */ }
 })();
