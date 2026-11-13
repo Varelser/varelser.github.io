@@ -429,7 +429,10 @@ const StatePersist = (() => {
     if (!slotName) return false;
     const raw = localStorage.getItem(STORAGE_PREFIX + slotName);
     if (!raw) {
-      if (typeof log === 'function') log('// STATE LOAD: slot "' + slotName + '" not found', 'warn');
+      /* __auto__ は起動時に無条件で読みに来るため、未保存 (初回起動など) は正常系。
+         警告を出すと毎回ログに残ってしまうので黙って戻る。名前付きスロットの
+         明示ロードだけ従来どおり警告する。 */
+      if (slotName !== '__auto__' && typeof log === 'function') log('// STATE LOAD: slot "' + slotName + '" not found', 'warn');
       return false;
     }
     let snap;
