@@ -260,7 +260,7 @@
     .btn.primary{flex:1 1 100%}
     .controls .btn{flex:1 1 auto}
     #btnCalib{flex:1 1 100%}
-    #btnDemo,#btnCamTest{flex:1 1 40%}
+    #btnDemo{flex:1 1 40%}
     .panel{padding:10px}
     .setgrid{gap:6px}
     .setgrid .btn{padding:10px 8px;font-size:13px;line-height:1.5}
@@ -276,43 +276,62 @@
     table.cmp .btn{display:block;width:100%;margin-top:4px}
     table.cmp .btn:first-child{margin-top:0}
   }
+  /* ---------- UI tidy-up: sticky status bar, sticky primary bar, collapsible sections ----------
+     Information architecture only — same Lien tokens, same components.
+     The sticky bar is the verdict hero's compact chip form (the hero
+     stays the primary display); the sections below the live sensor
+     grid are native <details> so nothing needs JS to be reachable. */
+  .stickybar{position:sticky;top:8px;z-index:50;display:flex;align-items:center;gap:10px;height:46px;
+    margin-top:10px;padding:0 12px;background:var(--panel-bg);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);
+    border:1px solid var(--panel-border);border-radius:10px;box-shadow:var(--shadow)}
+  .sb-phase{flex:none;max-width:32vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sb-verdict{font-weight:700;font-size:14.5px;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .stickybar.lv0 .sb-verdict{color:var(--lv0)}
+  .stickybar.lv1 .sb-verdict{color:var(--lv1)}
+  .stickybar.lv2 .sb-verdict{color:var(--lv2)}
+  .stickybar.lv3 .sb-verdict{color:var(--lv3)}
+  .sb-ev{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .sb-score{margin-left:auto;font-family:var(--mono);font-size:20px;font-weight:600;flex:none;line-height:1}
+  .sb-score small{font-size:10.5px;color:var(--muted-2);font-weight:400}
+  #primaryBar{position:sticky;top:62px;z-index:40;background:var(--panel-bg);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);
+    border:1px solid var(--panel-border);border-radius:12px;padding:8px;box-shadow:var(--shadow)}
+  details.acc{background:var(--panel-bg);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);
+    border:1px solid var(--panel-border);border-radius:12px;margin-top:12px;box-shadow:var(--shadow)}
+  details.acc>summary{counter-increment:secc;cursor:pointer;list-style:none;display:flex;align-items:center;
+    min-height:48px;padding:10px 14px;font-size:13.5px;font-weight:700;letter-spacing:.05em;color:var(--fg)}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary::before{content:counter(secc,decimal-leading-zero);font-family:var(--mono);color:var(--muted-2);
+    font-size:11px;margin-right:12px;letter-spacing:.1em}
+  details.acc>summary span{color:var(--muted-2);font-weight:400;font-size:11.5px;letter-spacing:.02em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  details.acc>summary::after{content:"›";margin-left:auto;flex:none;font-family:var(--mono);color:var(--muted-2);
+    font-size:19px;line-height:1;transform:rotate(90deg);transition:transform .2s}
+  details.acc[open]>summary::after{transform:rotate(-90deg)}
+  .acc-body{padding:2px 14px 14px;border-top:1px solid var(--border)}
+  .acc-body .wide{border:none;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0;margin-top:14px;box-shadow:none}
+  .acc-body .notes{border:none;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:2px 0 0;margin-top:0;box-shadow:none}
+  .acc-body .diagbar{margin-top:2px}
+  .acc-body .profctl{margin-bottom:0}
+  .subh{font-size:11px;letter-spacing:.14em;font-weight:700;color:var(--fg);margin:16px 0 8px}
+  .subh:first-child{margin-top:6px}
+  .subh span{color:var(--muted-2);letter-spacing:.03em;font-weight:400;margin-left:6px}
+  @media(max-width:640px){
+    .stage{height:76dvh;min-height:520px}
+    .sb-ev{display:none}
+    .hero-main{padding:14px 16px}
+    .verdict{font-size:30px}
+    .verdict-sub{font-size:12.5px;line-height:1.7}
+    .hero-score{padding:12px 16px}
+    .ring-num{font-size:40px}
+    .level-meter{margin:10px 0 2px}
+  }
   @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- ======== FULLSCREEN CAMERA (primary view) ======== -->
-  <section class="stage" aria-label="カメラ映像（全面）">
-    <video id="cam" playsinline webkit-playsinline muted autoplay aria-hidden="true"></video>
-    <canvas id="view" width="480" height="360"></canvas>
-    <canvas id="trackOverlay" width="480" height="360" aria-hidden="true"></canvas>
-    <div class="idle-guide" id="idleGuide"><div class="ig-t" id="idleTitle">カメラ待機中</div><div class="ig-s" id="idleSub">「センサーを起動」を押すと映像が始まります</div></div>
-    <div class="hud">
-      <span class="hudbox"><span class="k">MODE</span> <span id="hudMode">疑似サーモ</span></span>
-      <span class="hudbox"><span class="k">輝度</span> <span id="hudBright">–</span>　<span class="k">動き</span> <span id="hudMotion">–</span>　<span class="k">解析</span> <span id="hudEngine">CPU</span>　<span class="k">FPS</span> <span id="hudFps">–</span></span>
-    </div>
-    <div class="anomaly-banner" id="anomalyBanner" role="alert" aria-live="polite" aria-hidden="true">⚠ <b>異常を検知</b> — 追跡中</div>
-    <div class="follow-tip" id="followTip" aria-hidden="true">⚠ 追跡中<small>動きを追っています</small></div>
-    <div class="flash" id="flash"></div>
-    <div class="modes" role="group" aria-label="表示モード">
-      <button class="mode sel" data-mode="thermal">疑似サーモ<small>明るさと赤みを熱っぽく</small></button>
-      <button class="mode" data-mode="motion">動き<small>動いた場所だけ光る</small></button>
-      <button class="mode" data-mode="flicker">光のゆらぎ<small>ちらつき・明滅を強調</small></button>
-      <button class="mode" data-mode="edge">輪郭<small>形の変化を見る</small></button>
-      <button class="mode" data-mode="normal">通常<small>計測グリッド付き</small></button>
-      <button class="mode" data-mode="heat">蓄積ヒート<small>動きが集まる場所</small></button>
-      <button class="mode" data-mode="nightred">赤色・夜間<small>暗順応を守る表示</small></button>
-      <button class="mode" data-mode="raw">生映像<small>無加工・カメラそのまま</small></button>
-    </div>
-    <div class="stage-bottom">
-      <div class="stage-verdict"><div class="sv-t" id="stageVerdict">まだ測定していません</div><div class="sv-s" id="stageScore">気配スコア – ／ 追跡対象 なし</div></div>
-      <div class="stage-actions"><button class="btn" id="btnFull" type="button">⛶ 全画面</button></div>
-    </div>
-  </section>
-  <div class="diagbar mono" id="camDiag">カメラ診断：ストリーム なし ／ トラック — ／ 映像 0×0 ／ readyState 0 ／ 再生時刻 0.0s（停止） ／ 処理フレーム 0</div>
-
-  <!-- ======== VERDICT ======== -->
+<!-- ======== VERDICT ======== -->
   <section class="hero" aria-label="総合判定">
     <div class="hero-main">
       <div class="hero-top"><span class="stchip" id="stPhase">待機中</span><span class="hero-cap">総合判定 — VERDICT</span></div>
@@ -339,50 +358,82 @@
     </div>
   </section>
 
-  <!-- ======== CONTROLS ======== -->
-  <div class="controls">
+  <!-- ======== STICKY STATUS BAR (compact mirror of the verdict) ======== -->
+  <div class="stickybar" id="stickyBar" role="status" aria-label="現在の判定（要約）">
+    <span class="stchip sb-phase" id="sbPhase">待機中</span>
+    <span class="sb-verdict" id="sbVerdict">まだ測定していません</span>
+    <span class="sb-ev" id="sbEv"></span>
+    <span class="sb-score"><span id="sbScore">–</span><small> / 100</small></span>
+  </div>
+
+<!-- ======== FULLSCREEN CAMERA (primary view) ======== -->
+  <section class="stage" aria-label="カメラ映像（全面）">
+    <video id="cam" playsinline webkit-playsinline muted autoplay aria-hidden="true"></video>
+    <canvas id="view" width="480" height="360"></canvas>
+    <canvas id="trackOverlay" width="480" height="360" aria-hidden="true"></canvas>
+    <div class="idle-guide" id="idleGuide"><div class="ig-t" id="idleTitle">カメラ待機中</div><div class="ig-s" id="idleSub">「センサーを起動」を押すと映像が始まります</div></div>
+    <div class="hud">
+      <span class="hudbox"><span class="k">MODE</span> <span id="hudMode">疑似サーモ</span></span>
+      <span class="hudbox"><span class="k">輝度</span> <span id="hudBright">–</span>　<span class="k">動き</span> <span id="hudMotion">–</span>　<span class="k">解析</span> <span id="hudEngine">CPU</span>　<span class="k">FPS</span> <span id="hudFps">–</span></span>
+    </div>
+    <div class="anomaly-banner" id="anomalyBanner" role="alert" aria-live="polite" aria-hidden="true">⚠ <b>異常を検知</b> — 追跡中</div>
+    <div class="follow-tip" id="followTip" aria-hidden="true">⚠ 追跡中<small>動きを追っています</small></div>
+    <div class="flash" id="flash"></div>
+    <div class="modes" role="group" aria-label="表示モード">
+      <button class="mode sel" data-mode="thermal">疑似サーモ<small>明るさと赤みを熱っぽく</small></button>
+      <button class="mode" data-mode="motion">動き<small>動いた場所だけ光る</small></button>
+      <button class="mode" data-mode="flicker">光のゆらぎ<small>ちらつき・明滅を強調</small></button>
+      <button class="mode" data-mode="edge">輪郭<small>形の変化を見る</small></button>
+      <button class="mode" data-mode="normal">通常<small>計測グリッド付き</small></button>
+      <button class="mode" data-mode="heat">蓄積ヒート<small>動きが集まる場所</small></button>
+      <button class="mode" data-mode="nightred">赤色・夜間<small>暗順応を守る表示</small></button>
+      <button class="mode" data-mode="raw">生映像<small>無加工・カメラそのまま</small></button>
+    </div>
+    <div class="stage-bottom">
+      <div class="stage-verdict"><div class="sv-t" id="stageVerdict">まだ測定していません</div><div class="sv-s" id="stageScore">気配スコア – ／ 追跡対象 なし</div></div>
+    </div>
+  </section>
+
+  <div class="controls" id="primaryBar">
     <button class="btn primary" id="btnStart">▶ ① センサーを起動して監視をはじめる</button>
     <button class="btn teal" id="btnCalib" disabled>⟳ ② この部屋の「いつも」を覚える（20秒）</button>
+    <button class="btn" id="btnFull" type="button">⛶ 全画面</button>
     <button class="btn" id="btnDemo">デモで動きを試す</button>
-    <button class="btn" id="btnCamTest">カメラだけテスト（最小構成）</button>
   </div>
 
-  <div class="camhelp" id="camHelp" role="alert"></div>
-  <div class="camhelp" id="camTestOut" role="status"></div>
-
-  <div class="panel">
-    <div class="setgrid">
-      <div class="sens">
-        <label for="sensRange">感度</label>
-        <input type="range" id="sensRange" min="50" max="200" value="100" />
-        <span class="val" id="sensVal">1.0×</span>
-      </div>
-      <button class="btn tgl" id="btnWake" aria-pressed="false">画面を消さない（Wake Lock）</button>
-      <button class="btn tgl" id="btnNight" aria-pressed="false">夜間モード（真っ黒＋赤）</button>
-      <button class="btn tgl" id="btnAdapt" aria-pressed="true">基準をゆっくり追従させる</button>
-      <button class="btn" id="btnTorch" disabled>ライト点灯（暗い部屋用）</button>
-      <div class="selwrap"><label for="selCam">カメラ</label><select id="selCam"><option value="">自動（背面）</option></select></div>
-      <div class="selwrap" id="zoomWrap" style="display:none"><label for="zoomRange">ズーム</label><input type="range" id="zoomRange" min="1" max="1" step="0.1" value="1" style="accent-color:var(--fg);min-height:36px" /></div>
-    </div>
-  </div>
-
-  <!-- ======== CONVENIENCE ======== -->
-  <div class="panel" aria-label="便利機能">
-    <div class="setgrid">
-      <button class="btn" id="btnPresetQuiet" type="button">プリセット：静かな部屋（感度1.4×）</button>
-      <button class="btn" id="btnPresetNormal" type="button">プリセット：通常（感度1.0×）</button>
-      <button class="btn" id="btnPresetNoisy" type="button">プリセット：音の多い部屋（感度0.7×）</button>
-      <div class="selwrap"><label for="selTimer">タイマー通知</label><select id="selTimer"><option value="0">なし</option><option value="30">30分後</option><option value="60">1時間後</option><option value="180">3時間後</option></select></div>
-      <button class="btn tgl" id="btnAlertSound" type="button" aria-pressed="false">アラート音（超危険で鳴らす）</button>
-      <button class="btn" id="btnNotify" type="button">通知を許可する</button>
-      <button class="btn" id="btnPersist" type="button">端末内保存を永続化する</button>
-    </div>
-    <p style="font-size:12px;color:var(--ink2);line-height:1.8;margin:10px 2px 0" id="convNote">タイマーは監視を止めず、指定時間にログと音（アラート音ON時）で知らせます。通知はホーム画面に追加した状態で使える場合があります（iOSの仕様）。</p>
-  </div>
-
-  <!-- ======== SENSORS ======== -->
+<!-- ======== SENSORS ======== -->
   <h2 class="sec">全センサー <span>— 16チャンネルを同時に監視し、異常は合算されます</span></h2>
   <div class="grid" id="sensorGrid"></div>
+  <div class="wide">
+    <div class="cap" style="margin:0"><span id="locCap">位置情報：未取得</span><span id="batCap"></span><span id="clockCap"></span></div>
+  </div>
+
+  <details class="acc" id="secRecord" open>
+    <summary>記録<span> — 検知ログ・スナップショット・映像と音声・書き出し</span></summary>
+    <div class="acc-body">
+  <h3 class="subh">検知ログ <span>— 複数のセンサーが同時に反応した記録ほど、意味が重くなります</span></h3>
+  <ul class="log" id="eventLog"></ul>
+  <div class="empty" id="logEmpty">まだ記録はありません。<br>校正が終わって監視が始まると、「いつも」と違う変化がここに残ります。</div>
+
+  <h3 class="subh">自動スナップショット <span>— 強い同時反応の瞬間に保存されます（タップでダウンロード）</span></h3>
+  <div class="shots" id="shots"></div>
+  <div class="empty" id="shotsEmpty">強い反応が起きると、その瞬間の映像がここに残ります。</div>
+
+  <h3 class="subh">イベント映像・音声 <span>— 強い同時反応のとき、短いクリップも残します（この端末・このセッション内のみ）</span></h3>
+  <div class="clips" id="clips"></div>
+  <div class="empty" id="clipsEmpty">強い同時反応が起きると、映像クリップと音声だけの記録（EVP用）がここに残ります。</div>
+
+      <h3 class="subh">書き出し <span>— ログと履歴はこの端末の中だけにあります</span></h3>
+      <div class="profctl">
+        <button class="btn" id="btnExport">記録を共有／書き出し</button>
+        <button class="btn" id="btnClearHist">端末内の記録を消す</button>
+      </div>
+    </div>
+  </details>
+
+  <details class="acc" id="secAnalysis">
+    <summary>分析<span> — 音とスコアの流れ・動きの蓄積・全セッション履歴</span></summary>
+    <div class="acc-body">
   <div class="wide">
     <canvas id="spectrum" height="86" aria-label="音のスペクトラム"></canvas>
     <div class="cap"><span>音のスペクトラム（左＝低い音／右＝高い音）</span><span id="specCap">マイク未起動</span></div>
@@ -399,46 +450,61 @@
     <div class="cap" style="margin:0 0 8px"><span>動きのかたまり — 大きさと残り方からの推定（断定ではありません）</span><span id="blobCap">—</span></div>
     <div class="hints" id="blobHints"><div class="hint">監視が始まると、動いた領域の大きさと持続から「ほこり・虫っぽい」「大きめの何かっぽい」といった目安を表示します。</div></div>
   </div>
-  <div class="wide">
-    <div class="cap" style="margin:0"><span id="locCap">位置情報：未取得</span><span id="batCap"></span><span id="clockCap"></span></div>
-  </div>
-
-  <!-- ======== LOG ======== -->
-  <h2 class="sec">検知ログ <span>— 複数のセンサーが同時に反応した記録ほど、意味が重くなります</span></h2>
-  <ul class="log" id="eventLog"></ul>
-  <div class="empty" id="logEmpty">まだ記録はありません。<br>校正が終わって監視が始まると、「いつも」と違う変化がここに残ります。</div>
-
-  <h2 class="sec">自動スナップショット <span>— 強い同時反応の瞬間に保存されます（タップでダウンロード）</span></h2>
-  <div class="shots" id="shots"></div>
-  <div class="empty" id="shotsEmpty">強い反応が起きると、その瞬間の映像がここに残ります。</div>
-
-  <!-- ======== CLIPS ======== -->
-  <h2 class="sec">イベント映像・音声 <span>— 強い同時反応のとき、短いクリップも残します（この端末・このセッション内のみ）</span></h2>
-  <div class="clips" id="clips"></div>
-  <div class="empty" id="clipsEmpty">強い同時反応が起きると、映像クリップと音声だけの記録（EVP用）がここに残ります。</div>
-
-  <!-- ======== HISTORY & PLACES ======== -->
-  <h2 class="sec">これまでの記録 <span>— ログとスコア履歴はこの端末の中にだけ残ります</span></h2>
+  <h3 class="subh">これまでの記録 <span>— ログとスコア履歴はこの端末の中にだけ残ります</span></h3>
   <div class="wide">
     <canvas id="history" height="72" aria-label="気配スコアの履歴"></canvas>
     <div class="cap"><span>気配スコアの履歴（この端末に残した全セッション）</span><span id="histCap">記録なし</span></div>
   </div>
+    </div>
+  </details>
 
-  <h2 class="sec">場所プロファイル <span>— 部屋ごとの「いつも」を名前で残して、場所同士を比べられます</span></h2>
-  <div class="wide">
+  <details class="acc" id="secPlaces">
+    <summary>場所プロファイル<span> — 部屋ごとの「いつも」を名前で残して比べる</span></summary>
+    <div class="acc-body">
     <div class="profctl">
       <input class="txtin" id="placeName" type="text" placeholder="場所の名前（例：寝室、実家の仏間）" autocomplete="off" />
       <button class="btn teal" id="btnSavePlace">今の校正をこの場所で保存</button>
-      <button class="btn" id="btnExport">記録を共有／書き出し</button>
-      <button class="btn" id="btnClearHist">端末内の記録を消す</button>
     </div>
     <div id="placeTable"><p style="color:var(--dim);font-size:12.5px;margin:4px 0">まだ場所は保存されていません。校正が終わった部屋で「今の校正をこの場所で保存」を押してください。</p></div>
     <p style="font-size:12.5px;color:var(--ink2);line-height:1.8;margin:10px 0 0">「読み込む」と、その場所の基準で監視を続けられます。「何かがある場所<b>かも</b>」は、場所同士を比べて初めて見えてくるものです。</p>
-  </div>
+    </div>
+  </details>
 
-  <!-- ======== TECH STATUS ======== -->
-  <details class="tech">
-    <summary>この端末で使えている技術（自動判定）</summary>
+  <details class="acc" id="secSettings">
+    <summary>設定<span> — 感度・プリセット・タイマー・通知・表示</span></summary>
+    <div class="acc-body">
+      <h3 class="subh">監視とカメラ</h3>
+    <div class="setgrid">
+      <div class="sens">
+        <label for="sensRange">感度</label>
+        <input type="range" id="sensRange" min="50" max="200" value="100" />
+        <span class="val" id="sensVal">1.0×</span>
+      </div>
+      <button class="btn tgl" id="btnWake" aria-pressed="false">画面を消さない（Wake Lock）</button>
+      <button class="btn tgl" id="btnNight" aria-pressed="false">夜間モード（真っ黒＋赤）</button>
+      <button class="btn tgl" id="btnAdapt" aria-pressed="true">基準をゆっくり追従させる</button>
+      <button class="btn" id="btnTorch" disabled>ライト点灯（暗い部屋用）</button>
+      <div class="selwrap"><label for="selCam">カメラ</label><select id="selCam"><option value="">自動（背面）</option></select></div>
+      <div class="selwrap" id="zoomWrap" style="display:none"><label for="zoomRange">ズーム</label><input type="range" id="zoomRange" min="1" max="1" step="0.1" value="1" style="accent-color:var(--fg);min-height:36px" /></div>
+    </div>
+      <h3 class="subh">プリセットと通知</h3>
+    <div class="setgrid">
+      <button class="btn" id="btnPresetQuiet" type="button">プリセット：静かな部屋（感度1.4×）</button>
+      <button class="btn" id="btnPresetNormal" type="button">プリセット：通常（感度1.0×）</button>
+      <button class="btn" id="btnPresetNoisy" type="button">プリセット：音の多い部屋（感度0.7×）</button>
+      <div class="selwrap"><label for="selTimer">タイマー通知</label><select id="selTimer"><option value="0">なし</option><option value="30">30分後</option><option value="60">1時間後</option><option value="180">3時間後</option></select></div>
+      <button class="btn tgl" id="btnAlertSound" type="button" aria-pressed="false">アラート音（超危険で鳴らす）</button>
+      <button class="btn" id="btnNotify" type="button">通知を許可する</button>
+      <button class="btn" id="btnPersist" type="button">端末内保存を永続化する</button>
+    </div>
+    <p style="font-size:12px;color:var(--ink2);line-height:1.8;margin:10px 2px 0" id="convNote">タイマーは監視を止めず、指定時間にログと音（アラート音ON時）で知らせます。通知はホーム画面に追加した状態で使える場合があります（iOSの仕様）。</p>
+    </div>
+  </details>
+
+  <details class="acc" id="secDevice">
+    <summary>端末の能力<span> — 使えている技術・自動判定・機種ごとの仕様差</span></summary>
+    <div class="acc-body">
+      <h3 class="subh">使えている技術（自動判定）</h3>
     <ul class="caplist">
       <li id="capGpu"><span class="st no">判定中</span><span>WebGPU（映像解析のGPU計算）</span></li>
       <li id="capWake"><span class="st no">判定中</span><span>Screen Wake Lock（監視中の画面維持）</span></li>
@@ -465,11 +531,9 @@
       <li><span class="st no">未対応</span><span>本体・バッテリー温度：Webからは取得できません</span></li>
     </ul>
     <p>未対応の技術は「使えているふり」をせず、代替手段（CPU解析、キャンバス保存、ダウンロードなど）で同じ目的を果たします。対応状況はこの端末・このブラウザで実際に判定した結果です。</p>
-  </details>
-
-  <!-- ======== DEVICE AUTO-CHECK ======== -->
-  <h2 class="sec">この端末の自動判定 <span>— 機種そのものはWebから断定できないため、測れるものから推定します</span></h2>
-  <div class="wide">
+  
+      <h3 class="subh">この端末の自動判定</h3>
+<div class="wide">
     <ul class="caplist">
       <li id="capScreen"><span class="st no">判定中</span><span>画面（論理サイズ／ピクセル比）</span></li>
       <li id="capRefresh"><span class="st no">判定中</span><span>画面のリフレッシュレート実測（ProMotion判定）</span></li>
@@ -481,10 +545,8 @@
     <p class="devlive" id="magLive"></p>
     <p style="font-size:12.5px;color:var(--ink2);line-height:1.8;margin:8px 0 0">ブラウザは端末の正確な機種名を教えてくれません。上の推定は画面サイズ等からの「候補」表示です。確実に分かるのは、下の仕様差の表のうち「その世代のProかどうか」で効いてくる項目です。</p>
   </div>
-
-  <!-- ======== MODEL DIFFERENCES ======== -->
-  <h2 class="sec">iPhone 機種ごとの仕様差 <span>— このアプリに関わる部分だけ</span></h2>
-  <div class="wide wide-scroll">
+      <h3 class="subh">iPhone 機種ごとの仕様差 <span>— このアプリに関わる部分だけ</span></h3>
+<div class="wide wide-scroll">
     <table class="model">
       <tr><th>世代</th><th>LiDAR</th><th>カメラまわり（監視に関わる差）</th><th>センサー・その他の差</th></tr>
       <tr><td><b>iPhone 12</b><br>12 Pro / Pro Max</td><td>Pro系のみ搭載</td><td>メイン12MP。Pro系は望遠あり</td><td>磁気・気圧センサーは全機種搭載（ただし生値はWeb不可＝全世代共通）。MagSafe・5Gが始まった世代</td></tr>
@@ -496,8 +558,24 @@
     </table>
     <p style="font-size:12.5px;color:var(--ink2);line-height:1.85;margin:10px 0 0"><b style="color:var(--ink)">結論：</b>このWeb版が使うカメラ映像・マイク・加速度・方位は全世代で共通に使えます。機種差が効くのは主に<b style="color:var(--ink)">暗い部屋でのカメラ性能</b>と、<b style="color:var(--ink)">LiDARの有無（Pro系のみ／ネイティブ版でのみ使用可）</b>。いちばん欲しい磁場と気圧は、どの機種にもセンサー自体は入っていますが、生値をWebに渡さないのは全世代共通の制限です。</p>
   </div>
+    </div>
+  </details>
 
-  <!-- ======== NOTES ======== -->
+  <details class="acc" id="secDiag">
+    <summary>診断<span> — カメラ診断と、カメラだけの切り分けテスト</span></summary>
+    <div class="acc-body">
+      <div class="diagbar mono" id="camDiag">カメラ診断：ストリーム なし ／ トラック — ／ 映像 0×0 ／ readyState 0 ／ 再生時刻 0.0s（停止） ／ 処理フレーム 0</div>
+      <div class="profctl" style="margin-top:10px">
+        <button class="btn" id="btnCamTest">カメラだけテスト（最小構成）</button>
+      </div>
+<div class="camhelp" id="camHelp" role="alert"></div>
+  <div class="camhelp" id="camTestOut" role="status"></div>
+    </div>
+  </details>
+
+  <details class="acc" id="secAbout">
+    <summary>しくみと限界<span> — 感知しているもの／Web版では触れないもの</span></summary>
+    <div class="acc-body">
   <div class="notes">
     <div class="cols">
       <div>
@@ -536,10 +614,11 @@
       <p><b>正直な線引き：</b>このアプリが検知するのは「説明のつかない環境の変化」です。判定はすべて「何かいる<b>かも</b>」の可能性レベルで、幽霊の存在を科学的に証明するものではありません。ただし、無人の部屋で複数のセンサーが同じ瞬間に反応した記録は、偶然では片づけにくい事実として残ります。あとは、あなたの判断です。</p>
     </div>
   </div>
+    </div>
+  </details>
 
-  <footer>iPhone Sensor Display — データはこの端末の中だけで処理され、どこにも送信されません。<br>監視中は iPhone を固定し、画面をつけたままにしてください（スリープするとセンサーも止まります）。</footer>
+<footer>iPhone Sensor Display — データはこの端末の中だけで処理され、どこにも送信されません。<br>監視中は iPhone を固定し、画面をつけたままにしてください（スリープするとセンサーも止まります）。</footer>
 </div>
-
 
 <canvas id="proc" width="480" height="360" style="display:none"></canvas>
 
@@ -2626,6 +2705,64 @@ paintStorageCap();
       if(got) setCap("capGenericMag","ok","Generic Sensor 磁気センサー：生値（µT）を取得できています。下に実測値をライブ表示中。");
     },1500);
   }catch(e){ setCap("capGenericMag","no","Generic Sensor 磁気センサー：起動できませんでした。"); }
+})();
+</script>
+<script>
+"use strict";
+/* ---------- UI organisation layer (tidy-up) ----------
+   Display organisation only: it never touches sensors, the camera
+   stream, scoring, or the stored data keys.
+   - Each collapsible section's open/closed state persists in
+     kehai.ui.v1 (a display preference, not sensor data).
+   - The sticky status bar mirrors the verdict hero (phase, verdict,
+     score, top evidence) so the current state stays visible while
+     scrolling. The hero remains the primary display; this is its
+     compact chip form. */
+(function(){
+  var KEY="kehai.ui.v1", state={};
+  try{ state=JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ state={}; }
+  document.querySelectorAll("details.acc").forEach(function(d){
+    if(d.id && Object.prototype.hasOwnProperty.call(state,d.id)) d.open=!!state[d.id];
+    d.addEventListener("toggle",function(){
+      if(d.id){ state[d.id]=d.open; try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+      if(d.open && d.id==="secAnalysis"){
+        try{ paintHistory(); }catch(e){}
+        try{ paintTrend(); }catch(e){}
+      }
+    });
+  });
+  /* If the camera core reports an error, make sure its guidance panel
+     (now inside the 診断 section) is actually visible. */
+  if(typeof window.showCamError==="function"){
+    var _origShowCamError=window.showCamError;
+    window.showCamError=function(){
+      var r=_origShowCamError.apply(this,arguments);
+      var d=document.getElementById("secDiag"); if(d) d.open=true;
+      return r;
+    };
+  }
+  function byId(id){ return document.getElementById(id); }
+  function syncSticky(){
+    var vt=byId("verdictText"), sn=byId("scoreNum"), ph=byId("stPhase"), ev=byId("evChips");
+    var bar=byId("stickyBar"); if(!bar) return;
+    var v=byId("sbVerdict"), s=byId("sbScore"), p=byId("sbPhase"), e=byId("sbEv");
+    if(v && vt && v.textContent!==vt.textContent) v.textContent=vt.textContent;
+    if(s && sn && s.textContent!==sn.textContent) s.textContent=sn.textContent;
+    if(p && ph){
+      if(p.textContent!==ph.textContent) p.textContent=ph.textContent;
+      var cls="stchip sb-phase"+(ph.classList.contains("on")?" on":ph.classList.contains("warn")?" warn":"");
+      if(p.className!==cls) p.className=cls;
+    }
+    if(e && ev){
+      var chip=ev.querySelector(".evchip"), t=chip? chip.textContent.replace(/\s+/g," ").trim() : "";
+      if(e.textContent!==t) e.textContent=t;
+    }
+    var m=vt? /lv(\d)/.exec(vt.className||"") : null;
+    var bc="stickybar"+(m? " lv"+m[1] : "");
+    if(bar.className!==bc) bar.className=bc;
+  }
+  syncSticky();
+  setInterval(syncSticky,450);
 })();
 </script>
 </body>
