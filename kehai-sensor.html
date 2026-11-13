@@ -35,7 +35,7 @@
   html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:var(--sans)}
   button,[role="button"],select,summary,input{ min-height:36px; }
   button{font-family:var(--sans);cursor:pointer}
-  .wrap{max-width:1060px;margin:0 auto;padding:0 14px 60px;counter-reset:secc}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 14px 60px}
   @media(max-width:640px){.wrap{padding:0 0 40px}.wrap>*:not(.stage){margin-left:14px;margin-right:14px}.wrap>.stage{margin-left:0;margin-right:0}}
   .mono{font-family:var(--mono)}
 
@@ -46,9 +46,8 @@
   .hero-main{padding:20px 22px}
   .hero-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .hero-cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--muted-2)}
-  .brandline{display:flex;align-items:baseline;gap:10px;padding:14px 2px 10px}
+  .brandline{display:flex;align-items:baseline;justify-content:center;text-align:center;gap:10px;padding:14px 2px 10px}
   .brand-name{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.28em;color:var(--fg)}
-  .brand-sub{font-size:11px;letter-spacing:.14em;color:var(--muted-2)}
   .hero-score{border-left:1px solid var(--panel-border);padding:20px 22px;display:flex;flex-direction:column;justify-content:center;background:var(--panel-header-bg)}
   .ring-num{font-family:var(--mono);font-size:64px;font-weight:600;line-height:1;color:var(--fg)}
   .ring-lab{font-size:10.5px;letter-spacing:.18em;color:var(--muted-2);margin-top:6px;font-family:var(--mono)}
@@ -154,10 +153,8 @@
   .camhelp ol{margin:6px 0 0;padding-left:19px}
 
   /* ---------- sensor grid ---------- */
-  h2.sec{font-size:11px;letter-spacing:.18em;color:var(--fg);margin:30px 2px 12px;font-weight:700;counter-increment:secc;
+  h2.sec{font-size:11px;letter-spacing:.18em;color:var(--fg);margin:30px 2px 12px;font-weight:700;
     border-bottom:1px solid var(--border);padding-bottom:8px;text-transform:none}
-  h2.sec::before{content:counter(secc,decimal-leading-zero);font-family:var(--mono);color:var(--muted-2);
-    font-size:11px;margin-right:12px;letter-spacing:.1em}
   h2.sec span{color:var(--muted-2);letter-spacing:.04em;font-weight:400;margin-left:8px;font-size:11px}
   .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   @media(min-width:760px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -300,11 +297,9 @@
     border:1px solid var(--panel-border);border-radius:12px;padding:8px;box-shadow:var(--shadow)}
   details.acc{background:var(--panel-bg);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);
     border:1px solid var(--panel-border);border-radius:12px;margin-top:12px;box-shadow:var(--shadow)}
-  details.acc>summary{counter-increment:secc;cursor:pointer;list-style:none;display:flex;align-items:center;
+  details.acc>summary{cursor:pointer;list-style:none;display:flex;align-items:center;
     min-height:48px;padding:10px 14px;font-size:13.5px;font-weight:700;letter-spacing:.05em;color:var(--fg)}
   details.acc>summary::-webkit-details-marker{display:none}
-  details.acc>summary::before{content:counter(secc,decimal-leading-zero);font-family:var(--mono);color:var(--muted-2);
-    font-size:11px;margin-right:12px;letter-spacing:.1em}
   details.acc>summary span{color:var(--muted-2);font-weight:400;font-size:11.5px;letter-spacing:.02em;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   details.acc>summary::after{content:"›";margin-left:auto;flex:none;font-family:var(--mono);color:var(--muted-2);
@@ -328,48 +323,40 @@
     .ring-num{font-size:40px}
     .level-meter{margin:10px 0 2px}
   }
+  /* ---------- separate pages for sections 02–08 ----------
+     The artifact is one self-contained file, so "pages" are views
+     switched in-page and addressed by hash (#/record, #/analysis, …):
+     the monitor view keeps the camera, verdict and 01 全センサー;
+     each of 02–08 gets its own page and only one page shows at a time.
+     Section numbers are pinned per-section below so a page always
+     shows its true number even when the other sections are hidden
+     (CSS counters skip display:none boxes). */
+  .page-hidden{display:none!important}
+  .pagenav{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px}
+  .pagenav a{display:inline-flex;align-items:baseline;gap:7px;min-height:40px;padding:9px 13px;
+    border:1px solid var(--option-inactive-border);border-radius:9999px;background:var(--control-bg);
+    color:var(--muted);text-decoration:none;font-size:13px;font-weight:700;line-height:1.2}
+  .pagenav a:hover{border-color:var(--option-inactive-hover);color:var(--fg)}
+  .pagenav a[aria-current="page"]{background:var(--option-active-bg);border-color:var(--option-active-border);color:var(--option-active-fg)}
   @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header class="brandline"><span class="brand-name">STRANGER THINGS</span><span class="brand-sub">気配センサー</span></header>
+<header class="brandline"><span class="brand-name">STRANGER THINGS</span></header>
 
-<!-- ======== VERDICT ======== -->
-  <section class="hero" aria-label="総合判定">
-    <div class="hero-main">
-      <div class="hero-top"><span class="stchip" id="stPhase">待機中</span><span class="hero-cap">総合判定 — VERDICT</span></div>
-      <p class="verdict" id="verdictText">まだ測定していません</p>
-      <div class="level-meter" id="levelMeter" aria-label="異常レベル（4段階）">
-        <span data-lv="0">異常なし</span><span data-lv="1">異常あり？</span><span data-lv="2">異常あり</span><span data-lv="3">超危険</span>
-      </div>
-      <p class="verdict-sub" id="verdictSub">①センサーを起動すると、続けて②この部屋の「いつも」を20秒で覚える校正が自動で始まります。部屋を無人の状態にしてから起動してください。判定が出るのは、測定が始まってからです。</p>
-      <div class="evchips" id="evChips"></div>
-      <div class="calibbar" id="calibBar"><i id="calibFill"></i></div>
-    </div>
-    <div class="hero-score">
-      <div class="ring-num" id="scoreNum">–</div>
-      <div class="ring-lab">気配スコア / 100</div>
-      <div class="scorebar"><i id="scoreFill"></i></div>
-      <div class="statusline">
-        <span class="stchip" id="stCam">カメラ —</span>
-        <span class="stchip" id="stMic">マイク —</span>
-        <span class="stchip" id="stMot">モーション —</span>
-        <span class="stchip" id="stLoc">位置 —</span>
-        <span class="stchip" id="stGpu">解析 CPU</span>
-        <span class="stchip" id="stWake">画面維持 OFF</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ======== STICKY STATUS BAR (compact mirror of the verdict) ======== -->
-  <div class="stickybar" id="stickyBar" role="status" aria-label="現在の判定（要約）">
-    <span class="stchip sb-phase" id="sbPhase">待機中</span>
-    <span class="sb-verdict" id="sbVerdict">まだ測定していません</span>
-    <span class="sb-ev" id="sbEv"></span>
-    <span class="sb-score"><span id="sbScore">–</span><small> / 100</small></span>
-  </div>
+<!-- ======== PAGE NAVIGATION (02–08 live on their own pages) ======== -->
+<nav class="pagenav" id="pageNav" aria-label="ページ切り替え">
+  <a href="#/monitor" data-page="monitor" aria-current="page">監視</a>
+  <a href="#/record" data-page="record">記録</a>
+  <a href="#/analysis" data-page="analysis">分析</a>
+  <a href="#/places" data-page="places">場所プロファイル</a>
+  <a href="#/settings" data-page="settings">設定</a>
+  <a href="#/device" data-page="device">端末の能力</a>
+  <a href="#/diag" data-page="diag">診断</a>
+  <a href="#/about" data-page="about">しくみと限界</a>
+</nav>
 
 <!-- ======== FULLSCREEN CAMERA (primary view) ======== -->
   <section class="stage" aria-label="カメラ映像（全面）">
@@ -399,19 +386,60 @@
     </div>
   </section>
 
-  <div class="controls" id="primaryBar">
-    <button class="btn primary" id="btnStart">▶ ① センサーを起動して監視をはじめる</button>
-    <button class="btn teal" id="btnCalib" disabled>⟳ ② この部屋の「いつも」を覚える（20秒）</button>
+  <!-- ======== STICKY STATUS BAR (compact mirror of the verdict) ======== -->
+  <div class="stickybar" id="stickyBar" role="status" aria-label="現在の判定（要約）">
+    <span class="stchip sb-phase" id="sbPhase">待機中</span>
+    <span class="sb-verdict" id="sbVerdict">まだ測定していません</span>
+    <span class="sb-ev" id="sbEv"></span>
+    <span class="sb-score"><span id="sbScore">–</span><small> / 100</small></span>
+  </div>
+
+<div class="controls" id="primaryBar">
+    <button class="btn primary" id="btnStart">▶ センサーを起動して監視をはじめる</button>
+    <button class="btn teal" id="btnCalib" disabled>⟳ この部屋の「いつも」を覚える（20秒）</button>
     <button class="btn" id="btnFull" type="button">⛶ 全画面</button>
     <button class="btn" id="btnDemo">デモで動きを試す</button>
   </div>
 
+<!-- ======== VERDICT ======== -->
+  <section class="hero" aria-label="総合判定">
+    <div class="hero-main">
+      <div class="hero-top"><span class="stchip" id="stPhase">待機中</span><span class="hero-cap">総合判定 — VERDICT</span></div>
+      <p class="verdict" id="verdictText">まだ測定していません</p>
+      <div class="level-meter" id="levelMeter" aria-label="異常レベル（4段階）">
+        <span data-lv="0">異常なし</span><span data-lv="1">異常あり？</span><span data-lv="2">異常あり</span><span data-lv="3">超危険</span>
+      </div>
+      <p class="verdict-sub" id="verdictSub">まず部屋を出て、誰もいない状態にしてください。その状態で「センサーを起動」を押すと、最初の20秒でこの部屋のふだんの状態を覚えます。その20秒間は部屋に入らないでください。終わると自動で監視が始まり、「ふだん」と違う変化があるかどうかを判定します。</p>
+      <div class="evchips" id="evChips"></div>
+      <div class="calibbar" id="calibBar"><i id="calibFill"></i></div>
+    </div>
+    <div class="hero-score">
+      <div class="ring-num" id="scoreNum">–</div>
+      <div class="ring-lab">気配スコア / 100</div>
+      <div class="scorebar"><i id="scoreFill"></i></div>
+      <div class="statusline">
+        <span class="stchip" id="stCam">カメラ —</span>
+        <span class="stchip" id="stMic">マイク —</span>
+        <span class="stchip" id="stMot">モーション —</span>
+        <span class="stchip" id="stLoc">位置 —</span>
+        <span class="stchip" id="stGpu">解析 CPU</span>
+        <span class="stchip" id="stWake">画面維持 OFF</span>
+      </div>
+    </div>
+  </section>
+
+  
+
 <!-- ======== SENSORS ======== -->
-  <h2 class="sec">全センサー <span>— 16チャンネルを同時に監視し、異常は合算されます</span></h2>
+  <details class="acc" id="secSensors" open>
+    <summary>全センサー<span> — 16チャンネルを同時に監視し、異常は合算されます</span></summary>
+    <div class="acc-body">
   <div class="grid" id="sensorGrid"></div>
   <div class="wide">
     <div class="cap" style="margin:0"><span id="locCap">位置情報：未取得</span><span id="batCap"></span><span id="clockCap"></span></div>
   </div>
+    </div>
+  </details>
 
   <details class="acc" id="secRecord" open>
     <summary>記録<span> — 検知ログ・スナップショット・映像と音声・書き出し</span></summary>
@@ -1039,8 +1067,8 @@ function levelForScore(score){
 }
 var LEVEL_LABELS=["異常なし","異常あり？","異常あり","超危険"];
 function verdictFor(score){
-  if(!S.running && !S.demo) return ["まだ測定していません","①センサーを起動すると、続けて②この部屋の「いつも」を20秒で覚える校正が自動で始まります。部屋を無人の状態にしてから起動してください。判定は「異常なし／異常あり？／異常あり／超危険」の4段階で表示します。"];
-  if(S.calibrating) return ["校正中…","この部屋の「いつも」を覚えています。部屋を無人の状態にして、そのまま動かずにお待ちください。終わると4段階判定が始まります。"];
+  if(!S.running && !S.demo) return ["まだ測定していません","まず部屋を出て、誰もいない状態にしてください。その状態で「センサーを起動」を押すと、最初の20秒でこの部屋のふだんの状態を覚えます。その20秒間は部屋に入らないでください。終わると自動で監視が始まり、判定は「異常なし／異常あり？／異常あり／超危険」の4段階で表示します。"];
+  if(S.calibrating) return ["校正中…","この部屋のふだんの状態を覚えています。部屋には入らず、そのまま待ってください。終わると自動で監視と判定が始まります。"];
   var lv=levelForScore(score);
   var label=LEVEL_LABELS[lv];
   if(!S.calibrated){
@@ -1304,7 +1332,7 @@ function finishCalib(){
   if(S.baseline.audio) S.baseline.silence={m:0,s:2.5};
   S.calibrated=Object.keys(S.baseline).length>=3;
   $("calibBar").style.display="none"; $("btnCalib").disabled=false;
-  $("btnCalib").textContent="⟳ ② 校正をやり直す（20秒）";
+  $("btnCalib").textContent="⟳ 校正をやり直す（20秒）";
   if(S.calibrated){ S.lastEventAt=performance.now();
     var li=document.createElement("li");
     li.innerHTML='<div class="lt"><span class="time">'+nowTime()+'</span><span class="sc">校正完了</span></div><div class="ds">この部屋の「いつも」を覚えました。ここから外れた変化を監視します。</div>';
@@ -2736,13 +2764,61 @@ paintStorageCap();
       }
     });
   });
+  /* ---------- separate pages for sections 02–08 ----------
+     One file, several pages: the monitor page (camera, sticky bar,
+     primary controls, verdict hero, 01 全センサー) stays as the home
+     view; 記録/分析/場所/設定/端末の能力/診断/しくみと限界 each live on
+     their own page, addressed by hash (#/record … #/about) so the
+     browser Back/Forward buttons move between pages too. Only
+     visibility changes — every element stays in the DOM, so sensors,
+     scoring, recording and stored data are untouched, and monitoring
+     keeps running while another page is open. */
+  var PAGE_SECTIONS={ record:"secRecord", analysis:"secAnalysis", places:"secPlaces",
+    settings:"secSettings", device:"secDevice", diag:"secDiag", about:"secAbout" };
+  var monitorBlocks=[];
+  [".stage","#stickyBar","#primaryBar",".hero","#secSensors"].forEach(function(sel){
+    var el=document.querySelector(sel); if(el) monitorBlocks.push(el);
+  });
+  function pageFromHash(){
+    var m=/^#\/([a-z]+)/.exec(location.hash||"");
+    var name=m? m[1] : "monitor";
+    return (name==="monitor" || PAGE_SECTIONS[name])? name : "monitor";
+  }
+  function applyPage(name, scrollTop){
+    monitorBlocks.forEach(function(el){ el.classList.toggle("page-hidden", name!=="monitor"); });
+    Object.keys(PAGE_SECTIONS).forEach(function(pg){
+      var d=document.getElementById(PAGE_SECTIONS[pg]); if(!d) return;
+      var isCur = pg===name;
+      d.classList.toggle("page-hidden", !isCur);
+      if(isCur) d.open=true; /* a page shows its section expanded, as its heading */
+    });
+    document.querySelectorAll("#pageNav a[data-page]").forEach(function(a){
+      if(a.getAttribute("data-page")===name) a.setAttribute("aria-current","page");
+      else a.removeAttribute("aria-current");
+    });
+    if(name==="analysis"){
+      /* canvases measure themselves from clientWidth, so repaint
+         only after the page is actually visible again */
+      setTimeout(function(){
+        try{ paintHistory(); }catch(e){}
+        try{ paintTrend(); }catch(e){}
+      },60);
+    }
+    if(scrollTop){ try{ window.scrollTo(0,0); }catch(e){} }
+  }
+  applyPage(pageFromHash(), false);
+  window.addEventListener("hashchange", function(){ applyPage(pageFromHash(), true); });
+
   /* If the camera core reports an error, make sure its guidance panel
-     (now inside the 診断 section) is actually visible. */
+     (on the 診断 page) is actually visible: open that section and
+     navigate to its page. */
   if(typeof window.showCamError==="function"){
     var _origShowCamError=window.showCamError;
     window.showCamError=function(){
       var r=_origShowCamError.apply(this,arguments);
       var d=document.getElementById("secDiag"); if(d) d.open=true;
+      if(pageFromHash()!=="diag"){ location.hash="#/diag"; }
+      else applyPage("diag", false);
       return r;
     };
   }
