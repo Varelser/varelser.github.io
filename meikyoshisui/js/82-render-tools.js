@@ -60,12 +60,11 @@
 
   /* ── WAV ── */
   const WAVES = ['triangle', 'sine', 'sine', 'triangle', 'sine', 'sawtooth', 'triangle', 'sine'];
-  async function renderWavBlob() {
+  async function renderAudioBuffer(sr) {
     const { notes, dur } = extractNotes();
     if (!notes.length) throw new Error('ノートがありません');
     const total = dur + 1.5;
     if (total > 600) throw new Error('長すぎます (' + Math.round(total) + ' 秒)。小節数を減らしてください');
-    const sr = 44100;
     const ctx = new OfflineAudioContext(2, Math.ceil(total * sr), sr);
     const master = ctx.createGain(); master.gain.value = 0.9;
     const comp = ctx.createDynamicsCompressor();
@@ -90,8 +89,102 @@
       g.connect(master);
       osc.start(t0); osc.stop(t1 + 0.3);
     }
-    const buf = await ctx.startRendering();
+    return ctx.startRendering();
+  }
+  async function renderWavBlob() {
+    const buf = await renderAudioBuffer(44100);
     return new Blob([encodeWAV(buf)], { type: 'audio/wav' });
+  }
+
+  /* ── Opus (WebCodecs + 自前 Ogg muxer) ──
+     WAV と同じオフライン描画を 48kHz で行い、AudioEncoder で Opus 化して
+     Ogg に詰める。対応ブラウザでのみボタンが出る。 */
+  const OGG_CRC_TABLE = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let r = n << 24; for (let k = 0; k < 8; k++) r = (r & 0x80000000) ? ((r << 1) ^ 0x04c11db7) : (r << 1); t[n] = r >>> 0; } return t; })();
+  function oggCrc(bytes) { let crc = 0; for (let i = 0; i < bytes.length; i++) crc = ((crc << 8) ^ OGG_CRC_TABLE[((crc >>> 24) & 0xff) ^ bytes[i]]) >>> 0; return crc >>> 0; }
+  function muxOggOpus(packets, channels, totalFrames) {
+    const PRE_SKIP = 312, serial = 0x4d45494b;
+    let seq = 0; const pages = [];
+    function makePage(segs, granule, type) {
+      let bodyLen = 0; for (const s of segs) bodyLen += s.length;
+      const page = new Uint8Array(27 + segs.length + bodyLen);
+      const dv = new DataView(page.buffer);
+      page.set([0x4f, 0x67, 0x67, 0x53, 0, type], 0);
+      dv.setBigUint64(6, granule < 0 ? 0xffffffffffffffffn : BigInt(Math.round(granule)), true);
+      dv.setUint32(14, serial, true); dv.setUint32(18, seq++, true);
+      page[26] = segs.length;
+      for (let i = 0; i < segs.length; i++) page[27 + i] = segs[i].length;
+      let o = 27 + segs.length;
+      for (const s of segs) { page.set(s, o); o += s.length; }
+      dv.setUint32(22, oggCrc(page), true);
+      pages.push(page);
+    }
+    const head = new Uint8Array(19);
+    head.set(new TextEncoder().encode('OpusHead'), 0);
+    const hv = new DataView(head.buffer);
+    head[8] = 1; head[9] = channels; hv.setUint16(10, PRE_SKIP, true); hv.setUint32(12, 48000, true); hv.setInt16(16, 0, true); head[18] = 0;
+    makePage([head], 0, 2);
+    const vendor = new TextEncoder().encode('MEIKYOSHISUI');
+    const tags = new Uint8Array(8 + 4 + vendor.length + 4);
+    tags.set(new TextEncoder().encode('OpusTags'), 0);
+    const tv = new DataView(tags.buffer);
+    tv.setUint32(8, vendor.length, true); tags.set(vendor, 12); tv.setUint32(12 + vendor.length, 0, true);
+    makePage([tags], 0, 0);
+    /* 音声ページ: パケットをセグメント化し、16KB 目安でページを切る。
+       ページ途中でパケットが割れたら、そのページの granule は -1、
+       次ページに継続フラグ (0x01) を立てる (Ogg の仕様どおり) */
+    let segs = [], segBytes = 0, pageGranule = PRE_SKIP, cumSamples = 0, startsContinued = false;
+    function flush(eos, granuleOverride) {
+      if (!segs.length) return;
+      makePage(segs, granuleOverride !== undefined ? granuleOverride : pageGranule, (startsContinued ? 1 : 0) | (eos ? 4 : 0));
+      segs = []; segBytes = 0; startsContinued = false;
+    }
+    for (const pkt of packets) {
+      let off = 0;
+      while (true) {
+        const take = Math.min(255, pkt.b.length - off);
+        segs.push(pkt.b.subarray(off, off + take)); segBytes += take; off += take;
+        if (take < 255) break;
+        if (off >= pkt.b.length) { segs.push(new Uint8Array(0)); break; }
+        if (segs.length >= 255 || segBytes >= 16384) { flush(false, -1); startsContinued = true; }
+      }
+      cumSamples += pkt.samples;
+      pageGranule = PRE_SKIP + cumSamples;
+      if (segBytes >= 16384 || segs.length >= 200) flush(false);
+    }
+    pageGranule = PRE_SKIP + totalFrames;
+    flush(true);
+    const out = new Uint8Array(pages.reduce((s, p) => s + p.length, 0));
+    let o = 0; for (const p of pages) { out.set(p, o); o += p.length; }
+    return out;
+  }
+  async function renderOpusBlob() {
+    if (typeof AudioEncoder === 'undefined') throw new Error('このブラウザは WebCodecs に未対応です');
+    const cfg = { codec: 'opus', sampleRate: 48000, numberOfChannels: 2, bitrate: 128000 };
+    const sup = await AudioEncoder.isConfigSupported(cfg).catch(() => ({ supported: false }));
+    if (!sup.supported) throw new Error('Opus エンコードに未対応です');
+    const buf = await renderAudioBuffer(48000);
+    const packets = [];
+    let encErr = null;
+    const enc = new AudioEncoder({
+      output: chunk => { const b = new Uint8Array(chunk.byteLength); chunk.copyTo(b); packets.push({ b, samples: chunk.duration ? Math.round(chunk.duration * 48000 / 1e6) : 960 }); },
+      error: e => { encErr = e; },
+    });
+    enc.configure(cfg);
+    const sr = buf.sampleRate, ch = Math.min(2, buf.numberOfChannels);
+    const chans = []; for (let c = 0; c < ch; c++) chans.push(buf.getChannelData(c));
+    const FRAME = 4800;
+    for (let off = 0; off < buf.length; off += FRAME) {
+      const n = Math.min(FRAME, buf.length - off);
+      const data = new Float32Array(n * ch);
+      for (let c = 0; c < ch; c++) data.set(chans[c].subarray(off, off + n), c * n);
+      const ad = new AudioData({ format: 'f32-planar', sampleRate: sr, numberOfFrames: n, numberOfChannels: ch, timestamp: Math.round(off / sr * 1e6), data });
+      enc.encode(ad); ad.close();
+      while (enc.encodeQueueSize > 8) await new Promise(r => setTimeout(r, 10));
+    }
+    await enc.flush(); enc.close();
+    if (encErr) throw encErr;
+    if (!packets.length) throw new Error('Opus パケットが生成されませんでした');
+    return new Blob([muxOggOpus(packets, ch, buf.length)], { type: 'audio/ogg' });
   }
   function encodeWAV(buf) {
     const nCh = Math.min(2, buf.numberOfChannels);
@@ -260,6 +353,21 @@
       try { status('WAVをレンダリング中…'); const blob = await renderWavBlob(); download(blob, 'meikyoshisui.wav'); status('WAVを書き出しました (' + Math.round(blob.size / 1024) + ' KB)'); }
       catch (e) { status('WAV失敗: ' + (e && e.message || e), false); }
     });
+    /* Opus ボタンは WebCodecs 対応時のみ出す */
+    if (typeof AudioEncoder !== 'undefined') {
+      AudioEncoder.isConfigSupported({ codec: 'opus', sampleRate: 48000, numberOfChannels: 2, bitrate: 128000 })
+        .then(sup => {
+          if (!sup.supported) return;
+          const b = document.createElement('button');
+          b.className = 'rnd-btn'; b.id = 'btnOpus'; b.type = 'button'; b.textContent = 'OGG (Opus) 書き出し';
+          b.title = 'WAV と同じ描画を Opus で小さく書き出す (WebCodecs)';
+          $('btnWav').after(b);
+          b.addEventListener('click', async () => {
+            try { status('Opusをレンダリング中…'); const blob = await renderOpusBlob(); download(blob, 'meikyoshisui.ogg'); status('OGG (Opus) を書き出しました (' + Math.round(blob.size / 1024) + ' KB)'); }
+            catch (e) { status('Opus失敗: ' + (e && e.message || e), false); }
+          });
+        }).catch(() => { /* 非対応なら出さない */ });
+    }
     $('btnBatch').addEventListener('click', async () => {
       try {
         const count = parseInt($('batchCount').value, 10) || 8;
@@ -274,7 +382,7 @@
     if (genBtn) genBtn.addEventListener('click', () => setTimeout(drawRoll, 1200));
     setTimeout(drawRoll, 500);
 
-    window.__MEIKY_RENDER__ = { renderWavBlob, buildZip, batchVariations, drawRoll, extractNotes };
+    window.__MEIKY_RENDER__ = { renderWavBlob, renderOpusBlob, buildZip, batchVariations, drawRoll, extractNotes };
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

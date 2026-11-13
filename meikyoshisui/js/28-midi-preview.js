@@ -127,6 +127,7 @@ const TIMBRE = {
 /* ── 状態 ─────────────────────────────────────── */
 let _ac = null;      /* AudioContext */
 let _analyser = null; /* 93-visualizer 用 AnalyserNode（play ごとに生成） */
+let _recDest = null;  /* 93 の録画用: マスター音声の MediaStream タップ */
 let _parsed = null;  /* parseMidi() の結果 */
 let _bpm = 60;
 let _startAt = 0;    /* AudioContext.currentTime のオフセット */
@@ -140,7 +141,9 @@ let _duration = 0;   /* 総再生時間(秒) */
 /* ── AudioContext 遅延初期化 ───────────────────── */
 function getAC() {
   if (!_ac || _ac.state === 'closed') {
-    _ac = new (window.AudioContext || window.webkitAudioContext)();
+    /* latencyHint: 'interactive' でプレビュー再生の遅延を抑える (Tier D) */
+    const AC = window.AudioContext || window.webkitAudioContext;
+    try { _ac = new AC({ latencyHint: 'interactive' }); } catch (e) { _ac = new AC(); }
   }
   if (_ac.state === 'suspended') _ac.resume();
   return _ac;
@@ -218,6 +221,7 @@ function play() {
   _analyser.smoothingTimeConstant = 0.84;
   masterGain.connect(_analyser);
   _analyser.connect(ac.destination);
+  if (_recDest && _recDest.context === ac) _analyser.connect(_recDest);
 
   /* チャンネル別ゲイン */
   const chGains = {};
@@ -391,9 +395,18 @@ function getDuration() { return _duration; }
 /* 93-visualizer 用の読み取り専用アクセサ（既存APIは不変） */
 function getAnalyser() { return _analyser; }
 function getContext() { return _ac; }
+/* 録画用にマスター音声のストリームを返す (未再生時は null — 映像のみ録画になる) */
+function getAudioStream() {
+  if (!_ac || _ac.state === 'closed') return null;
+  if (!_recDest || _recDest.context !== _ac) {
+    _recDest = _ac.createMediaStreamDestination();
+    if (_analyser) _analyser.connect(_recDest);
+  }
+  return _recDest.stream;
+}
 function getElapsed() { return _playing && _ac ? Math.max(0, _ac.currentTime - _startAt) : (_pausedAt || 0); }
 function getParsed() { return _parsed; }
 function getBpm() { return _bpm; }
 
-return { load, play, pause, stop, seek, setChVol, isPlaying, getDuration, getAnalyser, getElapsed, getParsed, getBpm, getContext };
+return { load, play, pause, stop, seek, setChVol, isPlaying, getDuration, getAnalyser, getElapsed, getParsed, getBpm, getContext, getAudioStream };
 })();

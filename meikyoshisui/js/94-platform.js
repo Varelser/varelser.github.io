@@ -172,7 +172,28 @@ const st = document.createElement('style');
 st.textContent = '::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}';
 document.head.appendChild(st);
 
-function init(){ initSinkButton(); initMidShareButton(); }
+/* ── ストレージ永続化（プリセット/オートセーブの自動削除を防ぐ） ── */
+function initStoragePersist(){
+  try {
+    if (!navigator.storage || typeof navigator.storage.persist !== 'function') return;
+    if (typeof navigator.storage.persisted === 'function'){
+      navigator.storage.persisted().then(ok => { if (!ok) navigator.storage.persist().catch(() => {}); }).catch(() => {});
+    } else navigator.storage.persist().catch(() => {});
+  } catch (e) { /* 失敗しても通常動作 */ }
+}
+/* ── PWA ショートカット（?shortcut=generate で開いてすぐ生成） ── */
+function initShortcut(){
+  try {
+    if (new URLSearchParams(location.search).get('shortcut') !== 'generate') return;
+    const t = setInterval(() => {
+      const b = document.getElementById('btnGen');
+      if (b) { clearInterval(t); setTimeout(() => b.click(), 700); }
+    }, 250);
+    setTimeout(() => clearInterval(t), 9000);
+  } catch (e) { /* URL 解析失敗時は無視 */ }
+}
+
+function init(){ initSinkButton(); initMidShareButton(); initStoragePersist(); initShortcut(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
 })();

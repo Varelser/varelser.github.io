@@ -601,6 +601,7 @@ function loop(now){
   drawParticle();
   if (!heavyAlt || frame % 2 === 1) drawPsyche(now, beat);
   fluxBurst = false;
+  if (recorder) drawComposite();
   requestAnimationFrame(loop);
 }
 
@@ -650,6 +651,84 @@ $('vizPng').addEventListener('click', () => {
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   }, 'image/png');
 });
+/* ── 録画（captureStream + MediaRecorder） ──
+   表示中のパネル群を合成キャンバスへ毎フレーム写し、プレビュー音声
+   (MidiPreview.getAudioStream) と合わせて WebM で録る。 */
+let recorder = null, recChunks = [], recCanvas = null, recCtx = null, recTimer = null, recStart = 0;
+function drawComposite(){
+  const host = $('vizPanels'); if (!host || !recCtx) return;
+  const hr = host.getBoundingClientRect();
+  recCtx.fillStyle = '#080809';
+  recCtx.fillRect(0, 0, recCanvasCssW, recCanvasCssH);
+  panel.querySelectorAll('[data-panel]').forEach(p => {
+    if (!p.classList.contains('show')) return;
+    const cv = p.querySelector('canvas'); if (!cv) return;
+    const r = cv.getBoundingClientRect();
+    if (r.width < 4 || r.height < 4) return;
+    recCtx.drawImage(cv, r.left - hr.left, r.top - hr.top, r.width, r.height);
+  });
+}
+let recCanvasCssW = 0, recCanvasCssH = 0;
+const recBtn = $('vizRec');
+if (recBtn && typeof MediaRecorder !== 'undefined' && typeof HTMLCanvasElement !== 'undefined' && 'captureStream' in HTMLCanvasElement.prototype){
+  recBtn.style.display = '';
+  const fmt = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+  function stopRec(){
+    if (recTimer) { clearInterval(recTimer); recTimer = null; }
+    if (recorder && recorder.state !== 'inactive') recorder.stop();
+    recorder = null;
+    recBtn.textContent = '● REC'; recBtn.classList.remove('on');
+  }
+  recBtn.addEventListener('click', () => {
+    if (recorder) { stopRec(); return; }
+    const host = $('vizPanels'); if (!host) return;
+    const hr = host.getBoundingClientRect();
+    if (hr.width < 10 || hr.height < 10) return;
+    const scale = Math.min(1, 1600 / hr.width);
+    recCanvasCssW = hr.width; recCanvasCssH = hr.height;
+    recCanvas = document.createElement('canvas');
+    recCanvas.width = Math.round(hr.width * scale); recCanvas.height = Math.round(hr.height * scale);
+    recCtx = recCanvas.getContext('2d');
+    recCtx.setTransform(scale, 0, 0, scale, 0, 0);
+    drawComposite();
+    const tracks = [...recCanvas.captureStream(30).getVideoTracks()];
+    if (typeof MidiPreview !== 'undefined' && MidiPreview.getAudioStream){
+      const as = MidiPreview.getAudioStream();
+      if (as) tracks.push(...as.getAudioTracks());
+    }
+    const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m));
+    if (!mime) return;
+    recChunks = [];
+    recorder = new MediaRecorder(new MediaStream(tracks), { mimeType: mime, videoBitsPerSecond: 6000000 });
+    recorder.ondataavailable = e => { if (e.data && e.data.size) recChunks.push(e.data); };
+    recorder.onstop = () => {
+      const blob = new Blob(recChunks, { type: 'video/webm' });
+      if (window.__MEIKY_SAVE__) window.__MEIKY_SAVE__.saveBlob(blob, 'meikyoshisui-viz.webm');
+      else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'meikyoshisui-viz.webm'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+    };
+    recorder.start(250);
+    recStart = performance.now();
+    recBtn.classList.add('on'); recBtn.textContent = '■ 0:00';
+    recTimer = setInterval(() => {
+      const s = (performance.now() - recStart) / 1000;
+      recBtn.textContent = '■ ' + fmt(s);
+      if (s >= 180) stopRec(); /* 安全上限 3分 */
+    }, 500);
+  });
+}
+/* ── 別画面に全画面（Window Management、対応時のみ） ── */
+const mfsBtn = $('vizMultiFs');
+if (mfsBtn && 'getScreenDetails' in window){
+  mfsBtn.style.display = '';
+  mfsBtn.addEventListener('click', async () => {
+    try {
+      const details = await window.getScreenDetails();
+      const other = details.screens.find(s => s !== details.currentScreen) || details.currentScreen;
+      try { await panel.requestFullscreen({ screen: other }); }
+      catch (e) { await panel.requestFullscreen(); }
+    } catch (e) { try { await panel.requestFullscreen(); } catch (_) { /* 失敗時は無反応でよい */ } }
+  });
+}
 /* ── Document Picture-in-Picture（対応時のみボタン表示） ── */
 const pipBtn = $('vizPip');
 if (pipBtn && 'documentPictureInPicture' in window){

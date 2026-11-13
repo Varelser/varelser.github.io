@@ -229,18 +229,46 @@
     const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
     return new TextDecoder().decode(bytes);
   }
+  /* ── gzip 圧縮共有 (#z=) ── 状態 JSON は圧縮がよく効く。旧 #s= も読み続けられる */
+  function b64urlEncodeBytes(bytes) {
+    let bin = '';
+    const CH = 0x8000;
+    for (let i = 0; i < bytes.length; i += CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecodeBytes(s) {
+    const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+    return Uint8Array.from(bin, c => c.charCodeAt(0));
+  }
+  async function gzipBytes(bytes) {
+    const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('gzip'));
+    return new Uint8Array(await new Response(stream).arrayBuffer());
+  }
+  async function gunzipBytes(bytes) {
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return new Uint8Array(await new Response(stream).arrayBuffer());
+  }
   async function copyShareLink() {
     StatePersist.save('__share__', 'Share');
     const raw = localStorage.getItem('meikyoshisui_v25___share__');
     if (!raw) throw new Error('状態の取得に失敗しました');
-    const url = location.origin + location.pathname + '#s=' + b64urlEncode(raw);
+    let url = null;
+    if (typeof CompressionStream !== 'undefined') {
+      try { url = location.origin + location.pathname + '#z=' + b64urlEncodeBytes(await gzipBytes(new TextEncoder().encode(raw))); }
+      catch (_) { url = null; }
+    }
+    if (!url) url = location.origin + location.pathname + '#s=' + b64urlEncode(raw);
     try { await navigator.clipboard.writeText(url); status('共有リンクをコピーしました (' + url.length + ' 文字)'); }
     catch (_) { const u = $('abShareUrl'); if (u) { u.value = url; u.style.display = 'block'; u.focus(); u.select(); } status('自動コピーできませんでした。下の欄のリンクをコピーしてください', false); }
   }
-  function applySharedFromHash() {
-    if (!location.hash.startsWith('#s=')) return;
+  async function applySharedFromHash() {
+    let raw = null;
     try {
-      const raw = b64urlDecode(location.hash.slice(3));
+      if (location.hash.startsWith('#z=')) {
+        raw = new TextDecoder().decode(await gunzipBytes(b64urlDecodeBytes(location.hash.slice(3))));
+      } else if (location.hash.startsWith('#s=')) {
+        raw = b64urlDecode(location.hash.slice(3));
+      } else { applySharedFromParams(); return; }
       const parsed = JSON.parse(raw);
       if (!parsed || parsed.version !== 25) return;
       localStorage.setItem('meikyoshisui_v25___shared__', raw);
@@ -248,6 +276,16 @@
         if (typeof StatePersist !== 'undefined' && StatePersist.load('__shared__')) status('共有リンクから状態を読み込みました');
       }, 1200);
     } catch (_) { /* 壊れたリンクは無視 */ }
+  }
+  /* PWA の share_target (GET) で他アプリから共有されたテキスト/URL に
+     Meikyoshisui の共有リンクが含まれていたら取り込む */
+  function applySharedFromParams() {
+    try {
+      const q = new URLSearchParams(location.search);
+      const cand = [q.get('text'), q.get('url'), q.get('title')].filter(Boolean).join(' ');
+      const m = cand.match(/#(s|z)=[A-Za-z0-9\-_]+/);
+      if (m) { location.hash = m[0]; applySharedFromHash(); }
+    } catch (_) { /* 取り込み失敗は無視 */ }
   }
   function setupDrop() {
     const overlay = document.createElement('div');
