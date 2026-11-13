@@ -146,6 +146,8 @@
   }
   .section .body{padding:16px}
   .type-info{font-size:11px;line-height:1.6;color:var(--muted);margin:-4px 0 10px;min-height:18px}
+  .type-info a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer a{color:inherit;text-decoration:underline;text-underline-offset:2px}
   .section.collapsed > .body{display:none !important}
   /* !important is required here: #masterFields / #layer*Fields get
      display:grid from their ID selectors below, and an ID beats the
@@ -660,7 +662,7 @@
       <div class="body">
         <div class="help">
           色付きノイズの一部（Grey / Green / Black など）は用途により定義が揺れるため、本作では実用向けの近似実装です。<br>
-          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を76種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。
+          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を76種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。<br>全76種の詳しい解説は、note の完全解説記事にまとめています：<a href="https://note.com/varelser/n/n170e0fb04ba3" target="_blank" rel="noopener">Noise 完全解説――全76種・114プリセット</a>。各レイヤーのタイプ説明からも、対応する節へ直接飛べます。
         </div>
       </div>
     </div>
@@ -744,7 +746,7 @@
       <div class="mini"><div class="k">Peak</div><div id="miniPeak" class="v">-∞ dBFS</div></div>
       <div class="mini"><div class="k">RMS</div><div id="miniRms" class="v">-∞ dBFS</div></div>
     </div>
-    <div class="footer mono">single-file noise generator / visualizers first / ultra wide / safe export / wav aiff / spectrogram / session json</div>
+    <div class="footer mono">single-file noise generator / visualizers first / ultra wide / safe export / wav aiff / spectrogram / session json / <a href="https://note.com/varelser/n/n170e0fb04ba3" target="_blank" rel="noopener" data-help="noteの完全解説記事（全76種の解説）へ移動します">note 完全解説（全76種）</a></div>
   </main>
 </div>
 
@@ -932,6 +934,86 @@
     paper: '紙のざわつき。乾いた高域のしわ音が塊で現れます。Densityで塊の多さ、Grainで紙の硬さが変わります。ASMR的な素材にも。',
     scrape: '金属を擦る音（コンタクトマイク的な質感）。擦過のたびに帯域がうねり、軋みが重なります。Densityで間隔、Grainで擦過の長さと軋みが変わります。音量に注意。',
     breath: '呼吸の音。吸って吐く周期でノイズが膨らみと収まりを繰り返します。Densityで呼吸の深さ、Motionで呼吸の速さ、Grainで息の質感が変わります。呼吸法や瞑想のお供に。'
+  };
+
+  const NOTE_ARTICLE_URL = 'https://note.com/varelser/n/n170e0fb04ba3';
+  const NOTE_TYPE_SECTIONS = {
+    white: 'fd75312e-45c5-4ec4-90c9-0d3243fdb679',
+    gaussian: 'e9c6b723-8d65-4087-8afc-e31989744717',
+    pink: 'fb1e6b96-df34-4221-98be-183cb0b24214',
+    brown: 'dc9d7db6-2b0d-415c-ad1f-1ed4f7ad739e',
+    blue: 'ac0f6568-e63b-452f-ad97-8d7cd0c829d0',
+    violet: '6ebde939-9b90-4c55-926b-de87ed1e7bd7',
+    rumble: '9517b889-7f26-4bb3-bf74-a1d032399a95',
+    powerhum: '4df6d243-ec10-4a4f-954f-15b851e1cd95',
+    tinnitus: 'b18b8c2e-f612-47aa-a853-fe6f51415ad3',
+    vinyl: 'f5c2e3aa-6ad2-4f4c-bfe0-a6c27b41c13c',
+    tape: 'a566a68a-b35d-4f62-93a8-b699ece6550d',
+    wind: '2d4775b6-aa5b-41d9-ac68-e37936335456',
+    rain: 'cdc3133a-10e8-4456-8732-1dc6f7cdac90',
+    hail: '69a7d6b7-0960-4bb6-b33b-16786a0ab3d5',
+    ocean: 'c7bb1a97-a946-4c76-8ca9-0f0d9edc068b',
+    crackle: '9b1a7419-9e09-48a1-b204-393d50f2d18d',
+    dust: '2c7fbab1-9d29-48df-83f1-14c84216a4a2',
+    paper: '429d9a35-0b79-4fde-8db8-f94cee54bf49',
+    shot: 'd49e8da6-c575-4274-9d04-585b1e5a82ee',
+    geiger: 'bdba8b21-5eb7-4056-9350-af14e6e91b3f',
+    velvet: '5cdb97d9-6dee-4ba0-8fdd-c1288b5c28f2',
+    staticam: '338efad0-d12f-4d0f-8d39-6f6f7f76fc2c',
+    shortwave: '0257c92b-c04e-48f9-b6f1-ed2b8b9ecbdc',
+    digital: '87d3d314-8f69-4e7c-bd4f-ec4b816a7a9b',
+    modem: '546fc7e6-736c-4d90-b281-43a22edf8ba8',
+    glitch: '67c35648-d2a5-44cd-8ba2-9ff02bb43caf',
+    harsh: '7fb4331f-2b59-4c24-bc29-1ec81ae3b1b9',
+    hnw: 'fa7a42ef-3b54-4183-94a5-974bf4a0bb87',
+    feedback: '6ea2cec7-b7d0-4162-adde-cd6845a06bc4',
+    scrape: '4965e601-175c-4c1b-ac4d-7f93e5e3a72d',
+    sand: '82a9af58-a443-48d9-b295-b07b76d8d9b6',
+    desert: '93518e5b-7a8d-44b8-aa5e-fb32d0dba62a',
+    fan: '32bb80ef-fce7-4d28-b7f7-64c3f045e0bf',
+    fridge: 'd10601f8-993f-42e2-925b-da764ab97546',
+    airplane: '7fb27fb6-e05e-439a-bd18-54516cb4bba1',
+    helicopter: 'aeb2385a-0258-4fb1-b6ec-8553fb6a71b6',
+    fire: 'e87b2ebb-cc89-49ba-a17c-9b01f6744347',
+    stream: 'c282c71a-4836-42ab-89a3-f12f1dde4847',
+    waterfall: '00f8ab97-422e-49df-98a8-d370d5999a68',
+    thunder: 'f89aab0f-1094-449b-bbc0-2ebb71ff3128',
+    forest: '463f6ebe-ad3a-45b2-ba10-075f95477fb7',
+    birds: '3474fc05-d9ca-4fb9-a0f2-685805863708',
+    snow: 'df132c76-835b-4901-8ff4-e2835500adb0',
+    city: 'a1a783da-9b84-4e62-a5cc-fbfd0c5cf7bb',
+    crowd: '35de80a6-75d2-4ff7-94bd-c4924b16cd71',
+    applause: 'afbdba15-9e1a-4d37-acf7-11c51a192122',
+    highway: '1e35feae-8cc5-4607-8cd9-2f1be9bd6ffb',
+    train: '7ac86f7b-eb77-4321-a51c-cbaf510aad86',
+    subway: '5b4f5414-c501-46c9-853b-67865c090c11',
+    construction: 'd30e0376-e585-40c7-a44f-528f40626e92',
+    shower: '378c8f13-e347-4938-b71c-6366d6a840f9',
+    washer: '4be81932-9fe6-4196-b4b6-776676d1563d',
+    underwater: '5edc88f6-b4c7-4797-80da-cea0fc859a77',
+    sonar: 'c9b2c7a0-8146-47e4-ad51-b9010ef6a5f4',
+    band: '5005d675-c025-4d52-9e20-81f4832eea1a',
+    organ: '7676652b-acac-42e2-a6c9-ae87be841534',
+    grains: '68c55edc-33ce-4378-8f53-fa5191a083bc',
+    shimmer: '181770a0-d20b-4615-8a20-13edd2430a55',
+    furin: '2d1cf659-5a81-4047-8d27-4f1fc0b5191d',
+    bowl: '2d8cf368-bccb-45ef-9f7f-9cf4e611333d',
+    chaos: 'c33e80db-21a2-409b-a68c-2e372b138b69',
+    space: '6496f07d-48e1-4b6e-9104-87aa4b4ee39a',
+    cicadas: '0161ed4d-61c0-4d5d-b7fb-be5e49c5513a',
+    crickets: 'f43dffc6-164d-434c-805c-9b7553763180',
+    heartbeat: '261c48d0-8ec8-484c-bb89-b5f4aec2e93b',
+    womb: 'bcd1f986-f066-43b3-84a4-d766fb9ceb79',
+    breath: '01267e78-e8f7-48c3-a95a-d34e632ca40b',
+    purr: 'b086b87a-e9a9-48ba-947c-01b4e74f42f3',
+    drops: 'e136851b-0b11-4ded-99ec-2b373384ea0a',
+    dryer: 'aecfdf68-dcb3-490d-9136-ec74805ecc4d',
+    vacuum: '745f9c23-11b2-4d19-9b68-b038081eb0b5',
+    clock: '4815dbd8-eea4-44f5-8458-34464ecd94da',
+    typing: 'f0e58265-f612-4dfa-8e43-5f763b378863',
+    grey: 'e097bc69-3b86-4d61-982a-592e5e677a6c',
+    green: 'b56ed46c-641e-4eda-90aa-d253b2350aa2',
+    black: 'a6c058a2-b8ee-4d16-8abe-8cf2ed9d8526'
   };
 
   const DEFAULTS = {
@@ -2265,6 +2347,16 @@
       if (!sel || !info) return;
       const text = NOISE_TYPE_INFO[sel.value] || '';
       info.textContent = text ? `${labelOfType(sel.value)}：${text}` : '';
+      const noteSec = NOTE_TYPE_SECTIONS[sel.value];
+      if (text && noteSec) {
+        const a = document.createElement('a');
+        a.href = NOTE_ARTICLE_URL + '#' + noteSec;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = 'noteで詳しく読む →';
+        info.appendChild(document.createTextNode('　'));
+        info.appendChild(a);
+      }
       if (text) sel.setAttribute('data-help', text);
     });
   }
