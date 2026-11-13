@@ -1,1 +1,267 @@
-IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoiIiJBcnQgTmV3cyBjYW5kaWRhdGUgZmV0Y2hlciAoZml4ZWQgc2NyaXB0IGZvciB0aGUgaG91cmx5IHVwZGF0ZSkuCgpTY29wZTogNDEgc291cmNlcyB2ZXJpZmllZCBieSBsaXZlIGZldGNoaW5nIG9uIDIwMjYtMTEtMTMsIHdoZW4gdGhlCkFydCBmaWVsZCB3YXMgYWRkZWQgYXQgdGhlIHVzZXIncyByZXF1ZXN0IChiYXNlIHBhdHRlcm46IE51cnNlIE5ld3MsCnRoZSBvcmlnaW5hbCBvZiB0aGlzIHNlcmllczsgc2FtZSBydWxlcyBhcyBDaW5lbWEgLyBDYW1lcmEgLyBNdXNpYyAvCkluc3RydW1lbnRzIC8gV29ybGQgLyBMaXRlcmF0dXJlKS4gQ292ZXJhZ2UgaXMgZGVsaWJlcmF0ZWx5IGJyb2FkOgpKYXBhbmVzZSBhcnQgbWVkaWEgYW5kIGV4aGliaXRpb24gcG9ydGFscywgb3ZlcnNlYXMgYXJ0IG1lZGlhIGFuZApjcml0aWNpc20sIG11c2V1bSBhbmQgbXVzZXVtLWluZHVzdHJ5IHNvdXJjZXMsIHRoZSBhcnQgbWFya2V0LCBhbmQKbWVkaWEtYXJ0IHNvdXJjZXMuCkphcGFuZXNlOiBBUlQgaVQsIGFydHNjYXBlLCBJTUEgT05MSU5FLgpPdmVyc2VhcyBhcnQgbWVkaWEgLyBjcml0aWNpc206IEFydG5ldCBOZXdzLCBBUlRuZXdzLCBBcnQgaW4gQW1lcmljYSwKQXJ0Zm9ydW0sIEh5cGVyYWxsZXJnaWMsIFRoZSBBcnQgTmV3c3BhcGVyLCBDb2xvc3NhbCwgQXJ0c3ksClRoZSBHdWFyZGlhbiBBcnQgYW5kIERlc2lnbiwgTllUIEFydCBhbmQgRGVzaWduLCBPY3VsYSBNYWdhemluZSwKQXJ0QXNpYVBhY2lmaWMsIEZBRCBNYWdhemluZSwgRWxlcGhhbnQgTWFnYXppbmUsIEJlcmxpbiBBcnQgTGluaywKQXJ0IFBsdWdnZWQsIERhaWx5QXJ0IE1hZ2F6aW5lLCBNb211cywgQXJ0IEFmcmljYSBNYWdhemluZSwKVGhlIEZsdXggUmV2aWV3LCBUd28gQ29hdHMgb2YgUGFpbnQsIFNvbWV0aGluZyBDdXJhdGVkLApTdWdhcmNhbmUgTWFnYXppbmUuCk11c2V1bXMgLyBtdXNldW0gaW5kdXN0cnk6IEd1Z2dlbmhlaW0sIExBQ01BIFVuZnJhbWVkLCBWJkEgQmxvZywKQmxvb2xvb3AsIE11c2V1bU5leHQsIEFBTSAoQW1lcmljYW4gQWxsaWFuY2Ugb2YgTXVzZXVtcykuCk1hcmtldDogTXV0dWFsQXJ0IChwbHVzIEFydG5ldCAvIEFydHN5IGFib3ZlKS4KRGVzaWduIC8gY3JhZnQgLyBtZWRpYSBhcnQ6IERlc2lnbmJvb20gQXJ0LCBEZXplZW4gQXJ0LCBJR05BTlQsCkNyZWF0aXZlIEJvb20sIE15IE1vZGVybiBNZXQsIEJvb29vb29vbSwgQXJzIEVsZWN0cm9uaWNhIEJsb2cuCkphcGFuIGluIEVuZ2xpc2g6IFNwb29uICYgVGFtYWdvIChyZWdpb24gaXMgc2V0IHRvIOWbveWGhSBmb3IgdGhpcyBvbmUpLgpOb3RlczogSU1BIE9OTElORSBpdGVtcyBvZnRlbiBjYXJyeSBubyBkZXNjcmlwdGlvbjsgdGhlIGVkaXRvcmlhbApnYXRlIGV4Y2x1ZGVzIGRlc2NyaXB0aW9uLWxlc3MgY2FuZGlkYXRlcy4gQXJ0c3kncyBmZWVkIGNhcnJpZXMKdmVyeSBsb25nIGRlc2NyaXB0aW9uczsgdGhleSBhcmUgdHJ1bmNhdGVkIHRvIDEyMDAgY2hhcnMgbGlrZSBldmVyeQpvdGhlciBzb3VyY2UuIE5ZVCBBcnRzIChnZW5lcmFsIHBlcmZvcm1pbmctYXJ0cyB3aXJlKSB3YXMgdmVyaWZpZWQKYnV0IG5vdCBhZG9wdGVkIGluIGZhdm91ciBvZiB0aGUgZm9jdXNlZCBOWVQgQXJ0IGFuZCBEZXNpZ24gZmVlZC4KUHJvYmVkIG9uIDIwMjYtMTEtMTMgYW5kIE5PVCBhZG9wdGVkIChkbyBub3QgcmV0cnkpOiDnvo7ooZPmiYvluJYgLwpUb2t5byBBcnQgQmVhdCAvIOe+juihk+WxleODiuODkyAvIOODjeODg+ODiFRBTSAvIOajrue+juihk+mkqCAvIOadseS6rOmDveePvuS7o+e+juihk+mkqCAvCk5UVCBJQ0MgLyBZQ0FNIC8g5paH5YyW5bqB44Oh44OH44Kj44Ki6Iq46KGT56WtIChubyBSU1MgZW5kcG9pbnQgZm91bmQ6IDQwNCksCkZyaWV6ZSAvIE1vTUEgTWFnYXppbmUgLyBBZXN0aGV0aWNhIE1hZ2F6aW5lIC8gQVhJUyAvIEFydCBJbnN0aXR1dGUKb2YgQ2hpY2FnbyAoNDAzKSwgVGhlIE1ldCAvIEJyb29rbHluIE11c2V1bSBCbG9nICg0MjkpLApBcG9sbG8gTWFnYXppbmUgLyBXYWxrZXIgQXJ0IENlbnRlciAoNTAwKSwgQnJpdGlzaCBNdXNldW0gQmxvZyAvCue+juihk+mkqOODiuODkyAvIOOCpOODs+OCv+ODvOODjeODg+ODiOODn+ODpeODvOOCuOOCouODoCAvIFdpZGV3YWxscyAvIFJoaXpvbWUgLwpUb2t5byBBcnQgTmF2aWdhdGlvbiAoY29ubmVjdGlvbiBjbG9zZWQpLCBHZXR0eSBJcmlzIC8gQXJ0IEd1aWRlCkF1c3RyYWxpYSAvIFFldGljIChYTUwgdGhlIHN0ZGxpYiBwYXJzZXIgY2Fubm90IHJlYWQpLCBBcnQgUmV2aWV3IC8KQXJ0RGFpbHkgLyBlLWZsdXggLyBUYXRlIC8gU0ZNT01BICg0MDQgb24gZXZlcnkgcHJvYmVkIGZlZWQgcGF0aCkuCkV4Y2x1ZGVkIGJ5IHRoZSA0NS1kYXkgcnVsZSAoZmVlZCBwYXJzZXMgYnV0IG5vIGl0ZW1zIHdpdGhpbgo0NSBkYXlzIG9uIHByb2JlIGRheSk6IEp1eHRhcG96LCBTbWl0aHNvbmlhbiBNYWdhemluZSBnZW5lcmFsIGZlZWQKKHN0YWxlIHNpbmNlIDIwMTkpLCBBcnQgQW5udWFsIE9ubGluZSwgQ3JlYXRpdmUgQXBwbGljYXRpb25zCk5ldHdvcmssIFdlIE1ha2UgTW9uZXkgTm90IEFydCwgQXJ0IE9ic2VydmVkLCBDdWx0dXJlIFR5cGUsCktvb25lc3MsIEJpanV0c3UgU2h1cHBhbiAo576O6KGT5Ye654mI56S+KS4gRXhjbHVkZWQgYnkgc2NvcGUsIG5vdApmYWlsdXJlOiBJQ09NIGFuZCBNdXNldW1zIEFzc29jaWF0aW9uIChmZWVkIHBhcnNlcywgMCBpdGVtcyksCk1ldHJvcG9saXMgSmFwYW4gYW5kIE5pcHBvbi5jb20gKGdlbmVyYWwgSmFwYW4vbGlmZSBmZWVkczsgYXJ0Cml0ZW1zIGFyZSBwaWNrZWQgdXAgdGhyb3VnaCB0aGUgYXJ0LXNwZWNpZmljIHNvdXJjZXMgYWJvdmUpLApDSU5SQSAoZ2VuZXJhbCBjdWx0dXJlIGZlZWQgYWxyZWFkeSBmZWVkaW5nIENpbmVtYSBOZXdzKS4KSmFwYW5lc2UgbmF0aW9uYWwgbXVzZXVtcyAo5Zu956uL576O6KGT6aSo44G744GLKSBwdWJsaXNoIG5vIHVzYWJsZSBSU1MgYXMKb2YgdGhlIHByb2JlOyBkb21lc3RpYyBleGhpYml0aW9uIGNvdmVyYWdlIGNvbWVzIGZyb20gYXJ0c2NhcGUKKGEgbXVzZXVtL2V4aGliaXRpb24gcG9ydGFsKSBhbmQgQVJUIGlUIGluc3RlYWQuClBhcnNlcyBSU1MvQXRvbSB3aXRoIHRoZSBzdGRsaWIgb25seSBhbmQgd3JpdGVzIGNhbmRpZGF0ZXMgdGhhdCBhcmUKbm90IGFscmVhZHkgaW4gYXJ0LW5ld3MtZGF0YS5qc29uIChkZWR1cGUgYnkgVVJMIGFuZCBub3JtYWxpemVkCnRpdGxlOyBzb3VyY2VzIGFyZSBmZXRjaGVkIGluIHBhcmFsbGVsLCBkZWR1cGUgaXMgYXBwbGllZAphZnRlcndhcmRzIGluIHB1Ymxpc2hlZEF0IG9yZGVyIHNvIHJ1bnMgc3RheSBkZXRlcm1pbmlzdGljKS4KCkVhY2ggY2FuZGlkYXRlOiB7c291cmNlTmFtZSwgb3JpZ2luYWxUaXRsZSwgdXJsLCBwdWJsaXNoZWRBdCAoSVNPIFVUQyksCmRlc2NyaXB0aW9uIChwbGFpbiB0ZXh0LCA8PTEyMDAgY2hhcnMpLCBsYW5nLCByZWdpb259LgpBIGZhaWxpbmcgc291cmNlIGlzIHJlY29yZGVkIGluIHRoZSBzdW1tYXJ5J3MgYGZhaWxlZGAgbGlzdCBhbmQgbmV2ZXIKc3RvcHMgdGhlIG90aGVycy4KClVzYWdlOgogIHB5dGhvbjMgc2NyaXB0cy9hcnRfZmV0Y2gucHkgLS1kYXRhIGFydC1uZXdzLWRhdGEuanNvbiBcCiAgICAgIC0tb3V0IC90bXAvYXJ0X2NhbmRpZGF0ZXMuanNvbiBbLS1kYXlzIDQ1XQpQcmludHMgYSBKU09OIHN1bW1hcnkge3RvdGFsLCBwZXJfc291cmNlLCBmYWlsZWR9IHRvIHN0ZG91dC4KIiIiCmltcG9ydCBhcmdwYXJzZQppbXBvcnQgaHRtbAppbXBvcnQganNvbgppbXBvcnQgcmUKaW1wb3J0IHN5cwppbXBvcnQgdXJsbGliLnJlcXVlc3QKaW1wb3J0IHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVApmcm9tIGNvbmN1cnJlbnQuZnV0dXJlcyBpbXBvcnQgVGhyZWFkUG9vbEV4ZWN1dG9yCmZyb20gZGF0ZXRpbWUgaW1wb3J0IGRhdGV0aW1lLCB0aW1lZGVsdGEsIHRpbWV6b25lCmZyb20gZW1haWwudXRpbHMgaW1wb3J0IHBhcnNlZGF0ZV90b19kYXRldGltZQoKIyAobmFtZSwgZmVlZCB1cmwsIGxhbmcsIHJlZ2lvbiBvdmVycmlkZSBvciBOb25lKQpTT1VSQ0VTID0gWwogICAgKCdBUlQgaVQnLCAiaHR0cHM6Ly93d3cuYXJ0LWl0LmFzaWEvZmVlZCIsICJqYSIsIE5vbmUpLAogICAgKCdhcnRzY2FwZScsICJodHRwczovL2FydHNjYXBlLmpwL2ZlZWQvIiwgImphIiwgTm9uZSksCiAgICAoJ0lNQSBPTkxJTkUnLCAiaHR0cHM6Ly9pbWFvbmxpbmUuanAvZmVlZC8iLCAiamEiLCBOb25lKSwKICAgICgnQXJ0bmV0IE5ld3MnLCAiaHR0cHM6Ly9uZXdzLmFydG5ldC5jb20vZmVlZCIsICJlbiIsIE5vbmUpLAogICAgKCdBUlRuZXdzJywgImh0dHBzOi8vd3d3LmFydG5ld3MuY29tL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0FydCBpbiBBbWVyaWNhJywgImh0dHBzOi8vd3d3LmFydG5ld3MuY29tL2FydC1pbi1hbWVyaWNhL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0FydGZvcnVtJywgImh0dHBzOi8vd3d3LmFydGZvcnVtLmNvbS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdIeXBlcmFsbGVyZ2ljJywgImh0dHBzOi8vaHlwZXJhbGxlcmdpYy5jb20vZmVlZC8iLCAiZW4iLCBOb25lKSwKICAgICgnVGhlIEFydCBOZXdzcGFwZXInLCAiaHR0cHM6Ly93d3cudGhlYXJ0bmV3c3BhcGVyLmNvbS9yc3MueG1sIiwgImVuIiwgTm9uZSksCiAgICAoJ0NvbG9zc2FsJywgImh0dHBzOi8vd3d3LnRoaXNpc2NvbG9zc2FsLmNvbS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdBcnRzeScsICJodHRwczovL3d3dy5hcnRzeS5uZXQvcnNzL25ld3MiLCAiZW4iLCBOb25lKSwKICAgICgnVGhlIEd1YXJkaWFuIEFydCBhbmQgRGVzaWduJywgImh0dHBzOi8vd3d3LnRoZWd1YXJkaWFuLmNvbS9hcnRhbmRkZXNpZ24vcnNzIiwgImVuIiwgTm9uZSksCiAgICAoJ05ZVCBBcnQgYW5kIERlc2lnbicsICJodHRwczovL3Jzcy5ueXRpbWVzLmNvbS9zZXJ2aWNlcy94bWwvcnNzL255dC9BcnRhbmREZXNpZ24ueG1sIiwgImVuIiwgTm9uZSksCiAgICAoJ09jdWxhIE1hZ2F6aW5lJywgImh0dHBzOi8vb2N1bGEuY29tL21hZ2F6aW5lL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0FydEFzaWFQYWNpZmljJywgImh0dHBzOi8vYXJ0YXNpYXBhY2lmaWMuY29tL2ZlZWQiLCAiZW4iLCBOb25lKSwKICAgICgnRkFEIE1hZ2F6aW5lJywgImh0dHBzOi8vZmFkbWFnYXppbmUuY29tL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0VsZXBoYW50IE1hZ2F6aW5lJywgImh0dHBzOi8vZWxlcGhhbnQuYXJ0L2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0JlcmxpbiBBcnQgTGluaycsICJodHRwczovL3d3dy5iZXJsaW5hcnRsaW5rLmNvbS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdBcnQgUGx1Z2dlZCcsICJodHRwczovL2FydHBsdWdnZWQuY28udWsvZmVlZC8iLCAiZW4iLCBOb25lKSwKICAgICgnRGFpbHlBcnQgTWFnYXppbmUnLCAiaHR0cHM6Ly93d3cuZGFpbHlhcnRtYWdhemluZS5jb20vZmVlZC8iLCAiZW4iLCBOb25lKSwKICAgICgnTW9tdXMnLCAiaHR0cHM6Ly9tb211cy5jYS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdBcnQgQWZyaWNhIE1hZ2F6aW5lJywgImh0dHBzOi8vYXJ0YWZyaWNhbWFnYXppbmUub3JnL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ1RoZSBGbHV4IFJldmlldycsICJodHRwczovL3d3dy50aGVmbHV4cmV2aWV3LmNvbS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdUd28gQ29hdHMgb2YgUGFpbnQnLCAiaHR0cHM6Ly90d29jb2F0c29mcGFpbnQuY29tL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ1NvbWV0aGluZyBDdXJhdGVkJywgImh0dHBzOi8vc29tZXRoaW5nY3VyYXRlZC5jb20vZmVlZC8iLCAiZW4iLCBOb25lKSwKICAgICgnU3VnYXJjYW5lIE1hZ2F6aW5lJywgImh0dHBzOi8vc3VnYXJjYW5lbWFnLmNvbS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdHdWdnZW5oZWltJywgImh0dHBzOi8vd3d3Lmd1Z2dlbmhlaW0ub3JnL2ZlZWQiLCAiZW4iLCBOb25lKSwKICAgICgnTEFDTUEgVW5mcmFtZWQnLCAiaHR0cHM6Ly91bmZyYW1lZC5sYWNtYS5vcmcvZmVlZC8iLCAiZW4iLCBOb25lKSwKICAgICgnViZBIEJsb2cnLCAiaHR0cHM6Ly93d3cudmFtLmFjLnVrL2Jsb2cvZmVlZCIsICJlbiIsIE5vbmUpLAogICAgKCdCbG9vbG9vcCcsICJodHRwczovL2Jsb29sb29wLmNvbS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdNdXNldW1OZXh0JywgImh0dHBzOi8vd3d3Lm11c2V1bW5leHQuY29tL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0FBTSAoQW1lcmljYW4gQWxsaWFuY2Ugb2YgTXVzZXVtcyknLCAiaHR0cHM6Ly93d3cuYWFtLXVzLm9yZy9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdNdXR1YWxBcnQnLCAiaHR0cHM6Ly93d3cubXV0dWFsYXJ0LmNvbS9yc3MiLCAiZW4iLCBOb25lKSwKICAgICgnRGVzaWduYm9vbSBBcnQnLCAiaHR0cHM6Ly93d3cuZGVzaWduYm9vbS5jb20vYXJ0L2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0RlemVlbiBBcnQnLCAiaHR0cHM6Ly93d3cuZGV6ZWVuLmNvbS90YWcvYXJ0L2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0lHTkFOVCcsICJodHRwczovL3d3dy5pZ25hbnQuY29tL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0NyZWF0aXZlIEJvb20nLCAiaHR0cHM6Ly93d3cuY3JlYXRpdmVib29tLmNvbS9mZWVkLyIsICJlbiIsIE5vbmUpLAogICAgKCdNeSBNb2Rlcm4gTWV0JywgImh0dHBzOi8vbXltb2Rlcm5tZXQuY29tL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0Jvb29vb29vbScsICJodHRwczovL3d3dy5ib29vb29vb20uY29tL2ZlZWQvIiwgImVuIiwgTm9uZSksCiAgICAoJ0FycyBFbGVjdHJvbmljYSBCbG9nJywgImh0dHBzOi8vYXJzLmVsZWN0cm9uaWNhLmFydC9hZWJsb2cvZW4vZmVlZC8iLCAiZW4iLCBOb25lKSwKICAgICgnU3Bvb24gJiBUYW1hZ28nLCAiaHR0cHM6Ly9zcG9vbi10YW1hZ28uY29tL2ZlZWQvIiwgImVuIiwgIuWbveWGhSIpLApdCgpVQSA9IHsiVXNlci1BZ2VudCI6ICJNb3ppbGxhLzUuMCAoY29tcGF0aWJsZTsgQXJ0TmV3c0ZldGNoLzEuMCkifQoKCmRlZiBub3JtX3RpdGxlKHMpOgogICAgcmV0dXJuIHJlLnN1YihyIlteYS16MC05XSIsICIiLCAocyBvciAiIikubG93ZXIoKSkKCgpkZWYgcGxhaW4ocyk6CiAgICBzID0gcmUuc3ViKHIiPFtePl0rPiIsICIgIiwgcyBvciAiIikKICAgIHMgPSBodG1sLnVuZXNjYXBlKHMpCiAgICByZXR1cm4gcmUuc3ViKHIiXHMrIiwgIiAiLCBzKS5zdHJpcCgpCgoKZGVmIHBhcnNlX2RhdGUodGV4dCk6CiAgICBpZiBub3QgdGV4dDoKICAgICAgICByZXR1cm4gTm9uZQogICAgdGV4dCA9IHRleHQuc3RyaXAoKQogICAgdHJ5OgogICAgICAgIGR0ID0gcGFyc2VkYXRlX3RvX2RhdGV0aW1lKHRleHQpCiAgICAgICAgaWYgZHQgaXMgbm90IE5vbmU6CiAgICAgICAgICAgIGlmIGR0LnR6aW5mbyBpcyBOb25lOgogICAgICAgICAgICAgICAgZHQgPSBkdC5yZXBsYWNlKHR6aW5mbz10aW1lem9uZS51dGMpCiAgICAgICAgICAgIHJldHVybiBkdC5hc3RpbWV6b25lKHRpbWV6b25lLnV0YykKICAgIGV4Y2VwdCAoVHlwZUVycm9yLCBWYWx1ZUVycm9yKToKICAgICAgICBwYXNzCiAgICBmb3IgZm10IGluICgiJVktJW0tJWRUJUg6JU06JVMleiIsICIlWS0lbS0lZFQlSDolTTolU1oiLAogICAgICAgICAgICAgICAgIiVZLSVtLSVkICVIOiVNOiVTIiwgIiVZLSVtLSVkIik6CiAgICAgICAgdHJ5OgogICAgICAgICAgICB0ID0gdGV4dC5yZXBsYWNlKCJaIiwgIiswMDAwIikgaWYgZm10LmVuZHN3aXRoKCIleiIpIGVsc2UgdGV4dAogICAgICAgICAgICBkdCA9IGRhdGV0aW1lLnN0cnB0aW1lKHQsIGZtdCkKICAgICAgICAgICAgaWYgZHQudHppbmZvIGlzIE5vbmU6CiAgICAgICAgICAgICAgICBkdCA9IGR0LnJlcGxhY2UodHppbmZvPXRpbWV6b25lLnV0YykKICAgICAgICAgICAgcmV0dXJuIGR0LmFzdGltZXpvbmUodGltZXpvbmUudXRjKQogICAgICAgIGV4Y2VwdCBWYWx1ZUVycm9yOgogICAgICAgICAgICBjb250aW51ZQogICAgcmV0dXJuIE5vbmUKCgpkZWYgbG9jYWwodGFnKToKICAgIHJldHVybiB0YWcucnNwbGl0KCJ9IiwgMSlbLTFdIGlmICJ9IiBpbiB0YWcgZWxzZSB0YWcKCgpkZWYgY2hpbGRfdGV4dChlbGVtLCBuYW1lcyk6CiAgICBmb3IgYyBpbiBlbGVtOgogICAgICAgIGlmIGxvY2FsKGMudGFnKSBpbiBuYW1lczoKICAgICAgICAgICAgdHh0ID0gIiIuam9pbihjLml0ZXJ0ZXh0KCkpLnN0cmlwKCkKICAgICAgICAgICAgaWYgdHh0OgogICAgICAgICAgICAgICAgcmV0dXJuIHR4dAogICAgcmV0dXJuICIiCgoKZGVmIGNoaWxkX2xpbmsoZWxlbSk6CiAgICAjIFJTUzogPGxpbms+dGV4dDwvbGluaz47IEF0b206IDxsaW5rIGhyZWY9Ii4uLiIvPgogICAgZm9yIGMgaW4gZWxlbToKICAgICAgICBpZiBsb2NhbChjLnRhZykgPT0gImxpbmsiOgogICAgICAgICAgICBocmVmID0gYy5nZXQoImhyZWYiKQogICAgICAgICAgICBpZiBocmVmIGFuZCBjLmdldCgicmVsIikgaW4gKE5vbmUsICJhbHRlcm5hdGUiKToKICAgICAgICAgICAgICAgIHJldHVybiBocmVmLnN0cmlwKCkKICAgICAgICAgICAgaWYgYy50ZXh0IGFuZCBjLnRleHQuc3RyaXAoKToKICAgICAgICAgICAgICAgIHJldHVybiBjLnRleHQuc3RyaXAoKQogICAgcmV0dXJuICIiCgoKZGVmIGZldGNoX2NhbmRpZGF0ZXMobmFtZSwgdXJsLCBsYW5nLCByZWdpb25fb3ZlcnJpZGUsIGN1dG9mZik6CiAgICAiIiJGZXRjaCBvbmUgc291cmNlJ3MgcmF3IGNhbmRpZGF0ZXMgKG5vIGRlZHVwZTsgbWFpbiBhcHBsaWVzIGl0KS4iIiIKICAgIHJlcSA9IHVybGxpYi5yZXF1ZXN0LlJlcXVlc3QodXJsLCBoZWFkZXJzPVVBKQogICAgd2l0aCB1cmxsaWIucmVxdWVzdC51cmxvcGVuKHJlcSwgdGltZW91dD0zMCkgYXMgcjoKICAgICAgICByYXcgPSByLnJlYWQoKQogICAgcm9vdCA9IEVULmZyb21zdHJpbmcocmF3LmxzdHJpcCgpKQogICAgaXRlbXMgPSBbZSBmb3IgZSBpbiByb290Lml0ZXIoKSBpZiBsb2NhbChlLnRhZykgaW4gKCJpdGVtIiwgImVudHJ5IildCiAgICBvdXQgPSBbXQogICAgZm9yIGl0IGluIGl0ZW1zOgogICAgICAgIHRpdGxlID0gcGxhaW4oY2hpbGRfdGV4dChpdCwgKCJ0aXRsZSIsKSkpCiAgICAgICAgbGluayA9IGNoaWxkX2xpbmsoaXQpCiAgICAgICAgaWYgbm90IHRpdGxlIG9yIG5vdCBsaW5rOgogICAgICAgICAgICBjb250aW51ZQogICAgICAgIGR0ID0gcGFyc2VfZGF0ZShjaGlsZF90ZXh0KGl0LCAoInB1YkRhdGUiLCAicHVibGlzaGVkIiwgInVwZGF0ZWQiLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgImRhdGUiLCAiZGM6ZGF0ZSIpKSkKICAgICAgICBpZiBkdCBpcyBOb25lIG9yIGR0IDwgY3V0b2ZmOgogICAgICAgICAgICBjb250aW51ZQogICAgICAgIGRlc2MgPSBwbGFpbihjaGlsZF90ZXh0KGl0LCAoImRlc2NyaXB0aW9uIiwgInN1bW1hcnkiLCAiY29udGVudCIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiZW5jb2RlZCIpKSkKICAgICAgICBvdXQuYXBwZW5kKHsKICAgICAgICAgICAgInNvdXJjZU5hbWUiOiBuYW1lLAogICAgICAgICAgICAib3JpZ2luYWxUaXRsZSI6IHRpdGxlLAogICAgICAgICAgICAidXJsIjogbGluaywKICAgICAgICAgICAgInB1Ymxpc2hlZEF0IjogZHQuc3RyZnRpbWUoIiVZLSVtLSVkVCVIOiVNOiVTWiIpLAogICAgICAgICAgICAiZGVzY3JpcHRpb24iOiBkZXNjWzoxMjAwXSwKICAgICAgICAgICAgImxhbmciOiBsYW5nLAogICAgICAgICAgICAicmVnaW9uIjogcmVnaW9uX292ZXJyaWRlIG9yICgi5Zu95YaFIiBpZiBsYW5nID09ICJqYSIgZWxzZSAi5rW35aSWIiksCiAgICAgICAgfSkKICAgIHJldHVybiBvdXQKCgpkZWYgbWFpbihhcmd2PU5vbmUpOgogICAgYXAgPSBhcmdwYXJzZS5Bcmd1bWVudFBhcnNlcihkZXNjcmlwdGlvbj0iQXJ0IE5ld3MgY2FuZGlkYXRlIGZldGNoZXIiKQogICAgYXAuYWRkX2FyZ3VtZW50KCItLWRhdGEiLCByZXF1aXJlZD1UcnVlKQogICAgYXAuYWRkX2FyZ3VtZW50KCItLW91dCIsIHJlcXVpcmVkPVRydWUpCiAgICBhcC5hZGRfYXJndW1lbnQoIi0tZGF5cyIsIHR5cGU9aW50LCBkZWZhdWx0PTQ1KQogICAgYXJncyA9IGFwLnBhcnNlX2FyZ3MoYXJndikKCiAgICB0cnk6CiAgICAgICAgd2l0aCBvcGVuKGFyZ3MuZGF0YSwgZW5jb2Rpbmc9InV0Zi04IikgYXMgZjoKICAgICAgICAgICAgc3RvY2sgPSBqc29uLmxvYWQoZikuZ2V0KCJhcnRpY2xlcyIsIFtdKQogICAgZXhjZXB0IEZpbGVOb3RGb3VuZEVycm9yOgogICAgICAgIHN0b2NrID0gW10KICAgIHNlZW5fdXJscyA9IHthWyJ1cmwiXSBmb3IgYSBpbiBzdG9ja30KICAgIHNlZW5fdGl0bGVzID0ge25vcm1fdGl0bGUoYS5nZXQoIm9yaWdpbmFsVGl0bGUiKSkgZm9yIGEgaW4gc3RvY2t9CiAgICBjdXRvZmYgPSBkYXRldGltZS5ub3codGltZXpvbmUudXRjKSAtIHRpbWVkZWx0YShkYXlzPWFyZ3MuZGF5cykKCiAgICByYXcsIHBlcl9zb3VyY2UsIGZhaWxlZCA9IFtdLCB7fSwgW10KICAgIHdpdGggVGhyZWFkUG9vbEV4ZWN1dG9yKG1heF93b3JrZXJzPTgpIGFzIGV4OgogICAgICAgIGZ1dHVyZXMgPSB7bmFtZTogZXguc3VibWl0KGZldGNoX2NhbmRpZGF0ZXMsIG5hbWUsIHVybCwgbGFuZywKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZWdpb25fb3ZlcnJpZGUsIGN1dG9mZikKICAgICAgICAgICAgICAgICAgIGZvciBuYW1lLCB1cmwsIGxhbmcsIHJlZ2lvbl9vdmVycmlkZSBpbiBTT1VSQ0VTfQogICAgICAgIGZvciBuYW1lLCB1cmwsIGxhbmcsIHJlZ2lvbl9vdmVycmlkZSBpbiBTT1VSQ0VTOgogICAgICAgICAgICB0cnk6CiAgICAgICAgICAgICAgICBnb3QgPSBmdXR1cmVzW25hbWVdLnJlc3VsdCgpCiAgICAgICAgICAgICAgICByYXcuZXh0ZW5kKGdvdCkKICAgICAgICAgICAgICAgIHBlcl9zb3VyY2VbbmFtZV0gPSAwICAjIGNvdW50ZWQgYWZ0ZXIgZGVkdXBlIGJlbG93CiAgICAgICAgICAgICAgICBmb3IgYyBpbiBnb3Q6CiAgICAgICAgICAgICAgICAgICAgY1siX3NvdXJjZV9rZXkiXSA9IG5hbWUKICAgICAgICAgICAgZXhjZXB0IEV4Y2VwdGlvbiBhcyBlOiAgIyBvbmUgc291cmNlIGRvd24gbXVzdCBub3Qgc3RvcCBvdGhlcnMKICAgICAgICAgICAgICAgIGZhaWxlZC5hcHBlbmQoeyJzb3VyY2UiOiBuYW1lLCAiZXJyb3IiOiBzdHIoZSlbOjIwMF19KQogICAgICAgICAgICAgICAgcGVyX3NvdXJjZVtuYW1lXSA9IDAKICAgICMgRGV0ZXJtaW5pc3RpYyBkZWR1cGU6IG5ld2VzdCBmaXJzdCwgYWdhaW5zdCB0aGUgc3RvY2sgYW5kIGl0c2VsZi4KICAgIHJhdy5zb3J0KGtleT1sYW1iZGEgYzogY1sicHVibGlzaGVkQXQiXSwgcmV2ZXJzZT1UcnVlKQogICAgY2FuZGlkYXRlcyA9IFtdCiAgICBmb3IgYyBpbiByYXc6CiAgICAgICAgaWYgY1sidXJsIl0gaW4gc2Vlbl91cmxzIG9yIG5vcm1fdGl0bGUoY1sib3JpZ2luYWxUaXRsZSJdKSBpbiBzZWVuX3RpdGxlczoKICAgICAgICAgICAgY29udGludWUKICAgICAgICBzZWVuX3VybHMuYWRkKGNbInVybCJdKQogICAgICAgIHNlZW5fdGl0bGVzLmFkZChub3JtX3RpdGxlKGNbIm9yaWdpbmFsVGl0bGUiXSkpCiAgICAgICAgcGVyX3NvdXJjZVtjLnBvcCgiX3NvdXJjZV9rZXkiKV0gKz0gMQogICAgICAgIGNhbmRpZGF0ZXMuYXBwZW5kKGMpCiAgICBjYW5kaWRhdGVzLnNvcnQoa2V5PWxhbWJkYSBjOiBjWyJwdWJsaXNoZWRBdCJdLCByZXZlcnNlPVRydWUpCiAgICB3aXRoIG9wZW4oYXJncy5vdXQsICJ3IiwgZW5jb2Rpbmc9InV0Zi04IikgYXMgZjoKICAgICAgICBqc29uLmR1bXAoY2FuZGlkYXRlcywgZiwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MSkKICAgIHByaW50KGpzb24uZHVtcHMoeyJ0b3RhbCI6IGxlbihjYW5kaWRhdGVzKSwgInBlcl9zb3VyY2UiOiBwZXJfc291cmNlLAogICAgICAgICAgICAgICAgICAgICAgImZhaWxlZCI6IGZhaWxlZH0sIGVuc3VyZV9hc2NpaT1GYWxzZSkpCiAgICByZXR1cm4gMAoKCmlmIF9fbmFtZV9fID09ICJfX21haW5fXyI6CiAgICBzeXMuZXhpdChtYWluKCkpCg==
+#!/usr/bin/env python3
+"""Art News candidate fetcher (fixed script for the hourly update).
+
+Scope: 41 sources verified by live fetching on 2026-11-13, when the
+Art field was added at the user's request (base pattern: Nurse News,
+the original of this series; same rules as Cinema / Camera / Music /
+Instruments / World / Literature). Coverage is deliberately broad:
+Japanese art media and exhibition portals, overseas art media and
+criticism, museum and museum-industry sources, the art market, and
+media-art sources.
+Japanese: ART iT, artscape, IMA ONLINE.
+Overseas art media / criticism: Artnet News, ARTnews, Art in America,
+Artforum, Hyperallergic, The Art Newspaper, Colossal, Artsy,
+The Guardian Art and Design, NYT Art and Design, Ocula Magazine,
+ArtAsiaPacific, FAD Magazine, Elephant Magazine, Berlin Art Link,
+Art Plugged, DailyArt Magazine, Momus, Art Africa Magazine,
+The Flux Review, Two Coats of Paint, Something Curated,
+Sugarcane Magazine.
+Museums / museum industry: Guggenheim, LACMA Unframed, V&A Blog,
+Blooloop, MuseumNext, AAM (American Alliance of Museums).
+Market: MutualArt (plus Artnet / Artsy above).
+Design / craft / media art: Designboom Art, Dezeen Art, IGNANT,
+Creative Boom, My Modern Met, Booooooom, Ars Electronica Blog.
+Japan in English: Spoon & Tamago (region is set to 国内 for this one).
+Notes: IMA ONLINE items often carry no description; the editorial
+gate excludes description-less candidates. Artsy's feed carries
+very long descriptions; they are truncated to 1200 chars like every
+other source. NYT Arts (general performing-arts wire) was verified
+but not adopted in favour of the focused NYT Art and Design feed.
+Probed on 2026-11-13 and NOT adopted (do not retry): 美術手帖 /
+Tokyo Art Beat / 美術展ナビ / ネットTAM / 森美術館 / 東京都現代美術館 /
+NTT ICC / YCAM / 文化庁メディア芸術祭 (no RSS endpoint found: 404),
+Frieze / MoMA Magazine / Aesthetica Magazine / AXIS / Art Institute
+of Chicago (403), The Met / Brooklyn Museum Blog (429),
+Apollo Magazine / Walker Art Center (500), British Museum Blog /
+美術館ナビ / インターネットミュージアム / Widewalls / Rhizome /
+Tokyo Art Navigation (connection closed), Getty Iris / Art Guide
+Australia / Qetic (XML the stdlib parser cannot read), Art Review /
+ArtDaily / e-flux / Tate / SFMOMA (404 on every probed feed path).
+Excluded by the 45-day rule (feed parses but no items within
+45 days on probe day): Juxtapoz, Smithsonian Magazine general feed
+(stale since 2019), Art Annual Online, Creative Applications
+Network, We Make Money Not Art, Art Observed, Culture Type,
+Kooness, Bijutsu Shuppan (美術出版社). Excluded by scope, not
+failure: ICOM and Museums Association (feed parses, 0 items),
+Metropolis Japan and Nippon.com (general Japan/life feeds; art
+items are picked up through the art-specific sources above),
+CINRA (general culture feed already feeding Cinema News).
+Japanese national museums (国立美術館ほか) publish no usable RSS as
+of the probe; domestic exhibition coverage comes from artscape
+(a museum/exhibition portal) and ART iT instead.
+Parses RSS/Atom with the stdlib only and writes candidates that are
+not already in art-news-data.json (dedupe by URL and normalized
+title; sources are fetched in parallel, dedupe is applied
+afterwards in publishedAt order so runs stay deterministic).
+
+Each candidate: {sourceName, originalTitle, url, publishedAt (ISO UTC),
+description (plain text, <=1200 chars), lang, region}.
+A failing source is recorded in the summary's `failed` list and never
+stops the others.
+
+Usage:
+  python3 scripts/art_fetch.py --data art-news-data.json \
+      --out /tmp/art_candidates.json [--days 45]
+Prints a JSON summary {total, per_source, failed} to stdout.
+"""
+import argparse
+import html
+import json
+import re
+import sys
+import urllib.request
+import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
+
+# (name, feed url, lang, region override or None)
+SOURCES = [
+    ('ART iT', "https://www.art-it.asia/feed", "ja", None),
+    ('artscape', "https://artscape.jp/feed/", "ja", None),
+    ('IMA ONLINE', "https://imaonline.jp/feed/", "ja", None),
+    ('Artnet News', "https://news.artnet.com/feed", "en", None),
+    ('ARTnews', "https://www.artnews.com/feed/", "en", None),
+    ('Art in America', "https://www.artnews.com/art-in-america/feed/", "en", None),
+    ('Artforum', "https://www.artforum.com/feed/", "en", None),
+    ('Hyperallergic', "https://hyperallergic.com/feed/", "en", None),
+    ('The Art Newspaper', "https://www.theartnewspaper.com/rss.xml", "en", None),
+    ('Colossal', "https://www.thisiscolossal.com/feed/", "en", None),
+    ('Artsy', "https://www.artsy.net/rss/news", "en", None),
+    ('The Guardian Art and Design', "https://www.theguardian.com/artanddesign/rss", "en", None),
+    ('NYT Art and Design', "https://rss.nytimes.com/services/xml/rss/nyt/ArtandDesign.xml", "en", None),
+    ('Ocula Magazine', "https://ocula.com/magazine/feed/", "en", None),
+    ('ArtAsiaPacific', "https://artasiapacific.com/feed", "en", None),
+    ('FAD Magazine', "https://fadmagazine.com/feed/", "en", None),
+    ('Elephant Magazine', "https://elephant.art/feed/", "en", None),
+    ('Berlin Art Link', "https://www.berlinartlink.com/feed/", "en", None),
+    ('Art Plugged', "https://artplugged.co.uk/feed/", "en", None),
+    ('DailyArt Magazine', "https://www.dailyartmagazine.com/feed/", "en", None),
+    ('Momus', "https://momus.ca/feed/", "en", None),
+    ('Art Africa Magazine', "https://artafricamagazine.org/feed/", "en", None),
+    ('The Flux Review', "https://www.thefluxreview.com/feed/", "en", None),
+    ('Two Coats of Paint', "https://twocoatsofpaint.com/feed/", "en", None),
+    ('Something Curated', "https://somethingcurated.com/feed/", "en", None),
+    ('Sugarcane Magazine', "https://sugarcanemag.com/feed/", "en", None),
+    ('Guggenheim', "https://www.guggenheim.org/feed", "en", None),
+    ('LACMA Unframed', "https://unframed.lacma.org/feed/", "en", None),
+    ('V&A Blog', "https://www.vam.ac.uk/blog/feed", "en", None),
+    ('Blooloop', "https://blooloop.com/feed/", "en", None),
+    ('MuseumNext', "https://www.museumnext.com/feed/", "en", None),
+    ('AAM (American Alliance of Museums)', "https://www.aam-us.org/feed/", "en", None),
+    ('MutualArt', "https://www.mutualart.com/rss", "en", None),
+    ('Designboom Art', "https://www.designboom.com/art/feed/", "en", None),
+    ('Dezeen Art', "https://www.dezeen.com/tag/art/feed/", "en", None),
+    ('IGNANT', "https://www.ignant.com/feed/", "en", None),
+    ('Creative Boom', "https://www.creativeboom.com/feed/", "en", None),
+    ('My Modern Met', "https://mymodernmet.com/feed/", "en", None),
+    ('Booooooom', "https://www.booooooom.com/feed/", "en", None),
+    ('Ars Electronica Blog', "https://ars.electronica.art/aeblog/en/feed/", "en", None),
+    ('Spoon & Tamago', "https://spoon-tamago.com/feed/", "en", "国内"),
+]
+
+UA = {"User-Agent": "Mozilla/5.0 (compatible; ArtNewsFetch/1.0)"}
+
+
+def norm_title(s):
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def plain(s):
+    s = re.sub(r"<[^>]+>", " ", s or "")
+    s = html.unescape(s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def parse_date(text):
+    if not text:
+        return None
+    text = text.strip()
+    try:
+        dt = parsedate_to_datetime(text)
+        if dt is not None:
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt.astimezone(timezone.utc)
+    except (TypeError, ValueError):
+        pass
+    for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%SZ",
+                "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+        try:
+            t = text.replace("Z", "+0000") if fmt.endswith("%z") else text
+            dt = datetime.strptime(t, fmt)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt.astimezone(timezone.utc)
+        except ValueError:
+            continue
+    return None
+
+
+def local(tag):
+    return tag.rsplit("}", 1)[-1] if "}" in tag else tag
+
+
+def child_text(elem, names):
+    for c in elem:
+        if local(c.tag) in names:
+            txt = "".join(c.itertext()).strip()
+            if txt:
+                return txt
+    return ""
+
+
+def child_link(elem):
+    # RSS: <link>text</link>; Atom: <link href="..."/>
+    for c in elem:
+        if local(c.tag) == "link":
+            href = c.get("href")
+            if href and c.get("rel") in (None, "alternate"):
+                return href.strip()
+            if c.text and c.text.strip():
+                return c.text.strip()
+    return ""
+
+
+def fetch_candidates(name, url, lang, region_override, cutoff):
+    """Fetch one source's raw candidates (no dedupe; main applies it)."""
+    req = urllib.request.Request(url, headers=UA)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        raw = r.read()
+    root = ET.fromstring(raw.lstrip())
+    items = [e for e in root.iter() if local(e.tag) in ("item", "entry")]
+    out = []
+    for it in items:
+        title = plain(child_text(it, ("title",)))
+        link = child_link(it)
+        if not title or not link:
+            continue
+        dt = parse_date(child_text(it, ("pubDate", "published", "updated",
+                                        "date", "dc:date")))
+        if dt is None or dt < cutoff:
+            continue
+        desc = plain(child_text(it, ("description", "summary", "content",
+                                     "encoded")))
+        out.append({
+            "sourceName": name,
+            "originalTitle": title,
+            "url": link,
+            "publishedAt": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "description": desc[:1200],
+            "lang": lang,
+            "region": region_override or ("国内" if lang == "ja" else "海外"),
+        })
+    return out
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="Art News candidate fetcher")
+    ap.add_argument("--data", required=True)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--days", type=int, default=45)
+    args = ap.parse_args(argv)
+
+    try:
+        with open(args.data, encoding="utf-8") as f:
+            stock = json.load(f).get("articles", [])
+    except FileNotFoundError:
+        stock = []
+    seen_urls = {a["url"] for a in stock}
+    seen_titles = {norm_title(a.get("originalTitle")) for a in stock}
+    cutoff = datetime.now(timezone.utc) - timedelta(days=args.days)
+
+    raw, per_source, failed = [], {}, []
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        futures = {name: ex.submit(fetch_candidates, name, url, lang,
+                                   region_override, cutoff)
+                   for name, url, lang, region_override in SOURCES}
+        for name, url, lang, region_override in SOURCES:
+            try:
+                got = futures[name].result()
+                raw.extend(got)
+                per_source[name] = 0  # counted after dedupe below
+                for c in got:
+                    c["_source_key"] = name
+            except Exception as e:  # one source down must not stop others
+                failed.append({"source": name, "error": str(e)[:200]})
+                per_source[name] = 0
+    # Deterministic dedupe: newest first, against the stock and itself.
+    raw.sort(key=lambda c: c["publishedAt"], reverse=True)
+    candidates = []
+    for c in raw:
+        if c["url"] in seen_urls or norm_title(c["originalTitle"]) in seen_titles:
+            continue
+        seen_urls.add(c["url"])
+        seen_titles.add(norm_title(c["originalTitle"]))
+        per_source[c.pop("_source_key")] += 1
+        candidates.append(c)
+    candidates.sort(key=lambda c: c["publishedAt"], reverse=True)
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(candidates, f, ensure_ascii=False, indent=1)
+    print(json.dumps({"total": len(candidates), "per_source": per_source,
+                      "failed": failed}, ensure_ascii=False))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
