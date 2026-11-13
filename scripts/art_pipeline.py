@@ -1,1 +1,492 @@
-IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoiIiJBcnQgTmV3cyBmaXhlZCBwaXBlbGluZSAoZGV0ZXJtaW5pc3RpYyBoYWxmIG9mIHRoZSBob3VybHkgdXBkYXRlKS4KCkRlcml2ZWQgZnJvbSB0aGUgTnVyc2UgTmV3cyBwaXBlbGluZSAodGhlIG9yaWdpbmFsIG9mIHRoaXMgc2VyaWVzKSwKdmlhIHRoZSBzaGFyZWQgQXJ0L0NpbmVtYSBwaXBlbGluZSB0ZW1wbGF0ZTogc2FtZSBjbGVhbmluZywKZGVkdXAsIHZhbGlkYXRpb24sIGFyY2hpdmUsIGZlZWQgYW5kIHNlYXJjaC1zaGFyZCBydWxlcy4iIgoKT3ducyBldmVyeXRoaW5nIGV4Y2VwdCBjYW5kaWRhdGUgZmV0Y2hpbmcgYW5kIHN1bW1hcnkgd3JpdGluZzoKICAxLiBDbGVhbiB0aGUgc3RvY2s6IGRyb3AgZmFsbGJhY2sgc3R1YnMsIGZ1dHVyZS1kYXRlZCBhcnRpY2xlcwogICAgICg+IG5vdyArIDIgZGF5cyksIFVSTCBkdXBsaWNhdGVzLCBhbmQgbm9ybWFsaXplZC10aXRsZSBkdXBsaWNhdGVzCiAgICAgKHNhbWUgc3RvcnkgdW5kZXIgYSBkaWZmZXJlbnQgVVJMOyBrZWVwIHRoZSBsb25nZXIgc3VtbWFyeSwgdGhlbgogICAgIHRoZSBuZXdlciBhcnRpY2xlKS4KICAyLiBNZXJnZSBuZXcgcmVjb3JkcyAoZnJvbSAtLW5ldyBGSUxFLCBhIEpTT04gbGlzdCBpbiB0aGUgZXN0YWJsaXNoZWQKICAgICBmb3JtYXQ7IGBpZGAsIGBwdWJsaXNoZWREYXRlS2V5YCBhbmQgYHB1Ymxpc2hlZE1vbnRoS2V5YCBhcmUKICAgICBkZXJpdmVkIHdoZW4gbWlzc2luZyksIGRlZHVwZWQgYWdhaW5zdCB0aGUgc3RvY2sgYW5kIGVhY2ggb3RoZXIKICAgICBieSBVUkwgYW5kIG5vcm1hbGl6ZWQgb3JpZ2luYWwgdGl0bGUuCiAgMy4gUmVnZW5lcmF0ZSBhcnQtbmV3cy5odG1sIChsYXRlc3QgODApIGFuZCBldmVyeSBtb250aGx5IGFyY2hpdmUKICAgICBhcnQtYXJjaGl2ZS1ZWVlZLU1NLmh0bWwgZnJvbSBhcnQtbmV3cy1kYXRhLmpzb24sIHJldXNpbmcgdGhlCiAgICAgY3VycmVudCBwYWdlIGFzIHRoZSBzaGVsbC4gVGhlIHBpcGVsaW5lIHJlZnVzZXMgdG8gcmVnZW5lcmF0ZSBpZgogICAgIHRoZSBzaGVsbCBsb3N0IGl0cyBwYWdlciwgYXJ0aWNsZSBtYXJrZXJzLCBhcmNoaXZlIG1hcmtlcnMsIG9yCiAgICAgc3VtbWFyeSBmb2xkaW5nLgogIDQuIFJlZ2VuZXJhdGUgYXJ0LWZlZWQueG1sIChSU1MgMi4wLCBsYXRlc3QgNTApIGFuZCB0aGUgc2hhcmRlZAogICAgIHNlYXJjaCBpbmRleCAoYXJ0LXNlYXJjaC1pbmRleC5qc29uICsgYXJ0LXNlYXJjaC1ZWVlZLU1NLmpzb24pLgogIDUuIFZhbGlkYXRlIGV2ZXJ5dGhpbmc7IGFueSBmYWlsdXJlIGV4aXRzIG5vbi16ZXJvLCBub3RoaW5nIHdyaXR0ZW4uCiAgNi4gUHJpbnQgYSBKU09OIHN1bW1hcnkgaW5jbHVkaW5nIGBmaWxlc2A6IHJlcG8tcmVsYXRpdmUgcGF0aHMgd2hvc2UKICAgICBieXRlcyBhY3R1YWxseSBjaGFuZ2VkICh0aGUgcHVzaCBtYW5pZmVzdCkuCgpXaXRoIG5vIHJlbW92YWxzIGFuZCBubyBuZXcgcmVjb3JkcyB0aGUgcnVuIGlzIGEgbm8tb3A6IG5vdGhpbmcgaXMKd3JpdHRlbiBhbmQgYHVwZGF0ZWRBdGAgc3RheXMgdW50b3VjaGVkIChieXRlLWlkZW50aWNhbCBvdXRwdXQpLgoKVXNhZ2U6CiAgcHl0aG9uMyBzY3JpcHRzL2FydF9waXBlbGluZS5weSAtLXJlcG8gRElSIFstLW5ldyBuZXcuanNvbl0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgWy0tZHJvcCB1cmxzLmpzb25dIFstLWRyeS1ydW5dCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFstLW5vdyBJU084NjAxWl0KRXhpdCBjb2RlczogMCBvaywgMiB2YWxpZGF0aW9uL3NoZWxsIGVycm9yLCAzIGJhZCBpbnB1dC4KU3RkbGliIG9ubHkuCiIiIgppbXBvcnQgYXJncGFyc2UKaW1wb3J0IGhhc2hsaWIKaW1wb3J0IGh0bWwKaW1wb3J0IGpzb24KaW1wb3J0IHJlCmltcG9ydCBzeXMKZnJvbSBjb2xsZWN0aW9ucyBpbXBvcnQgT3JkZXJlZERpY3QKZnJvbSBkYXRldGltZSBpbXBvcnQgZGF0ZXRpbWUsIHRpbWVkZWx0YSwgdGltZXpvbmUKZnJvbSB6b25laW5mbyBpbXBvcnQgWm9uZUluZm8KCkpTVCA9IFpvbmVJbmZvKCJBc2lhL1Rva3lvIikKU1RVQl9NQVJLRVJTID0gKCJHZW1pbmkg54Sh5paZ5p6gIiwgIueUn+aIkOimgee0hOOCkuWuieWumuWPluW+l+OBp+OBjeOBquOBi+OBo+OBnyIpCktBTkFfUkUgPSByZS5jb21waWxlKHIiW+OBgS3jgpPjgqEt44O2XSIpCk1BSU5fTElNSVQgPSA4MApGRUVEX0xJTUlUID0gNTAKTUFJTl9USVRMRSA9ICJBcnQgTmV3c++8iOe+juihk+ODu+e+juihk+mkqOODi+ODpeODvOOCue+8iXwgVkFSRUxTRVIiClJFUVVJUkVEID0gKCJzb3VyY2VOYW1lIiwgIm9yaWdpbmFsVGl0bGUiLCAidGl0bGVKYSIsICJzdW1tYXJ5SHRtbCIsICJ1cmwiLAogICAgICAgICAgICAicHVibGlzaGVkQXQiLCAiY2F0ZWdvcmllcyIsICJyZWdpb24iLCAia2luZCIpCgoKZGVmIGVzYyhzKToKICAgIHJldHVybiBodG1sLmVzY2FwZShzdHIocyksIHF1b3RlPVRydWUpCgoKZGVmIG5vcm1fdGl0bGUocyk6CiAgICByZXR1cm4gcmUuc3ViKHIiW15hLXowLTldIiwgIiIsIChzIG9yICIiKS5sb3dlcigpKQoKCmRlZiBtZDVoZXgocyk6CiAgICByZXR1cm4gaGFzaGxpYi5tZDUocy5lbmNvZGUoInV0Zi04IikpLmhleGRpZ2VzdCgpCgoKZGVmIHBhcnNlX2lzbyhzKToKICAgIHQgPSBzLnJlcGxhY2UoIi4wMDBaIiwgIloiKQogICAgaWYgIi4iIGluIHQgYW5kIHQuZW5kc3dpdGgoIloiKToKICAgICAgICB0ID0gdFs6dC5pbmRleCgiLiIpXSArICJaIgogICAgcmV0dXJuIGRhdGV0aW1lLnN0cnB0aW1lKHQsICIlWS0lbS0lZFQlSDolTTolU1oiKS5yZXBsYWNlKHR6aW5mbz10aW1lem9uZS51dGMpCgoKZGVmIGpzdF9tZXRhKHB1Ymxpc2hlZF9hdF9pc28pOgogICAgcmV0dXJuIHBhcnNlX2lzbyhwdWJsaXNoZWRfYXRfaXNvKS5hc3RpbWV6b25lKEpTVCkuc3RyZnRpbWUoIiVZLSVtLSVkICVIOiVNIikKCgpkZWYgcGxhaW5fdGV4dChodG1sX3N0cik6CiAgICByZXR1cm4gcmUuc3ViKHIiPFtePl0rPiIsICIiLCAoaHRtbF9zdHIgb3IgIiIpLnJlcGxhY2UoIjxicj48YnI+IiwgIiAiKSkKCgpkZWYgYXJ0aWNsZV9ibG9jayhhKToKICAgIHNlYXJjaCA9ICIgIi5qb2luKFsKICAgICAgICBhWyJ0aXRsZUphIl0sIGFbIm9yaWdpbmFsVGl0bGUiXSwgcGxhaW5fdGV4dChhWyJzdW1tYXJ5SHRtbCJdKSwKICAgICAgICBhWyJzb3VyY2VOYW1lIl0sICIgIi5qb2luKGFbImNhdGVnb3JpZXMiXSksIGFbInJlZ2lvbiJdLCBhWyJraW5kIl0sCiAgICBdKQogICAgY2hpcHMgPSBbZic8c3BhbiBjbGFzcz0iY2hpcCI+44Kr44OG44K044OqOiB7ZXNjKGcpfTwvc3Bhbj4nIGZvciBnIGluIGFbImNhdGVnb3JpZXMiXV0KICAgIGNoaXBzLmFwcGVuZChmJzxzcGFuIGNsYXNzPSJjaGlwIj7lnLDln586IHtlc2MoYVsicmVnaW9uIl0pfTwvc3Bhbj4nKQogICAgY2hpcHMuYXBwZW5kKGYnPHNwYW4gY2xhc3M9ImNoaXAiPueoruWIpToge2VzYyhhWyJraW5kIl0pfTwvc3Bhbj4nKQogICAgcGFyYXMgPSBhWyJzdW1tYXJ5SHRtbCJdLnNwbGl0KCI8YnI+PGJyPiIpCiAgICBpZiBsZW4ocGFyYXMpID49IDI6CiAgICAgICAgc3VtbWFyeV9kaXYgPSAoCiAgICAgICAgICAgIGYnICA8ZGl2IGNsYXNzPSJzdW1tYXJ5Ij57cGFyYXNbMF19JwogICAgICAgICAgICBmJzxzcGFuIGNsYXNzPSJzdW1tYXJ5LXJlc3QiIGhpZGRlbj48YnI+PGJyPnsiPGJyPjxicj4iLmpvaW4ocGFyYXNbMTpdKX08L3NwYW4+PC9kaXY+XG4nCiAgICAgICAgICAgICcgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzcz0ic3VtbWFyeS10b2dnbGUiIGFyaWEtZXhwYW5kZWQ9ImZhbHNlIj7ntprjgY3jgpLoqq3jgoA8L2J1dHRvbj5cbicKICAgICAgICApCiAgICBlbHNlOgogICAgICAgIHN1bW1hcnlfZGl2ID0gZicgIDxkaXYgY2xhc3M9InN1bW1hcnkiPnthWyJzdW1tYXJ5SHRtbCJdfTwvZGl2PlxuJwogICAgcmV0dXJuICgKICAgICAgICAiPGFydGljbGVcbiIKICAgICAgICBmJyAgZGF0YS1pZD0ie2FbImlkIl19IlxuJwogICAgICAgIGYnICBkYXRhLWRhdGU9InthWyJwdWJsaXNoZWREYXRlS2V5Il19IlxuJwogICAgICAgIGYnICBkYXRhLW1vbnRoPSJ7YVsicHVibGlzaGVkTW9udGhLZXkiXX0iXG4nCiAgICAgICAgZicgIGRhdGEtY2F0ZWdvcmllcz0ieyJ8fCIuam9pbihhWyJjYXRlZ29yaWVzIl0pfSJcbicKICAgICAgICBmJyAgZGF0YS1yZWdpb249Intlc2MoYVsicmVnaW9uIl0pfSJcbicKICAgICAgICBmJyAgZGF0YS1zb3VyY2U9Intlc2MoYVsic291cmNlTmFtZSJdKX0iXG4nCiAgICAgICAgZicgIGRhdGEta2luZD0ie2VzYyhhWyJraW5kIl0pfSJcbicKICAgICAgICBmJyAgZGF0YS1zZWFyY2g9Intlc2Moc2VhcmNoKX0iPlxuJwogICAgICAgIGYnICA8cCBjbGFzcz0ibWV0YSI+e2VzYyhhWyJzb3VyY2VOYW1lIl0pfeOAgHtqc3RfbWV0YShhWyJwdWJsaXNoZWRBdCJdKX08L3A+XG4nCiAgICAgICAgZicgIDxoMiBjbGFzcz0iYXJ0aWNsZS10aXRsZSI+e2VzYyhhWyJ0aXRsZUphIl0pfTwvaDI+XG4nCiAgICAgICAgZicgIDxkaXYgY2xhc3M9InRheG9ub215Ij57IiIuam9pbihjaGlwcyl9PC9kaXY+XG4nCiAgICAgICAgZid7c3VtbWFyeV9kaXZ9JwogICAgICAgICcgIDxkaXYgY2xhc3M9InNvdXJjZS1ib3giPlxuJwogICAgICAgICcgICAgPHN0cm9uZz7jgr3jg7zjgrnjg7vlvJXnlKjlhYM8L3N0cm9uZz5cbicKICAgICAgICBmJyAgICDphY3kv6HlhYPvvJp7ZXNjKGFbInNvdXJjZU5hbWUiXSl9PGJyPlxuJwogICAgICAgIGYnICAgIOWOn+mhjO+8mntlc2MoYVsib3JpZ2luYWxUaXRsZSJdKX08YnI+XG4nCiAgICAgICAgZicgICAg5Y6f5paHVVJM77yaPGEgaHJlZj0ie2VzYyhhWyJ1cmwiXSl9IiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub29wZW5lciI+e2VzYyhhWyJ1cmwiXSl9PC9hPlxuJwogICAgICAgICcgIDwvZGl2PlxuJwogICAgICAgICc8L2FydGljbGU+JwogICAgKQoKCmRlZiBjbGVhbl9zdG9jayhhcnRpY2xlcywgbm93KToKICAgIHJlbW92ZWQsIGtlcHQgPSBbXSwgW10KICAgIGZ1dHVyZV9saW1pdCA9IG5vdyArIHRpbWVkZWx0YShkYXlzPTIpCiAgICBmb3IgYSBpbiBhcnRpY2xlczoKICAgICAgICBibG9iID0ganNvbi5kdW1wcyhhLCBlbnN1cmVfYXNjaWk9RmFsc2UpCiAgICAgICAgaWYgYW55KG0gaW4gYmxvYiBmb3IgbSBpbiBTVFVCX01BUktFUlMpOgogICAgICAgICAgICByZW1vdmVkLmFwcGVuZCgoYSwgInN0dWIiKSkKICAgICAgICAgICAgY29udGludWUKICAgICAgICB0cnk6CiAgICAgICAgICAgIHB1YiA9IHBhcnNlX2lzbyhhWyJwdWJsaXNoZWRBdCJdKQogICAgICAgIGV4Y2VwdCBFeGNlcHRpb246CiAgICAgICAgICAgIHJlbW92ZWQuYXBwZW5kKChhLCAiYmFkLWRhdGUiKSkKICAgICAgICAgICAgY29udGludWUKICAgICAgICBpZiBwdWIgPiBmdXR1cmVfbGltaXQ6CiAgICAgICAgICAgIHJlbW92ZWQuYXBwZW5kKChhLCAiZnV0dXJlIikpCiAgICAgICAgICAgIGNvbnRpbnVlCiAgICAgICAga2VwdC5hcHBlbmQoYSkKICAgIHNlZW5fdXJsLCB0bXAgPSBzZXQoKSwgW10KICAgIGZvciBhIGluIGtlcHQ6CiAgICAgICAgaWYgYVsidXJsIl0gaW4gc2Vlbl91cmw6CiAgICAgICAgICAgIHJlbW92ZWQuYXBwZW5kKChhLCAiZHVwLXVybCIpKQogICAgICAgICAgICBjb250aW51ZQogICAgICAgIHNlZW5fdXJsLmFkZChhWyJ1cmwiXSkKICAgICAgICB0bXAuYXBwZW5kKGEpCiAgICBrZXB0ID0gdG1wCiAgICBieV90aXRsZSA9IHt9CiAgICBmb3IgYSBpbiBrZXB0OgogICAgICAgIGsgPSBub3JtX3RpdGxlKGEuZ2V0KCJvcmlnaW5hbFRpdGxlIikpCiAgICAgICAgaWYgbm90IGs6CiAgICAgICAgICAgIGNvbnRpbnVlCiAgICAgICAgY3VyID0gYnlfdGl0bGUuZ2V0KGspCiAgICAgICAgaWYgY3VyIGlzIE5vbmU6CiAgICAgICAgICAgIGJ5X3RpdGxlW2tdID0gYQogICAgICAgICAgICBjb250aW51ZQogICAgICAgIGRlZiByYW5rKHgpOgogICAgICAgICAgICByZXR1cm4gKGxlbih4LmdldCgic3VtbWFyeUh0bWwiLCAiIikpLCB4WyJwdWJsaXNoZWRBdCJdKQogICAgICAgIHdpbm5lciA9IGEgaWYgcmFuayhhKSA+IHJhbmsoY3VyKSBlbHNlIGN1cgogICAgICAgIGxvc2VyID0gY3VyIGlmIHdpbm5lciBpcyBhIGVsc2UgYQogICAgICAgIGJ5X3RpdGxlW2tdID0gd2lubmVyCiAgICAgICAgcmVtb3ZlZC5hcHBlbmQoKGxvc2VyLCAiZHVwLXRpdGxlIikpCiAgICBpZiBhbnkoclsxXSA9PSAiZHVwLXRpdGxlIiBmb3IgciBpbiByZW1vdmVkKToKICAgICAgICBsb3NlcnMgPSB7aWQoclswXSkgZm9yIHIgaW4gcmVtb3ZlZCBpZiByWzFdID09ICJkdXAtdGl0bGUifQogICAgICAgIGtlcHQgPSBbYSBmb3IgYSBpbiBrZXB0IGlmIGlkKGEpIG5vdCBpbiBsb3NlcnNdCiAgICByZXR1cm4ga2VwdCwgcmVtb3ZlZAoKCmRlZiB2YWxpZGF0ZV9uZXcocmVjLCBub3cpOgogICAgZm9yIGsgaW4gUkVRVUlSRUQ6CiAgICAgICAgaWYgbm90IHJlYy5nZXQoayk6CiAgICAgICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoZiJtaXNzaW5nIGZpZWxkIHtrfToge3JlYy5nZXQoJ3VybCcpfSIpCiAgICBpZiBub3QgS0FOQV9SRS5zZWFyY2gocmVjWyJ0aXRsZUphIl0pOgogICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoZiJ0aXRsZUphIGhhcyBubyBrYW5hOiB7cmVjWyd1cmwnXX0iKQogICAgaWYgbm90IGlzaW5zdGFuY2UocmVjWyJjYXRlZ29yaWVzIl0sIGxpc3QpIG9yIG5vdCByZWNbImNhdGVnb3JpZXMiXToKICAgICAgICByYWlzZSBWYWx1ZUVycm9yKGYiY2F0ZWdvcmllcyBtdXN0IGJlIGEgbm9uLWVtcHR5IGxpc3Q6IHtyZWNbJ3VybCddfSIpCiAgICBpZiBsZW4ocGxhaW5fdGV4dChyZWNbInN1bW1hcnlIdG1sIl0pKSA8IDEwMDoKICAgICAgICByYWlzZSBWYWx1ZUVycm9yKGYic3VtbWFyeSB0b28gc2hvcnQgKDwxMDAgY2hhcnMpOiB7cmVjWyd1cmwnXX0iKQogICAgaWYgYW55KG0gaW4gcmVjWyJzdW1tYXJ5SHRtbCJdIGZvciBtIGluIFNUVUJfTUFSS0VSUyk6CiAgICAgICAgcmFpc2UgVmFsdWVFcnJvcihmInN1bW1hcnlIdG1sIGNvbnRhaW5zIHN0dWIgbWFya2VyOiB7cmVjWyd1cmwnXX0iKQogICAgcHViID0gcGFyc2VfaXNvKHJlY1sicHVibGlzaGVkQXQiXSkKICAgIGlmIHB1YiA+IG5vdyArIHRpbWVkZWx0YShkYXlzPTIpOgogICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoZiJwdWJsaXNoZWRBdCB0b28gZmFyIGluIGZ1dHVyZToge3JlY1sndXJsJ119IikKICAgIG91dCA9IGRpY3QocmVjKQogICAgb3V0LnNldGRlZmF1bHQoImlkIiwgbWQ1aGV4KHJlY1sidXJsIl0pKQogICAgaWYgb3V0WyJpZCJdICE9IG1kNWhleChyZWNbInVybCJdKToKICAgICAgICByYWlzZSBWYWx1ZUVycm9yKGYiaWQgaXMgbm90IG1kNSh1cmwpOiB7cmVjWyd1cmwnXX0iKQogICAgb3V0WyJwdWJsaXNoZWREYXRlS2V5Il0gPSBwdWIuc3RyZnRpbWUoIiVZLSVtLSVkIikKICAgIG91dFsicHVibGlzaGVkTW9udGhLZXkiXSA9IHB1Yi5zdHJmdGltZSgiJVktJW0iKQogICAgcmV0dXJuIHtrOiBvdXRba10gZm9yIGsgaW4gc29ydGVkKG91dCl9CgoKZGVmIGpwX21vbnRoKG1rKToKICAgIHksIG0gPSBtay5zcGxpdCgiLSIpCiAgICByZXR1cm4gZiJ7eX3lubR7aW50KG0pfeaciCIKCgpBUlRfUkUgPSByZS5jb21waWxlKAogICAgciI8IS0tIEFSVElDTEVTX1NUQVJUIC0tPi4qPzwhLS0gQVJUSUNMRVNfRU5EIC0tPiIsIHJlLlMpCkFSQ0hfUkUgPSByZS5jb21waWxlKAogICAgciIgICAgPCEtLSBBUlRfQVJDSElWRV9MSU5LU19TVEFSVCAtLT4uKj8gICAgPCEtLSBBUlRfQVJDSElWRV9MSU5LU19FTkQgLS0+IiwKICAgIHJlLlMpCgoKZGVmIHJlcGxhY2Vfb3B0aW9ucyhwYWdlLCBzZWxlY3RfaWQsIHZhbHVlcyk6CiAgICBwYXQgPSByZS5jb21waWxlKAogICAgICAgIHInKDxzZWxlY3QgaWQ9IicgKyBzZWxlY3RfaWQgKyByJyI+KS4qPyg8L3NlbGVjdD4pJywgcmUuUykKICAgIG9wdHMgPSAnPG9wdGlvbiB2YWx1ZT0iIj7jgZnjgbnjgaY8L29wdGlvbj4nICsgIiIuam9pbigKICAgICAgICBmJzxvcHRpb24gdmFsdWU9Intlc2Modil9Ij57ZXNjKHYpfTwvb3B0aW9uPicgZm9yIHYgaW4gdmFsdWVzKQogICAgcmV0dXJuIHBhdC5zdWIobGFtYmRhIG06IG0uZ3JvdXAoMSkgKyBvcHRzICsgbS5ncm91cCgyKSwgcGFnZSwgY291bnQ9MSkKCgpkZWYgcmVmcmVzaF9maWx0ZXJzKHBhZ2UsIGFydGljbGVzKToKICAgIG1vbnRocyA9IHNvcnRlZCh7YVsicHVibGlzaGVkTW9udGhLZXkiXSBmb3IgYSBpbiBhcnRpY2xlc30sIHJldmVyc2U9VHJ1ZSkKICAgIGNhdGVnb3JpZXMgPSBzb3J0ZWQoe2cgZm9yIGEgaW4gYXJ0aWNsZXMgZm9yIGcgaW4gYVsiY2F0ZWdvcmllcyJdfSkKICAgIHNvdXJjZXMgPSBzb3J0ZWQoe2FbInNvdXJjZU5hbWUiXSBmb3IgYSBpbiBhcnRpY2xlc30pCiAgICBraW5kcyA9IHNvcnRlZCh7YVsia2luZCJdIGZvciBhIGluIGFydGljbGVzfSkKICAgIHBhZ2UgPSByZXBsYWNlX29wdGlvbnMocGFnZSwgIm1vbnRoRmlsdGVyIiwKICAgICAgICAgICAgICAgICAgICAgICAgICAgW2Yie219IiBmb3IgbSBpbiBtb250aHNdKQogICAgIyBNb250aCBvcHRpb24gbGFiZWxzIHN0YXkgYXMgWVlZWS1NTSAobWF0Y2hlcyBudXJzZSBiZWhhdmlvdXIpLgogICAgcGFnZSA9IHJlcGxhY2Vfb3B0aW9ucyhwYWdlLCAiY2F0ZWdvcnlGaWx0ZXIiLCBjYXRlZ29yaWVzKQogICAgcGFnZSA9IHJlcGxhY2Vfb3B0aW9ucyhwYWdlLCAic291cmNlRmlsdGVyIiwgc291cmNlcykKICAgIHBhZ2UgPSByZXBsYWNlX29wdGlvbnMocGFnZSwgImtpbmRGaWx0ZXIiLCBraW5kcykKICAgIHJldHVybiBwYWdlCgoKZGVmIHJlZ2VuZXJhdGUobWFpbl9zaGVsbCwgYXJ0aWNsZXMpOgogICAgaWYgJ2lkPSJwYWdlU2l6ZSInIG5vdCBpbiBtYWluX3NoZWxsIG9yICdpZD0icGFnZUluZm8iJyBub3QgaW4gbWFpbl9zaGVsbDoKICAgICAgICByYWlzZSBWYWx1ZUVycm9yKCJzaGVsbCBsb3N0IGl0cyBwYWdlciAocGFnZVNpemUvcGFnZUluZm8gbWlzc2luZykiKQogICAgaWYgInN1bW1hcnlUb2dnbGUiIG5vdCBpbiBtYWluX3NoZWxsOgogICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoInNoZWxsIGxvc3Qgc3VtbWFyeSBmb2xkaW5nIChzdW1tYXJ5VG9nZ2xlIG1pc3NpbmcpIikKICAgIGlmICJwb3NpdGlvbjogc3RpY2t5IiBpbiBtYWluX3NoZWxsOgogICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoInNoZWxsIGhhcyBwb3NpdGlvbjogc3RpY2t5IChtdXN0IHN0YXkgcmVtb3ZlZCkiKQogICAgaWYgbm90IEFSQ0hfUkUuc2VhcmNoKG1haW5fc2hlbGwpOgogICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoInNoZWxsIGxvc3QgQVJUX0FSQ0hJVkVfTElOS1MgbWFya2VycyIpCiAgICBpZiBub3QgQVJUX1JFLnNlYXJjaChtYWluX3NoZWxsKToKICAgICAgICByYWlzZSBWYWx1ZUVycm9yKCJzaGVsbCBsb3N0IEFSVElDTEVTIG1hcmtlcnMiKQoKICAgIGRlZiBmaWxsKHNoZWxsLCByZWNzLCB0b3RhbF9sYWJlbCk6CiAgICAgICAgYmxvY2tzID0gIlxuIi5qb2luKGFydGljbGVfYmxvY2soYSkgZm9yIGEgaW4gcmVjcykKICAgICAgICBib2R5ID0gZiI8IS0tIEFSVElDTEVTX1NUQVJUIC0tPlxue2Jsb2Nrc31cbjwhLS0gQVJUSUNMRVNfRU5EIC0tPiIKICAgICAgICBzaGVsbCA9IEFSVF9SRS5zdWIobGFtYmRhIF86IGJvZHksIHNoZWxsLCBjb3VudD0xKQogICAgICAgIHNoZWxsID0gcmUuc3ViKHIi5YWoXGQr5Lu2IiwgZiLlhah7dG90YWxfbGFiZWx95Lu2Iiwgc2hlbGwsIGNvdW50PTEpCiAgICAgICAgcmV0dXJuIHNoZWxsCgogICAgdG9wID0gYXJ0aWNsZXNbOk1BSU5fTElNSVRdCiAgICBtYWluID0gZmlsbChtYWluX3NoZWxsLCB0b3AsIGxlbih0b3ApKQogICAgb3ZlcmZsb3cgPSBhcnRpY2xlc1tNQUlOX0xJTUlUOl0KICAgIG1vbnRocyA9IE9yZGVyZWREaWN0KCkKICAgIGZvciBhIGluIG92ZXJmbG93OgogICAgICAgIG1vbnRocy5zZXRkZWZhdWx0KGFbInB1Ymxpc2hlZE1vbnRoS2V5Il0sIFtdKS5hcHBlbmQoYSkKICAgIGlmIG1vbnRoczoKICAgICAgICBpdGVtcyA9ICJcbiIuam9pbigKICAgICAgICAgICAgZicgICAgICAgIDxsaT48YSBocmVmPSJhcnQtYXJjaGl2ZS17bWt9Lmh0bWwiPntqcF9tb250aChtayl977yIe2xlbih2KX3ku7bvvIk8L2E+PC9saT4nCiAgICAgICAgICAgIGZvciBtaywgdiBpbiBzb3J0ZWQobW9udGhzLml0ZW1zKCksIHJldmVyc2U9VHJ1ZSkpCiAgICBlbHNlOgogICAgICAgIGl0ZW1zID0gIiAgICAgICAgPGxpPuOBvuOBoOOBguOCiuOBvuOBm+OCkzwvbGk+IgogICAgYXJjaF9zZWN0aW9uID0gKAogICAgICAgICIgICAgPCEtLSBBUlRfQVJDSElWRV9MSU5LU19TVEFSVCAtLT5cbiIKICAgICAgICAiICAgIDxzZWN0aW9uIGNsYXNzPVwiYXJjaGl2ZS1saW5rc1wiPlxuIgogICAgICAgICIgICAgICA8aDI+6YGO5Y6744Gu44Ki44O844Kr44Kk44OW77yI5pyI5Yil77yJPC9oMj5cbiIKICAgICAgICAnICAgICAgPHVsIGNsYXNzPSJhcmNoaXZlLWxpc3QiPlxuJwogICAgICAgIGYie2l0ZW1zfVxuIgogICAgICAgICIgICAgICA8L3VsPlxuIgogICAgICAgICIgICAgPC9zZWN0aW9uPlxuIgogICAgICAgICIgICAgPCEtLSBBUlRfQVJDSElWRV9MSU5LU19FTkQgLS0+IgogICAgKQogICAgbSA9IEFSQ0hfUkUuc2VhcmNoKG1haW4pCiAgICBtYWluID0gbWFpbls6bS5zdGFydCgpXSArIGFyY2hfc2VjdGlvbiArIG1haW5bbS5lbmQoKTpdCiAgICBtYWluID0gcmVmcmVzaF9maWx0ZXJzKG1haW4sIGFydGljbGVzKQoKICAgIG91dCA9IHsiYXJ0LW5ld3MuaHRtbCI6IG1haW59CiAgICBhcmNoMiA9ICgKICAgICAgICAiICAgIDwhLS0gQVJUX0FSQ0hJVkVfTElOS1NfU1RBUlQgLS0+XG4iCiAgICAgICAgIiAgICA8c2VjdGlvbiBjbGFzcz1cImFyY2hpdmUtbGlua3NcIj5cbiIKICAgICAgICAiICAgICAgPGgyPumBjuWOu+OBruOCouODvOOCq+OCpOODlu+8iOaciOWIpe+8iTwvaDI+XG4iCiAgICAgICAgJyAgICAgIDxwPuOCouODvOOCq+OCpOODluS4gOimp+OBrzxhIGhyZWY9ImFydC1uZXdzLmh0bWwiPuacrOS9k+ODmuODvOOCuDwvYT7jgavjgYLjgorjgb7jgZnjgII8L3A+XG4nCiAgICAgICAgIiAgICA8L3NlY3Rpb24+XG4iCiAgICAgICAgIiAgICA8IS0tIEFSVF9BUkNISVZFX0xJTktTX0VORCAtLT4iCiAgICApCiAgICBmb3IgbWsgaW4gc29ydGVkKG1vbnRocyk6CiAgICAgICAgcmVjcyA9IG1vbnRoc1tta10KICAgICAgICBzaGVsbCA9IG1haW4KICAgICAgICB5LCBtbyA9IG1rLnNwbGl0KCItIikKICAgICAgICBzaGVsbCA9IHNoZWxsLnJlcGxhY2UoCiAgICAgICAgICAgIGYiPHRpdGxlPntNQUlOX1RJVExFfTwvdGl0bGU+IiwKICAgICAgICAgICAgZiI8dGl0bGU+QXJ0IE5ld3Mg44Ki44O844Kr44Kk44OWIHt5feW5tHtpbnQobW8pfeaciCB8IFZBUkVMU0VSPC90aXRsZT4iLCAxKQogICAgICAgIHNoZWxsID0gZmlsbChzaGVsbCwgcmVjcywgbGVuKHJlY3MpKQogICAgICAgIG0yID0gQVJDSF9SRS5zZWFyY2goc2hlbGwpCiAgICAgICAgc2hlbGwgPSBzaGVsbFs6bTIuc3RhcnQoKV0gKyBhcmNoMiArIHNoZWxsW20yLmVuZCgpOl0KICAgICAgICBvdXRbZiJhcnQtYXJjaGl2ZS17bWt9Lmh0bWwiXSA9IHNoZWxsCiAgICByZXR1cm4gb3V0LCBtb250aHMKCgpkZWYgdmFsaWRhdGUoZmlsZXMsIGFydGljbGVzKToKICAgIHByb2JsZW1zID0gW10KICAgIGJsb2IgPSBqc29uLmR1bXBzKGFydGljbGVzLCBlbnN1cmVfYXNjaWk9RmFsc2UpCiAgICBmb3IgbWFya2VyIGluIFNUVUJfTUFSS0VSUzoKICAgICAgICBpZiBtYXJrZXIgaW4gYmxvYjoKICAgICAgICAgICAgcHJvYmxlbXMuYXBwZW5kKGYic3R1YiBtYXJrZXIgaW4gZGF0YToge21hcmtlcn0iKQogICAgZm9yIGEgaW4gYXJ0aWNsZXM6CiAgICAgICAgaWYgbm90IEtBTkFfUkUuc2VhcmNoKGEuZ2V0KCJ0aXRsZUphIiwgIiIpKToKICAgICAgICAgICAgcHJvYmxlbXMuYXBwZW5kKGYia2FuYS1sZXNzIHRpdGxlSmE6IHthLmdldCgndXJsJyl9IikKICAgIHRvdGFsX2h0bWwgPSAwCiAgICBmb3IgbmFtZSwgY29udGVudCBpbiBmaWxlcy5pdGVtcygpOgogICAgICAgIG4gPSBjb250ZW50LmNvdW50KCI8YXJ0aWNsZSIpCiAgICAgICAgdG90YWxfaHRtbCArPSBuCiAgICAgICAgaWYgJ2lkPSJwYWdlU2l6ZSInIG5vdCBpbiBjb250ZW50OgogICAgICAgICAgICBwcm9ibGVtcy5hcHBlbmQoZiJwYWdlciBtaXNzaW5nOiB7bmFtZX0iKQogICAgICAgIGlmICJwb3NpdGlvbjogc3RpY2t5IiBpbiBjb250ZW50OgogICAgICAgICAgICBwcm9ibGVtcy5hcHBlbmQoZiJzdGlja3kgcHJlc2VudDoge25hbWV9IikKICAgIGlmIGZpbGVzWyJhcnQtbmV3cy5odG1sIl0uY291bnQoIjxhcnRpY2xlIikgIT0gbWluKE1BSU5fTElNSVQsIGxlbihhcnRpY2xlcykpOgogICAgICAgIHByb2JsZW1zLmFwcGVuZCgibWFpbiBhcnRpY2xlIGNvdW50IG1pc21hdGNoIikKICAgIGlkc19pbl9tYWluID0gcmUuZmluZGFsbChyJ2RhdGEtaWQ9IihbMC05YS1mXSspIicsIGZpbGVzWyJhcnQtbmV3cy5odG1sIl0pCiAgICBpZiBpZHNfaW5fbWFpbiAhPSBbYVsiaWQiXSBmb3IgYSBpbiBhcnRpY2xlc1s6TUFJTl9MSU1JVF1dOgogICAgICAgIHByb2JsZW1zLmFwcGVuZCgibWFpbiBkYXRhLWlkIG9yZGVyIGRvZXMgbm90IG1hdGNoIEpTT04gaGVhZCIpCiAgICBpZiB0b3RhbF9odG1sICE9IGxlbihhcnRpY2xlcyk6CiAgICAgICAgcHJvYmxlbXMuYXBwZW5kKAogICAgICAgICAgICBmIm1haW4rYXJjaGl2ZXMge3RvdGFsX2h0bWx9ICE9IEpTT04gdG90YWwge2xlbihhcnRpY2xlcyl9IikKICAgIGlmICdocmVmPSIvIicgbm90IGluIGZpbGVzWyJhcnQtbmV3cy5odG1sIl06CiAgICAgICAgcHJvYmxlbXMuYXBwZW5kKCJob21lIGxpbmsgaXMgbm90ICcvJyBpbiBtYWluIHBhZ2UiKQogICAgaWYgcHJvYmxlbXM6CiAgICAgICAgcmFpc2UgVmFsdWVFcnJvcigiOyAiLmpvaW4ocHJvYmxlbXMpKQoKCmRlZiBidWlsZF9mZWVkKGFydGljbGVzLCB1cGRhdGVkX2F0X2lzbyk6CiAgICBmcm9tIGVtYWlsLnV0aWxzIGltcG9ydCBmb3JtYXRfZGF0ZXRpbWUKICAgIGRlZiB4ZXNjKHMpOgogICAgICAgIHJldHVybiBodG1sLmVzY2FwZShzdHIocyksIHF1b3RlPUZhbHNlKQogICAgaXRlbXMgPSBbXQogICAgZm9yIGEgaW4gYXJ0aWNsZXNbOkZFRURfTElNSVRdOgogICAgICAgIHB1YiA9IGZvcm1hdF9kYXRldGltZShwYXJzZV9pc28oYVsicHVibGlzaGVkQXQiXSkpCiAgICAgICAgaXRlbXMuYXBwZW5kKAogICAgICAgICAgICAiICA8aXRlbT5cbiIKICAgICAgICAgICAgZiIgICA8dGl0bGU+e3hlc2MoYVsndGl0bGVKYSddKX08L3RpdGxlPlxuIgogICAgICAgICAgICBmIiAgIDxsaW5rPnt4ZXNjKGFbJ3VybCddKX08L2xpbms+XG4iCiAgICAgICAgICAgIGYiICAgPGd1aWQgaXNQZXJtYUxpbms9XCJ0cnVlXCI+e3hlc2MoYVsndXJsJ10pfTwvZ3VpZD5cbiIKICAgICAgICAgICAgZiIgICA8cHViRGF0ZT57cHVifTwvcHViRGF0ZT5cbiIKICAgICAgICAgICAgZiIgICA8ZGVzY3JpcHRpb24+e3hlc2MocGxhaW5fdGV4dChhWydzdW1tYXJ5SHRtbCddKVs6NjAwXSl9PC9kZXNjcmlwdGlvbj5cbiIKICAgICAgICAgICAgIiAgPC9pdGVtPiIpCiAgICByZXR1cm4gKAogICAgICAgICc8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJVVEYtOCI/PlxuJwogICAgICAgICc8cnNzIHZlcnNpb249IjIuMCI+XG48Y2hhbm5lbD5cbicKICAgICAgICAiIDx0aXRsZT5BcnQgTmV3c++8iOe+juihk+ODu+e+juihk+mkqOODi+ODpeODvOOCue+8iTwvdGl0bGU+XG4iCiAgICAgICAgIiA8bGluaz5odHRwczovL3ZhcmVsc2VyLmdpdGh1Yi5pby9hcnQtbmV3cy5odG1sPC9saW5rPlxuIgogICAgICAgICIgPGRlc2NyaXB0aW9uPuWbveWGheWkluOBrue+juihk+ODu+e+juihk+mkqOODi+ODpeODvOOCueOCkuaXpeacrOiqnuimgee0hOOBp+WxiuOBkeOCiyBBcnQgTmV3cyDjga7mlrDnnYDjg5XjgqPjg7zjg4k8L2Rlc2NyaXB0aW9uPlxuIgogICAgICAgICIgPGxhbmd1YWdlPmphPC9sYW5ndWFnZT5cbiIKICAgICAgICBmIiA8bGFzdEJ1aWxkRGF0ZT57Zm9ybWF0X2RhdGV0aW1lKHBhcnNlX2lzbyh1cGRhdGVkX2F0X2lzbykpfTwvbGFzdEJ1aWxkRGF0ZT5cbiIKICAgICAgICArICJcbiIuam9pbihpdGVtcykgKwogICAgICAgICJcbjwvY2hhbm5lbD5cbjwvcnNzPlxuIgogICAgKQoKCmRlZiBidWlsZF9zZWFyY2hfaW5kZXgoYXJ0aWNsZXMsIHVwZGF0ZWRfYXRfaXNvKToKICAgIG1vbnRocyA9IE9yZGVyZWREaWN0KCkKICAgIGZvciBhIGluIGFydGljbGVzOgogICAgICAgIG1vbnRocy5zZXRkZWZhdWx0KGFbInB1Ymxpc2hlZE1vbnRoS2V5Il0sIFtdKS5hcHBlbmQoewogICAgICAgICAgICAidCI6IGFbInRpdGxlSmEiXSwKICAgICAgICAgICAgIm8iOiBhWyJvcmlnaW5hbFRpdGxlIl0sCiAgICAgICAgICAgICJ1IjogYVsidXJsIl0sCiAgICAgICAgICAgICJkIjogYVsicHVibGlzaGVkRGF0ZUtleSJdLAogICAgICAgICAgICAicyI6IGFbInNvdXJjZU5hbWUiXSwKICAgICAgICAgICAgImIiOiBwbGFpbl90ZXh0KGFbInN1bW1hcnlIdG1sIl0pLAogICAgICAgICAgICAiZyI6ICIgIi5qb2luKGFbImNhdGVnb3JpZXMiXSArIFthWyJraW5kIl0sIGFbInJlZ2lvbiJdXSksCiAgICAgICAgfSkKICAgIG91dCA9IHt9CiAgICBtYW5pZmVzdF9tb250aHMgPSBbXQogICAgZm9yIG1rIGluIHNvcnRlZChtb250aHMsIHJldmVyc2U9VHJ1ZSk6CiAgICAgICAgZm5hbWUgPSBmImFydC1zZWFyY2gte21rfS5qc29uIgogICAgICAgIG91dFtmbmFtZV0gPSBqc29uLmR1bXBzKAogICAgICAgICAgICB7Im1vbnRoIjogbWssICJhcnRpY2xlcyI6IG1vbnRoc1tta119LAogICAgICAgICAgICBlbnN1cmVfYXNjaWk9RmFsc2UsIHNlcGFyYXRvcnM9KCIsIiwgIjoiKSkKICAgICAgICBtYW5pZmVzdF9tb250aHMuYXBwZW5kKAogICAgICAgICAgICB7ImtleSI6IG1rLCAiZmlsZSI6IGZuYW1lLCAiY291bnQiOiBsZW4obW9udGhzW21rXSl9KQogICAgb3V0WyJhcnQtc2VhcmNoLWluZGV4Lmpzb24iXSA9IGpzb24uZHVtcHMoCiAgICAgICAgeyJ1cGRhdGVkQXQiOiB1cGRhdGVkX2F0X2lzbywgInRvdGFsIjogbGVuKGFydGljbGVzKSwKICAgICAgICAgIm1vbnRocyI6IG1hbmlmZXN0X21vbnRoc30sCiAgICAgICAgZW5zdXJlX2FzY2lpPUZhbHNlLCBzZXBhcmF0b3JzPSgiLCIsICI6IikpCiAgICByZXR1cm4gb3V0CgoKZGVmIHJ1bihyZXBvLCBuZXdfcGF0aD1Ob25lLCBkcnlfcnVuPUZhbHNlLCBub3c9Tm9uZSwgZHJvcF9wYXRoPU5vbmUpOgogICAgaW1wb3J0IG9zCiAgICBub3cgPSBub3cgb3IgZGF0ZXRpbWUubm93KHRpbWV6b25lLnV0YykKICAgIGRlZiByZWFkKG5hbWUpOgogICAgICAgIHdpdGggb3Blbihvcy5wYXRoLmpvaW4ocmVwbywgbmFtZSksIGVuY29kaW5nPSJ1dGYtOCIpIGFzIGY6CiAgICAgICAgICAgIHJldHVybiBmLnJlYWQoKQogICAgZGVmIHJlYWRfYnl0ZXMobmFtZSk6CiAgICAgICAgd2l0aCBvcGVuKG9zLnBhdGguam9pbihyZXBvLCBuYW1lKSwgInJiIikgYXMgZjoKICAgICAgICAgICAgcmV0dXJuIGYucmVhZCgpCgogICAgZGF0YV9yYXcgPSByZWFkX2J5dGVzKCJhcnQtbmV3cy1kYXRhLmpzb24iKQogICAgZGF0YSA9IGpzb24ubG9hZHMoZGF0YV9yYXcuZGVjb2RlKCJ1dGYtOCIpKQogICAgYXJ0aWNsZXMgPSBkYXRhWyJhcnRpY2xlcyJdCiAgICBrZXB0LCByZW1vdmVkID0gY2xlYW5fc3RvY2soYXJ0aWNsZXMsIG5vdykKCiAgICBhZGRlZCA9IFtdCiAgICBpZiBuZXdfcGF0aDoKICAgICAgICB3aXRoIG9wZW4obmV3X3BhdGgsIGVuY29kaW5nPSJ1dGYtOCIpIGFzIGY6CiAgICAgICAgICAgIG5ld19yZWNvcmRzID0ganNvbi5sb2FkKGYpCiAgICAgICAgaWYgbm90IGlzaW5zdGFuY2UobmV3X3JlY29yZHMsIGxpc3QpOgogICAgICAgICAgICByYWlzZSBWYWx1ZUVycm9yKCItLW5ldyBmaWxlIG11c3QgY29udGFpbiBhIEpTT04gbGlzdCIpCiAgICAgICAgZXhpc3RpbmdfdXJscyA9IHthWyJ1cmwiXSBmb3IgYSBpbiBrZXB0fQogICAgICAgIGV4aXN0aW5nX3RpdGxlcyA9IHtub3JtX3RpdGxlKGEuZ2V0KCJvcmlnaW5hbFRpdGxlIikpIGZvciBhIGluIGtlcHR9CiAgICAgICAgZm9yIHJlYyBpbiBuZXdfcmVjb3JkczoKICAgICAgICAgICAgcmVjID0gdmFsaWRhdGVfbmV3KHJlYywgbm93KQogICAgICAgICAgICBpZiByZWNbInVybCJdIGluIGV4aXN0aW5nX3VybHM6CiAgICAgICAgICAgICAgICBjb250aW51ZQogICAgICAgICAgICBpZiBub3JtX3RpdGxlKHJlYy5nZXQoIm9yaWdpbmFsVGl0bGUiKSkgaW4gZXhpc3RpbmdfdGl0bGVzOgogICAgICAgICAgICAgICAgY29udGludWUKICAgICAgICAgICAga2VwdC5hcHBlbmQocmVjKQogICAgICAgICAgICBhZGRlZC5hcHBlbmQocmVjKQogICAgICAgICAgICBleGlzdGluZ191cmxzLmFkZChyZWNbInVybCJdKQogICAgICAgICAgICBleGlzdGluZ190aXRsZXMuYWRkKG5vcm1fdGl0bGUocmVjLmdldCgib3JpZ2luYWxUaXRsZSIpKSkKCiAgICBpZiBkcm9wX3BhdGg6CiAgICAgICAgd2l0aCBvcGVuKGRyb3BfcGF0aCwgZW5jb2Rpbmc9InV0Zi04IikgYXMgZjoKICAgICAgICAgICAgZHJvcF91cmxzID0gc2V0KGpzb24ubG9hZChmKSkKICAgICAgICBkcm9wcGVkID0gW2EgZm9yIGEgaW4ga2VwdCBpZiBhWyJ1cmwiXSBpbiBkcm9wX3VybHNdCiAgICAgICAga2VwdCA9IFthIGZvciBhIGluIGtlcHQgaWYgYVsidXJsIl0gbm90IGluIGRyb3BfdXJsc10KICAgICAgICByZW1vdmVkLmV4dGVuZCgoYSwgImVkaXRvcmlhbCIpIGZvciBhIGluIGRyb3BwZWQpCiAgICAgICAgbWlzc2luZyA9IGRyb3BfdXJscyAtIHthWyJ1cmwiXSBmb3IgYSBpbiBkcm9wcGVkfQogICAgICAgIGlmIG1pc3Npbmc6CiAgICAgICAgICAgIHJhaXNlIFZhbHVlRXJyb3IoZiItLWRyb3AgVVJMcyBub3QgaW4gc3RvY2s6IHtzb3J0ZWQobWlzc2luZylbOjNdfSIpCgogICAga2VwdC5zb3J0KGtleT1sYW1iZGEgYTogYVsicHVibGlzaGVkQXQiXSwgcmV2ZXJzZT1UcnVlKQoKICAgIHN1bW1hcnkgPSB7CiAgICAgICAgImNoYW5nZWQiOiBGYWxzZSwKICAgICAgICAiYWRkZWQiOiBbYVsidGl0bGVKYSJdIGZvciBhIGluIGFkZGVkXSwKICAgICAgICAicmVtb3ZlZCI6IFt7InRpdGxlIjogYVsidGl0bGVKYSJdLCAicmVhc29uIjogcn0gZm9yIGEsIHIgaW4gcmVtb3ZlZF0sCiAgICAgICAgInRvdGFsIjogbGVuKGtlcHQpLAogICAgICAgICJmaWxlcyI6IFtdLAogICAgfQogICAgaWYgbm90IHJlbW92ZWQgYW5kIG5vdCBhZGRlZDoKICAgICAgICByZXR1cm4gc3VtbWFyeQoKICAgIGRhdGFbImFydGljbGVzIl0gPSBrZXB0CiAgICBkYXRhWyJ1cGRhdGVkQXQiXSA9IG5vdy5zdHJmdGltZSgiJVktJW0tJWRUJUg6JU06JVNaIikKICAgIG5ld19qc29uID0ganNvbi5kdW1wcyhkYXRhLCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0xKQoKICAgIG1haW5fc2hlbGwgPSByZWFkKCJhcnQtbmV3cy5odG1sIikKICAgIGZpbGVzLCBtb250aHMgPSByZWdlbmVyYXRlKG1haW5fc2hlbGwsIGtlcHQpCiAgICB2YWxpZGF0ZShmaWxlcywga2VwdCkKICAgIHN1bW1hcnlbImFyY2hpdmVfY291bnRzIl0gPSB7azogbGVuKHYpIGZvciBrLCB2IGluIG1vbnRocy5pdGVtcygpfQoKICAgIHRhcmdldHMgPSB7ImFydC1uZXdzLWRhdGEuanNvbiI6IG5ld19qc29uLAogICAgICAgICAgICAgICAiYXJ0LWZlZWQueG1sIjogYnVpbGRfZmVlZChrZXB0LCBkYXRhWyJ1cGRhdGVkQXQiXSl9CiAgICB0YXJnZXRzLnVwZGF0ZShidWlsZF9zZWFyY2hfaW5kZXgoa2VwdCwgZGF0YVsidXBkYXRlZEF0Il0pKQogICAgdGFyZ2V0cy51cGRhdGUoZmlsZXMpCiAgICBjaGFuZ2VkID0gW10KICAgIGZvciBuYW1lLCBjb250ZW50IGluIHNvcnRlZCh0YXJnZXRzLml0ZW1zKCkpOgogICAgICAgIHBhdGggPSBvcy5wYXRoLmpvaW4ocmVwbywgbmFtZSkKICAgICAgICBvbGQgPSBOb25lCiAgICAgICAgaWYgb3MucGF0aC5leGlzdHMocGF0aCk6CiAgICAgICAgICAgIHdpdGggb3BlbihwYXRoLCAicmIiKSBhcyBmOgogICAgICAgICAgICAgICAgb2xkID0gZi5yZWFkKCkKICAgICAgICBpZiBvbGQgIT0gY29udGVudC5lbmNvZGUoInV0Zi04Iik6CiAgICAgICAgICAgIGNoYW5nZWQuYXBwZW5kKG5hbWUpCiAgICAgICAgICAgIGlmIG5vdCBkcnlfcnVuOgogICAgICAgICAgICAgICAgd2l0aCBvcGVuKHBhdGgsICJ3IiwgZW5jb2Rpbmc9InV0Zi04IikgYXMgZjoKICAgICAgICAgICAgICAgICAgICBmLndyaXRlKGNvbnRlbnQpCiAgICBzdW1tYXJ5WyJjaGFuZ2VkIl0gPSBib29sKGNoYW5nZWQpCiAgICBzdW1tYXJ5WyJmaWxlcyJdID0gY2hhbmdlZAogICAgc3VtbWFyeVsiZHJ5X3J1biJdID0gZHJ5X3J1bgogICAgcmV0dXJuIHN1bW1hcnkKCgpkZWYgbWFpbihhcmd2PU5vbmUpOgogICAgYXAgPSBhcmdwYXJzZS5Bcmd1bWVudFBhcnNlcihkZXNjcmlwdGlvbj0iQXJ0IE5ld3MgZml4ZWQgcGlwZWxpbmUiKQogICAgYXAuYWRkX2FyZ3VtZW50KCItLXJlcG8iLCByZXF1aXJlZD1UcnVlKQogICAgYXAuYWRkX2FyZ3VtZW50KCItLW5ldyIsIGRlZmF1bHQ9Tm9uZSkKICAgIGFwLmFkZF9hcmd1bWVudCgiLS1kcm9wIiwgZGVmYXVsdD1Ob25lKQogICAgYXAuYWRkX2FyZ3VtZW50KCItLWRyeS1ydW4iLCBhY3Rpb249InN0b3JlX3RydWUiKQogICAgYXAuYWRkX2FyZ3VtZW50KCItLW5vdyIsIGRlZmF1bHQ9Tm9uZSwgaGVscD0iSVNPODYwMSBVVEMsIGZvciB0ZXN0cyIpCiAgICBhcmdzID0gYXAucGFyc2VfYXJncyhhcmd2KQogICAgbm93ID0gcGFyc2VfaXNvKGFyZ3Mubm93KSBpZiBhcmdzLm5vdyBlbHNlIE5vbmUKICAgIHRyeToKICAgICAgICBzdW1tYXJ5ID0gcnVuKGFyZ3MucmVwbywgYXJncy5uZXcsIGFyZ3MuZHJ5X3J1biwgbm93LAogICAgICAgICAgICAgICAgICAgICAgZHJvcF9wYXRoPWFyZ3MuZHJvcCkKICAgIGV4Y2VwdCAoVmFsdWVFcnJvciwgS2V5RXJyb3IsIGpzb24uSlNPTkRlY29kZUVycm9yKSBhcyBlOgogICAgICAgIHByaW50KGYiRVJST1I6IHtlfSIsIGZpbGU9c3lzLnN0ZGVycikKICAgICAgICByZXR1cm4gMgogICAgcHJpbnQoanNvbi5kdW1wcyhzdW1tYXJ5LCBlbnN1cmVfYXNjaWk9RmFsc2UsIGluZGVudD0xKSkKICAgIHJldHVybiAwCgoKaWYgX19uYW1lX18gPT0gIl9fbWFpbl9fIjoKICAgIHN5cy5leGl0KG1haW4oKSkK
+#!/usr/bin/env python3
+"""Art News fixed pipeline (deterministic half of the hourly update).
+
+Derived from the Nurse News pipeline (the original of this series),
+via the shared Art/Cinema pipeline template: same cleaning,
+dedup, validation, archive, feed and search-shard rules.""
+
+Owns everything except candidate fetching and summary writing:
+  1. Clean the stock: drop fallback stubs, future-dated articles
+     (> now + 2 days), URL duplicates, and normalized-title duplicates
+     (same story under a different URL; keep the longer summary, then
+     the newer article).
+  2. Merge new records (from --new FILE, a JSON list in the established
+     format; `id`, `publishedDateKey` and `publishedMonthKey` are
+     derived when missing), deduped against the stock and each other
+     by URL and normalized original title.
+  3. Regenerate art-news.html (latest 80) and every monthly archive
+     art-archive-YYYY-MM.html from art-news-data.json, reusing the
+     current page as the shell. The pipeline refuses to regenerate if
+     the shell lost its pager, article markers, archive markers, or
+     summary folding.
+  4. Regenerate art-feed.xml (RSS 2.0, latest 50) and the sharded
+     search index (art-search-index.json + art-search-YYYY-MM.json).
+  5. Validate everything; any failure exits non-zero, nothing written.
+  6. Print a JSON summary including `files`: repo-relative paths whose
+     bytes actually changed (the push manifest).
+
+With no removals and no new records the run is a no-op: nothing is
+written and `updatedAt` stays untouched (byte-identical output).
+
+Usage:
+  python3 scripts/art_pipeline.py --repo DIR [--new new.json]
+                                    [--drop urls.json] [--dry-run]
+                                    [--now ISO8601Z]
+Exit codes: 0 ok, 2 validation/shell error, 3 bad input.
+Stdlib only.
+"""
+import argparse
+import hashlib
+import html
+import json
+import re
+import sys
+from collections import OrderedDict
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
+JST = ZoneInfo("Asia/Tokyo")
+STUB_MARKERS = ("Gemini 無料枠", "生成要約を安定取得できなかった")
+KANA_RE = re.compile(r"[ぁ-んァ-ヶ]")
+MAIN_LIMIT = 80
+FEED_LIMIT = 50
+MAIN_TITLE = "Art News（美術・美術館ニュース）| VARELSER"
+REQUIRED = ("sourceName", "originalTitle", "titleJa", "summaryHtml", "url",
+            "publishedAt", "categories", "region", "kind")
+
+
+def esc(s):
+    return html.escape(str(s), quote=True)
+
+
+def norm_title(s):
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def md5hex(s):
+    return hashlib.md5(s.encode("utf-8")).hexdigest()
+
+
+def parse_iso(s):
+    t = s.replace(".000Z", "Z")
+    if "." in t and t.endswith("Z"):
+        t = t[:t.index(".")] + "Z"
+    return datetime.strptime(t, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+
+
+def jst_meta(published_at_iso):
+    return parse_iso(published_at_iso).astimezone(JST).strftime("%Y-%m-%d %H:%M")
+
+
+def plain_text(html_str):
+    return re.sub(r"<[^>]+>", "", (html_str or "").replace("<br><br>", " "))
+
+
+def article_block(a):
+    search = " ".join([
+        a["titleJa"], a["originalTitle"], plain_text(a["summaryHtml"]),
+        a["sourceName"], " ".join(a["categories"]), a["region"], a["kind"],
+    ])
+    chips = [f'<span class="chip">カテゴリ: {esc(g)}</span>' for g in a["categories"]]
+    chips.append(f'<span class="chip">地域: {esc(a["region"])}</span>')
+    chips.append(f'<span class="chip">種別: {esc(a["kind"])}</span>')
+    paras = a["summaryHtml"].split("<br><br>")
+    if len(paras) >= 2:
+        summary_div = (
+            f'  <div class="summary">{paras[0]}'
+            f'<span class="summary-rest" hidden><br><br>{"<br><br>".join(paras[1:])}</span></div>\n'
+            '  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>\n'
+        )
+    else:
+        summary_div = f'  <div class="summary">{a["summaryHtml"]}</div>\n'
+    return (
+        "<article\n"
+        f'  data-id="{a["id"]}"\n'
+        f'  data-date="{a["publishedDateKey"]}"\n'
+        f'  data-month="{a["publishedMonthKey"]}"\n'
+        f'  data-categories="{"||".join(a["categories"])}"\n'
+        f'  data-region="{esc(a["region"])}"\n'
+        f'  data-source="{esc(a["sourceName"])}"\n'
+        f'  data-kind="{esc(a["kind"])}"\n'
+        f'  data-search="{esc(search)}">\n'
+        f'  <p class="meta">{esc(a["sourceName"])}　{jst_meta(a["publishedAt"])}</p>\n'
+        f'  <h2 class="article-title">{esc(a["titleJa"])}</h2>\n'
+        f'  <div class="taxonomy">{"".join(chips)}</div>\n'
+        f'{summary_div}'
+        '  <div class="source-box">\n'
+        '    <strong>ソース・引用元</strong>\n'
+        f'    配信元：{esc(a["sourceName"])}<br>\n'
+        f'    原題：{esc(a["originalTitle"])}<br>\n'
+        f'    原文URL：<a href="{esc(a["url"])}" target="_blank" rel="noopener">{esc(a["url"])}</a>\n'
+        '  </div>\n'
+        '</article>'
+    )
+
+
+def clean_stock(articles, now):
+    removed, kept = [], []
+    future_limit = now + timedelta(days=2)
+    for a in articles:
+        blob = json.dumps(a, ensure_ascii=False)
+        if any(m in blob for m in STUB_MARKERS):
+            removed.append((a, "stub"))
+            continue
+        try:
+            pub = parse_iso(a["publishedAt"])
+        except Exception:
+            removed.append((a, "bad-date"))
+            continue
+        if pub > future_limit:
+            removed.append((a, "future"))
+            continue
+        kept.append(a)
+    seen_url, tmp = set(), []
+    for a in kept:
+        if a["url"] in seen_url:
+            removed.append((a, "dup-url"))
+            continue
+        seen_url.add(a["url"])
+        tmp.append(a)
+    kept = tmp
+    by_title = {}
+    for a in kept:
+        k = norm_title(a.get("originalTitle"))
+        if not k:
+            continue
+        cur = by_title.get(k)
+        if cur is None:
+            by_title[k] = a
+            continue
+        def rank(x):
+            return (len(x.get("summaryHtml", "")), x["publishedAt"])
+        winner = a if rank(a) > rank(cur) else cur
+        loser = cur if winner is a else a
+        by_title[k] = winner
+        removed.append((loser, "dup-title"))
+    if any(r[1] == "dup-title" for r in removed):
+        losers = {id(r[0]) for r in removed if r[1] == "dup-title"}
+        kept = [a for a in kept if id(a) not in losers]
+    return kept, removed
+
+
+def validate_new(rec, now):
+    for k in REQUIRED:
+        if not rec.get(k):
+            raise ValueError(f"missing field {k}: {rec.get('url')}")
+    if not KANA_RE.search(rec["titleJa"]):
+        raise ValueError(f"titleJa has no kana: {rec['url']}")
+    if not isinstance(rec["categories"], list) or not rec["categories"]:
+        raise ValueError(f"categories must be a non-empty list: {rec['url']}")
+    if len(plain_text(rec["summaryHtml"])) < 100:
+        raise ValueError(f"summary too short (<100 chars): {rec['url']}")
+    if any(m in rec["summaryHtml"] for m in STUB_MARKERS):
+        raise ValueError(f"summaryHtml contains stub marker: {rec['url']}")
+    pub = parse_iso(rec["publishedAt"])
+    if pub > now + timedelta(days=2):
+        raise ValueError(f"publishedAt too far in future: {rec['url']}")
+    out = dict(rec)
+    out.setdefault("id", md5hex(rec["url"]))
+    if out["id"] != md5hex(rec["url"]):
+        raise ValueError(f"id is not md5(url): {rec['url']}")
+    out["publishedDateKey"] = pub.strftime("%Y-%m-%d")
+    out["publishedMonthKey"] = pub.strftime("%Y-%m")
+    return {k: out[k] for k in sorted(out)}
+
+
+def jp_month(mk):
+    y, m = mk.split("-")
+    return f"{y}年{int(m)}月"
+
+
+ART_RE = re.compile(
+    r"<!-- ARTICLES_START -->.*?<!-- ARTICLES_END -->", re.S)
+ARCH_RE = re.compile(
+    r"    <!-- ART_ARCHIVE_LINKS_START -->.*?    <!-- ART_ARCHIVE_LINKS_END -->",
+    re.S)
+
+
+def replace_options(page, select_id, values):
+    pat = re.compile(
+        r'(<select id="' + select_id + r'">).*?(</select>)', re.S)
+    opts = '<option value="">すべて</option>' + "".join(
+        f'<option value="{esc(v)}">{esc(v)}</option>' for v in values)
+    return pat.sub(lambda m: m.group(1) + opts + m.group(2), page, count=1)
+
+
+def refresh_filters(page, articles):
+    months = sorted({a["publishedMonthKey"] for a in articles}, reverse=True)
+    categories = sorted({g for a in articles for g in a["categories"]})
+    sources = sorted({a["sourceName"] for a in articles})
+    kinds = sorted({a["kind"] for a in articles})
+    page = replace_options(page, "monthFilter",
+                           [f"{m}" for m in months])
+    # Month option labels stay as YYYY-MM (matches nurse behaviour).
+    page = replace_options(page, "categoryFilter", categories)
+    page = replace_options(page, "sourceFilter", sources)
+    page = replace_options(page, "kindFilter", kinds)
+    return page
+
+
+def regenerate(main_shell, articles):
+    if 'id="pageSize"' not in main_shell or 'id="pageInfo"' not in main_shell:
+        raise ValueError("shell lost its pager (pageSize/pageInfo missing)")
+    if "summaryToggle" not in main_shell:
+        raise ValueError("shell lost summary folding (summaryToggle missing)")
+    if "position: sticky" in main_shell:
+        raise ValueError("shell has position: sticky (must stay removed)")
+    if not ARCH_RE.search(main_shell):
+        raise ValueError("shell lost ART_ARCHIVE_LINKS markers")
+    if not ART_RE.search(main_shell):
+        raise ValueError("shell lost ARTICLES markers")
+
+    def fill(shell, recs, total_label):
+        blocks = "\n".join(article_block(a) for a in recs)
+        body = f"<!-- ARTICLES_START -->\n{blocks}\n<!-- ARTICLES_END -->"
+        shell = ART_RE.sub(lambda _: body, shell, count=1)
+        shell = re.sub(r"全\d+件", f"全{total_label}件", shell, count=1)
+        return shell
+
+    top = articles[:MAIN_LIMIT]
+    main = fill(main_shell, top, len(top))
+    overflow = articles[MAIN_LIMIT:]
+    months = OrderedDict()
+    for a in overflow:
+        months.setdefault(a["publishedMonthKey"], []).append(a)
+    if months:
+        items = "\n".join(
+            f'        <li><a href="art-archive-{mk}.html">{jp_month(mk)}（{len(v)}件）</a></li>'
+            for mk, v in sorted(months.items(), reverse=True))
+    else:
+        items = "        <li>まだありません</li>"
+    arch_section = (
+        "    <!-- ART_ARCHIVE_LINKS_START -->\n"
+        "    <section class=\"archive-links\">\n"
+        "      <h2>過去のアーカイブ（月別）</h2>\n"
+        '      <ul class="archive-list">\n'
+        f"{items}\n"
+        "      </ul>\n"
+        "    </section>\n"
+        "    <!-- ART_ARCHIVE_LINKS_END -->"
+    )
+    m = ARCH_RE.search(main)
+    main = main[:m.start()] + arch_section + main[m.end():]
+    main = refresh_filters(main, articles)
+
+    out = {"art-news.html": main}
+    arch2 = (
+        "    <!-- ART_ARCHIVE_LINKS_START -->\n"
+        "    <section class=\"archive-links\">\n"
+        "      <h2>過去のアーカイブ（月別）</h2>\n"
+        '      <p>アーカイブ一覧は<a href="art-news.html">本体ページ</a>にあります。</p>\n'
+        "    </section>\n"
+        "    <!-- ART_ARCHIVE_LINKS_END -->"
+    )
+    for mk in sorted(months):
+        recs = months[mk]
+        shell = main
+        y, mo = mk.split("-")
+        shell = shell.replace(
+            f"<title>{MAIN_TITLE}</title>",
+            f"<title>Art News アーカイブ {y}年{int(mo)}月 | VARELSER</title>", 1)
+        shell = fill(shell, recs, len(recs))
+        m2 = ARCH_RE.search(shell)
+        shell = shell[:m2.start()] + arch2 + shell[m2.end():]
+        out[f"art-archive-{mk}.html"] = shell
+    return out, months
+
+
+def validate(files, articles):
+    problems = []
+    blob = json.dumps(articles, ensure_ascii=False)
+    for marker in STUB_MARKERS:
+        if marker in blob:
+            problems.append(f"stub marker in data: {marker}")
+    for a in articles:
+        if not KANA_RE.search(a.get("titleJa", "")):
+            problems.append(f"kana-less titleJa: {a.get('url')}")
+    total_html = 0
+    for name, content in files.items():
+        n = content.count("<article")
+        total_html += n
+        if 'id="pageSize"' not in content:
+            problems.append(f"pager missing: {name}")
+        if "position: sticky" in content:
+            problems.append(f"sticky present: {name}")
+    if files["art-news.html"].count("<article") != min(MAIN_LIMIT, len(articles)):
+        problems.append("main article count mismatch")
+    ids_in_main = re.findall(r'data-id="([0-9a-f]+)"', files["art-news.html"])
+    if ids_in_main != [a["id"] for a in articles[:MAIN_LIMIT]]:
+        problems.append("main data-id order does not match JSON head")
+    if total_html != len(articles):
+        problems.append(
+            f"main+archives {total_html} != JSON total {len(articles)}")
+    if 'href="/"' not in files["art-news.html"]:
+        problems.append("home link is not '/' in main page")
+    if problems:
+        raise ValueError("; ".join(problems))
+
+
+def build_feed(articles, updated_at_iso):
+    from email.utils import format_datetime
+    def xesc(s):
+        return html.escape(str(s), quote=False)
+    items = []
+    for a in articles[:FEED_LIMIT]:
+        pub = format_datetime(parse_iso(a["publishedAt"]))
+        items.append(
+            "  <item>\n"
+            f"   <title>{xesc(a['titleJa'])}</title>\n"
+            f"   <link>{xesc(a['url'])}</link>\n"
+            f"   <guid isPermaLink=\"true\">{xesc(a['url'])}</guid>\n"
+            f"   <pubDate>{pub}</pubDate>\n"
+            f"   <description>{xesc(plain_text(a['summaryHtml'])[:600])}</description>\n"
+            "  </item>")
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0">\n<channel>\n'
+        " <title>Art News（美術・美術館ニュース）</title>\n"
+        " <link>https://varelser.github.io/art-news.html</link>\n"
+        " <description>国内外の美術・美術館ニュースを日本語要約で届ける Art News の新着フィード</description>\n"
+        " <language>ja</language>\n"
+        f" <lastBuildDate>{format_datetime(parse_iso(updated_at_iso))}</lastBuildDate>\n"
+        + "\n".join(items) +
+        "\n</channel>\n</rss>\n"
+    )
+
+
+def build_search_index(articles, updated_at_iso):
+    months = OrderedDict()
+    for a in articles:
+        months.setdefault(a["publishedMonthKey"], []).append({
+            "t": a["titleJa"],
+            "o": a["originalTitle"],
+            "u": a["url"],
+            "d": a["publishedDateKey"],
+            "s": a["sourceName"],
+            "b": plain_text(a["summaryHtml"]),
+            "g": " ".join(a["categories"] + [a["kind"], a["region"]]),
+        })
+    out = {}
+    manifest_months = []
+    for mk in sorted(months, reverse=True):
+        fname = f"art-search-{mk}.json"
+        out[fname] = json.dumps(
+            {"month": mk, "articles": months[mk]},
+            ensure_ascii=False, separators=(",", ":"))
+        manifest_months.append(
+            {"key": mk, "file": fname, "count": len(months[mk])})
+    out["art-search-index.json"] = json.dumps(
+        {"updatedAt": updated_at_iso, "total": len(articles),
+         "months": manifest_months},
+        ensure_ascii=False, separators=(",", ":"))
+    return out
+
+
+def run(repo, new_path=None, dry_run=False, now=None, drop_path=None):
+    import os
+    now = now or datetime.now(timezone.utc)
+    def read(name):
+        with open(os.path.join(repo, name), encoding="utf-8") as f:
+            return f.read()
+    def read_bytes(name):
+        with open(os.path.join(repo, name), "rb") as f:
+            return f.read()
+
+    data_raw = read_bytes("art-news-data.json")
+    data = json.loads(data_raw.decode("utf-8"))
+    articles = data["articles"]
+    kept, removed = clean_stock(articles, now)
+
+    added = []
+    if new_path:
+        with open(new_path, encoding="utf-8") as f:
+            new_records = json.load(f)
+        if not isinstance(new_records, list):
+            raise ValueError("--new file must contain a JSON list")
+        existing_urls = {a["url"] for a in kept}
+        existing_titles = {norm_title(a.get("originalTitle")) for a in kept}
+        for rec in new_records:
+            rec = validate_new(rec, now)
+            if rec["url"] in existing_urls:
+                continue
+            if norm_title(rec.get("originalTitle")) in existing_titles:
+                continue
+            kept.append(rec)
+            added.append(rec)
+            existing_urls.add(rec["url"])
+            existing_titles.add(norm_title(rec.get("originalTitle")))
+
+    if drop_path:
+        with open(drop_path, encoding="utf-8") as f:
+            drop_urls = set(json.load(f))
+        dropped = [a for a in kept if a["url"] in drop_urls]
+        kept = [a for a in kept if a["url"] not in drop_urls]
+        removed.extend((a, "editorial") for a in dropped)
+        missing = drop_urls - {a["url"] for a in dropped}
+        if missing:
+            raise ValueError(f"--drop URLs not in stock: {sorted(missing)[:3]}")
+
+    kept.sort(key=lambda a: a["publishedAt"], reverse=True)
+
+    summary = {
+        "changed": False,
+        "added": [a["titleJa"] for a in added],
+        "removed": [{"title": a["titleJa"], "reason": r} for a, r in removed],
+        "total": len(kept),
+        "files": [],
+    }
+    if not removed and not added:
+        return summary
+
+    data["articles"] = kept
+    data["updatedAt"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    new_json = json.dumps(data, ensure_ascii=False, indent=1)
+
+    main_shell = read("art-news.html")
+    files, months = regenerate(main_shell, kept)
+    validate(files, kept)
+    summary["archive_counts"] = {k: len(v) for k, v in months.items()}
+
+    targets = {"art-news-data.json": new_json,
+               "art-feed.xml": build_feed(kept, data["updatedAt"])}
+    targets.update(build_search_index(kept, data["updatedAt"]))
+    targets.update(files)
+    changed = []
+    for name, content in sorted(targets.items()):
+        path = os.path.join(repo, name)
+        old = None
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                old = f.read()
+        if old != content.encode("utf-8"):
+            changed.append(name)
+            if not dry_run:
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(content)
+    summary["changed"] = bool(changed)
+    summary["files"] = changed
+    summary["dry_run"] = dry_run
+    return summary
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="Art News fixed pipeline")
+    ap.add_argument("--repo", required=True)
+    ap.add_argument("--new", default=None)
+    ap.add_argument("--drop", default=None)
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--now", default=None, help="ISO8601 UTC, for tests")
+    args = ap.parse_args(argv)
+    now = parse_iso(args.now) if args.now else None
+    try:
+        summary = run(args.repo, args.new, args.dry_run, now,
+                      drop_path=args.drop)
+    except (ValueError, KeyError, json.JSONDecodeError) as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        return 2
+    print(json.dumps(summary, ensure_ascii=False, indent=1))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
