@@ -241,6 +241,61 @@ html.tw-vt-active #root > main > div{ animation:none !important; }
   background:color-mix(in srgb, var(--tw-text) 5%, transparent);
 }
 
+/* === 4DT-RESKIN v4: sphere, "blueprint" look (2026-11-13) ===
+   User picked variant B (設計図) from a six-look gallery. The sphere
+   view is one SVG whose geometry uses presentation attributes driven
+   by the app's theme variables; CSS retunes the mixes/weights
+   through the SAME variables, so every theme keeps its own hue and
+   lightness. Scoped via :has(#sphereGlow); other views untouched.
+   Blueprint character: no glow, no fill, crisp wireframe + dot grid. */
+
+/* drafting-paper dot grid behind the sphere */
+#root > main > div:has(> svg:has(#sphereGlow)){
+  background-image:radial-gradient(circle, color-mix(in srgb, var(--tw-sphere) 7%, transparent) 1px, transparent 1.4px);
+  background-size:26px 26px;
+}
+/* glow off: gradient stops transparent, halo disc hidden */
+#root > main svg:has(#sphereGlow) #sphereGlow stop{ stop-color:transparent; }
+#root > main svg:has(#sphereGlow) > circle:nth-of-type(1){ opacity:0; }
+/* shell: thin, firm rim, no fill */
+#root > main svg:has(#sphereGlow) > circle:nth-of-type(2){
+  stroke:color-mix(in srgb, var(--tw-sphere) 55%, transparent);
+  stroke-width:1;
+  fill:transparent;
+}
+/* graticule: the drawing itself — strong, clean, round joins */
+#root > main svg:has(#sphereGlow) polyline{
+  stroke:color-mix(in srgb, var(--tw-grid) 50%, transparent);
+  stroke-width:.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+/* edges: near-full strength, round-capped */
+#root > main svg:has(#sphereGlow) line{ stroke-linecap:round; }
+#root > main svg:has(#sphereGlow) line[stroke-width="1"]{
+  stroke:color-mix(in srgb, var(--tw-edge) 82%, transparent);
+  stroke-width:1.1;
+}
+/* node dots: base size (rings and the glowing centre excluded) */
+#root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){
+  r:3px;
+}
+/* node labels: finer frame */
+#root > main svg:has(#sphereGlow) g rect{
+  stroke-width:.8;
+  stroke-opacity:.9;
+}
+/* label type line + title: slightly larger, airier */
+#root > main svg:has(#sphereGlow) g text[font-size="7.6"]{
+  font-size:7.9px;
+  letter-spacing:.02em;
+  font-weight:550;
+}
+#root > main svg:has(#sphereGlow) g text[font-size="5.8"]{
+  font-size:6.2px;
+  letter-spacing:.07em;
+}
+
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{
     animation-duration:.01ms !important;
