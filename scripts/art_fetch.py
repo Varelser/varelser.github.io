@@ -1,27 +1,32 @@
 #!/usr/bin/env python3
 """Art News candidate fetcher (fixed script for the hourly update).
 
-Scope: 41 sources verified by live fetching on 2026-11-13, when the
+Scope: 49 sources verified by live fetching on 2026-11-13, when the
 Art field was added at the user's request (base pattern: Nurse News,
 the original of this series; same rules as Cinema / Camera / Music /
 Instruments / World / Literature). Coverage is deliberately broad:
 Japanese art media and exhibition portals, overseas art media and
 criticism, museum and museum-industry sources, the art market, and
 media-art sources.
-Japanese: ART iT, artscape, IMA ONLINE.
+Japanese: ART iT, artscape, IMA ONLINE, Casa BRUTUS,
+National Museum of Art, Osaka (国立国際美術館; short descriptions,
+the editorial gate still applies).
 Overseas art media / criticism: Artnet News, ARTnews, Art in America,
 Artforum, Hyperallergic, The Art Newspaper, Colossal, Artsy,
 The Guardian Art and Design, NYT Art and Design, Ocula Magazine,
 ArtAsiaPacific, FAD Magazine, Elephant Magazine, Berlin Art Link,
 Art Plugged, DailyArt Magazine, Momus, Art Africa Magazine,
 The Flux Review, Two Coats of Paint, Something Curated,
-Sugarcane Magazine.
+Sugarcane Magazine, Mousse Magazine, Flash Art, Hypebeast Art.
 Museums / museum industry: Guggenheim, LACMA Unframed, V&A Blog,
 Blooloop, MuseumNext, AAM (American Alliance of Museums).
 Market: MutualArt (plus Artnet / Artsy above).
 Design / craft / media art: Designboom Art, Dezeen Art, IGNANT,
 Creative Boom, My Modern Met, Booooooom, Ars Electronica Blog.
-Japan in English: Spoon & Tamago (region is set to 国内 for this one).
+Photography: Aperture, British Journal of Photography (plus
+IMA ONLINE above).
+Japan in English: Spoon & Tamago and SHIFT (region is set to 国内
+for these two).
 Notes: IMA ONLINE items often carry no description; the editorial
 gate excludes description-less candidates. Artsy's feed carries
 very long descriptions; they are truncated to 1200 chars like every
@@ -37,6 +42,19 @@ Apollo Magazine / Walker Art Center (500), British Museum Blog /
 Tokyo Art Navigation (connection closed), Getty Iris / Art Guide
 Australia / Qetic (XML the stdlib parser cannot read), Art Review /
 ArtDaily / e-flux / Tate / SFMOMA (404 on every probed feed path).
+Wave-2 probe (2026-11-13, same day) also NOT adopted: Brooklyn
+Rail / Art Radar / Monopol / Spike / Wellcome Collection /
+Whitney / New Museum / National Gallery London / Rijksmuseum /
+M+ / MMCA Korea / teamLab / Gagosian / Pace / David Zwirner /
+Sotheby's / Dazed / Art Basel / Barbican / ICA London / Garage /
+Palais de Tokyo / MAAT / 森美術館 / ポーラ美術館 / 21_21 DESIGN
+SIGHT / 瀬戸内国際芸術祭 (404), Contemporary Lynx / LensCulture /
+Smarthistory / NGA Washington / 東京国立近代美術館 (403), Foam /
+Hauser & Wirth / Artprice (429), Christie's (timeout), 原美術館
+(connection closed), あいちトリエンナーレ (malformed XML),
+兵庫県立美術館 (503), Serpentine / Whitechapel / アーティゾン
+美術館 / 横浜美術館 / 越後妻有 (feed parses, 0 items), NGV
+Melbourne (45-day rule, latest item 2026-06).
 Excluded by the 45-day rule (feed parses but no items within
 45 days on probe day): Juxtapoz, Smithsonian Magazine general feed
 (stale since 2019), Art Annual Online, Creative Applications
@@ -118,6 +136,14 @@ SOURCES = [
     ('Booooooom', "https://www.booooooom.com/feed/", "en", None),
     ('Ars Electronica Blog', "https://ars.electronica.art/aeblog/en/feed/", "en", None),
     ('Spoon & Tamago', "https://spoon-tamago.com/feed/", "en", "国内"),
+    ('Casa BRUTUS', "https://casabrutus.com/feed", "ja", None),
+    ('National Museum of Art, Osaka', "https://www.nmao.go.jp/feed/", "ja", None),
+    ('Mousse Magazine', "https://www.moussemagazine.it/feed/", "en", None),
+    ('Flash Art', "https://flash---art.it/feed/", "en", None),
+    ('Hypebeast Art', "https://hypebeast.com/art/feed", "en", None),
+    ('Aperture', "https://aperture.org/feed/", "en", None),
+    ('British Journal of Photography', "https://www.1854.photography/feed/", "en", None),
+    ('SHIFT', "http://www.shift.jp.org/en/feed/", "en", "国内"),
 ]
 
 UA = {"User-Agent": "Mozilla/5.0 (compatible; ArtNewsFetch/1.0)"}
