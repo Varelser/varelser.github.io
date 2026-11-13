@@ -13,6 +13,8 @@
 'use strict';
 const panel = document.getElementById('vizPanel');
 if (!panel || typeof MidiPreview === 'undefined') return;
+/* 要素は必ずパネル経由で引く。PiP で別ドキュメントへ移っても参照が切れないようにするため */
+const $ = id => panel.querySelector('#' + id);
 
 /* ── レイヤー（チャンネル→名前と明度） ── */
 const CH_DEF = [
@@ -67,8 +69,8 @@ function rebuild(){
   }
   particles.length = 0; ripples.length = 0; surfaceRings.length = 0; melodyPath.length = 0;
   sgCols.length = 0; pvBursts.length = 0; pvParticles.length = 0; rollStaticDirty = true; _prevBeat = -1;
-  document.getElementById('vizRollInfo').textContent = notes.length + ' NOTES · ' + totalBeats + ' BEATS';
-  document.getElementById('vizLegend').innerHTML = presentChs.map(ch =>
+  $('vizRollInfo').textContent = notes.length + ' NOTES · ' + totalBeats + ' BEATS';
+  $('vizLegend').innerHTML = presentChs.map(ch =>
     '<span><i style="background:' + layerOf(ch).color + '"></i>' + layerOf(ch).name + '</span>').join('');
   panel.style.display = '';
 }
@@ -83,7 +85,7 @@ const analyser = () => MidiPreview.getAnalyser ? MidiPreview.getAnalyser() : nul
 const particles = [], ripples = [], surfaceRings = [], melodyPath = [], pvBursts = [];
 let _prevBeat = -1;
 function onOnset(n){
-  const ocv = document.getElementById('vizCvOrbit'), r = ocv.getBoundingClientRect();
+  const ocv = $('vizCvOrbit'), r = ocv.getBoundingClientRect();
   const p = orbitPos(n, r.width || 800, r.height || 360);
   ripples.push({ x: p.x, y: p.y, r: 3, life: 1, color: layerOf(n.ch).color });
   particles.push({ x: p.x, y: p.y, a: rng() * Math.PI * 2, sp: 5 + rng() * 13, life: 1, decay: .006 + rng() * .008, color: layerOf(n.ch).color, size: .8 + rng() * 1.1 });
@@ -114,7 +116,7 @@ function getBands(){
   const avg = (a, b) => { let s = 0; for (let i = a; i < b; i++) s += f[i]; return s / ((b - a) * 255); };
   return { bass: avg(1, 10), mid: avg(10, 90), treble: avg(90, 320) };
 }
-const sens = () => (+document.getElementById('vizSens').value) / 100;
+const sens = () => (+$('vizSens').value) / 100;
 let _prevFreq = null, _fluxAvg = 0.02, _lastBurst = 0, fluxBurst = false, psychePulse = 0;
 function detectFlux(now){
   if (!isPlaying() || !analyser()) return;
@@ -129,7 +131,7 @@ function detectFlux(now){
 }
 
 /* ── 共通描画ユーティリティ ── */
-const trailsOn = () => document.getElementById('vizTrail').classList.contains('on');
+const trailsOn = () => $('vizTrail').classList.contains('on');
 function fit(cv){
   const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
   const w = Math.round(r.width * d), h = Math.round(r.height * d);
@@ -197,7 +199,7 @@ function drawRollStatic(W, H){
   rollStaticKey = W + 'x' + H;
 }
 function drawRoll(beat){
-  const cv = document.getElementById('vizCvRoll'); if (!cv.offsetParent) return;
+  const cv = $('vizCvRoll'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   if (rollStaticDirty || !rollStatic || rollStaticKey !== W + 'x' + H){ drawRollStatic(W, H); rollStaticDirty = false; }
   x.save(); x.setTransform(1, 0, 0, 1, 0, 0);
@@ -223,7 +225,7 @@ let rot = 0;
 const orbitAngle = pc => (pc / 12) * Math.PI * 2 - Math.PI / 2 + rot;
 function orbitPos(n, W, H){ return ringPos(n, W, H, orbitAngle); }
 function drawOrbit(W, H, beat){
-  const cv = document.getElementById('vizCvOrbit'); if (!cv.offsetParent) return;
+  const cv = $('vizCvOrbit'); if (!cv.offsetParent) return;
   const { x } = fit(cv);
   if (trailsOn()){ x.fillStyle = 'rgba(6,6,7,.22)'; x.fillRect(0, 0, W, H); } else x.clearRect(0, 0, W, H);
   const { cx, cy, maxR } = circleFrame(x, W, H, orbitAngle);
@@ -272,13 +274,13 @@ function drawOrbit(W, H, beat){
   x.fillStyle = 'rgba(255,255,255,.32)'; x.font = '8.5px Share Tech Mono';
   x.fillText(isPlaying() ? act.length + ' VOICES' : 'STILL WATER', cx, cy + 15);
   x.textAlign = 'left';
-  document.getElementById('vizOrbitInfo').textContent = isPlaying() ? ([...new Set(act.map(n => NN[n.note % 12]))].join(' · ') || '—') : '停止中 — ゆっくり回っています';
+  $('vizOrbitInfo').textContent = isPlaying() ? ([...new Set(act.map(n => NN[n.note % 12]))].join(' · ') || '—') : '停止中 — ゆっくり回っています';
 }
 
 /* ── 3 FIFTHS ── */
 const fifthsAngle = pc => (((pc * 7) % 12) / 12) * Math.PI * 2 - Math.PI / 2 + rot;
 function drawFifths(W, H, beat, now){
-  const cv = document.getElementById('vizCvFifths'); if (!cv.offsetParent) return;
+  const cv = $('vizCvFifths'); if (!cv.offsetParent) return;
   const { x } = fit(cv);
   x.clearRect(0, 0, W, H);
   const { cx, cy, maxR } = circleFrame(x, W, H, fifthsAngle);
@@ -310,12 +312,12 @@ function drawFifths(W, H, beat, now){
   x.fillStyle = 'rgba(255,255,255,.32)'; x.font = '8.5px Share Tech Mono';
   x.fillText(isPlaying() ? act.length + ' VOICES' : 'STILL WATER', cx, cy + 15);
   x.textAlign = 'left';
-  document.getElementById('vizFifthsInfo').textContent = alive.length ? '軌跡 ' + alive.length + ' 音' : '—';
+  $('vizFifthsInfo').textContent = alive.length ? '軌跡 ' + alive.length + ' 音' : '—';
 }
 
 /* ── 4 SURFACE ── */
 function drawSurface(now){
-  const cv = document.getElementById('vizCvSurface'); if (!cv.offsetParent) return;
+  const cv = $('vizCvSurface'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   x.clearRect(0, 0, W, H);
   const rows = presentChs.length ? presentChs : [0];
@@ -342,13 +344,13 @@ function drawSurface(now){
     if (age < 0.4){ x.fillStyle = hexA(layerOf(r.n.ch).color, 0.9 * (1 - age / 0.4)); x.beginPath(); x.arc(px, py, 2.4, 0, Math.PI * 2); x.fill(); }
   }
   for (let i = surfaceRings.length - 1; i >= 0; i--) if (now - surfaceRings[i].t0 > 3000) surfaceRings.splice(i, 1);
-  document.getElementById('vizSurfaceInfo').textContent = aliveCount ? aliveCount + ' RIPPLES' : '—';
+  $('vizSurfaceInfo').textContent = aliveCount ? aliveCount + ' RIPPLES' : '—';
 }
 
 /* ── 5 SPECTRUM ── */
 const NB = 64; let barsSm = new Float32Array(NB), peaks = new Float32Array(NB);
 function drawSpec(){
-  const cv = document.getElementById('vizCvSpec'); if (!cv.offsetParent) return;
+  const cv = $('vizCvSpec'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv); x.clearRect(0, 0, W, H);
   const specH = H * 0.64;
   if (!analyser()){ x.fillStyle = 'rgba(255,255,255,.3)'; x.font = '10.5px Share Tech Mono'; x.fillText('PREVIEW再生で実音声を表示します', 12, 22); return; }
@@ -375,14 +377,14 @@ function drawSpec(){
   }
   x.strokeStyle = 'rgba(232,232,238,.85)'; x.lineWidth = 1.2; x.stroke();
   let peak = 0; for (const v of freq) peak = Math.max(peak, v);
-  document.getElementById('vizSpecInfo').textContent = isPlaying() ? 'PEAK ' + Math.round(peak / 255 * 100) + '%' : '—';
+  $('vizSpecInfo').textContent = isPlaying() ? 'PEAK ' + Math.round(peak / 255 * 100) + '%' : '—';
 }
 
 /* ── 6 SPECTROGRAM ── */
 const SG_BINS = 56, SG_MAX = 220, sgCols = [];
 let sgLastPush = 0;
 function drawSg(now){
-  const cv = document.getElementById('vizCvSg'); if (!cv.offsetParent) return;
+  const cv = $('vizCvSg'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   x.clearRect(0, 0, W, H);
   if (isPlaying() && analyser() && now - sgLastPush > 85){
@@ -401,13 +403,13 @@ function drawSg(now){
     }
   });
   if (!sgCols.length){ x.fillStyle = 'rgba(255,255,255,.3)'; x.font = '10.5px Share Tech Mono'; x.fillText('PREVIEW再生で右から流れ込みます', 12, 22); }
-  document.getElementById('vizSgInfo').textContent = sgCols.length ? (sgCols.length * 0.085).toFixed(1) + ' SEC' : '—';
+  $('vizSgInfo').textContent = sgCols.length ? (sgCols.length * 0.085).toFixed(1) + ' SEC' : '—';
 }
 
 /* ── 7 POLAR ── */
 const PB = 72; let polarSm = new Float32Array(PB);
 function drawPolar(){
-  const cv = document.getElementById('vizCvPolar'); if (!cv.offsetParent) return;
+  const cv = $('vizCvPolar'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   x.clearRect(0, 0, W, H);
   const cx = W / 2, cy = H / 2, maxR = Math.min(W, H) / 2 - 14, r0 = 20;
@@ -426,13 +428,13 @@ function drawPolar(){
   }
   x.fillStyle = 'rgba(255,255,255,.35)'; x.font = '8.5px Share Tech Mono'; x.textAlign = 'center';
   x.fillText('POLAR', cx, cy + 3); x.textAlign = 'left';
-  document.getElementById('vizPolarInfo').textContent = isPlaying() ? 'PEAK ' + Math.round(peak * 100) + '%' : '—';
+  $('vizPolarInfo').textContent = isPlaying() ? 'PEAK ' + Math.round(peak * 100) + '%' : '—';
 }
 
 /* ── 8 FLOW ── */
 const flowPts = [];
 function drawFlow(now){
-  const cv = document.getElementById('vizCvFlow'); if (!cv.offsetParent) return;
+  const cv = $('vizCvFlow'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   x.fillStyle = 'rgba(6,6,7,.06)'; x.fillRect(0, 0, W, H);
   const bands = getBands(), t = now * 0.001;
@@ -447,19 +449,19 @@ function drawFlow(now){
     p.x = nx; p.y = ny; p.life -= 0.004;
     if (p.life <= 0 || p.x < -8 || p.x > W + 8 || p.y < -8 || p.y > H + 8){ p.x = rng() * W; p.y = rng() * H; p.life = 0.7 + rng() * 0.5; }
   }
-  document.getElementById('vizFlowInfo').textContent = isPlaying() ? 'BASS ' + Math.round(bands.bass * 100) + '% · TREBLE ' + Math.round(bands.treble * 100) + '%' : '静か — 音で流れます';
+  $('vizFlowInfo').textContent = isPlaying() ? 'BASS ' + Math.round(bands.bass * 100) + '% · TREBLE ' + Math.round(bands.treble * 100) + '%' : '静か — 音で流れます';
 }
 
 /* ── 9 PHASE ── */
 function drawPhase(){
-  const cv = document.getElementById('vizCvPhase'); if (!cv.offsetParent) return;
+  const cv = $('vizCvPhase'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   x.fillStyle = 'rgba(6,6,7,.16)'; x.fillRect(0, 0, W, H);
   x.strokeStyle = 'rgba(255,255,255,.06)';
   x.beginPath(); x.moveTo(W / 2, 6); x.lineTo(W / 2, H - 6); x.moveTo(6, H / 2); x.lineTo(W - 6, H / 2); x.stroke();
   if (!analyser() || !isPlaying()){
     x.fillStyle = 'rgba(255,255,255,.3)'; x.font = '10.5px Share Tech Mono'; x.fillText('PREVIEW再生で軌跡が残ります', 12, 22);
-    document.getElementById('vizPhaseInfo').textContent = '—'; return;
+    $('vizPhaseInfo').textContent = '—'; return;
   }
   const w = waveData(), delay = 28, cx = W / 2, cy = H / 2, sx = W * 0.44, sy = H * 0.44;
   x.fillStyle = 'rgba(255,255,255,.55)';
@@ -467,7 +469,7 @@ function drawPhase(){
     const px = cx + ((w[i] - 128) / 128) * sx, py = cy + ((w[i + delay] - 128) / 128) * sy;
     x.fillRect(px, py, 1.6, 1.6);
   }
-  document.getElementById('vizPhaseInfo').textContent = 'x[t] × x[t−28]';
+  $('vizPhaseInfo').textContent = 'x[t] × x[t−28]';
 }
 
 /* ── 10 PARTICLE ── */
@@ -478,7 +480,7 @@ function pvSpawn(px, py, vx, vy, life, col, size){
   pvParticles.push({ x: px, y: py, vx, vy, life: 1, decay: 1 / (life * 60), col, size });
 }
 function drawParticle(){
-  const cv = document.getElementById('vizCvParticle'); if (!cv.offsetParent) return;
+  const cv = $('vizCvParticle'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   x.fillStyle = 'rgba(6,6,7,.30)'; x.fillRect(0, 0, W, H);
   const bands = getBands(), level = (bands.bass + bands.mid + bands.treble) / 3, s = sens();
@@ -515,12 +517,12 @@ function drawParticle(){
     x.beginPath(); x.arc(p.x, p.y, p.size * 0.55, 0, Math.PI * 2); x.fill();
   }
   if (!isPlaying() && !pvParticles.length){ x.fillStyle = 'rgba(255,255,255,.3)'; x.font = '10.5px Share Tech Mono'; x.fillText('PREVIEW再生で粒子が湧きます', 12, 22); }
-  document.getElementById('vizParticleInfo').textContent = pvParticles.length ? pvParticles.length + ' PARTICLES' : '—';
+  $('vizParticleInfo').textContent = pvParticles.length ? pvParticles.length + ' PARTICLES' : '—';
 }
 
 /* ── 11 PSYCHE ── */
 function drawPsyche(now, beat){
-  const cv = document.getElementById('vizCvPsyche'); if (!cv.offsetParent) return;
+  const cv = $('vizCvPsyche'); if (!cv.offsetParent) return;
   const { x, W, H } = fit(cv);
   const bands = getBands(), level = (bands.bass + bands.mid + bands.treble) / 3, s = sens();
   const zoom = 1.010 + level * 0.055 * s + psychePulse * 0.035;
@@ -563,7 +565,7 @@ function drawPsyche(now, beat){
     if (sg % 2) x.scale(1, -1);
     x.translate(-cx, -cy); motif(); x.restore();
   }
-  document.getElementById('vizPsycheInfo').textContent = isPlaying() ? (psychePulse > 0.35 ? 'PULSE' : act.length + ' VOICES · KALEIDOSCOPE') : 'KALEIDOSCOPE — 再生で回り出す';
+  $('vizPsycheInfo').textContent = isPlaying() ? (psychePulse > 0.35 ? 'PULSE' : act.length + ' VOICES · KALEIDOSCOPE') : 'KALEIDOSCOPE — 再生で回り出す';
 }
 
 /* ── メインループ ── */
@@ -578,9 +580,9 @@ function loop(now){
     rot += 0.00045;
   } else { rot += 0.00013; _prevBeat = -1; }
   drawRoll(beat);
-  const ocv = document.getElementById('vizCvOrbit'); const r2 = ocv.getBoundingClientRect();
+  const ocv = $('vizCvOrbit'); const r2 = ocv.getBoundingClientRect();
   drawOrbit(r2.width || 800, r2.height || 360, beat);
-  const fcv = document.getElementById('vizCvFifths'); const r3 = fcv.getBoundingClientRect();
+  const fcv = $('vizCvFifths'); const r3 = fcv.getBoundingClientRect();
   drawFifths(r3.width || 800, r3.height || 340, beat, now);
   drawSurface(now);
   drawSpec();
@@ -600,44 +602,80 @@ const VIEW_ORDER = ['roll','orbit','fifths','surface','spec','sg','polar','flow'
 const LS_KEY = 'meikyoshisui_viz_v1';
 let currentView = 'all';
 function savePref(){
-  try { localStorage.setItem(LS_KEY, JSON.stringify({ view: currentView, trails: trailsOn(), sens: +document.getElementById('vizSens').value })); } catch(e){}
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ view: currentView, trails: trailsOn(), sens: +$('vizSens').value })); } catch(e){}
 }
 function clearFxCanvases(){
   ['vizCvOrbit','vizCvFlow','vizCvPhase','vizCvParticle','vizCvPsyche'].forEach(id => {
-    const cv = document.getElementById(id); if (!cv) return;
+    const cv = $(id); if (!cv) return;
     const x = cv.getContext('2d'); x.save(); x.setTransform(1,0,0,1,0,0); x.clearRect(0, 0, cv.width, cv.height); x.restore();
   });
 }
-function setView(v){
+function applyView(v){
   currentView = v;
   panel.querySelectorAll('.viz-vbtn').forEach(b => b.classList.toggle('on', b.dataset.view === v));
-  document.getElementById('vizPanels').classList.toggle('all', v === 'all');
+  $('vizPanels').classList.toggle('all', v === 'all');
   panel.querySelectorAll('[data-panel]').forEach(p => p.classList.toggle('show', v === 'all' || p.dataset.panel === v));
   rollStaticDirty = true;
   clearFxCanvases();
   savePref();
 }
+const VT_OK = typeof document.startViewTransition === 'function' &&
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setView(v){
+  if (VT_OK && v !== currentView) document.startViewTransition(() => applyView(v));
+  else applyView(v);
+}
 panel.querySelectorAll('.viz-vbtn').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
-document.getElementById('vizTrail').addEventListener('click', e => { e.currentTarget.classList.toggle('on'); savePref(); });
-document.getElementById('vizSens').addEventListener('input', e => {
-  document.getElementById('vizSensV').textContent = '×' + (e.target.value / 100).toFixed(1);
+$('vizTrail').addEventListener('click', e => { e.currentTarget.classList.toggle('on'); savePref(); });
+$('vizSens').addEventListener('input', e => {
+  $('vizSensV').textContent = '×' + (e.target.value / 100).toFixed(1);
   savePref();
 });
-document.getElementById('vizFull').addEventListener('click', () => {
+$('vizFull').addEventListener('click', () => {
   document.fullscreenElement ? document.exitFullscreen() : panel.requestFullscreen && panel.requestFullscreen();
 });
-document.getElementById('vizPng').addEventListener('click', () => {
+$('vizPng').addEventListener('click', () => {
   const src = panel.querySelector('[data-panel].show canvas'); if (!src) return;
-  const a = document.createElement('a'); a.href = src.toDataURL('image/png'); a.download = 'meikyoshisui-visualizer.png'; a.click();
+  src.toBlob(async blob => {
+    if (!blob) return;
+    if (window.__MEIKY_SAVE__) { await window.__MEIKY_SAVE__.saveBlob(blob, 'meikyoshisui-visualizer.png'); return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'meikyoshisui-visualizer.png'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }, 'image/png');
 });
-document.getElementById('vizCvRoll').addEventListener('click', e => {
+/* ── Document Picture-in-Picture（対応時のみボタン表示） ── */
+const pipBtn = $('vizPip');
+if (pipBtn && 'documentPictureInPicture' in window){
+  pipBtn.style.display = '';
+  const placeholder = document.createElement('div');
+  placeholder.id = 'vizPipPlaceholder'; placeholder.style.display = 'none';
+  panel.before(placeholder);
+  let pipWin = null;
+  pipBtn.addEventListener('click', async () => {
+    if (pipWin){ pipWin.close(); return; }
+    try {
+      pipWin = await window.documentPictureInPicture.requestWindow({ width: 920, height: 660 });
+      const doc = pipWin.document;
+      doc.addEventListener('keydown', vizKeys);
+      doc.body.style.cssText = 'margin:0;background:#080809;font-family:\'Share Tech Mono\',monospace;';
+      panel.style.display = '';
+      doc.body.appendChild(panel);
+      pipWin.addEventListener('pagehide', () => {
+        placeholder.after(panel);
+        pipWin = null;
+        rollStaticDirty = true;
+      });
+    } catch (e) { pipWin = null; }
+  });
+}
+$('vizCvRoll').addEventListener('click', e => {
   if (!notes.length || typeof MidiPreview.seek !== 'function') return;
   const cv = e.currentTarget, r = cv.getBoundingClientRect();
   const beat = Math.max(0, Math.min(totalBeats - 0.05, ((e.clientX - r.left - KEYW) / (r.width - KEYW)) * totalBeats));
   const dur = MidiPreview.getDuration ? MidiPreview.getDuration() : 0;
   if (dur > 0) MidiPreview.seek(Math.min(0.999, (beat * spb()) / dur));
 });
-document.addEventListener('keydown', e => {
+function vizKeys(e){
   if (panel.style.display === 'none') return;
   const t = e.target;
   if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
@@ -645,15 +683,16 @@ document.addEventListener('keydown', e => {
   else if (e.key === '0') setView('all');
   else if (e.key === 'q' || e.key === 'Q') setView('particle');
   else if (e.key === 'w' || e.key === 'W') setView('psyche');
-});
+}
+document.addEventListener('keydown', vizKeys);
 /* 保存された表示を復元（なければ全部表示） */
 (function restore(){
   try {
     const p = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
     if (p){
-      if (p.trails === false) document.getElementById('vizTrail').classList.remove('on');
+      if (p.trails === false) $('vizTrail').classList.remove('on');
       if (p.view && (p.view === 'all' || p.view === 'particle' || p.view === 'psyche' || VIEW_ORDER.includes(p.view))) currentView = p.view;
-      if (p.sens){ document.getElementById('vizSens').value = p.sens; document.getElementById('vizSensV').textContent = '×' + (p.sens / 100).toFixed(1); }
+      if (p.sens){ $('vizSens').value = p.sens; $('vizSensV').textContent = '×' + (p.sens / 100).toFixed(1); }
     }
   } catch(e){}
 })();

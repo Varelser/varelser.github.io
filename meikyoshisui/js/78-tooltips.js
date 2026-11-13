@@ -211,6 +211,10 @@
   try { enabled = localStorage.getItem(KEY) !== 'off'; } catch (_) { /* 既定 ON */ }
 
   let tipEl = null, showTimer = null, hideTimer = null, currentTarget = null;
+  /* 94系プラットフォーム対応: Popover API があれば最上位レイヤーで表示する（パネルや段組みに切られない）。
+     非対応環境では従来の fixed 配置のまま。表示/非表示のタイミングと内容は従来と同一。 */
+  const POP_OK = typeof HTMLElement !== 'undefined' && typeof HTMLElement.prototype.showPopover === 'function';
+  let popHideTimer = null;
 
   function ensureTipEl() {
     if (tipEl) return tipEl;
@@ -221,6 +225,7 @@
         padding: 8px 10px; font-size: 11px; line-height: 1.6; letter-spacing: .02em;
         opacity: 0; transition: opacity .12s ease; box-shadow: 0 6px 24px rgba(0,0,0,.45); }
       #meikyTip.on { opacity: 1; }
+      #meikyTip[popover] { margin: 0; inset: auto; }
       #meikyTip.has-link { pointer-events: auto; }
       #meikyTip .meiky-tip-link { display: inline-block; margin-top: 6px; color: #fff;
         font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
@@ -229,6 +234,7 @@
     document.head.appendChild(style);
     tipEl = document.createElement('div');
     tipEl.id = 'meikyTip';
+    if (POP_OK) tipEl.setAttribute('popover', 'manual');
     document.body.appendChild(tipEl);
     return tipEl;
   }
@@ -251,6 +257,7 @@
     const text = target.getAttribute('data-tip');
     if (!text) return;
     if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    if (popHideTimer) { clearTimeout(popHideTimer); popHideTimer = null; }
     currentTarget = target;
     const el = ensureTipEl();
     el.textContent = '';
@@ -268,6 +275,7 @@
       a.textContent = 'noteで詳しく読む →';
       el.appendChild(a);
     }
+    if (POP_OK && !el.matches(':popover-open')) { try { el.showPopover(); } catch (_) { /* 表示済み等は無視 */ } }
     position(target);
   }
   function hide() {
@@ -275,6 +283,12 @@
     if (showTimer) { clearTimeout(showTimer); showTimer = null; }
     if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
     if (tipEl) tipEl.classList.remove('on');
+    if (POP_OK && tipEl && tipEl.matches(':popover-open')) {
+      if (popHideTimer) clearTimeout(popHideTimer);
+      popHideTimer = setTimeout(() => {
+        if (tipEl && !tipEl.classList.contains('on')) { try { tipEl.hidePopover(); } catch (_) { /* 既に閉じている */ } }
+      }, 150);
+    }
   }
   function scheduleHide() {
     if (hideTimer) clearTimeout(hideTimer);

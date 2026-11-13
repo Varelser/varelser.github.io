@@ -390,9 +390,10 @@ function isPlaying() { return _playing; }
 function getDuration() { return _duration; }
 /* 93-visualizer 用の読み取り専用アクセサ（既存APIは不変） */
 function getAnalyser() { return _analyser; }
+function getContext() { return _ac; }
 function getElapsed() { return _playing && _ac ? Math.max(0, _ac.currentTime - _startAt) : (_pausedAt || 0); }
 function getParsed() { return _parsed; }
 function getBpm() { return _bpm; }
 
-return { load, play, pause, stop, seek, setChVol, isPlaying, getDuration, getAnalyser, getElapsed, getParsed, getBpm };
+return { load, play, pause, stop, seek, setChVol, isPlaying, getDuration, getAnalyser, getElapsed, getParsed, getBpm, getContext };
 })();
