@@ -330,6 +330,12 @@
   .status { border-bottom: 0; letter-spacing: 0.08em; }
   .footer { border-top: 0; }
   #tooltip { border: 0; }
+  /* ==== latest-tech: popover tooltip reset + preset rows ==== */
+  #tooltip[popover]{margin:0;inset:auto}
+  .up-row{display:flex;gap:6px;align-items:stretch;margin-top:6px}
+  .up-row .up-apply{flex:1 1 auto;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .up-row button{padding:6px 10px;font-size:11px;line-height:1rem;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer}
+  .up-row button:hover{background:var(--control-bg-hover)}
   /* explicit border:0 guard (Yayoi lesson: a dropped declaration alone
      can revive the UA default border) */
   #panel button, #panel input, #panel select, #panel textarea,
@@ -529,6 +535,20 @@
         </div>
         <div id="presetFilters" class="pillrow preset-filters"></div>
         <div id="presetPills" class="pillrow"></div>
+        <div class="field" style="margin-top:10px">
+          <label><span>マイプリセット</span></label>
+          <div class="grid2">
+            <input id="userPresetName" type="text" placeholder="名前（例: 眠れる雨）" data-help="マイプリセットの名前。現在の設定をこの名前で保存します。同じ名前で保存すると上書きされます。">
+            <button id="userPresetSave" class="secondary" type="button" data-help="現在の設定をマイプリセットとして保存します。ブラウザのIndexedDBに保存されます（未対応時はlocalStorage）。">現在の設定を保存</button>
+          </div>
+          <div id="userPresetList"></div>
+          <div class="grid2" style="margin-top:6px">
+            <button id="userPresetExport" class="secondary" type="button" data-help="保存したマイプリセット全部をJSONファイルに書き出します。">JSON書き出し</button>
+            <button id="userPresetImport" class="secondary" type="button" data-help="書き出したマイプリセットJSONを読み込みます。">JSON読み込み</button>
+          </div>
+          <input id="userPresetFile" type="file" accept="application/json,.json" hidden>
+          <div class="help">自分専用のプリセット置き場です。名前を押すと適用、削除で消えます。内蔵114プリセットとは別に保存されます。</div>
+        </div>
       </div>
     </div>
 
@@ -540,6 +560,7 @@
           <button id="loadSessionBtn" class="secondary" type="button" data-help="保存したセッションJSONを読み込みます。">JSON読込</button>
           <button id="copySessionBtn" class="secondary" type="button" data-help="現在の設定JSONをクリップボードへコピーします。AIへ渡す時にも使えます。">JSONコピー</button>
           <button id="copyUrlBtn" class="secondary" type="button" data-help="現在の設定を埋め込んだURLをコピーします。開くと設定が再現されます。">URLコピー</button>
+          <button id="shareBtn" class="secondary" type="button" data-help="現在の設定を埋め込んだURLを、OSの共有シートで共有します（対応ブラウザのみ）。未対応の場合はURLをコピーします。">共有</button>
           <button id="swapLayersBtn" class="secondary" type="button" data-help="Layer AとBの設定を入れ替えます。">A↔B 入替</button>
           <button id="copyAtoBBtn" class="secondary" type="button" data-help="Layer Aの設定をBへコピーします。似た音を重ねたい時に。">A→B コピー</button>
           <button id="clearAutosaveBtn" class="secondary" type="button" data-help="ブラウザに自動保存された前回設定を消します。次回は初期状態で開きます。">自動保存削除</button>
@@ -552,6 +573,24 @@
     <div class="section" id="sec-master">
       <div class="head"><h2>マスター</h2></div>
       <div class="body" id="masterFields"></div>
+    </div>
+
+    <div class="section" id="sec-device">
+      <div class="head"><h2>デバイス</h2></div>
+      <div class="body">
+        <div class="grid2">
+          <div class="field" id="sinkField">
+            <label><span>出力先</span></label>
+            <button id="sinkBtn" class="secondary" type="button" data-help="音の出力先（スピーカー／イヤホンなど）を選びます。再生は止まりません。対応ブラウザでのみ表示されます。">出力先を選ぶ</button>
+            <div class="help" id="sinkLabel">現在の出力先: 既定</div>
+          </div>
+          <div class="field" id="wakeField">
+            <label><span>画面</span></label>
+            <label class="check" data-help="再生中、画面が自動で暗くならないようにします（Wake Lock）。対応ブラウザでのみ表示されます。"><input id="wakeLockToggle" type="checkbox"><span>再生中は画面を維持</span></label>
+          </div>
+        </div>
+        <div class="help">出力先の切り替えと画面維持は、対応ブラウザでのみ表示・動作します。</div>
+      </div>
     </div>
 
     <div class="section" id="sec-layerA">
@@ -688,6 +727,7 @@
       <button type="button" class="viz-btn" id="persistBtn" aria-pressed="false" data-help="波形・スペクトラム・リサージュ・円形・フローに残像（蛍光体トレイル）を付けます">残像</button>
       <button type="button" class="viz-btn" id="posterBtn" data-help="現在の設定で30秒分を描き、スペクトログラムのポスターPNG（2200×1240）を保存します">ポスター保存</button>
       <button type="button" class="viz-btn" id="immersiveBtn" data-help="表示だけを全画面にします。全画面中はクリックで表示が切り替わります">没入</button>
+      <button type="button" class="viz-btn" id="pipBtn" data-help="ビジュアライザだけを小さな窓（Document Picture-in-Picture）に切り離して、常に最前面に表示します。対応ブラウザでのみ表示されます。もう一度押すと戻ります。">小窓</button>
     </div>
     <div class="readout" id="readout" data-view="trio">
       <div class="card" data-viz="scope">
@@ -750,7 +790,7 @@
   </main>
 </div>
 
-  <div id="tooltip" role="tooltip"></div>
+  <div id="tooltip" role="tooltip" popover="manual"></div>
 <script>
 (() => {
   'use strict';
@@ -1037,6 +1077,8 @@
     master_gain: 0.55,
     master_width: 1.2,
     master_space: 0.0,
+    master_spaceMode: 'diffuse',
+    master_spaceType: 'hall',
     master_air: 0.0,
     master_lowcut: 10,
     master_highcut: 20000,
@@ -1853,6 +1895,8 @@
     { id:'master_gain', type:'range', label:'Master Gain', min:0, max:2.2, step:0.01 },
     { id:'master_width', type:'range', label:'Stereo Width', min:0, max:5.5, step:0.01 },
     { id:'master_space', type:'range', label:'Diffuse Space', min:0, max:1.8, step:0.01 },
+    { id:'master_spaceMode', type:'select', label:'Space Mode', options:[['diffuse','Diffuse（従来）'],['convolution','Convolution（畳み込み）']] },
+    { id:'master_spaceType', type:'select', label:'Space Type (Conv)', options:[['hall','Hall'],['cave','Cave'],['studio','Studio'],['plate','Plate']] },
     { id:'master_air', type:'range', label:'Air Exciter', min:0, max:1.6, step:0.01 },
     { id:'master_lowcut', type:'range', label:'Low Cut (Hz)', min:5, max:8000, step:1 },
     { id:'master_highcut', type:'range', label:'High Cut (Hz)', min:500, max:20000, step:1 },
@@ -1887,7 +1931,7 @@
     { id:'type', type:'select', label:'Type', options:NOISE_TYPES.map(([v,l]) => [v,l]) },
     { id:'gain', type:'range', label:'Gain', min:0, max:2.2, step:0.01 },
     { id:'pan', type:'range', label:'Pan', min:-1, max:1, step:0.01 },
-    { id:'move', type:'select', label:'Move（上下左右）', options:[['off','Off'],['lr','←→ 左右'],['ud','↑↓ 上下'],['circle','○ 円'],['eight','∞ 8の字'],['drift','漂い']] },
+    { id:'move', type:'select', label:'Move（上下左右）', options:[['off','Off'],['lr','←→ 左右'],['ud','↑↓ 上下'],['circle','○ 円'],['eight','∞ 8の字'],['drift','漂い'],['orbit3d','◎ 3D周回（簡易空間化）']] },
     { id:'moveRate', type:'range', label:'Move Rate (Hz)', min:0.01, max:2, step:0.01 },
     { id:'moveDepth', type:'range', label:'Move Depth', min:0, max:1, step:0.01 },
     { id:'tone', type:'range', label:'Tone', min:-1, max:1, step:0.01 },
@@ -1907,7 +1951,7 @@
     type: 'ノイズの種類。76種から選べます。色ノイズ、自然音、生活音、身体音、質感系、電子系があります。',
     gain: 'このレイヤーの音量。上げすぎるとマスターで歪むことがあるので、全体のバランスで調整を。',
     pan: 'このレイヤーの左右位置。-1で左、+1で右。マスターのLFOでもゆっくり揺れます。',
-    move: 'このレイヤーの音を自動で動かします。左右=パン、上下=明るさと距離感（上は明るく近く、下は暗く遠く）の疑似移動、円と8の字はその組み合わせ、漂いは不規則なゆらぎです。',
+    move: 'このレイヤーの音を自動で動かします。左右=パン、上下=明るさと距離感（上は明るく近く、下は暗く遠く）の疑似移動、円と8の字はその組み合わせ、漂いは不規則なゆらぎです。「3D周回」は両耳間時間差と頭の影のフィルタによる簡易空間化で、音が頭の周りを回ります（HRTFそのものではありません。ヘッドホン推奨）。',
     moveRate: 'Moveの速さ。0.05前後でゆっくり、1を超えると速く回ります。',
     moveDepth: 'Moveの大きさ。左右はパンの振れ幅、上下は明るさ・距離の変化量です。',
     tone: '音の明るさ。左で暗く丸く、右で明るく鋭くなります。',
@@ -1939,6 +1983,8 @@
     master_gain: '全体の音量。プレビューと書き出しの両方に効きます。',
     master_width: 'ステレオの広がり。1が原音、上げるほど左右に広がり、下げるとモノラルに近づきます。',
     master_space: '拡散感のある残響的な広がり。洞窟や大空間のような空気感が出ます。',
+    master_spaceMode: 'Spaceの方式。Diffuseは従来の拡散型。Convolutionは手続き生成のインパルス応答（IR）との畳み込みで、実在感のある残響になります。再生・書き出しの両方に同じ処理がかかります。量はDiffuse Spaceスライダーで調整します。',
+    master_spaceType: 'Convolution時の空間の種類。Hall=大ホール、Cave=洞窟（長く暗い残響）、Studio=短く明るい部屋、Plate=プレートリバーブ風。',
     master_air: '高域の空気感を持ち上げるエキサイター。こもった音が抜けてきます。',
     master_lowcut: 'この周波数以下を切ります。ゴロゴロした不要な低域の除去に。',
     master_highcut: 'この周波数以上を切ります。耳に痛い高域を落として丸くします。',
@@ -2182,7 +2228,7 @@
 
   function getExportFormat(params) {
     const raw = String(params.master_exportFormat || 'wav').toLowerCase();
-    return raw === 'aiff' ? 'aiff' : (raw === 'flac' ? 'flac' : 'wav');
+    return raw === 'aiff' ? 'aiff' : (raw === 'flac' ? 'flac' : (raw === 'opus' ? 'opus' : 'wav'));
   }
 
   function getExportSampleRate(params) {
@@ -2227,7 +2273,7 @@
   }
 
   function exportFormatLabel(format) {
-    return format === 'aiff' ? 'AIFF' : (format === 'flac' ? 'FLAC' : 'WAV');
+    return format === 'aiff' ? 'AIFF' : (format === 'flac' ? 'FLAC' : (format === 'opus' ? 'Opus (Ogg)' : 'WAV'));
   }
 
   function getPreviewQuality(params) {
@@ -2470,6 +2516,7 @@
     engine.rebuild();
     scheduleAutosave();
     setStatus(`プリセット適用: ${name}`);
+    updateMediaSessionMeta(name);
   }
 
   async function copySessionJson() {
@@ -3635,6 +3682,8 @@
     p.master_gain = clamp(Number(p.master_gain) || 0, 0, 2.2);
     p.master_width = clamp(Number(p.master_width) || 0, 0, 5.5);
     p.master_space = clamp(Number(p.master_space) || 0, 0, 1.8);
+    p.master_spaceMode = p.master_spaceMode === 'convolution' ? 'convolution' : 'diffuse';
+    p.master_spaceType = ['hall', 'cave', 'studio', 'plate'].includes(p.master_spaceType) ? p.master_spaceType : 'hall';
     p.master_air = clamp(Number(p.master_air) || 0, 0, 1.6);
     p.master_lowcut = clamp(Number(p.master_lowcut) || 10, 5, 8000);
     p.master_highcut = clamp(Number(p.master_highcut) || 20000, 500, 20000);
@@ -3690,16 +3739,16 @@
         if (!allowed.includes(String(p[key]))) p[key] = DEFAULTS[key];
       };
       enumOk('master_binauralMode', ['binaural', 'isochronic', 'monaural']);
-      enumOk('master_exportFormat', ['wav', 'aiff', 'flac']);
+      enumOk('master_exportFormat', ['wav', 'aiff', 'flac', 'opus']);
       enumOk('master_exportBitDepth', ['16', '24', '32f']);
       enumOk('master_loopFade', ['0', '1', '2', '3', '5', '10']);
       enumOk('master_exportLoudness', ['0', '-23', '-18', '-16', '-14']);
       enumOk('master_exportNoiseShaping', ['off', 'gentle', 'strong']);
       enumOk('master_previewQuality', ['eco', 'normal', 'high']);
       enumOk('master_exportMode', ['mix', 'stems', 'mixstems']);
-      enumOk('A_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift']);
-      enumOk('B_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift']);
-      enumOk('C_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift']);
+      enumOk('A_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift', 'orbit3d']);
+      enumOk('B_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift', 'orbit3d']);
+      enumOk('C_move', ['off', 'lr', 'ud', 'circle', 'eight', 'drift', 'orbit3d']);
     }
     return p;
   }
@@ -3887,6 +3936,7 @@
       case 'lr': return [Math.sin(ph), 0];
       case 'ud': return [0, Math.sin(ph)];
       case 'circle': return [Math.sin(ph), Math.cos(ph)];
+      case 'orbit3d': return [Math.sin(ph), Math.cos(ph)];
       case 'eight': return [Math.sin(ph), Math.sin(2 * ph) * 0.7];
       case 'drift': return [Math.sin(ph * 0.9 + 1.3 * Math.sin(ph * 0.37)) * 0.85, Math.sin(ph * 0.73 + 1.1 * Math.sin(ph * 0.29 + 1.7)) * 0.85];
       default: return [0, 0];
@@ -3895,6 +3945,36 @@
 
   // Up/down axis: up = brighter + slightly closer, down = darker + farther
   // (one-pole muffle). Uses only its own filter slots ('mvLo' / 'mvHi').
+
+  // orbit3d: honest lightweight spatializer (NOT HRTF). Runs inside the shared
+  // renderer, so live (worklet + fallback) / export / CLI all agree. Per layer:
+  // interaural time difference via the layer's own delay lines + head-shadow
+  // lowpass on the far ear. The front/back axis reuses applyMoveY (brightness /
+  // distance), which renderBlock already applies from the same phase.
+  function spatializeOrbit(s, inL, inR, az, depth, sr) {
+    depth = clamp(Number(depth) || 0, 0, 1);
+    if (!s.spBufL) { s.spBufL = new Float32Array(1024); s.spBufR = new Float32Array(1024); s.spIdx = 0; }
+    const idx = s.spIdx;
+    s.spBufL[idx] = inL;
+    s.spBufR[idx] = inR;
+    s.spIdx = (idx + 1) % 1024;
+    let oL = inL, oR = inR;
+    const itd = Math.min(200, 0.00066 * sr * Math.abs(az) * depth);
+    if (az > 0.001) {
+      oL = readDelay(s.spBufL, idx, itd);
+      const sh = 0.7 * az * depth;
+      const lpv = lp(s, 'spShL', oL, 6500 - 4000 * az * depth, sr);
+      oL = (oL * (1 - sh) + lpv * sh) * (1 - 0.28 * az * depth);
+    } else if (az < -0.001) {
+      const a = -az;
+      oR = readDelay(s.spBufR, idx, itd);
+      const sh = 0.7 * a * depth;
+      const lpv = lp(s, 'spShR', oR, 6500 - 4000 * a * depth, sr);
+      oR = (oR * (1 - sh) + lpv * sh) * (1 - 0.28 * a * depth);
+    }
+    return [oL, oR];
+  }
+
   function applyMoveY(s, y, dy, depth, sr) {
     if (!dy || !depth) return y;
     const g = 1 + dy * 0.22 * depth;
@@ -3939,9 +4019,16 @@
           const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
           yR = (y * (1 - w) + shapedR * w) * norm;
         }
-        const pan = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22 + mvxA * (sA.p.moveDepth || 0), -1, 1);
-        l += y * Math.sqrt((1 - pan) * 0.5);
-        r += yR * Math.sqrt((1 + pan) * 0.5);
+        if (sA.p.move === 'orbit3d') {
+          const spA = spatializeOrbit(sA, y, yR, mvxA, sA.p.moveDepth || 0, sr);
+          const panSA = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22, -1, 1);
+          l += spA[0] * 0.7071 * Math.sqrt(1 - Math.max(0, panSA));
+          r += spA[1] * 0.7071 * Math.sqrt(1 + Math.min(0, panSA));
+        } else {
+          const pan = clamp(sA.p.pan + Math.sin(TAU * p.master_lfoRate * t) * p.master_lfoDepth * 0.22 + mvxA * (sA.p.moveDepth || 0), -1, 1);
+          l += y * Math.sqrt((1 - pan) * 0.5);
+          r += yR * Math.sqrt((1 + pan) * 0.5);
+        }
       }
       if (sB.p.enabled) {
         const raw = nextNoiseRaw(sB, sB.p, t);
@@ -3961,9 +4048,16 @@
           const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
           yR = (y * (1 - w) + shapedR * w) * norm;
         }
-        const pan = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22 + mvxB * (sB.p.moveDepth || 0), -1, 1);
-        l += y * Math.sqrt((1 - pan) * 0.5);
-        r += yR * Math.sqrt((1 + pan) * 0.5);
+        if (sB.p.move === 'orbit3d') {
+          const spB = spatializeOrbit(sB, y, yR, mvxB, sB.p.moveDepth || 0, sr);
+          const panSB = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22, -1, 1);
+          l += spB[0] * 0.7071 * Math.sqrt(1 - Math.max(0, panSB));
+          r += spB[1] * 0.7071 * Math.sqrt(1 + Math.min(0, panSB));
+        } else {
+          const pan = clamp(sB.p.pan - Math.sin(TAU * p.master_lfoRate * t * 0.81 + 1.1) * p.master_lfoDepth * 0.22 + mvxB * (sB.p.moveDepth || 0), -1, 1);
+          l += y * Math.sqrt((1 - pan) * 0.5);
+          r += yR * Math.sqrt((1 + pan) * 0.5);
+        }
       }
 
       if (sC && sC.p.enabled) {
@@ -3984,9 +4078,16 @@
           const norm = 1 / Math.sqrt((1 - w) * (1 - w) + w * w);
           yR = (y * (1 - w) + shapedR * w) * norm;
         }
-        const pan = clamp(sC.p.pan + Math.sin(TAU * p.master_lfoRate * t * 0.63 + 2.2) * p.master_lfoDepth * 0.22 + mvxC * (sC.p.moveDepth || 0), -1, 1);
-        l += y * Math.sqrt((1 - pan) * 0.5);
-        r += yR * Math.sqrt((1 + pan) * 0.5);
+        if (sC.p.move === 'orbit3d') {
+          const spC = spatializeOrbit(sC, y, yR, mvxC, sC.p.moveDepth || 0, sr);
+          const panSC = clamp(sC.p.pan + Math.sin(TAU * p.master_lfoRate * t * 0.63 + 2.2) * p.master_lfoDepth * 0.22, -1, 1);
+          l += spC[0] * 0.7071 * Math.sqrt(1 - Math.max(0, panSC));
+          r += spC[1] * 0.7071 * Math.sqrt(1 + Math.min(0, panSC));
+        } else {
+          const pan = clamp(sC.p.pan + Math.sin(TAU * p.master_lfoRate * t * 0.63 + 2.2) * p.master_lfoDepth * 0.22 + mvxC * (sC.p.moveDepth || 0), -1, 1);
+          l += y * Math.sqrt((1 - pan) * 0.5);
+          r += yR * Math.sqrt((1 + pan) * 0.5);
+        }
       }
 
       applyMasterFx(masterState, l, r, t);
@@ -4394,6 +4495,7 @@
     const decimator = createDecimator(oversampleFactor);
     const safetyState = initExportSafetyState(sampleRate, params);
     const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
+    const convFx = makeExportConv(params, sampleRate);
     let done = 0;
     let peak = 0;
 
@@ -4405,6 +4507,7 @@
         const right = new Float32Array(frames);
         renderBlock(renderer, frames, left, right);
         applyLoopHeadMix(left, right, done, loopPost);
+        if (convFx) convFx.processInPlace(left, right);
         peak = Math.max(peak, applyExportSafetyBlock(left, right, safetyState));
       } else {
         const tempFrames = frames * oversampleFactor;
@@ -4416,6 +4519,7 @@
         const produced = decimateInto(decimator, tempL, tempR, outL, outR);
         if (produced !== frames) throw new Error('DECIMATION_LENGTH_MISMATCH');
         applyLoopHeadMix(outL, outR, done, loopPost);
+        if (convFx) convFx.processInPlace(outL, outR);
         peak = Math.max(peak, applyExportSafetyBlock(outL, outR, safetyState));
       }
       done += frames;
@@ -4435,6 +4539,7 @@
     const decimator = createDecimator(oversampleFactor);
     const safetyState = initExportSafetyState(sampleRate, params);
     const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
+    const convFx = makeExportConv(params, sampleRate);
     let done = 0;
     let peak = 0;
     let sumSq = 0;
@@ -4451,6 +4556,7 @@
         const right = new Float32Array(frames);
         renderBlock(renderer, frames, left, right);
         applyLoopHeadMix(left, right, done, loopPost);
+        if (convFx) convFx.processInPlace(left, right);
         peak = Math.max(peak, applyExportSafetyBlock(left, right, safetyState));
         accumulate(left, right, frames);
       } else {
@@ -4463,6 +4569,7 @@
         const produced = decimateInto(decimator, tempL, tempR, outL, outR);
         if (produced !== frames) throw new Error('DECIMATION_LENGTH_MISMATCH');
         applyLoopHeadMix(outL, outR, done, loopPost);
+        if (convFx) convFx.processInPlace(outL, outR);
         peak = Math.max(peak, applyExportSafetyBlock(outL, outR, safetyState));
         accumulate(outL, outR, frames);
       }
@@ -4774,6 +4881,7 @@
     const decimator = createDecimator(oversampleFactor);
     const safetyState = initExportSafetyState(sampleRate, params);
     const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
+    const convFx = makeExportConv(params, sampleRate);
     const shaper = bitDepth === '32f' ? null : createNoiseShaper(getExportNoiseShaping(params));
     if (format === 'flac' && bitDepth === '32f') throw new Error('FLOAT_REQUIRES_WAV');
     const flacEncoder = format === 'flac'
@@ -4806,6 +4914,7 @@
         if (produced !== frames) throw new Error('DECIMATION_LENGTH_MISMATCH');
       }
       applyLoopHeadMix(left, right, done, loopPost);
+      if (convFx) convFx.processInPlace(left, right);
       applyExportSafetyBlock(left, right, safetyState);
       const pcmBuf = encodeAudioChunk(left, right, bitDepth, flacEncoder ? 'wav' : format, normalizeGain, useDither, ditherRng, shaper);
       if (flacEncoder) flacEncoder.pushPcm(pcmBuf); else parts.push(pcmBuf);
@@ -4821,6 +4930,7 @@
 
   function estimateExportBytes(params) {
     const frameCount = Math.max(1, Math.floor(params.master_duration * getExportSampleRate(params)));
+    if (getExportFormat(params) === 'opus') return 8192 + Math.ceil(frameCount * 20000 / getExportSampleRate(params));
     const bytesPerFrame = bytesPerSampleForBitDepth(getExportBitDepth(params)) * 2;
     const headerBytes = (getExportFormat(params) === 'aiff' ? 54 : 44) + ((getExportFormat(params) === 'wav' && getLoopFadeSec(params) > 0) ? 68 : 0);
     return headerBytes + frameCount * bytesPerFrame;
@@ -4860,6 +4970,7 @@
     shapeLayerSample.toString(),
     layerMove.toString(),
     applyMoveY.toString(),
+    spatializeOrbit.toString(),
     normalizeParams.toString(),
     createStereoRenderer.toString(),
     renderBlock.toString()
@@ -5050,7 +5161,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     ensureContext() {
       if (this.ctx) return;
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      this.ctx = new AudioCtx({ sampleRate: Number(getParams().master_sampleRate) || 48000 });
+      this.ctx = new AudioCtx({ sampleRate: Number(getParams().master_sampleRate) || 48000, latencyHint: 'playback' });
       this.masterGain = this.ctx.createGain();
       this.analyser = this.ctx.createAnalyser();
       this.applyPreviewQuality();
@@ -5060,7 +5171,21 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       this.safetyComp.ratio.value = 20;
       this.safetyComp.attack.value = 0.003;
       this.safetyComp.release.value = 0.25;
-      this.masterGain.connect(this.analyser);
+      this.ctx.addEventListener('statechange', () => {
+        if (this.ctx && this.ctx.state === 'interrupted' && this.playing) {
+          setStatus('音声が一時中断されました（着信など）。再開を試みます…');
+          this.ctx.resume().catch(() => {});
+        }
+      });
+      this.dryGain = this.ctx.createGain();
+      this.convNode = this.ctx.createConvolver();
+      this.wetGain = this.ctx.createGain();
+      this.wetGain.gain.value = 0;
+      this.masterGain.connect(this.dryGain);
+      this.dryGain.connect(this.analyser);
+      this.masterGain.connect(this.convNode);
+      this.convNode.connect(this.wetGain);
+      this.wetGain.connect(this.analyser);
       this.analyser.connect(this.safetyComp);
       this.safetyComp.connect(this.ctx.destination);
       // Silent stereo tap for the Lissajous view: splitter -> L/R
@@ -5217,6 +5342,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 
       updateMini(this.params);
       this.applyPreviewQuality();
+      applySpaceFx();
 
       if (this.node) {
         this.node.port.postMessage({ type: 'params', params: normalizeParams(this.params), forceRebuild: !!force });
@@ -5256,6 +5382,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
 
       scheduleAutosave();
+      applySpaceFx();
     },
 
     async play() {
@@ -5269,6 +5396,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
       this.playing = true;
       setStatus(this.mode === 'worklet' ? '再生中 / AudioWorklet' : '再生中 / Fallback', 'ok');
+      onEnginePlaybackChange();
       startSleepCycle();
     },
 
@@ -5279,6 +5407,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
       this.playing = false;
       setStatus(this.mode === 'script' ? '停止 / Fallback' : '停止', '');
+      onEnginePlaybackChange();
     },
 
     processFallback(e) {
@@ -5764,12 +5893,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   // ---- URL session sharing ----
   async function copySessionUrl() {
     try {
-      const json = serializeSession();
-      const bytes = new TextEncoder().encode(json);
-      let bin = '';
-      bytes.forEach(b => { bin += String.fromCharCode(b); });
-      const b64 = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-      const url = `${location.origin}${location.pathname}?session=${b64}`;
+      const url = buildSessionUrl();
       await navigator.clipboard.writeText(url);
       setStatus('共有URLをコピーしました。', 'ok');
     } catch (_) {
@@ -6210,7 +6334,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
   async function exportAudio() {
     const params = getParams();
     const format = getExportFormat(params);
-    const exportRate = getExportSampleRate(params);
+    const exportRate = format === 'opus' ? 48000 : getExportSampleRate(params);
     const exportBit = getExportBitDepth(params);
     const oversampleFactor = getExportOversampleFactor(params);
     const internalRate = exportRate * oversampleFactor;
@@ -6275,14 +6399,15 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         }
 
         setStatus(`書き出し中 2/2: 0% / gain ${fmt(normalizeGain, 3)} / ${safeInfo}`);
-        const blob = await encodeAudioChunked(job.params, token, (done, total, pass, value) => {
+        const encodeFn = format === 'opus' ? encodeOpusChunked : encodeAudioChunked;
+        const blob = await encodeFn(job.params, token, (done, total, pass, value) => {
           const pct = Math.floor(done / total * 100);
           setStatus(`書き出し中 2/2: ${pct}% / gain ${fmt(value, 3)} / ${safeInfo}`);
         }, normalizeGain);
 
         if (token.cancelled) throw new Error('__EXPORT_CANCELLED__');
 
-        const ext = format === 'aiff' ? 'aiff' : (format === 'flac' ? 'flac' : 'wav');
+        const ext = format === 'opus' ? 'ogg' : (format === 'aiff' ? 'aiff' : (format === 'flac' ? 'flac' : 'wav'));
         triggerBlobDownload(blob, `noise_${job.suffix}_${exportRate}Hz_os${oversampleFactor}x_${exportBit}_${stamp}.${ext}`);
         await nextFrame();
       }
@@ -6342,16 +6467,16 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       const stored = section.id && section.id in prefs ? prefs[section.id] : !!PANEL_DEFAULT_COLLAPSED[section.id];
       setSectionCollapsed(section, !!stored, null);
       head.addEventListener('click', () => {
-        setSectionCollapsed(section, !section.classList.contains('collapsed'), prefs);
+        withViewTransition(() => setSectionCollapsed(section, !section.classList.contains('collapsed'), prefs));
       });
     });
     const expandAll = $('expandAllBtn');
     if (expandAll) expandAll.addEventListener('click', () => {
-      sections.forEach(section => setSectionCollapsed(section, false, prefs));
+      withViewTransition(() => sections.forEach(section => setSectionCollapsed(section, false, prefs)));
     });
     const collapseAll = $('collapseAllBtn');
     if (collapseAll) collapseAll.addEventListener('click', () => {
-      sections.forEach(section => setSectionCollapsed(section, true, prefs));
+      withViewTransition(() => sections.forEach(section => setSectionCollapsed(section, true, prefs)));
     });
   }
 
@@ -6493,9 +6618,15 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     if (tipEl) {
       let tipTimer = 0;
       let tipTarget = null;
+      const popOk = typeof tipEl.showPopover === 'function' && typeof tipEl.hidePopover === 'function';
+      const showTipEl = () => {
+        tipEl.classList.add('visible');
+        if (popOk) { try { if (!tipEl.matches(':popover-open')) tipEl.showPopover(); } catch (_) {} }
+      };
       const hideTip = () => {
         clearTimeout(tipTimer);
         tipEl.classList.remove('visible');
+        if (popOk) { try { if (tipEl.matches(':popover-open')) tipEl.hidePopover(); } catch (_) {} }
         tipTarget = null;
       };
       const positionTip = (x, y) => {
@@ -6518,7 +6649,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         tipTimer = setTimeout(() => {
           if (tipTarget !== t) return;
           tipEl.textContent = text;
-          tipEl.classList.add('visible');
+          showTipEl();
           positionTip(e.clientX, e.clientY);
         }, 350);
       });
@@ -6534,7 +6665,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         hideTip();
         tipTarget = t;
         tipEl.textContent = t.getAttribute('data-help');
-        tipEl.classList.add('visible');
+        showTipEl();
         const r = t.getBoundingClientRect();
         positionTip(r.left + r.width / 2, r.bottom);
       });
@@ -6797,7 +6928,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
       try { localStorage.setItem('noise_viz_v1', JSON.stringify(vizState)); } catch (_err) {}
     };
-    const setView = (view) => { if (VIZ_VIEWS.includes(view)) { vizState.view = view; apply(); } };
+    const setView = (view) => { if (VIZ_VIEWS.includes(view)) { vizState.view = view; withViewTransition(apply); } };
     document.querySelectorAll('[data-viz-view]').forEach(btn => {
       btn.addEventListener('click', () => setView(btn.dataset.vizView));
     });
@@ -6827,9 +6958,561 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     apply();
   }
 
+
+  // ---- Latest-tech Phase 1: Media Session / output device / Wake Lock / Share / Document PiP ----
+  const techState = { presetName: '', wakeLock: null, wakeWanted: false, pipWin: null, sinkLabel: '' };
+  function buildSessionUrl() {
+    const json = serializeSession();
+    const bytes = new TextEncoder().encode(json);
+    let bin = '';
+    bytes.forEach(b => { bin += String.fromCharCode(b); });
+    const b64 = btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return `${location.origin}${location.pathname}?session=${b64}`;
+  }
+  function updateMediaSessionMeta(name) {
+    if (name) techState.presetName = name;
+    if (!('mediaSession' in navigator)) return;
+    try {
+      const title = techState.presetName || (presetSelect && presetSelect.value) || 'Noise';
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title, artist: 'Varelser', album: 'Noise — ノイズ生成機',
+        artwork: [
+          { src: 'https://noise-assets.pages.dev/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'https://noise-assets.pages.dev/icon-512.png', sizes: '512x512', type: 'image/png' }
+        ]
+      });
+    } catch (_) {}
+  }
+  function initMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+    try {
+      navigator.mediaSession.setActionHandler('play', () => { engine.play(); });
+      navigator.mediaSession.setActionHandler('pause', () => { engine.stop(); });
+      navigator.mediaSession.setActionHandler('stop', () => { engine.stop(); });
+    } catch (_) {}
+    updateMediaSessionMeta();
+  }
+  function onEnginePlaybackChange() {
+    if ('mediaSession' in navigator) {
+      try { navigator.mediaSession.playbackState = engine.playing ? 'playing' : 'paused'; } catch (_) {}
+    }
+    if (engine.playing) updateMediaSessionMeta();
+    applyWakeLock();
+  }
+  async function applyWakeLock() {
+    try {
+      if (techState.wakeWanted && engine.playing && 'wakeLock' in navigator) {
+        if (!techState.wakeLock) {
+          techState.wakeLock = await navigator.wakeLock.request('screen');
+          techState.wakeLock.addEventListener('release', () => { techState.wakeLock = null; });
+        }
+      } else if (techState.wakeLock) {
+        const wl = techState.wakeLock; techState.wakeLock = null;
+        await wl.release();
+      }
+    } catch (_) {}
+  }
+  async function chooseAudioOutput() {
+    try {
+      engine.ensureContext();
+      const ctx = engine.ctx;
+      if (!ctx || typeof ctx.setSinkId !== 'function') { setStatus('このブラウザは出力先の切り替えに未対応です。', 'err'); return; }
+      if (navigator.mediaDevices && typeof navigator.mediaDevices.selectAudioOutput === 'function') {
+        const dev = await navigator.mediaDevices.selectAudioOutput();
+        if (!dev) return;
+        await ctx.setSinkId(dev.deviceId);
+        techState.sinkLabel = dev.label || dev.deviceId || '既定';
+      } else {
+        setStatus('このブラウザでは出力先の選択ダイアログに未対応です。', 'err'); return;
+      }
+      const lab = $('sinkLabel'); if (lab) lab.textContent = `現在の出力先: ${techState.sinkLabel || '既定'}`;
+      setStatus(`出力先を変更しました: ${techState.sinkLabel || '既定'}`, 'ok');
+    } catch (_) { setStatus('出力先を変更できませんでした。', 'err'); }
+  }
+  async function shareSession() {
+    const url = buildSessionUrl();
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Noise', text: 'Noiseのセッションを共有', url }); setStatus('共有しました。', 'ok'); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    try { await navigator.clipboard.writeText(url); setStatus('共有URLをコピーしました。', 'ok'); }
+    catch (_) { setStatus('共有に失敗しました。', 'err'); }
+  }
+  async function toggleVizPip() {
+    if (techState.pipWin) { try { techState.pipWin.close(); } catch (_) {} return; }
+    if (!window.documentPictureInPicture || typeof documentPictureInPicture.requestWindow !== 'function') { setStatus('このブラウザは小窓表示（Document Picture-in-Picture）に未対応です。', 'err'); return; }
+    const readout = $('readout'); if (!readout) return;
+    try {
+      const win = await documentPictureInPicture.requestWindow({ width: 900, height: 540 });
+      techState.pipWin = win;
+      for (const sh of [...document.styleSheets]) {
+        try { const css = [...sh.cssRules].map(r => r.cssText).join('\n'); const st = win.document.createElement('style'); st.textContent = css; win.document.head.appendChild(st); } catch (_) {}
+      }
+      win.document.body.style.background = '#000';
+      win.document.body.style.margin = '0';
+      const marker = document.createComment('pip-readout-home');
+      readout.parentNode.insertBefore(marker, readout);
+      win.document.body.appendChild(readout);
+      win.addEventListener('pagehide', () => {
+        if (marker.parentNode) marker.parentNode.insertBefore(readout, marker);
+        if (marker.parentNode) marker.remove();
+        techState.pipWin = null;
+      });
+      setStatus('ビジュアライザを小窓で表示しています。', 'ok');
+    } catch (_) { setStatus('小窓表示を開始できませんでした。', 'err'); }
+  }
+  function initTechFeatures() {
+    initMediaSession();
+    const sinkField = $('sinkField');
+    const canSink = !!((window.AudioContext && AudioContext.prototype && typeof AudioContext.prototype.setSinkId === 'function') || (navigator.mediaDevices && typeof navigator.mediaDevices.selectAudioOutput === 'function'));
+    if (sinkField && !canSink) sinkField.style.display = 'none';
+    const sinkBtn = $('sinkBtn'); if (sinkBtn) sinkBtn.addEventListener('click', chooseAudioOutput);
+    const wakeField = $('wakeField');
+    if (wakeField && !('wakeLock' in navigator)) wakeField.style.display = 'none';
+    const wakeToggle = $('wakeLockToggle');
+    if (wakeToggle) wakeToggle.addEventListener('change', () => { techState.wakeWanted = !!wakeToggle.checked; applyWakeLock(); });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') applyWakeLock(); });
+    const shareBtn = $('shareBtn'); if (shareBtn) shareBtn.addEventListener('click', shareSession);
+    const pipBtn = $('pipBtn');
+    if (pipBtn) {
+      if (!window.documentPictureInPicture) pipBtn.style.display = 'none';
+      else pipBtn.addEventListener('click', toggleVizPip);
+    }
+  }
+
+
+  // ---- Latest-tech Phase 2: Opus export (WebCodecs AudioEncoder + minimal Ogg muxer) ----
+  const OGG_CRC_TABLE = (() => {
+    const tb = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) { let r = n << 24; for (let k = 0; k < 8; k++) r = (r & 0x80000000) ? ((r << 1) ^ 0x04c11db7) : (r << 1); tb[n] = r >>> 0; }
+    return tb;
+  })();
+  function oggCrc(bytes) {
+    let c = 0;
+    for (let i = 0; i < bytes.length; i++) c = ((c << 8) ^ OGG_CRC_TABLE[((c >>> 24) ^ bytes[i]) & 0xff]) >>> 0;
+    return c >>> 0;
+  }
+  function createOggOpusMuxer(sampleRate) {
+    const serial = 0x4e4f4953;
+    let seq = 0;
+    let granule = 0;
+    const pages = [];
+    let pending = [];
+    let pendingBytes = 0;
+    function writePage(packets, granulePos, flags) {
+      const segTable = [];
+      let payload = 0;
+      for (const p of packets) { let n = p.length; payload += n; while (n >= 255) { segTable.push(255); n -= 255; } segTable.push(n); }
+      const headLen = 27 + segTable.length;
+      const page = new Uint8Array(headLen + payload);
+      const dv = new DataView(page.buffer);
+      page.set([0x4f, 0x67, 0x67, 0x53, 0, flags], 0);
+      dv.setBigUint64(6, BigInt(Math.max(0, Math.floor(granulePos))), true);
+      dv.setUint32(14, serial, true);
+      dv.setUint32(18, seq++, true);
+      dv.setUint32(22, 0, true);
+      page[26] = segTable.length;
+      page.set(segTable, 27);
+      let off = headLen;
+      for (const p of packets) { page.set(p, off); off += p.length; }
+      dv.setUint32(22, oggCrc(page), true);
+      pages.push(page);
+    }
+    function flushPending(flags) {
+      if (!pending.length) return;
+      writePage(pending, granule, flags || 0);
+      pending = []; pendingBytes = 0;
+    }
+    // Identification + comment headers (RFC 7845), each on its own page.
+    {
+      const head = new Uint8Array(19);
+      head.set([0x4f, 0x70, 0x75, 0x73, 0x48, 0x65, 0x61, 0x64], 0);
+      head[8] = 1; head[9] = 2;
+      const hv = new DataView(head.buffer);
+      hv.setUint16(10, 312, true); // pre-skip (standard libopus encoder delay at 48 kHz)
+      hv.setUint32(12, sampleRate, true);
+      hv.setInt16(16, 0, true);
+      head[18] = 0;
+      writePage([head], 0, 0x02);
+      const vendor = 'Noise';
+      const tags = new Uint8Array(8 + 4 + vendor.length + 4);
+      tags.set([0x4f, 0x70, 0x75, 0x73, 0x54, 0x61, 0x67, 0x73], 0);
+      const tv = new DataView(tags.buffer);
+      tv.setUint32(8, vendor.length, true);
+      tags.set(new TextEncoder().encode(vendor), 12);
+      tv.setUint32(12 + vendor.length, 0, true);
+      writePage([tags], 0, 0x00);
+    }
+    return {
+      pushPacket(chunk) {
+        const buf = new Uint8Array(chunk.byteLength);
+        chunk.copyTo(buf);
+        pending.push(buf);
+        pendingBytes += buf.length;
+        if (chunk.duration) granule += Math.round(chunk.duration * sampleRate / 1e6);
+        if (pendingBytes > 32768) flushPending(0);
+      },
+      finish() {
+        flushPending(0x04);
+        return new Blob(pages, { type: 'audio/ogg' });
+      }
+    };
+  }
+  async function encodeOpusChunked(params, token, onProgress, normalizeGain = 1) {
+    if (!window.AudioEncoder) throw new Error('OPUS_UNSUPPORTED');
+    const cfg = { codec: 'opus', sampleRate: 48000, numberOfChannels: 2, bitrate: 160000 };
+    const sup = await AudioEncoder.isConfigSupported(cfg).catch(() => null);
+    if (!sup || !sup.supported) throw new Error('OPUS_UNSUPPORTED');
+    const sampleRate = 48000;
+    const oversampleFactor = getExportOversampleFactor(params);
+    const totalFrames = Math.max(1, Math.floor(params.master_duration * sampleRate));
+    const chunkFrames = chooseChunkFrames(sampleRate, totalFrames, oversampleFactor);
+    const renderer = createStereoRenderer(params, sampleRate * oversampleFactor);
+    const decimator = createDecimator(oversampleFactor);
+    const safetyState = initExportSafetyState(sampleRate, params);
+    const loopPost = renderLoopPostTail(params, sampleRate, oversampleFactor);
+    const convFx = (typeof makeExportConv === 'function') ? makeExportConv(params, sampleRate) : null;
+    const muxer = createOggOpusMuxer(sampleRate);
+    let encErr = null;
+    const encoder = new AudioEncoder({
+      output: (chunk) => { try { muxer.pushPacket(chunk); } catch (e) { encErr = e; } },
+      error: (e) => { encErr = e; }
+    });
+    encoder.configure(cfg);
+    let done = 0;
+    let tsUs = 0;
+    while (done < totalFrames) {
+      if (token.cancelled) { try { encoder.close(); } catch (_) {} throw new Error('__EXPORT_CANCELLED__'); }
+      const frames = Math.min(chunkFrames, totalFrames - done);
+      let left, right;
+      if (oversampleFactor === 1) {
+        left = new Float32Array(frames); right = new Float32Array(frames);
+        renderBlock(renderer, frames, left, right);
+      } else {
+        const tempFrames = frames * oversampleFactor;
+        const tempL = new Float32Array(tempFrames); const tempR = new Float32Array(tempFrames);
+        left = new Float32Array(frames); right = new Float32Array(frames);
+        renderBlock(renderer, tempFrames, tempL, tempR);
+        const produced = decimateInto(decimator, tempL, tempR, left, right);
+        if (produced !== frames) throw new Error('DECIMATION_LENGTH_MISMATCH');
+      }
+      applyLoopHeadMix(left, right, done, loopPost);
+      if (convFx) convFx.processInPlace(left, right);
+      applyExportSafetyBlock(left, right, safetyState);
+      const buf = new ArrayBuffer(frames * 8);
+      const f32 = new Float32Array(buf);
+      for (let i = 0; i < frames; i++) {
+        f32[i] = clamp(left[i] * normalizeGain, -1, 1);
+        f32[frames + i] = clamp(right[i] * normalizeGain, -1, 1);
+      }
+      const ad = new AudioData({ format: 'f32-planar', sampleRate, numberOfFrames: frames, numberOfChannels: 2, timestamp: tsUs, data: buf });
+      encoder.encode(ad);
+      ad.close();
+      tsUs += Math.round(frames * 1e6 / sampleRate);
+      done += frames;
+      onProgress(done, totalFrames, 2, normalizeGain);
+      while (encoder.encodeQueueSize > 4) await nextFrame();
+      await nextFrame();
+    }
+    await encoder.flush();
+    try { encoder.close(); } catch (_) {}
+    if (encErr) throw encErr;
+    return muxer.finish();
+  }
+  async function initPhase2() {
+    try {
+      const sel = $('master_exportFormat');
+      if (!sel || !window.AudioEncoder || typeof AudioEncoder.isConfigSupported !== 'function') return;
+      const sup = await AudioEncoder.isConfigSupported({ codec: 'opus', sampleRate: 48000, numberOfChannels: 2, bitrate: 160000 });
+      if (sup && sup.supported) {
+        const o = document.createElement('option');
+        o.value = 'opus';
+        o.textContent = 'Opus (Ogg)';
+        sel.appendChild(o);
+      }
+    } catch (_) {}
+  }
+
+
+  // ---- Latest-tech Phase 3: convolution Space (procedural IR, FFT overlap-save) ----
+  function buildConvIR(sr, type, space, seed) {
+    const baseSec = { studio: 0.7, plate: 1.6, hall: 2.6, cave: 4.0 }[type] || 2.6;
+    const decayPow = { studio: 2.4, plate: 1.9, hall: 1.5, cave: 1.05 }[type] || 1.5;
+    const typeHash = { studio: 101, plate: 202, hall: 303, cave: 404 }[type] || 1;
+    const lenF = Math.max(1024, Math.min(Math.round(baseSec * (0.45 + 0.55 * clamp(space, 0, 1.8) / 1.8) * sr), 65536));
+    const mk = (salt) => {
+      const rng = new RNG((((seed >>> 0) ^ Math.imul(typeHash, 2654435761) ^ (sr * 97) ^ salt) >>> 0) || 1);
+      const ir = new Float32Array(lenF);
+      let lpv = 0;
+      let sum = 0;
+      for (let i = 0; i < lenF; i++) {
+        const x = i / lenF;
+        let v = rng.signed();
+        const a = 0.9 - 0.75 * x; // later reflections get darker
+        lpv += a * (v - lpv);
+        v = (type === 'studio' || type === 'plate') ? (v * 0.6 + lpv * 0.4) : lpv;
+        let env = Math.pow(1 - x, decayPow) * Math.exp(-1.2 * x);
+        if (i < sr * 0.09 && rng.float() < 0.015) env *= 2.2; // sparse early reflections
+        ir[i] = v * env;
+        sum += ir[i] * ir[i];
+      }
+      const k = sum > 0 ? Math.sqrt(0.35 / sum) : 1;
+      for (let i = 0; i < lenF; i++) ir[i] *= k;
+      return ir;
+    };
+    return { l: mk(11), r: mk(29) };
+  }
+  function fftConvInPlace(re, im, invert) {
+    const n = re.length;
+    for (let i = 1, j = 0; i < n; i++) {
+      let bit = n >> 1;
+      for (; j & bit; bit >>= 1) j ^= bit;
+      j ^= bit;
+      if (i < j) { const tr = re[i]; re[i] = re[j]; re[j] = tr; const ti = im[i]; im[i] = im[j]; im[j] = ti; }
+    }
+    for (let len = 2; len <= n; len <<= 1) {
+      const ang = (invert ? 2 : -2) * Math.PI / len;
+      const wr = Math.cos(ang), wi = Math.sin(ang);
+      for (let i = 0; i < n; i += len) {
+        let cwr = 1, cwi = 0;
+        for (let j = 0; j < len / 2; j++) {
+          const ur = re[i + j], ui = im[i + j];
+          const vr = re[i + j + len / 2] * cwr - im[i + j + len / 2] * cwi;
+          const vi = re[i + j + len / 2] * cwi + im[i + j + len / 2] * cwr;
+          re[i + j] = ur + vr; im[i + j] = ui + vi;
+          re[i + j + len / 2] = ur - vr; im[i + j + len / 2] = ui - vi;
+          const nwr = cwr * wr - cwi * wi; cwi = cwr * wi + cwi * wr; cwr = nwr;
+        }
+      }
+    }
+    if (invert) { for (let i = 0; i < n; i++) { re[i] /= n; im[i] /= n; } }
+  }
+  function nextPow2(n) { let p = 1; while (p < n) p <<= 1; return p; }
+  function createConvChannel(ir) {
+    const irLen = ir.length;
+    let hist = new Float32Array(Math.max(0, irLen - 1));
+    const specCache = new Map();
+    function irSpec(n) {
+      if (specCache.has(n)) return specCache.get(n);
+      const re = new Float64Array(n), im = new Float64Array(n);
+      re.set(ir);
+      fftConvInPlace(re, im, false);
+      const s = { re, im };
+      specCache.set(n, s);
+      return s;
+    }
+    return {
+      process(input) {
+        const frames = input.length;
+        const ext = new Float32Array(hist.length + frames);
+        ext.set(hist); ext.set(input, hist.length);
+        const n = nextPow2(ext.length + irLen - 1);
+        const spec = irSpec(n);
+        const re = new Float64Array(n), im = new Float64Array(n);
+        re.set(ext);
+        fftConvInPlace(re, im, false);
+        for (let i = 0; i < n; i++) { const xr = re[i], xi = im[i]; re[i] = xr * spec.re[i] - xi * spec.im[i]; im[i] = xr * spec.im[i] + xi * spec.re[i]; }
+        fftConvInPlace(re, im, true);
+        const out = new Float32Array(frames);
+        for (let i = 0; i < frames; i++) out[i] = re[irLen - 1 + i];
+        hist = ext.length >= irLen - 1 ? ext.slice(ext.length - (irLen - 1)) : ext.slice();
+        return out;
+      }
+    };
+  }
+  function makeExportConv(params, sr) {
+    const p = normalizeParams(params);
+    if (p.master_spaceMode !== 'convolution' || !(p.master_space > 0)) return null;
+    const ir = buildConvIR(sr, p.master_spaceType, p.master_space, p.master_seed);
+    const chL = createConvChannel(ir.l);
+    const chR = createConvChannel(ir.r);
+    const wet = clamp(p.master_space / 1.8, 0, 1) * 0.9;
+    const dry = 1 - wet * 0.3;
+    return {
+      processInPlace(left, right) {
+        const wl = chL.process(left);
+        const wr = chR.process(right);
+        for (let i = 0; i < left.length; i++) {
+          left[i] = left[i] * dry + wl[i] * wet;
+          right[i] = right[i] * dry + wr[i] * wet;
+        }
+      }
+    };
+  }
+  const convLiveState = { key: '' };
+  function applySpaceFx() {
+    const e = engine;
+    if (!e || !e.ctx || !e.convNode || !e.wetGain || !e.dryGain) return;
+    const p = normalizeParams(getParams());
+    const wet = (p.master_spaceMode === 'convolution' && p.master_space > 0) ? clamp(p.master_space / 1.8, 0, 1) * 0.9 : 0;
+    const t = e.ctx.currentTime;
+    try {
+      e.wetGain.gain.setTargetAtTime(wet, t, 0.05);
+      e.dryGain.gain.setTargetAtTime(1 - wet * 0.3, t, 0.05);
+      if (wet > 0) {
+        const key = `${p.master_spaceType}|${Math.round(p.master_space * 20)}|${e.ctx.sampleRate}|${p.master_seed}`;
+        if (convLiveState.key !== key) {
+          convLiveState.key = key;
+          const ir = buildConvIR(e.ctx.sampleRate, p.master_spaceType, p.master_space, p.master_seed);
+          const buf = e.ctx.createBuffer(2, ir.l.length, e.ctx.sampleRate);
+          buf.copyToChannel(ir.l, 0);
+          buf.copyToChannel(ir.r, 1);
+          e.convNode.buffer = buf;
+        }
+      }
+    } catch (_) {}
+  }
+
+
+  // ---- Latest-tech Phase 4: user presets (IndexedDB) + Popover/View-Transition helpers ----
+  function withViewTransition(fn) {
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) {}
+    if (!reduce && typeof document.startViewTransition === 'function') {
+      try { document.startViewTransition(fn); return; } catch (_) {}
+    }
+    fn();
+  }
+  const UP_LS_KEY = 'noise_user_presets_v1';
+  const upStore = { db: null, useDb: false };
+  function upOpenDb() {
+    return new Promise((resolve) => {
+      if (!('indexedDB' in window)) { resolve(false); return; }
+      let req;
+      try { req = indexedDB.open('noise', 1); } catch (_) { resolve(false); return; }
+      req.onupgradeneeded = () => { try { req.result.createObjectStore('userPresets', { keyPath: 'name' }); } catch (_) {} };
+      req.onsuccess = () => { upStore.db = req.result; upStore.useDb = true; resolve(true); };
+      req.onerror = () => resolve(false);
+    });
+  }
+  function upLsAll() {
+    try { const raw = localStorage.getItem(UP_LS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr : []; }
+    catch (_) { return []; }
+  }
+  function upLsSave(arr) { try { localStorage.setItem(UP_LS_KEY, JSON.stringify(arr)); } catch (_) {} }
+  function upLsPut(rec) { const arr = upLsAll().filter(r => r.name !== rec.name); arr.push(rec); upLsSave(arr); }
+  function upAll() {
+    if (upStore.useDb && upStore.db) return new Promise((resolve) => {
+      const out = [];
+      try {
+        const tx = upStore.db.transaction('userPresets', 'readonly');
+        const cur = tx.objectStore('userPresets').openCursor();
+        cur.onsuccess = () => { const c = cur.result; if (c) { out.push(c.value); c.continue(); } else resolve(out); };
+        cur.onerror = () => resolve(upLsAll());
+      } catch (_) { resolve(upLsAll()); }
+    });
+    return Promise.resolve(upLsAll());
+  }
+  function upPut(rec) {
+    if (upStore.useDb && upStore.db) return new Promise((resolve) => {
+      try {
+        const tx = upStore.db.transaction('userPresets', 'readwrite');
+        tx.objectStore('userPresets').put(rec);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => { upLsPut(rec); resolve(false); };
+      } catch (_) { upLsPut(rec); resolve(false); }
+    });
+    upLsPut(rec);
+    return Promise.resolve(true);
+  }
+  function upDelete(name) {
+    if (upStore.useDb && upStore.db) return new Promise((resolve) => {
+      try {
+        const tx = upStore.db.transaction('userPresets', 'readwrite');
+        tx.objectStore('userPresets').delete(name);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => resolve(false);
+      } catch (_) { resolve(false); }
+    });
+    upLsSave(upLsAll().filter(r => r.name !== name));
+    return Promise.resolve(true);
+  }
+  async function renderUserPresets() {
+    const host = $('userPresetList');
+    if (!host) return;
+    const all = (await upAll()).slice().sort((a, b) => String(a.name).localeCompare(String(b.name), 'ja'));
+    host.innerHTML = '';
+    if (!all.length) {
+      const d = document.createElement('div');
+      d.className = 'help';
+      d.textContent = '保存したマイプリセットはまだありません。';
+      host.appendChild(d);
+      return;
+    }
+    for (const rec of all) {
+      const row = document.createElement('div');
+      row.className = 'up-row';
+      const apply = document.createElement('button');
+      apply.type = 'button';
+      apply.className = 'up-apply';
+      apply.textContent = rec.name;
+      apply.setAttribute('data-help', 'このマイプリセットを適用します。');
+      apply.addEventListener('click', () => {
+        try { loadSessionObject(JSON.parse(rec.sessionJSON), `マイプリセット「${rec.name}」`); }
+        catch (_) { setStatus('マイプリセットの読込に失敗しました。', 'err'); }
+      });
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.textContent = '削除';
+      del.setAttribute('data-help', 'このマイプリセットを削除します。');
+      del.addEventListener('click', async () => { await upDelete(rec.name); renderUserPresets(); setStatus(`マイプリセット「${rec.name}」を削除しました。`); });
+      row.appendChild(apply);
+      row.appendChild(del);
+      host.appendChild(row);
+    }
+  }
+  async function initPhase4() {
+    await upOpenDb();
+    const saveBtn = $('userPresetSave');
+    if (saveBtn) saveBtn.addEventListener('click', async () => {
+      const nameEl = $('userPresetName');
+      const name = nameEl ? nameEl.value.trim() : '';
+      if (!name) { setStatus('マイプリセットの名前を入力してください。', 'err'); return; }
+      await upPut({ name, sessionJSON: serializeSession(), updatedAt: Date.now() });
+      if (nameEl) nameEl.value = '';
+      renderUserPresets();
+      setStatus(`マイプリセット「${name}」を保存しました${upStore.useDb ? '（IndexedDB）' : '（localStorage）'}。`, 'ok');
+    });
+    const expBtn = $('userPresetExport');
+    if (expBtn) expBtn.addEventListener('click', async () => {
+      const all = await upAll();
+      const blob = new Blob([JSON.stringify({ app: 'noise', kind: 'userPresets', version: 1, presets: all }, null, 2)], { type: 'application/json' });
+      triggerBlobDownload(blob, `noise_user_presets_${new Date().toISOString().replace(/[:.]/g, '-')}.json`);
+      setStatus('マイプリセットを書き出しました。', 'ok');
+    });
+    const impBtn = $('userPresetImport');
+    const fileEl = $('userPresetFile');
+    if (impBtn && fileEl) {
+      impBtn.addEventListener('click', () => fileEl.click());
+      fileEl.addEventListener('change', async () => {
+        const f = fileEl.files && fileEl.files[0];
+        if (!f) return;
+        try {
+          const obj = JSON.parse(await f.text());
+          const arr = Array.isArray(obj) ? obj : obj.presets;
+          if (!Array.isArray(arr)) throw new Error('bad format');
+          let n = 0;
+          for (const r of arr) {
+            if (r && typeof r.name === 'string' && typeof r.sessionJSON === 'string') {
+              await upPut({ name: r.name, sessionJSON: r.sessionJSON, updatedAt: Number(r.updatedAt) || Date.now() });
+              n++;
+            }
+          }
+          renderUserPresets();
+          setStatus(`マイプリセットを${n}件読み込みました。`, 'ok');
+        } catch (_) { setStatus('マイプリセットの読込に失敗しました。', 'err'); }
+        fileEl.value = '';
+      });
+    }
+    renderUserPresets();
+  }
+
   setParams(DEFAULTS);
   initCollapsibleSections();
   wireEvents();
+  initTechFeatures();
+  initPhase2();
+  initPhase4();
   setBusyUI(false);
   drawLoop();
   initVizUI();
