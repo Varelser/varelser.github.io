@@ -410,6 +410,8 @@
     padding: 12px 24px 0;
   }
   .vizbar .viz-sep { flex: 1 1 auto; }
+  .viz-sens { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.12em; color: var(--option-inactive-fg); white-space: nowrap; }
+  .viz-sens input[type="range"] { width: 92px; accent-color: #ffffff; cursor: pointer; }
   .viz-btn {
     padding: 6px 10px; font-size: 10px; line-height: 0.875rem;
     letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
@@ -724,6 +726,7 @@
       <button type="button" class="viz-btn" data-viz-view="liquid" data-help="スペクトラムでうねる流れる線のアート。Leary風リキッド表現です（キー: 9）">リキッド</button>
       <button type="button" class="viz-btn" data-viz-view="grid" data-help="8つの表示を全部並べます（キー: 0）">全表示</button>
       <span class="viz-sep"></span>
+      <label class="viz-sens" data-help="ビジュアライザの音への反応の強さです。大きくすると小さな音の動きも大きく表示され、音の立ち上がりで画面が脈動します">感度 <input type="range" id="vizSens" min="0.5" max="2.5" step="0.05" value="1.5"> <span id="vizSensVal">×1.5</span></label>
       <button type="button" class="viz-btn" id="persistBtn" aria-pressed="false" data-help="波形・スペクトラム・リサージュ・円形・フローに残像（蛍光体トレイル）を付けます">残像</button>
       <button type="button" class="viz-btn" id="posterBtn" data-help="現在の設定で30秒分を描き、スペクトログラムのポスターPNG（2200×1240）を保存します">ポスター保存</button>
       <button type="button" class="viz-btn" id="immersiveBtn" data-help="表示だけを全画面にします。全画面中はクリックで表示が切り替わります">没入</button>
@@ -2295,9 +2298,9 @@
   }
 
   function previewConfigForQuality(quality) {
-    if (quality === 'eco') return { fftSize: 512, smoothing: 0.88, fps: 20, bars: 96 };
-    if (quality === 'high') return { fftSize: 2048, smoothing: 0.76, fps: 45, bars: 220 };
-    return { fftSize: 1024, smoothing: 0.82, fps: 30, bars: 144 };
+    if (quality === 'eco') return { fftSize: 512, smoothing: 0.70, fps: 30, bars: 96 };
+    if (quality === 'high') return { fftSize: 2048, smoothing: 0.45, fps: 60, bars: 220 };
+    return { fftSize: 1024, smoothing: 0.55, fps: 60, bars: 144 };
   }
 
   function cloneParams(params) {
@@ -5110,6 +5113,28 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     audioWorkletModuleURL = '';
   });
 
+  // Resolve true if the promise settles (either way is reported by the
+  // caller re-checking state), false on rejection or after `ms` — a
+  // never-settling promise (a real failure mode of resume()/addModule on
+  // hosts without an audio output device) must not hang playback.
+  function settleWithin(promise, ms) {
+    return new Promise((resolve) => {
+      let done = false;
+      const timer = setTimeout(() => { if (!done) { done = true; resolve(false); } }, ms);
+      Promise.resolve(promise).then(
+        () => { if (!done) { done = true; clearTimeout(timer); resolve(true); } },
+        () => { if (!done) { done = true; clearTimeout(timer); resolve(false); } });
+    });
+  }
+  async function waitForRunningCtx(ctx, ms) {
+    const t0 = Date.now();
+    while (ctx && Date.now() - t0 < ms) {
+      if (ctx.state === 'running') return true;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    return !!(ctx && ctx.state === 'running');
+  }
+
   const engine = {
 
     ctx: null,
@@ -5239,9 +5264,10 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       if (this.node || this.fallbackProcessor) return;
       const params = this.params || getParams();
 
-      if (this.canUseAudioWorklet()) {
+      if (!this.forceFallback && this.canUseAudioWorklet()) {
         try {
-          await this.ctx.audioWorklet.addModule(getAudioWorkletModuleURL());
+          const modLoaded = await settleWithin(this.ctx.audioWorklet.addModule(getAudioWorkletModuleURL()), 2500);
+          if (!modLoaded) throw new Error('AudioWorklet module load timed out');
           this.node = new AudioWorkletNode(this.ctx, 'noise-processor', {
             numberOfInputs: 0,
             numberOfOutputs: 1,
@@ -5393,39 +5419,97 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       applySpaceFx();
     },
 
+    async switchToFallback() {
+      if (this.node) {
+        try { this.node.port.postMessage({ type: 'stop' }); } catch (_) {}
+        try { this.node.disconnect(); } catch (_) {}
+        this.node = null;
+      }
+      this.mode = 'none';
+      this.forceFallback = true;
+      await this.ensureRealtimeNode();
+    },
+
     async play() {
+      // Playback must never fail silently: every attempt ends in either a
+      // 'playing' status or a visible error status. Two awaits on this
+      // path can never settle on hosts without an audio output device
+      // (Chrome on a device-less VM): ctx.resume() and addModule(). The
+      // resume await used to sit before playing/status were set, so a
+      // hang there froze the UI with no trace. Defences, in order:
+      // timeout races on both awaits, a 'running'-state confirmation with
+      // one retry on the ScriptProcessor fallback, and a watchdog timer
+      // (independent of this async flow) as the last resort.
+      if (this.playing || this._playInFlight) return;
+      this._playInFlight = true;
+      const seq = (this._playSeq = (this._playSeq || 0) + 1);
+      const stale = () => this._playSeq !== seq;
+      clearTimeout(this._playWatchdog);
+      this._playWatchdog = setTimeout(() => {
+        if (stale() || this.playing) return;
+        this._playSeq++;
+        this._playInFlight = false;
+        setStatus('再生を開始できませんでした（音声デバイスが応答しません）。音声出力先を確認して、もう一度お試しください。', 'err');
+        onEnginePlaybackChange();
+      }, 4000);
+      const finish = () => {
+        if (!stale()) { this._playInFlight = false; clearTimeout(this._playWatchdog); }
+      };
+      const fail = (err) => {
+        if (err) console.error(err);
+        this.playing = false;
+        setStatus('再生を開始できませんでした（音声デバイスが応答しません）。ブラウザの音声設定を確認して、もう一度お試しください。', 'err');
+        onEnginePlaybackChange();
+        finish();
+      };
       try {
         this.params = getParams();
-        // Rebuild BEFORE (re)creating the context/node. rebuild() may
-        // invalidate a stale context while stopped (preview-rate change);
-        // running it after node creation could close the just-created
-        // context when the browser reports a different actual sampleRate
-        // than requested (fixed-rate devices/VMs) — that used to kill
-        // play() silently at the this.ctx.state check (unhandled
-        // rejection, status line never moved).
+        // Rebuild BEFORE (re)creating the context/node (see fix round 1:
+        // running it afterwards could close a just-created context whose
+        // actual sampleRate differs from the requested one).
         this.rebuild(true);
         this.ensureContext();
         await this.ensureRealtimeNode();
+        if (stale()) return;
         applySpaceFx();
-        if (this.ctx && this.ctx.state === 'suspended') {
-          try { await this.ctx.resume(); } catch (_) {}
-        }
         if (this.node) {
           this.node.port.postMessage({ type: 'play' });
         }
         this.playing = true;
-        setStatus(this.mode === 'worklet' ? '再生中 / AudioWorklet' : '再生中 / Fallback', 'ok');
         onEnginePlaybackChange();
         startSleepCycle();
-      } catch (err) {
-        console.error(err);
-        this.playing = false;
-        setStatus('再生を開始できませんでした。ブラウザの音声設定を確認して、もう一度お試しください。', 'err');
+        let running = !!(this.ctx && this.ctx.state === 'running');
+        if (!running && this.ctx) {
+          await settleWithin(this.ctx.resume(), 1000);
+          if (stale()) return;
+          running = await waitForRunningCtx(this.ctx, 700);
+        }
+        if (!running && this.mode === 'worklet') {
+          // One retry on the ScriptProcessor fallback path.
+          await this.switchToFallback();
+          if (stale()) return;
+          if (this.ctx && this.ctx.state !== 'running') {
+            await settleWithin(this.ctx.resume(), 700);
+            if (stale()) return;
+            running = await waitForRunningCtx(this.ctx, 400);
+          } else {
+            running = true;
+          }
+        }
+        if (stale()) return;
+        if (!running) { fail(); return; }
+        setStatus(this.mode === 'worklet' ? '再生中 / AudioWorklet' : '再生中 / Fallback', 'ok');
         onEnginePlaybackChange();
+        finish();
+      } catch (err) {
+        if (stale()) return;
+        fail(err);
       }
     },
-
     stop() {
+      this._playSeq = (this._playSeq || 0) + 1;
+      this._playInFlight = false;
+      clearTimeout(this._playWatchdog);
       stopSleepCycle();
       if (this.node) {
         this.node.port.postMessage({ type: 'stop' });
@@ -6027,6 +6111,9 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     let levelEnv = 0;
     let vizGate = 0;
     let lastTs = 0;
+    let lastDrawTs = 0;
+    let onsetEnv = 0;
+    let fluxAvg = 0;
 
     const loop = (ts = 0) => {
       requestAnimationFrame(loop);
@@ -6035,6 +6122,10 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       const targetMs = 1000 / Math.max(10, preview.fps || 30);
       if (ts - lastTs < targetMs) return;
       lastTs = ts;
+      const dtMs = lastDrawTs ? Math.min(100, ts - lastDrawTs) : 16.7;
+      lastDrawTs = ts;
+      const dtScale = dtMs / 33.333;
+      const sens = (window.__noiseViz && typeof window.__noiseViz.sens === 'number') ? window.__noiseViz.sens : 1.5;
 
       const persist = !!(window.__noiseViz && window.__noiseViz.persist);
       if (persist) {
@@ -6085,6 +6176,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         if (i === 0) ctx1.moveTo(x, y);
         else ctx1.lineTo(x, y);
       }
+      ctx1.lineWidth = 1.2 + Math.min(2.4, peak * 6);
       ctx1.stroke();
       const rms = Math.sqrt(sum / Math.max(1, timeData.length));
       $('miniPeak').textContent = `${peak > 0 ? fmt(ampToDb(peak), 1) : '-∞'} dBFS`;
@@ -6097,7 +6189,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       // centroid and an adaptive frame peak. Every art view reads these,
       // so the visuals track the sound itself, not a private clock.
       {
-        liqT += 0.016;
+        liqT += 0.016 * dtScale;
         const binHz = (engine.analyser.context ? engine.analyser.context.sampleRate : 48000) / 2 / Math.max(1, freqData.length);
         const bandEdges = [20, 60, 250, 500, 2000, 6000, 16000];
         const bandRaw = [0, 0, 0, 0, 0, 0];
@@ -6116,14 +6208,23 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         }
         if (!prevFreq || prevFreq.length !== freqData.length) prevFreq = new Float32Array(freqData.length);
         for (let i = 0; i < freqData.length; i++) prevFreq[i] = freqData[i] / 255;
+        const kAttack = 1 - Math.exp(-dtMs / 7);
+        const kRelease = 1 - Math.exp(-dtMs / 85);
         for (let b = 0; b < 6; b++) {
-          const target = bandCount[b] ? bandRaw[b] / bandCount[b] : 0;
-          bandEnv[b] += (target - bandEnv[b]) * (target > bandEnv[b] ? 0.55 : 0.07);
+          const target = Math.min(1.25, (bandCount[b] ? bandRaw[b] / bandCount[b] : 0) * sens);
+          bandEnv[b] += (target - bandEnv[b]) * (target > bandEnv[b] ? kAttack : kRelease);
         }
-        const fluxTarget = Math.min(1, fluxSum / Math.max(1, freqData.length) * 14);
-        fluxEnv = Math.max(fluxTarget, fluxEnv * 0.90);
+        const fluxTarget = Math.min(1, fluxSum / Math.max(1, freqData.length) * 14 * sens);
+        fluxEnv = Math.max(fluxTarget, fluxEnv * Math.pow(0.5, dtMs / 90));
+        // Onset: flux jumping well above its own slow average fires an
+        // immediate pulse across views (frame flash + per-view kicks).
+        fluxAvg += (fluxTarget - fluxAvg) * 0.02;
+        if (vizGate > 0.25 && fluxTarget > 0.16 && fluxTarget > fluxAvg * 1.9 && fluxTarget - fluxAvg > 0.07) {
+          onsetEnv = Math.min(1, 0.45 + fluxTarget);
+        }
+        onsetEnv *= Math.pow(0.5, dtMs / 110);
         if (centDen > 0.001) centroidEnv += (Math.min(1, (centNum / centDen) / 9) - centroidEnv) * 0.12;
-        specPeak = Math.max(frameMax, specPeak * 0.996);
+        specPeak = Math.max(frameMax, specPeak * Math.pow(0.5, dtMs / 1000));
         if (engine.analyserL && engine.analyserR) {
           const n = engine.analyserL.fftSize;
           if (timeL.length !== n) { timeL = new Uint8Array(n); timeR = new Uint8Array(n); }
@@ -6141,19 +6242,21 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         // silent data, so art views must key off the actual RMS or they
         // keep drawing at base amplitude forever.
         const lvTarget = Math.min(1, rms * 3);
-        levelEnv += (lvTarget - levelEnv) * (lvTarget > levelEnv ? 0.35 : (rms < 0.001 ? 0.12 : 0.03));
+        levelEnv += (lvTarget - levelEnv) * (lvTarget > levelEnv ? 0.6 : (rms < 0.001 ? 0.12 : 0.08));
         vizGate = Math.min(1, levelEnv * 2.5);
       }
       const bars = preview.bars || 144;
       const bw = spec.width / bars;
       for (let i = 0; i < bars; i++) {
         const idx = Math.floor((i / bars) ** 1.8 * (freqData.length - 1));
-        const v = Math.pow(freqData[idx] / 255, 1.5) * (0.98 / Math.max(0.22, specPeak));
+        const lin = Math.pow(freqData[idx] / 255, 1.35) * (0.98 / Math.max(0.22, specPeak)) * sens;
+        const v = lin / (1 + lin * 0.6);
         const h = Math.max(1, Math.min(1, v) * spec.height);
         ctx2.fillRect(i * bw, spec.height - h, Math.max(1, bw - 1), h);
       }
 
-      ctx3.drawImage(gram, -1, 0);
+      const gramAdv = Math.max(1, Math.min(6, Math.round(dtMs * 0.06)));
+      ctx3.drawImage(gram, -gramAdv, 0);
       if (gramColData.height !== gram.height) {
         gramCol.height = Math.max(1, gram.height);
         gramColData = gramColCtx.createImageData(1, gramCol.height);
@@ -6163,7 +6266,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         for (let y = 0; y < gram.height; y++) {
           const frac = 1 - (y / Math.max(1, gram.height - 1));
           const idx = Math.floor((frac ** 2.2) * (freqData.length - 1));
-          const c = freqData[idx];
+          const c = Math.min(255, Math.round(freqData[idx] * (1 + onsetEnv * 0.45)));
           const o = y * 4;
           data[o] = c;
           data[o + 1] = c;
@@ -6171,7 +6274,21 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
           data[o + 3] = 255;
         }
         gramColCtx.putImageData(gramColData, 0, 0);
-        ctx3.drawImage(gramCol, gram.width - 1, 0);
+        ctx3.drawImage(gramCol, gram.width - gramAdv, 0, gramAdv, gram.height);
+      }
+
+      // ---- Onset pulse: thin monochrome frame flash on every visible
+      // view. Lightness only — no colour, no glow/shadowBlur. ----
+      if (onsetEnv > 0.02) {
+        for (const ctx of [ctx1, ctx2, ctxL, ctxP, ctxF, ctxPart, ctxLiq]) {
+          const c = ctx.canvas;
+          if (!c.offsetParent) continue;
+          ctx.fillStyle = 'rgba(255,255,255,' + (onsetEnv * 0.05).toFixed(3) + ')';
+          ctx.fillRect(0, 0, c.width, c.height);
+          ctx.strokeStyle = 'rgba(255,255,255,' + (onsetEnv * 0.55).toFixed(3) + ')';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(1, 1, c.width - 2, c.height - 2);
+        }
       }
 
       // ---- Lissajous (stereo phase) ----
@@ -6197,7 +6314,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
           if (a > framePeak) framePeak = a;
           if (b > framePeak) framePeak = b;
         }
-        lisPeak = Math.max(framePeak, lisPeak * 0.998);
+        lisPeak = Math.max(framePeak, lisPeak * Math.pow(0.5, dtMs / 1400));
         const gain = 0.92 / Math.min(1, Math.max(0.15, lisPeak));
         ctxL.strokeStyle = 'rgba(255,255,255,0.9)';
         ctxL.beginPath();
@@ -6215,7 +6332,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         ctxP.fillStyle = persist ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,1)';
         ctxP.fillRect(0, 0, w, h);
         const r0 = Math.min(w, h) * 0.20;
-        const rMax = Math.min(w, h) * 0.27;
+        const rMax = Math.min(w, h) * 0.29;
         ctxP.strokeStyle = 'rgba(255,255,255,0.20)';
         ctxP.lineWidth = 1;
         ctxP.beginPath(); ctxP.arc(cx, cy, r0, 0, TAU); ctxP.stroke();
@@ -6225,7 +6342,8 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         ctxP.beginPath();
         for (let i = 0; i < pBars; i++) {
           const idx = Math.floor((i / pBars) ** 1.8 * (freqData.length - 1));
-          const v = Math.min(1, Math.pow(freqData[idx] / 255, 1.5) * (0.98 / Math.max(0.22, specPeak)));
+          const linP = Math.pow(freqData[idx] / 255, 1.35) * (0.98 / Math.max(0.22, specPeak)) * sens;
+          const v = Math.min(1, linP / (1 + linP * 0.6));
           const a = (i / pBars) * TAU - Math.PI / 2;
           const r1 = r0 + Math.max(1, v * rMax);
           ctxP.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
@@ -6242,7 +6360,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         bass /= 12;
         for (let i = Math.floor(freqData.length * 0.6); i < freqData.length; i++) treb += freqData[i] / 255;
         treb /= Math.max(1, freqData.length - Math.floor(freqData.length * 0.6));
-        flowT += 0.016;
+        flowT += 0.016 * dtScale;
         ctxF.fillStyle = persist ? 'rgba(0,0,0,0.05)' : 'rgba(0,0,0,0.09)';
         ctxF.fillRect(0, 0, w, h);
         if (!flowParts) {
@@ -6251,15 +6369,15 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
             flowParts.push({ x: Math.random() * w, y: Math.random() * h, age: Math.random() * 200, life: 160 + Math.random() * 240 });
           }
         }
-        const speed = (0.5 + bandEnv[0] * 2.2 + bandEnv[1] * 2.4 + fluxEnv * 5.0) * (0.3 + 0.7 * vizGate);
+        const speed = (0.5 + bandEnv[0] * 2.2 + bandEnv[1] * 2.4 + fluxEnv * 5.0) * (0.3 + 0.7 * vizGate) * (1 + onsetEnv * 1.1);
         ctxF.strokeStyle = 'rgba(255,255,255,' + (0.55 * (0.12 + 0.88 * vizGate)).toFixed(3) + ')';
         ctxF.lineWidth = 1;
         ctxF.beginPath();
         for (const pt of flowParts) {
           const nse = Math.sin(pt.x * 0.008 + flowT * 0.6) + Math.cos(pt.y * 0.0095 - flowT * 0.4) + Math.sin((pt.x + pt.y) * 0.004 + flowT * 0.25);
           const ang = nse * (1.2 + bandEnv[3] * 1.6) + treb * 1.2 + fluxEnv * 1.8;
-          const nx = pt.x + Math.cos(ang) * speed * 1.7;
-          const ny = pt.y + Math.sin(ang) * speed * 1.7;
+          const nx = pt.x + Math.cos(ang) * speed * 1.7 * dtScale;
+          const ny = pt.y + Math.sin(ang) * speed * 1.7 * dtScale;
           ctxF.moveTo(pt.x, pt.y);
           ctxF.lineTo(nx, ny);
           pt.x = nx; pt.y = ny; pt.age++;
@@ -6284,7 +6402,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
           }
         }
         const cx = w / 2, cy = h / 2;
-        const kick = fluxEnv * 3.4;
+        const kick = fluxEnv * 3.4 + onsetEnv * 5.0;
         for (const p of partParts) {
           const e = bandEnv[p.band];
           const nse = Math.sin(p.x * 0.006 + liqT * 0.7) + Math.cos(p.y * 0.0075 - liqT * 0.5);
@@ -6297,10 +6415,10 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
           p.vx += (dx / dist) * (kick * 0.14 - bandEnv[1] * 0.012);
           p.vy += (dy / dist) * (kick * 0.14 - bandEnv[1] * 0.012);
           p.vx += dx * widthEnv * 0.0006;
-          p.vx *= 0.94; p.vy *= 0.94;
+          const dampF = Math.pow(0.94, dtScale); p.vx *= dampF; p.vy *= dampF;
           const px = p.x, py = p.y;
-          p.x += p.vx * (1 + e * 1.6);
-          p.y += p.vy * (1 + e * 1.6);
+          p.x += p.vx * (1 + e * 1.6) * dtScale;
+          p.y += p.vy * (1 + e * 1.6) * dtScale;
           p.age++;
           ctxPart.globalAlpha = Math.max(0.02, Math.min(0.9, 0.25 + e * 0.9) * (0.15 + 0.85 * vizGate));
           ctxPart.beginPath();
@@ -6324,10 +6442,10 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         const w = liquid.width, h = liquid.height;
         ctxLiq.fillStyle = persist ? 'rgba(0,0,0,0.10)' : 'rgba(0,0,0,0.17)';
         ctxLiq.fillRect(0, 0, w, h);
-        const lines = 56;
+        const lines = 64;
         const t = liqT;
         const swell = bandEnv[0] * 0.9 + bandEnv[1] * 0.7;
-        const rippleSpeed = 0.6 + centroidEnv * 2.2 + fluxEnv * 2.0;
+        const rippleSpeed = 0.6 + centroidEnv * 2.2 + fluxEnv * 2.0 + onsetEnv * 3.0;
         const ampScale = 0.25 + 0.75 * vizGate;
         const alphaScale = 0.2 + 0.8 * vizGate;
         ctxLiq.lineWidth = 1.1;
@@ -6335,7 +6453,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
           const frac = j / (lines - 1);
           const baseY = (frac * 0.92 + 0.04) * h;
           const band = bandEnv[Math.min(5, Math.floor(frac * 6))];
-          const amp1 = h * 0.016 * (0.35 + swell * 1.5 + band * 0.9) * ampScale;
+          const amp1 = h * 0.02 * (0.35 + swell * 1.5 + band * 0.9) * ampScale;
           const amp2 = h * 0.008 * (0.3 + bandEnv[3] * 1.3 + band * 0.7) * ampScale;
           const amp3 = h * 0.0035 * (0.3 + bandEnv[5] * 1.6) * ampScale;
           const ph = j * 0.42;
@@ -6817,12 +6935,13 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 
   // ---- Visual views: selector, persistence, immersive, poster ----
   const VIZ_VIEWS = ['trio', 'scope', 'spec', 'gram', 'lissajous', 'polar', 'flow', 'particle', 'liquid', 'grid'];
-  const vizState = { view: 'trio', persist: false };
+  const vizState = { view: 'trio', persist: false, sens: 1.5 };
   window.__noiseViz = vizState;
   try {
     const saved = JSON.parse(localStorage.getItem('noise_viz_v1') || 'null');
     if (saved && VIZ_VIEWS.includes(saved.view)) vizState.view = saved.view;
     if (saved && typeof saved.persist === 'boolean') vizState.persist = saved.persist;
+    if (saved && typeof saved.sens === 'number' && isFinite(saved.sens)) vizState.sens = Math.min(2.5, Math.max(0.5, saved.sens));
   } catch (_err) { /* storage is optional */ }
 
   function fftInPlace(re, im) {
@@ -6958,6 +7077,18 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       btn.addEventListener('click', () => setView(btn.dataset.vizView));
     });
     if (persistBtn) persistBtn.addEventListener('click', () => { vizState.persist = !vizState.persist; apply(); });
+    const sensEl = $('vizSens');
+    const sensVal = $('vizSensVal');
+    const showSens = () => { if (sensVal) sensVal.textContent = '×' + vizState.sens.toFixed(2).replace(/0$/, ''); };
+    if (sensEl) {
+      sensEl.value = String(vizState.sens);
+      showSens();
+      sensEl.addEventListener('input', () => {
+        vizState.sens = Math.min(2.5, Math.max(0.5, Number(sensEl.value) || 1.5));
+        showSens();
+        apply();
+      });
+    }
     const posterBtn = $('posterBtn');
     if (posterBtn) posterBtn.addEventListener('click', () => { savePosterPng(); });
     const immersiveBtn = $('immersiveBtn');
