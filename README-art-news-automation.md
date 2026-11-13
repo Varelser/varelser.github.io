@@ -1,1 +1,34 @@
-IyBBcnQgTmV3cyBhdXRvbWF0aW9uCgrnvo7ooZPjg7vnvo7ooZPppKjjg4vjg6Xjg7zjgrnjga7oh6rli5XphY3kv6HvvIjml6XmnKzoqp7opoHntITvvInjga7jgZ/jgoHjga7lrp/oo4XjgafjgZnjgIJOdXJzZSBOZXdz77yI44GT44Gu44K344Oq44O844K644Gu5Y6f5Z6L77yJ44Go5ZCM44GY44Or44O844Or44Gn5YuV44GN44CB5LuW44Gu5YiG6YeO77yIQ2luZW1hIC8gQ2FtZXJhIC8gTXVzaWMgLyBJbnN0cnVtZW50cyAvIFdvcmxkIC8gTGl0ZXJhdHVyZSAvIGFyWGl277yJ44Go5Lim6LWw44GX44G+44GZ44CCCgojIyDmp4vmiJAKLSBgYXJ0LW5ld3MuaHRtbGAg4oCUIOacgOaWsDgw5Lu244Gu5pys5L2T44Oa44O844K477yI44K344Kn44Or44CC44OR44Kk44OX44Op44Kk44Oz44GM6KiY5LqL6YOo44KS5YaN55Sf5oiQ77yJCi0gYGFydC1uZXdzLWRhdGEuanNvbmAg4oCUIOWFqOOCueODiOODg+OCr++8iOato+acrO+8iQotIGBhcnQtYXJjaGl2ZS1ZWVlZLU1NLmh0bWxgIOKAlCA4MOS7tuOCkui2heOBiOOBn+WIhuOBruaciOWIpeOCouODvOOCq+OCpOODlu+8iOiHquWLleeUn+aIkO+8iQotIGBhcnQtZmVlZC54bWxgIOKAlCBSU1MgMi4w77yI5pyA5pawNTDku7bvvIkKLSBgYXJ0LXNlYXJjaC5odG1sYCAvIGBhcnQtc2VhcmNoLWluZGV4Lmpzb25gIC8gYGFydC1zZWFyY2gtWVlZWS1NTS5qc29uYCDigJQg5YWo5Lu25qSc57Si77yI5pyI5Yil44K344Oj44O844OJ77yJCi0gYHNjcmlwdHMvYXJ0X2ZldGNoLnB5YCDigJQg5YCZ6KOc5Y+O6ZuG77yINDHjgr3jg7zjgrnjgIHmqJnmupbjg6njgqTjg5bjg6njg6rjga7jgb/jgIHmpJzoqLzmuIjjgb/jgr3jg7zjgrnjgajkuI3mjqHnlKjnkIbnlLHjga/jg5XjgqHjgqTjg6vlhpLpoK3jgavoqJjpjLLvvIkKLSBgc2NyaXB0cy9hcnRfcGlwZWxpbmUucHlgIOKAlCDnorrlrprlh6bnkIbvvIjjgq/jg6rjg7zjg4vjg7PjgrDjgIHph43opIfmjpLpmaTjgIHmpJzoqLzjgIFIVE1ML+ODleOCo+ODvOODiS/mpJzntKLntKLlvJXjga7lho3nlJ/miJDvvIkKLSBgdGVzdHMvdGVzdF9hcnRfcGlwZWxpbmUucHlgIOKAlCDjg5HjgqTjg5fjg6njgqTjg7Pjga7jg4bjgrnjg4jvvIhDSTogYC5naXRodWIvd29ya2Zsb3dzL2FydC1waXBlbGluZS10ZXN0cy55bWxg77yJCgojIyDmm7TmlrDjg6vjg7zjg6vvvIjku5bliIbph47jgajlhbHpgJrvvIkKLSBNdXNlIOWBtCBjcm9uIGBhcnQtbmV3cy11cGRhdGVgIOOBjDHmmYLplpPjgZTjgajjgavlrp/ooYzjgZnjgovjgILopoHntITkvZzmiJDjga8gY3JvbiDlgbTvvIhBSe+8ieOBjOaLheOBhOOAgeeiuuWumuWHpueQhuOBryBgYXJ0X3BpcGVsaW5lLnB5YCDjgYzmi4XjgYYKLSDmlrDopo/jga/lgJnoo5zjgYvjgonmnIDlpKc45Lu2L+WbnuOAguiqrOaYjuaWh+OBruOBquOBhOWAmeijnOOBr+aOoeeUqOOBl+OBquOBhAotIOWFrOmWi+mdouOBq+ODleOCqeODvOODq+ODkOODg+OCr+aWh++8iOOAjEdlbWluaSDnhKHmlpnmnqDjgI3jgIznlJ/miJDopoHntITjgpLlronlrprlj5blvpfjgafjgY3jgarjgYvjgaPjgZ/jgI3nrYnvvInjgpLmrovjgZXjgarjgYQKLSDph43opIfjga8gVVJM44O75q2j6KaP5YyW44K/44Kk44OI44Or44Gn5o6S6Zmk44CC5pyq5p2l5pel5LuY77yIKzLml6XotoXvvInjga/okL3jgajjgZkKLSDlpInmm7TjgYzjgarjgYRydW7jga/kvZXjgoLmm7jjgYvjgarjgYTvvIjjg5DjgqTjg4jlkIzkuIDjga5uby1vcO+8iQotIOaXpeasoeOCpuOCqeODg+ODgeODieODg+OCsOOBjOabtOaWsOWBnOatouODu+aknOiovOWkseaVl+OCkuebo+imluOBmeOCiwoKIyMg5omL5YuV5a6f6KGMCmBgYGJhc2gKcHl0aG9uMyBzY3JpcHRzL2FydF9mZXRjaC5weSAtLWRhdGEgYXJ0LW5ld3MtZGF0YS5qc29uIC0tb3V0IC90bXAvYXJ0X2NhbmRpZGF0ZXMuanNvbgojIOWAmeijnOOBi+OCieaWsOimj+iomOS6i+OBrkpTT07vvIhuZXcuanNvbu+8ieOCkueUqOaEj+OBl+OBpjoKcHl0aG9uMyBzY3JpcHRzL2FydF9waXBlbGluZS5weSAtLXJlcG8gLiAtLW5ldyBuZXcuanNvbgpweXRob24zIHRlc3RzL3Rlc3RfYXJ0X3BpcGVsaW5lLnB5CmBgYAoKIyMg5YiG6aGeCi0gY2F0ZWdvcmllczog54++5Luj44Ki44O844OIIC8g57W155S7IC8g5b2r5Yi744O756uL5L2TIC8g5YaZ55yfIC8g54mI55S744O744Kw44Op44OV44Kj44OD44KvIC8g5bel6Iq444O744OH44K244Kk44OzIC8g5bu656+J44O756m66ZaTIC8g44Oh44OH44Kj44Ki44Ki44O844OIIC8g44OR44OV44Kp44O844Oe44Oz44K5IC8g576O6KGT5Y+y44O75Y+k5YW4IC8g5bGV6Kan5Lya44O744Kk44OZ44Oz44OIIC8g576O6KGT6aSo44O75Y2a54mp6aSoIC8g44Ki44O844OI44Oe44O844Kx44OD44OIIC8g5L+d5a2Y5L+u5b6p44O75paH5YyW6LKhIC8g44Gd44Gu5LuWCi0ga2luZDog44OL44Ol44O844K5IC8g5bGV6Kan5Lya5qGI5YaFIC8g44Os44OT44Ol44O844O75om56KmVIC8g44Kk44Oz44K/44OT44Ol44O8IC8g54m56ZuGIC8g5biC5aC044Os44Od44O844OIIC8g56CU56m244O76Kej6KqsIC8g5Y+X6LOe44O76KiD5aCxIC8g44Gd44Gu5LuWCi0gcmVnaW9uOiDlm73lhoUgLyDmtbflpJYK
+# Art News automation
+
+美術・美術館ニュースの自動配信（日本語要約）のための実装です。Nurse News（このシリーズの原型）と同じルールで動き、他の分野（Cinema / Camera / Music / Instruments / World / Literature / arXiv）と並走します。
+
+## 構成
+- `art-news.html` — 最新80件の本体ページ（シェル。パイプラインが記事部を再生成）
+- `art-news-data.json` — 全ストック（正本）
+- `art-archive-YYYY-MM.html` — 80件を超えた分の月別アーカイブ（自動生成）
+- `art-feed.xml` — RSS 2.0（最新50件）
+- `art-search.html` / `art-search-index.json` / `art-search-YYYY-MM.json` — 全件検索（月別シャード）
+- `scripts/art_fetch.py` — 候補収集（41ソース、標準ライブラリのみ、検証済みソースと不採用理由はファイル冒頭に記録）
+- `scripts/art_pipeline.py` — 確定処理（クリーニング、重複排除、検証、HTML/フィード/検索索引の再生成）
+- `tests/test_art_pipeline.py` — パイプラインのテスト（CI: `.github/workflows/art-pipeline-tests.yml`）
+
+## 更新ルール（他分野と共通）
+- Muse 側 cron `art-news-update` が1時間ごとに実行する。要約作成は cron 側（AI）が担い、確定処理は `art_pipeline.py` が担う
+- 新規は候補から最大8件/回。説明文のない候補は採用しない
+- 公開面にフォールバック文（「Gemini 無料枠」「生成要約を安定取得できなかった」等）を残さない
+- 重複は URL・正規化タイトルで排除。未来日付（+2日超）は落とす
+- 変更がないrunは何も書かない（バイト同一のno-op）
+- 日次ウォッチドッグが更新停止・検証失敗を監視する
+
+## 手動実行
+```bash
+python3 scripts/art_fetch.py --data art-news-data.json --out /tmp/art_candidates.json
+# 候補から新規記事のJSON（new.json）を用意して:
+python3 scripts/art_pipeline.py --repo . --new new.json
+python3 tests/test_art_pipeline.py
+```
+
+## 分類
+- categories: 現代アート / 絵画 / 彫刻・立体 / 写真 / 版画・グラフィック / 工芸・デザイン / 建築・空間 / メディアアート / パフォーマンス / 美術史・古典 / 展覧会・イベント / 美術館・博物館 / アートマーケット / 保存修復・文化財 / その他
+- kind: ニュース / 展覧会案内 / レビュー・批評 / インタビュー / 特集 / 市場レポート / 研究・解説 / 受賞・訃報 / その他
+- region: 国内 / 海外
