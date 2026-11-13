@@ -1,1 +1,153 @@
-IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoiIiJUZXN0cyBmb3Igc2NyaXB0cy9hcnRfcGlwZWxpbmUucHkgKyBzY3JpcHRzL2FydF9mZXRjaC5weSBwYXJzaW5nLgoKUnVuOiBweXRob24zIHRlc3RzL3Rlc3RfYXJ0X3BpcGVsaW5lLnB5ClN0ZGxpYiBvbmx5ICh1bml0dGVzdCkuCiIiIgppbXBvcnQganNvbgppbXBvcnQgb3MKaW1wb3J0IHNodXRpbAppbXBvcnQgc3VicHJvY2VzcwppbXBvcnQgc3lzCmltcG9ydCB0ZW1wZmlsZQppbXBvcnQgdW5pdHRlc3QKClJFUE8gPSBvcy5wYXRoLmRpcm5hbWUob3MucGF0aC5kaXJuYW1lKG9zLnBhdGguYWJzcGF0aChfX2ZpbGVfXykpKQpOT1cgPSAiMjAyNi0xMS0xMlQwMDowMDowMFoiCgoKZGVmIHJlYyhpLCB0aXRsZT1Ob25lLCB1cmw9Tm9uZSwgZGF0ZT0iMjAyNi0xMS0xMFQwMDowMDowMFoiLCBzdW1tYXJ5PU5vbmUpOgogICAgdGl0bGUgPSB0aXRsZSBvciBmIuODhuOCueODiOiomOS6i3tpfeOBruOCv+OCpOODiOODqyIKICAgIHVybCA9IHVybCBvciBmImh0dHBzOi8vZXhhbXBsZS5jb20vYXJ0L3tpfSIKICAgIGJvZHkgPSBzdW1tYXJ5IG9yICgKICAgICAgICBmIuOBk+OCjOOBr+ODhuOCueODiOiomOS6i3tpfeOBruimgee0hOOBruesrOS4gOauteiQveOBp+OBmeOAguOCouODvOODhuOCo+OCueODiOOBruaWsOS9nOOBq+mWouOBmeOCiyIKICAgICAgICAi5YW35L2T55qE44Gq5oOF5aCx44CB44Oq44Oq44O844K55pel44CB5Y+O6Yyy5puy44CB6Zai5L+C6ICF44Gu44Kz44Oh44Oz44OI44Gq44Gp44CB6Kqt6ICF44GMIgogICAgICAgICLnn6XjgorjgZ/jgYTopoHngrnjgpLjgZPjgZPjgavjgb7jgajjgoHjgabjgYTjgb7jgZnjgILmnKzmlofjga/ljYHliIbjgarplbfjgZXjgYzjgYLjgorjgb7jgZnjgIIiCiAgICAgICAgIjxicj48YnI+IgogICAgICAgICLnrKzkuozmrrXokL3jgafjga/og4zmma/jgoTku4rlvozjga7kuojlrprjgpLoo5zotrPjgZfjgb7jgZnjgILjg4TjgqLjg7zml6XnqIvjgoTjg4HjgrHjg4Pjg4jmg4XloLHjgIEiCiAgICAgICAgIumWoumAo+S9nOWTgeOBuOOBruiogOWPiuOBquOBqeOAgee2muWgseOBqOOBl+OBpuaKvOOBleOBiOOBpuOBiuOBjeOBn+OBhOWGheWuueOCkuiomOOBl+OBvuOBmeOAgiIpCiAgICByZXR1cm4gewogICAgICAgICJzb3VyY2VOYW1lIjogIkFSVCBpVCIsCiAgICAgICAgIm9yaWdpbmFsVGl0bGUiOiB0aXRsZSwKICAgICAgICAidGl0bGVKYSI6IGYi44OG44K544OI6KiY5LqLe2l944CB5paw5L2c44KS55m66KGoIiwKICAgICAgICAic3VtbWFyeUh0bWwiOiBib2R5LAogICAgICAgICJ1cmwiOiB1cmwsCiAgICAgICAgInB1Ymxpc2hlZEF0IjogZGF0ZSwKICAgICAgICAiY2F0ZWdvcmllcyI6IFsi54++5Luj44Ki44O844OIIl0sCiAgICAgICAgInJlZ2lvbiI6ICLlm73lhoUiLAogICAgICAgICJraW5kIjogIuWxleimp+S8muahiOWGhSIsCiAgICB9CgoKY2xhc3MgQXJ0UGlwZWxpbmVUZXN0KHVuaXR0ZXN0LlRlc3RDYXNlKToKICAgIGRlZiBzZXRVcChzZWxmKToKICAgICAgICBzZWxmLnRtcCA9IHRlbXBmaWxlLm1rZHRlbXAocHJlZml4PSJhcnQtdGVzdC0iKQogICAgICAgIHNlbGYuYWRkQ2xlYW51cChzaHV0aWwucm10cmVlLCBzZWxmLnRtcCwgVHJ1ZSkKICAgICAgICBmb3IgbmFtZSBpbiAoImFydC1uZXdzLmh0bWwiLCk6CiAgICAgICAgICAgIHNodXRpbC5jb3B5KG9zLnBhdGguam9pbihSRVBPLCBuYW1lKSwKICAgICAgICAgICAgICAgICAgICAgICAgb3MucGF0aC5qb2luKHNlbGYudG1wLCBuYW1lKSkKICAgICAgICB3aXRoIG9wZW4ob3MucGF0aC5qb2luKHNlbGYudG1wLCAiYXJ0LW5ld3MtZGF0YS5qc29uIiksICJ3IiwKICAgICAgICAgICAgICAgICAgZW5jb2Rpbmc9InV0Zi04IikgYXMgZjoKICAgICAgICAgICAganNvbi5kdW1wKHsidXBkYXRlZEF0IjogTk9XLCAiYXJ0aWNsZXMiOiBbXX0sIGYsCiAgICAgICAgICAgICAgICAgICAgICBlbnN1cmVfYXNjaWk9RmFsc2UpCgogICAgZGVmIHJ1bl9waXBlbGluZShzZWxmLCAqZXh0cmEpOgogICAgICAgIGNtZCA9IFtzeXMuZXhlY3V0YWJsZSwKICAgICAgICAgICAgICAgb3MucGF0aC5qb2luKFJFUE8sICJzY3JpcHRzIiwgImFydF9waXBlbGluZS5weSIpLAogICAgICAgICAgICAgICAiLS1yZXBvIiwgc2VsZi50bXAsICItLW5vdyIsIE5PVywgKmV4dHJhXQogICAgICAgIHAgPSBzdWJwcm9jZXNzLnJ1bihjbWQsIGNhcHR1cmVfb3V0cHV0PVRydWUsIHRleHQ9VHJ1ZSkKICAgICAgICByZXR1cm4gcAoKICAgIGRlZiB3cml0ZV9uZXcoc2VsZiwgcmVjb3Jkcyk6CiAgICAgICAgcGF0aCA9IG9zLnBhdGguam9pbihzZWxmLnRtcCwgIm5ldy5qc29uIikKICAgICAgICB3aXRoIG9wZW4ocGF0aCwgInciLCBlbmNvZGluZz0idXRmLTgiKSBhcyBmOgogICAgICAgICAgICBqc29uLmR1bXAocmVjb3JkcywgZiwgZW5zdXJlX2FzY2lpPUZhbHNlKQogICAgICAgIHJldHVybiBwYXRoCgogICAgZGVmIHJlYWRfZGF0YShzZWxmKToKICAgICAgICB3aXRoIG9wZW4ob3MucGF0aC5qb2luKHNlbGYudG1wLCAiYXJ0LW5ld3MtZGF0YS5qc29uIiksCiAgICAgICAgICAgICAgICAgIGVuY29kaW5nPSJ1dGYtOCIpIGFzIGY6CiAgICAgICAgICAgIHJldHVybiBqc29uLmxvYWQoZikKCiAgICBkZWYgdGVzdF9tZXJnZV9hbmRfcmVnZW5lcmF0ZShzZWxmKToKICAgICAgICBwID0gc2VsZi5ydW5fcGlwZWxpbmUoIi0tbmV3Iiwgc2VsZi53cml0ZV9uZXcoW3JlYygxKSwgcmVjKDIpXSkpCiAgICAgICAgc2VsZi5hc3NlcnRFcXVhbChwLnJldHVybmNvZGUsIDAsIHAuc3RkZXJyKQogICAgICAgIHN1bW1hcnkgPSBqc29uLmxvYWRzKHAuc3Rkb3V0KQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwoc3VtbWFyeVsidG90YWwiXSwgMikKICAgICAgICBzZWxmLmFzc2VydEVxdWFsKGxlbihzdW1tYXJ5WyJhZGRlZCJdKSwgMikKICAgICAgICBtYWluID0gb3Blbihvcy5wYXRoLmpvaW4oc2VsZi50bXAsICJhcnQtbmV3cy5odG1sIiksCiAgICAgICAgICAgICAgICAgICAgZW5jb2Rpbmc9InV0Zi04IikucmVhZCgpCiAgICAgICAgc2VsZi5hc3NlcnRFcXVhbChtYWluLmNvdW50KCI8YXJ0aWNsZSIpLCAyKQogICAgICAgIHNlbGYuYXNzZXJ0SW4oImFydC1mZWVkLnhtbCIsIHN1bW1hcnlbImZpbGVzIl0pCiAgICAgICAgZmVlZCA9IG9wZW4ob3MucGF0aC5qb2luKHNlbGYudG1wLCAiYXJ0LWZlZWQueG1sIiksCiAgICAgICAgICAgICAgICAgICAgZW5jb2Rpbmc9InV0Zi04IikucmVhZCgpCiAgICAgICAgc2VsZi5hc3NlcnRFcXVhbChmZWVkLmNvdW50KCI8aXRlbT4iKSwgMikKICAgICAgICBpZHggPSBqc29uLmxvYWQob3Blbihvcy5wYXRoLmpvaW4oCiAgICAgICAgICAgIHNlbGYudG1wLCAiYXJ0LXNlYXJjaC1pbmRleC5qc29uIiksIGVuY29kaW5nPSJ1dGYtOCIpKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwoaWR4WyJ0b3RhbCJdLCAyKQoKICAgIGRlZiB0ZXN0X25vb3BfaXNfYnl0ZV9pZGVudGljYWwoc2VsZik6CiAgICAgICAgc2VsZi5ydW5fcGlwZWxpbmUoIi0tbmV3Iiwgc2VsZi53cml0ZV9uZXcoW3JlYygxKV0pKQogICAgICAgIGJlZm9yZSA9IHt9CiAgICAgICAgZm9yIG5hbWUgaW4gb3MubGlzdGRpcihzZWxmLnRtcCk6CiAgICAgICAgICAgIHdpdGggb3Blbihvcy5wYXRoLmpvaW4oc2VsZi50bXAsIG5hbWUpLCAicmIiKSBhcyBmOgogICAgICAgICAgICAgICAgYmVmb3JlW25hbWVdID0gZi5yZWFkKCkKICAgICAgICBwID0gc2VsZi5ydW5fcGlwZWxpbmUoKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwocC5yZXR1cm5jb2RlLCAwLCBwLnN0ZGVycikKICAgICAgICBzdW1tYXJ5ID0ganNvbi5sb2FkcyhwLnN0ZG91dCkKICAgICAgICBzZWxmLmFzc2VydEVxdWFsKHN1bW1hcnlbImZpbGVzIl0sIFtdKQogICAgICAgIGZvciBuYW1lLCBibG9iIGluIGJlZm9yZS5pdGVtcygpOgogICAgICAgICAgICB3aXRoIG9wZW4ob3MucGF0aC5qb2luKHNlbGYudG1wLCBuYW1lKSwgInJiIikgYXMgZjoKICAgICAgICAgICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwoZi5yZWFkKCksIGJsb2IsIG5hbWUpCgogICAgZGVmIHRlc3RfZGVkdXBlX3VybF9hbmRfdGl0bGUoc2VsZik6CiAgICAgICAgc2VsZi5ydW5fcGlwZWxpbmUoIi0tbmV3Iiwgc2VsZi53cml0ZV9uZXcoW3JlYygxKV0pKQogICAgICAgIGR1cF91cmwgPSByZWMoMiwgdXJsPSJodHRwczovL2V4YW1wbGUuY29tL2FydC8xIikKICAgICAgICBkdXBfdGl0bGUgPSByZWMoMywgdGl0bGU9IuODhuOCueODiOiomOS6izHjga7jgr/jgqTjg4jjg6siLAogICAgICAgICAgICAgICAgICAgICAgICB1cmw9Imh0dHBzOi8vb3RoZXIuZXhhbXBsZS5jb20veCIpCiAgICAgICAgcCA9IHNlbGYucnVuX3BpcGVsaW5lKCItLW5ldyIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlbGYud3JpdGVfbmV3KFtkdXBfdXJsLCBkdXBfdGl0bGUsIHJlYyg0KV0pKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwocC5yZXR1cm5jb2RlLCAwLCBwLnN0ZGVycikKICAgICAgICBzdW1tYXJ5ID0ganNvbi5sb2FkcyhwLnN0ZG91dCkKICAgICAgICBzZWxmLmFzc2VydEVxdWFsKHN1bW1hcnlbInRvdGFsIl0sIDIpCiAgICAgICAgc2VsZi5hc3NlcnRFcXVhbChsZW4oc3VtbWFyeVsiYWRkZWQiXSksIDEpCgogICAgZGVmIHRlc3Rfa2FuYV9sZXNzX3RpdGxlX3JlamVjdGVkKHNlbGYpOgogICAgICAgIGJhZCA9IHJlYygxKQogICAgICAgIGJhZFsidGl0bGVKYSJdID0gIkVuZ2xpc2ggT25seSBUaXRsZSIKICAgICAgICBwID0gc2VsZi5ydW5fcGlwZWxpbmUoIi0tbmV3Iiwgc2VsZi53cml0ZV9uZXcoW2JhZF0pKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwocC5yZXR1cm5jb2RlLCAyKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwoc2VsZi5yZWFkX2RhdGEoKVsiYXJ0aWNsZXMiXSwgW10pCgogICAgZGVmIHRlc3Rfc2hvcnRfc3VtbWFyeV9yZWplY3RlZChzZWxmKToKICAgICAgICBiYWQgPSByZWMoMSwgc3VtbWFyeT0i55+t44GE6KaB57SE44Gn44GZ44CCIikKICAgICAgICBwID0gc2VsZi5ydW5fcGlwZWxpbmUoIi0tbmV3Iiwgc2VsZi53cml0ZV9uZXcoW2JhZF0pKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwocC5yZXR1cm5jb2RlLCAyKQoKICAgIGRlZiB0ZXN0X2FyY2hpdmVfb3ZlcmZsb3coc2VsZik6CiAgICAgICAgcmVjb3JkcyA9IFtyZWMoaSwgZGF0ZT1mIjIwMjYtMTAteyhpICUgMjgpICsgMTowMmR9VDAwOjAwOjAwWiIpCiAgICAgICAgICAgICAgICAgICBmb3IgaSBpbiByYW5nZSg4NSldCiAgICAgICAgIyBnaXZlIHRoZW0gZGlzdGluY3QgbW9udGhzIHNwbGl0OiBmaXJzdCA4MCBzdGF5IG1haW4gb25seSBpZiBhbGwKICAgICAgICAjIHNoYXJlIGRhdGVzIGluIG9uZSBtb250aDsgcGlwZWxpbmUgYXJjaGl2ZXMgb3ZlcmZsb3cgYnkgbW9udGguCiAgICAgICAgcCA9IHNlbGYucnVuX3BpcGVsaW5lKCItLW5ldyIsIHNlbGYud3JpdGVfbmV3KHJlY29yZHMpKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwocC5yZXR1cm5jb2RlLCAwLCBwLnN0ZGVycikKICAgICAgICBzdW1tYXJ5ID0ganNvbi5sb2FkcyhwLnN0ZG91dCkKICAgICAgICBzZWxmLmFzc2VydEVxdWFsKHN1bW1hcnlbInRvdGFsIl0sIDg1KQogICAgICAgIG1haW4gPSBvcGVuKG9zLnBhdGguam9pbihzZWxmLnRtcCwgImFydC1uZXdzLmh0bWwiKSwKICAgICAgICAgICAgICAgICAgICBlbmNvZGluZz0idXRmLTgiKS5yZWFkKCkKICAgICAgICBzZWxmLmFzc2VydEVxdWFsKG1haW4uY291bnQoIjxhcnRpY2xlIiksIDgwKQogICAgICAgIGFyY2ggPSBvcGVuKG9zLnBhdGguam9pbihzZWxmLnRtcCwgImFydC1hcmNoaXZlLTIwMjYtMTAuaHRtbCIpLAogICAgICAgICAgICAgICAgICAgIGVuY29kaW5nPSJ1dGYtOCIpLnJlYWQoKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwoYXJjaC5jb3VudCgiPGFydGljbGUiKSwgNSkKCiAgICBkZWYgdGVzdF9zaGVsbF9ndWFyZF9wYWdlcl9taXNzaW5nKHNlbGYpOgogICAgICAgIHBhdGggPSBvcy5wYXRoLmpvaW4oc2VsZi50bXAsICJhcnQtbmV3cy5odG1sIikKICAgICAgICBwYWdlID0gb3BlbihwYXRoLCBlbmNvZGluZz0idXRmLTgiKS5yZWFkKCkucmVwbGFjZSgKICAgICAgICAgICAgJ2lkPSJwYWdlU2l6ZSInLCAnaWQ9InBhZ2VTaXplR29uZSInKQogICAgICAgIG9wZW4ocGF0aCwgInciLCBlbmNvZGluZz0idXRmLTgiKS53cml0ZShwYWdlKQogICAgICAgIHAgPSBzZWxmLnJ1bl9waXBlbGluZSgiLS1uZXciLCBzZWxmLndyaXRlX25ldyhbcmVjKDEpXSkpCiAgICAgICAgc2VsZi5hc3NlcnRFcXVhbChwLnJldHVybmNvZGUsIDIpCgoKaWYgX19uYW1lX18gPT0gIl9fbWFpbl9fIjoKICAgIHVuaXR0ZXN0Lm1haW4odmVyYm9zaXR5PTIpCg==
+#!/usr/bin/env python3
+"""Tests for scripts/art_pipeline.py + scripts/art_fetch.py parsing.
+
+Run: python3 tests/test_art_pipeline.py
+Stdlib only (unittest).
+"""
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+NOW = "2026-11-12T00:00:00Z"
+
+
+def rec(i, title=None, url=None, date="2026-11-10T00:00:00Z", summary=None):
+    title = title or f"テスト記事{i}のタイトル"
+    url = url or f"https://example.com/art/{i}"
+    body = summary or (
+        f"これはテスト記事{i}の要約の第一段落です。アーティストの新作に関する"
+        "具体的な情報、リリース日、収録曲、関係者のコメントなど、読者が"
+        "知りたい要点をここにまとめています。本文は十分な長さがあります。"
+        "<br><br>"
+        "第二段落では背景や今後の予定を補足します。ツアー日程やチケット情報、"
+        "関連作品への言及など、続報として押さえておきたい内容を記します。")
+    return {
+        "sourceName": "ART iT",
+        "originalTitle": title,
+        "titleJa": f"テスト記事{i}、新作を発表",
+        "summaryHtml": body,
+        "url": url,
+        "publishedAt": date,
+        "categories": ["現代アート"],
+        "region": "国内",
+        "kind": "展覧会案内",
+    }
+
+
+class ArtPipelineTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix="art-test-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        for name in ("art-news.html",):
+            shutil.copy(os.path.join(REPO, name),
+                        os.path.join(self.tmp, name))
+        with open(os.path.join(self.tmp, "art-news-data.json"), "w",
+                  encoding="utf-8") as f:
+            json.dump({"updatedAt": NOW, "articles": []}, f,
+                      ensure_ascii=False)
+
+    def run_pipeline(self, *extra):
+        cmd = [sys.executable,
+               os.path.join(REPO, "scripts", "art_pipeline.py"),
+               "--repo", self.tmp, "--now", NOW, *extra]
+        p = subprocess.run(cmd, capture_output=True, text=True)
+        return p
+
+    def write_new(self, records):
+        path = os.path.join(self.tmp, "new.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(records, f, ensure_ascii=False)
+        return path
+
+    def read_data(self):
+        with open(os.path.join(self.tmp, "art-news-data.json"),
+                  encoding="utf-8") as f:
+            return json.load(f)
+
+    def test_merge_and_regenerate(self):
+        p = self.run_pipeline("--new", self.write_new([rec(1), rec(2)]))
+        self.assertEqual(p.returncode, 0, p.stderr)
+        summary = json.loads(p.stdout)
+        self.assertEqual(summary["total"], 2)
+        self.assertEqual(len(summary["added"]), 2)
+        main = open(os.path.join(self.tmp, "art-news.html"),
+                    encoding="utf-8").read()
+        self.assertEqual(main.count("<article"), 2)
+        self.assertIn("art-feed.xml", summary["files"])
+        feed = open(os.path.join(self.tmp, "art-feed.xml"),
+                    encoding="utf-8").read()
+        self.assertEqual(feed.count("<item>"), 2)
+        idx = json.load(open(os.path.join(
+            self.tmp, "art-search-index.json"), encoding="utf-8"))
+        self.assertEqual(idx["total"], 2)
+
+    def test_noop_is_byte_identical(self):
+        self.run_pipeline("--new", self.write_new([rec(1)]))
+        before = {}
+        for name in os.listdir(self.tmp):
+            with open(os.path.join(self.tmp, name), "rb") as f:
+                before[name] = f.read()
+        p = self.run_pipeline()
+        self.assertEqual(p.returncode, 0, p.stderr)
+        summary = json.loads(p.stdout)
+        self.assertEqual(summary["files"], [])
+        for name, blob in before.items():
+            with open(os.path.join(self.tmp, name), "rb") as f:
+                self.assertEqual(f.read(), blob, name)
+
+    def test_dedupe_url_and_title(self):
+        self.run_pipeline("--new", self.write_new([rec(1)]))
+        dup_url = rec(2, url="https://example.com/art/1")
+        dup_title = rec(3, title="テスト記事1のタイトル",
+                        url="https://other.example.com/x")
+        p = self.run_pipeline("--new",
+                              self.write_new([dup_url, dup_title, rec(4)]))
+        self.assertEqual(p.returncode, 0, p.stderr)
+        summary = json.loads(p.stdout)
+        self.assertEqual(summary["total"], 2)
+        self.assertEqual(len(summary["added"]), 1)
+
+    def test_kana_less_title_rejected(self):
+        bad = rec(1)
+        bad["titleJa"] = "English Only Title"
+        p = self.run_pipeline("--new", self.write_new([bad]))
+        self.assertEqual(p.returncode, 2)
+        self.assertEqual(self.read_data()["articles"], [])
+
+    def test_short_summary_rejected(self):
+        bad = rec(1, summary="短い要約です。")
+        p = self.run_pipeline("--new", self.write_new([bad]))
+        self.assertEqual(p.returncode, 2)
+
+    def test_archive_overflow(self):
+        records = [rec(i, date=f"2026-10-{(i % 28) + 1:02d}T00:00:00Z")
+                   for i in range(85)]
+        # give them distinct months split: first 80 stay main only if all
+        # share dates in one month; pipeline archives overflow by month.
+        p = self.run_pipeline("--new", self.write_new(records))
+        self.assertEqual(p.returncode, 0, p.stderr)
+        summary = json.loads(p.stdout)
+        self.assertEqual(summary["total"], 85)
+        main = open(os.path.join(self.tmp, "art-news.html"),
+                    encoding="utf-8").read()
+        self.assertEqual(main.count("<article"), 80)
+        arch = open(os.path.join(self.tmp, "art-archive-2026-10.html"),
+                    encoding="utf-8").read()
+        self.assertEqual(arch.count("<article"), 5)
+
+    def test_shell_guard_pager_missing(self):
+        path = os.path.join(self.tmp, "art-news.html")
+        page = open(path, encoding="utf-8").read().replace(
+            'id="pageSize"', 'id="pageSizeGone"')
+        open(path, "w", encoding="utf-8").write(page)
+        p = self.run_pipeline("--new", self.write_new([rec(1)]))
+        self.assertEqual(p.returncode, 2)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
