@@ -1,0 +1,1911 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" href="data:," />
+<title>iPhone Sensor Display — 気配センサー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0b0d0c; --bg2:#11140f; --panel:#151814; --panel2:#1a1e19;
+    --line:#2a2f28; --line2:#39402f;
+    --ink:#ece7da; --ink2:#b9b4a4; --dim:#7e7a6c;
+    --amber:#e8a33d; --amber2:#f5c26b; --teal:#43c6b4; --red:#e4573d; --green:#7fb069;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"Zen Kaku Gothic New",-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;
+    --serif:"Shippori Mincho","Hiragino Mincho ProN",serif;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  body{background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(232,163,61,.07), transparent 60%),
+    radial-gradient(900px 600px at -10% 30%, rgba(67,198,180,.05), transparent 60%),
+    var(--bg);}
+  button,[role="button"],select,summary,input{ min-height:36px; }
+  button{font-family:var(--sans);cursor:pointer}
+  .wrap{max-width:1060px;margin:0 auto;padding:14px 14px 60px}
+  .mono{font-family:var(--mono)}
+
+  /* ---------- verdict hero ---------- */
+  .hero{display:grid;grid-template-columns:148px 1fr;gap:16px;align-items:center;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+    border-radius:18px;padding:18px;margin-top:6px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(420px 200px at 12% 0%, rgba(232,163,61,.10), transparent 65%)}
+  .ringwrap{position:relative;width:148px;height:148px}
+  .ringwrap svg{transform:rotate(-90deg)}
+  .ring-bg{stroke:#262b24}.ring-fg{stroke:var(--amber);transition:stroke-dashoffset .5s ease, stroke .5s ease}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-num{font-family:var(--mono);font-size:44px;font-weight:600;line-height:1}
+  .ring-lab{font-size:10px;letter-spacing:.18em;color:var(--dim);margin-top:4px}
+  .verdict{font-family:var(--serif);font-size:clamp(24px,5.4vw,38px);font-weight:700;line-height:1.35;margin:2px 0 6px}
+  .verdict-sub{color:var(--ink2);font-size:13.5px;line-height:1.7;margin:0}
+  .statusline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
+  .stchip{font-family:var(--mono);font-size:11px;padding:5px 9px;border:1px solid var(--line2);border-radius:999px;color:var(--ink2)}
+  .stchip.on{color:#0d0f0c;background:var(--amber);border-color:var(--amber);font-weight:600}
+  .stchip.warn{color:var(--amber2);border-color:var(--amber)}
+  .evchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .evchip{font-size:11.5px;padding:5px 9px;border-radius:6px;background:#23281f;border:1px solid var(--line2);color:var(--ink2)}
+  .evchip b{color:var(--amber2);font-family:var(--mono);font-weight:600}
+  .evchip.hot{border-color:var(--red);color:#f3c1b4}.evchip.hot b{color:#ff9a86}
+  .calibbar{height:6px;background:#23261f;border-radius:99px;overflow:hidden;margin-top:10px;display:none}
+  .calibbar i{display:block;height:100%;background:var(--teal);width:0%;transition:width .3s linear}
+
+  /* ---------- camera ---------- */
+  .stage{margin-top:14px;background:#000;border:1px solid var(--line);border-radius:18px;overflow:hidden;position:relative}
+  .stage video#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;pointer-events:none;z-index:0}
+  .stage canvas#view{display:block;width:100%;aspect-ratio:4/3;background:#050605;position:relative;z-index:1}
+  .stage.rawmode canvas#view{visibility:hidden}
+  .stage.rawmode video#cam{opacity:1;z-index:2}
+  .diagbar{margin-top:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:11px;line-height:1.7;color:var(--ink2);word-break:break-all}
+  .stage .hud{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:4}
+  .hudbox{font-family:var(--mono);font-size:11px;background:rgba(5,6,5,.72);border:1px solid rgba(236,231,218,.18);
+    color:var(--ink);padding:6px 9px;border-radius:8px;backdrop-filter:blur(4px)}
+  .hudbox .k{color:var(--dim)}
+  .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
+  .flash.go{animation:fl .45s ease-out}
+  @keyframes fl{0%{opacity:.85}100%{opacity:0}}
+  .modes{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--panel);border-top:1px solid var(--line)}
+  .mode{flex:1 1 auto;min-width:96px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink2);
+    border-radius:10px;padding:9px 6px;font-size:13px;font-weight:700}
+  .mode small{display:block;font-weight:400;font-size:10.5px;color:var(--dim);margin-top:2px}
+  .mode.sel{background:var(--amber);border-color:var(--amber);color:#141310}
+  .mode.sel small{color:#4d3d17}
+
+  /* ---------- controls ---------- */
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .btn{border-radius:12px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);
+    padding:11px 16px;font-size:14px;font-weight:700;min-height:44px}
+  .btn.primary{background:var(--amber);border-color:var(--amber);color:#141310}
+  .btn.teal{background:transparent;border-color:var(--teal);color:var(--teal)}
+  .btn:disabled{opacity:.34;cursor:default;filter:saturate(.35);border-style:dashed}
+  .btn:active{transform:translateY(1px)}
+  .sens{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:8px 14px;flex:1 1 220px;min-height:44px}
+  .sens label{font-size:12px;color:var(--ink2);white-space:nowrap;font-weight:700}
+  .sens input[type=range]{flex:1;accent-color:var(--amber);min-height:36px}
+  .sens .val{font-family:var(--mono);font-size:12px;color:var(--amber2);width:34px;text-align:right}
+  .camhelp{display:none;margin-top:12px;border:1px solid #6b3a2a;background:#1d1712;border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.8;color:#f0d9c8}
+  .camhelp b{color:#ffb59d}
+  .camhelp ol{margin:6px 0 0;padding-left:19px}
+
+  /* ---------- sensor grid ---------- */
+  h2.sec{font-size:13px;letter-spacing:.14em;color:var(--dim);margin:26px 2px 10px;font-weight:900}
+  h2.sec span{color:var(--ink2);letter-spacing:0;font-weight:500;margin-left:8px;font-size:12px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media(min-width:760px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 13px;position:relative}
+  .card .nm{font-size:12px;color:var(--ink2);font-weight:700;display:flex;align-items:center;gap:7px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#4a4f45;flex:none}
+  .dot.ok{background:var(--green)} .dot.hot{background:var(--red);box-shadow:0 0 0 4px rgba(228,87,61,.18)}
+  .dot.na{background:#3a3e36}
+  .card .vl{font-family:var(--mono);font-size:24px;font-weight:600;margin:7px 0 2px;line-height:1.1}
+  .card .vl small{font-size:11px;color:var(--dim);font-weight:400}
+  .card .bs{font-size:11px;color:var(--dim);font-family:var(--mono)}
+  .bar{height:5px;background:#22261f;border-radius:99px;margin-top:9px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0%;background:var(--teal);border-radius:99px;transition:width .3s ease, background .3s}
+  .bar i.mid{background:var(--amber)} .bar i.high{background:var(--red)}
+
+  .wide{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-top:10px}
+  .wide canvas{display:block;width:100%}
+  .wide .cap{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:6px;flex-wrap:wrap;gap:4px}
+
+  /* ---------- log & shots ---------- */
+  .log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .log li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+  .log li.strong{border-color:#6b3a2a;background:#1d1712}
+  .log .lt{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .log .time{font-family:var(--mono);font-size:12px;color:var(--amber2)}
+  .log .sc{font-family:var(--mono);font-size:12px;color:var(--ink2)}
+  .log .sc b{color:var(--ink);font-size:15px}
+  .log .ds{font-size:12.5px;color:var(--ink2);line-height:1.65;margin-top:4px}
+  .log .tag{display:inline-block;font-size:10.5px;font-weight:900;padding:2px 7px;border-radius:5px;background:#2c2417;color:var(--amber2);margin-right:6px}
+  .log li.strong .tag{background:var(--red);color:#fff}
+  .empty{border:1px dashed var(--line2);border-radius:12px;padding:18px;text-align:center;color:var(--dim);font-size:13px;line-height:1.8}
+  .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  @media(min-width:760px){.shots{grid-template-columns:repeat(6,1fr)}}
+  .shot{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000;text-align:left;padding:0}
+  .shot img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+  .shot span{display:block;font-family:var(--mono);font-size:10px;color:var(--ink2);padding:5px 7px;background:var(--panel)}
+
+  /* ---------- notes ---------- */
+  .notes{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:12px}
+  .notes h3{margin:0 0 8px;font-size:15px}
+  .notes p,.notes li{font-size:13px;line-height:1.85;color:var(--ink2)}
+  .notes ul{margin:6px 0;padding-left:19px}
+  .notes b{color:var(--ink)}
+  .cols{display:grid;gap:14px}
+  @media(min-width:760px){.cols{grid-template-columns:1fr 1fr}}
+  .honest{border:1px solid #57451f;background:#1a160d;border-radius:12px;padding:13px 15px;margin-top:14px}
+  .honest p{margin:0;font-size:13px;line-height:1.85;color:#e6d9b8}
+  /* ---------- new tech ---------- */
+  .caplist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+  .caplist li{display:flex;gap:9px;align-items:baseline;font-size:12.5px;color:var(--ink2);line-height:1.6}
+  .caplist .st{font-family:var(--mono);font-size:11px;flex:none;padding:2px 8px;border-radius:99px;border:1px solid var(--line2)}
+  .caplist .st.ok{color:#0d0f0c;background:var(--green);border-color:var(--green);font-weight:700}
+  .caplist .st.no{color:var(--dim)}
+  .caplist .st.fb{color:var(--amber2);border-color:var(--amber)}
+  details.tech{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:12px}
+  details.tech summary{cursor:pointer;font-weight:700;font-size:13.5px;min-height:36px;display:flex;align-items:center}
+  details.tech p{font-size:12.5px;color:var(--ink2);line-height:1.8}
+  .tgl[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#0b100e}
+  .selwrap{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-height:44px}
+  .selwrap label{font-size:12px;color:var(--ink2);font-weight:700;white-space:nowrap}
+  .selwrap select{background:var(--panel2);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:6px;font-family:var(--sans);max-width:200px;min-height:36px}
+  .txtin{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;color:var(--ink);padding:9px 11px;font-family:var(--sans);font-size:14px;min-height:44px;flex:1 1 170px}
+  .hints{display:flex;flex-direction:column;gap:6px}
+  .hint{font-size:12.5px;color:var(--ink2);background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:8px 11px;line-height:1.6}
+  .hint b{color:var(--amber2)}
+  .clips{display:flex;flex-direction:column;gap:10px}
+  .clip{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .clip video{width:100%;max-height:260px;border-radius:8px;background:#000}
+  .clip audio{width:100%}
+  .clip .cm{display:flex;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:7px;flex-wrap:wrap}
+  .clip a{color:var(--teal)}
+  table.cmp{width:100%;border-collapse:collapse;font-size:12.5px}
+  table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;color:var(--ink2);vertical-align:middle}
+  table.cmp th{color:var(--dim);font-size:11px;letter-spacing:.06em}
+  table.cmp td b{color:var(--ink)}
+  table.cmp .btn{min-height:36px;padding:7px 11px;font-size:12px}
+  .profctl{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+  body.night{--bg:#000;--bg2:#000;--panel:#060202;--panel2:#0b0303;--line:#401112;--line2:#5c1a1c;--ink:#ffc9b8;--ink2:#d99a8a;--dim:#9c6a5e;background:#000}
+  body.night .hero,body.night .card,body.night .wide,body.night .notes,body.night details.tech{background:#050101}
+  footer{color:var(--dim);font-size:11.5px;line-height:1.8;margin-top:26px;text-align:center}
+  @media(max-width:560px){.hero{grid-template-columns:118px 1fr;padding:14px}.ringwrap{width:118px;height:118px}.ring-num{font-size:34px}}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ======== VERDICT ======== -->
+  <section class="hero" aria-label="総合判定">
+    <div class="ringwrap">
+      <svg width="100%" height="100%" viewBox="0 0 148 148">
+        <circle class="ring-bg" cx="74" cy="74" r="64" fill="none" stroke-width="10"/>
+        <circle class="ring-fg" id="ringFg" cx="74" cy="74" r="64" fill="none" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-num" id="scoreNum">–</div>
+        <div class="ring-lab">気配スコア</div>
+      </div>
+    </div>
+    <div>
+      <p class="verdict" id="verdictText">まだ測定していません</p>
+      <p class="verdict-sub" id="verdictSub">①センサーを起動すると、続けて②この部屋の「いつも」を20秒で覚える校正が自動で始まります。部屋を無人の状態にしてから起動してください。判定が出るのは、測定が始まってからです。</p>
+      <div class="statusline">
+        <span class="stchip" id="stPhase">待機中</span>
+        <span class="stchip" id="stCam">カメラ —</span>
+        <span class="stchip" id="stMic">マイク —</span>
+        <span class="stchip" id="stMot">モーション —</span>
+        <span class="stchip" id="stLoc">位置 —</span>
+        <span class="stchip" id="stGpu">解析 CPU</span>
+        <span class="stchip" id="stWake">画面維持 OFF</span>
+      </div>
+      <div class="evchips" id="evChips"></div>
+      <div class="calibbar" id="calibBar"><i id="calibFill"></i></div>
+    </div>
+  </section>
+
+  <!-- ======== CONTROLS ======== -->
+  <div class="controls">
+    <button class="btn primary" id="btnStart">▶ ① センサーを起動して監視をはじめる</button>
+    <button class="btn teal" id="btnCalib" disabled>⟳ ② この部屋の「いつも」を覚える（20秒）</button>
+    <button class="btn" id="btnDemo">デモで動きを試す</button>
+    <button class="btn" id="btnCamTest">カメラだけテスト（最小構成）</button>
+    <div class="sens">
+      <label for="sensRange">感度</label>
+      <input type="range" id="sensRange" min="50" max="200" value="100" />
+      <span class="val" id="sensVal">1.0×</span>
+    </div>
+  </div>
+
+  <div class="camhelp" id="camHelp" role="alert"></div>
+  <div class="camhelp" id="camTestOut" role="status"></div>
+
+  <div class="controls">
+    <button class="btn tgl" id="btnWake" aria-pressed="false">画面を消さない（Wake Lock）</button>
+    <button class="btn tgl" id="btnNight" aria-pressed="false">夜間モード（真っ黒＋赤）</button>
+    <button class="btn tgl" id="btnAdapt" aria-pressed="true">基準をゆっくり追従させる</button>
+    <button class="btn" id="btnTorch" disabled>ライト点灯（暗い部屋用）</button>
+    <div class="selwrap"><label for="selCam">カメラ</label><select id="selCam"><option value="">自動（背面）</option></select></div>
+    <div class="selwrap" id="zoomWrap" style="display:none"><label for="zoomRange">ズーム</label><input type="range" id="zoomRange" min="1" max="1" step="0.1" value="1" style="accent-color:var(--amber);min-height:36px" /></div>
+  </div>
+
+  <!-- ======== CAMERA ======== -->
+  <section class="stage" aria-label="カメラ映像">
+    <video id="cam" playsinline webkit-playsinline muted autoplay aria-hidden="true"></video>
+    <canvas id="view" width="480" height="360"></canvas>
+    <div class="hud">
+      <span class="hudbox"><span class="k">MODE</span> <span id="hudMode">疑似サーモ</span></span>
+      <span class="hudbox"><span class="k">輝度</span> <span id="hudBright">–</span>　<span class="k">動き</span> <span id="hudMotion">–</span>　<span class="k">解析</span> <span id="hudEngine">CPU</span>　<span class="k">FPS</span> <span id="hudFps">–</span></span>
+    </div>
+    <div class="flash" id="flash"></div>
+    <div class="modes" role="group" aria-label="表示モード">
+      <button class="mode sel" data-mode="thermal">疑似サーモ<small>明るさと赤みを熱っぽく</small></button>
+      <button class="mode" data-mode="motion">動き<small>動いた場所だけ光る</small></button>
+      <button class="mode" data-mode="flicker">光のゆらぎ<small>ちらつき・明滅を強調</small></button>
+      <button class="mode" data-mode="edge">輪郭<small>形の変化を見る</small></button>
+      <button class="mode" data-mode="normal">通常<small>計測グリッド付き</small></button>
+      <button class="mode" data-mode="heat">蓄積ヒート<small>動きが集まる場所</small></button>
+      <button class="mode" data-mode="nightred">赤色・夜間<small>暗順応を守る表示</small></button>
+      <button class="mode" data-mode="raw">生映像<small>無加工・カメラそのまま</small></button>
+    </div>
+  </section>
+  <div class="diagbar mono" id="camDiag">カメラ診断：ストリーム なし ／ トラック — ／ 映像 0×0 ／ readyState 0 ／ 再生時刻 0.0s（停止） ／ 処理フレーム 0</div>
+
+  <!-- ======== SENSORS ======== -->
+  <h2 class="sec">全センサー <span>— すべて同時に監視し、異常は合算されます</span></h2>
+  <div class="grid" id="sensorGrid">
+    <div class="card" data-k="motion"><div class="nm"><span class="dot na"></span>映像の動き</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="bright"><div class="nm"><span class="dot na"></span>明るさの変化</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="flicker"><div class="nm"><span class="dot na"></span>光のゆらぎ</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="color"><div class="nm"><span class="dot na"></span>色の偏りの変化</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="audio"><div class="nm"><span class="dot na"></span>音の大きさ</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="lowfreq"><div class="nm"><span class="dot na"></span>低い音（〜150Hz）</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="vib"><div class="nm"><span class="dot na"></span>振動・本体の動き</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="orient"><div class="nm"><span class="dot na"></span>方位・姿勢</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+    <div class="card" data-k="silence"><div class="nm"><span class="dot na"></span>急な静寂</div><div class="vl">–</div><div class="bs">基準 –</div><div class="bar"><i></i></div></div>
+  </div>
+
+  <div class="wide">
+    <canvas id="spectrum" height="86" aria-label="音のスペクトラム"></canvas>
+    <div class="cap"><span>音のスペクトラム（左＝低い音／右＝高い音）</span><span id="specCap">マイク未起動</span></div>
+  </div>
+  <div class="wide">
+    <canvas id="trend" height="72" aria-label="気配スコアの推移"></canvas>
+    <div class="cap"><span>気配スコアの推移（直近2分）</span><span id="trendCap">—</span></div>
+  </div>
+  <div class="wide">
+    <canvas id="falls" height="110" aria-label="音のスペクトログラム履歴"></canvas>
+    <div class="cap"><span>音の流れ（スペクトログラム：上が新しい音／左＝低い音）</span><span id="fallsCap">マイク未起動</span></div>
+  </div>
+  <div class="wide">
+    <div class="cap" style="margin:0 0 8px"><span>動きのかたまり — 大きさと残り方からの推定（断定ではありません）</span><span id="blobCap">—</span></div>
+    <div class="hints" id="blobHints"><div class="hint">監視が始まると、動いた領域の大きさと持続から「ほこり・虫っぽい」「大きめの何かっぽい」といった目安を表示します。</div></div>
+  </div>
+  <div class="wide">
+    <div class="cap" style="margin:0"><span id="locCap">位置情報：未取得</span><span id="batCap"></span><span id="clockCap"></span></div>
+  </div>
+
+  <!-- ======== LOG ======== -->
+  <h2 class="sec">検知ログ <span>— 複数のセンサーが同時に反応した記録ほど、意味が重くなります</span></h2>
+  <ul class="log" id="eventLog"></ul>
+  <div class="empty" id="logEmpty">まだ記録はありません。<br>校正が終わって監視が始まると、「いつも」と違う変化がここに残ります。</div>
+
+  <h2 class="sec">自動スナップショット <span>— 強い同時反応の瞬間に保存されます（タップでダウンロード）</span></h2>
+  <div class="shots" id="shots"></div>
+  <div class="empty" id="shotsEmpty">強い反応が起きると、その瞬間の映像がここに残ります。</div>
+
+  <!-- ======== CLIPS ======== -->
+  <h2 class="sec">イベント映像・音声 <span>— 強い同時反応のとき、短いクリップも残します（この端末・このセッション内のみ）</span></h2>
+  <div class="clips" id="clips"></div>
+  <div class="empty" id="clipsEmpty">強い同時反応が起きると、映像クリップと音声だけの記録（EVP用）がここに残ります。</div>
+
+  <!-- ======== HISTORY & PLACES ======== -->
+  <h2 class="sec">これまでの記録 <span>— ログとスコア履歴はこの端末の中にだけ残ります</span></h2>
+  <div class="wide">
+    <canvas id="history" height="72" aria-label="気配スコアの履歴"></canvas>
+    <div class="cap"><span>気配スコアの履歴（この端末に残した全セッション）</span><span id="histCap">記録なし</span></div>
+  </div>
+
+  <h2 class="sec">場所プロファイル <span>— 部屋ごとの「いつも」を名前で残して、場所同士を比べられます</span></h2>
+  <div class="wide">
+    <div class="profctl">
+      <input class="txtin" id="placeName" type="text" placeholder="場所の名前（例：寝室、実家の仏間）" autocomplete="off" />
+      <button class="btn teal" id="btnSavePlace">今の校正をこの場所で保存</button>
+      <button class="btn" id="btnExport">記録を共有／書き出し</button>
+      <button class="btn" id="btnClearHist">端末内の記録を消す</button>
+    </div>
+    <div id="placeTable"><p style="color:var(--dim);font-size:12.5px;margin:4px 0">まだ場所は保存されていません。校正が終わった部屋で「今の校正をこの場所で保存」を押してください。</p></div>
+    <p style="font-size:12.5px;color:var(--ink2);line-height:1.8;margin:10px 0 0">「読み込む」と、その場所の基準で監視を続けられます。「何かがある場所<b>かも</b>」は、場所同士を比べて初めて見えてくるものです。</p>
+  </div>
+
+  <!-- ======== TECH STATUS ======== -->
+  <details class="tech">
+    <summary>この端末で使えている技術（自動判定）</summary>
+    <ul class="caplist">
+      <li id="capGpu"><span class="st no">判定中</span><span>WebGPU（映像解析のGPU計算）</span></li>
+      <li id="capWake"><span class="st no">判定中</span><span>Screen Wake Lock（監視中の画面維持）</span></li>
+      <li id="capIC"><span class="st no">判定中</span><span>ImageCapture（高解像度スナップショット）</span></li>
+      <li id="capTorch"><span class="st no">判定中</span><span>カメラのライト／ズーム／レンズ切替（カメラ起動後に判定）</span></li>
+      <li id="capMR"><span class="st no">判定中</span><span>MediaRecorder（イベント映像・音声クリップ）</span></li>
+      <li id="capShare"><span class="st no">判定中</span><span>Web Share（記録の共有）</span></li>
+      <li id="capWorker"><span class="st no">判定中</span><span>解析Worker（集計の別スレッド移譲）</span></li>
+      <li id="capStore"><span class="st no">判定中</span><span>端末内保存（ログ・履歴・場所プロファイル）</span></li>
+    </ul>
+    <p>未対応の技術は「使えているふり」をせず、代替手段（CPU解析、キャンバス保存、ダウンロードなど）で同じ目的を果たします。対応状況はこの端末・このブラウザで実際に判定した結果です。</p>
+  </details>
+
+  <!-- ======== NOTES ======== -->
+  <div class="notes">
+    <div class="cols">
+      <div>
+        <h3>このアプリが感知しているもの</h3>
+        <ul>
+          <li><b>カメラ</b>：動き・明るさ・光のゆらぎ（フリッカー）・色の偏り。疑似サーモ表示は「明るさ＋赤み」を熱っぽい色に変換したもので、実温度ではありません</li>
+          <li><b>マイク</b>：音量と周波数。物音だけでなく、聞き取りにくい低い音のうなりも拾います</li>
+          <li><b>加速度・ジャイロ</b>：本体の振動と傾きの変化（机に置いて使うと床の振動も拾えます）</li>
+          <li><b>方位センサー</b>：向いている方角と姿勢の変化</li>
+          <li><b>位置情報</b>：監視場所の記録として表示します（電池残量は、対応ブラウザでのみ起動後に表示）</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Web版では触れないもの（iPhone 15 Pro 本体にはある）</h3>
+        <ul>
+          <li><b>LiDAR</b>：空間の距離・形。Safariからは取得できず、ネイティブ版が必要です</li>
+          <li><b>気圧計・磁気センサーの生データ</b>：同じくWebからは読めません</li>
+          <li><b>本物の温度（サーモグラフィー）</b>：遠赤外線はカメラのフィルターで遮断されるため原理的に不可。必要な場合は外付けサーマルカメラ（FLIR ONE等）が要ります</li>
+        </ul>
+      </div>
+    </div>
+    <h3 style="margin-top:16px">積み増した仕組み</h3>
+    <ul>
+      <li><b>基準の自動追従</b>：夕方で部屋が少しずつ暗くなるような緩やかな変化には基準がゆっくり追従し、急な変化だけを拾います（ボタンで無効化できます）</li>
+      <li><b>急な静寂も異常</b>：いつも鳴っていた音が突然消える変化も、校正後の基準との差として数えます</li>
+      <li><b>蓄積ヒート表示</b>：一瞬の動きではなく「時間とともに動きが集まる場所」を空間に塗ります。かたまり分類は大きさと持続からの目安で、断定ではありません</li>
+      <li><b>記録の持ち出し</b>：ログはJSON／CSVで共有・書き出しでき、強い反応は短い映像と音声クリップでも残ります。クリップはこのセッション内のみ、ログと履歴はこの端末内に保存されます</li>
+    </ul>
+    <div class="honest">
+      <p><b>正直な線引き：</b>このアプリが検知するのは「説明のつかない環境の変化」です。判定はすべて「何かいる<b>かも</b>」の可能性レベルで、幽霊の存在を科学的に証明するものではありません。ただし、無人の部屋で複数のセンサーが同じ瞬間に反応した記録は、偶然では片づけにくい事実として残ります。あとは、あなたの判断です。</p>
+    </div>
+  </div>
+
+  <footer>iPhone Sensor Display — データはこの端末の中だけで処理され、どこにも送信されません。<br>監視中は iPhone を固定し、画面をつけたままにしてください（スリープするとセンサーも止まります）。</footer>
+</div>
+
+
+<canvas id="proc" width="480" height="360" style="display:none"></canvas>
+
+<script type="text/js-worker" id="kehaiWorker">
+var heat=new Float32Array(432), blobs=[];
+self.onmessage=function(e){
+  var g=e.data.grid, W=24, H=18, i;
+  for(i=0;i<432;i++){ var v=g[i]*4.2; heat[i]=Math.max(v, heat[i]*0.94); }
+  var seen=new Uint8Array(432), comps=[], s;
+  for(s=0;s<432;s++){
+    if(g[s]>16 && !seen[s]){
+      var stack=[s], cells=[]; seen[s]=1;
+      while(stack.length){
+        var c=stack.pop(); cells.push(c);
+        var cx=c%W, cy=(c/W)|0, dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+        for(var d=0;d<4;d++){
+          var nx=cx+dirs[d][0], ny=cy+dirs[d][1];
+          if(nx<0||ny<0||nx>=W||ny>=H) continue;
+          var ni=ny*W+nx;
+          if(!seen[ni] && g[ni]>16){ seen[ni]=1; stack.push(ni); }
+        }
+      }
+      comps.push(cells);
+    }
+  }
+  var now=[];
+  comps.forEach(function(cells){
+    var sx=0, sy=0;
+    cells.forEach(function(c){ sx+=c%W; sy+=((c/W)|0); });
+    var cx=sx/cells.length, cy=sy/cells.length, life=1;
+    blobs.forEach(function(b){ var dx=b.cx-cx, dy=b.cy-cy; if(dx*dx+dy*dy<9 && b.life+1>life) life=b.life+1; });
+    now.push({cells:cells.length, cx:cx, cy:cy, life:life});
+  });
+  blobs=now;
+  self.postMessage({heat:Array.from(heat), blobs:now});
+};
+</script>
+<script>
+"use strict";
+/* ================= state ================= */
+var S = {
+  running:false, demo:false, calibrated:false, calibrating:false,
+  calibSamples:null, calibUntil:0, baseline:null,
+  mode:"thermal", sensitivity:1,
+  metrics:{ motion:0, bright:0, flicker:0, color:0, audio:-70, lowfreq:0, vib:0, orient:0, silence:0 },
+  sub:{ motion:0, bright:0, flicker:0, color:0, audio:0, lowfreq:0, vib:0, orient:0, silence:0 },
+  avail:{ motion:false, bright:false, flicker:false, color:false, audio:false, lowfreq:false, vib:false, orient:false, silence:false },
+  combined:0, peakHold:0,
+  heatArr:null, cellGrid:null, adaptive:true, sessionMax:0, lastClipAt:0, _lastHist:0, _lastGray:null, placeName:"",
+  events:[], lastEventAt:0, lastShotAt:0, eventSeq:0,
+  trend:[], brightHist:[], startedAt:null
+};
+var NAMES = { motion:"映像の動き", bright:"明るさ", flicker:"光のゆらぎ", color:"色の偏り", audio:"音", lowfreq:"低い音", vib:"振動", orient:"姿勢", silence:"急な静寂" };
+var UNITS = { motion:"%", bright:"", flicker:"", color:"", audio:"dB", lowfreq:"", vib:"m/s²", orient:"°", silence:"dB" };
+var WEIGHTS = { motion:26, bright:14, flicker:14, color:8, audio:18, lowfreq:8, vib:8, orient:4, silence:6 };
+
+function $(id){ return document.getElementById(id); }
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+function fmt(n,d){ return (n==null||isNaN(n))?"–":Number(n).toFixed(d==null?1:d); }
+function nowTime(){ var d=new Date(); function p(x){return (x<10?"0":"")+x;} return p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds()); }
+
+/* ================= thermal palette ================= */
+var LUT=[];
+(function(){ // iron palette stops
+  var stops=[[0,0,0],[28,0,52],[74,0,96],[122,10,110],[168,32,84],[208,62,44],[238,110,22],[252,166,32],[253,214,92],[255,244,180],[255,255,255]];
+  for(var i=0;i<256;i++){ var t=i/255*(stops.length-1), a=Math.floor(t), f=t-a, A=stops[a], B=stops[Math.min(a+1,stops.length-1)];
+    LUT.push([A[0]+(B[0]-A[0])*f, A[1]+(B[1]-A[1])*f, A[2]+(B[2]-A[2])*f]); }
+})();
+
+/* ================= camera processing ================= */
+var video=$("cam"), proc=$("proc"), pctx=proc.getContext("2d",{willReadFrequently:true});
+var view=$("view"), vctx=view.getContext("2d");
+var PW=480, PH=360, prevGray=null, trail=null, frames=0, fpsT=performance.now(), fps=0;
+var stream=null;    /* the camera stream shown in <video> — single owner: start / camera-switch / watchdog-restart only */
+var micStream=null; /* the microphone's own stream, never merged into the displayed stream */
+var PROC_FRAMES=0, LAST_FRAME_AT=0; /* diagnostic: frames actually drawn by the pipeline */
+var heatCv=document.createElement("canvas"); heatCv.width=24; heatCv.height=18;
+var heatCx=heatCv.getContext("2d");
+
+function drawIdle(){
+  var g=vctx.createLinearGradient(0,0,PW,PH);
+  g.addColorStop(0,"#0a0c0a"); g.addColorStop(.55,"#10130e"); g.addColorStop(1,"#0a0c0a");
+  vctx.fillStyle=g; vctx.fillRect(0,0,PW,PH);
+  vctx.strokeStyle="rgba(236,231,218,.08)"; vctx.lineWidth=1;
+  for(var x=0;x<=PW;x+=48){ vctx.beginPath(); vctx.moveTo(x,0); vctx.lineTo(x,PH); vctx.stroke(); }
+  for(var y=0;y<=PH;y+=48){ vctx.beginPath(); vctx.moveTo(0,y); vctx.lineTo(PW,y); vctx.stroke(); }
+  vctx.fillStyle="rgba(236,231,218,.55)"; vctx.font="600 15px 'Zen Kaku Gothic New',sans-serif"; vctx.textAlign="center";
+  vctx.fillText(S.demo?"デモ映像（合成）":"カメラ待機中", PW/2, PH/2-8);
+  vctx.fillStyle="rgba(236,231,218,.35)"; vctx.font="12px 'Zen Kaku Gothic New',sans-serif";
+  vctx.fillText(S.demo?"センサーの反応だけを再現しています":"「センサーを起動」を押すと映像が始まります", PW/2, PH/2+16);
+}
+drawIdle();
+
+/* demo synthetic frame generator */
+var demoT=0, demoBurst=0;
+function demoFrame(){
+  demoT+=1/30;
+  if(Math.random()<0.006) demoBurst=40+Math.random()*50; // occasional anomaly burst
+  if(demoBurst>0) demoBurst--;
+  var img=pctx.createImageData(PW,PH), d=img.data;
+  var cx=PW/2+Math.sin(demoT*.3)*60, cy=PH/2+Math.cos(demoT*.23)*40;
+  var flick = (Math.random()<0.02)? 26 : Math.sin(demoT*7)*1.5;
+  for(var y=0;y<PH;y+=2){ for(var x=0;x<PW;x+=2){
+    var dx=x-cx, dy=y-cy, dist=Math.sqrt(dx*dx+dy*dy);
+    var base=52+18*Math.sin(x*.02+demoT)+10*Math.cos(y*.03);
+    var blob=Math.max(0, 130-dist)*(demoBurst>0?1.5:0.8);
+    var v=base+blob+flick+ (Math.random()*7-3.5);
+    var r=clamp(v*1.15,0,255), gg=clamp(v,0,255), b=clamp(v*.8,0,255);
+    for(var oy=0;oy<2;oy++) for(var ox=0;ox<2;ox++){
+      var i=((y+oy)*PW+(x+ox))*4; d[i]=r; d[i+1]=gg; d[i+2]=b; d[i+3]=255; }
+  }}
+  pctx.putImageData(img,0,0);
+  return img;
+}
+
+function processFrame(){
+  var img;
+  if(S.demo){ img=demoFrame(); S._newFrame=true; }
+  else{
+    if(video.readyState<2) return;
+    /* A frame counts as PROCESSED only when the video clock actually
+       moved: redrawing the same frozen frame must not refresh the
+       freshness timestamps the watchdogs rely on, or a stalled stream
+       would look alive forever and self-recovery would never fire. */
+    S._newFrame = video.currentTime !== S._procCT; S._procCT = video.currentTime;
+    // cover-draw video into proc canvas
+    var vw=video.videoWidth, vh=video.videoHeight; if(!vw) return;
+    var s=Math.max(PW/vw, PH/vh), dw=vw*s, dh=vh*s;
+    pctx.drawImage(video,(PW-dw)/2,(PH-dh)/2,dw,dh);
+    img=pctx.getImageData(0,0,PW,PH);
+  }
+  var d=img.data, n=PW*PH;
+  var gray=new Float32Array(n);
+  var sumB=0, sumR=0, sumBl=0;
+  for(var i=0;i<n;i++){ var j=i*4, r=d[j],g=d[j+1],b=d[j+2];
+    var gr=(r*0.299+g*0.587+b*0.114); gray[i]=gr; sumB+=gr; sumR+=r; sumBl+=b; }
+  var bright=sumB/n, colorIdx=(sumR-sumBl)/n;
+  // motion
+  var motion=0;
+  if(prevGray){ var acc=0; for(var k=0;k<n;k+=2){ acc+=Math.abs(gray[k]-prevGray[k]); } motion=acc/(n/2)/2.55; }
+  // metrics
+  S.metrics.bright=bright; S.metrics.motion=motion; S._lastGray=gray;
+  // spatial cell grid (24x18) for the accumulation worker — every other frame is enough
+  if(prevGray && !S._cgSkip){
+    var cg=new Float32Array(432), cc=new Uint16Array(432);
+    for(var yy=0;yy<PH;yy++){ var row=(yy/20)|0, baseI=yy*PW;
+      for(var xx=0;xx<PW;xx++){ var cell=row*24+((xx/20)|0); cg[cell]+=Math.abs(gray[baseI+xx]-prevGray[baseI+xx]); cc[cell]++; } }
+    for(var ci=0;ci<432;ci++) cg[ci]=cg[ci]/cc[ci]/2.55;
+    S.cellGrid=cg;
+  }
+  S._cgSkip=!S._cgSkip;
+  if(S._lastColor==null) S._lastColor=colorIdx;
+  S.metrics.color=Math.abs(colorIdx-S._lastColor)*3 + (S.metrics.color||0)*0.6; S._lastColor=colorIdx;
+  S.brightHist.push(bright); if(S.brightHist.length>45) S.brightHist.shift();
+  if(S.brightHist.length>10){ var m=0,i2; for(i2=0;i2<S.brightHist.length;i2++) m+=S.brightHist[i2]; m/=S.brightHist.length;
+    var v=0; for(i2=0;i2<S.brightHist.length;i2++) v+=(S.brightHist[i2]-m)*(S.brightHist[i2]-m); S.metrics.flicker=Math.sqrt(v/S.brightHist.length); }
+  S.avail.motion=S.avail.bright=S.avail.flicker=S.avail.color=true;
+
+  // ---- render by mode ----
+  if(S.mode==="raw"){ /* the stage is showing the <video> element itself;
+       analysis above still ran, only the canvas render is skipped */
+    prevGray=gray; afterFrame(); return; }
+  var out=pctx.createImageData(PW,PH), o=out.data;
+  if(!trail) trail=new Float32Array(n);
+  if(S.mode==="thermal"){
+    for(var p=0;p<n;p++){ var t=clamp(Math.round(gray[p]*0.82 + (d[p*4]-gray[p])*0.9 + 26),0,255), c=LUT[t], q=p*4;
+      o[q]=c[0]; o[q+1]=c[1]; o[q+2]=c[2]; o[q+3]=255; }
+  } else if(S.mode==="motion"){
+    for(var p2=0;p2<n;p2++){ var df=prevGray?Math.abs(gray[p2]-prevGray[p2]):0;
+      trail[p2]=Math.max(df*2.6, trail[p2]*0.90); var tv=clamp(trail[p2],0,255), q2=p2*4;
+      o[q2]=tv; o[q2+1]=tv*0.72; o[q2+2]=tv*0.30; o[q2+3]=255; }
+  } else if(S.mode==="flicker"){
+    for(var p3=0;p3<n;p3++){ var df2=prevGray?Math.abs(gray[p3]-prevGray[p3])*3.2:0, q3=p3*4;
+      var base=gray[p3]*0.22; o[q3]=base+df2*0.4; o[q3+1]=base+df2*0.95; o[q3+2]=base+df2*0.85; o[q3+3]=255; }
+  } else if(S.mode==="edge"){
+    for(var y=1;y<PH-1;y++){ for(var x=1;x<PW-1;x++){ var idx=y*PW+x;
+      var gx=-gray[idx-PW-1]-2*gray[idx-1]-gray[idx+PW-1]+gray[idx-PW+1]+2*gray[idx+1]+gray[idx+PW+1];
+      var gy=-gray[idx-PW-1]-2*gray[idx-PW]-gray[idx-PW+1]+gray[idx+PW-1]+2*gray[idx+PW]+gray[idx+PW+1];
+      var e=clamp(Math.sqrt(gx*gx+gy*gy)*0.9,0,255), q4=idx*4;
+      o[q4]=e*0.95; o[q4+1]=e; o[q4+2]=e*0.9; o[q4+3]=255; } }
+  } else if(S.mode==="heat"){
+    vctx.fillStyle="#050605"; vctx.fillRect(0,0,PW,PH);
+    if(S.heatArr){
+      var hd=heatCx.createImageData(24,18), mx=0.001, hi, hj;
+      for(hi=0;hi<432;hi++) if(S.heatArr[hi]>mx) mx=S.heatArr[hi];
+      for(hj=0;hj<432;hj++){ var hv=clamp(Math.round(S.heatArr[hj]/mx*255),0,255), hc=LUT[hv], hq=hj*4;
+        hd.data[hq]=hc[0]; hd.data[hq+1]=hc[1]; hd.data[hq+2]=hc[2]; hd.data[hq+3]=255; }
+      heatCx.putImageData(hd,0,0);
+      vctx.imageSmoothingEnabled=true; vctx.drawImage(heatCv,0,0,PW,PH);
+      vctx.fillStyle="rgba(236,231,218,.8)"; vctx.font="12px 'Zen Kaku Gothic New',sans-serif"; vctx.textAlign="left";
+      vctx.fillText("時間とともに動きが集まった場所",12,22);
+    } else {
+      vctx.fillStyle="rgba(236,231,218,.5)"; vctx.font="13px 'Zen Kaku Gothic New',sans-serif"; vctx.textAlign="center";
+      vctx.fillText("動きの蓄積を待っています",PW/2,PH/2);
+    }
+    prevGray=gray; afterFrame(); return;
+  } else if(S.mode==="nightred"){
+    for(var p4=0;p4<n;p4++){ var q5=p4*4; o[q5]=clamp(gray[p4]*1.15,0,255); o[q5+1]=gray[p4]*0.16; o[q5+2]=gray[p4]*0.10; o[q5+3]=255; }
+  } else { // normal + grid
+    out=img;
+    vctx.putImageData(out,0,0);
+    vctx.strokeStyle="rgba(67,198,180,.35)"; vctx.lineWidth=1;
+    vctx.strokeRect(PW/2-40,PH/2-40,80,80);
+    vctx.beginPath(); vctx.moveTo(PW/2-56,PH/2); vctx.lineTo(PW/2+56,PH/2); vctx.moveTo(PW/2,PH/2-56); vctx.lineTo(PW/2,PH/2+56); vctx.stroke();
+    prevGray=gray; afterFrame(); return;
+  }
+  vctx.putImageData(out,0,0);
+  prevGray=gray; afterFrame();
+}
+function afterFrame(){
+  frames++;
+  if(S._newFrame !== false){ PROC_FRAMES++; LAST_FRAME_AT=performance.now(); }
+  var t=performance.now();
+  if(t-fpsT>=1000){ fps=frames*1000/(t-fpsT); frames=0; fpsT=t;
+    $("hudFps").textContent=Math.round(fps); $("hudBright").textContent=fmt(S.metrics.bright,0);
+    $("hudMotion").textContent=fmt(S.metrics.motion,1)+"%"; }
+}
+function frameLoop(){
+  /* Schedule the next frame FIRST and never let an exception in frame
+     processing or scoring kill the loop: previously one throw stopped
+     rendering permanently while the stream was actually live, which
+     looked exactly like "the camera never started". */
+  requestAnimationFrame(frameLoop);
+  if(!(S.running||S.demo)) return;
+  /* Analysis frame-rate cap (~18fps): processFrame does a full-frame
+     480x360 luminance / diff / render pass, and running it on every
+     rAF (up to 60fps) is pure heat, thermal throttling and battery
+     drain during overnight monitoring. The analysis does not need
+     more than this — scoring ticks at 4Hz — and the raw <video>
+     display itself is rendered by the browser independently of this
+     loop, so the live picture stays full-rate either way. */
+  var nowP=performance.now();
+  if(nowP-(frameLoop._lastProc||0)<55) return;
+  frameLoop._lastProc=nowP;
+  try{ processFrame(); frameLoop._errs=0; }
+  catch(e){
+    frameLoop._errs=(frameLoop._errs||0)+1;
+    prevGray=null; trail=null; /* drop possibly-corrupt frame state */
+    if(frameLoop._errs===30){
+      showCamError("映像の処理でエラーが続いています",
+        "カメラ自体は掴めていますが、フレーム処理が繰り返し失敗しています（"+((e&&e.name)||"Error")+"）。",
+        ["「● 監視中」を押して止め、もう一度起動する","繰り返す場合は、上のエラー内容をそのまま教えてください"]);
+    }
+  }
+  try{ tick(); }catch(e){}
+  /* Self-heal playback: if the stream is live but the element is still
+     paused (play() lost the gesture race), retry at most every 2s. */
+  if(stream && !S.demo && video.paused){
+    var nowfl=performance.now();
+    if(nowfl-(frameLoop._pr||0)>2000){ frameLoop._pr=nowfl;
+      try{ var fp=video.play(); if(fp && fp.catch) fp.catch(function(){}); }catch(e){}
+    }
+  }
+}
+requestAnimationFrame(frameLoop);
+
+/* ================= audio ================= */
+var AC=null, analyser=null, freqData=null, timeData=null;
+/* The mic chip must tell the truth about the AudioContext, not just the
+   stream: a live mic feeding a SUSPENDED context yields fixed silence
+   (-70dB) forever while looking "available", which silently kills both
+   audio metrics. Surface the context state on the chip instead. */
+function micChip(){
+  var chip=$("stMic"); if(!chip || !AC) return;
+  if(AC.state==="running"){ chip.textContent="マイク ON"; chip.classList.add("on"); chip.classList.remove("warn"); }
+  else{ chip.textContent="マイク ON（音声処理 "+AC.state+"）"; chip.classList.add("warn"); chip.classList.remove("on"); }
+}
+/* iOS Safari creates an AudioContext suspended when the tap's transient
+   activation was consumed by the camera/mic permission dialogs.
+   resume() is therefore called at creation, on every user tap, from
+   the audio loop (throttled) and on statechange — a suspended context
+   is retried until it runs, never left silent-dead. */
+function resumeAudio(){
+  if(!AC) return;
+  if(AC.state==="suspended" || AC.state==="interrupted"){
+    try{ var p=AC.resume(); if(p && p.then) p.then(function(){ micChip(); }).catch(function(){ micChip(); }); }catch(e){}
+  }
+  micChip();
+}
+document.addEventListener("pointerdown", function(){ resumeAudio(); });
+function startAudio(streamObj){
+  try{
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    AC.onstatechange=function(){ micChip(); if(AC.state==="suspended") resumeAudio(); };
+    var src=AC.createMediaStreamSource(streamObj);
+    analyser=AC.createAnalyser(); analyser.fftSize=2048; analyser.smoothingTimeConstant=0.55;
+    src.connect(analyser);
+    freqData=new Uint8Array(analyser.frequencyBinCount);
+    timeData=new Uint8Array(analyser.fftSize);
+    S.avail.audio=S.avail.lowfreq=true;
+    resumeAudio();
+    audioLoop();
+  }catch(e){ $("stMic").textContent="マイク ×"; }
+}
+var specC=$("spectrum"), sctx=specC.getContext("2d");
+function audioLoop(){
+  if(!analyser) return;
+  requestAnimationFrame(audioLoop);
+  if(AC && AC.state!=="running"){ /* found suspended mid-run: retry resume, throttled */
+    var nowA=performance.now();
+    if(nowA-(audioLoop._ra||0)>2000){ audioLoop._ra=nowA; resumeAudio(); }
+  }
+  analyser.getByteTimeDomainData(timeData);
+  var sum=0; for(var i=0;i<timeData.length;i++){ var v=(timeData[i]-128)/128; sum+=v*v; }
+  var rms=Math.sqrt(sum/timeData.length);
+  S.metrics.audio = rms>0.0004 ? clamp(20*Math.log10(rms), -70, 0) : -70;
+  analyser.getByteFrequencyData(freqData);
+  var sr=AC.sampleRate, lowEnd=Math.max(2,Math.floor(150/(sr/2)*freqData.length)), ls=0;
+  for(var j=0;j<lowEnd;j++) ls+=freqData[j];
+  S.metrics.lowfreq=ls/lowEnd/2.55;
+  var W=specC.width=specC.clientWidth* (window.devicePixelRatio>1?1.5:1), H=specC.height;
+  sctx.clearRect(0,0,W,H);
+  var bars=64, bw=W/bars;
+  for(var b2=0;b2<bars;b2++){ var idx=Math.floor(Math.pow(b2/bars,1.7)*freqData.length*0.72);
+    var val=freqData[idx]/255, h=Math.max(2,val*(H-6));
+    sctx.fillStyle = idx<lowEnd ? "#e8a33d" : "#43c6b4";
+    sctx.fillRect(b2*bw+1, H-h, bw-2, h); }
+  var peak=0,pi=0; for(var k2=4;k2<freqData.length;k2++){ if(freqData[k2]>peak){peak=freqData[k2];pi=k2;} }
+  $("specCap").textContent="音量 "+fmt(S.metrics.audio,0)+" dB（相対）／ 主成分 約"+Math.round(pi*(sr/2)/freqData.length)+" Hz／ 低音 "+fmt(S.metrics.lowfreq,0)+"%";
+  drawWaterfall(freqData);
+}
+
+/* ================= motion / orientation ================= */
+var lastOrient=null;
+function onMotion(e){
+  var a=e.accelerationIncludingGravity; if(!a) return;
+  var mag=Math.sqrt((a.x||0)*(a.x||0)+(a.y||0)*(a.y||0)+(a.z||0)*(a.z||0));
+  var dev=Math.abs(mag-9.81);
+  var r=e.rotationRate, rot=r?Math.sqrt((r.alpha||0)*(r.alpha||0)+(r.beta||0)*(r.beta||0)+(r.gamma||0)*(r.gamma||0)):0;
+  S.metrics.vib=dev + rot*0.004;
+  S.avail.vib=true;
+}
+function onOrient(e){
+  if(e.alpha==null) return;
+  var cur={a:e.alpha,b:e.beta||0,g:e.gamma||0};
+  if(lastOrient){ var da=Math.min(Math.abs(cur.a-lastOrient.a),360-Math.abs(cur.a-lastOrient.a));
+    var d=Math.sqrt(da*da+(cur.b-lastOrient.b)*(cur.b-lastOrient.b)+(cur.g-lastOrient.g)*(cur.g-lastOrient.g));
+    S.metrics.orient=S.metrics.orient*0.7 + d*0.3; }
+  lastOrient=cur; S._heading=e.webkitCompassHeading!=null?e.webkitCompassHeading:e.alpha;
+  S.avail.orient=true;
+}
+window.addEventListener("devicemotion",onMotion);
+window.addEventListener("deviceorientation",onOrient);
+
+/* ================= scoring ================= */
+function meanStd(arr){ var m=0,i; for(i=0;i<arr.length;i++) m+=arr[i]; m/=arr.length; var v=0;
+  for(i=0;i<arr.length;i++) v+=(arr[i]-m)*(arr[i]-m); return {m:m, s:Math.sqrt(v/arr.length)}; }
+
+function computeScores(){
+  var keys=Object.keys(NAMES), wsum=0, acc=0, fired=[];
+  keys.forEach(function(k){
+    var sub=0;
+    if(S.avail[k]){
+      if(S.calibrated && S.baseline && S.baseline[k]){
+        var b=S.baseline[k], eps={motion:.25,bright:1.2,flicker:.25,color:.3,audio:1.6,lowfreq:1.2,vib:.05,orient:.4,silence:2}[k]||0.3;
+        var z=(S.metrics[k]-b.m)/Math.max(b.s,eps);
+        if(k==="bright"||k==="color") z=Math.abs(z);
+        sub=clamp((z-1.6)/3.6*100,0,100)*S.sensitivity;
+      } else {
+        var th={motion:7,bright:26,flicker:6,color:9,audio:-26,lowfreq:32,vib:1.4,orient:9}[k];
+        var val=(k==="bright")?0:S.metrics[k];
+        sub = k==="audio" ? clamp((S.metrics.audio-(-52))/30*100,0,100)*S.sensitivity
+             : clamp(val/th*62,0,100)*S.sensitivity;
+        if(k==="bright") sub=0;
+      }
+      sub=clamp(sub,0,100);
+      acc+=sub*WEIGHTS[k]; wsum+=WEIGHTS[k];
+      if(sub>=55) fired.push({k:k,sub:Math.round(sub),val:S.metrics[k]});
+    }
+    S.sub[k]=sub;
+  });
+  var combined=wsum? acc/wsum : 0;
+  if(fired.length>=3) combined=clamp(combined+10,0,100);
+  else if(fired.length===2) combined=clamp(combined+5,0,100);
+  S.combined=S.combined*0.55+combined*0.45;
+  return fired;
+}
+
+function verdictFor(score){
+  if(!S.running && !S.demo) return ["まだ測定していません","①センサーを起動すると、続けて②この部屋の「いつも」を20秒で覚える校正が自動で始まります。部屋を無人の状態にしてから起動してください。"];
+  if(S.calibrating) return ["この部屋の「いつも」を覚えています…","部屋を無人の状態にして、そのまま動かずにお待ちください。"];
+  if(!S.calibrated) return ["手探りで見守っています","まだ校正前なので判定は粗めです。「いつも」を覚えさせると、複数のセンサーの同時変化を正確に拾えます。"];
+  if(score<18) return ["今は静かです","すべてのセンサーが「いつも」の範囲内です。"];
+  if(score<38) return ["少しだけ、空気が動いています","小さな変化があります。単独のセンサーの反応で、環境要因の可能性が高い状態です。"];
+  if(score<60) return ["何かいるかも","複数の変化が重なり始めています。下のログで、どのセンサーが反応したか確認してください。"];
+  if(score<80) return ["何かいるかも","複数のセンサーが同時に反応しています。偶然が重なっただけとは言い切れない動きです。"];
+  return ["ここは、何かがある場所かも","強い同時反応が続いています。スナップショットとログに、その瞬間を残しました。"];
+}
+
+/* ================= UI update ================= */
+var ring=$("ringFg"), CIRC=402;
+function paintUI(fired){
+  var sc=S.combined;
+  $("scoreNum").textContent=(S.running||S.demo)? Math.round(sc) : "–";
+  ring.style.strokeDashoffset=CIRC-(CIRC*clamp(sc,0,100)/100);
+  ring.style.stroke = sc>=80? "#e4573d" : sc>=55? "#e8863d" : sc>=32? "#e8a33d" : "#43c6b4";
+  var v=verdictFor(sc);
+  if($("verdictText").textContent!==v[0]) $("verdictText").textContent=v[0];
+  $("verdictSub").textContent=v[1];
+  // evidence chips
+  var html="";
+  fired.slice().sort(function(a,b){return b.sub-a.sub;}).slice(0,4).forEach(function(f){
+    html+='<span class="evchip'+(f.sub>=75?" hot":"")+'">'+NAMES[f.k]+" <b>"+f.sub+"</b></span>"; });
+  $("evChips").innerHTML = html || ((S.running||S.demo)&&S.calibrated? '<span class="evchip">反応しているセンサーはありません</span>' : "");
+  // cards
+  Object.keys(NAMES).forEach(function(k){
+    var card=document.querySelector('.card[data-k="'+k+'"]'); if(!card) return;
+    var dot=card.querySelector(".dot"), vl=card.querySelector(".vl"), bs=card.querySelector(".bs"), bar=card.querySelector(".bar i");
+    var sub=S.sub[k]||0;
+    dot.className="dot "+(!S.avail[k]?"na":(sub>=55?"hot":"ok"));
+    var val=S.metrics[k];
+    vl.innerHTML = S.avail[k]? fmt(val, k==="audio"?0:1)+" <small>"+UNITS[k]+"</small>" : "利用不可";
+    if(S.avail[k] && k==="orient" && S._heading!=null) vl.innerHTML=fmt(S._heading,0)+" <small>° 方位</small>";
+    bs.textContent = S.calibrated&&S.baseline&&S.baseline[k] ? "基準 "+fmt(S.baseline[k].m,1)+" ±"+fmt(S.baseline[k].s,1) : (S.avail[k]?"基準 未校正":"—");
+    bar.style.width=clamp(sub,0,100)+"%";
+    bar.className= sub>=70?"high": sub>=40?"mid":"";
+  });
+  // phase chip
+  var ph=$("stPhase");
+  if(S.calibrating){ ph.textContent="校正中… あと"+Math.max(0,Math.ceil((S.calibUntil-performance.now())/1000))+"秒"; ph.className="stchip warn"; }
+  else if(S.running||S.demo){ ph.textContent=S.calibrated?"監視中（校正済み）":"監視中（未校正）"; ph.className="stchip on"; }
+  else { ph.textContent="待機中"; ph.className="stchip"; }
+  $("clockCap").textContent="現在 "+nowTime()+(S.startedAt? " ／ 監視開始 "+S.startedAt:"");
+}
+
+/* trend graph */
+var trendC=$("trend"), tctx=trendC.getContext("2d");
+function paintTrend(){
+  var W=trendC.width=trendC.clientWidth*(window.devicePixelRatio>1?1.5:1), H=trendC.height;
+  tctx.clearRect(0,0,W,H);
+  tctx.strokeStyle="rgba(236,231,218,.12)"; tctx.beginPath(); tctx.moveTo(0,H*0.4); tctx.lineTo(W,H*0.4); tctx.stroke();
+  if(S.trend.length<2) return;
+  tctx.beginPath();
+  S.trend.forEach(function(v,i){ var x=i/(119)*W, y=H-4-(v/100)*(H-10); i?tctx.lineTo(x,y):tctx.moveTo(x,y); });
+  tctx.strokeStyle="#e8a33d"; tctx.lineWidth=1.6; tctx.stroke();
+  tctx.lineTo((S.trend.length-1)/119*W,H); tctx.lineTo(0,H); tctx.closePath();
+  tctx.fillStyle="rgba(232,163,61,.12)"; tctx.fill();
+  $("trendCap").textContent="現在 "+Math.round(S.combined)+" ／ 最大 "+Math.round(Math.max.apply(null,S.trend.concat([0])));
+}
+
+/* ================= events & snapshots ================= */
+function logEvent(fired, score, strong){
+  S.eventSeq++;
+  var li=document.createElement("li"); if(strong) li.className="strong";
+  var desc=fired.map(function(f){ return NAMES[f.k]+"（"+f.sub+"）"; }).join("・");
+  li.innerHTML='<div class="lt"><span class="time">'+nowTime()+'</span><span class="sc">'+(strong?'<span class="tag">同時反応</span>':"")+'気配スコア <b>'+Math.round(score)+"</b></span></div>"+
+    '<div class="ds">'+(strong? "複数のセンサーが同じ瞬間に反応しました。" : "単独センサーの反応です。")+" 反応： "+desc+"。"+
+    (strong? "「何かいるかも」しれない変化として記録します。" : "環境要因の可能性も含めて記録します。")+"</div>";
+  var log=$("eventLog"); log.insertBefore(li, log.firstChild);
+  while(log.children.length>40) log.removeChild(log.lastChild);
+  $("logEmpty").style.display="none";
+  S.events.push({t:nowTime(), score:score, fired:fired, strong:strong});
+  persistEvent({t:new Date().toLocaleString("ja-JP"), score:Math.round(score), strong:strong,
+    names:fired.map(function(f){ return NAMES[f.k]; })});
+}
+function takeSnapshot(score, fired){
+  if(window.ImageCapture && stream && !S.demo){
+    try{
+      new ImageCapture(stream.getVideoTracks()[0]).takePhoto()
+        .then(function(blob){ shotFromURL(URL.createObjectURL(blob), score); })
+        .catch(function(){ canvasSnap(score); });
+      return;
+    }catch(e){}
+  }
+  canvasSnap(score);
+}
+function shotFromURL(url, score){
+  var b=document.createElement("button"); b.className="shot"; b.type="button";
+  b.innerHTML='<img alt="検知時の映像（高解像度） '+nowTime()+'" src="'+url+'"><span>'+nowTime()+" ／ スコア "+Math.round(score)+" ／ 高解像度</span>";
+  b.addEventListener("click",function(){ var a=document.createElement("a"); a.href=url; a.download="kehai-"+Date.now()+".jpg"; a.click(); });
+  var box=$("shots"); box.insertBefore(b, box.firstChild);
+  while(box.children.length>12) box.removeChild(box.lastChild);
+  $("shotsEmpty").style.display="none";
+  var fl=$("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
+}
+function canvasSnap(score){
+  try{
+    var url=view.toDataURL("image/jpeg",0.82);
+    var b=document.createElement("button"); b.className="shot"; b.type="button";
+    b.innerHTML='<img alt="検知時の映像 '+nowTime()+'" src="'+url+'"><span>'+nowTime()+" ／ スコア "+Math.round(score)+"</span>";
+    b.addEventListener("click",function(){ var a=document.createElement("a"); a.href=url; a.download="kehai-"+Date.now()+".jpg"; a.click(); });
+    var box=$("shots"); box.insertBefore(b, box.firstChild);
+    while(box.children.length>12) box.removeChild(box.lastChild);
+    $("shotsEmpty").style.display="none";
+    var fl=$("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
+  }catch(e){}
+}
+
+/* ================= main tick (4Hz, driven by both rAF and interval) ================= */
+var lastTickMs=0;
+function tick(){
+  var nowMs=performance.now(); if(nowMs-lastTickMs<240) return; lastTickMs=nowMs;
+  if(!(S.running||S.demo)) return;
+  if(S.demo){ // synthetic audio / vib metrics for demo
+    var burst=demoBurst>0;
+    S.metrics.audio = burst? -18-Math.random()*6 : -52+Math.random()*5;
+    S.metrics.lowfreq = burst? 55+Math.random()*25 : 8+Math.random()*6;
+    S.metrics.vib = burst? 1.1+Math.random()*0.8 : 0.03+Math.random()*0.05;
+    S.metrics.orient = burst? 6+Math.random()*6 : Math.random()*1.2;
+    S.avail.audio=S.avail.lowfreq=S.avail.vib=S.avail.orient=true;
+  }
+  // sudden silence: only meaningful against a calibrated audio baseline
+  S.avail.silence = !!S.avail.audio && S.calibrated && !S.demo;
+  if(S.avail.silence && S.baseline && S.baseline.audio) S.metrics.silence=Math.max(0, S.baseline.audio.m - S.metrics.audio);
+  else S.metrics.silence=0;
+  if(S.calibrating){
+    var ks=Object.keys(NAMES);
+    ks.forEach(function(k){ if(S.avail[k]) S.calibSamples[k].push(S.metrics[k]); });
+    $("calibFill").style.width=clamp(100-(S.calibUntil-performance.now())/200,0,100)+"%";
+    if(performance.now()>=S.calibUntil) finishCalib();
+    paintUI([]); return;
+  }
+  var fired=computeScores();
+  // adaptive baseline: quietly follow gradual room drift, never sudden changes
+  if(S.calibrated && S.adaptive && S.combined<25 && S.baseline){
+    Object.keys(S.baseline).forEach(function(k){
+      if(k==="silence") return; var b=S.baseline[k]; if(!b||!S.avail[k]) return;
+      b.m += (S.metrics[k]-b.m)*0.008;
+    });
+  }
+  if(S.combined>S.sessionMax) S.sessionMax=S.combined;
+  if(performance.now()-S._lastHist>5000){
+    S._lastHist=performance.now();
+    store.history.push({t:Date.now(), s:Math.round(S.combined)});
+    if(store.history.length>1200) store.history.shift();
+    saveStore(); paintHistory();
+  }
+  if(S.cellGrid){
+    if(workerOK && heatWorker){ try{ heatWorker.postMessage({grid:S.cellGrid}); }catch(e){} }
+    else localHeat(S.cellGrid);
+  }
+  S.trend.push(S.combined); if(S.trend.length>120) S.trend.shift();
+  paintTrend();
+  // event logic: coalesce 6s; strong = 2+ sensors together
+  var strong=fired.length>=2 && S.combined>=42;
+  var single=fired.length>=1 && S.combined>=34;
+  if((strong||single) && performance.now()-S.lastEventAt>6000){
+    S.lastEventAt=performance.now();
+    logEvent(fired, S.combined, strong);
+    if(strong && S.combined>=55 && performance.now()-S.lastShotAt>12000){ S.lastShotAt=performance.now(); takeSnapshot(S.combined, fired); }
+    if(strong && S.combined>=55 && performance.now()-S.lastClipAt>25000){ S.lastClipAt=performance.now(); recordEventClip(); }
+  }
+  paintUI(fired);
+}
+setInterval(tick,250);
+
+/* ================= calibration ================= */
+function startCalib(){
+  if(!(S.running||S.demo)) return;
+  S.calibrating=true; S.calibrated=false; S.calibSamples={};
+  Object.keys(NAMES).forEach(function(k){ S.calibSamples[k]=[]; });
+  S.calibUntil=performance.now()+20000;
+  $("calibBar").style.display="block"; $("calibFill").style.width="0%";
+  $("btnCalib").disabled=true;
+}
+function finishCalib(){
+  S.calibrating=false; S.baseline={};
+  Object.keys(NAMES).forEach(function(k){
+    var arr=S.calibSamples[k]; if(arr && arr.length>12) S.baseline[k]=meanStd(arr);
+  });
+  if(S.baseline.audio) S.baseline.silence={m:0,s:2.5};
+  S.calibrated=Object.keys(S.baseline).length>=3;
+  $("calibBar").style.display="none"; $("btnCalib").disabled=false;
+  $("btnCalib").textContent="⟳ ② 校正をやり直す（20秒）";
+  if(S.calibrated){ S.lastEventAt=performance.now();
+    var li=document.createElement("li");
+    li.innerHTML='<div class="lt"><span class="time">'+nowTime()+'</span><span class="sc">校正完了</span></div><div class="ds">この部屋の「いつも」を覚えました。ここから外れた変化を監視します。</div>';
+    var log=$("eventLog"); log.insertBefore(li,log.firstChild); $("logEmpty").style.display="none";
+  }
+}
+
+/* ================= start sensors ================= */
+/* Camera is requested on its own first: a microphone refusal must never
+   take the camera down with it. The constraint ladder starts from the
+   simplest rear-camera request and falls back to plain {video:true};
+   resolution is only requested via applyConstraints after the stream
+   is live, so an OverconstrainedError cannot kill startup. */
+function showCamError(title, detail, steps){
+  var box=$("camHelp"); if(!box) return;
+  var h="<b>"+escapeHtml(title)+"</b>";
+  if(detail) h+="<br>"+escapeHtml(detail);
+  if(steps && steps.length) h+="<ol><li>"+steps.map(escapeHtml).join("</li><li>")+"</li></ol>";
+  box.innerHTML=h; box.style.display="block";
+  try{ box.scrollIntoView({behavior:"smooth", block:"nearest"}); }catch(e){}
+}
+function hideCamError(){ var box=$("camHelp"); if(box) box.style.display="none"; }
+function describeCamError(e){
+  var name=(e&&e.name)||"", msg=(e&&e.message)||"";
+  var sig=name+(msg? "："+msg : "");
+  var low=(name+" "+msg).toLowerCase();
+  if(name==="TimeoutError"){
+    return { title:"カメラから応答がありませんでした",
+      detail:"カメラ取得の要求を出しましたが、制限時間内に応答が返りませんでした（"+sig+"）。許可ダイアログ自体が出ていないまま止まっている状態です。",
+      steps:["このページを iPhone の Safari で直接開いてから、もう一度起動する（アプリ内ブラウザでは応答が返らないことがあります）",
+             "他のカメラ使用中アプリを閉じてから再試行する",
+             "それでも応答がない場合は、上のエラー内容をそのまま教えてください"] };
+  }
+  if(low.indexOf("policy")>=0 || low.indexOf("enabled in this document")>=0 || low.indexOf("not allowed in this document")>=0){
+    return { title:"この表示（アプリ内の埋め込み画面）ではカメラが塞がれています",
+      detail:"あなたが拒否したのではなく、表示している側の枠（Permissions Policy）がカメラを許可していないため、ブラウザが要求自体を弾きました（"+sig+"）。端末の設定を変えても、この表示の中では直りません。",
+      steps:["このページを iPhone の Safari で直接開いてから起動する",
+             "Safari で開けば、通常どおりカメラ許可のダイアログが出ます"] };
+  }
+  if(name==="NotAllowedError"||name==="SecurityError"){
+    return { title:"カメラの許可が得られませんでした",
+      detail:"ブラウザ／アプリ側でカメラがブロックされています（"+sig+"）。アプリ内の埋め込み表示では、許可ダイアログ自体が出ないまま拒否されることがあります。",
+      steps:["アドレスバー左端のアイコンやメニューから、このサイトのカメラ許可を確認する",
+             "iPhoneの「設定 → Safari → カメラ」を「確認」または「許可」にする（アプリ内ブラウザの場合は、そのアプリの設定でカメラを許可する）",
+             "それでもダイアログが出ない場合は、このページを Safari で直接開いてから起動する",
+             "許可できたら「↻ カメラをもう一度試す」を押す"] };
+  }
+  if(name==="NotFoundError"||name==="OverconstrainedError"){
+    return { title:"使えるカメラが見つかりませんでした",
+      detail:"要求した条件に合うカメラが応答しませんでした（"+sig+"）。条件を緩めて再試行しても届きませんでした。",
+      steps:["他のカメラ使用中アプリを閉じる","ブラウザを再読み込みして、もう一度起動する"] };
+  }
+  if(name==="NotReadableError"||name==="AbortError"){
+    return { title:"カメラを開けませんでした（使用中の可能性）",
+      detail:"カメラが他のアプリやタブに掴まれていると、このエラーになります（"+sig+"）。",
+      steps:["カメラを使っている他のアプリ／タブを閉じる","数秒待って「↻ カメラをもう一度試す」を押す"] };
+  }
+  return { title:"カメラが起動しませんでした",
+    detail:"エラーの内容："+(sig||"不明なエラー"),
+    steps:["このページを Safari で直接開いて試す","それでも失敗する場合は、上のエラー内容をそのまま教えてください"] };
+}
+/* Shared latch: the main start and the camera-only test must never run
+   getUserMedia at the same time — iOS answers concurrent requests by
+   failing one of them (NotReadableError), which looks like a camera fault. */
+var camBusy=false;
+/* getUserMedia with a hard timeout. In a broken webview the promise can
+   neither resolve nor reject, which used to hang startup forever on
+   "起動中…" with no message at all. A late-arriving stream is stopped. */
+/* If `holder` is given, a stream that arrives AFTER the timeout is not
+   stopped but handed to the holder instead. This matters for the camera:
+   the old code stopped every track of a late-arriving stream, so a user
+   who spent more than the timeout reading the permission dialog had the
+   camera killed by the app itself the moment they tapped Allow —
+   exactly the reported "許可してもダメ". */
+function gumWithTimeout(constraints, ms, holder){
+  var timedOut=false;
+  var gum;
+  try{ gum=navigator.mediaDevices.getUserMedia(constraints); }
+  catch(e){ return Promise.reject(e); }
+  gum.then(function(s){
+    if(!timedOut) return;
+    if(holder && !holder.stream){ holder.stream=s; }
+    else s.getTracks().forEach(function(t){ t.stop(); });
+  }, function(){});
+  var timer=new Promise(function(_,rej){
+    setTimeout(function(){ timedOut=true;
+      var er=new Error("getUserMedia did not answer within "+Math.round(ms/1000)+"s");
+      er.name="TimeoutError"; rej(er); }, ms);
+  });
+  return Promise.race([gum, timer]);
+}
+async function tryGetVideo(fast){
+  var ladder=[
+    { video:{ facingMode:"environment" }, audio:false },
+    { video:true, audio:false },
+    { video:{ facingMode:"user" }, audio:false } /* NotFoundError fallback: front camera */
+  ];
+  /* Generous timeouts: the clock includes the user reading and tapping
+     the permission dialog, and a late stream is adopted, never killed.
+     The watchdog's restarts use the short set — a frozen stream must be
+     replaced in seconds, not held for a dialog nobody is watching. */
+  var waits= fast? [8000, 6000, 6000] : [45000, 20000, 15000];
+  var holder={stream:null}, lastErr=null;
+  for(var i=0;i<ladder.length;i++){
+    var tries=0;
+    while(true){
+      try{ return await gumWithTimeout(ladder[i], waits[i], holder); }
+      catch(e){
+        if(holder.stream){ var late=holder.stream; holder.stream=null; return late; }
+        lastErr=e;
+        if(e && (e.name==="NotAllowedError"||e.name==="SecurityError")) throw e;
+        /* Camera busy / grabbed by another app: retry the SAME rung
+           with backoff (up to 2 times) before stepping down the ladder
+           or surfacing any guidance. */
+        if(e && (e.name==="NotReadableError"||e.name==="AbortError") && tries<2){
+          tries++;
+          await new Promise(function(r){ setTimeout(r, (fast? 700:1000)*tries); });
+          continue;
+        }
+        break;
+      }
+    }
+  }
+  if(holder.stream) return holder.stream;
+  throw lastErr;
+}
+/* Microphone acquisition with the SAME holder pattern as the camera.
+   The mic calls used to omit the holder, so a permission dialog that
+   took longer than the 10s timeout made the app stop the just-granted
+   mic stream itself — the mic version of the camera's "許可してもダメ"
+   bug. A late-arriving mic stream is adopted, never stopped. */
+var micHolder={stream:null};
+async function tryGetMic(){
+  var ladder=[
+    { audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false } },
+    { audio:true }
+  ];
+  for(var i=0;i<ladder.length;i++){
+    try{ return await gumWithTimeout(ladder[i], 10000, micHolder); }
+    catch(e){
+      if(micHolder.stream){ var late=micHolder.stream; micHolder.stream=null; return late; }
+      if(e && (e.name==="NotAllowedError"||e.name==="SecurityError")) return null;
+    }
+  }
+  if(micHolder.stream){ var l2=micHolder.stream; micHolder.stream=null; return l2; }
+  return null;
+}
+/* If the mic stream lands only after BOTH attempts have timed out, it
+   sits in micHolder (alive, unstopped): poll briefly and adopt it the
+   moment it arrives, starting audio then. Gives up after 90s. */
+function watchLateMic(){
+  var started=performance.now();
+  var iv=setInterval(function(){
+    if(micHolder.stream && !micStream){
+      var late=micHolder.stream; micHolder.stream=null; micStream=late;
+      if(late.getAudioTracks().length) startAudio(late);
+      clearInterval(iv); return;
+    }
+    if(micStream || performance.now()-started>90000) clearInterval(iv);
+  },600);
+}
+/* iOS motion/orientation permission. It needs the tap's transient
+   activation, so it is requested IMMEDIATELY after the camera stream is
+   secured — not after the mic request and the up-to-3.5s frame wait,
+   by which time the gesture has expired and iOS denies it silently.
+   Bounded by a timeout so a stuck request can never hang startup. */
+function requestMotionPermission(){
+  var ps=[];
+  try{
+    if(typeof DeviceMotionEvent!=="undefined" && typeof DeviceMotionEvent.requestPermission==="function")
+      ps.push(DeviceMotionEvent.requestPermission().then(function(r){ if(r==="granted") S.avail.vib=true; }));
+  }catch(e){}
+  try{
+    if(typeof DeviceOrientationEvent!=="undefined" && typeof DeviceOrientationEvent.requestPermission==="function")
+      ps.push(DeviceOrientationEvent.requestPermission().then(function(r){ if(r==="granted") S.avail.orient=true; }));
+  }catch(e){}
+  var all=Promise.all(ps.map(function(p){ return p.catch(function(){}); }));
+  var to=new Promise(function(res){ setTimeout(res, 6000); });
+  return Promise.race([all, to]);
+}
+/* If play() was refused or stalled (gesture expired while the camera
+   permission sheet was up), the next tap anywhere retries it. Registered once. */
+document.addEventListener("pointerdown", function(){
+  if(stream && video.paused){
+    try{ var p=video.play(); if(p && p.catch) p.catch(function(){}); }catch(e){}
+  }
+});
+/* ================= camera diagnostics + raw fallback =================
+   A permanent readout under the camera view, so the exact stuck point
+   is visible on the device itself: whether a stream was acquired, the
+   track state, the real frame size, readyState, whether the playback
+   clock is advancing, and how many frames the processing pipeline has
+   actually drawn. If processed frames stall for >2s while monitoring,
+   the view fails OPEN to the raw <video> element instead of sitting
+   on a black canvas. */
+var DIAG={ct:-1, adv:false, note:""};
+function attachTrackWatch(tr){
+  if(!tr || tr._kehaiWatched) return;
+  tr._kehaiWatched=true;
+  try{
+    tr.addEventListener("mute", function(){
+      DIAG.note="トラックがミュート中（OS側の一時停止の可能性）";
+      if(video.paused){ try{ var p=video.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){} }
+    });
+    tr.addEventListener("unmute", function(){ if(DIAG.note.indexOf("ミュート")>=0) DIAG.note=""; });
+    tr.addEventListener("ended", function(){
+      $("stCam").textContent="カメラ ×（終了）"; $("stCam").classList.remove("on");
+      showCamError("カメラのトラックが終了しました",
+        "映像トラックが ended 状態になりました。別のアプリにカメラを取られたか、OS側で止められた可能性があります。",
+        ["他のカメラ使用中アプリを閉じる","「↻ カメラをもう一度試す」を押す"]);
+    });
+  }catch(e){}
+}
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState==="visible") LAST_FRAME_AT=performance.now(); /* rAF pauses while hidden; do not read that as a stall */
+});
+setInterval(function(){
+  var el=$("camDiag"); if(!el) return;
+  var tr=null;
+  try{ tr = stream? stream.getVideoTracks()[0] : (video.srcObject? video.srcObject.getVideoTracks()[0] : null); }catch(e){}
+  var ct=video.currentTime||0;
+  DIAG.adv = ct!==DIAG.ct; DIAG.ct=ct;
+  if(DIAG.adv) DIAG.advAt=performance.now();
+  else if(S.running && !DIAG.advAt) DIAG.advAt=performance.now(); /* grace: first sample after start */
+  var txt="カメラ診断：ストリーム "+((stream||video.srcObject)? "取得済み":"なし")+
+    " ／ トラック "+(tr? ((tr.readyState||"?")+(tr.muted?"・muted中":"・mutedなし")) : "—")+
+    " ／ 映像 "+(video.videoWidth||0)+"×"+(video.videoHeight||0)+
+    " ／ readyState "+video.readyState+
+    " ／ 再生時刻 "+ct.toFixed(1)+"s（"+(DIAG.adv?"進行中":"停止")+"）"+
+    " ／ 処理フレーム "+PROC_FRAMES+
+    " ／ 表示 "+(S.mode==="raw"? "生映像": ($("hudMode")? $("hudMode").textContent : S.mode));
+  if(DIAG.note) txt+=" ／ "+DIAG.note;
+  if(el.textContent!==txt) el.textContent=txt;
+  if(S.running && !S.demo && S.mode!=="raw" && DIAG.advAt && performance.now()-DIAG.advAt>2000
+     && document.visibilityState==="visible"){
+    var rb=document.querySelector('.mode[data-mode="raw"]');
+    if(rb){ DIAG.note="処理済み表示が2秒以上止まったため、生映像に自動で切り替えました"; rb.click(); }
+  }
+},500);
+/* ================= frame watchdog + automatic restart =================
+   Every 2s: is the picture actually advancing? Frame advancement is
+   measured by requestVideoFrameCallback where available, else by the
+   playback clock (currentTime) and the pipeline's own frame counter.
+   - video paused with a live stream  -> play() again
+   - frames frozen > 4s while visible -> re-acquire the camera
+     automatically (new stream first, old tracks stopped only after),
+     up to 3 times; only then is guidance shown.
+   Silent freezing is therefore impossible: either frames flow, or the
+   app is actively recovering, or it says so. */
+var RESTARTS=0, RESTARTING=false, VID_CT=-1, VID_CT_AT=0, RVFC_AT=0, FW_TOKEN=0;
+function startFrameWatch(){
+  VID_CT_AT=performance.now(); RVFC_AT=0;
+  var tok=++FW_TOKEN;
+  if(video.requestVideoFrameCallback){
+    var cb=function(){ if(tok!==FW_TOKEN) return; RVFC_AT=performance.now(); if(stream) try{ video.requestVideoFrameCallback(cb); }catch(e){} };
+    try{ video.requestVideoFrameCallback(cb); }catch(e){}
+  }
+}
+async function restartCamera(){
+  if(RESTARTING) return;
+  RESTARTING=true; RESTARTS++;
+  DIAG.note="映像が止まったため、カメラを自動で取り直しています（"+RESTARTS+"/3）";
+  try{
+    var ns=await tryGetVideo(true);
+    var old=stream;
+    stream=ns; video.srcObject=ns;
+    attachTrackWatch(ns.getVideoTracks()[0]);
+    video.muted=true; video.playsInline=true;
+    try{ var p=video.play(); if(p&&p.catch) await p.catch(function(){}); }catch(e){}
+    if(old && old!==ns) old.getVideoTracks().forEach(function(t){ t.stop(); }); /* old stopped only after the new stream is live */
+    LAST_FRAME_AT=performance.now(); VID_CT_AT=performance.now(); RVFC_AT=0;
+    S._runAt=performance.now();
+    startFrameWatch(); setupTrackCaps();
+    DIAG.note="カメラを取り直しました（"+RESTARTS+"/3）";
+  }catch(e){
+    if(e && (e.name==="NotAllowedError"||e.name==="SecurityError")){
+      var info=describeCamError(e); showCamError(info.title, info.detail, info.steps);
+    }
+    DIAG.note="カメラの再取得に失敗しました（"+((e&&e.name)||"Error")+"）。自動で再試行を続けます";
+    S._runAt=performance.now(); /* back off: next attempt after a fresh grace period */
+  } finally { RESTARTING=false; }
+}
+setInterval(function(){
+  if(!(S.running && !S.demo)) return;
+  if(document.visibilityState!=="visible"){ VID_CT_AT=performance.now(); return; } /* hidden is not a freeze */
+  var ct=video.currentTime||0;
+  if(ct!==VID_CT){ VID_CT=ct; VID_CT_AT=performance.now(); }
+  var lastAdv=Math.max(VID_CT_AT, RVFC_AT||0); /* genuine advancement only: playback clock / presented-frame callbacks, never the pipeline's own redraws */
+  if(stream && video.paused){ try{ var p2=video.play(); if(p2&&p2.catch) p2.catch(function(){}); }catch(e){} }
+  var tr=null; try{ tr=stream? stream.getVideoTracks()[0] : null; }catch(e){}
+  if(tr && tr.readyState==="live" && performance.now()-lastAdv<=4000 && video.videoWidth>0
+     && $("stCam").textContent.indexOf("ON")<0){
+    $("stCam").textContent="カメラ ON"; $("stCam").classList.add("on");
+    if(DIAG.note.indexOf("到着を待って")>=0) DIAG.note="";
+  }
+  if(!stream || RESTARTING) return;
+  /* A healthy stretch clears the failure count: 3 restarts is a budget
+     for CONSECUTIVE failures, not a lifetime budget for the session. */
+  if(performance.now()-lastAdv<=4000 && RESTARTS>0) RESTARTS=0;
+  /* The gave-up latch re-arms after 60s: conditions that blocked the
+     camera (another app holding it, an OS hiccup) may well have
+     cleared, so auto-recovery resumes trying instead of staying
+     latched off for the rest of the session. */
+  if(DIAG._gaveUp && DIAG._gaveUpAt && performance.now()-DIAG._gaveUpAt>=60000){
+    DIAG._gaveUp=false; DIAG._gaveUpAt=0; RESTARTS=0; S._runAt=performance.now();
+    DIAG.note="自動復旧を再開します（諦め状態を解除しました）";
+    return; /* the fresh _runAt grace period lets the next cycle retry cleanly */
+  }
+  if(performance.now()-lastAdv>4000 && performance.now()-(S._runAt||0)>6000){
+    if(RESTARTS<3){ restartCamera(); }
+    else if(!DIAG._gaveUp){ DIAG._gaveUp=true; DIAG._gaveUpAt=performance.now();
+      showCamError("映像が繰り返し止まります",
+        "自動で3回まで取り直しましたが、フレームが進みませんでした。60秒後に自動復旧を再開します。",
+        ["カメラを使っている他のアプリをすべて閉じる","このページを再読み込みして、もう一度起動する"]);
+    }
+  }
+},2000);
+/* Minimal camera-only test: plain {video:true}, nothing else involved.
+   Success here + failure in the main start means the blocker is outside
+   the camera (mic, motion permission, processing). Failure here gives
+   the raw error name/message for diagnosis. */
+$("btnCamTest").addEventListener("click", async function(){
+  var out=$("camTestOut"); if(!out) return;
+  out.style.display="block";
+  if(camBusy){
+    out.innerHTML="<b>テスト待機：</b>本体の起動処理（または別のテスト）が進行中です。同時にカメラを取りにいくと iOS が両方を失敗させるため、終わってからもう一度押してください。";
+    return;
+  }
+  camBusy=true;
+  out.innerHTML="<b>カメラだけテスト中…</b><br>いちばん単純な {video:true} だけで取得を試しています。";
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    camBusy=false;
+    out.innerHTML="<b>テスト失敗：</b>このブラウザ／表示ではカメラ取得の仕組み自体が提供されていません（mediaDevices 未提供"+(window.isSecureContext===false?"／安全な接続(HTTPS)ではありません":"")+"）。このページを Safari で直接開いてください。";
+    return;
+  }
+  try{
+    var ts=await gumWithTimeout({ video:true }, 30000);
+    var tr=ts.getVideoTracks()[0], st={};
+    try{ st=tr.getSettings(); }catch(e){}
+    out.innerHTML="<b>テスト成功：</b>カメラ単体では取得できました（"+escapeHtml((tr&&tr.label)||"カメラ")+(st.width? " ／ "+st.width+"×"+st.height : "")+"）。このテストが成功して本体の起動が失敗する場合は、原因はカメラ以外（マイク取得やモーション許可まわり）です。テスト用の映像は止めました。";
+    ts.getTracks().forEach(function(t){ t.stop(); });
+  }catch(e){
+    var info=describeCamError(e);
+    out.innerHTML="<b>テスト失敗：</b>"+escapeHtml(info.title)+"（エラー名 "+escapeHtml((e&&e.name)||"不明")+(e&&e.message? "："+escapeHtml(e.message) : "")+"）<br>"+escapeHtml(info.detail)+"<br>対処："+info.steps.map(escapeHtml).join(" ／ ");
+  } finally { camBusy=false; }
+});
+$("btnStart").addEventListener("click", async function(){
+  if(S.running){ location.reload(); return; }
+  if(camBusy) return; /* startup (or the camera test) already in flight */
+  camBusy=true;
+  var btn=this;
+  hideCamError();
+  btn.disabled=true; btn.textContent="起動中…";
+  var gotCam=false;
+  try{
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    $("stCam").textContent="カメラ ×"; $("stMic").textContent="マイク ×";
+    showCamError("この表示ではカメラ機能が使えません",
+      "カメラ取得の仕組みが、このブラウザ／埋め込み表示では提供されていません。"+(window.isSecureContext===false?"このページは安全な接続(HTTPS)で開かれていないため、ブラウザがカメラ機能自体を隠しています。":""),
+      ["このページを iPhone の Safari で直接開いてから、もう一度起動してください"]);
+    return;
+  }
+  var vStream=null, camErr=null;
+  /* The camera call is the first await in this handler (the tap's
+     gesture is still alive). Inside tryGetVideo, NotReadableError /
+     AbortError are retried with backoff per rung before any guidance
+     is shown, so this handler needs exactly one call. */
+  try{ vStream=await tryGetVideo(); }catch(e){ camErr=e; }
+  if(vStream){
+    /* ATTACH FIRST — before any other permission dialog. Previously the
+       acquired track sat unattached while the motion request (up to 6s)
+       and two mic attempts (up to 20s of dialogs/timeouts) ran first:
+       after tapping Allow, the user saw nothing change, and iOS can
+       mute a track that is never attached or played. Now the picture
+       starts the moment the camera is allowed; motion and mic are
+       asked afterwards, and neither can block the image. */
+    stream=vStream;
+    video.muted=true; video.playsInline=true;
+    try{ video.setAttribute("playsinline",""); video.setAttribute("webkit-playsinline",""); }catch(e){}
+    /* The canonical minimal pattern, and nothing else, feeds the view:
+       getUserMedia -> video.srcObject = that very stream -> play().
+       No composited/recombined stream is ever displayed; the microphone
+       keeps its own separate stream (micStream) and can never gate,
+       replace, or stop this feed. */
+    video.srcObject=vStream;
+    attachTrackWatch(vStream.getVideoTracks()[0]);
+    /* play() raced with a timeout: on some webviews the promise neither
+       resolves nor rejects, and a bare await hung startup forever. A late
+       rejection is swallowed here; the pointerdown retry and the frame
+       loop's periodic retry recover playback afterwards. */
+    try{
+      var pp=video.play();
+      if(pp && pp.then) await Promise.race([pp.catch(function(){}), new Promise(function(r){ setTimeout(r,1500); })]);
+    }catch(ep){}
+    var t0=performance.now();
+    while(video.readyState<2 && performance.now()-t0<3500){
+      await new Promise(function(r){ setTimeout(r,120); });
+    }
+    gotCam = video.readyState>=2 || vStream.getVideoTracks().some(function(t){ return t.readyState==="live"; });
+    S.running=true; S.demo=false; S.startedAt=nowTime();
+    LAST_FRAME_AT=performance.now(); /* raw-fallback watchdog grace starts at attach */
+    S._runAt=performance.now(); RESTARTS=0; DIAG._gaveUp=false; DIAG._gaveUpAt=0; startFrameWatch(); /* manual restart re-arms the watchdog */
+    /* The raw feed is the main view: show it first. Processed views
+       (疑似サーモ等) are side channels the user can switch to — the
+       analysis runs either way, and a processing failure can never
+       hide or stop this feed. A track that starts muted simply shows
+       「準備中」 via the status chip until frames actually flow; the
+       watchdog below keeps retrying play() and, if frames freeze,
+       re-acquires the camera on its own. */
+    $("stCam").textContent = video.videoWidth>0? "カメラ ON" : "カメラ 準備中…";
+    if(video.videoWidth>0) $("stCam").classList.add("on");
+    var rb0=document.querySelector('.mode[data-mode="raw"]'); if(rb0) rb0.click();
+    /* Motion/orientation permission — only now, with the picture live. */
+    await requestMotionPermission();
+    /* Microphone last, separately — its failure is non-fatal. */
+    var aStream=null;
+    try{ aStream=await tryGetMic(); }catch(ea){ aStream=null; }
+    if(!aStream){ $("stMic").textContent="マイク ×（カメラは継続）"; watchLateMic(); /* a stream granted after the timeouts is adopted by the watcher, not stopped */ }
+    micStream=aStream; /* kept separate forever — never merged into the displayed stream */
+    /* stream is live: only now ask for more resolution — non-fatal if refused */
+    var vt0=vStream.getVideoTracks()[0];
+    if(vt0 && vt0.applyConstraints){
+      try{ var prc=vt0.applyConstraints({ width:{ideal:1280}, height:{ideal:720} }); if(prc && prc.catch) prc.catch(function(){}); }catch(e){}
+    }
+    $("btnDemo").textContent="デモで動きを試す"; /* demo flag must not survive a real start, or processFrame keeps rendering synthetic frames */
+    if(video.videoWidth>0){ $("stCam").textContent="カメラ ON"; $("stCam").classList.add("on"); }
+    if(aStream && aStream.getAudioTracks().length) startAudio(aStream);
+    if(video.readyState<2){
+      /* Not an error state: frames may simply still be warming up (a
+         track often starts muted). The watchdog retries play() and
+         re-acquires the camera automatically if frames stay frozen —
+         no action is asked of the user. */
+      DIAG.note="映像の到着を待っています（自動で再試行・再取得します）";
+    }
+  } else {
+    $("stCam").textContent="カメラ ×"; $("stMic").textContent="マイク ×";
+    var info=describeCamError(camErr);
+    showCamError(info.title, info.detail, info.steps);
+    $("verdictSub").textContent="カメラが起動できませんでした。ボタンの下に出ている案内を確認してください。";
+  }
+  // motion / orientation permission was already requested above,
+  // immediately after the camera stream was secured.
+  setTimeout(function(){
+    if(S.avail.vib||S.avail.orient){ $("stMot").textContent="モーション ON"; $("stMot").classList.add("on"); }
+    else if(!/iPhone|iPad/.test(navigator.userAgent)){ S.avail.vib=true; $("stMot").textContent="モーション 待受中"; }
+    else $("stMot").textContent="モーション ×";
+  },1200);
+  // location (record only)
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(p){
+      $("stLoc").textContent="位置 ON"; $("stLoc").classList.add("on");
+      $("locCap").textContent="位置情報：緯度 "+p.coords.latitude.toFixed(4)+" ／ 経度 "+p.coords.longitude.toFixed(4)+
+        (p.coords.altitude!=null? " ／ 高度 "+Math.round(p.coords.altitude)+"m":"")+" ／ 精度 ±"+Math.round(p.coords.accuracy)+"m";
+    }, function(){ $("stLoc").textContent="位置 ×"; }, {enableHighAccuracy:true, timeout:8000});
+  }
+  setupTrackCaps(); listCameras();
+  showBattery();
+  }catch(unexpected){
+    /* Nothing in startup may fail silently or strand the button on
+       "起動中…": name the real error and let the finally restore. */
+    var un=(unexpected&&unexpected.name)||"Error", um=(unexpected&&unexpected.message)||"";
+    showCamError("起動の途中でエラーが起きました",
+      "エラーの内容："+un+(um? "："+um : "")+"。カメラ取得そのものとは別の処理で止まりました。",
+      ["もう一度「↻ カメラをもう一度試す」を押す","繰り返す場合は、上のエラー内容をそのまま教えてください"]);
+  } finally {
+    btn.textContent = gotCam? "● 監視中（タップで映像を止める）" : "↻ カメラをもう一度試す";
+    btn.disabled=false;
+    camBusy=false;
+    if(gotCam){ $("btnCalib").disabled=false; startCalib(); }
+  }
+});
+
+var batteryWired=false;
+function showBattery(){
+  if(!navigator.getBattery || batteryWired) return; /* listeners must be attached once, not on every start */
+  batteryWired=true;
+  navigator.getBattery().then(function(b){
+    var upd=function(){ $("batCap").textContent="電池 "+Math.round(b.level*100)+"%"+(b.charging?"（充電中）":""); };
+    upd(); b.addEventListener("levelchange",upd); b.addEventListener("chargingchange",upd);
+  }).catch(function(){});
+}
+showBattery();
+$("btnCalib").addEventListener("click", startCalib);
+$("btnDemo").addEventListener("click", function(){
+  if(S.demo){ location.reload(); return; }
+  S.demo=true; S.running=false; S.startedAt=nowTime();
+  $("stCam").textContent="カメラ デモ"; $("stMic").textContent="マイク デモ"; $("stMot").textContent="モーション デモ";
+  $("specCap").textContent="デモ：合成した音の反応を表示中";
+  this.textContent="デモを終了"; $("btnCalib").disabled=false;
+  startCalib();
+});
+
+/* modes */
+document.querySelectorAll(".mode").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll(".mode").forEach(function(x){x.classList.remove("sel");});
+    b.classList.add("sel"); S.mode=b.getAttribute("data-mode");
+    $("hudMode").textContent=b.childNodes[0].textContent;
+    trail=null;
+    var stg=document.querySelector(".stage"); if(stg) stg.classList.toggle("rawmode", S.mode==="raw");
+    if(S.mode==="raw" && video.paused){ try{ var rp=video.play(); if(rp&&rp.catch) rp.catch(function(){}); }catch(e){} }
+  });
+});
+$("sensRange").addEventListener("input", function(){
+  S.sensitivity=this.value/100; $("sensVal").textContent=S.sensitivity.toFixed(1)+"×";
+});
+setInterval(function(){ if(!(S.running||S.demo)) drawIdle(); }, 2000);
+
+/* =====================================================================
+   NEW TECH LAYER — every capability is feature-detected at runtime.
+   Anything unavailable falls back; nothing is faked.
+   ===================================================================== */
+function setCap(id, cls, txt){
+  var el=$(id); if(!el) return;
+  var lab = cls==="ok" ? "対応" : cls==="fb" ? "代替で動作" : "未対応";
+  el.innerHTML='<span class="st '+cls+'">'+lab+'</span><span>'+txt+'</span>';
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+/* ---------- persistent store (this device only) ---------- */
+var store={events:[], history:[], profiles:[], ok:false};
+try{
+  localStorage.setItem("__kehai_t","1"); localStorage.removeItem("__kehai_t"); store.ok=true;
+  store.events=JSON.parse(localStorage.getItem("kehai.events.v1")||"[]");
+  store.history=JSON.parse(localStorage.getItem("kehai.history.v1")||"[]");
+  store.profiles=JSON.parse(localStorage.getItem("kehai.profiles.v1")||"[]");
+  if(!Array.isArray(store.events)) store.events=[];
+  if(!Array.isArray(store.history)) store.history=[];
+  if(!Array.isArray(store.profiles)) store.profiles=[];
+}catch(e){ store.ok=false; }
+function saveStore(){
+  if(!store.ok) return;
+  try{
+    localStorage.setItem("kehai.events.v1", JSON.stringify(store.events.slice(-60)));
+    localStorage.setItem("kehai.history.v1", JSON.stringify(store.history.slice(-1200)));
+    localStorage.setItem("kehai.profiles.v1", JSON.stringify(store.profiles));
+  }catch(e){}
+}
+function persistEvent(ev){
+  store.events.push(ev);
+  if(store.events.length>60) store.events=store.events.slice(-60);
+  saveStore();
+}
+setCap("capStore", store.ok?"ok":"no", store.ok
+  ? "端末内保存：ログ・スコア履歴・場所プロファイルを、このブラウザの中にだけ保存しています（送信はしません）。"
+  : "端末内保存：このブラウザでは保存が使えないため、記録はこのセッション内のみになります。");
+
+/* restore the persisted log */
+(function restoreLog(){
+  if(!store.events.length) return;
+  $("logEmpty").style.display="none";
+  var log=$("eventLog");
+  store.events.forEach(function(ev){
+    var li=document.createElement("li"); if(ev.strong) li.className="strong";
+    li.innerHTML='<div class="lt"><span class="time">'+escapeHtml(ev.t)+'</span><span class="sc">'+(ev.strong?'<span class="tag">同時反応</span>':"")+'気配スコア <b>'+ev.score+"</b></span></div>"+
+      '<div class="ds">前回までの記録から復元しました。反応： '+escapeHtml((ev.names||[]).join("・"))+"。</div>";
+    log.insertBefore(li, log.firstChild);
+  });
+  while(log.children.length>40) log.removeChild(log.lastChild);
+})();
+
+/* ---------- score history graph ---------- */
+var histC=$("history"), histX=histC?histC.getContext("2d"):null;
+function paintHistory(){
+  if(!histC||!histX) return;
+  var W=histC.width=histC.clientWidth*(window.devicePixelRatio>1?1.5:1), H=histC.height;
+  histX.clearRect(0,0,W,H);
+  histX.strokeStyle="rgba(236,231,218,.12)"; histX.beginPath(); histX.moveTo(0,H*0.4); histX.lineTo(W,H*0.4); histX.stroke();
+  var data=store.history;
+  if(data.length<2){ $("histCap").textContent="記録なし"; return; }
+  var max=0; data.forEach(function(p){ if(p.s>max) max=p.s; });
+  histX.beginPath();
+  data.forEach(function(p,i){ var x=i/(Math.max(data.length-1,1))*W, y=H-4-(p.s/100)*(H-10); i?histX.lineTo(x,y):histX.moveTo(x,y); });
+  histX.strokeStyle="#43c6b4"; histX.lineWidth=1.6; histX.stroke();
+  $("histCap").textContent=data.length+" サンプル ／ 最高 "+max;
+}
+try{ paintHistory(); }catch(e){} /* history repaint must never block later init */
+
+/* ---------- place profiles ---------- */
+function renderProfiles(){
+  var box=$("placeTable"); if(!box) return;
+  if(!store.profiles.length){
+    box.innerHTML='<p style="color:var(--dim);font-size:12.5px;margin:4px 0">まだ場所は保存されていません。校正が終わった部屋で「今の校正をこの場所で保存」を押してください。</p>';
+    return;
+  }
+  var h='<table class="cmp"><tr><th>場所</th><th>保存日時</th><th>明るさ基準</th><th>音基準</th><th></th></tr>';
+  store.profiles.forEach(function(p,i){
+    h+='<tr><td><b>'+escapeHtml(p.name)+'</b>'+(S.placeName===p.name?' <span style="color:var(--teal);font-size:11px">監視中</span>':"")+'</td><td>'+escapeHtml(p.when)+'</td>'+
+       '<td>'+(p.baseline&&p.baseline.bright?fmt(p.baseline.bright.m,0):"–")+'</td>'+
+       '<td>'+(p.baseline&&p.baseline.audio?fmt(p.baseline.audio.m,0)+" dB":"–")+'</td>'+
+       '<td><button class="btn" data-load="'+i+'">読み込む</button> <button class="btn" data-del="'+i+'">削除</button></td></tr>';
+  });
+  h+="</table>"; box.innerHTML=h;
+  box.querySelectorAll("[data-load]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var p=store.profiles[Number(b.getAttribute("data-load"))]; if(!p) return;
+      S.baseline=JSON.parse(JSON.stringify(p.baseline));
+      if(S.baseline.audio && !S.baseline.silence) S.baseline.silence={m:0,s:2.5};
+      S.calibrated=true; S.placeName=p.name;
+      var li=document.createElement("li");
+      li.innerHTML='<div class="lt"><span class="time">'+nowTime()+'</span><span class="sc">場所プロファイル</span></div><div class="ds">「'+escapeHtml(p.name)+'」の基準を読み込みました。この場所の「いつも」と比べて監視します。</div>';
+      var log=$("eventLog"); log.insertBefore(li, log.firstChild); $("logEmpty").style.display="none";
+      renderProfiles();
+    });
+  });
+  box.querySelectorAll("[data-del]").forEach(function(b){
+    b.addEventListener("click", function(){
+      store.profiles.splice(Number(b.getAttribute("data-del")),1);
+      saveStore(); renderProfiles();
+    });
+  });
+}
+try{ renderProfiles(); }catch(e){} /* a malformed saved profile must never block the controls below */
+$("btnSavePlace").addEventListener("click", function(){
+  if(!S.calibrated || !S.baseline){
+    $("placeName").focus();
+    $("placeName").placeholder="まず監視を開始して、校正を終わらせてください";
+    return;
+  }
+  var name=$("placeName").value.trim() || ("場所 "+(store.profiles.length+1));
+  store.profiles.push({ name:name, when:new Date().toLocaleString("ja-JP"), baseline:JSON.parse(JSON.stringify(S.baseline)) });
+  S.placeName=name;
+  saveStore(); renderProfiles();
+  $("placeName").value="";
+});
+$("btnClearHist").addEventListener("click", function(){
+  store.events=[]; store.history=[];
+  try{ localStorage.removeItem("kehai.events.v1"); localStorage.removeItem("kehai.history.v1"); }catch(e){}
+  saveStore(); paintHistory();
+  this.textContent="記録を消しました（場所プロファイルは残っています）";
+});
+
+/* ---------- export / share ---------- */
+$("btnExport").addEventListener("click", async function(){
+  var payload={ app:"気配センサー", exportedAt:new Date().toISOString(), place:S.placeName||null,
+    sessionMax:Math.round(S.sessionMax), events:store.events, scoreHistory:store.history, profiles:store.profiles.map(function(p){return p.name;}) };
+  var jsonStr=JSON.stringify(payload,null,2);
+  var csv="datetime,score,strong,sensors\n"+store.events.map(function(ev){
+    return '"'+String(ev.t).replace(/"/g,'""')+'",'+ev.score+","+(ev.strong?"同時反応":"単独")+',"'+(ev.names||[]).join(" / ")+'"';
+  }).join("\n");
+  var files=[];
+  try{
+    files.push(new File([jsonStr],"kehai-log.json",{type:"application/json"}));
+    files.push(new File(["\ufeff"+csv],"kehai-log.csv",{type:"text/csv"}));
+    var imgs=document.querySelectorAll("#shots img");
+    for(var i=0;i<imgs.length && i<4;i++){
+      try{ var bl=await (await fetch(imgs[i].src)).blob(); files.push(new File([bl],"kehai-shot-"+(i+1)+".jpg",{type:bl.type||"image/jpeg"})); }catch(e){}
+    }
+  }catch(e){ files=[]; }
+  if(files.length && navigator.canShare && navigator.canShare({files:files})){
+    try{ await navigator.share({files:files, title:"気配センサーの記録"}); return; }
+    catch(e){ if(e && e.name==="AbortError") return; }
+  }
+  function dl(content, name, type){ var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([content],{type:type})); a.download=name; a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); },4000); }
+  dl(jsonStr,"kehai-log.json","application/json");
+  setTimeout(function(){ dl("\ufeff"+csv,"kehai-log.csv","text/csv"); },350);
+});
+(function(){
+  var f=null; try{ f=new File(["{}"],"t.json",{type:"application/json"}); }catch(e){}
+  if(f && navigator.canShare && navigator.canShare({files:[f]}))
+    setCap("capShare","ok","Web Share：ログ（JSON/CSV）とスナップショットを、iOSの共有シートからそのまま送れます。");
+  else if(navigator.share)
+    setCap("capShare","fb","Web Share：ファイル付き共有は未対応のため、書き出しはダウンロードになります。");
+  else
+    setCap("capShare","no","Web Share：未対応のため、書き出しはダウンロードになります。");
+  if(window.ImageCapture)
+    setCap("capIC","ok","ImageCapture：強い反応の瞬間は、映像処理用とは別に高解像度の写真で残します。");
+  else
+    setCap("capIC","fb","ImageCapture：未対応（Safari 18.4から）のため、スナップショットは表示中の映像から保存します。");
+})();
+
+/* ---------- Screen Wake Lock ---------- */
+var wakeLock=null, wakeWanted=false;
+function acquireWake(){
+  if(!navigator.wakeLock) return Promise.resolve(false);
+  return navigator.wakeLock.request("screen").then(function(wl){
+    wakeLock=wl;
+    $("stWake").textContent="画面維持 ON"; $("stWake").classList.add("on");
+    wl.addEventListener("release", function(){ $("stWake").textContent="画面維持 OFF"; $("stWake").classList.remove("on"); });
+    return true;
+  }).catch(function(){ return false; });
+}
+if(navigator.wakeLock) setCap("capWake","ok","Screen Wake Lock：監視中、画面が自動で消えないようにできます（下のボタン）。ホーム画面に追加したアプリでは iOS 18.4 から完全対応。");
+else setCap("capWake","no","Screen Wake Lock：このブラウザでは未対応です。監視中は iPhone の自動ロックを「なし」にしてください。");
+$("btnWake").addEventListener("click", function(){
+  var btn=this;
+  wakeWanted=!wakeWanted;
+  btn.setAttribute("aria-pressed", wakeWanted?"true":"false");
+  if(wakeWanted){
+    acquireWake().then(function(ok){
+      if(!ok){ wakeWanted=false; btn.setAttribute("aria-pressed","false"); btn.textContent="画面を消さない（この環境では使えませんでした）"; }
+    });
+  } else if(wakeLock){ try{ wakeLock.release(); }catch(e){} wakeLock=null; }
+});
+document.addEventListener("visibilitychange", function(){
+  if(wakeWanted && document.visibilityState==="visible") acquireWake();
+});
+
+/* ---------- night mode / adaptive toggle ---------- */
+$("btnNight").addEventListener("click", function(){
+  var on=document.body.classList.toggle("night");
+  this.setAttribute("aria-pressed", on?"true":"false");
+  if(on){ var b=document.querySelector('.mode[data-mode="nightred"]'); if(b) b.click(); }
+});
+$("btnAdapt").addEventListener("click", function(){
+  S.adaptive=!S.adaptive;
+  this.setAttribute("aria-pressed", S.adaptive?"true":"false");
+});
+
+/* ---------- camera hardware: torch / zoom / lens switching ---------- */
+var torchOn=false;
+function setupTrackCaps(){
+  if(!stream) return;
+  var tr=stream.getVideoTracks()[0]; if(!tr) return;
+  var caps={};
+  try{ caps=tr.getCapabilities? tr.getCapabilities() : {}; }catch(e){}
+  if(caps.torch){
+    $("btnTorch").disabled=false;
+    setCap("capTorch","ok","カメラのハードウェア情報：ライト（トーチ）対応を確認しました。ズーム範囲 "+(caps.zoom? caps.zoom.min+"〜"+caps.zoom.max+"×":"—")+"。下のボタンとスライダーで実際に操作できます。");
+  } else {
+    setCap("capTorch","fb","カメラのハードウェア情報：このレンズ／ブラウザではライト制御が公開されていません。"+(caps.zoom? "ズーム範囲 "+caps.zoom.min+"〜"+caps.zoom.max+"× は使えます。":""));
+  }
+  if(caps.zoom){
+    var zw=$("zoomWrap"); zw.style.display="flex";
+    var zr=$("zoomRange"); zr.min=caps.zoom.min; zr.max=caps.zoom.max; zr.step=caps.zoom.step||0.1;
+    try{ var st=tr.getSettings(); if(st && st.zoom) zr.value=st.zoom; }catch(e){}
+  }
+}
+$("btnTorch").addEventListener("click", function(){
+  if(!stream) return;
+  var tr=stream.getVideoTracks()[0]; if(!tr) return;
+  torchOn=!torchOn;
+  var btn=this;
+  tr.applyConstraints({advanced:[{torch:torchOn}]}).then(function(){
+    btn.setAttribute("aria-pressed", torchOn?"true":"false");
+    btn.classList.toggle("tgl", true);
+    btn.textContent=torchOn? "ライト消灯" : "ライト点灯（暗い部屋用）";
+  }).catch(function(){ torchOn=false; });
+});
+$("zoomRange").addEventListener("input", function(){
+  if(!stream) return;
+  var tr=stream.getVideoTracks()[0]; if(!tr) return;
+  tr.applyConstraints({advanced:[{zoom:parseFloat(this.value)}]}).catch(function(){});
+});
+function listCameras(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+  navigator.mediaDevices.enumerateDevices().then(function(devs){
+    var sel=$("selCam"), cur=sel.value, n=0;
+    sel.innerHTML='<option value="">自動（背面）</option>';
+    devs.forEach(function(d){
+      if(d.kind==="videoinput"){ n++; var o=document.createElement("option"); o.value=d.deviceId; o.textContent=d.label||("カメラ "+n); sel.appendChild(o); }
+    });
+    sel.value=cur;
+  }).catch(function(){});
+}
+$("selCam").addEventListener("change", function(){
+  var id=this.value;
+  if(!id || !stream) return;
+  navigator.mediaDevices.getUserMedia({video:{deviceId:{exact:id}}}).then(function(ns){
+    var nt=ns.getVideoTracks()[0];
+    attachTrackWatch(nt);
+    var old=stream;
+    stream=ns; video.srcObject=ns; var vp=video.play(); if(vp&&vp.catch) vp.catch(function(){});
+    if(old && old!==ns) old.getVideoTracks().forEach(function(t){ t.stop(); }); /* old tracks stop only after the new stream is attached */
+    startFrameWatch();
+    torchOn=false; $("btnTorch").textContent="ライト点灯（暗い部屋用）";
+    setupTrackCaps();
+  }).catch(function(){ $("stCam").textContent="カメラ切替 ×"; });
+});
+
+/* ---------- MediaRecorder event clips ---------- */
+function pickMime(list){
+  if(!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+  for(var i=0;i<list.length;i++) if(MediaRecorder.isTypeSupported(list[i])) return list[i];
+  return "";
+}
+(function(){
+  if(!window.MediaRecorder){ setCap("capMR","no","MediaRecorder：未対応のため、イベント記録は静止画とログのみになります。"); return; }
+  var vids=["video/mp4","video/webm"].filter(function(m){ try{ return MediaRecorder.isTypeSupported(m); }catch(e){ return false; } });
+  var auds=["audio/mp4","audio/webm"].filter(function(m){ try{ return MediaRecorder.isTypeSupported(m); }catch(e){ return false; } });
+  setCap("capMR", vids.length?"ok":"fb", "MediaRecorder：対応形式を実測しました（映像 "+(vids.join(" / ")||"なし")+"、音声 "+(auds.join(" / ")||"なし")+"）。強い同時反応で約8秒のクリップを残します。");
+})();
+function addClip(url, mime, isVideo){
+  var ebox=$("clipsEmpty"); if(ebox) ebox.style.display="none";
+  var ext = mime && mime.indexOf("mp4")>=0 ? (isVideo?".mp4":".m4a") : ".webm";
+  var div=document.createElement("div"); div.className="clip";
+  div.innerHTML='<div class="cm"><span>'+nowTime()+" ／ 気配スコア "+Math.round(S.combined)+'</span><a href="'+url+'" download="kehai-clip-'+Date.now()+ext+'">ダウンロード</a></div>'+
+    (isVideo ? '<video controls playsinline preload="metadata" src="'+url+'"></video>'
+             : '<audio controls preload="metadata" src="'+url+'"></audio><div style="font-size:11.5px;color:var(--dim);margin-top:6px">音声のみ（EVP用）：反応の前後の音をそのまま残しています</div>');
+  var box=$("clips"); box.insertBefore(div, box.firstChild);
+  while(box.children.length>6) box.removeChild(box.lastChild);
+}
+function recordEventClip(){
+  if(!window.MediaRecorder) return;
+  var tracks=[];
+  if(stream) stream.getVideoTracks().forEach(function(t){ tracks.push(t); }); /* raw camera tracks, not the (possibly hidden) canvas */
+  if(micStream) micStream.getAudioTracks().forEach(function(t){ tracks.push(t); });
+  if(tracks.length){
+    try{
+      var mime=pickMime(["video/mp4","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"]);
+      var rec=mime? new MediaRecorder(new MediaStream(tracks),{mimeType:mime}) : new MediaRecorder(new MediaStream(tracks));
+      var chunks=[];
+      rec.ondataavailable=function(e){ if(e.data && e.data.size) chunks.push(e.data); };
+      rec.onstop=function(){ addClip(URL.createObjectURL(new Blob(chunks,{type:rec.mimeType||"video/webm"})), rec.mimeType, true); };
+      rec.start(500);
+      setTimeout(function(){ if(rec.state!=="inactive") try{ rec.stop(); }catch(e){} }, 8000);
+    }catch(e){}
+  }
+  recordAudioClip();
+}
+function recordAudioClip(){
+  if(!micStream || !window.MediaRecorder) return;
+  var at=micStream.getAudioTracks(); if(!at.length) return;
+  try{
+    var mime=pickMime(["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/ogg"]);
+    var rec=mime? new MediaRecorder(new MediaStream(at),{mimeType:mime}) : new MediaRecorder(new MediaStream(at));
+    var chunks=[];
+    rec.ondataavailable=function(e){ if(e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop=function(){ addClip(URL.createObjectURL(new Blob(chunks,{type:rec.mimeType||"audio/webm"})), rec.mimeType, false); };
+    rec.start(500);
+    setTimeout(function(){ if(rec.state!=="inactive") try{ rec.stop(); }catch(e){} }, 8000);
+  }catch(e){}
+}
+
+/* ---------- spectrogram waterfall ---------- */
+var fallsEl=$("falls"), fallsCtx=failsSafe(fallsEl);
+function failsSafe(el){ return el? el.getContext("2d") : null; }
+function drawWaterfall(fd){
+  if(!fallsEl || !fallsCtx || !fd) return;
+  var now=performance.now();
+  if(now-(drawWaterfall._t||0)<90) return;
+  drawWaterfall._t=now;
+  var targetW=failsEl.clientWidth*(window.devicePixelRatio>1?1.5:1);
+  if(fallsEl.width!==targetW) fallsEl.width=targetW;
+  var W=fallsEl.width, H=fallsEl.height;
+  fallsCtx.drawImage(fallsEl,0,3);
+  var bars=72, bw=W/bars;
+  for(var b=0;b<bars;b++){
+    var idx=Math.floor(Math.pow(b/bars,1.7)*fd.length*0.72);
+    var v=fd[idx]/255;
+    fallsCtx.fillStyle= v>0.75? "#e4573d" : v>0.45? "#e8a33d" : v>0.18? "#43c6b4" : "#131c19";
+    fallsCtx.fillRect(b*bw,0,bw,3);
+  }
+  var fc=$("fallsCap");
+  if(fc && S.avail.audio) fc.textContent="低音域（〜150Hz）"+fmt(S.metrics.lowfreq,0)+"% ／ 音量 "+fmt(S.metrics.audio,0)+" dB（相対）";
+}
+
+/* ---------- analysis worker (heat accumulation + blob hints) ---------- */
+var heatWorker=null, workerOK=false, lastBlobPaint=0;
+var localHeatArr=new Float32Array(432);
+function localHeat(grid){
+  for(var i=0;i<432;i++){ var v=grid[i]*4.2; localHeatArr[i]=Math.max(v, localHeatArr[i]*0.94); }
+  S.heatArr=localHeatArr;
+  var bc=$("blobCap");
+  if(bc && bc.textContent.indexOf("簡易")<0) bc.textContent="簡易集計（Worker未対応）";
+}
+function blobHint(b){
+  if(b.cells<=2 && b.life<10) return "<b>小さく一瞬</b> — ほこり・虫・映像ノイズの可能性が高い大きさと残り方です";
+  if(b.cells>=8 && b.life>=10) return "<b>大きく、しばらく残った</b> — 小さなゴミでは説明しにくい動きです。大きめの何かが動いた可能性";
+  if(b.life>=24) return "<b>長く残っている</b> — 場所そのものの変化（物が動いた等）の可能性";
+  return "<b>様子見</b> — まだ特徴が弱く、目安を出せるほどではありません";
+}
+function paintBlobs(blobs){
+  var now=performance.now();
+  if(now-lastBlobPaint<900) return;
+  lastBlobPaint=now;
+  var bc=$("blobCap"); if(bc) bc.textContent=blobs.length? "検出 "+blobs.length+" 件" : "検出なし";
+  var box=$("blobHints"); if(!box) return;
+  if(!blobs.length){ box.innerHTML='<div class="hint">いまは目立った動きのかたまりはありません。</div>'; return; }
+  var top=blobs.slice().sort(function(a,b){ return b.cells-a.cells; }).slice(0,3);
+  box.innerHTML=top.map(function(b){
+    return '<div class="hint">'+blobHint(b)+'（大きさ目安 '+b.cells+' セル／持続 '+b.life+' 回）</div>';
+  }).join("");
+}
+try{
+  var wsrc=$("kehaiWorker").textContent;
+  heatWorker=new Worker(URL.createObjectURL(new Blob([wsrc],{type:"text/javascript"})));
+  heatWorker.onmessage=function(e){
+    workerOK=true;
+    S.heatArr=Float32Array.from(e.data.heat);
+    paintBlobs(e.data.blobs||[]);
+  };
+  heatWorker.onerror=function(){
+    workerOK=false;
+    setCap("capWorker","fb","解析Worker：起動できなかったため、集計はメインスレッドで行います（監視そのものは止まりません）。");
+  };
+  workerOK=true;
+  setCap("capWorker","ok","解析Worker：動きの蓄積と「かたまり」分類を別スレッドに移譲しています。OffscreenCanvas："+(typeof OffscreenCanvas!=="undefined"?"対応":"未対応")+"。");
+}catch(e){
+  workerOK=false;
+  setCap("capWorker","fb","解析Worker：未対応のため、集計はメインスレッドで行います（機能はそのまま使えます）。");
+}
+
+/* ---------- WebGPU compute (motion analysis assist) ---------- */
+var gpuState={ok:false, busy:false};
+function gpuFail(msg){
+  gpuState.ok=false;
+  setCap("capGpu","fb","WebGPU："+msg+"。映像解析はCPUで行っています。");
+  var c=$("stGpu"); if(c){ c.textContent="解析 CPU"; c.classList.remove("on"); }
+  var h=$("hudEngine"); if(h) h.textContent="CPU";
+}
+function setupGPU(device){
+  var N=96*72;
+  var WGSL=[
+    "@group(0) @binding(0) var<storage, read> cur: array<f32>;",
+    "@group(0) @binding(1) var<storage, read> prv: array<f32>;",
+    "@group(0) @binding(2) var<storage, read_write> outv: array<f32>;",
+    "@compute @workgroup_size(256)",
+    "fn main(@builtin(global_invocation_id) id: vec3<u32>) {",
+    "  let i = id.x;",
+    "  if (i < arrayLength(&cur)) { outv[i] = abs(cur[i] - prv[i]); }",
+    "}"
+  ].join("\n");
+  var pipe=device.createComputePipeline({layout:"auto", compute:{module:device.createShaderModule({code:WGSL}), entryPoint:"main"}});
+  function mk(usage){ return device.createBuffer({size:N*4, usage:usage}); }
+  var curB=mk(GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST);
+  var prvB=mk(GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST);
+  var outB=mk(GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_SRC);
+  var stgB=mk(GPUBufferUsage.MAP_READ|GPUBufferUsage.COPY_DST);
+  var bg=device.createBindGroup({layout:pipe.getBindGroupLayout(0), entries:[
+    {binding:0, resource:{buffer:curB}}, {binding:1, resource:{buffer:prvB}}, {binding:2, resource:{buffer:outB}} ]});
+  var prev=new Float32Array(N), prevInit=false;
+  gpuState.run=function(){
+    if(gpuState.busy && performance.now()-(gpuState.busyAt||0)<3000) return;
+    gpuState.busy=false; /* a readback that never resolves must not wedge GPU assist forever */
+    if(!S._lastGray || !S.running || S.demo) return;
+    gpuState.busy=true; gpuState.busyAt=performance.now();
+    var ds=new Float32Array(N), g=S._lastGray;
+    for(var y=0;y<72;y++) for(var x=0;x<96;x++) ds[y*96+x]=g[(y*5)*480+(x*5)];
+    device.queue.writeBuffer(curB,0,ds); device.queue.writeBuffer(prvB,0,prev);
+    var enc=device.createCommandEncoder();
+    var pass=enc.beginComputePass(); pass.setPipeline(pipe); pass.setBindGroup(0,bg); pass.dispatchWorkgroups(Math.ceil(N/256)); pass.end();
+    enc.copyBufferToBuffer(outB,0,stgB,0,N*4);
+    device.queue.submit([enc.finish()]);
+    stgB.mapAsync(GPUMapMode.READ).then(function(){
+      var arr=new Float32Array(stgB.getMappedRange().slice(0));
+      stgB.unmap();
+      var sum=0; for(var i=0;i<N;i++) sum+=arr[i];
+      if(prevInit) S.metrics.motion=sum/N/2.55;
+      prev=ds; prevInit=true; gpuState.busy=false;
+    }).catch(function(){ gpuState.busy=false; });
+  };
+  setInterval(function(){ if(gpuState.ok){ try{ gpuState.run(); }catch(e){ gpuFail("計算中にエラーが発生したため、CPU解析に切り替えました"); } } }, 420);
+}
+(function initGPU(){
+  if(!navigator.gpu){ gpuFail("このブラウザでは未対応です（Safari 26 / iOS 26 から標準で有効。iOS 17.4〜18 では設定で無効が既定）"); return; }
+  var timedOut=false;
+  var to=setTimeout(function(){ timedOut=true; if(!gpuState.ok) gpuFail("応答がなかったため、CPU解析に切り替えました"); }, 5000);
+  navigator.gpu.requestAdapter().then(function(adapter){
+    if(!adapter){ clearTimeout(to); gpuFail("アダプタが取得できませんでした"); return null; }
+    return adapter.requestDevice();
+  }).then(function(device){
+    clearTimeout(to);
+    if(!device || timedOut) return;
+    try{
+      setupGPU(device);
+      gpuState.ok=true;
+      setCap("capGpu","ok","WebGPU：GPU計算で映像の動き解析を補助しています（96×72に縮小した輝度差分をコンピュートシェーダで算出）。");
+      var c=$("stGpu"); if(c){ c.textContent="解析 WebGPU"; c.classList.add("on"); }
+      var h=$("hudEngine"); if(h) h.textContent="WebGPU";
+    }catch(e){ gpuFail("初期化に失敗しました"); }
+  }).catch(function(){ clearTimeout(to); gpuFail("利用できませんでした"); });
+})();
+</script>
+</body>
+</html>
