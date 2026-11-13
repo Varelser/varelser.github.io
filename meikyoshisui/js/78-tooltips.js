@@ -122,6 +122,11 @@
     p3:'69a710cc-eef8-432a-9ecb-d284ec29c7c4', p4:'40666225-89c9-447e-a785-374598e08486',
     p5:'dc4e62f7-2960-4590-acf8-e6ad5a134951', p6:'8cb68bf9-58cf-450a-b54e-c36f0a639bb5',
     p7:'abec92f6-fc85-4935-a997-61741b8eb98e',
+    s42:'bad7e901-852c-4923-907b-faa05131b131', s43:'d601fac7-b031-4543-b4cc-c3651e28f1e9',
+    s44:'8193a587-d95b-4dc5-a08e-15feb98a1bac', s45:'f2b3a0d9-3c5e-4c83-878c-5147678d6171',
+    s46:'6da67fad-e030-4256-bcd5-37ce8b4b7313', s47:'129aaee2-aba0-4133-aae3-91d47e2af5b9',
+    s48:'95a994ff-cfc7-469a-bcd9-5385e50459df', s49:'8fa33d0b-375a-400d-8d0d-6bc93b628ff9',
+    s50:'d14203f5-aa56-4899-bfc2-6184765f20c2', p10:'72043ee1-0751-4ed7-9254-7539b7e25cb8',
   };
   const SECTION_NOTE = {
     'chord-input': NA.s2, 'genre': NA.genre, 'cc-automation': NA.s32,
@@ -156,22 +161,22 @@
   };
   /* .tog-name のキーワード → 節 (上から順に照合するので具体的なものを先に) */
   const TOGNAME_NOTE = [
-    /* Theory Pack III〜VI (2026-11-13 追加分): 対応する節があるものだけ。
-       節が無い MICROPOLYPHONY / FRIPPERTRONICS / GENETIC / ORNAMENTS /
-       GRANULAR はリンクなし (従来基準と同じ)。'SEQUENCE' は Attractor
-       Sequencer 行と衝突するので ATTRACTOR ルールより後ろに置く。 */
-    ['CANON FORMS', NA.s13], ['KLANGFARBENMELODIE', NA.s37], ['ADDITIVE PROCESS', NA.s21],
-    ['HOCKET', NA.s20], ['PASSACAGLIA', NA.s14], ['METRIC MODULATION', NA.s19],
-    ['VOICE EXCHANGE', NA.s13], ['CHANGE RINGING', NA.s11], ['COLOTOMIC', NA.s20],
-    ['CHORALE', NA.s9], ['BEBOP', NA.s4], ['VARIATIONS', NA.s14],
-    ['WALKING', NA.s4], ['ORGANUM', NA.s13], ['AKSAK', NA.s20],
-    ['COLTRANE', NA.s4], ['CLICH', NA.s5], ['RONDO', NA.s14],
-    ['CALL & RESPONSE', NA.s15],
-    ['INVERTIBLE', NA.s13], ['TUPLETS', NA.s19], ['DISPLACEMENT', NA.s21],
-    ['GLISSANDO', NA.s37], ['CLUSTERS', NA.s37], ['MESSIAEN', NA.shelf5],
-    ['RAGA', NA.world], ['BLUES', NA.blues], ['UPPER STRUCTURES', NA.poly],
-    ['MEDIANTS', NA.s8], ['SUITE', NA.s14],
-    ['BROWNIAN', NA.s30], ['SONIFICATION', NA.s25], ['TEMPO CANON', NA.s19],
+    /* Theory Pack III〜VI: 理論記事の第10部 (42〜50節) に専用節ができた
+       ので全項目リンク。'SEQUENCE' は Attractor Sequencer 行と衝突する
+       ので ATTRACTOR ルールより後ろに置く (従来どおり)。 */
+    ['CANON FORMS', NA.s42], ['KLANGFARBENMELODIE', NA.s37], ['ADDITIVE PROCESS', NA.s44],
+    ['HOCKET', NA.s44], ['PASSACAGLIA', NA.s45], ['METRIC MODULATION', NA.s46],
+    ['VOICE EXCHANGE', NA.s42], ['CHANGE RINGING', NA.s46], ['COLOTOMIC', NA.s46],
+    ['CHORALE', NA.s43], ['BEBOP', NA.s47], ['VARIATIONS', NA.s45],
+    ['WALKING', NA.s47], ['ORGANUM', NA.s43], ['AKSAK', NA.s46],
+    ['COLTRANE', NA.s47], ['CLICH', NA.s47], ['RONDO', NA.s45],
+    ['CALL & RESPONSE', NA.s45], ['ORNAMENTS', NA.s43], ['MICROPOLYPHONY', NA.s44],
+    ['FRIPPERTRONICS', NA.s44],
+    ['INVERTIBLE', NA.s42], ['TUPLETS', NA.s46], ['DISPLACEMENT', NA.s46],
+    ['GLISSANDO', NA.s48], ['CLUSTERS', NA.s48], ['MESSIAEN', NA.s48],
+    ['RAGA', NA.s48], ['BLUES', NA.s47], ['UPPER STRUCTURES', NA.s47],
+    ['MEDIANTS', NA.s48], ['SUITE', NA.s45], ['GENETIC', NA.s49], ['GRANULAR', NA.s49],
+    ['BROWNIAN', NA.s49], ['SONIFICATION', NA.s49], ['TEMPO CANON', NA.s46],
     ['TINTINNABULI', NA.s16], ['PHASING', NA.s21], ['ISORHYTHM', NA.s21],
     ['SHEPARD', NA.s22], ['SPECIES', NA.s13], ['CADENCE', NA.s15],
     ['WORLD RHYTHM', NA.s20], ['RISSET', NA.s22], ['COMBINATION TONES', NA.s37],
@@ -182,7 +187,7 @@
     ['RHYTHMIC CANON', NA.s19], ['CONDUCTOR', NA.s31],
     ['SCALE MUTATION', NA.s6], ['PROGRESSION', NA.s5],
     ['ATTRACTOR', NA.s27], ['LORENZ', NA.s27],
-    ['SEQUENCE', NA.s4],
+    ['SEQUENCE', NA.s47],
     ['BOIDS', NA.s28], ['SWARM', NA.s28],
     ['SIEVE', NA.s25], ['CELLULAR AUTOMATON', NA.s26],
     ['EUCLIDEAN', NA.s18], ['MARKOV', NA.s23], ['L-SYSTEM', NA.s24],
