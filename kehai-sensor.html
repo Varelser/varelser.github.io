@@ -38,8 +38,20 @@
   .ring-lab{font-size:10.5px;letter-spacing:.18em;color:var(--dim);margin-top:6px;font-family:var(--mono)}
   .scorebar{height:8px;background:#23261f;border-radius:99px;overflow:hidden;margin-top:12px}
   .scorebar i{display:block;height:100%;width:0%;background:var(--teal);border-radius:99px;transition:width .5s ease,background .5s ease}
-  .verdict{font-family:var(--serif);font-size:clamp(27px,5.6vw,40px);font-weight:700;line-height:1.35;margin:0 0 8px}
+  .verdict{font-family:var(--serif);font-size:clamp(36px,7vw,56px);font-weight:700;line-height:1.2;margin:0 0 8px;letter-spacing:.02em}
+  .verdict.lv0{color:var(--green)}
+  .verdict.lv1{color:var(--amber2)}
+  .verdict.lv2{color:#f07a3a}
+  .verdict.lv3{color:var(--red);text-shadow:0 0 24px rgba(228,87,61,.35)}
   .verdict-sub{color:var(--ink2);font-size:13.5px;line-height:1.75;margin:0;max-width:56ch}
+  .level-meter{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:14px 0 4px}
+  .level-meter span{font-size:12.5px;font-weight:900;text-align:center;padding:9px 4px;border-radius:999px;border:1px solid var(--line2);color:var(--dim);background:var(--panel2);line-height:1.2;white-space:nowrap}
+  .level-meter span[data-lv="0"].active{background:var(--green);border-color:var(--green);color:#0f160c;box-shadow:0 0 0 3px rgba(127,176,105,.18)}
+  .level-meter span[data-lv="1"].active{background:var(--amber);border-color:var(--amber);color:#1a1406;box-shadow:0 0 0 3px rgba(232,163,61,.18)}
+  .level-meter span[data-lv="2"].active{background:#e86a2c;border-color:#e86a2c;color:#fff;box-shadow:0 0 0 3px rgba(232,106,44,.22)}
+  .level-meter span[data-lv="3"].active{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(228,87,61,.28);animation:lvPulse 1s ease-in-out infinite}
+  @keyframes lvPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  @media(max-width:480px){.level-meter span{font-size:11px;padding:8px 2px}}
   .statusline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}
   .stchip{font-family:var(--mono);font-size:11px;padding:5px 9px;border:1px solid var(--line2);border-radius:999px;color:var(--ink2)}
   .stchip.on{color:#141310;background:var(--amber);border-color:var(--amber);font-weight:600}
@@ -67,7 +79,12 @@
   .follow-tip::after{content:"";position:absolute;left:50%;bottom:-14px;width:1px;height:14px;background:var(--amber)}
   .stage-bottom{position:absolute;left:10px;right:10px;bottom:10px;z-index:5;display:flex;gap:8px;align-items:flex-end;justify-content:space-between;pointer-events:none}
   .stage-verdict{pointer-events:auto;background:rgba(5,6,5,.84);border:1px solid rgba(236,231,218,.18);border-radius:10px;padding:10px 12px;max-width:min(72vw,520px);backdrop-filter:blur(6px)}
-  .stage-verdict .sv-t{font-family:var(--serif);font-weight:700;font-size:clamp(18px,4.5vw,26px);line-height:1.3}
+  .stage-verdict .sv-t{font-family:var(--serif);font-weight:700;font-size:clamp(22px,5.5vw,34px);line-height:1.2}
+  .stage-verdict.lv0 .sv-t{color:var(--green)}
+  .stage-verdict.lv1 .sv-t{color:var(--amber2)}
+  .stage-verdict.lv2 .sv-t{color:#ff8a4a}
+  .stage-verdict.lv3 .sv-t{color:#ff6b52}
+  .stage-verdict.lv3{border-color:var(--red);box-shadow:0 0 0 1px rgba(228,87,61,.4),0 8px 28px rgba(228,87,61,.22)}
   .stage-verdict .sv-s{font-family:var(--mono);font-size:11px;color:var(--amber2);margin-top:2px}
   .stage-actions{pointer-events:auto;display:flex;gap:6px;flex:none}
   .stage-actions .btn{background:rgba(5,6,5,.84);backdrop-filter:blur(6px)}
@@ -265,6 +282,9 @@
     <div class="hero-main">
       <div class="hero-top"><span class="stchip" id="stPhase">待機中</span><span class="hero-cap">総合判定 — VERDICT</span></div>
       <p class="verdict" id="verdictText">まだ測定していません</p>
+      <div class="level-meter" id="levelMeter" aria-label="異常レベル（4段階）">
+        <span data-lv="0">異常なし</span><span data-lv="1">異常あり？</span><span data-lv="2">異常あり</span><span data-lv="3">超危険</span>
+      </div>
       <p class="verdict-sub" id="verdictSub">①センサーを起動すると、続けて②この部屋の「いつも」を20秒で覚える校正が自動で始まります。部屋を無人の状態にしてから起動してください。判定が出るのは、測定が始まってからです。</p>
       <div class="evchips" id="evChips"></div>
       <div class="calibbar" id="calibBar"><i id="calibFill"></i></div>
@@ -833,15 +853,30 @@ function computeScores(){
   return fired;
 }
 
+function levelForScore(score){
+  /* 4-level bands, shared definition with the native build:
+     異常なし <25 / 異常あり？ 25–49 / 異常あり 50–74 / 超危険 >=75 */
+  if(score<25) return 0;
+  if(score<50) return 1;
+  if(score<75) return 2;
+  return 3;
+}
+var LEVEL_LABELS=["異常なし","異常あり？","異常あり","超危険"];
 function verdictFor(score){
-  if(!S.running && !S.demo) return ["まだ測定していません","①センサーを起動すると、続けて②この部屋の「いつも」を20秒で覚える校正が自動で始まります。部屋を無人の状態にしてから起動してください。"];
-  if(S.calibrating) return ["この部屋の「いつも」を覚えています…","部屋を無人の状態にして、そのまま動かずにお待ちください。"];
-  if(!S.calibrated) return ["手探りで見守っています","まだ校正前なので判定は粗めです。「いつも」を覚えさせると、複数のセンサーの同時変化を正確に拾えます。"];
-  if(score<18) return ["今は静かです","すべてのセンサーが「いつも」の範囲内です。"];
-  if(score<38) return ["少しだけ、空気が動いています","小さな変化があります。単独のセンサーの反応で、環境要因の可能性が高い状態です。"];
-  if(score<60) return ["何かいるかも","複数の変化が重なり始めています。下のログで、どのセンサーが反応したか確認してください。"];
-  if(score<80) return ["何かいるかも","複数のセンサーが同時に反応しています。偶然が重なっただけとは言い切れない動きです。"];
-  return ["ここは、何かがある場所かも","強い同時反応が続いています。スナップショットとログに、その瞬間を残しました。"];
+  if(!S.running && !S.demo) return ["まだ測定していません","①センサーを起動すると、続けて②この部屋の「いつも」を20秒で覚える校正が自動で始まります。部屋を無人の状態にしてから起動してください。判定は「異常なし／異常あり？／異常あり／超危険」の4段階で表示します。"];
+  if(S.calibrating) return ["校正中…","この部屋の「いつも」を覚えています。部屋を無人の状態にして、そのまま動かずにお待ちください。終わると4段階判定が始まります。"];
+  var lv=levelForScore(score);
+  var label=LEVEL_LABELS[lv];
+  if(!S.calibrated){
+    if(lv===0) return [label,"まだ校正前なので判定は粗めです。今のところ目立つ変化はありません。校正すると精度が上がります。"];
+    if(lv===1) return [label,"まだ校正前なので判定は粗めです。小さな変化があります。校正すると「いつも」との差が正確に分かります。"];
+    if(lv===2) return [label,"まだ校正前ですが、はっきりした変化があります。下の内訳で何が反応したか確認してください。"];
+    return [label,"まだ校正前ですが、非常に強い変化があります。すぐに内訳とログを確認してください。"];
+  }
+  if(lv===0) return [label,"すべてのセンサーが「いつも」の範囲内です。異常は検知されていません。"];
+  if(lv===1) return [label,"小さなズレがあります。単独センサーの反応が中心で、環境要因の可能性もあります。様子を見てください。"];
+  if(lv===2) return [label,"複数のセンサーが反応しています。「いつも」とは違う変化が起きています。下の内訳とログを確認してください。"];
+  return [label,"強い同時反応が続いています。複数のセンサーが大きく外れています。スナップショットとログにその瞬間を残しました。"];
 }
 
 /* ---------- anomaly reasons: WHAT is abnormal, in plain words ----------
@@ -870,11 +905,19 @@ function topReasons(n){
 var scoreFillEl=$("scoreFill");
 function paintUI(fired){
   var sc=S.combined;
+  var isActive=(S.running||S.demo) && !S.calibrating;
+  var lv=isActive? levelForScore(sc) : -1;
   $("scoreNum").textContent=(S.running||S.demo)? Math.round(sc) : "–";
   if(scoreFillEl){ scoreFillEl.style.width=clamp(sc,0,100)+"%";
-    scoreFillEl.style.background = sc>=80? "#e4573d" : sc>=55? "#e8863d" : sc>=32? "#e8a33d" : "#43c6b4"; }
+    scoreFillEl.style.background = lv===3? "#e4573d" : lv===2? "#e86a2c" : lv===1? "#e8a33d" : "#7fb069"; }
   var v=verdictFor(sc);
-  if($("verdictText").textContent!==v[0]) $("verdictText").textContent=v[0];
+  var vt=$("verdictText");
+  if(vt.textContent!==v[0]) vt.textContent=v[0];
+  vt.className="verdict"+(lv>=0? " lv"+lv : "");
+  var meter=$("levelMeter");
+  if(meter){ meter.querySelectorAll("span").forEach(function(sp){ sp.classList.toggle("active", Number(sp.getAttribute("data-lv"))===lv); }); }
+  var stageBox=document.querySelector(".stage-verdict");
+  if(stageBox) stageBox.className="stage-verdict"+(lv>=0? " lv"+lv : "");
   var firedSorted=(fired||[]).slice().sort(function(a,b){ return b.sub-a.sub; });
   $("verdictSub").textContent=v[1]+(firedSorted.length? " いま反応しているのは："+firedSorted.slice(0,3).map(function(f){ return reasonText(f.k); }).join("／")+"。":"");
   var sv=$("stageVerdict"); if(sv && sv.textContent!==v[0]) sv.textContent=v[0];
@@ -2101,7 +2144,8 @@ function drawTracks(){
     var topName="";
     if(hot && S._lastFired && S._lastFired.length)
       topName=NAMES[S._lastFired.slice().sort(function(a,b){ return b.sub-a.sub; })[0].k]||"";
-    var label="#"+t.id+(hot? " 異常かも"+(topName? "："+topName:"") : " 追跡中");
+    var lvLab=(typeof LEVEL_LABELS!=="undefined" && typeof levelForScore==="function")? LEVEL_LABELS[levelForScore(S.combined)] : "異常あり";
+    var label="#"+t.id+(hot? " "+lvLab+(topName? "："+topName:"") : " 追跡中");
     ctx.font="600 11px 'IBM Plex Mono',monospace";
     var tw=ctx.measureText(label).width+12;
     ctx.fillStyle="rgba(5,6,5,.88)"; ctx.fillRect(x, Math.max(0,y-20), tw, 17);
@@ -2110,9 +2154,10 @@ function drawTracks(){
   if(anomalous && strong[0]){
     var t0=strong[0];
     var why=topReasons(3);
-    banner.innerHTML="⚠ <b>異常を検知</b> — "+escapeHtml(areaName(t0.cx,t0.cy))+"で動きを追跡中（対象 #"+t0.id+"／気配スコア "+Math.round(S.combined)+"）"+(why.length? '<span class="ab-why">何が異常か：'+escapeHtml(why.join("／"))+"</span>":"");
+    var lvLabel=(typeof LEVEL_LABELS!=="undefined" && typeof levelForScore==="function")? LEVEL_LABELS[levelForScore(S.combined)] : "異常あり";
+    banner.innerHTML="⚠ <b>"+escapeHtml(lvLabel)+"</b> — "+escapeHtml(areaName(t0.cx,t0.cy))+"で動きを追跡中（対象 #"+t0.id+"／気配スコア "+Math.round(S.combined)+"）"+(why.length? '<span class="ab-why">何が異常か：'+escapeHtml(why.join("／"))+"</span>":"");
     banner.classList.add("show");
-    tip.innerHTML="⚠ 何かいるかも — 追跡中 #"+t0.id+"<small>"+escapeHtml(areaName(t0.cx,t0.cy))+" ／ 大きさ目安 "+t0.cells+"セル ／ スコア "+Math.round(S.combined)+(why.length? "<br>異常の内訳："+escapeHtml(why.slice(0,2).join("／")):"")+"</small>";
+    tip.innerHTML="⚠ "+escapeHtml(lvLabel)+" — 追跡中 #"+t0.id+"<small>"+escapeHtml(areaName(t0.cx,t0.cy))+" ／ 大きさ目安 "+t0.cells+"セル ／ スコア "+Math.round(S.combined)+(why.length? "<br>異常の内訳："+escapeHtml(why.slice(0,2).join("／")):"")+"</small>";
     /* pin the tip to the top-centre of the tracked box, converted from
        bitmap coordinates through the shared cover transform above so
        it sits on the same subject the overlay frame is drawn around */
