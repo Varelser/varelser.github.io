@@ -82,7 +82,6 @@
   .stage{margin:0 calc(50% - 50vw);width:100vw;background:#000;border:none;border-bottom:1px solid var(--panel-border);overflow:hidden;position:relative;height:100dvh;min-height:560px;max-height:100dvh}
   .stage:fullscreen{height:100%;max-height:none}
   .stage video#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;pointer-events:none;z-index:0}
-  .stage canvas#view{display:block;width:100%;height:100%;background:#000;position:absolute;inset:0;z-index:1;object-fit:cover}
   .stage canvas#trackOverlay{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;object-fit:cover}
   /* idle guidance: HTML overlay (wraps normally) instead of canvas text,
      so it can never be cropped by the cover fit on portrait phones */
@@ -110,8 +109,6 @@
   .stage-verdict .sv-s{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
   .stage-actions{pointer-events:auto;display:flex;gap:6px;flex:none}
   .stage-actions .btn{background:var(--overlay-bg);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);border-color:var(--overlay-border)}
-  .stage.rawmode canvas#view{visibility:hidden}
-  .stage.rawmode video#cam{opacity:1;z-index:2}
   .diagbar{margin-top:8px;background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:8px;padding:8px 11px;font-size:11px;line-height:1.7;color:var(--muted);word-break:break-all}
   .stage .hud{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;z-index:4}
   .hudbox{font-family:var(--mono);font-size:11px;background:var(--overlay-bg);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);border:1px solid var(--overlay-border);
@@ -120,14 +117,6 @@
   .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
   .flash.go{animation:fl .45s ease-out}
   @keyframes fl{0%{opacity:.85}100%{opacity:0}}
-  .modes{position:absolute;left:10px;right:10px;bottom:96px;z-index:5;display:flex;flex-wrap:wrap;gap:6px;padding:6px;background:var(--overlay-bg);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);border:1px solid var(--overlay-border);border-radius:12px}
-  .modes .mode{flex:1 1 21%}
-  .mode{border:1px solid var(--option-inactive-border);background:var(--control-bg);color:var(--muted);
-    border-radius:8px;padding:9px 6px;font-size:13px;font-weight:700}
-  .mode small{display:block;font-weight:400;font-size:10.5px;color:var(--muted-2);margin-top:2px}
-  .mode:hover{border-color:var(--option-inactive-hover)}
-  .mode.sel{background:var(--option-active-bg);border-color:var(--option-active-border);color:var(--option-active-fg)}
-  .mode.sel small{color:#525252}
 
   /* ---------- controls ---------- */
   .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
@@ -361,26 +350,14 @@
 <!-- ======== FULLSCREEN CAMERA (primary view) ======== -->
   <section class="stage" aria-label="カメラ映像（全面）">
     <video id="cam" playsinline webkit-playsinline muted autoplay aria-hidden="true"></video>
-    <canvas id="view" width="480" height="360"></canvas>
     <canvas id="trackOverlay" width="480" height="360" aria-hidden="true"></canvas>
     <div class="idle-guide" id="idleGuide"><div class="ig-t" id="idleTitle">カメラ待機中</div><div class="ig-s" id="idleSub">「センサーを起動」を押すと映像が始まります</div></div>
     <div class="hud">
-      <span class="hudbox"><span class="k">MODE</span> <span id="hudMode">疑似サーモ</span></span>
       <span class="hudbox"><span class="k">輝度</span> <span id="hudBright">–</span>　<span class="k">動き</span> <span id="hudMotion">–</span>　<span class="k">解析</span> <span id="hudEngine">CPU</span>　<span class="k">FPS</span> <span id="hudFps">–</span></span>
     </div>
     <div class="anomaly-banner" id="anomalyBanner" role="alert" aria-live="polite" aria-hidden="true">⚠ <b>異常を検知</b> — 追跡中</div>
     <div class="follow-tip" id="followTip" aria-hidden="true">⚠ 追跡中<small>動きを追っています</small></div>
     <div class="flash" id="flash"></div>
-    <div class="modes" role="group" aria-label="表示モード">
-      <button class="mode sel" data-mode="thermal">疑似サーモ<small>明るさと赤みを熱っぽく</small></button>
-      <button class="mode" data-mode="motion">動き<small>動いた場所だけ光る</small></button>
-      <button class="mode" data-mode="flicker">光のゆらぎ<small>ちらつき・明滅を強調</small></button>
-      <button class="mode" data-mode="edge">輪郭<small>形の変化を見る</small></button>
-      <button class="mode" data-mode="normal">通常<small>計測グリッド付き</small></button>
-      <button class="mode" data-mode="heat">蓄積ヒート<small>動きが集まる場所</small></button>
-      <button class="mode" data-mode="nightred">赤色・夜間<small>暗順応を守る表示</small></button>
-      <button class="mode" data-mode="raw">生映像<small>無加工・カメラそのまま</small></button>
-    </div>
     <div class="stage-bottom">
       <div class="stage-verdict"><div class="sv-t" id="stageVerdict">まだ測定していません</div><div class="sv-s" id="stageScore">気配スコア – ／ 追跡対象 なし</div></div>
     </div>
@@ -614,7 +591,7 @@
       <div>
         <h3>このアプリが感知しているもの</h3>
         <ul>
-          <li><b>カメラ</b>：動き・明るさ・光のゆらぎ（フリッカー）・色の偏り。疑似サーモ表示は「明るさ＋赤み」を熱っぽい色に変換したもので、実温度ではありません</li>
+          <li><b>カメラ</b>：動き・明るさ・光のゆらぎ（フリッカー）・色の偏り。画面に出る映像は無加工の生映像で、解析は見えないところで行います</li>
           <li><b>マイク</b>：音量と周波数。物音だけでなく、聞き取りにくい低い音のうなりも拾います</li>
           <li><b>加速度・ジャイロ</b>：本体の振動と傾きの変化（机に置いて使うと床の振動も拾えます）</li>
           <li><b>方位センサー</b>：向いている方角と姿勢の変化</li>
@@ -640,7 +617,7 @@
     <ul>
       <li><b>基準の自動追従</b>：夕方で部屋が少しずつ暗くなるような緩やかな変化には基準がゆっくり追従し、急な変化だけを拾います（ボタンで無効化できます）</li>
       <li><b>急な静寂も異常</b>：いつも鳴っていた音が突然消える変化も、校正後の基準との差として数えます</li>
-      <li><b>蓄積ヒート表示</b>：一瞬の動きではなく「時間とともに動きが集まる場所」を空間に塗ります。かたまり分類は大きさと持続からの目安で、断定ではありません</li>
+      <li><b>動きの蓄積とかたまり分類</b>：一瞬の動きではなく、時間とともに動きが集まる領域を裏側で集計します。かたまり分類は大きさと持続からの目安で、断定ではありません</li>
       <li><b>記録の持ち出し</b>：ログはJSON／CSVで共有・書き出しでき、強い反応は短い映像と音声クリップでも残ります。クリップはこのセッション内のみ、ログと履歴はこの端末内に保存されます</li>
     </ul>
     <div class="honest">
@@ -695,7 +672,7 @@ self.onmessage=function(e){
 var S = {
   running:false, demo:false, calibrated:false, calibrating:false,
   calibSamples:null, calibUntil:0, baseline:null,
-  mode:"thermal", sensitivity:1,
+  sensitivity:1,
   metrics:{ motion:0, bright:0, flicker:0, color:0, spatial:0, audio:-70, lowfreq:0, ultra:0, vib:0, vibper:0, orient:0, magjit:0, lux:0, prox:0, net:0, silence:0 },
   sub:{ motion:0, bright:0, flicker:0, color:0, spatial:0, audio:0, lowfreq:0, ultra:0, vib:0, vibper:0, orient:0, magjit:0, lux:0, prox:0, net:0, silence:0 },
   avail:{ motion:false, bright:false, flicker:false, color:false, spatial:false, audio:false, lowfreq:false, ultra:false, vib:false, vibper:false, orient:false, magjit:false, lux:false, prox:false, net:false, silence:false },
@@ -713,34 +690,21 @@ function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
 function fmt(n,d){ return (n==null||isNaN(n))?"–":Number(n).toFixed(d==null?1:d); }
 function nowTime(){ var d=new Date(); function p(x){return (x<10?"0":"")+x;} return p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds()); }
 
-/* ================= thermal palette ================= */
-var LUT=[];
-(function(){ // iron palette stops
-  var stops=[[0,0,0],[28,0,52],[74,0,96],[122,10,110],[168,32,84],[208,62,44],[238,110,22],[252,166,32],[253,214,92],[255,244,180],[255,255,255]];
-  for(var i=0;i<256;i++){ var t=i/255*(stops.length-1), a=Math.floor(t), f=t-a, A=stops[a], B=stops[Math.min(a+1,stops.length-1)];
-    LUT.push([A[0]+(B[0]-A[0])*f, A[1]+(B[1]-A[1])*f, A[2]+(B[2]-A[2])*f]); }
-})();
-
-/* ================= camera processing ================= */
+/* ================= camera processing =================
+   The stage shows ONLY the raw <video> feed. All frame processing
+   happens on the hidden #proc canvas and is never painted over the
+   picture: it exists purely to produce the analysis channels
+   (motion / brightness / flicker / colour / spatial) for the score. */
 var video=$("cam"), proc=$("proc"), pctx=proc.getContext("2d",{willReadFrequently:true});
-var view=$("view"), vctx=view.getContext("2d");
-var PW=480, PH=360, prevGray=null, trail=null, frames=0, fpsT=performance.now(), fps=0;
+var PW=480, PH=360, prevGray=null, frames=0, fpsT=performance.now(), fps=0;
 var stream=null;    /* the camera stream shown in <video> — single owner: start / camera-switch / watchdog-restart only */
 var micStream=null; /* the microphone's own stream, never merged into the displayed stream */
-var PROC_FRAMES=0, LAST_FRAME_AT=0; /* diagnostic: frames actually drawn by the pipeline */
-var heatCv=document.createElement("canvas"); heatCv.width=24; heatCv.height=18;
-var heatCx=heatCv.getContext("2d");
+var PROC_FRAMES=0, LAST_FRAME_AT=0; /* diagnostic: frames actually analysed by the pipeline */
 
 function drawIdle(){
-  var g=vctx.createLinearGradient(0,0,PW,PH);
-  g.addColorStop(0,"#0a0c0a"); g.addColorStop(.55,"#10130e"); g.addColorStop(1,"#0a0c0a");
-  vctx.fillStyle=g; vctx.fillRect(0,0,PW,PH);
-  vctx.strokeStyle="rgba(255,255,255,.08)"; vctx.lineWidth=1;
-  for(var x=0;x<=PW;x+=48){ vctx.beginPath(); vctx.moveTo(x,0); vctx.lineTo(x,PH); vctx.stroke(); }
-  for(var y=0;y<=PH;y+=48){ vctx.beginPath(); vctx.moveTo(0,y); vctx.lineTo(PW,y); vctx.stroke(); }
-  /* Guidance text is NOT drawn here: canvas text was cropped by the
-     cover fit on portrait phones. The #idleGuide HTML overlay carries
-     it instead and wraps normally at any stage size. */
+  /* Nothing is painted for the idle state: the stage stays plain
+     black and the #idleGuide HTML overlay carries the guidance text
+     (it wraps normally at any stage size). */
   var ig=$("idleGuide");
   if(ig){ ig.classList.remove("hide");
     $("idleTitle").textContent = S.demo? "デモ映像（合成）" : "カメラ待機中";
@@ -820,55 +784,9 @@ function processFrame(){
     var v=0; for(i2=0;i2<S.brightHist.length;i2++) v+=(S.brightHist[i2]-m)*(S.brightHist[i2]-m); S.metrics.flicker=Math.sqrt(v/S.brightHist.length); }
   S.avail.motion=S.avail.bright=S.avail.flicker=S.avail.color=true;
 
-  // ---- render by mode ----
-  if(S.mode==="raw"){ /* the stage is showing the <video> element itself;
-       analysis above still ran, only the canvas render is skipped */
-    prevGray=gray; afterFrame(); return; }
-  var out=pctx.createImageData(PW,PH), o=out.data;
-  if(!trail) trail=new Float32Array(n);
-  if(S.mode==="thermal"){
-    for(var p=0;p<n;p++){ var t=clamp(Math.round(gray[p]*0.82 + (d[p*4]-gray[p])*0.9 + 26),0,255), c=LUT[t], q=p*4;
-      o[q]=c[0]; o[q+1]=c[1]; o[q+2]=c[2]; o[q+3]=255; }
-  } else if(S.mode==="motion"){
-    for(var p2=0;p2<n;p2++){ var df=prevGray?Math.abs(gray[p2]-prevGray[p2]):0;
-      trail[p2]=Math.max(df*2.6, trail[p2]*0.90); var tv=clamp(trail[p2],0,255), q2=p2*4;
-      o[q2]=tv; o[q2+1]=tv*0.72; o[q2+2]=tv*0.30; o[q2+3]=255; }
-  } else if(S.mode==="flicker"){
-    for(var p3=0;p3<n;p3++){ var df2=prevGray?Math.abs(gray[p3]-prevGray[p3])*3.2:0, q3=p3*4;
-      var base=gray[p3]*0.22; o[q3]=base+df2*0.4; o[q3+1]=base+df2*0.95; o[q3+2]=base+df2*0.85; o[q3+3]=255; }
-  } else if(S.mode==="edge"){
-    for(var y=1;y<PH-1;y++){ for(var x=1;x<PW-1;x++){ var idx=y*PW+x;
-      var gx=-gray[idx-PW-1]-2*gray[idx-1]-gray[idx+PW-1]+gray[idx-PW+1]+2*gray[idx+1]+gray[idx+PW+1];
-      var gy=-gray[idx-PW-1]-2*gray[idx-PW]-gray[idx-PW+1]+gray[idx+PW-1]+2*gray[idx+PW]+gray[idx+PW+1];
-      var e=clamp(Math.sqrt(gx*gx+gy*gy)*0.9,0,255), q4=idx*4;
-      o[q4]=e*0.95; o[q4+1]=e; o[q4+2]=e*0.9; o[q4+3]=255; } }
-  } else if(S.mode==="heat"){
-    vctx.fillStyle="#050605"; vctx.fillRect(0,0,PW,PH);
-    if(S.heatArr){
-      var hd=heatCx.createImageData(24,18), mx=0.001, hi, hj;
-      for(hi=0;hi<432;hi++) if(S.heatArr[hi]>mx) mx=S.heatArr[hi];
-      for(hj=0;hj<432;hj++){ var hv=clamp(Math.round(S.heatArr[hj]/mx*255),0,255), hc=LUT[hv], hq=hj*4;
-        hd.data[hq]=hc[0]; hd.data[hq+1]=hc[1]; hd.data[hq+2]=hc[2]; hd.data[hq+3]=255; }
-      heatCx.putImageData(hd,0,0);
-      vctx.imageSmoothingEnabled=true; vctx.drawImage(heatCv,0,0,PW,PH);
-      vctx.fillStyle="rgba(255,255,255,.85)"; vctx.font="12px system-ui,sans-serif"; vctx.textAlign="left";
-      vctx.fillText("時間とともに動きが集まった場所",12,22);
-    } else {
-      vctx.fillStyle="rgba(255,255,255,.55)"; vctx.font="13px system-ui,sans-serif"; vctx.textAlign="center";
-      vctx.fillText("動きの蓄積を待っています",PW/2,PH/2);
-    }
-    prevGray=gray; afterFrame(); return;
-  } else if(S.mode==="nightred"){
-    for(var p4=0;p4<n;p4++){ var q5=p4*4; o[q5]=clamp(gray[p4]*1.15,0,255); o[q5+1]=gray[p4]*0.16; o[q5+2]=gray[p4]*0.10; o[q5+3]=255; }
-  } else { // normal + grid
-    out=img;
-    vctx.putImageData(out,0,0);
-    vctx.strokeStyle="rgba(255,255,255,.35)"; vctx.lineWidth=1;
-    vctx.strokeRect(PW/2-40,PH/2-40,80,80);
-    vctx.beginPath(); vctx.moveTo(PW/2-56,PH/2); vctx.lineTo(PW/2+56,PH/2); vctx.moveTo(PW/2,PH/2-56); vctx.lineTo(PW/2,PH/2+56); vctx.stroke();
-    prevGray=gray; afterFrame(); return;
-  }
-  vctx.putImageData(out,0,0);
+  /* Analysis only — nothing is rendered from the frame. The stage
+     keeps showing the raw <video> feed; in demo mode the synthetic
+     frame above stands in for the camera in the analysis only. */
   prevGray=gray; afterFrame();
 }
 function afterFrame(){
@@ -899,7 +817,7 @@ function frameLoop(){
   try{ processFrame(); frameLoop._errs=0; }
   catch(e){
     frameLoop._errs=(frameLoop._errs||0)+1;
-    prevGray=null; trail=null; /* drop possibly-corrupt frame state */
+    prevGray=null; /* drop possibly-corrupt frame state */
     if(frameLoop._errs===30){
       showCamError("映像の処理でエラーが続いています",
         "カメラ自体は掴めていますが、フレーム処理が繰り返し失敗しています（"+((e&&e.name)||"Error")+"）。",
@@ -1233,7 +1151,10 @@ function shotFromURL(url, score, why){
 }
 function canvasSnap(score, why){
   try{
-    var url=view.toDataURL("image/jpeg",0.82);
+    /* #proc holds the latest RAW frame (cover-drawn from the video,
+       before any analysis), so the snapshot is the unprocessed
+       camera image — in demo mode, the synthetic frame. */
+    var url=proc.toDataURL("image/jpeg",0.82);
     var b=document.createElement("button"); b.className="shot"; b.type="button";
     b.innerHTML='<img alt="検知時の映像 '+nowTime()+'" src="'+url+'"><span>'+nowTime()+" ／ スコア "+Math.round(score)+(why? " ／ 異常："+why:"")+"</span>";
     b.addEventListener("click",function(){ var a=document.createElement("a"); a.href=url; a.download="kehai-"+Date.now()+".jpg"; a.click(); });
@@ -1520,14 +1441,13 @@ document.addEventListener("pointerdown", function(){
     try{ var p=video.play(); if(p && p.catch) p.catch(function(){}); }catch(e){}
   }
 });
-/* ================= camera diagnostics + raw fallback =================
+/* ================= camera diagnostics =================
    A permanent readout under the camera view, so the exact stuck point
    is visible on the device itself: whether a stream was acquired, the
    track state, the real frame size, readyState, whether the playback
-   clock is advancing, and how many frames the processing pipeline has
-   actually drawn. If processed frames stall for >2s while monitoring,
-   the view fails OPEN to the raw <video> element instead of sitting
-   on a black canvas. */
+   clock is advancing, and how many frames the analysis pipeline has
+   actually processed. The stage itself always shows the raw <video>
+   element — there is no processed view to fall back from. */
 var DIAG={ct:-1, adv:false, note:""};
 function attachTrackWatch(tr){
   if(!tr || tr._kehaiWatched) return;
@@ -1563,14 +1483,9 @@ setInterval(function(){
     " ／ readyState "+video.readyState+
     " ／ 再生時刻 "+ct.toFixed(1)+"s（"+(DIAG.adv?"進行中":"停止")+"）"+
     " ／ 処理フレーム "+PROC_FRAMES+
-    " ／ 表示 "+(S.mode==="raw"? "生映像": ($("hudMode")? $("hudMode").textContent : S.mode));
+    " ／ 表示 生映像";
   if(DIAG.note) txt+=" ／ "+DIAG.note;
   if(el.textContent!==txt) el.textContent=txt;
-  if(S.running && !S.demo && S.mode!=="raw" && DIAG.advAt && performance.now()-DIAG.advAt>2000
-     && document.visibilityState==="visible"){
-    var rb=document.querySelector('.mode[data-mode="raw"]');
-    if(rb){ DIAG.note="処理済み表示が2秒以上止まったため、生映像に自動で切り替えました"; rb.click(); }
-  }
 },500);
 /* ================= frame watchdog + automatic restart =================
    Every 2s: is the picture actually advancing? Frame advancement is
@@ -1735,16 +1650,15 @@ $("btnStart").addEventListener("click", async function(){
     S.running=true; S.demo=false; S.startedAt=nowTime();
     LAST_FRAME_AT=performance.now(); /* raw-fallback watchdog grace starts at attach */
     S._runAt=performance.now(); RESTARTS=0; DIAG._gaveUp=false; DIAG._gaveUpAt=0; startFrameWatch(); /* manual restart re-arms the watchdog */
-    /* The raw feed is the main view: show it first. Processed views
-       (疑似サーモ等) are side channels the user can switch to — the
-       analysis runs either way, and a processing failure can never
-       hide or stop this feed. A track that starts muted simply shows
-       「準備中」 via the status chip until frames actually flow; the
-       watchdog below keeps retrying play() and, if frames freeze,
-       re-acquires the camera on its own. */
+    /* The raw feed is the only view: show it first. The analysis
+       runs invisibly on the offscreen canvas either way, and an
+       analysis failure can never hide or stop this feed. A track
+       that starts muted simply shows 「準備中」 via the status chip
+       until frames actually flow; the watchdog below keeps retrying
+       play() and, if frames freeze, re-acquires the camera on its
+       own. */
     $("stCam").textContent = video.videoWidth>0? "カメラ ON" : "カメラ 準備中…";
     if(video.videoWidth>0) $("stCam").classList.add("on");
-    var rb0=document.querySelector('.mode[data-mode="raw"]'); if(rb0) rb0.click();
     /* Motion/orientation permission — only now, with the picture live. */
     await requestMotionPermission();
     /* Microphone last, separately — its failure is non-fatal. */
@@ -1825,17 +1739,6 @@ $("btnDemo").addEventListener("click", function(){
   startCalib();
 });
 
-/* modes */
-document.querySelectorAll(".mode").forEach(function(b){
-  b.addEventListener("click", function(){
-    document.querySelectorAll(".mode").forEach(function(x){x.classList.remove("sel");});
-    b.classList.add("sel"); S.mode=b.getAttribute("data-mode");
-    $("hudMode").textContent=b.childNodes[0].textContent;
-    trail=null;
-    var stg=document.querySelector(".stage"); if(stg) stg.classList.toggle("rawmode", S.mode==="raw");
-    if(S.mode==="raw" && video.paused){ try{ var rp=video.play(); if(rp&&rp.catch) rp.catch(function(){}); }catch(e){} }
-  });
-});
 $("sensRange").addEventListener("input", function(){
   S.sensitivity=this.value/100; $("sensVal").textContent=S.sensitivity.toFixed(1)+"×";
 });
@@ -2001,7 +1904,7 @@ $("btnExport").addEventListener("click", async function(){
   if(window.ImageCapture)
     setCap("capIC","ok","ImageCapture：強い反応の瞬間は、映像処理用とは別に高解像度の写真で残します。");
   else
-    setCap("capIC","fb","ImageCapture：未対応（Safari 18.4から）のため、スナップショットは表示中の映像から保存します。");
+    setCap("capIC","fb","ImageCapture：未対応（Safari 18.4から）のため、スナップショットは生映像のフレームから保存します。");
 })();
 
 /* ---------- Screen Wake Lock ---------- */
@@ -2035,7 +1938,6 @@ document.addEventListener("visibilitychange", function(){
 $("btnNight").addEventListener("click", function(){
   var on=document.body.classList.toggle("night");
   this.setAttribute("aria-pressed", on?"true":"false");
-  if(on){ var b=document.querySelector('.mode[data-mode="nightred"]'); if(b) b.click(); }
 });
 $("btnAdapt").addEventListener("click", function(){
   S.adaptive=!S.adaptive;
@@ -2317,14 +2219,13 @@ function updateTracks(){
   drawTracks();
 }
 /* ---------- ONE shared coordinate transform for the three layers ----------
-   The camera picture (the <video> element in raw mode, and the #view
-   canvas that re-renders the analysed frames in every other mode), the
-   #trackOverlay canvas, and the HTML follow-tip must all land on the
-   same stage pixels. The picture and both canvases carry a 480x360
-   bitmap fitted into the stage box with object-fit:cover — scaled by
+   The camera picture (the raw <video> element), the #trackOverlay
+   canvas, and the HTML follow-tip must all land on the same stage
+   pixels. The picture and the overlay canvas carry a 480x360 bitmap
+   fitted into the stage box with object-fit:cover — scaled by
    max(stageW/480, stageH/360) and centre-cropped — so canvas drawing
-   can stay in bitmap coordinates and the CSS fit transforms #view and
-   #trackOverlay identically. The follow-tip is a plain HTML element
+   can stay in bitmap coordinates and the CSS fit transforms the
+   picture and #trackOverlay identically. The follow-tip is a plain HTML element
    with no object-fit, so its position is computed through this same
    cover transform: bitmap point -> stage percentages. (Before this,
    the overlay had no object-fit and was stretched fill-style while the
@@ -2639,7 +2540,7 @@ paintStorageCap();
   var p3=false, hdr=false;
   try{ p3=window.matchMedia("(color-gamut: p3)").matches; }catch(e){}
   try{ hdr=window.matchMedia("(dynamic-range: high)").matches; }catch(e){}
-  setCap("capGamut", (p3||hdr)?"ok":"fb", "広色域（P3）："+(p3? "対応" : "判定できず")+" ／ HDR表示："+(hdr? "対応" : "判定できず")+"。疑似サーモ表示の色の出方が機種で少し変わるのはこの差です。");
+  setCap("capGamut", (p3||hdr)?"ok":"fb", "広色域（P3）："+(p3? "対応" : "判定できず")+" ／ HDR表示："+(hdr? "対応" : "判定できず")+"。");
 
   /* standalone / PWA */
   var sa=false;
