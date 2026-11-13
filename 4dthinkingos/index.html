@@ -35,5 +35,123 @@
 </head>
   <body>
     <div id="root"></div>
-  </body>
+  <script>
+/* 4DT Tier B (2026-11-13): View Transitions for view switches +
+   Wake Lock during timeline playback. Self-contained and fails safe:
+   everything is feature-detected and try/caught, and nothing here
+   reads or writes the app's own state. */
+(function(){
+  'use strict';
+  var api = { vtInstalled:false, wakeInstalled:false, vtCalls:0, wakeRequests:0, wakeReleases:0 };
+  window.__twTierB = api;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- View Transitions (workspace <main> only) ---------- */
+  try {
+    if (document.startViewTransition && !reduceMotion.matches) {
+      var lastMainMutation = 0;
+      var mo = new MutationObserver(function(){ lastMainMutation = performance.now(); });
+      var moTarget = null;
+      function armObserver(){
+        if (moTarget && document.contains(moTarget)) return;
+        var main = document.querySelector('#root > main');
+        if (main) { moTarget = main; mo.observe(main, {childList:true, subtree:true}); }
+      }
+      armObserver();
+      new MutationObserver(armObserver).observe(document.documentElement, {childList:true, subtree:true});
+
+      var pending = null;
+      document.addEventListener('click', function(ev){
+        try {
+          if (pending) return;
+          var btn = ev.target && ev.target.closest ? ev.target.closest('button') : null;
+          if (!btn) return;
+          var section = btn.closest('#root > aside > div');
+          if (!section) return;
+          var head = section.querySelector('button');
+          var label = head ? (head.textContent || '') : '';
+          if (!/トピック|レイアウト・表示|画面分割/.test(label)) return;
+          var clickAt = performance.now();
+          var vt = document.startViewTransition(function(){
+            return new Promise(function(resolve){
+              if (lastMainMutation > clickAt) { resolve(); return; }
+              var done = false;
+              var obs = new MutationObserver(function(){
+                if (done) return; done = true; obs.disconnect();
+                requestAnimationFrame(function(){ requestAnimationFrame(resolve); });
+              });
+              var main = document.querySelector('#root > main');
+              if (main) obs.observe(main, {childList:true, subtree:true});
+              setTimeout(function(){
+                if (done) return; done = true; obs.disconnect();
+                try { vt.skipTransition(); } catch(e) {}
+                resolve();
+              }, 220);
+            });
+          });
+          pending = vt; api.vtCalls++;
+          document.documentElement.classList.add('tw-vt-active');
+          var clear = function(){
+            if (pending === vt) pending = null;
+            document.documentElement.classList.remove('tw-vt-active');
+          };
+          vt.finished.then(clear, clear);
+        } catch(e) {}
+      }, true);
+      api.vtInstalled = true;
+    }
+  } catch(e) {}
+
+  /* ---------- Wake Lock while the timeline plays ----------
+     The bottom bar is the app's own fixed div. During playback its
+     time label / playhead mutate continuously; 3 mutation batches
+     within 2.5s counts as "playing". Silence for 5s releases. */
+  try {
+    if ('wakeLock' in navigator) {
+      var bar = null, sentinel = null, batches = [], lastBatch = 0, playing = false;
+      function findBar(){
+        if (bar && document.contains(bar)) return bar;
+        var divs = document.querySelectorAll('#root > div');
+        for (var i = 0; i < divs.length; i++) {
+          var s = divs[i].getAttribute('style') || '';
+          if (s.indexOf('position: fixed') === 0 && s.indexOf('bottom: 0px') > -1) { bar = divs[i]; return bar; }
+        }
+        return null;
+      }
+      function acquire(){
+        if (sentinel || document.visibilityState !== 'visible') return;
+        navigator.wakeLock.request('screen').then(function(s){
+          sentinel = s; api.wakeRequests++;
+          s.addEventListener('release', function(){ sentinel = null; api.wakeReleases++; });
+        }).catch(function(){});
+      }
+      function release(){
+        if (sentinel) { try { sentinel.release(); } catch(e) {} sentinel = null; }
+      }
+      var barObs = new MutationObserver(function(){
+        var now = performance.now();
+        if (now - lastBatch < 90) return;
+        lastBatch = now;
+        batches.push(now);
+        batches = batches.filter(function(t){ return now - t < 2500; });
+        if (!playing && batches.length >= 3) { playing = true; acquire(); }
+      });
+      var tries = 0;
+      var timer = setInterval(function(){
+        var b = findBar();
+        if (b) barObs.observe(b, {childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:['style']});
+        if (b || ++tries > 40) clearInterval(timer);
+      }, 500);
+      setInterval(function(){
+        if (playing && performance.now() - lastBatch > 5000) { playing = false; batches = []; release(); }
+      }, 1000);
+      document.addEventListener('visibilitychange', function(){
+        if (document.visibilityState === 'visible' && playing) acquire();
+      });
+      api.wakeInstalled = true;
+    }
+  } catch(e) {}
+})();
+</script>
+</body>
 </html>
