@@ -161,7 +161,8 @@
   try {
     var LOOKS = [['standard','標準'],['blueprint','設計図'],['orb','天体'],
                  ['minimal','余白'],['constellation','星座'],['glass','硝子'],
-                 ['dots','点描'],['lines','線画'],['orb3d','陰影']];
+                 ['dots','点描'],['lines','線画'],['orb3d','陰影'],
+                 ['topo','地形'],['pulse','脈動']];
     var LS_KEY = 'tw.sphere.look.v1';
     var cur = 'standard';
     try {
@@ -217,7 +218,7 @@
        rect. It (re)attaches whenever React swaps the container,
        detaches for non-body looks, and rAF idles cheaply when the
        sphere view is off screen. Ink colour follows --tw-sphere. */
-    var BODY = { dots: 1, lines: 1, orb3d: 1 };
+    var BODY = { dots: 1, lines: 1, orb3d: 1, topo: 1, pulse: 1 };
     var cv = null, cx2 = null;
     var inkRGB = [255, 255, 255], inkTick = 0;
     function refreshInk() {
@@ -289,6 +290,54 @@
           }
         }
         gx.strokeStyle = ink(0.4); gx.lineWidth = 1;
+        gx.beginPath(); gx.arc(cx, cy, R, 0, 6.2832); gx.stroke();
+      } else if (look === 'topo') {
+        var a3 = t * 0.05;
+        gx.lineWidth = 0.8;
+        for (j = 1; j < 12; j++) {
+          var phi = (j / 12) * Math.PI;
+          var yy3 = Math.cos(phi), rr3 = Math.sin(phi), prevT = null;
+          for (k = 0; k <= 72; k++) {
+            var th3 = (k / 72) * Math.PI * 2;
+            var wob = 1 + 0.05 * Math.sin(3 * th3 + j * 1.7 + t * 0.12) + 0.032 * Math.sin(5 * th3 - j * 2.3 + t * 0.07);
+            p = brot(Math.cos(th3) * rr3 * wob, yy3 * (1 - (wob - 1) * 0.6), Math.sin(th3) * rr3 * wob, a3);
+            var plen = Math.sqrt(p[0] * p[0] + p[1] * p[1]);
+            if (plen > 0.998) { var pf = 0.998 / plen; p = [p[0] * pf, p[1] * pf, p[2]]; }
+            if (prevT) {
+              var dtp = ((prevT[2] + p[2]) / 2 + 1) / 2;
+              gx.strokeStyle = ink(0.03 + 0.48 * dtp * dtp);
+              gx.beginPath();
+              gx.moveTo(cx + prevT[0] * R, cy + prevT[1] * R);
+              gx.lineTo(cx + p[0] * R, cy + p[1] * R);
+              gx.stroke();
+            }
+            prevT = p;
+          }
+        }
+        gx.strokeStyle = ink(0.4); gx.lineWidth = 1;
+        gx.beginPath(); gx.arc(cx, cy, R, 0, 6.2832); gx.stroke();
+      } else if (look === 'pulse') {
+        var a4 = t * 0.07;
+        for (i = 0; i < BN; i++) {
+          p = brot(bpts[i][0], bpts[i][1], bpts[i][2], a4);
+          var d4 = (p[2] + 1) / 2;
+          var pr = 0.5 + 1.5 * d4 + 0.6 * Math.sin(t * 2.4 - p[2] * 3.2) * d4;
+          if (pr < 0.3) pr = 0.3;
+          gx.globalAlpha = 0.05 + 0.55 * d4 * d4;
+          gx.fillStyle = ink(1);
+          gx.beginPath();
+          gx.arc(cx + p[0] * R, cy + p[1] * R, pr, 0, 6.2832);
+          gx.fill();
+        }
+        gx.globalAlpha = 1;
+        for (j = 0; j < 3; j++) {
+          var ph4 = ((t * 0.4) + j / 3) % 1;
+          gx.globalAlpha = (1 - ph4) * 0.32;
+          gx.strokeStyle = ink(1); gx.lineWidth = 1;
+          gx.beginPath(); gx.arc(cx, cy, R * (0.12 + 0.88 * ph4), 0, 6.2832); gx.stroke();
+        }
+        gx.globalAlpha = 1;
+        gx.strokeStyle = ink(0.35); gx.lineWidth = 1;
         gx.beginPath(); gx.arc(cx, cy, R, 0, 6.2832); gx.stroke();
       } else { /* orb3d */
         var g = gx.createRadialGradient(cx - R * 0.45, cy - R * 0.5, R * 0.08, cx, cy, R * 1.02);
@@ -373,7 +422,7 @@
       }
       return clone;
     }
-    async function exportPNGBlob() {
+    async function exportPNGBlob(transparent) {
       var svg = sphereSvg(); if (!svg) return null;
       var cont = svg.parentElement;
       var shell = svg.querySelector(':scope > circle:nth-of-type(2)');
@@ -384,9 +433,11 @@
       var k = OUT / side;
       var out = document.createElement('canvas'); out.width = OUT; out.height = OUT;
       var g = out.getContext('2d');
-      var bg = getComputedStyle(cont).backgroundColor;
-      g.fillStyle = (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') ? bg : '#000000';
-      g.fillRect(0, 0, OUT, OUT);
+      if (!transparent) {
+        var bg = getComputedStyle(cont).backgroundColor;
+        g.fillStyle = (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') ? bg : '#000000';
+        g.fillRect(0, 0, OUT, OUT);
+      }
       if (cv && cv.parentElement) {
         var cr2 = cv.getBoundingClientRect(), f = cv.width / cr2.width;
         g.drawImage(cv, (sr.left - cr2.left - pad) * f, (sr.top - cr2.top - pad) * f, side * f, side * f, 0, 0, OUT, OUT);
@@ -437,17 +488,28 @@
     var sep = document.createElement('span');
     sep.className = 'sep';
     bar.appendChild(sep);
-    function barBtn(label, title, fn) {
+    function barBtn(label, title, fn, act) {
       var b = document.createElement('button');
       b.type = 'button'; b.textContent = label; b.title = title;
-      b.addEventListener('click', function() { fn(b); });
+      if (act) b.setAttribute('data-act', act);
+      b.addEventListener('click', function(ev) { fn(b, ev); });
       bar.appendChild(b);
       return b;
     }
-    barBtn('画像', '球体をPNGで保存', async function(b) {
+    barBtn('画像', '球体をPNGで保存（Alt=透過背景）', async function(b, ev) {
       flash(b, '生成中');
-      try { var blob = await exportPNGBlob(); if (blob) saveBlob(blob, 'thought-sphere.png'); } catch (e) {}
-    });
+      try { var blob = await exportPNGBlob(!!(ev && ev.altKey)); if (blob) saveBlob(blob, 'thought-sphere.png'); } catch (e) {}
+    }, 'png');
+    barBtn('コピー', 'PNGをクリップボードにコピー（Alt=透過背景）', async function(b, ev) {
+      try {
+        var blob = await exportPNGBlob(!!(ev && ev.altKey)); if (!blob) return;
+        if (navigator.clipboard && window.ClipboardItem) {
+          var item = {}; item['image/png'] = blob;
+          await navigator.clipboard.write([new ClipboardItem(item)]);
+          flash(b, '済');
+        } else flash(b, '未対応');
+      } catch (e) { flash(b, '不可'); }
+    }, 'copy');
     barBtn('共有', 'PNGを共有', async function(b) {
       try {
         var blob = await exportPNGBlob(); if (!blob) return;
@@ -455,13 +517,13 @@
         if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f] });
         else saveBlob(blob, 'thought-sphere.png');
       } catch (e) {}
-    });
+    }, 'share');
     barBtn('全画面', '球体ビューを全画面表示', function() {
       var svg = sphereSvg(), el = svg ? svg.parentElement : null;
       if (document.fullscreenElement) document.exitFullscreen().catch(function() {});
       else if (el && el.requestFullscreen) el.requestFullscreen().catch(function() {});
-    });
-    barBtn('小窓', 'ミニ球体を常時最前面の小窓で表示', function(b) { openPiP(b); });
+    }, 'fs');
+    barBtn('小窓', 'ミニ球体を常時最前面の小窓で表示', function(b) { openPiP(b); }, 'pip');
 
     var lastBadge = -1;
     var syncVis2 = function() {
@@ -481,6 +543,21 @@
         }
       } catch (e) {}
     };
+    document.addEventListener('keydown', function(e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var tg = e.target;
+      if (tg && (tg.tagName === 'INPUT' || tg.tagName === 'TEXTAREA' || tg.tagName === 'SELECT' || tg.isContentEditable)) return;
+      if (!bar.isConnected || bar.style.display === 'none') return;
+      var clickLook = function(name) { var b = bar.querySelector('button[data-look="' + name + '"]'); if (b) b.click(); };
+      var clickAct = function(name) { var b = bar.querySelector('button[data-act="' + name + '"]'); if (b) b.click(); };
+      var key = e.key;
+      if (key >= '1' && key <= '9') clickLook(LOOKS[parseInt(key, 10) - 1][0]);
+      else if (key === '0') clickLook('topo');
+      else if (key === 'u' || key === 'U') clickLook('pulse');
+      else if (key === 'f' || key === 'F') clickAct('fs');
+      else if (key === 's' || key === 'S') clickAct('png');
+      else if (key === 'c' || key === 'C') clickAct('copy');
+    });
     setInterval(syncVis2, 900);
   } catch (e) { /* look switcher is decorative; never break the app */ }
 })();

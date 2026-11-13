@@ -403,7 +403,7 @@ html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) line[stroke-width
 html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:3.6px; }
 html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"]{ font-size:8.4px; }
 
-/* ---- body looks: 点描 dots / 線画 lines / 陰影 orb3d ----
+/* ---- body looks: 点描 dots / 線画 lines / 陰影 orb3d / 地形 topo / 脈動 pulse ----
    For these three, the app's own sphere body (shell, glow disc,
    graticule) is hidden and a canvas engine in the Tier B script
    draws a replacement body UNDER the SVG (nodes/edges/labels —
@@ -411,12 +411,18 @@ html[data-tw-sphere="glass"] #root > main svg:has(#sphereGlow) g text[font-size=
    standard look. */
 html[data-tw-sphere="dots"] #root > main svg:has(#sphereGlow) > circle,
 html[data-tw-sphere="lines"] #root > main svg:has(#sphereGlow) > circle,
+html[data-tw-sphere="topo"] #root > main svg:has(#sphereGlow) > circle,
+html[data-tw-sphere="pulse"] #root > main svg:has(#sphereGlow) > circle,
 html[data-tw-sphere="orb3d"] #root > main svg:has(#sphereGlow) > circle{ opacity:0; }
 html[data-tw-sphere="dots"] #root > main svg:has(#sphereGlow) polyline,
 html[data-tw-sphere="lines"] #root > main svg:has(#sphereGlow) polyline,
+html[data-tw-sphere="topo"] #root > main svg:has(#sphereGlow) polyline,
+html[data-tw-sphere="pulse"] #root > main svg:has(#sphereGlow) polyline,
 html[data-tw-sphere="orb3d"] #root > main svg:has(#sphereGlow) polyline{ opacity:0; }
 html[data-tw-sphere="dots"] #root > main > div:has(> svg:has(#sphereGlow)),
-html[data-tw-sphere="lines"] #root > main > div:has(> svg:has(#sphereGlow)){
+html[data-tw-sphere="lines"] #root > main > div:has(> svg:has(#sphereGlow)),
+html[data-tw-sphere="topo"] #root > main > div:has(> svg:has(#sphereGlow)),
+html[data-tw-sphere="pulse"] #root > main > div:has(> svg:has(#sphereGlow)){
   background-image:radial-gradient(125% 105% at 50% 50%, transparent 62%, color-mix(in srgb, var(--tw-bg) 55%, #000) 100%);
 }
 html[data-tw-sphere="orb3d"] #root > main > div:has(> svg:has(#sphereGlow)){
@@ -424,11 +430,15 @@ html[data-tw-sphere="orb3d"] #root > main > div:has(> svg:has(#sphereGlow)){
 }
 html[data-tw-sphere="dots"] #root > main svg:has(#sphereGlow) line[stroke-width="1"],
 html[data-tw-sphere="lines"] #root > main svg:has(#sphereGlow) line[stroke-width="1"],
+html[data-tw-sphere="topo"] #root > main svg:has(#sphereGlow) line[stroke-width="1"],
+html[data-tw-sphere="pulse"] #root > main svg:has(#sphereGlow) line[stroke-width="1"],
 html[data-tw-sphere="orb3d"] #root > main svg:has(#sphereGlow) line[stroke-width="1"]{
   stroke:color-mix(in srgb, var(--tw-edge) 60%, transparent); stroke-width:1;
 }
 html[data-tw-sphere="dots"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]),
 html[data-tw-sphere="lines"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]),
+html[data-tw-sphere="topo"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]),
+html[data-tw-sphere="pulse"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]),
 html[data-tw-sphere="orb3d"] #root > main svg:has(#sphereGlow) g > circle:not([fill="none"]):not([filter]){ r:3.3px; }
 html[data-tw-sphere="dots"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"],
 html[data-tw-sphere="lines"] #root > main svg:has(#sphereGlow) g text[font-size="7.6"],
