@@ -1880,7 +1880,7 @@
     { id:'master_exportMode', type:'select', label:'Export Mode', options:[['mix','Mix'],['stems','Stems'],['mixstems','Mix + Stems']] },
     { id:'master_batchCount', type:'select', label:'Batch Seeds', options:[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['7','7'],['8','8']] },
     { id:'master_seedStep', type:'number', label:'Seed Step', min:1, max:1000000, step:1 },
-    { id:'master_exportFormat', type:'select', label:'Format', options:[['wav','WAV'],['aiff','AIFF'],['flac','FLAC']] },
+    { id:'master_exportFormat', type:'select', label:'Format', options:[['wav','WAV'],['aiff','AIFF'],['flac','FLAC'],['opus','Opus (Ogg)']] },
     { id:'master_exportSampleRate', type:'select', label:'Export Rate', options:[['22050','22.05 kHz'],['44100','44.1 kHz'],['48000','48 kHz'],['88200','88.2 kHz'],['96000','96 kHz'],['176400','176.4 kHz'],['192000','192 kHz'],['352800','352.8 kHz'],['384000','384 kHz']] },
     { id:'master_exportBitDepth', type:'select', label:'Bit Depth', options:[['16','16-bit PCM'],['24','24-bit PCM'],['32f','32-bit float WAV']] },
     { id:'master_exportDither', type:'checkbox', label:'Dither (PCM only)' },
@@ -1968,7 +1968,7 @@
     master_exportMode: '書き出し形式。Mixは全レイヤー混合、Stemsはレイヤーごとの個別ファイル、Mix + Stemsは両方。',
     master_batchCount: 'シードを変えたバリエーションを何ファイル作るか。Seed Stepずつずらして生成します。',
     master_seedStep: 'バッチ生成でシードをいくつずつ進めるか。',
-    master_exportFormat: '書き出しファイル形式。WAV(非圧縮、32-bit floatまで) / AIFF(非圧縮) / FLAC(可逆圧縮)。ループ情報(smpl)はWAVのみ付きます。FLACは16/24bitのみ。',
+    master_exportFormat: '書き出しファイル形式。WAV(非圧縮、32-bit floatまで) / AIFF(非圧縮) / FLAC(可逆圧縮) / Opus(Ogg、可逆でないが高圧縮・対応ブラウザのみ。非対応環境では自動でWAVに戻ります)。ループ情報(smpl)はWAVのみ付きます。FLACは16/24bitのみ。',
     master_exportSampleRate: '書き出しのサンプルレート。配布用は48kHz、軽さ優先なら22.05kHz、非圧縮の超高音質なら352.8kHz / 384kHz + WAV 32-bit floatが最大です。',
     master_exportBitDepth: '書き出しのビット深度。16bitが一般的、32fは編集用に余裕を持たせたい時。',
     master_exportDither: '16bitなどPCM書き出し時のディザ。量子化ノイズを目立たなくします。32fでは無効。',
@@ -5161,7 +5161,15 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     ensureContext() {
       if (this.ctx) return;
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      this.ctx = new AudioCtx({ sampleRate: Number(getParams().master_sampleRate) || 48000, latencyHint: 'playback' });
+      try {
+        this.ctx = new AudioCtx({ sampleRate: Number(getParams().master_sampleRate) || 48000, latencyHint: 'playback' });
+      } catch (_ctxErr) {
+        // Some browsers/devices reject an explicit sampleRate (or the
+        // latency hint) with NotSupportedError. Fall back to the device
+        // default rate instead of failing playback entirely; everything
+        // downstream follows ctx.sampleRate.
+        this.ctx = new AudioCtx();
+      }
       this.masterGain = this.ctx.createGain();
       this.analyser = this.ctx.createAnalyser();
       this.applyPreviewQuality();
@@ -5386,18 +5394,35 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     },
 
     async play() {
-      this.params = getParams();
-      this.ensureContext();
-      await this.ensureRealtimeNode();
-      this.rebuild(true);
-      if (this.ctx.state === 'suspended') await this.ctx.resume();
-      if (this.node) {
-        this.node.port.postMessage({ type: 'play' });
+      try {
+        this.params = getParams();
+        // Rebuild BEFORE (re)creating the context/node. rebuild() may
+        // invalidate a stale context while stopped (preview-rate change);
+        // running it after node creation could close the just-created
+        // context when the browser reports a different actual sampleRate
+        // than requested (fixed-rate devices/VMs) — that used to kill
+        // play() silently at the this.ctx.state check (unhandled
+        // rejection, status line never moved).
+        this.rebuild(true);
+        this.ensureContext();
+        await this.ensureRealtimeNode();
+        applySpaceFx();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          try { await this.ctx.resume(); } catch (_) {}
+        }
+        if (this.node) {
+          this.node.port.postMessage({ type: 'play' });
+        }
+        this.playing = true;
+        setStatus(this.mode === 'worklet' ? '再生中 / AudioWorklet' : '再生中 / Fallback', 'ok');
+        onEnginePlaybackChange();
+        startSleepCycle();
+      } catch (err) {
+        console.error(err);
+        this.playing = false;
+        setStatus('再生を開始できませんでした。ブラウザの音声設定を確認して、もう一度お試しください。', 'err');
+        onEnginePlaybackChange();
       }
-      this.playing = true;
-      setStatus(this.mode === 'worklet' ? '再生中 / AudioWorklet' : '再生中 / Fallback', 'ok');
-      onEnginePlaybackChange();
-      startSleepCycle();
     },
 
     stop() {
@@ -7057,6 +7082,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         if (marker.parentNode) marker.parentNode.insertBefore(readout, marker);
         if (marker.parentNode) marker.remove();
         techState.pipWin = null;
+        setStatus('ビジュアライザを通常表示に戻しました。');
       });
       setStatus('ビジュアライザを小窓で表示しています。', 'ok');
     } catch (_) { setStatus('小窓表示を開始できませんでした。', 'err'); }
@@ -7220,17 +7246,33 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     return muxer.finish();
   }
   async function initPhase2() {
+    // Fix1: the opus <option> is part of the static MASTER_SCHEMA, so it
+    // exists before any session restore runs (restore races this async
+    // check, and setParams() drops select values that have no <option>).
+    // This check therefore only ever REMOVES the option: when Opus turns
+    // out to be unsupported, a selection a restore already made is moved
+    // to 'wav' first and the corrected state is re-saved, so the session
+    // falls back cleanly instead of losing the format silently.
+    const dropOpusOption = () => {
+      try {
+        const sel = $('master_exportFormat');
+        if (!sel) return;
+        const opt = [...sel.options].find(o => o.value === 'opus');
+        if (!opt) return;
+        const wasSelected = sel.value === 'opus';
+        sel.removeChild(opt);
+        if (wasSelected) {
+          sel.value = 'wav';
+          updateMini(getParams());
+          scheduleAutosave();
+        }
+      } catch (_) {}
+    };
     try {
-      const sel = $('master_exportFormat');
-      if (!sel || !window.AudioEncoder || typeof AudioEncoder.isConfigSupported !== 'function') return;
+      if (!window.AudioEncoder || typeof AudioEncoder.isConfigSupported !== 'function') { dropOpusOption(); return; }
       const sup = await AudioEncoder.isConfigSupported({ codec: 'opus', sampleRate: 48000, numberOfChannels: 2, bitrate: 160000 });
-      if (sup && sup.supported) {
-        const o = document.createElement('option');
-        o.value = 'opus';
-        o.textContent = 'Opus (Ogg)';
-        sel.appendChild(o);
-      }
-    } catch (_) {}
+      if (!sup || !sup.supported) dropOpusOption();
+    } catch (_) { dropOpusOption(); }
   }
 
 
