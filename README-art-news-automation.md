@@ -8,7 +8,7 @@
 - `art-archive-YYYY-MM.html` — 80件を超えた分の月別アーカイブ（自動生成）
 - `art-feed.xml` — RSS 2.0（最新50件）
 - `art-search.html` / `art-search-index.json` / `art-search-YYYY-MM.json` — 全件検索（月別シャード）
-- `scripts/art_fetch.py` — 候補収集（41ソース、標準ライブラリのみ、検証済みソースと不採用理由はファイル冒頭に記録）
+- `scripts/art_fetch.py` — 候補収集（49ソース、標準ライブラリのみ、検証済みソースと不採用理由はファイル冒頭に記録）
 - `scripts/art_pipeline.py` — 確定処理（クリーニング、重複排除、検証、HTML/フィード/検索索引の再生成）
 - `tests/test_art_pipeline.py` — パイプラインのテスト（CI: `.github/workflows/art-pipeline-tests.yml`）
 
