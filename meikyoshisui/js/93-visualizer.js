@@ -132,8 +132,12 @@ function detectFlux(now){
 
 /* ── 共通描画ユーティリティ ── */
 const trailsOn = () => $('vizTrail').classList.contains('on');
+/* ALL 表示では 11 画面を同時描画するため、バッキングストアを 0.6 倍に落として
+   描画ピクセル数を約 1/3 にする (描画座標は CSS px のまま不変、単体表示は等倍)。
+   監査第3回の所見2への対応。 */
+function vizScale(){ return (typeof currentView !== 'undefined' && currentView === 'all') ? 0.6 : 1; }
 function fit(cv){
-  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  const r = cv.getBoundingClientRect(), d = (window.devicePixelRatio || 1) * vizScale();
   const w = Math.round(r.width * d), h = Math.round(r.height * d);
   if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; }
   const x = cv.getContext('2d'); x.setTransform(d, 0, 0, d, 0, 0);
@@ -173,7 +177,7 @@ const KEYW = 30;
 let rollStatic = null, rollStaticDirty = true, rollStaticKey = '';
 function drawRollStatic(W, H){
   rollStatic = document.createElement('canvas');
-  const d = window.devicePixelRatio || 1;
+  const d = (window.devicePixelRatio || 1) * vizScale();
   rollStatic.width = Math.round(W * d); rollStatic.height = Math.round(H * d);
   const x = rollStatic.getContext('2d'); x.setTransform(d, 0, 0, d, 0, 0);
   x.fillStyle = '#060607'; x.fillRect(0, 0, W, H);
@@ -586,13 +590,16 @@ function loop(now){
   drawFifths(r3.width || 800, r3.height || 340, beat, now);
   drawSurface(now);
   drawSpec();
-  drawSg(now);
+  /* 重い3種 (自己コピーのスペクトログラム/フロー、フィードバックのサイケ) は
+     ALL 表示でのみ 1 フレームおきに交互更新し、毎フレームの負荷を平らにする */
+  const heavyAlt = currentView === 'all';
+  if (!heavyAlt || frame % 2 === 0) drawSg(now);
   drawPolar();
-  drawFlow(now);
+  if (!heavyAlt || frame % 2 === 0) drawFlow(now);
   drawPhase();
   detectFlux(now);
   drawParticle();
-  drawPsyche(now, beat);
+  if (!heavyAlt || frame % 2 === 1) drawPsyche(now, beat);
   fluxBurst = false;
   requestAnimationFrame(loop);
 }

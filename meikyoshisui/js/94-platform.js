@@ -66,16 +66,25 @@ function msMetadata(){
 }
 
 /* ── Wake Lock ──────────────────────────────── */
-let wakeLock = null, wlWant = false;
+let wakeLock = null, wlWant = false, wlPending = false, wlRetryAt = 0;
 async function wlSync(want){
   wlWant = want;
   try {
     if (want && 'wakeLock' in navigator && document.visibilityState === 'visible'){
-      if (!wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+      /* 拒否される環境 (フォーカス無し等) で 500ms ごとに再要求し続けないよう、
+         失敗したら 30 秒は間を空ける。要求中の重複も防ぐ。 */
+      if (!wakeLock && !wlPending && Date.now() >= wlRetryAt){
+        wlPending = true;
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+          wakeLock.addEventListener('release', () => { wakeLock = null; });
+        } catch (e) { wakeLock = null; wlRetryAt = Date.now() + 30000; }
+        wlPending = false;
+      }
     } else if (!want && wakeLock){ await wakeLock.release(); wakeLock = null; }
-  } catch (e) { wakeLock = null; }
+  } catch (e) { wakeLock = null; wlPending = false; }
 }
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && wlWant) wlSync(true); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && wlWant){ wlRetryAt = 0; wlSync(true); } });
 
 /* ── ポーリング（再生状態・データ差し替えの検出） ── */
 setInterval(() => {
