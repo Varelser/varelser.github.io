@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Literature News アーカイブ 2026年11月 | VARELSER</title>
+  <meta name="description" content="国内外の文学・小説・詩・書評・翻訳文学・出版の最新ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:title" content="Literature News（文学ニュース）| VARELSER" />
+    <meta property="og:description" content="国内外の文学・小説・詩・書評・翻訳文学・出版の最新ニュースを日本語要約し、日付・カテゴリ・地域・種別で整理した一覧です。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://varelser.github.io/literature-news.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="Literature News RSS" href="literature-feed.xml" />
+  <style>
+    :root{
+      --bg:#fff;
+      --fg:#111;
+      --muted:rgba(0,0,0,.55);
+      --border:#e8e8e8;
+      --accent:#0056b3;
+      --card-bg:#fafafa;
+      --chip:#f3f3f3;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;line-height:1.8;font-size:16px;}
+    .container{max-width:980px;margin:0 auto;padding:48px 24px 72px;}
+    .back-link{display:inline-block;margin-bottom:32px;color:var(--muted);text-decoration:none;font-size:14px;}
+    .back-link:hover{color:var(--fg);}
+    .page-title{font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:.02em;}
+    .page-desc{color:var(--muted);font-size:13px;margin:0 0 24px;}
+    .page-desc a{color:var(--accent);}
+    .filter-panel{background:var(--bg);padding:16px 0 18px;margin:0 0 28px;border-bottom:1px solid var(--border);}
+    .filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+    .filter-item{display:flex;flex-direction:column;gap:6px;}
+    .filter-item label{font-size:12px;color:var(--muted);}
+    .filter-item input,.filter-item select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:14px;}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+    .count{font-size:13px;color:var(--muted);}
+    .reset-btn{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .articles{margin-top:28px;}
+    article{margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--bg);}
+    .meta{font-size:12px;color:var(--muted);margin:0 0 10px;letter-spacing:.02em;}
+    .article-title{font-size:20px;font-weight:700;margin:0 0 14px;line-height:1.5;letter-spacing:.01em;}
+    .taxonomy{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;}
+    .chip{display:inline-flex;align-items:center;border:1px solid var(--border);background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.4;color:#333;}
+    .summary{font-size:15px;color:#222;line-height:1.9;margin-bottom:18px;white-space:normal;}
+    .summary-rest[hidden]{display:none;}
+    .summary-toggle{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--accent);margin:0 0 18px;}
+    .summary-toggle:hover{text-decoration:underline;}
+    .source-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:#555;line-height:1.7;}
+    .source-box strong{color:var(--fg);display:block;margin-bottom:4px;}
+    .source-box a{color:var(--accent);word-break:break-all;}
+    .empty{display:none;border:1px dashed var(--border);border-radius:16px;padding:28px 20px;color:var(--muted);text-align:center;}
+    .pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:26px 0 4px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+    .pager button{appearance:none;border:1px solid var(--border);background:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;color:var(--fg);}
+    .pager button:disabled{opacity:.4;cursor:default;}
+    .pager select{width:auto;padding:6px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;}
+    .archive-links{margin-top:28px;border-top:1px solid var(--border);padding-top:18px;}
+    .archive-links h2{font-size:16px;margin:0 0 10px;color:var(--fg);}
+    .archive-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted);}
+    .archive-list a{color:var(--accent);text-decoration:none;}
+    .archive-list a:hover{text-decoration:underline;}
+    @media (max-width: 860px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (max-width: 640px){.container{padding:32px 16px 56px;}.filter-grid{grid-template-columns:1fr;}.article-title{font-size:18px;}article{padding:18px;}}
+      </style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zce7ueghhb");
+</script>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-link">← ホームに戻る</a>
+    <p class="page-title">最新の文学ニュース</p>
+    <p class="page-desc">国内外の文学メディア・文芸誌・書評メディアから、小説、詩歌、随筆、評論、翻訳文学、児童文学、SF・ファンタジー、ミステリー、出版、文学賞のニュースをAIで日本語要約し、日付・カテゴリ・種別・配信元で整理しています。情報源は本の話、Book Bang、Web河出、Real Sound ブック、Guardian Books、NYT Books、Literary Hub、Paris Review など国内・海外53媒体です。</p>
+    <p class="page-desc"><a href="literature-search.html">全件検索（全ストックから探す）</a> ・ <a href="literature-feed.xml">RSSフィード</a></p>
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
+        <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option></select></div>
+        <div class="filter-item"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="SF・ファンタジー">SF・ファンタジー</option><option value="その他">その他</option><option value="ミステリー">ミステリー</option><option value="児童文学">児童文学</option><option value="出版">出版</option><option value="小説">小説</option><option value="文学賞">文学賞</option><option value="翻訳文学">翻訳文学</option><option value="評論">評論</option><option value="詩歌">詩歌</option><option value="随筆">随筆</option></select></div>
+        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="Book Bang">Book Bang</option><option value="Book Marks">Book Marks</option><option value="Book Riot">Book Riot</option><option value="BookPage">BookPage</option><option value="Brittle Paper">Brittle Paper</option><option value="Chicago Review of Books">Chicago Review of Books</option><option value="CrimeReads">CrimeReads</option><option value="Electric Literature">Electric Literature</option><option value="Guardian Books">Guardian Books</option><option value="JBBY">JBBY</option><option value="Literary Hub">Literary Hub</option><option value="Locus Magazine">Locus Magazine</option><option value="NPR Books">NPR Books</option><option value="NYT Books">NYT Books</option><option value="PEN America">PEN America</option><option value="Reactor">Reactor</option><option value="Real Sound ブック">Real Sound ブック</option><option value="Small Beer Press">Small Beer Press</option><option value="The Atlantic Books">The Atlantic Books</option><option value="Web河出">Web河出</option><option value="Words Without Borders">Words Without Borders</option><option value="World Literature Today">World Literature Today</option><option value="Yahoo!ニュース エンタメ">Yahoo!ニュース エンタメ</option><option value="文春オンライン">文春オンライン</option><option value="本の話">本の話</option><option value="現代ビジネス">現代ビジネス</option><option value="翻訳ミステリー大賞">翻訳ミステリー大賞</option></select></div>
+        <div class="filter-item"><label for="kindFilter">種別</label><select id="kindFilter"><option value="">すべて</option><option value="インタビュー">インタビュー</option><option value="ニュース">ニュース</option><option value="受賞">受賞</option><option value="書評">書評</option><option value="特集">特集</option><option value="解説">解説</option></select></div>
+        <div class="filter-item"><label for="regionFilter">地域</label><select id="regionFilter"><option value="">すべて</option><option value="国内">国内</option><option value="海外">海外</option></select></div>
+      </div>
+      <div class="toolbar">
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全5件</div>
+        <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
+      </div>
+    </section>
+    <div id="emptyState" class="empty">該当する記事がありません。</div>
+    <section class="articles" id="articlesList">
+<!-- ARTICLES_START -->
+<article
+  data-id="c98d628e6dfec26a3e0cf72d0f8465f1"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="その他"
+  data-region="海外"
+  data-source="Guardian Books"
+  data-kind="書評"
+  data-search="モナ・チャラビ『Ten Lives』書評——自分の富について完全に正直になったらどうなるか Ten Lives by Mona Chalabi review – what if we were totally honest about our wealth? 元ガーディアンのデータジャーナリストでイラストレーターのモナ・チャラビによる初めての本。自身の収入をはじめ、経済状況の異なる10人の人々の家計を顕微鏡の下に置く。 ジャーナリズムとデータビジュアライゼーション、回想録を組み合わせた一冊で、「私たち全員が抱える経済的不安の原因に取り組むには、個人の富についてもっと率直に語らなければならない」と訴える。 Guardian Books その他 海外 書評">
+  <p class="meta">Guardian Books　2026-11-11 16:00</p>
+  <h2 class="article-title">モナ・チャラビ『Ten Lives』書評——自分の富について完全に正直になったらどうなるか</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: その他</span><span class="chip">地域: 海外</span><span class="chip">種別: 書評</span></div>
+  <div class="summary">元ガーディアンのデータジャーナリストでイラストレーターのモナ・チャラビによる初めての本。自身の収入をはじめ、経済状況の異なる10人の人々の家計を顕微鏡の下に置く。<span class="summary-rest" hidden><br><br>ジャーナリズムとデータビジュアライゼーション、回想録を組み合わせた一冊で、「私たち全員が抱える経済的不安の原因に取り組むには、個人の富についてもっと率直に語らなければならない」と訴える。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Guardian Books<br>
+    原題：Ten Lives by Mona Chalabi review – what if we were totally honest about our wealth?<br>
+    原文URL：<a href="https://www.theguardian.com/books/2026/nov/11/ten-lives-by-mona-chalabi-review-what-if-we-were-totally-honest-about-our-wealth" target="_blank" rel="noopener">https://www.theguardian.com/books/2026/nov/11/ten-lives-by-mona-chalabi-review-what-if-we-were-totally-honest-about-our-wealth</a>
+  </div>
+</article>
+<article
+  data-id="d2ab9b205867ee672c1106bf873431aa"
+  data-date="2026-11-09"
+  data-month="2026-11"
+  data-categories="ミステリー||評論"
+  data-region="海外"
+  data-source="NPR Books"
+  data-kind="書評"
+  data-search="ポーとコナン・ドイルの謎は尽きない　新刊2冊がミステリーの巨匠たちを再び照らす We are still puzzling over the mysteries of Edgar Allan Poe and Arthur Conan Doyle エドガー・アラン・ポーとアーサー・コナン・ドイルについては、長年にわたって膨大な文学研究が積み重ねられてきた。それでも新刊『Darkness Becomes Bright』と『Sleuth-Hound』は、このミステリーの巨匠たちについて、まだ発見すべきことが多く残されていることを示しているという。 NPRの書評は、探偵小説の源流に位置する2人の作家への尽きない関心を取り上げたものだ。古典的な作家像を更新する研究書2冊の刊行が、その関心の持続を物語っている。 NPR Books ミステリー 評論 海外 書評">
+  <p class="meta">NPR Books　2026-11-10 01:31</p>
+  <h2 class="article-title">ポーとコナン・ドイルの謎は尽きない　新刊2冊がミステリーの巨匠たちを再び照らす</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: ミステリー</span><span class="chip">カテゴリ: 評論</span><span class="chip">地域: 海外</span><span class="chip">種別: 書評</span></div>
+  <div class="summary">エドガー・アラン・ポーとアーサー・コナン・ドイルについては、長年にわたって膨大な文学研究が積み重ねられてきた。それでも新刊『Darkness Becomes Bright』と『Sleuth-Hound』は、このミステリーの巨匠たちについて、まだ発見すべきことが多く残されていることを示しているという。<span class="summary-rest" hidden><br><br>NPRの書評は、探偵小説の源流に位置する2人の作家への尽きない関心を取り上げたものだ。古典的な作家像を更新する研究書2冊の刊行が、その関心の持続を物語っている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：NPR Books<br>
+    原題：We are still puzzling over the mysteries of Edgar Allan Poe and Arthur Conan Doyle<br>
+    原文URL：<a href="https://www.npr.org/2026/11/09/nx-s1-6032766/edgar-allan-poe-arthur-conan-doyle-sherlock-holmes" target="_blank" rel="noopener">https://www.npr.org/2026/11/09/nx-s1-6032766/edgar-allan-poe-arthur-conan-doyle-sherlock-holmes</a>
+  </div>
+</article>
+<article
+  data-id="f12b59e091245684c086699de1732fe9"
+  data-date="2026-11-09"
+  data-month="2026-11"
+  data-categories="小説"
+  data-region="国内"
+  data-source="本の話"
+  data-kind="解説"
+  data-search="「あまりに美しいシリーズの閉幕」――東野圭吾と「ガリレオ」の30年の軌跡 「あまりに美しいシリーズの閉幕」『永遠の記憶』までの全11作を読み解く…東野圭吾と「ガリレオ」の軌跡 累計発行部数1700万部を超える「ガリレオ」シリーズを振り返る特別寄稿。最新作『永遠の記憶』の刊行を控えた7月末に東野圭吾の訃報が届いたことを受け、天才物理学者・湯川学の誕生から30年の変遷をたどる。 全11作にわたるシリーズの歩みを読み解き、その閉幕の美しさを描いた記事となっている。 本の話 小説 国内 解説">
+  <p class="meta">本の話　2026-11-09 12:00</p>
+  <h2 class="article-title">「あまりに美しいシリーズの閉幕」――東野圭吾と「ガリレオ」の30年の軌跡</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 小説</span><span class="chip">地域: 国内</span><span class="chip">種別: 解説</span></div>
+  <div class="summary">累計発行部数1700万部を超える「ガリレオ」シリーズを振り返る特別寄稿。最新作『永遠の記憶』の刊行を控えた7月末に東野圭吾の訃報が届いたことを受け、天才物理学者・湯川学の誕生から30年の変遷をたどる。<span class="summary-rest" hidden><br><br>全11作にわたるシリーズの歩みを読み解き、その閉幕の美しさを描いた記事となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：本の話<br>
+    原題：「あまりに美しいシリーズの閉幕」『永遠の記憶』までの全11作を読み解く…東野圭吾と「ガリレオ」の軌跡<br>
+    原文URL：<a href="https://books.bunshun.jp/articles/-/11436" target="_blank" rel="noopener">https://books.bunshun.jp/articles/-/11436</a>
+  </div>
+</article>
+<article
+  data-id="fd1e965d880c38bf8897005557cf1c39"
+  data-date="2026-11-07"
+  data-month="2026-11"
+  data-categories="児童文学"
+  data-region="国内"
+  data-source="JBBY"
+  data-kind="ニュース"
+  data-search="「2026イタリア・ボローニャ国際絵本原画展」石川県七尾美術館で開催中 「2026イタリア・ボローニャ国際絵本原画展」開催！ 石川県七尾美術館（11/7▶12/13） 「2026イタリア・ボローニャ国際絵本原画展」が石川県七尾美術館で開催中だ。会期は2026年11月7日から12月13日までとなっている。 国際絵本原画展の名の通り、世界の絵本の原画を紹介する展覧会で、11月7日に開幕した。 JBBY 児童文学 国内 ニュース">
+  <p class="meta">JBBY　2026-11-07 09:16</p>
+  <h2 class="article-title">「2026イタリア・ボローニャ国際絵本原画展」石川県七尾美術館で開催中</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 児童文学</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">「2026イタリア・ボローニャ国際絵本原画展」が石川県七尾美術館で開催中だ。会期は2026年11月7日から12月13日までとなっている。<span class="summary-rest" hidden><br><br>国際絵本原画展の名の通り、世界の絵本の原画を紹介する展覧会で、11月7日に開幕した。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：JBBY<br>
+    原題：「2026イタリア・ボローニャ国際絵本原画展」開催！ 石川県七尾美術館（11/7▶12/13）<br>
+    原文URL：<a href="https://jbby.org/news/domes-news/post-27764" target="_blank" rel="noopener">https://jbby.org/news/domes-news/post-27764</a>
+  </div>
+</article>
+<article
+  data-id="37d4b4fcb45694049cfbfdd768a5d526"
+  data-date="2026-11-05"
+  data-month="2026-11"
+  data-categories="小説||文学賞"
+  data-region="国内"
+  data-source="本の話"
+  data-kind="ニュース"
+  data-search="古川真人『近づくと遠ざかる船』刊行　第50回川端康成文学賞の受賞作など3編を収録 第50回川端康成文学賞受賞の表題作他、二編を収録『近づくと遠ざかる船』 ほか 古川真人の短編集『近づくと遠ざかる船』が刊行された。第50回川端康成文学賞を受賞した表題作のほか、2編を収録している。表題作は、普段は大勢の家族や親戚に囲まれている大村家の3きょうだいだけの時間が訪れ、弟の稔がふと口にした問いかけをきっかけに物語が動き出す作品だ。 川端康成文学賞は短編小説を対象とする文学賞で、その節目となる第50回の受賞作を収めた短編集として注目される。家族の時間を描く古川文学の新刊である。 本の話 小説 文学賞 国内 ニュース">
+  <p class="meta">本の話　2026-11-06 07:00</p>
+  <h2 class="article-title">古川真人『近づくと遠ざかる船』刊行　第50回川端康成文学賞の受賞作など3編を収録</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 小説</span><span class="chip">カテゴリ: 文学賞</span><span class="chip">地域: 国内</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">古川真人の短編集『近づくと遠ざかる船』が刊行された。第50回川端康成文学賞を受賞した表題作のほか、2編を収録している。表題作は、普段は大勢の家族や親戚に囲まれている大村家の3きょうだいだけの時間が訪れ、弟の稔がふと口にした問いかけをきっかけに物語が動き出す作品だ。<span class="summary-rest" hidden><br><br>川端康成文学賞は短編小説を対象とする文学賞で、その節目となる第50回の受賞作を収めた短編集として注目される。家族の時間を描く古川文学の新刊である。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：本の話<br>
+    原題：第50回川端康成文学賞受賞の表題作他、二編を収録『近づくと遠ざかる船』 ほか<br>
+    原文URL：<a href="https://books.bunshun.jp/articles/-/11469" target="_blank" rel="noopener">https://books.bunshun.jp/articles/-/11469</a>
+  </div>
+</article>
+<!-- ARTICLES_END -->
+    </section>
+    <nav class="pager" aria-label="ページ送り">
+      <label>1ページ <select id="pageSize"><option value="10">10件</option><option value="20" selected>20件</option><option value="50">50件</option><option value="0">すべて</option></select></label>
+      <button type="button" id="prevPage">前へ</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextPage">次へ</button>
+    </nav>
+    <!-- LITERATURE_ARCHIVE_LINKS_START -->
+    <section class="archive-links">
+      <h2>過去のアーカイブ（月別）</h2>
+      <p>アーカイブ一覧は<a href="literature-news.html">本体ページ</a>にあります。</p>
+    </section>
+    <!-- LITERATURE_ARCHIVE_LINKS_END -->
+  </div>
+  <script>
+    (function(){
+      const els = {
+        search: document.getElementById("searchInput"),
+        month: document.getElementById("monthFilter"),
+        genre: document.getElementById("categoryFilter"),
+        source: document.getElementById("sourceFilter"),
+        kind: document.getElementById("kindFilter"),
+        region: document.getElementById("regionFilter"),
+        reset: document.getElementById("resetFilters"),
+        count: document.getElementById("visibleCount"),
+        empty: document.getElementById("emptyState"),
+        pageSize: document.getElementById("pageSize"),
+        prev: document.getElementById("prevPage"),
+        next: document.getElementById("nextPage"),
+        info: document.getElementById("pageInfo")
+      };
+      const articles = Array.prototype.slice.call(document.querySelectorAll("article[data-id]"));
+      let page = 1;
+      function hasToken(csv, value){
+        if(!value) return true;
+        const arr = String(csv || "").split("||").filter(Boolean);
+        return arr.indexOf(value) !== -1;
+      }
+      function matches(article){
+        const q = String(els.search.value || "").trim().toLowerCase();
+        const haystack = String(article.getAttribute("data-search") || "").toLowerCase();
+        return (!q || haystack.indexOf(q) !== -1)
+          && (!els.month.value || article.getAttribute("data-month") === els.month.value)
+          && hasToken(article.getAttribute("data-categories"), els.genre.value)
+          && (!els.source.value || article.getAttribute("data-source") === els.source.value)
+          && (!els.kind.value || article.getAttribute("data-kind") === els.kind.value)
+          && (!els.region.value || article.getAttribute("data-region") === els.region.value);
+      }
+      function apply(resetPage){
+        if (resetPage) page = 1;
+        const matched = articles.filter(matches);
+        const per = parseInt(els.pageSize.value, 10) || 0;
+        const totalPages = per ? Math.max(1, Math.ceil(matched.length / per)) : 1;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        const start = per ? (page - 1) * per : 0;
+        const end = per ? start + per : matched.length;
+        articles.forEach(function(article){
+          const idx = matched.indexOf(article);
+          article.style.display = (idx >= start && idx < end) ? "block" : "none";
+        });
+        els.count.textContent = String(matched.length);
+        els.empty.style.display = matched.length ? "none" : "block";
+        els.info.textContent = matched.length ? (page + " / " + totalPages + " ページ") : "";
+        els.prev.disabled = page <= 1;
+        els.next.disabled = page >= totalPages;
+      }
+      [els.search, els.month, els.genre, els.source, els.kind, els.region].forEach(function(el){
+        el.addEventListener("input", function(){ apply(true); });
+        el.addEventListener("change", function(){ apply(true); });
+      });
+      els.pageSize.addEventListener("change", function(){ apply(true); });
+      els.prev.addEventListener("click", function(){ page -= 1; apply(false); });
+      els.next.addEventListener("click", function(){ page += 1; apply(false); });
+      els.reset.addEventListener("click", function(){
+        els.search.value = ""; els.month.value = ""; els.genre.value = "";
+        els.source.value = ""; els.kind.value = ""; els.region.value = "";
+        apply(true);
+      });
+      apply(true);
+    })();
+  </script>
+  <script>
+    function summaryToggle(btn) {
+      var card = btn.closest ? btn.closest("article") : null;
+      var rest = card ? card.querySelector(".summary-rest") : null;
+      if (!rest) return;
+      if (rest.hasAttribute("hidden")) {
+        rest.removeAttribute("hidden");
+        btn.textContent = "閉じる";
+        btn.setAttribute("aria-expanded", "true");
+      } else {
+        rest.setAttribute("hidden", "");
+        btn.textContent = "続きを読む";
+        btn.setAttribute("aria-expanded", "false");
+      }
+    }
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      var btn = t && t.closest ? t.closest(".summary-toggle") : null;
+      if (btn) summaryToggle(btn);
+    });
+  </script>
+</body>
+</html>
