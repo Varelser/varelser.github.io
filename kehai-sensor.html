@@ -23,7 +23,8 @@
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
   button,[role="button"],select,summary,input{ min-height:36px; }
   button{font-family:var(--sans);cursor:pointer}
-  .wrap{max-width:1060px;margin:0 auto;padding:16px 14px 60px;counter-reset:secc}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 14px 60px;counter-reset:secc}
+  @media(max-width:640px){.wrap{padding:0 0 40px}.wrap>*:not(.stage){margin-left:14px;margin-right:14px}.wrap>.stage{margin-left:0;margin-right:0}}
   .mono{font-family:var(--mono)}
 
   /* ---------- verdict hero ---------- */
@@ -51,9 +52,25 @@
   .calibbar i{display:block;height:100%;background:var(--teal);width:0%;transition:width .3s linear}
 
   /* ---------- camera ---------- */
-  .stage{margin-top:14px;background:#000;border:1px solid var(--line2);border-radius:14px;overflow:hidden;position:relative}
+  .stage{margin:0 calc(50% - 50vw);width:100vw;background:#000;border:none;border-bottom:1px solid var(--line2);overflow:hidden;position:relative;height:100dvh;min-height:560px;max-height:100dvh}
+  .stage:fullscreen{height:100%;max-height:none}
   .stage video#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;pointer-events:none;z-index:0}
-  .stage canvas#view{display:block;width:100%;aspect-ratio:4/3;background:#050605;position:relative;z-index:1}
+  .stage canvas#view{display:block;width:100%;height:100%;background:#050605;position:absolute;inset:0;z-index:1;object-fit:cover}
+  .stage canvas#trackOverlay{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;object-fit:cover}
+  .anomaly-banner{position:absolute;top:52px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:6;max-width:min(92vw,560px);background:rgba(20,8,4,.92);border:1px solid var(--red);color:#ffe2d8;border-radius:999px;padding:9px 16px;font-size:13.5px;font-weight:700;line-height:1.4;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 32px rgba(0,0,0,.55)}
+  .anomaly-banner.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .anomaly-banner b{color:#ff9a86}
+  .anomaly-banner .ab-why{display:block;font-size:11.5px;font-weight:500;color:#ffd9cf;margin-top:3px}
+  .follow-tip{position:absolute;z-index:6;pointer-events:none;transform:translate(-50%,-130%);background:rgba(10,6,3,.92);border:1px solid var(--amber);color:var(--ink);border-radius:8px;padding:6px 9px;font-size:11.5px;font-weight:700;line-height:1.45;white-space:normal;max-width:min(80vw,340px);text-align:left;opacity:0;transition:opacity .2s,left .18s linear,top .18s linear}
+  .follow-tip.show{opacity:1}
+  .follow-tip small{display:block;font-weight:400;color:var(--ink2);font-size:10.5px}
+  .follow-tip::after{content:"";position:absolute;left:50%;bottom:-14px;width:1px;height:14px;background:var(--amber)}
+  .stage-bottom{position:absolute;left:10px;right:10px;bottom:10px;z-index:5;display:flex;gap:8px;align-items:flex-end;justify-content:space-between;pointer-events:none}
+  .stage-verdict{pointer-events:auto;background:rgba(5,6,5,.84);border:1px solid rgba(236,231,218,.18);border-radius:10px;padding:10px 12px;max-width:min(72vw,520px);backdrop-filter:blur(6px)}
+  .stage-verdict .sv-t{font-family:var(--serif);font-weight:700;font-size:clamp(18px,4.5vw,26px);line-height:1.3}
+  .stage-verdict .sv-s{font-family:var(--mono);font-size:11px;color:var(--amber2);margin-top:2px}
+  .stage-actions{pointer-events:auto;display:flex;gap:6px;flex:none}
+  .stage-actions .btn{background:rgba(5,6,5,.84);backdrop-filter:blur(6px)}
   .stage.rawmode canvas#view{visibility:hidden}
   .stage.rawmode video#cam{opacity:1;z-index:2}
   .diagbar{margin-top:8px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:11px;line-height:1.7;color:var(--ink2);word-break:break-all}
@@ -64,7 +81,8 @@
   .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
   .flash.go{animation:fl .45s ease-out}
   @keyframes fl{0%{opacity:.85}100%{opacity:0}}
-  .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100px,100%),1fr));gap:6px;padding:10px;background:var(--panel);border-top:1px solid var(--line)}
+  .modes{position:absolute;left:10px;right:10px;bottom:96px;z-index:5;display:flex;gap:6px;padding:6px;background:rgba(10,11,9,.72);border:1px solid rgba(236,231,218,.14);border-radius:10px;overflow-x:auto;backdrop-filter:blur(6px)}
+  .modes .mode{flex:1 0 auto}
   .mode{border:1px solid var(--line2);background:var(--panel2);color:var(--ink2);
     border-radius:8px;padding:9px 6px;font-size:13px;font-weight:700}
   .mode small{display:block;font-weight:400;font-size:10.5px;color:var(--dim);margin-top:2px}
@@ -213,6 +231,35 @@
 <body>
 <div class="wrap">
 
+  <!-- ======== FULLSCREEN CAMERA (primary view) ======== -->
+  <section class="stage" aria-label="カメラ映像（全面）">
+    <video id="cam" playsinline webkit-playsinline muted autoplay aria-hidden="true"></video>
+    <canvas id="view" width="480" height="360"></canvas>
+    <canvas id="trackOverlay" width="480" height="360" aria-hidden="true"></canvas>
+    <div class="hud">
+      <span class="hudbox"><span class="k">MODE</span> <span id="hudMode">疑似サーモ</span></span>
+      <span class="hudbox"><span class="k">輝度</span> <span id="hudBright">–</span>　<span class="k">動き</span> <span id="hudMotion">–</span>　<span class="k">解析</span> <span id="hudEngine">CPU</span>　<span class="k">FPS</span> <span id="hudFps">–</span></span>
+    </div>
+    <div class="anomaly-banner" id="anomalyBanner" role="alert" aria-live="polite">⚠ <b>異常を検知</b> — 追跡中</div>
+    <div class="follow-tip" id="followTip">⚠ 追跡中<small>動きを追っています</small></div>
+    <div class="flash" id="flash"></div>
+    <div class="modes" role="group" aria-label="表示モード">
+      <button class="mode sel" data-mode="thermal">疑似サーモ<small>明るさと赤みを熱っぽく</small></button>
+      <button class="mode" data-mode="motion">動き<small>動いた場所だけ光る</small></button>
+      <button class="mode" data-mode="flicker">光のゆらぎ<small>ちらつき・明滅を強調</small></button>
+      <button class="mode" data-mode="edge">輪郭<small>形の変化を見る</small></button>
+      <button class="mode" data-mode="normal">通常<small>計測グリッド付き</small></button>
+      <button class="mode" data-mode="heat">蓄積ヒート<small>動きが集まる場所</small></button>
+      <button class="mode" data-mode="nightred">赤色・夜間<small>暗順応を守る表示</small></button>
+      <button class="mode" data-mode="raw">生映像<small>無加工・カメラそのまま</small></button>
+    </div>
+    <div class="stage-bottom">
+      <div class="stage-verdict"><div class="sv-t" id="stageVerdict">まだ測定していません</div><div class="sv-s" id="stageScore">気配スコア – ／ 追跡対象 なし</div></div>
+      <div class="stage-actions"><button class="btn" id="btnFull" type="button">⛶ 全画面</button></div>
+    </div>
+  </section>
+  <div class="diagbar mono" id="camDiag">カメラ診断：ストリーム なし ／ トラック — ／ 映像 0×0 ／ readyState 0 ／ 再生時刻 0.0s（停止） ／ 処理フレーム 0</div>
+
   <!-- ======== VERDICT ======== -->
   <section class="hero" aria-label="総合判定">
     <div class="hero-main">
@@ -263,28 +310,6 @@
       <div class="selwrap" id="zoomWrap" style="display:none"><label for="zoomRange">ズーム</label><input type="range" id="zoomRange" min="1" max="1" step="0.1" value="1" style="accent-color:var(--amber);min-height:36px" /></div>
     </div>
   </div>
-
-  <!-- ======== CAMERA ======== -->
-  <section class="stage" aria-label="カメラ映像">
-    <video id="cam" playsinline webkit-playsinline muted autoplay aria-hidden="true"></video>
-    <canvas id="view" width="480" height="360"></canvas>
-    <div class="hud">
-      <span class="hudbox"><span class="k">MODE</span> <span id="hudMode">疑似サーモ</span></span>
-      <span class="hudbox"><span class="k">輝度</span> <span id="hudBright">–</span>　<span class="k">動き</span> <span id="hudMotion">–</span>　<span class="k">解析</span> <span id="hudEngine">CPU</span>　<span class="k">FPS</span> <span id="hudFps">–</span></span>
-    </div>
-    <div class="flash" id="flash"></div>
-    <div class="modes" role="group" aria-label="表示モード">
-      <button class="mode sel" data-mode="thermal">疑似サーモ<small>明るさと赤みを熱っぽく</small></button>
-      <button class="mode" data-mode="motion">動き<small>動いた場所だけ光る</small></button>
-      <button class="mode" data-mode="flicker">光のゆらぎ<small>ちらつき・明滅を強調</small></button>
-      <button class="mode" data-mode="edge">輪郭<small>形の変化を見る</small></button>
-      <button class="mode" data-mode="normal">通常<small>計測グリッド付き</small></button>
-      <button class="mode" data-mode="heat">蓄積ヒート<small>動きが集まる場所</small></button>
-      <button class="mode" data-mode="nightred">赤色・夜間<small>暗順応を守る表示</small></button>
-      <button class="mode" data-mode="raw">生映像<small>無加工・カメラそのまま</small></button>
-    </div>
-  </section>
-  <div class="diagbar mono" id="camDiag">カメラ診断：ストリーム なし ／ トラック — ／ 映像 0×0 ／ readyState 0 ／ 再生時刻 0.0s（停止） ／ 処理フレーム 0</div>
 
   <!-- ======== SENSORS ======== -->
   <h2 class="sec">全センサー <span>— 16チャンネルを同時に監視し、異常は合算されます</span></h2>
@@ -819,6 +844,28 @@ function verdictFor(score){
   return ["ここは、何かがある場所かも","強い同時反応が続いています。スナップショットとログに、その瞬間を残しました。"];
 }
 
+/* ---------- anomaly reasons: WHAT is abnormal, in plain words ----------
+   Every alert surface (banner, follow-tip, stage verdict line, log,
+   snapshot captions) states the same thing: which sensor reacted, the
+   value it measured, and — once calibrated — what "usual" looks like
+   for this room, so the user can see what the anomaly actually is. */
+function reasonText(k){
+  if(k==="net") return "ネットワーク変化（回線の切替・断を検知）";
+  if(k==="prox") return "近接：何かが端末の近くに来た";
+  var dec = (k==="audio"||k==="silence") ? 0 : 1;
+  var txt=NAMES[k]+" "+fmt(S.metrics[k],dec)+(UNITS[k]?" "+UNITS[k]:"");
+  if(S.calibrated && S.baseline && S.baseline[k])
+    txt+="（いつも "+fmt(S.baseline[k].m,dec)+" ±"+fmt(S.baseline[k].s,dec)+"）";
+  return txt;
+}
+function topReasons(n){
+  var list=(S._lastFired && S._lastFired.length) ? S._lastFired.slice()
+    : Object.keys(NAMES).filter(function(k){ return (S.sub[k]||0)>=40; })
+        .map(function(k){ return {k:k, sub:Math.round(S.sub[k])}; });
+  list.sort(function(a,b){ return b.sub-a.sub; });
+  return list.slice(0, n||2).map(function(f){ return reasonText(f.k); });
+}
+
 /* ================= UI update ================= */
 var scoreFillEl=$("scoreFill");
 function paintUI(fired){
@@ -828,7 +875,10 @@ function paintUI(fired){
     scoreFillEl.style.background = sc>=80? "#e4573d" : sc>=55? "#e8863d" : sc>=32? "#e8a33d" : "#43c6b4"; }
   var v=verdictFor(sc);
   if($("verdictText").textContent!==v[0]) $("verdictText").textContent=v[0];
-  $("verdictSub").textContent=v[1];
+  var firedSorted=(fired||[]).slice().sort(function(a,b){ return b.sub-a.sub; });
+  $("verdictSub").textContent=v[1]+(firedSorted.length? " いま反応しているのは："+firedSorted.slice(0,3).map(function(f){ return reasonText(f.k); }).join("／")+"。":"");
+  var sv=$("stageVerdict"); if(sv && sv.textContent!==v[0]) sv.textContent=v[0];
+  var ss=$("stageScore"); if(ss) ss.textContent="気配スコア "+((S.running||S.demo)?Math.round(sc):"–")+" ／ 追跡対象 "+((S.tracks&&S.tracks.length)? S.tracks.length+"件を追跡中":"なし")+(firedSorted.length? " ／ 異常の内訳："+reasonText(firedSorted[0].k):"");
   // evidence chips
   var html="";
   fired.slice().sort(function(a,b){return b.sub-a.sub;}).slice(0,4).forEach(function(f){
@@ -902,7 +952,7 @@ function paintTrend(){
 function logEvent(fired, score, strong){
   S.eventSeq++;
   var li=document.createElement("li"); if(strong) li.className="strong";
-  var desc=fired.map(function(f){ return NAMES[f.k]+"（"+f.sub+"）"; }).join("・");
+  var desc=fired.map(function(f){ return reasonText(f.k)+"［反応の強さ "+f.sub+"］"; }).join("・");
   li.innerHTML='<div class="lt"><span class="time">'+nowTime()+'</span><span class="sc">'+(strong?'<span class="tag">同時反応</span>':"")+'気配スコア <b>'+Math.round(score)+"</b></span></div>"+
     '<div class="ds">'+(strong? "複数のセンサーが同じ瞬間に反応しました。" : "単独センサーの反応です。")+" 反応： "+desc+"。"+
     (strong? "「何かいるかも」しれない変化として記録します。" : "環境要因の可能性も含めて記録します。")+"</div>";
@@ -914,30 +964,31 @@ function logEvent(fired, score, strong){
     names:fired.map(function(f){ return NAMES[f.k]; })});
 }
 function takeSnapshot(score, fired){
+  var why=(fired&&fired.length)? fired.slice().sort(function(a,b){ return b.sub-a.sub; }).slice(0,2).map(function(f){ return reasonText(f.k); }).join("／") : "";
   if(window.ImageCapture && stream && !S.demo){
     try{
       new ImageCapture(stream.getVideoTracks()[0]).takePhoto()
-        .then(function(blob){ shotFromURL(URL.createObjectURL(blob), score); })
-        .catch(function(){ canvasSnap(score); });
+        .then(function(blob){ shotFromURL(URL.createObjectURL(blob), score, why); })
+        .catch(function(){ canvasSnap(score, why); });
       return;
     }catch(e){}
   }
-  canvasSnap(score);
+  canvasSnap(score, why);
 }
-function shotFromURL(url, score){
+function shotFromURL(url, score, why){
   var b=document.createElement("button"); b.className="shot"; b.type="button";
-  b.innerHTML='<img alt="検知時の映像（高解像度） '+nowTime()+'" src="'+url+'"><span>'+nowTime()+" ／ スコア "+Math.round(score)+" ／ 高解像度</span>";
+  b.innerHTML='<img alt="検知時の映像（高解像度） '+nowTime()+'" src="'+url+'"><span>'+nowTime()+" ／ スコア "+Math.round(score)+" ／ 高解像度"+(why? " ／ 異常："+why:"")+"</span>";
   b.addEventListener("click",function(){ var a=document.createElement("a"); a.href=url; a.download="kehai-"+Date.now()+".jpg"; a.click(); });
   var box=$("shots"); box.insertBefore(b, box.firstChild);
   while(box.children.length>12) box.removeChild(box.lastChild);
   $("shotsEmpty").style.display="none";
   var fl=$("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
 }
-function canvasSnap(score){
+function canvasSnap(score, why){
   try{
     var url=view.toDataURL("image/jpeg",0.82);
     var b=document.createElement("button"); b.className="shot"; b.type="button";
-    b.innerHTML='<img alt="検知時の映像 '+nowTime()+'" src="'+url+'"><span>'+nowTime()+" ／ スコア "+Math.round(score)+"</span>";
+    b.innerHTML='<img alt="検知時の映像 '+nowTime()+'" src="'+url+'"><span>'+nowTime()+" ／ スコア "+Math.round(score)+(why? " ／ 異常："+why:"")+"</span>";
     b.addEventListener("click",function(){ var a=document.createElement("a"); a.href=url; a.download="kehai-"+Date.now()+".jpg"; a.click(); });
     var box=$("shots"); box.insertBefore(b, box.firstChild);
     while(box.children.length>12) box.removeChild(box.lastChild);
@@ -979,6 +1030,7 @@ function tick(){
   }
   if(S.avail.net && !S.demo) S.metrics.net*=0.90;
   var fired=computeScores();
+  S._lastFired=fired; /* the tracking overlay reads this to say WHAT is abnormal */
   // adaptive baseline: quietly follow gradual room drift, never sudden changes
   if(S.calibrated && S.adaptive && S.combined<25 && S.baseline){
     Object.keys(S.baseline).forEach(function(k){
@@ -1816,7 +1868,8 @@ function addClip(url, mime, isVideo){
   var ebox=$("clipsEmpty"); if(ebox) ebox.style.display="none";
   var ext = mime && mime.indexOf("mp4")>=0 ? (isVideo?".mp4":".m4a") : ".webm";
   var div=document.createElement("div"); div.className="clip";
-  div.innerHTML='<div class="cm"><span>'+nowTime()+" ／ 気配スコア "+Math.round(S.combined)+'</span><a href="'+url+'" download="kehai-clip-'+Date.now()+ext+'">ダウンロード</a></div>'+
+  var aw=topReasons(2);
+  div.innerHTML='<div class="cm"><span>'+nowTime()+" ／ 気配スコア "+Math.round(S.combined)+(aw.length? " ／ 異常の内訳："+escapeHtml(aw.join("／")) : "")+'</span><a href="'+url+'" download="kehai-clip-'+Date.now()+ext+'">ダウンロード</a></div>'+
     (isVideo ? '<video controls playsinline preload="metadata" src="'+url+'"></video>'
              : '<audio controls preload="metadata" src="'+url+'"></audio><div style="font-size:11.5px;color:var(--dim);margin-top:6px">音声のみ（EVP用）：反応の前後の音をそのまま残しています</div>');
   var box=$("clips"); box.insertBefore(div, box.firstChild);
@@ -1952,6 +2005,127 @@ try{
     setCap("capNet","ok","ネットワーク情報：接続種別を表示し、回線の切替・断を「端末まわりの変化」として監視しています。");
   } else setCap("capNet","no","ネットワーク情報：このブラウザでは取得できません。");
 })();
+
+/* ---------- FULLSCREEN + ANOMALY TRACKING ----------
+   The camera is the full-screen primary view. Motion blobs from the
+   24x18 analysis grid become tracked objects: a corner-bracket box
+   and a label follow each blob as it moves, a banner appears at the
+   top while an anomalous blob is being tracked, and a tip pinned to
+   the strongest blob follows it across the frame. Tracking is a
+   fail-open side channel — it only reads S.cellGrid and never
+   touches the camera stream. */
+S.tracks=[]; S._trackSeq=0; S._lastVibeAt=0;
+$("btnFull").addEventListener("click", function(){
+  var stg=document.querySelector(".stage"); if(!stg) return;
+  try{
+    if(document.fullscreenElement) document.exitFullscreen();
+    else if(stg.requestFullscreen) stg.requestFullscreen().catch(function(){});
+    else stg.scrollIntoView({behavior:"smooth"});
+  }catch(e){ stg.scrollIntoView({behavior:"smooth"}); }
+});
+function blobsFromGrid(grid){
+  if(!grid) return [];
+  var W=24,H=18,seen=new Uint8Array(432),out=[];
+  for(var s=0;s<432;s++){
+    if(grid[s]>14 && !seen[s]){
+      var stack=[s],cells=[]; seen[s]=1;
+      while(stack.length){ var c=stack.pop(); cells.push(c);
+        var cx=c%W, cy=(c/W)|0, dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+        for(var d=0;d<4;d++){ var nx=cx+dirs[d][0], ny=cy+dirs[d][1];
+          if(nx<0||ny<0||nx>=W||ny>=H) continue; var ni=ny*W+nx;
+          if(!seen[ni] && grid[ni]>14){ seen[ni]=1; stack.push(ni); } } }
+      var mnx=99,mxx=-1,mny=99,mxy=-1,sx=0,sy=0;
+      cells.forEach(function(cc){ var x=cc%W,y=(cc/W)|0; sx+=x; sy+=y; if(x<mnx)mnx=x; if(x>mxx)mxx=x; if(y<mny)mny=y; if(y>mxy)mxy=y; });
+      out.push({cx:sx/cells.length, cy:sy/cells.length, cells:cells.length, x0:mnx, x1:mxx, y0:mny, y1:mxy});
+    }
+  }
+  return out;
+}
+function areaName(cx,cy){
+  var hx= cx<8? "左" : cx>15? "右" : "中央";
+  var vy= cy<6? "上" : cy>11? "下" : "";
+  return (vy+hx).replace("中央","中央")+"付近";
+}
+function updateTracks(){
+  if(!(S.running||S.demo)){ if(S.tracks.length){ S.tracks=[]; drawTracks(); } return; }
+  var blobs=blobsFromGrid(S.cellGrid).filter(function(b){ return b.cells>=2; });
+  var used={};
+  blobs.forEach(function(b){
+    var best=null,bd=36;
+    S.tracks.forEach(function(t,i){ if(used[i]) return; var dx=t.cx-b.cx, dy=t.cy-b.cy, d2=dx*dx+dy*dy; if(d2<bd){ bd=d2; best=t; used[S.tracks.indexOf(t)]=1; } });
+    if(best){ best.cx+=(b.cx-best.cx)*0.45; best.cy+=(b.cy-best.cy)*0.45; best.x0=b.x0; best.x1=b.x1; best.y0=b.y0; best.y1=b.y1; best.cells=b.cells; best.miss=0; best.life++; }
+    else if(S.tracks.length<4){ S.tracks.push({id:++S._trackSeq, cx:b.cx, cy:b.cy, x0:b.x0, x1:b.x1, y0:b.y0, y1:b.y1, cells:b.cells, miss:0, life:1, born:performance.now()}); }
+  });
+  S.tracks.forEach(function(t){ t.miss++; });
+  S.tracks=S.tracks.filter(function(t){ return t.miss<=3; });
+  blobs.forEach(function(){});
+  drawTracks();
+}
+/* ---------- ONE shared coordinate transform for the three layers ----------
+   The camera picture (the <video> element in raw mode, and the #view
+   canvas that re-renders the analysed frames in every other mode), the
+   #trackOverlay canvas, and the HTML follow-tip must all land on the
+   same stage pixels. The picture and both canvases carry a 480x360
+   bitmap fitted into the stage box with object-fit:cover — scaled by
+   max(stageW/480, stageH/360) and centre-cropped — so canvas drawing
+   can stay in bitmap coordinates and the CSS fit transforms #view and
+   #trackOverlay identically. The follow-tip is a plain HTML element
+   with no object-fit, so its position is computed through this same
+   cover transform: bitmap point -> stage percentages. (Before this,
+   the overlay had no object-fit and was stretched fill-style while the
+   picture was cover-cropped, and the tip used a naive linear percent —
+   three different mappings, so the tracking frame drifted sideways off
+   its subject whenever the stage aspect differed from 4:3.) */
+function stagePoint(bx,by){
+  var oc=$("trackOverlay"); if(!oc || !oc.parentElement) return {x:bx/480*100, y:by/360*100};
+  var sw=oc.parentElement.clientWidth||480, sh=oc.parentElement.clientHeight||360;
+  var sc=Math.max(sw/480, sh/360);
+  return { x:(bx*sc+(sw-480*sc)/2)/sw*100, y:(by*sc+(sh-360*sc)/2)/sh*100 };
+}
+function drawTracks(){
+  var oc=$("trackOverlay"); if(!oc) return;
+  var ctx=oc.getContext("2d"); ctx.clearRect(0,0,480,360);
+  var banner=$("anomalyBanner"), tip=$("followTip");
+  var strong=S.tracks.filter(function(t){ return t.cells>=5 || (t.cells>=3 && S.combined>=38); });
+  var anomalous = strong.length>0 && S.combined>=30;
+  S.tracks.forEach(function(t){
+    var x=t.x0*20-6, y=t.y0*20-6, w=(t.x1-t.x0+1)*20+12, h=(t.y1-t.y0+1)*20+12;
+    var hot = strong.indexOf(t)>=0;
+    var col = hot? "#e4573d" : "#e8a33d";
+    ctx.strokeStyle=col; ctx.lineWidth=2; var L=Math.min(16,w/3,h/3);
+    ctx.beginPath();
+    [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]].forEach(function(cn){
+      ctx.moveTo(cn[0]+cn[2]*L, cn[1]); ctx.lineTo(cn[0], cn[1]); ctx.lineTo(cn[0], cn[1]+cn[3]*L); });
+    ctx.stroke();
+    ctx.strokeStyle= hot? "rgba(228,87,61,.45)" : "rgba(232,163,61,.35)"; ctx.lineWidth=1; ctx.strokeRect(x,y,w,h);
+    var topName="";
+    if(hot && S._lastFired && S._lastFired.length)
+      topName=NAMES[S._lastFired.slice().sort(function(a,b){ return b.sub-a.sub; })[0].k]||"";
+    var label="#"+t.id+(hot? " 異常かも"+(topName? "："+topName:"") : " 追跡中");
+    ctx.font="600 11px 'IBM Plex Mono',monospace";
+    var tw=ctx.measureText(label).width+12;
+    ctx.fillStyle="rgba(5,6,5,.88)"; ctx.fillRect(x, Math.max(0,y-20), tw, 17);
+    ctx.fillStyle=col; ctx.fillText(label, x+6, Math.max(12,y-7));
+  });
+  if(anomalous && strong[0]){
+    var t0=strong[0];
+    var why=topReasons(3);
+    banner.innerHTML="⚠ <b>異常を検知</b> — "+escapeHtml(areaName(t0.cx,t0.cy))+"で動きを追跡中（対象 #"+t0.id+"／気配スコア "+Math.round(S.combined)+"）"+(why.length? '<span class="ab-why">何が異常か：'+escapeHtml(why.join("／"))+"</span>":"");
+    banner.classList.add("show");
+    tip.innerHTML="⚠ 何かいるかも — 追跡中 #"+t0.id+"<small>"+escapeHtml(areaName(t0.cx,t0.cy))+" ／ 大きさ目安 "+t0.cells+"セル ／ スコア "+Math.round(S.combined)+(why.length? "<br>異常の内訳："+escapeHtml(why.slice(0,2).join("／")):"")+"</small>";
+    /* pin the tip to the top-centre of the tracked box, converted from
+       bitmap coordinates through the shared cover transform above so
+       it sits on the same subject the overlay frame is drawn around */
+    var anchor=stagePoint((t0.x0+(t0.x1-t0.x0+1)/2)*20, t0.y0*20);
+    tip.style.left=anchor.x+"%"; tip.style.top=anchor.y+"%";
+    tip.classList.add("show");
+    if(performance.now()-S._lastVibeAt>15000){ S._lastVibeAt=performance.now(); try{ if(navigator.vibrate) navigator.vibrate(120); }catch(e){} }
+  } else {
+    banner.classList.remove("show"); tip.classList.remove("show");
+    if(S.tracks.length && banner){ /* still tracking weak motion: keep a quiet banner off, tip off */ }
+  }
+}
+setInterval(updateTracks, 220);
 
 /* ---------- WebGPU compute (motion analysis assist) ---------- */
 var gpuState={ok:false, busy:false};
