@@ -531,7 +531,7 @@
 
 
 </main>
-<footer>DESIGN v5.23 — 計算はすべてこのファイル内で行う。自動保存（ローカルストレージ）と設定JSON・設定コードでの保存に対応する。PSD読み書きに ag-psd（MIT License）を使用。PCでの利用を推奨。</footer>
+<footer>DESIGN v5.24 — 計算はすべてこのファイル内で行う。自動保存（ローカルストレージ）と設定JSON・設定コードでの保存に対応する。PSD読み書きに ag-psd（MIT License）を使用。PCでの利用を推奨。</footer>
 <dialog id="exportDialog" aria-labelledby="exportDialogTitle">
 <h3 id="exportDialogTitle" style="margin:0 0 8px;font-size:15px;text-transform:none;letter-spacing:0;color:#fff">書き出しサイズの確認</h3>
 <p id="exportDialogText" style="margin:0 0 14px"></p>
@@ -2618,10 +2618,11 @@ function moveTip(x,y){
 }
 const NOTE_URL="https://note.com/varelser/n/ncf2abd81b2f0";
 function noteHref(n){return NOTE_URL+"#:~:text="+encodeURIComponent(n);}
-function showTip(text,x,y,note){if(!tipsOn||!text)return;tipEl.textContent="";const sp=document.createElement("span");sp.textContent=text;tipEl.appendChild(sp);if(note){const a=document.createElement("a");a.className="tip-note";a.href=noteHref(note);a.target="_blank";a.rel="noopener";a.textContent="noteで詳しく見る \u2197";tipEl.appendChild(a);tipEl.classList.add("has-note");}else tipEl.classList.remove("has-note");tipEl.style.display="block";moveTip(x,y);}
-function hideTip(){tipEl.style.display="none";tipEl.classList.remove("has-note");}
+let tipFrozen=false;
+function showTip(text,x,y,note){if(!tipsOn||!text)return;tipEl.textContent="";const sp=document.createElement("span");sp.textContent=text;tipEl.appendChild(sp);if(note){const a=document.createElement("a");a.className="tip-note";a.href=noteHref(note);a.target="_blank";a.rel="noopener";a.textContent="noteで詳しく見る \u2197";tipEl.appendChild(a);tipEl.classList.add("has-note");}else tipEl.classList.remove("has-note");tipEl.style.display="block";moveTip(x,y);tipFrozen=!!note;}
+function hideTip(){tipEl.style.display="none";tipEl.classList.remove("has-note");tipFrozen=false;}
 document.addEventListener("mouseover",e=>{const el=e.target&&e.target.closest?e.target.closest("[data-tip]"):null;if(el)showTip(el.dataset.tip,e.clientX,e.clientY,el.dataset.note);});
-document.addEventListener("mousemove",e=>{if(tipEl.style.display==="block"&&e.target!==tipEl&&!tipEl.contains(e.target))moveTip(e.clientX,e.clientY);});
+document.addEventListener("mousemove",e=>{if(tipEl.style.display==="block"&&!tipFrozen&&e.target!==tipEl&&!tipEl.contains(e.target))moveTip(e.clientX,e.clientY);});
 document.addEventListener("mouseout",e=>{const el=e.target&&e.target.closest?e.target.closest("[data-tip]"):null;if(el){const to=e.relatedTarget;if(to&&tipEl.contains(to))return;if(!to||!el.contains(to))hideTip();}});
 tipEl.addEventListener("mouseleave",hideTip);
 addEventListener("scroll",hideTip,{passive:true});
