@@ -5,6 +5,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Punkt - local halftone and stipple processor. Offline single-file build with presets, compare, masks, history, multilayer rendering, and optimized exports." />
+  <meta property="og:title" content="Punkt — Halftone &amp; Stipple Processor" />
+  <meta property="og:description" content="Local halftone, stipple and Poisson pointillism from your photos. Offline, single file, with presets, masks, compare and multilayer exports." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://varelser.github.io/punkt.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='14' cy='14' r='6'/%3E%3Ccircle cx='32' cy='14' r='4'/%3E%3Ccircle cx='50' cy='14' r='2.5'/%3E%3Ccircle cx='14' cy='32' r='4'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Ccircle cx='50' cy='32' r='4'/%3E%3Ccircle cx='14' cy='50' r='2.5'/%3E%3Ccircle cx='32' cy='50' r='4'/%3E%3Ccircle cx='50' cy='50' r='6'/%3E%3C/g%3E%3C/svg%3E" />
   <title>Punkt</title>
   <style>
     :root {
@@ -870,6 +877,101 @@
       outline: 2px solid #f5f5f5; outline-offset: 2px;
     }
   </style>
+  <style id="punkt-plus-css">
+/* Punkt Plus — additive only. Core styles untouched above. */
+
+/* Performance: the floating panel's backdrop blur(20px) re-blurs the
+   artwork on every preview repaint — the same trap removed in Lien/Yayoi.
+   Opaque panel instead; preview toolbar / nodes pill likewise. */
+.dock-details {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  background: rgba(10,10,12,0.97) !important;
+}
+.preview-toolbar, .nodes-pill {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+  background: rgba(0,0,0,0.82) !important;
+}
+
+/* Toolbar centre mirror: mode / seed / spacing / points at a glance */
+.plus-mirror {
+  flex: 1 1 auto; text-align: center; min-width: 0;
+  font: 500 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.08em; color: #a3a3a3; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; padding: 0 10px;
+}
+.plus-mirror b { color: #f5f5f5; font-weight: 600; }
+@media (max-width: 899px) { .plus-mirror { display: none; } }
+
+/* Immersion (H): hide chrome, artwork takes the whole window */
+body.plus-immersive .app-header,
+body.plus-immersive .control-dock,
+body.plus-immersive .preview-toolbar { display: none !important; }
+
+/* Surroundings preview (transparency check) */
+.canvas-wrap.plus-bg-white { background-color: #f4f4f5 !important; background-image: none !important; }
+.canvas-wrap.plus-bg-gray  { background-color: #3f3f46 !important; background-image: none !important; }
+.canvas-wrap.plus-bg-black { background-color: #000000 !important; background-image: none !important; }
+
+/* Grid overlay: thirds / centre, aligned to the artwork box */
+.plus-grid {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none; display: none;
+}
+.plus-grid.show { display: block; }
+.plus-grid i { position: absolute; background: rgba(255,255,255,0.28); box-shadow: 0 0 0 0.5px rgba(0,0,0,0.25); }
+.plus-grid .v1 { left: 33.333%; top: 0; bottom: 0; width: 1px; }
+.plus-grid .v2 { left: 66.666%; top: 0; bottom: 0; width: 1px; }
+.plus-grid .h1 { top: 33.333%; left: 0; right: 0; height: 1px; }
+.plus-grid .h2 { top: 66.666%; left: 0; right: 0; height: 1px; }
+.plus-grid.centre .v1, .plus-grid.centre .v2, .plus-grid.centre .h1, .plus-grid.centre .h2 { display: none; }
+.plus-grid .cv { left: 50%; top: 0; bottom: 0; width: 1px; display: none; }
+.plus-grid .ch { top: 50%; left: 0; right: 0; height: 1px; display: none; }
+.plus-grid.centre .cv, .plus-grid.centre .ch { display: block; }
+
+/* Gradient-map FX layer: between preview (z1) and mask (z2 -> 3) */
+#plusFxCanvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 2; pointer-events: none; display: none;
+}
+#maskCanvas { z-index: 3 !important; }
+.compare-split { z-index: 4 !important; }
+.compare-labels { z-index: 5 !important; }
+
+/* Original photo overlay */
+#plusOriginal {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; z-index: 2; pointer-events: none; display: none;
+  background: transparent;
+}
+#plusOriginal.show { display: block; }
+
+/* Plus panel bits, in the panel's own vocabulary */
+.plus-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.plus-row .pill.active { background: #f5f5f5; color: #000; }
+.plus-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.plus-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border-radius: 999px; cursor: pointer;
+  background: rgba(255,255,255,0.06); color: #d4d4d8;
+  font-size: 11px; border: 0; min-height: 26px;
+}
+.plus-chip:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.plus-chip .sw { width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25); }
+.plus-chip .del { color: #a1a1aa; padding: 0 2px; }
+.plus-chip .del:hover { color: #ff8b8b; }
+.plus-note { font-size: 11px; line-height: 1.55; color: #8a8a96; margin: 2px 0 0; }
+.plus-status { font-size: 11px; line-height: 1.55; color: #a3a3a3; margin: 2px 0 0; overflow-wrap: anywhere; }
+.plus-check { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: #d4d4d8; cursor: pointer; }
+.plus-check input { accent-color: #f5f5f5; }
+.plus-url { flex: 1 1 120px; min-width: 0; }
+.plus-toast {
+  position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
+  z-index: 200; background: rgba(0,0,0,0.88); color: #f5f5f5;
+  padding: 8px 14px; border-radius: 999px; font-size: 12px; letter-spacing: 0.04em;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  max-width: calc(100vw - 32px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.plus-toast.show { opacity: 1; }
+  </style>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
 <script type="text/javascript">
@@ -1199,6 +1301,152 @@
                   <div class="meta-item"><strong>Compare</strong><span id="compareMeta">A: no / B: no</span></div>
                 </div>
                 <p class="message" id="message"></p>
+              </div>
+            </section>
+            <section class="dock-col bordered" id="plusSection">
+              <h2 class="section-title">Plus</h2>
+              <div class="stack tight">
+                <div class="label-row"><span class="label">View</span><span class="value" id="plusViewValue">Dark</span></div>
+                <div class="plus-row" id="plusBgRow">
+                  <button class="pill active" data-plus-bg="dark" type="button">Dark</button>
+                  <button class="pill" data-plus-bg="checker" type="button">Checker</button>
+                  <button class="pill" data-plus-bg="white" type="button">White</button>
+                  <button class="pill" data-plus-bg="gray" type="button">Gray</button>
+                  <button class="pill" data-plus-bg="black" type="button">Black</button>
+                </div>
+                <div class="plus-row" id="plusGridRow">
+                  <button class="pill active" data-plus-grid="off" type="button">Grid Off</button>
+                  <button class="pill" data-plus-grid="thirds" type="button">Thirds</button>
+                  <button class="pill" data-plus-grid="centre" type="button">Centre</button>
+                  <button class="pill" id="plusOriginalBtn" type="button">Original</button>
+                </div>
+                <label class="field">
+                  <span class="label-row"><span class="label">Original Blend</span><span class="value" id="plusOriginalMixValue">100 %</span></span>
+                  <input class="range" type="range" id="plusOriginalMix" min="0" max="100" step="1" value="100" />
+                </label>
+                <div class="label-row"><span class="label">Palette (from photo / artwork)</span></div>
+                <div class="plus-row" id="plusTargetRow">
+                  <button class="pill active" data-plus-target="inkColor" type="button">Ink</button>
+                  <button class="pill" data-plus-target="paperColor" type="button">Paper</button>
+                  <button class="pill" data-plus-target="accentColor" type="button">Accent</button>
+                  <button class="pill" data-plus-target="edgeColor" type="button">Edge</button>
+                  <button class="pill" id="plusPickBtn" type="button">Pick</button>
+                </div>
+                <div class="plus-chips" id="plusPalette"></div>
+                <div class="plus-row">
+                  <button class="pill" id="plusPaletteArtBtn" type="button">Palette from Artwork</button>
+                </div>
+                <div class="label-row"><span class="label">Load</span></div>
+                <div class="plus-row">
+                  <input class="text plus-url" id="plusUrlInput" type="url" placeholder="image URL" />
+                  <button class="pill" id="plusUrlBtn" type="button">Load URL</button>
+                </div>
+                <p class="plus-note">Paste an image (Ctrl+V) or drop a preset .json anywhere. Paste JSON text applies it as a preset.</p>
+                <div class="label-row"><span class="label">Dice</span></div>
+                <div class="plus-row">
+                  <button class="pill" id="plusSurpriseBtn" type="button">Surprise Me</button>
+                  <button class="pill" id="plusMutateBtn" type="button">Mutate</button>
+                </div>
+                <div class="label-row"><span class="label">My Scenes</span><span class="value" id="plusSceneCount">0</span></div>
+                <div class="plus-row">
+                  <input class="text grow" id="plusSceneName" type="text" maxlength="40" placeholder="scene name" />
+                  <button class="pill" id="plusSceneSaveBtn" type="button">Save</button>
+                </div>
+                <div class="plus-chips" id="plusScenes"></div>
+                <div class="label-row"><span class="label">Recent</span></div>
+                <div class="plus-chips" id="plusRecent"></div>
+                <div class="label-row"><span class="label">Share / Files</span></div>
+                <div class="plus-row">
+                  <button class="pill" id="plusShareLinkBtn" type="button">Copy Share Link</button>
+                  <button class="pill" id="plusSaveCfgBtn" type="button">Save Config</button>
+                  <button class="pill" id="plusLoadCfgBtn" type="button">Load Config</button>
+                </div>
+                <div class="label-row"><span class="label">Snapshot (as seen, preview size)</span></div>
+                <div class="plus-row">
+                  <button class="pill" id="plusSnapBtn" type="button">Download</button>
+                  <button class="pill" id="plusSnapCopyBtn" type="button">Copy PNG</button>
+                  <button class="pill" id="plusSnapShareBtn" type="button">Share</button>
+                  <button class="pill" id="plusSnapSaveAsBtn" type="button">Save As…</button>
+                </div>
+                <div class="label-row"><span class="label">Batch PNG (full-res, core export)</span></div>
+                <div class="plus-row">
+                  <button class="pill" id="plusBatch3Btn" type="button">3 Seeds</button>
+                  <button class="pill" id="plusBatch5Btn" type="button">5 Seeds</button>
+                  <span class="plus-status" id="plusBatchStatus"></span>
+                </div>
+                <div class="plus-row">
+                  <button class="pill" id="plusPipBtn" type="button">PiP Preview</button>
+                  <button class="pill" id="plusWakeBtn" type="button">Wake Lock</button>
+                </div>
+                <p class="plus-note">Keys: H immersion · O original · R reprocess · E export PNG · 1/2/3 mode · [ ] spacing · Ctrl+Z / Ctrl+Y undo/redo</p>
+                <p class="plus-status" id="plusStatus"></p>
+              </div>
+            </section>
+
+            <section class="dock-col bordered" id="exprSection">
+              <h2 class="section-title">Expression</h2>
+              <div class="stack tight">
+                <div class="label-row"><span class="label">Texture (display only)</span><span class="value" id="plusTextureValue">Normal</span></div>
+                <div class="plus-row" id="plusTextureRow">
+                  <button class="pill active" data-plus-texture="normal" type="button">Normal</button>
+                  <button class="pill" data-plus-texture="glow" type="button">Glow</button>
+                  <button class="pill" data-plus-texture="neon" type="button">Neon</button>
+                  <button class="pill" data-plus-texture="dream" type="button">Dream</button>
+                  <button class="pill" data-plus-texture="print" type="button">Print</button>
+                  <button class="pill" data-plus-texture="ghost" type="button">Ghost</button>
+                </div>
+                <label class="field">
+                  <span class="label-row"><span class="label">Texture Intensity</span><span class="value" id="plusIntensityValue">70 %</span></span>
+                  <input class="range" type="range" id="plusIntensity" min="0" max="100" step="1" value="70" />
+                </label>
+                <div class="label-row"><span class="label">Gradient Map (preview FX)</span><span class="value" id="plusGradValue">Off</span></div>
+                <div class="plus-row" id="plusGradRow">
+                  <button class="pill active" data-plus-grad="off" type="button">Off</button>
+                  <button class="pill" data-plus-grad="fire" type="button">Fire</button>
+                  <button class="pill" data-plus-grad="ice" type="button">Ice</button>
+                  <button class="pill" data-plus-grad="viridis" type="button">Viridis</button>
+                  <button class="pill" data-plus-grad="sunset" type="button">Sunset</button>
+                  <button class="pill" data-plus-grad="gold" type="button">Gold</button>
+                </div>
+                <label class="field">
+                  <span class="label-row"><span class="label">Gradient Mix</span><span class="value" id="plusGradMixValue">80 %</span></span>
+                  <input class="range" type="range" id="plusGradMix" min="0" max="100" step="1" value="80" />
+                </label>
+                <label class="plus-check"><input type="checkbox" id="plusHueAnim" /> Animate hue drift</label>
+                <p class="plus-note">Gradient map is a preview effect at up to 880px; use Snapshot in Plus to save it as seen. Core PNG/SVG exports stay exact.</p>
+              </div>
+            </section>
+
+            <section class="dock-col bordered" id="syncSection">
+              <h2 class="section-title">Sync — Varelser Link</h2>
+              <div class="stack tight">
+                <label class="plus-check"><input type="checkbox" id="plusLinkToggle" /> Varelser Link 送受信</label>
+                <div class="plus-row">
+                  <button class="pill" id="plusLinkSyncBtn" type="button">シードを全アプリに同期</button>
+                </div>
+                <p class="plus-status" id="plusLinkNoise">Noise: —</p>
+                <p class="plus-status" id="plusLinkMeikyo">♪ Meikyoshisui: —</p>
+                <label class="field">
+                  <span class="label-row"><span class="label">Noise Amount</span><span class="value" id="plusSyncAmtValue">70 %</span></span>
+                  <input class="range" type="range" id="plusSyncAmt" min="0" max="100" step="1" value="70" />
+                </label>
+                <label class="field">
+                  <span class="label-row"><span class="label">Attack</span><span class="value" id="plusSyncAtkValue">65 %</span></span>
+                  <input class="range" type="range" id="plusSyncAtk" min="0" max="100" step="1" value="65" />
+                </label>
+                <label class="field">
+                  <span class="label-row"><span class="label">Release</span><span class="value" id="plusSyncRelValue">30 %</span></span>
+                  <input class="range" type="range" id="plusSyncRel" min="0" max="100" step="1" value="30" />
+                </label>
+                <label class="field">
+                  <span class="label-row"><span class="label">Hue Drift</span><span class="value" id="plusSyncHueValue">24°</span></span>
+                  <input class="range" type="range" id="plusSyncHue" min="0" max="120" step="1" value="24" />
+                </label>
+                <label class="plus-check"><input type="checkbox" id="plusSyncGrad" /> Noise drives gradient mix too</label>
+                <label class="plus-check"><input type="checkbox" id="plusSyncBpm" /> Meikyoshisui BPM pulse</label>
+                <label class="plus-check"><input type="checkbox" id="plusSyncDemo" /> Demo signal (no Noise needed)</label>
+                <p class="plus-note">Seed derivation for Punkt (new): SeedWorks chain, tag “punkt”, seed = 1 + floor(r × 999,999,999). Modulation is display-only; your settings are never changed.</p>
+                <p class="plus-status" id="plusSyncStatus">Link: OFF</p>
               </div>
             </section>
           </div>
@@ -3503,6 +3751,888 @@
     renderSeedList();
     drawCurveEditor();
   })();
+  </script>
+  <script id="punkt-plus-js">
+/* Punkt Plus / Expression / Sync — additive script.
+   Core state lives in the main IIFE closure; the supported external
+   surface is the DOM (exactly like Varelser Link for Lien):
+   - ranges/colors fire 'input' -> core updates config + reprocesses
+   - seed goes through #seedInput pointerdown -> value -> 'change'
+   - full configs go through core's own Paste JSON dialog (sanitize +
+     history + updateInputsFromConfig), with a DOM-dispatch fallback
+   - toggles/modes are button clicks
+   Display effects (texture filter, gradient map, Noise modulation) are
+   CSS/canvas overlays only — core config and exports are never mutated. */
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+  var clamp01 = function (v) { v = Number(v); return Number.isFinite(v) ? clamp(v, 0, 1) : 0; };
+
+  var previewCanvas = $('previewCanvas');
+  var sceneWrap = $('sceneWrap');
+  var canvasWrap = $('canvasWrap');
+  if (!previewCanvas || !sceneWrap) return;
+
+  /* ---------- toast + status ---------- */
+  var toastEl = document.createElement('div');
+  toastEl.className = 'plus-toast'; toastEl.id = 'plusToast';
+  document.body.appendChild(toastEl);
+  var toastTimer = 0;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
+    var st = $('plusStatus'); if (st) st.textContent = msg;
+  }
+
+  /* ---------- persistent Plus UI state ---------- */
+  var UI_KEY = 'punkt_plus_v1';
+  var ui = { bg: 'dark', grid: 'off', texture: 'normal', intensity: 70, grad: 'off', gradMix: 80,
+    hueAnim: false, target: 'inkColor', originalMix: 100, syncAmt: 70, syncAtk: 65, syncRel: 30,
+    syncHue: 24, syncGrad: false, syncBpm: false, syncDemo: false };
+  try { var saved = JSON.parse(localStorage.getItem(UI_KEY) || 'null'); if (saved && typeof saved === 'object') Object.assign(ui, saved); } catch (e) {}
+  function saveUi() { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) {} }
+
+  /* ---------- config read (DOM reconstruction, exact core mapping) ---------- */
+  var RANGE_KEYS = ['minDotSize','maxDotSize','spacing','contrast','threshold','shadowBoost','highlightBoost','edgeBoost','marginPx','previewBudget','curveShadow','curveMid','curveHigh','baseOpacity','edgeOpacity','accentOpacity','edgeThreshold','accentThreshold','accentScale','svgPrecision','compareMix','brushSize','brushSoftness','maskOpacity'];
+  var COLOR_KEYS = { inkColor: 'color', paperColor: 'backgroundColor', accentColor: 'accentColor', edgeColor: 'edgeColor' };
+  var TOGGLE_KEYS = { invertBtn: 'invert', transparentBtn: 'transparentBackground', autoQualityBtn: 'autoQuality', optimizeSvgBtn: 'optimizeSvg', baseLayerBtn: 'baseLayer', edgeLayerBtn: 'edgeLayer', accentLayerBtn: 'accentLayer', asSeenExportBtn: 'asSeenExport' };
+  function readConfig() {
+    var cfg = {};
+    RANGE_KEYS.forEach(function (k) { var el = $(k); if (el) cfg[k] = Number(el.value); });
+    Object.keys(COLOR_KEYS).forEach(function (id) { var el = $(id); if (el) cfg[COLOR_KEYS[id]] = el.value; });
+    Object.keys(TOGGLE_KEYS).forEach(function (id) { var el = $(id); if (el) cfg[TOGGLE_KEYS[id]] = el.classList.contains('active'); });
+    var modeBtn = document.querySelector('#modeRow .mode.active');
+    cfg.mode = modeBtn ? modeBtn.dataset.mode : 'HALFTONE';
+    var pm = document.querySelector('[data-preview-mode].active');
+    cfg.previewMode = pm ? pm.dataset.previewMode : 'single';
+    var mm = document.querySelector('[data-mask-mode].active');
+    cfg.maskMode = mm ? mm.dataset.maskMode : 'off';
+    var sc = document.querySelector('#scaleRow .scale.active');
+    cfg.exportScale = sc ? Number(sc.dataset.scale) : 1;
+    cfg.seed = Math.max(0, Math.floor(Number(($('seedInput') || {}).value) || 0));
+    cfg.compareLabelA = 'A'; cfg.compareLabelB = 'B';
+    return cfg;
+  }
+  function setRange(id, value) {
+    var el = $(id); if (!el) return;
+    el.value = String(value);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  function setColor(id, value) {
+    var el = $(id); if (!el) return;
+    el.value = value;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  function applyConfigDom(cfg) {
+    RANGE_KEYS.forEach(function (k) { if (cfg[k] !== undefined) setRange(k, cfg[k]); });
+    Object.keys(COLOR_KEYS).forEach(function (id) { var v = cfg[COLOR_KEYS[id]]; if (v) setColor(id, v); });
+    Object.keys(TOGGLE_KEYS).forEach(function (id) {
+      var key = TOGGLE_KEYS[id]; if (cfg[key] === undefined) return;
+      var el = $(id); if (el && el.classList.contains('active') !== !!cfg[key]) el.click();
+    });
+    if (cfg.mode) { var b = document.querySelector('#modeRow [data-mode="' + cfg.mode + '"]'); if (b && !b.classList.contains('active')) b.click(); }
+    if (cfg.previewMode) { var p = document.querySelector('[data-preview-mode="' + cfg.previewMode + '"]'); if (p && !p.classList.contains('active')) p.click(); }
+    if (cfg.maskMode) { var m = document.querySelector('[data-mask-mode="' + cfg.maskMode + '"]'); if (m && !m.classList.contains('active')) m.click(); }
+    if (cfg.exportScale) { var s = document.querySelector('#scaleRow [data-scale="' + cfg.exportScale + '"]'); if (s && !s.disabled) s.click(); }
+    if (cfg.seed !== undefined) applySeed(cfg.seed);
+  }
+  function applyConfig(cfg) {
+    /* Preferred: core's own preset-import path (sanitize + history). */
+    return new Promise(function (resolve) {
+      var btn = $('importPresetBtn');
+      var dialog = $('jsonDialog');
+      if (!btn || !dialog) { applyConfigDom(cfg); resolve('dom'); return; }
+      btn.click();
+      var tries = 0;
+      var iv = setInterval(function () {
+        tries++;
+        if (!dialog.hidden) {
+          clearInterval(iv);
+          var ta = $('jsonDialogText');
+          ta.value = JSON.stringify(cfg);
+          $('jsonDialogApply').click();
+          resolve('dialog');
+        } else if (tries > 40) {
+          clearInterval(iv);
+          applyConfigDom(cfg);
+          resolve('dom-fallback');
+        }
+      }, 50);
+    });
+  }
+  function applySeed(seed) {
+    var inp = $('seedInput'); if (!inp) return;
+    try { inp.dispatchEvent(new Event('pointerdown', { bubbles: true })); } catch (e) {}
+    inp.value = String(Math.max(0, Math.floor(Number(seed) || 0)));
+    inp.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  /* ---------- toolbar mirror ---------- */
+  var mirror = document.createElement('div');
+  mirror.className = 'plus-mirror'; mirror.id = 'plusMirror';
+  var dockTop = document.querySelector('.dock-top');
+  var dockRight = document.querySelector('.dock-right');
+  if (dockTop && dockRight) dockTop.insertBefore(mirror, dockRight);
+  function updateMirror() {
+    var cfg = readConfig();
+    var pts = ($('nodeCount') || {}).textContent || '0';
+    var dims = ($('previewDims') || {}).textContent || '—';
+    mirror.innerHTML = '<b>' + cfg.mode + '</b> · Seed <b>' + cfg.seed + '</b> · Spacing <b>' + cfg.spacing + '</b> · <b>' + pts + '</b> pts · ' + dims;
+  }
+
+  /* ---------- view: surroundings + grid + original ---------- */
+  var gridEl = document.createElement('div');
+  gridEl.className = 'plus-grid'; gridEl.id = 'plusGrid';
+  gridEl.innerHTML = '<i class="v1"></i><i class="v2"></i><i class="h1"></i><i class="h2"></i><i class="cv"></i><i class="ch"></i>';
+  sceneWrap.appendChild(gridEl);
+  var origImg = document.createElement('img');
+  origImg.className = ''; origImg.id = 'plusOriginal'; origImg.alt = 'Original photo';
+  sceneWrap.appendChild(origImg);
+  var originalOn = false;
+  var lastObjectUrl = null;
+  function captureFile(file) {
+    if (!file || !/^image\//.test(file.type || '')) return;
+    if (lastObjectUrl) URL.revokeObjectURL(lastObjectUrl);
+    lastObjectUrl = URL.createObjectURL(file);
+    origImg.src = lastObjectUrl;
+    extractPaletteFromUrl(lastObjectUrl);
+  }
+  function setOriginal(on) {
+    originalOn = !!on;
+    origImg.classList.toggle('show', originalOn && !!lastObjectUrl);
+    var b = $('plusOriginalBtn'); if (b) b.classList.toggle('active', originalOn);
+    if (originalOn && !lastObjectUrl) toast('Original: load an image first');
+  }
+  function applyBg() {
+    canvasWrap.classList.remove('plus-bg-white', 'plus-bg-gray', 'plus-bg-black');
+    if (ui.bg === 'white') canvasWrap.classList.add('plus-bg-white');
+    if (ui.bg === 'gray') canvasWrap.classList.add('plus-bg-gray');
+    if (ui.bg === 'black') canvasWrap.classList.add('plus-bg-black');
+    if (ui.bg === 'dark') canvasWrap.style.backgroundColor = '';
+    var v = $('plusViewValue'); if (v) v.textContent = ui.bg.charAt(0).toUpperCase() + ui.bg.slice(1);
+    document.querySelectorAll('[data-plus-bg]').forEach(function (b) { b.classList.toggle('active', b.dataset.plusBg === ui.bg); });
+  }
+  function applyGrid() {
+    gridEl.classList.toggle('show', ui.grid !== 'off');
+    gridEl.classList.toggle('centre', ui.grid === 'centre');
+    document.querySelectorAll('[data-plus-grid]').forEach(function (b) { b.classList.toggle('active', b.dataset.plusGrid === ui.grid); });
+  }
+  $('plusBgRow').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-plus-bg]'); if (!b) return;
+    ui.bg = b.dataset.plusBg; saveUi(); applyBg();
+  });
+  $('plusGridRow').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-plus-grid]'); if (!b) return;
+    ui.grid = b.dataset.plusGrid; saveUi(); applyGrid();
+  });
+  $('plusOriginalBtn').addEventListener('click', function () { setOriginal(!originalOn); });
+  $('plusOriginalMix').addEventListener('input', function (e) {
+    ui.originalMix = Number(e.target.value);
+    $('plusOriginalMixValue').textContent = ui.originalMix + ' %';
+    origImg.style.opacity = String(ui.originalMix / 100);
+    if (ui.originalMix < 100 && !originalOn) setOriginal(true);
+    saveUi();
+  });
+
+  /* file capture on every load path Plus can observe */
+  $('fileInput').addEventListener('change', function (e) { var f = e.target.files && e.target.files[0]; if (f) captureFile(f); });
+  canvasWrap.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) captureFile(f); });
+  function forwardFileToCore(file) {
+    var fi = $('fileInput');
+    try {
+      var dt = new DataTransfer(); dt.items.add(file); fi.files = dt.files;
+      fi.dispatchEvent(new Event('change', { bubbles: true }));
+    } catch (err) { toast('Could not load that image here'); return; }
+    captureFile(file);
+  }
+
+  /* paste: image -> core, JSON text -> preset */
+  window.addEventListener('paste', function (e) {
+    var t = e.target;
+    if (t && t.closest && t.closest('input, textarea, [contenteditable="true"]')) return;
+    var cd = e.clipboardData; if (!cd) return;
+    var f = cd.files && cd.files[0];
+    if (f && /^image\//.test(f.type)) { e.preventDefault(); forwardFileToCore(f); toast('Image pasted'); return; }
+    var text = cd.getData && cd.getData('text/plain');
+    if (text && text.trim().charAt(0) === '{') {
+      try {
+        var parsed = JSON.parse(text);
+        var known = RANGE_KEYS.concat(['mode', 'seed', 'color']).filter(function (k) { return k in parsed; });
+        if (known.length >= 3) { e.preventDefault(); applyConfig(parsed).then(function () { toast('Preset applied from paste'); }); }
+      } catch (err) {}
+    }
+  });
+  /* drop JSON anywhere on the panel/window (images stay with core) */
+  window.addEventListener('drop', function (e) {
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!f) return;
+    if (/\.json$/i.test(f.name) || f.type === 'application/json') {
+      e.preventDefault();
+      f.text().then(function (text) {
+        try {
+          var parsed = JSON.parse(text);
+          var cfg = parsed && parsed.config ? parsed.config : parsed;
+          applyConfig(cfg).then(function () { toast('Preset loaded: ' + f.name); });
+        } catch (err) { toast('That .json is not a Punkt preset'); }
+      });
+    }
+  }, true);
+  $('plusUrlBtn').addEventListener('click', function () {
+    var url = ($('plusUrlInput').value || '').trim();
+    if (!url) return;
+    toast('Loading image URL…');
+    fetch(url).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
+      .then(function (blob) {
+        var name = 'url-image';
+        try { name = decodeURIComponent(new URL(url).pathname.split('/').pop() || name); } catch (e) {}
+        forwardFileToCore(new File([blob], name, { type: blob.type || 'image/png' }));
+        toast('Image loaded from URL');
+      })
+      .catch(function (err) { toast('URL load failed (CORS?): ' + err.message); });
+  });
+
+  /* ---------- palette extraction ---------- */
+  function paletteFromImageSource(draw) {
+    var c = document.createElement('canvas'); c.width = 128; c.height = 128;
+    var ctx = c.getContext('2d', { willReadFrequently: true });
+    draw(ctx, 128, 128);
+    var data;
+    try { data = ctx.getImageData(0, 0, 128, 128).data; } catch (e) { return []; }
+    var buckets = new Map();
+    for (var i = 0; i < data.length; i += 16) {
+      var a = data[i + 3]; if (a < 200) continue;
+      var r = data[i], g = data[i + 1], b = data[i + 2];
+      var key = ((r >> 5) << 6) | ((g >> 5) << 3) | (b >> 5);
+      var cur = buckets.get(key) || { n: 0, r: 0, g: 0, b: 0 };
+      cur.n++; cur.r += r; cur.g += g; cur.b += b; buckets.set(key, cur);
+    }
+    return Array.from(buckets.values()).sort(function (x, y) { return y.n - x.n; }).slice(0, 6).map(function (v) {
+      var hex = function (n) { return Math.round(n).toString(16).padStart(2, '0'); };
+      return '#' + hex(v.r / v.n) + hex(v.g / v.n) + hex(v.b / v.n);
+    });
+  }
+  function renderPalette(colors) {
+    var box = $('plusPalette'); box.innerHTML = '';
+    colors.forEach(function (hex) {
+      var chip = document.createElement('button');
+      chip.type = 'button'; chip.className = 'plus-chip';
+      chip.innerHTML = '<span class="sw" style="background:' + hex + '"></span>' + hex;
+      chip.addEventListener('click', function () { setColor(ui.target, hex); toast(hex + ' → ' + ui.target.replace('Color', '')); });
+      box.appendChild(chip);
+    });
+    if (!colors.length) box.innerHTML = '<span class="plus-note">No palette yet — load an image.</span>';
+  }
+  function extractPaletteFromUrl(url) {
+    var img = new Image();
+    img.onload = function () {
+      renderPalette(paletteFromImageSource(function (ctx, w, h) { ctx.drawImage(img, 0, 0, w, h); }));
+    };
+    img.src = url;
+  }
+  $('plusPaletteArtBtn').addEventListener('click', function () {
+    if (!previewCanvas.width) { toast('Nothing rendered yet'); return; }
+    renderPalette(paletteFromImageSource(function (ctx, w, h) { ctx.drawImage(previewCanvas, 0, 0, w, h); }));
+    toast('Palette from artwork');
+  });
+  $('plusTargetRow').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-plus-target]'); if (!b) return;
+    ui.target = b.dataset.plusTarget; saveUi();
+    document.querySelectorAll('[data-plus-target]').forEach(function (x) { x.classList.toggle('active', x.dataset.plusTarget === ui.target); });
+  });
+  $('plusPickBtn').addEventListener('click', function () {
+    if (!window.EyeDropper) { toast('EyeDropper is not available in this browser'); return; }
+    new window.EyeDropper().open().then(function (res) {
+      if (res && res.sRGBHex) { setColor(ui.target, res.sRGBHex); toast(res.sRGBHex + ' picked'); }
+    }).catch(function () {});
+  });
+
+  /* ---------- dice: surprise + mutate (through core import path) ---------- */
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  $('plusSurpriseBtn').addEventListener('click', function () {
+    var cfg = readConfig();
+    cfg.mode = pick(['HALFTONE', 'STIPPLE', 'POISSON']);
+    cfg.spacing = Math.round(rnd(3, 18));
+    cfg.minDotSize = Number(rnd(0.3, 2.5).toFixed(1));
+    cfg.maxDotSize = Number(rnd(Math.max(4, cfg.minDotSize + 2), 16).toFixed(1));
+    cfg.contrast = Number(rnd(0.7, 2.2).toFixed(2));
+    cfg.threshold = Number(rnd(0.05, 0.45).toFixed(2));
+    cfg.shadowBoost = Number(rnd(-0.2, 1.2).toFixed(2));
+    cfg.highlightBoost = Number(rnd(-0.6, 0.4).toFixed(2));
+    cfg.edgeBoost = Number(rnd(0, 1.6).toFixed(2));
+    cfg.seed = Math.floor(Math.random() * 2147483647);
+    cfg.invert = Math.random() < 0.25;
+    applyConfig(cfg).then(function () { toast('Surprise applied'); });
+  });
+  $('plusMutateBtn').addEventListener('click', function () {
+    var cfg = readConfig();
+    var nudge = function (k, amt, min, max, dp) { cfg[k] = Number(clamp((Number(cfg[k]) || 0) + rnd(-amt, amt), min, max).toFixed(dp === undefined ? 2 : dp)); };
+    nudge('spacing', 3, 1, 80, 0); cfg.spacing = Math.round(cfg.spacing);
+    nudge('minDotSize', 0.6, 0.1, 50, 1); nudge('maxDotSize', 2, cfg.minDotSize, 50, 1);
+    nudge('contrast', 0.3, 0.4, 4); nudge('threshold', 0.08, 0, 1);
+    nudge('shadowBoost', 0.3, -1, 2); nudge('highlightBoost', 0.3, -1, 2); nudge('edgeBoost', 0.4, 0, 3);
+    nudge('curveShadow', 0.2, -1, 1); nudge('curveMid', 0.2, -1, 1); nudge('curveHigh', 0.2, -1, 1);
+    cfg.seed = Math.floor(Math.random() * 2147483647);
+    applyConfig(cfg).then(function () { toast('Mutated (new seed ' + cfg.seed + ')'); });
+  });
+
+  /* ---------- scenes + recent ---------- */
+  var SCENE_KEY = 'punkt_plus_scenes_v1';
+  var RECENT_KEY = 'punkt_plus_recent_v1';
+  function loadArr(k) { try { var v = JSON.parse(localStorage.getItem(k) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function saveArr(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function renderScenes() {
+    var scenes = loadArr(SCENE_KEY);
+    $('plusSceneCount').textContent = String(scenes.length);
+    var box = $('plusScenes'); box.innerHTML = '';
+    scenes.forEach(function (s, idx) {
+      var chip = document.createElement('button');
+      chip.type = 'button'; chip.className = 'plus-chip';
+      chip.innerHTML = '';
+      var label = document.createElement('span'); label.textContent = s.name; chip.appendChild(label);
+      var del = document.createElement('span'); del.className = 'del'; del.textContent = '×'; chip.appendChild(del);
+      chip.addEventListener('click', function (e) {
+        if (e.target === del) { var next = loadArr(SCENE_KEY); next.splice(idx, 1); saveArr(SCENE_KEY, next); renderScenes(); return; }
+        applyConfig(s.config).then(function () { toast('Scene: ' + s.name); });
+      });
+      box.appendChild(chip);
+    });
+  }
+  $('plusSceneSaveBtn').addEventListener('click', function () {
+    var name = ($('plusSceneName').value || '').trim() || ('Scene ' + new Date().toLocaleTimeString());
+    var scenes = loadArr(SCENE_KEY);
+    var ex = scenes.find(function (s) { return s.name === name; });
+    var payload = { name: name, config: readConfig(), ts: Date.now() };
+    if (ex) Object.assign(ex, payload); else scenes.unshift(payload);
+    saveArr(SCENE_KEY, scenes.slice(0, 12));
+    $('plusSceneName').value = '';
+    renderScenes(); toast('Scene saved: ' + name);
+  });
+  function renderRecent() {
+    var box = $('plusRecent'); box.innerHTML = '';
+    loadArr(RECENT_KEY).forEach(function (cfg) {
+      var chip = document.createElement('button');
+      chip.type = 'button'; chip.className = 'plus-chip';
+      chip.textContent = cfg.mode + ' · ' + cfg.seed + ' · sp' + cfg.spacing;
+      chip.addEventListener('click', function () { applyConfig(cfg).then(function () { toast('Recent applied'); }); });
+      box.appendChild(chip);
+    });
+  }
+  var lastRecentFp = '';
+  setInterval(function () {
+    var overlay = $('overlay');
+    var busy = overlay && overlay.classList.contains('show');
+    var pts = Number((($('nodeCount') || {}).textContent || '0').replace(/[^0-9]/g, '')) || 0;
+    if (busy || !pts) return;
+    var cfg = readConfig();
+    var fp = JSON.stringify(cfg);
+    if (fp === lastRecentFp) return;
+    lastRecentFp = fp;
+    var recent = loadArr(RECENT_KEY).filter(function (c) { return JSON.stringify(c) !== fp; });
+    recent.unshift(cfg);
+    saveArr(RECENT_KEY, recent.slice(0, 8));
+    renderRecent();
+  }, 1200);
+
+  /* ---------- share link + config files ---------- */
+  function b64urlEncode(text) { return btoa(unescape(encodeURIComponent(text))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function b64urlDecode(s) { return decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/')))); }
+  $('plusShareLinkBtn').addEventListener('click', function () {
+    var url = location.href.split('#')[0] + '#p=' + b64urlEncode(JSON.stringify(readConfig()));
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { toast('Share link copied'); }, function () { toast('Copy failed — link in address bar'); history.replaceState(null, '', url); });
+    } else { history.replaceState(null, '', url); toast('Share link in address bar'); }
+  });
+  if (location.hash.indexOf('#p=') === 0) {
+    try {
+      var sharedCfg = JSON.parse(b64urlDecode(location.hash.slice(3)));
+      setTimeout(function () { applyConfig(sharedCfg).then(function () { toast('Shared settings applied'); }); }, 600);
+      history.replaceState(null, '', location.href.split('#')[0]);
+    } catch (e) {}
+  }
+  function downloadBlob(blob, name) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+  async function saveBlobAs(blob, name) {
+    if (window.showSaveFilePicker) {
+      try {
+        var handle = await window.showSaveFilePicker({ suggestedName: name, types: [{ description: 'File', accept: { [blob.type || 'application/octet-stream']: ['.' + (name.split('.').pop() || 'bin')] } }] });
+        var w = await handle.createWritable(); await w.write(blob); await w.close();
+        toast('Saved: ' + name); return true;
+      } catch (e) { if (e && e.name === 'AbortError') return false; }
+    }
+    downloadBlob(blob, name); return true;
+  }
+  $('plusSaveCfgBtn').addEventListener('click', function () {
+    saveBlobAs(new Blob([JSON.stringify(readConfig(), null, 2)], { type: 'application/json' }), 'punkt-config.json');
+  });
+  $('plusLoadCfgBtn').addEventListener('click', async function () {
+    var file = null;
+    if (window.showOpenFilePicker) {
+      try { var handles = await window.showOpenFilePicker({ types: [{ description: 'Punkt config', accept: { 'application/json': ['.json'] } }] }); file = await handles[0].getFile(); } catch (e) { return; }
+    } else {
+      file = await new Promise(function (resolve) {
+        var inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json';
+        inp.addEventListener('change', function () { resolve(inp.files[0] || null); });
+        inp.click();
+      });
+    }
+    if (!file) return;
+    try {
+      var parsed = JSON.parse(await file.text());
+      applyConfig(parsed && parsed.config ? parsed.config : parsed).then(function () { toast('Config loaded'); });
+    } catch (e) { toast('That file is not a Punkt config'); }
+  });
+
+  /* ---------- snapshot (as seen) + copy/share/save ---------- */
+  var fxCanvas = document.createElement('canvas');
+  fxCanvas.id = 'plusFxCanvas';
+  sceneWrap.insertBefore(fxCanvas, $('maskCanvas'));
+  function snapshotCanvas() {
+    var w = previewCanvas.width, h = previewCanvas.height;
+    if (!w || !h) return null;
+    var out = document.createElement('canvas'); out.width = w; out.height = h;
+    var ctx = out.getContext('2d');
+    var filt = currentFilterString();
+    try { ctx.filter = filt || 'none'; } catch (e) {}
+    ctx.drawImage(previewCanvas, 0, 0);
+    try { ctx.filter = 'none'; } catch (e) {}
+    if (fxCanvas.style.display !== 'none' && fxCanvas.width) ctx.drawImage(fxCanvas, 0, 0, w, h);
+    if (originalOn && lastObjectUrl && origImg.complete) {
+      ctx.globalAlpha = ui.originalMix / 100;
+      /* contain-fit the original into the snapshot box */
+      var ir = origImg.naturalWidth / Math.max(1, origImg.naturalHeight);
+      var br = w / h; var dw, dh;
+      if (ir > br) { dw = w; dh = w / ir; } else { dh = h; dw = h * ir; }
+      ctx.drawImage(origImg, (w - dw) / 2, (h - dh) / 2, dw, dh);
+      ctx.globalAlpha = 1;
+    }
+    return out;
+  }
+  function snapshotBlob() {
+    return new Promise(function (resolve) {
+      var c = snapshotCanvas();
+      if (!c) { resolve(null); return; }
+      c.toBlob(resolve, 'image/png');
+    });
+  }
+  $('plusSnapBtn').addEventListener('click', async function () {
+    var b = await snapshotBlob(); if (!b) { toast('Nothing rendered yet'); return; }
+    downloadBlob(b, 'punkt-snapshot.png'); toast('Snapshot downloaded (preview size)');
+  });
+  $('plusSnapCopyBtn').addEventListener('click', async function () {
+    var b = await snapshotBlob(); if (!b) { toast('Nothing rendered yet'); return; }
+    try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); toast('Snapshot copied'); }
+    catch (e) { toast('Clipboard copy not available here'); }
+  });
+  $('plusSnapShareBtn').addEventListener('click', async function () {
+    var b = await snapshotBlob(); if (!b) { toast('Nothing rendered yet'); return; }
+    var file = new File([b], 'punkt-snapshot.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: 'Punkt' }); } catch (e) {}
+    } else { downloadBlob(b, 'punkt-snapshot.png'); toast('Share not available — downloaded instead'); }
+  });
+  $('plusSnapSaveAsBtn').addEventListener('click', async function () {
+    var b = await snapshotBlob(); if (!b) { toast('Nothing rendered yet'); return; }
+    saveBlobAs(b, 'punkt-snapshot.png');
+  });
+
+  /* ---------- batch PNG via core export ---------- */
+  var batchCancel = false;
+  function waitProcessed(timeoutMs) {
+    return new Promise(function (resolve) {
+      var start = Date.now(); var stableSince = 0;
+      var iv = setInterval(function () {
+        var overlay = $('overlay');
+        var busy = overlay && overlay.classList.contains('show');
+        var exporting = $('exportPngBtn') && $('exportPngBtn').disabled && busy;
+        if (!busy && !exporting) {
+          if (!stableSince) stableSince = Date.now();
+          if (Date.now() - stableSince > 700) { clearInterval(iv); resolve(true); }
+        } else stableSince = 0;
+        if (Date.now() - start > (timeoutMs || 45000)) { clearInterval(iv); resolve(false); }
+      }, 150);
+    });
+  }
+  async function runBatch(n, btn) {
+    if (btn.dataset.running) { batchCancel = true; $('plusBatchStatus').textContent = 'cancelling…'; return; }
+    if (!$('exportPngBtn') || $('exportPngBtn').disabled) { toast('Load an image first'); return; }
+    btn.dataset.running = '1'; batchCancel = false;
+    var base = readConfig().seed;
+    try {
+      for (var i = 0; i < n; i++) {
+        if (batchCancel) { $('plusBatchStatus').textContent = 'cancelled'; break; }
+        var seed = (base + i * 7919) % 2147483647;
+        $('plusBatchStatus').textContent = (i + 1) + '/' + n + ' seed ' + seed;
+        applySeed(seed);
+        var ok = await waitProcessed(45000);
+        if (!ok) { $('plusBatchStatus').textContent = 'timeout at ' + (i + 1); break; }
+        if (batchCancel) { $('plusBatchStatus').textContent = 'cancelled'; break; }
+        $('exportPngBtn').click();
+        await new Promise(function (r) { setTimeout(r, 1200); });
+        await waitProcessed(45000);
+      }
+      if (!batchCancel) $('plusBatchStatus').textContent = 'done (' + n + ')';
+      toast('Batch finished');
+    } finally { delete btn.dataset.running; }
+  }
+  $('plusBatch3Btn').addEventListener('click', function () { runBatch(3, $('plusBatch3Btn')); });
+  $('plusBatch5Btn').addEventListener('click', function () { runBatch(5, $('plusBatch5Btn')); });
+
+  /* ---------- PiP + Wake Lock ---------- */
+  var pipWin = null, pipRaf = 0;
+  $('plusPipBtn').addEventListener('click', async function () {
+    if (!window.documentPictureInPicture) { toast('Document PiP is not available in this browser'); return; }
+    try {
+      pipWin = await window.documentPictureInPicture.requestWindow({ width: 520, height: 400 });
+      var c = pipWin.document.createElement('canvas');
+      c.style.cssText = 'width:100%;height:100%;object-fit:contain;background:#000;';
+      pipWin.document.body.style.margin = '0';
+      pipWin.document.body.appendChild(c);
+      var draw = function () {
+        if (!pipWin || pipWin.closed) return;
+        if (previewCanvas.width) {
+          var snap = snapshotCanvas();
+          if (snap) { c.width = snap.width; c.height = snap.height; c.getContext('2d').drawImage(snap, 0, 0); }
+        }
+        pipRaf = pipWin.requestAnimationFrame(draw);
+      };
+      draw();
+      pipWin.addEventListener('pagehide', function () { if (pipRaf) cancelAnimationFrame(pipRaf); pipWin = null; });
+      toast('PiP preview opened');
+    } catch (e) { toast('PiP failed: ' + e.message); }
+  });
+  var wakeSentinel = null;
+  async function setWake(on) {
+    var btn = $('plusWakeBtn');
+    if (on) {
+      if (!navigator.wakeLock) { toast('Wake Lock is not available here'); return; }
+      try {
+        wakeSentinel = await navigator.wakeLock.request('screen');
+        btn.classList.add('active'); toast('Wake Lock on');
+        wakeSentinel.addEventListener('release', function () { btn.classList.remove('active'); wakeSentinel = null; });
+      } catch (e) { toast('Wake Lock failed'); }
+    } else if (wakeSentinel) { try { await wakeSentinel.release(); } catch (e) {} wakeSentinel = null; btn.classList.remove('active'); }
+  }
+  $('plusWakeBtn').addEventListener('click', function () { setWake(!wakeSentinel); });
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && $('plusWakeBtn').classList.contains('active') && !wakeSentinel) setWake(true);
+  });
+
+  /* ---------- Expression: texture filter manager + gradient map ---------- */
+  var noiseDrive = 0;      /* 0..1 from Sync follower (or demo) */
+  var hueAngle = 0;
+  function textureFilter(t, inten) {
+    switch (t) {
+      case 'glow': return 'brightness(' + (1 + 0.25 * inten).toFixed(3) + ') saturate(' + (1 + 0.3 * inten).toFixed(3) + ') drop-shadow(0 0 ' + (7 * inten).toFixed(1) + 'px rgba(255,255,255,0.55))';
+      case 'neon': return 'brightness(' + (1 + 0.15 * inten).toFixed(3) + ') contrast(' + (1 + 0.35 * inten).toFixed(3) + ') saturate(' + (1 + 1.1 * inten).toFixed(3) + ')';
+      case 'dream': return 'brightness(' + (1 + 0.12 * inten).toFixed(3) + ') contrast(' + (1 - 0.25 * inten).toFixed(3) + ') saturate(' + (1 - 0.3 * inten).toFixed(3) + ') blur(' + (1.2 * inten).toFixed(2) + 'px)';
+      case 'print': return 'contrast(' + (1 + 0.5 * inten).toFixed(3) + ') saturate(' + (1 - 0.15 * inten).toFixed(3) + ') brightness(' + (1 + 0.03 * inten).toFixed(3) + ')';
+      case 'ghost': return 'opacity(' + (1 - 0.35 * inten).toFixed(3) + ') brightness(' + (1 + 0.2 * inten).toFixed(3) + ') blur(' + (0.6 * inten).toFixed(2) + 'px)';
+      default: return '';
+    }
+  }
+  function currentFilterString() {
+    var parts = [];
+    var tf = textureFilter(ui.texture, ui.intensity / 100);
+    if (tf) parts.push(tf);
+    var amt = ui.syncAmt / 100;
+    if (noiseDrive > 0.003 && amt > 0) {
+      parts.push('brightness(' + (1 + 0.45 * noiseDrive * amt).toFixed(3) + ')');
+      parts.push('contrast(' + (1 + 0.20 * noiseDrive * amt).toFixed(3) + ')');
+      var hue = noiseDrive * ui.syncHue * amt;
+      if (hue > 0.5) parts.push('hue-rotate(' + hue.toFixed(1) + 'deg)');
+    }
+    if (ui.hueAnim && hueAngle) parts.push('hue-rotate(' + hueAngle.toFixed(0) + 'deg)');
+    return parts.join(' ');
+  }
+  function applyFilter() { previewCanvas.style.filter = currentFilterString(); }
+  setInterval(applyFilter, 120);
+  (function hueLoop(ts) {
+    requestAnimationFrame(hueLoop);
+    if (ui.hueAnim) hueAngle = ((performance.now() / 60) % 360);
+  })();
+  $('plusTextureRow').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-plus-texture]'); if (!b) return;
+    ui.texture = b.dataset.plusTexture; saveUi();
+    document.querySelectorAll('[data-plus-texture]').forEach(function (x) { x.classList.toggle('active', x.dataset.plusTexture === ui.texture); });
+    $('plusTextureValue').textContent = ui.texture.charAt(0).toUpperCase() + ui.texture.slice(1);
+    applyFilter();
+  });
+  $('plusIntensity').addEventListener('input', function (e) {
+    ui.intensity = Number(e.target.value); saveUi();
+    $('plusIntensityValue').textContent = ui.intensity + ' %'; applyFilter();
+  });
+  $('plusHueAnim').addEventListener('change', function (e) { ui.hueAnim = e.target.checked; saveUi(); if (!ui.hueAnim) { hueAngle = 0; applyFilter(); } });
+
+  var GRADS = {
+    fire: [[0, '#000000'], [0.35, '#7a0d0d'], [0.62, '#e63e12'], [0.85, '#f7a823'], [1, '#fff6d8']],
+    ice: [[0, '#020617'], [0.35, '#0e3a5d'], [0.65, '#2f9ec4'], [0.88, '#a5e8f5'], [1, '#ffffff']],
+    viridis: [[0, '#440154'], [0.3, '#414487'], [0.55, '#2a788e'], [0.78, '#22a884'], [1, '#fde725']],
+    sunset: [[0, '#1d1147'], [0.35, '#7e1e68'], [0.6, '#c73e4e'], [0.82, '#f98e09'], [1, '#fff3b0']],
+    gold: [[0, '#0a0800'], [0.4, '#4a3205'], [0.7, '#b8860b'], [0.9, '#ffd766'], [1, '#fffbe6']]
+  };
+  function buildLut(stops) {
+    function hx(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+    var lut = new Uint8Array(256 * 3);
+    for (var i = 0; i < 256; i++) {
+      var t = i / 255, a = stops[0], b = stops[stops.length - 1];
+      for (var s = 0; s < stops.length - 1; s++) { if (t >= stops[s][0] && t <= stops[s + 1][0]) { a = stops[s]; b = stops[s + 1]; break; } }
+      var f = (t - a[0]) / Math.max(0.0001, b[0] - a[0]);
+      var ca = hx(a[1]), cb = hx(b[1]);
+      lut[i * 3] = ca[0] + (cb[0] - ca[0]) * f; lut[i * 3 + 1] = ca[1] + (cb[1] - ca[1]) * f; lut[i * 3 + 2] = ca[2] + (cb[2] - ca[2]) * f;
+    }
+    return lut;
+  }
+  var gradWork = document.createElement('canvas');
+  function redrawGrad() {
+    if (ui.grad === 'off' || !previewCanvas.width) { fxCanvas.style.display = 'none'; return; }
+    var maxDim = 880;
+    var scale = Math.min(1, maxDim / Math.max(previewCanvas.width, previewCanvas.height));
+    var w = Math.max(1, Math.round(previewCanvas.width * scale));
+    var h = Math.max(1, Math.round(previewCanvas.height * scale));
+    gradWork.width = w; gradWork.height = h;
+    var wctx = gradWork.getContext('2d', { willReadFrequently: true });
+    wctx.drawImage(previewCanvas, 0, 0, w, h);
+    var img;
+    try { img = wctx.getImageData(0, 0, w, h); } catch (e) { fxCanvas.style.display = 'none'; return; }
+    var lut = buildLut(GRADS[ui.grad]);
+    var d = img.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var lum = Math.max(d[i], d[i + 1], d[i + 2]);
+      d[i] = lut[lum * 3]; d[i + 1] = lut[lum * 3 + 1]; d[i + 2] = lut[lum * 3 + 2];
+    }
+    wctx.putImageData(img, 0, 0);
+    fxCanvas.width = w; fxCanvas.height = h;
+    var fctx = fxCanvas.getContext('2d');
+    fctx.clearRect(0, 0, w, h); fctx.drawImage(gradWork, 0, 0);
+    var mix = (ui.syncGradOn ? ui.gradMixLive : ui.gradMix) / 100;
+    fxCanvas.style.opacity = String(mix);
+    fxCanvas.style.display = mix > 0 ? 'block' : 'none';
+  }
+  var gradFp = '';
+  setInterval(function () {
+    if (ui.grad === 'off') return;
+    var fp = previewCanvas.width + 'x' + previewCanvas.height + '|' + (($('nodeCount') || {}).textContent || '') + '|' + ui.gradMixLive;
+    if (fp !== gradFp) { gradFp = fp; redrawGrad(); }
+  }, 600);
+  $('plusGradRow').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-plus-grad]'); if (!b) return;
+    ui.grad = b.dataset.plusGrad; ui.gradMixLive = ui.gradMix; saveUi();
+    document.querySelectorAll('[data-plus-grad]').forEach(function (x) { x.classList.toggle('active', x.dataset.plusGrad === ui.grad); });
+    $('plusGradValue').textContent = ui.grad === 'off' ? 'Off' : ui.grad.charAt(0).toUpperCase() + ui.grad.slice(1);
+    gradFp = ''; redrawGrad();
+  });
+  $('plusGradMix').addEventListener('input', function (e) {
+    ui.gradMix = Number(e.target.value); ui.gradMixLive = ui.gradMix; saveUi();
+    $('plusGradMixValue').textContent = ui.gradMix + ' %'; gradFp = ''; redrawGrad();
+  });
+
+  /* ---------- Sync: Varelser Link ---------- */
+  function hashSeedString(s) { var h = 0x811C9DC5; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; }
+  function splitmix32(a) { return function () { a |= 0; a = (a + 0x9E3779B9) | 0; var t = (a ^ (a >>> 16)) >>> 0; t = Math.imul(t, 0x21F0AAAD); t = (t ^ (t >>> 15)) >>> 0; t = Math.imul(t, 0x735A2D97); t = (t ^ (t >>> 15)) >>> 0; return t >>> 0; }; }
+  function mulberry32(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function masterHash(raw) {
+    var t = String(raw == null ? '' : raw).trim();
+    if (t === '') return null;
+    if (/^-?\d+$/.test(t)) return (Number(t) >>> 0) || 1;
+    return hashSeedString(t) || 1;
+  }
+  function derivePunktSeed(master) {
+    var h = masterHash(master); if (h === null) return null;
+    var th = hashSeedString('punkt');
+    var sm = splitmix32((h ^ th) >>> 0);
+    var r = mulberry32(sm());
+    return 1 + Math.floor(r() * 999999999);
+  }
+  var LINK_KEY = 'punkt.varelserLink.v1';
+  var channel = null, applyingRemote = false, lastSeedSent = null, lastSeedSeen = null;
+  var lastNoise = null, lastMeikyo = null;
+  var envFast = 0, envSlow = 0;
+  function linkStatus(t) { var el = $('plusSyncStatus'); if (el) el.textContent = t; }
+  function postState() {
+    if (!channel || applyingRemote) return;
+    var seed = readConfig().seed;
+    if (!seed && seed !== 0) return;
+    lastSeedSent = seed;
+    try { channel.postMessage({ app: 'punkt', type: 'state', ts: Date.now(), seed: seed }); } catch (e) {}
+  }
+  function onLinkMessage(e) {
+    var msg = e && e.data;
+    if (!msg || typeof msg !== 'object' || msg.app === 'punkt') return;
+    if (msg.type === 'seed-sync') {
+      if (msg.master === undefined || msg.master === null) return;
+      var derived = derivePunktSeed(msg.master);
+      if (derived === null || derived === readConfig().seed) return;
+      applyingRemote = true;
+      applySeed(derived);
+      lastSeedSeen = derived; lastSeedSent = derived;
+      linkStatus('Link: シード同期を受信 → Punktシード ' + derived + ' を適用');
+      setTimeout(function () { applyingRemote = false; }, 900);
+      return;
+    }
+    if (msg.type !== 'state') return;
+    if (msg.app === 'noise') {
+      lastNoise = { data: msg, at: Date.now() };
+      var layerName = '—';
+      if (Array.isArray(msg.layers) && msg.layers.length) {
+        var on = msg.layers.find(function (l) { return l && l.on; }) || msg.layers[0];
+        if (on && on.type) layerName = on.type;
+      }
+      var masterTxt = (typeof msg.master === 'number' && Number.isFinite(msg.master)) ? msg.master.toFixed(2) : '—';
+      $('plusLinkNoise').textContent = 'Noise: master ' + masterTxt + ' / ' + layerName + ' / ' + (msg.playing ? '再生中' : '停止');
+    } else if (msg.app === 'meikyoshisui' || msg.app === 'meikyo') {
+      lastMeikyo = { data: msg, at: Date.now() };
+      var bpm = (typeof msg.bpm === 'number' && Number.isFinite(msg.bpm)) ? String(Math.round(msg.bpm)) : '—';
+      var genre = (typeof msg.genre === 'string' && msg.genre) ? msg.genre : '—';
+      var playing = (typeof msg.playing === 'boolean') ? msg.playing : !!msg.isPlaying;
+      $('plusLinkMeikyo').textContent = '♪ Meikyoshisui: ' + bpm + ' BPM / ' + genre + ' / ' + (playing ? '再生中' : '停止');
+    }
+  }
+  function startLink() {
+    if (channel || typeof BroadcastChannel === 'undefined') return;
+    try { channel = new BroadcastChannel('varelser-link-v1'); } catch (e) { channel = null; return; }
+    channel.onmessage = onLinkMessage;
+    postState();
+    linkStatus('Link: ON — varelser-link-v1');
+  }
+  function stopLink() {
+    if (channel) { try { channel.onmessage = null; channel.close(); } catch (e) {} channel = null; }
+    lastNoise = null; lastMeikyo = null; noiseDrive = 0; applyFilter();
+    linkStatus('Link: OFF');
+  }
+  $('plusLinkToggle').addEventListener('change', function (e) {
+    try { localStorage.setItem(LINK_KEY, e.target.checked ? '1' : '0'); } catch (err) {}
+    if (e.target.checked) startLink(); else stopLink();
+  });
+  $('plusLinkSyncBtn').addEventListener('click', function () {
+    if (!channel) { $('plusLinkToggle').checked = true; try { localStorage.setItem(LINK_KEY, '1'); } catch (e) {} startLink(); }
+    if (!channel) { linkStatus('Link: BroadcastChannel を利用できません'); return; }
+    var seed = readConfig().seed;
+    try { channel.postMessage({ app: 'punkt', type: 'seed-sync', ts: Date.now(), master: String(seed) }); } catch (e) {}
+    linkStatus('Link: シード ' + seed + ' を全アプリに同期しました');
+    toast('Seed synced to all apps');
+  });
+  setInterval(function () {
+    var seed = readConfig().seed;
+    if (seed !== lastSeedSeen) {
+      var first = lastSeedSeen === null;
+      lastSeedSeen = seed;
+      if (channel && !applyingRemote && seed !== lastSeedSent) { if (first) postState(); else setTimeout(postState, 250); }
+    }
+  }, 500);
+  /* envelope follower (Phase-4 style expansion) + demo + BPM pulse */
+  setInterval(function () {
+    var drive = 0, fresh = false;
+    if (ui.syncDemo) {
+      fresh = true;
+      var t = performance.now() / 1000;
+      drive = clamp01(0.45 + 0.35 * Math.sin(t * 1.7) + (Math.sin(t * 4.3) > 0.92 ? 0.35 : 0));
+    } else if ($('plusLinkToggle').checked && lastNoise && Date.now() - lastNoise.at < 1500) {
+      fresh = true;
+      var d = lastNoise.data;
+      var rms = (typeof d.levelRms === 'number') ? d.levelRms : 0;
+      var peak = (typeof d.levelPeak === 'number') ? d.levelPeak : 0;
+      drive = (rms || peak) ? clamp01(Math.max(peak * 0.9, rms * 2.2)) : clamp01(Number(d.master) || 0);
+      if (!d.playing && !rms && !peak) drive = 0;
+    }
+    if (fresh) {
+      var aFast = 0.10 + 0.85 * (ui.syncAtk / 100);
+      var aSlow = 0.02 + 0.30 * ((100 - ui.syncRel) / 100);
+      envFast += (drive - envFast) * aFast;
+      envSlow += (drive - envSlow) * aSlow;
+      var swing = clamp((envFast - envSlow) * 20, -0.45, 0.75);
+      noiseDrive = clamp01(envFast * 0.7 + Math.max(0, swing) * 0.5);
+    } else {
+      envFast *= 0.9; envSlow *= 0.95;
+      noiseDrive = clamp01(envFast * 0.7);
+      if (noiseDrive < 0.003) noiseDrive = 0;
+    }
+    if (ui.syncBpm && lastMeikyo && Date.now() - lastMeikyo.at < 3000) {
+      var m = lastMeikyo.data;
+      var playing = (typeof m.playing === 'boolean') ? m.playing : !!m.isPlaying;
+      if (playing && typeof m.bpm === 'number' && m.bpm > 0) {
+        var phase = (performance.now() % (60000 / m.bpm)) / (60000 / m.bpm);
+        var pulse = Math.exp(-phase * 6);
+        noiseDrive = clamp01(Math.max(noiseDrive, pulse * 0.65 * (ui.syncAmt / 100)));
+      }
+    }
+    ui.syncGradOn = ui.syncGrad && noiseDrive > 0.01;
+    var live = Math.round(ui.gradMix * (1 - noiseDrive * 0.85));
+    if (ui.syncGradOn && live !== ui.gradMixLive) { ui.gradMixLive = live; gradFp = ''; }
+    if (!ui.syncGradOn && ui.gradMixLive !== ui.gradMix) { ui.gradMixLive = ui.gradMix; gradFp = ''; }
+  }, 120);
+  [['plusSyncAmt', 'syncAmt', 'plusSyncAmtValue', '%'], ['plusSyncAtk', 'syncAtk', 'plusSyncAtkValue', '%'], ['plusSyncRel', 'syncRel', 'plusSyncRelValue', '%']].forEach(function (cfg) {
+    $(cfg[0]).addEventListener('input', function (e) { ui[cfg[1]] = Number(e.target.value); $(cfg[2]).textContent = ui[cfg[1]] + ' ' + cfg[3]; saveUi(); });
+  });
+  $('plusSyncHue').addEventListener('input', function (e) { ui.syncHue = Number(e.target.value); $('plusSyncHueValue').textContent = ui.syncHue + '°'; saveUi(); });
+  $('plusSyncGrad').addEventListener('change', function (e) { ui.syncGrad = e.target.checked; saveUi(); });
+  $('plusSyncBpm').addEventListener('change', function (e) { ui.syncBpm = e.target.checked; saveUi(); });
+  $('plusSyncDemo').addEventListener('change', function (e) { ui.syncDemo = e.target.checked; saveUi(); });
+
+  /* ---------- keyboard shortcuts ---------- */
+  window.addEventListener('keydown', function (e) {
+    var t = e.target;
+    var editable = t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]');
+    if (e.key === 'Escape' && document.body.classList.contains('plus-immersive')) {
+      document.body.classList.remove('plus-immersive'); window.dispatchEvent(new Event('resize')); return;
+    }
+    if (editable) return;
+    var mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); var u = $('undoBtn'); if (u && !u.disabled) u.click(); return; }
+    if ((mod && e.key.toLowerCase() === 'y') || (mod && e.shiftKey && e.key.toLowerCase() === 'z')) { e.preventDefault(); var r = $('redoBtn'); if (r && !r.disabled) r.click(); return; }
+    if (mod) return;
+    switch (e.key.toLowerCase()) {
+      case 'h': document.body.classList.toggle('plus-immersive'); setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 60); break;
+      case 'o': setOriginal(!originalOn); break;
+      case 'r': { var rp = $('reprocessBtn'); if (rp && !rp.disabled) rp.click(); break; }
+      case 'e': { var ex = $('exportPngBtn'); if (ex && !ex.disabled) ex.click(); break; }
+      case '1': case '2': case '3': {
+        var modes = ['HALFTONE', 'STIPPLE', 'POISSON'];
+        var b = document.querySelector('#modeRow [data-mode="' + modes[Number(e.key) - 1] + '"]');
+        if (b) b.click(); break;
+      }
+      case '[': setRange('spacing', clamp(readConfig().spacing - 1, 1, 80)); break;
+      case ']': setRange('spacing', clamp(readConfig().spacing + 1, 1, 80)); break;
+    }
+  });
+
+  /* ---------- restore UI state ---------- */
+  (function restore() {
+    document.querySelectorAll('[data-plus-target]').forEach(function (x) { x.classList.toggle('active', x.dataset.plusTarget === ui.target); });
+    document.querySelectorAll('[data-plus-texture]').forEach(function (x) { x.classList.toggle('active', x.dataset.plusTexture === ui.texture); });
+    document.querySelectorAll('[data-plus-grad]').forEach(function (x) { x.classList.toggle('active', x.dataset.plusGrad === ui.grad); });
+    $('plusTextureValue').textContent = ui.texture.charAt(0).toUpperCase() + ui.texture.slice(1);
+    $('plusGradValue').textContent = ui.grad === 'off' ? 'Off' : ui.grad.charAt(0).toUpperCase() + ui.grad.slice(1);
+    $('plusIntensity').value = ui.intensity; $('plusIntensityValue').textContent = ui.intensity + ' %';
+    $('plusGradMix').value = ui.gradMix; $('plusGradMixValue').textContent = ui.gradMix + ' %';
+    ui.gradMixLive = ui.gradMix;
+    $('plusOriginalMix').value = ui.originalMix; $('plusOriginalMixValue').textContent = ui.originalMix + ' %';
+    origImg.style.opacity = String(ui.originalMix / 100);
+    $('plusHueAnim').checked = !!ui.hueAnim;
+    $('plusSyncAmt').value = ui.syncAmt; $('plusSyncAmtValue').textContent = ui.syncAmt + ' %';
+    $('plusSyncAtk').value = ui.syncAtk; $('plusSyncAtkValue').textContent = ui.syncAtk + ' %';
+    $('plusSyncRel').value = ui.syncRel; $('plusSyncRelValue').textContent = ui.syncRel + ' %';
+    $('plusSyncHue').value = ui.syncHue; $('plusSyncHueValue').textContent = ui.syncHue + '°';
+    $('plusSyncGrad').checked = !!ui.syncGrad; $('plusSyncBpm').checked = !!ui.syncBpm; $('plusSyncDemo').checked = !!ui.syncDemo;
+    applyBg(); applyGrid(); applyFilter();
+    renderPalette([]); renderScenes(); renderRecent();
+    var linkOn = false;
+    try { linkOn = localStorage.getItem(LINK_KEY) === '1'; } catch (e) {}
+    if (linkOn) { $('plusLinkToggle').checked = true; startLink(); }
+    updateMirror();
+    setInterval(updateMirror, 500);
+  })();
+
+  window.__punktPlus = { readConfig: readConfig, applyConfig: applyConfig, applySeed: applySeed, derivePunktSeed: derivePunktSeed, snapshotCanvas: snapshotCanvas, version: '1.0.0' };
+})();
+
   </script>
 </body>
 </html>
