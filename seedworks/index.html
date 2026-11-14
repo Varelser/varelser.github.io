@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeedWorks — 統合シード作品機</title>
+<style>
+  :root{ --bg:#0b0b0c; --panel:#121213; --line:#2c2c2e; --txt:#e8e8e8; --dim:#9a9a9e; --accent:#f2f2f2; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--txt); font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif; font-size:14px; line-height:1.7; }
+  .wrap{ max-width:880px; margin:0 auto; padding:32px 20px 64px; }
+  header{ border-bottom:1px solid var(--line); padding-bottom:20px; margin-bottom:24px; }
+  h1{ font-size:22px; letter-spacing:.35em; margin:0 0 6px; font-weight:600; }
+  .sub{ color:var(--dim); font-size:12.5px; letter-spacing:.08em; }
+  .mono{ font-family:"SF Mono",Menlo,Consolas,monospace; }
+  .seedrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:stretch; margin:20px 0 6px; }
+  #seedInput{ flex:1 1 320px; background:#000; border:1px solid var(--line); color:var(--txt); padding:12px 14px; font-size:16px; letter-spacing:.06em; }
+  #seedInput:focus{ outline:1px solid #555; }
+  button{ background:var(--accent); color:#000; border:1px solid var(--accent); padding:12px 22px; font-size:14px; letter-spacing:.12em; cursor:pointer; }
+  button.ghost{ background:transparent; color:var(--txt); border-color:var(--line); }
+  button.small{ padding:6px 14px; font-size:12px; }
+  button:hover{ opacity:.85; }
+  .hint{ color:var(--dim); font-size:12px; }
+  #out{ display:none; margin-top:28px; }
+  .workhead{ border:1px solid var(--line); background:var(--panel); padding:20px 22px; margin-bottom:16px; }
+  .workhead .ttl{ font-size:24px; letter-spacing:.06em; margin:0 0 4px; }
+  .workhead .meta{ color:var(--dim); font-size:12.5px; }
+  .card{ border:1px solid var(--line); background:var(--panel); padding:18px 22px; margin-bottom:16px; }
+  .card h2{ font-size:13px; letter-spacing:.3em; margin:0 0 4px; font-weight:600; }
+  .card h2 .app{ color:var(--dim); letter-spacing:.1em; font-size:12px; }
+  table.kv{ border-collapse:collapse; margin:8px 0; }
+  table.kv td{ padding:2px 18px 2px 0; vertical-align:top; }
+  table.kv td.k{ color:var(--dim); white-space:nowrap; font-size:12.5px; }
+  .links{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 4px; }
+  a.btn{ display:inline-block; text-decoration:none; background:var(--accent); color:#000; padding:6px 14px; font-size:12px; letter-spacing:.1em; border:1px solid var(--accent); }
+  a.btn.ghost{ background:transparent; color:var(--txt); border-color:var(--line); }
+  .note{ color:var(--dim); font-size:12px; margin-top:8px; }
+  .note b{ color:var(--txt); font-weight:600; }
+  pre.credits{ background:#000; border:1px solid var(--line); padding:16px; white-space:pre-wrap; word-break:break-all; font-size:12px; line-height:1.8; }
+  .status{ font-size:12px; color:var(--dim); margin-top:6px; }
+  .status.ok{ color:#cfcfcf; }
+  .status.err{ color:#e8e8e8; text-decoration:underline; }
+  ol.check{ margin:8px 0 0; padding-left:20px; }
+  ol.check li{ margin:6px 0; }
+  ol.check .dim{ color:var(--dim); font-size:12px; }
+  footer{ border-top:1px solid var(--line); margin-top:32px; padding-top:16px; color:var(--dim); font-size:12px; }
+  #selfcheck.ok{ color:#cfcfcf; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>SEED WORKS</h1>
+    <div class="sub">統合シード作品機 — 1つのマスターシードから、音楽（Meikyoshisui）・音響床（Noise）・映像（Kalokagathia）の3作品要素を決定的に導出します。同じシードからは、常に同じ作品レシピが得られます。</div>
+  </header>
+
+  <div class="seedrow">
+    <input id="seedInput" type="text" placeholder="マスターシード（数値または文字列）" autocomplete="off" spellcheck="false">
+    <button id="genBtn" type="button">作品を生成</button>
+    <button id="randBtn" type="button" class="ghost">ランダム</button>
+  </div>
+  <div class="hint">数値でも言葉でも可（例: 20261114 / 慈愛 / first snow）。生成後、このページの URL（?seed=）自体が作品レシピの共有リンクになります。</div>
+
+  <div id="out">
+    <div class="workhead">
+      <p class="ttl" id="wTitle"></p>
+      <div class="meta mono" id="wMeta"></div>
+    </div>
+
+    <div class="card">
+      <h2>MUSIC <span class="app">— Meikyoshisui（生成MIDI）</span></h2>
+      <table class="kv" id="mKv"></table>
+      <div class="links">
+        <a class="btn" id="mOpen" href="#" target="_blank" rel="noopener">この設定で Meikyoshisui を開く</a>
+        <button class="small ghost" id="mCopy" type="button">リンクをコピー</button>
+      </div>
+      <div class="note"><b>自動です。</b>リンクは Meikyoshisui 本体の共有リンク形式（#s=）で、開くとシード固定・ジャンル・スケール・コード・BPM がそのまま読み込まれます（本体の StatePersist 共有機能を利用）。読み込み後、GENERATE を押せば同じ生成が再現されます。リンクが壊れた場合の手動再現手順はマニフェストに記載しています。</div>
+    </div>
+
+    <div class="card">
+      <h2>SOUND BED <span class="app">— Noise（音響床）</span></h2>
+      <table class="kv" id="nKv"></table>
+      <div class="links">
+        <a class="btn" id="nOpen" href="#" target="_blank" rel="noopener">セッションURLで開く（シード込み）</a>
+        <button class="small ghost" id="nCopy" type="button">URLをコピー</button>
+        <a class="btn ghost" id="nPresetOpen" href="#" target="_blank" rel="noopener">プリセットのみで開く</a>
+      </div>
+      <div class="note"><b>セッションURLは自動です。</b>Noise 本体の URL セッション共有（?session=）で、レイヤー構成と Seed が一括で読み込まれます。「同じ設定＋同じシードでは書き出しが完全に同じ音になる」（本体仕様）。プリセットのみのリンクはシードを含まないため、使う場合は Noise 側で Seed 欄に下記の値を手入力してください。</div>
+    </div>
+
+    <div class="card">
+      <h2>VISUALS <span class="app">— Kalokagathia（映像）</span></h2>
+      <table class="kv" id="kKv"></table>
+      <div class="links">
+        <a class="btn" id="kOpenP" href="#" target="_blank" rel="noopener">#p= プリセットで開く</a>
+        <button class="small ghost" id="kCopyP" type="button">コピー</button>
+        <button class="small" id="kMakeC" type="button">シード差し替え #c= リンクを作成</button>
+        <a class="btn" id="kOpenC" href="#" target="_blank" rel="noopener" style="display:none"> #c= で開く</a>
+        <button class="small ghost" id="kCopyC" type="button" style="display:none">コピー</button>
+      </div>
+      <div class="status" id="kCStatus">#c= リンクは、プリセット設定を本家サイトから取得し、シード項目（gpgpuSeed 等）をこの作品のシードに差し替えてから、本体と同じ deflate-raw 圧縮で生成します（要ネット接続）。</div>
+      <div class="note"><b>#p= は自動（プリセットそのもの）。#c= は作成ボタンを押した時点で生成され、シードまで含めた完全な再現リンクになります。</b>Kalokagathia の GPGPU 初期状態はシードで決まります。厳密な再現には本体の「決定論的レンダリング（PNG連番）」を使ってください（時間で動くオーバーレイ要素は再現範囲外という本体仕様があります）。</div>
+    </div>
+
+    <div class="card">
+      <h2>CREDITS <span class="app">— クレジット表記</span></h2>
+      <pre class="credits mono" id="credits"></pre>
+      <div class="links">
+        <button class="small" id="copyCredits" type="button">クレジットをコピー</button>
+        <button class="small ghost" id="dlManifest" type="button">マニフェスト JSON を保存</button>
+      </div>
+      <div class="note">マニフェストには全シード・全リンク・手動再現手順が入っています。書き出した素材（MID / WAV / PNG）と一緒に保存してください。</div>
+    </div>
+
+    <div class="card">
+      <h2>CHECKLIST <span class="app">— 制作チェックリスト</span></h2>
+      <ol class="check">
+        <li>Meikyoshisui をリンクで開き、状態が読み込まれたことを確認 → 「⬡ GENERATE MIDI」→ MIDI ダウンロードで <span class="mono">.mid</span> を保存。<span class="dim">ステム分けは Multi-File Export、楽譜は MusicXML 書き出しも可。</span></li>
+        <li>Noise をセッションURLで開き、再生して音響床を確認 → Export で WAV を書き出し。<span class="dim">書き出し形式はセッション側の設定（96kHz / 24bit / WAV）に従います。バリエーションが欲しい場合は Batch Seeds を増やしてください（Seed Step ずつずれた版が一括で出ます）。</span></li>
+        <li>Kalokagathia を #c=（無ければ #p=）で開き、PNG 書き出しでジャケット画像を保存。<span class="dim">動画にする場合は決定論的レンダリングの PNG 連番 ZIP → 動画変換が最も再現性が高い経路です。</span></li>
+        <li>DAW / 動画編集で Meikyoshisui の MIDI（必要なら音源で鳴らす）と Noise の WAV 床、Kalokagathia の映像を合成。</li>
+        <li>manifest.json とクレジットを素材と同じフォルダに入れ、ZIP 化して作品パック完成。<span class="dim">マスターシードさえ残せば、いつでもこのページで同じレシピを復元できます。</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>
+    <div id="selfcheck">決定的生成セルフチェック: 未実行</div>
+    <div>SeedWorks は Varelser の3つの自作ツール（Meikyoshisui / Noise / Kalokagathia）の連携レシピ生成器です。各リンクは各本体に実在する共有機能だけを使っています。自動化の範囲は各カードに明記しています。</div>
+  </footer>
+</div>
+
+<script>
+const KG_PRESETS=[["chua-att-double-scroll","Chua: Double Scroll (GPGPU)"],["chua-att-tight-scroll","Chua: Tight Scroll (GPGPU)"],["chua-motion-double-scroll","Chua: Double Scroll Motion"],["chua-motion-twin-layer","Chua: Twin-Layer Motion"],["coverage-001-cube-aero-20261109","Coverage 001 — Cube × Aero"],["coverage-002-grid-epicycle-20261109","Coverage 002 — Grid × Epicycle"],["coverage-003-grid-tidal-lock-20261109","Coverage 003 — Grid × Tidal Lock"],["coverage-004-disc-radial-steps-20261109","Coverage 004 — Disc × Radial Steps"],["coverage-005-spiral-zigzag-20261109","Coverage 005 — Spiral × Zigzag"],["coverage-006-ring-rossler-20261109","Coverage 006 — Ring × Rossler"],["coverage-007-sphere-echo-ring-20261109","Coverage 007 — Sphere × Echo Ring"],["coverage-008-sphere-wave-20261109","Coverage 008 — Sphere × Wave"],["coverage-009-cube-reaction-diffusion-20261109","Coverage 009 — Cube × Reaction Diffusion"],["coverage-010-image-swirl-20261109","Coverage 010 — Image × Swirl"],["coverage-011-image-eclipse-halo-20261109","Coverage 011 — Image × Eclipse Halo"],["coverage-012-disc-tidal-lock-20261109","Coverage 012 — Disc × Tidal Lock"],["coverage-013-cone-uniform-20261109","Coverage 013 — Cone × Uniform"],["coverage-014-cube-petals-20261109","Coverage 014 — Cube × Petals"],["coverage-015-text-gyro-20261109","Coverage 015 — Text × Gyro"],["coverage-016-ring-fanout-20261109","Coverage 016 — Ring × Fanout"],["coverage-017-plane-wave-20261109","Coverage 017 — Plane × Wave"],["coverage-017-plane-wave-20261109-lite","Coverage 017 — Plane × Wave (Lite)"],["coverage-017-plane-wave-20261109-lites","Coverage 017 — Plane × Wave (Lite S)"],["coverage-018-plane-petals-20261109","Coverage 018 — Plane × Petals"],["coverage-019-sphere-wind-20261109","Coverage 019 — Sphere × Wind"],["coverage-020-text-gravity-20261109","Coverage 020 — Text × Gravity"],["coverage-021-cube-gyroflower-20261109","Coverage 021 — Cube × Gyroflower"],["coverage-022-spiral-aero-20261109","Coverage 022 — Spiral × Aero"],["coverage-022-spiral-aero-20261109-lite","Coverage 022 — Spiral × Aero (Lite)"],["coverage-022-spiral-aero-20261109-lites","Coverage 022 — Spiral × Aero (Lite S)"],["coverage-023-image-pulse-grid-20261109","Coverage 023 — Image × Pulse Grid"],["coverage-024-image-clifford-20261109","Coverage 024 — Image × Clifford"],["coverage-025-grid-gyro-20261109","Coverage 025 — Grid × Gyro"],["coverage-026-ring-phyllotaxis-20261109","Coverage 026 — Ring × Phyllotaxis"],["coverage-027-plane-vortex-20261109","Coverage 027 — Plane × Vortex"],["coverage-028-text-harmonic-20261109","Coverage 028 — Text × Harmonic"],["coverage-029-cone-coil-20261109","Coverage 029 — Cone × Coil"],["coverage-030-image-euler-20261109","Coverage 030 — Image × Euler"],["coverage-031-sphere-lattice-20261109","Coverage 031 — Sphere × Lattice"],["coverage-032-video-phyllotaxis-20261109","Coverage 032 — Video × Phyllotaxis"],["coverage-033-text-fronds-20261109","Coverage 033 — Text × Fronds"],["coverage-034-cone-aero-20261109","Coverage 034 — Cone × Aero"],["coverage-035-plane-resonance-flux-20261109","Coverage 035 — Plane × Resonance Flux"],["coverage-036-disc-wave-20261109","Coverage 036 — Disc × Wave"],["coverage-036-disc-wave-20261109-lite","Coverage 036 — Disc × Wave (Lite)"],["coverage-036-disc-wave-20261109-lites","Coverage 036 — Disc × Wave (Lite S)"],["coverage-037-cube-shockwave-20261109","Coverage 037 — Cube × Shockwave"],["coverage-038-sphere-hopalong-20261109","Coverage 038 — Sphere × Hopalong"],["coverage-039-ring-echo-ring-20261109","Coverage 039 — Ring × Echo Ring"],["coverage-040-sphere-corrosion-front-20261109","Coverage 040 — Sphere × Corrosion Front"],["coverage-041-sphere-fronds-20261109","Coverage 041 — Sphere × Fronds"],["coverage-042-disc-aux-20261109","Coverage 042 — Disc × Aux"],["coverage-043-cone-swirl-20261109","Coverage 043 — Cone × Swirl"],["coverage-044-video-prism-20261109","Coverage 044 — Video × Prism"],["coverage-045-text-wave-20261109","Coverage 045 — Text × Wave"],["coverage-046-disc-tessellate-20261109","Coverage 046 — Disc × Tessellate"],["coverage-047-grid-paint-daubs-20261109","Coverage 047 — Grid × Paint Daubs"],["coverage-048-plane-tessellate-20261109","Coverage 048 — Plane × Tessellate"],["coverage-049-text-tidal-20261109","Coverage 049 — Text × Tidal"],["coverage-050-plane-braidshell-20261109","Coverage 050 — Plane × Braidshell"],["coverage-050-plane-braidshell-20261109-lite","Coverage 050 — Plane × Braidshell (Lite)"],["coverage-050-plane-braidshell-20261109-lites","Coverage 050 — Plane × Braidshell (Lite S)"],["coverage-051-disc-reaction-diffusion-20261109","Coverage 051 — Disc × Reaction Diffusion"],["coverage-051-disc-reaction-diffusion-20261109-lite","Coverage 051 — Disc × Reaction Diffusion (Lite)"],["coverage-051-disc-reaction-diffusion-20261109-lites","Coverage 051 — Disc × Reaction Diffusion (Lite S)"],["coverage-052-cube-prism-20261109","Coverage 052 — Cube × Prism"],["coverage-053-spiral-shockwave-20261109","Coverage 053 — Spiral × Shockwave"],["coverage-054-video-uniform-20261109","Coverage 054 — Video × Uniform"],["coverage-055-spiral-swirl-20261109","Coverage 055 — Spiral × Swirl"],["coverage-056-text-fanout-20261109","Coverage 056 — Text × Fanout"],["coverage-057-video-paint-daubs-20261109","Coverage 057 — Video × Paint Daubs"],["coverage-058-spiral-clifford-20261109","Coverage 058 — Spiral × Clifford"],["coverage-059-sphere-field-20261109","Coverage 059 — Sphere × Field"],["coverage-059-sphere-field-20261109-fixed","Coverage 059 — Sphere × Field (Fixed)"],["coverage-060-disc-gaussian-20261109","Coverage 060 — Disc × Gaussian"],["coverage-061-disc-aero-20261109","Coverage 061 — Disc × Aero"],["coverage-062-video-tessellate-20261109","Coverage 062 — Video × Tessellate"],["coverage-063-video-aux-20261109","Coverage 063 — Video × Aux"],["coverage-064-grid-radial-steps-20261109","Coverage 064 — Grid × Radial Steps"],["coverage-065-sphere-paint-daubs-20261109","Coverage 065 — Sphere × Paint Daubs"],["coverage-066-spiral-tessellate-20261109","Coverage 066 — Spiral × Tessellate"],["coverage-067-video-morph-20261109","Coverage 067 — Video × Morph"],["coverage-068-spiral-tidal-20261109","Coverage 068 — Spiral × Tidal"],["coverage-069-disc-spring-20261109","Coverage 069 — Disc × Spring"],["coverage-069-disc-spring-20261109-lite","Coverage 069 — Disc × Spring (Lite)"],["coverage-069-disc-spring-20261109-lites","Coverage 069 — Disc × Spring (Lite S)"],["coverage-069-disc-spring-20261109-litess","Coverage 069 — Disc × Spring (Lite SS)"],["coverage-070-ring-linear-20261109","Coverage 070 — Ring × Linear"],["coverage-071-cube-attractor-20261109","Coverage 071 — Cube × Attractor"],["coverage-072-spiral-spring-20261109","Coverage 072 — Spiral × Spring"],["coverage-073-cube-rossler-20261109","Coverage 073 — Cube × Rossler"],["coverage-074-plane-euler-20261109","Coverage 074 — Plane × Euler"],["coverage-075-sphere-gyroflower-20261109","Coverage 075 — Sphere × Gyroflower"],["coverage-076-spiral-paint-daubs-20261109","Coverage 076 — Spiral × Paint Daubs"],["coverage-077-cone-phyllotaxis-20261109","Coverage 077 — Cone × Phyllotaxis"],["coverage-078-disc-wind-20261109","Coverage 078 — Disc × Wind"],["coverage-078-disc-wind-20261109-lite","Coverage 078 — Disc × Wind (Lite)"],["coverage-078-disc-wind-20261109-lites","Coverage 078 — Disc × Wind (Lite S)"],["coverage-078-disc-wind-20261109-litess","Coverage 078 — Disc × Wind (Lite SS)"],["coverage-079-sphere-swirl-20261109","Coverage 079 — Sphere × Swirl"],["coverage-080-ring-euler-20261109","Coverage 080 — Ring × Euler"],["coverage-081-spiral-branch-propagation-20261109","Coverage 081 — Spiral × Branch Propagation"],["coverage-082-cube-hopalong-20261109","Coverage 082 — Cube × Hopalong"],["coverage-083-video-echo-ring-20261109","Coverage 083 — Video × Echo Ring"],["coverage-083-video-echo-ring-20261109-fixed","Coverage 083 — Video × Echo Ring (Fixed)"],["coverage-084-text-field-20261109","Coverage 084 — Text × Field"],["coverage-085-spiral-uniform-20261109","Coverage 085 — Spiral × Uniform"],["coverage-086-disc-eclipse-halo-20261109","Coverage 086 — Disc × Eclipse Halo"],["coverage-087-spiral-aux-20261109","Coverage 087 — Spiral × Aux"],["coverage-088-sphere-tessellate-20261109","Coverage 088 — Sphere × Tessellate"],["coverage-089-disc-rossler-20261109","Coverage 089 — Disc × Rossler"],["coverage-090-cube-labyrinth-20261109","Coverage 090 — Cube × Labyrinth"],["coverage-091-image-tidal-lock-20261109","Coverage 091 — Image × Tidal Lock"],["coverage-092-cone-resonance-flux-20261109","Coverage 092 — Cone × Resonance Flux"],["coverage-092-cone-resonance-flux-20261109-lite","Coverage 092 — Cone × Resonance Flux (Lite)"],["coverage-092-cone-resonance-flux-20261109-lites","Coverage 092 — Cone × Resonance Flux (Lite S)"],["coverage-093-cube-lattice-20261109","Coverage 093 — Cube × Lattice"],["coverage-094-plane-tidal-lock-20261109","Coverage 094 — Plane × Tidal Lock"],["coverage-095-disc-tidal-20261109","Coverage 095 — Disc × Tidal"],["coverage-096-spiral-labyrinth-20261109","Coverage 096 — Spiral × Labyrinth"],["coverage-097-video-eclipse-halo-20261109","Coverage 097 — Video × Eclipse Halo"],["coverage-098-image-coil-20261109","Coverage 098 — Image × Coil"],["coverage-099-text-pulse-grid-20261109","Coverage 099 — Text × Pulse Grid"],["coverage-099-text-pulse-grid-20261109-fixed","Coverage 099 — Text × Pulse Grid (Fixed)"],["coverage-100-disc-attractor-20261109","Coverage 100 — Disc × Attractor"],["coverage-101-image-vortex-20261109","Coverage 101 — Image × Vortex"],["coverage-102-cone-aux-20261109","Coverage 102 — Cone × Aux"],["coverage-103-cube-flow-20261109","Coverage 103 — Cube × Flow"],["coverage-104-plane-aux-20261109","Coverage 104 — Plane × Aux"],["coverage-105-cone-harmonic-20261109","Coverage 105 — Cone × Harmonic"],["coverage-106-ring-gyroflower-20261109","Coverage 106 — Ring × Gyroflower"],["coverage-106-ring-gyroflower-20261109-lite","Coverage 106 — Ring × Gyroflower (Lite)"],["coverage-106-ring-gyroflower-20261109-lites","Coverage 106 — Ring × Gyroflower (Lite S)"],["coverage-107-spiral-pulse-grid-20261109","Coverage 107 — Spiral × Pulse Grid"],["coverage-108-text-clifford-20261109","Coverage 108 — Text × Clifford"],["coverage-109-disc-prism-20261109","Coverage 109 — Disc × Prism"],["coverage-110-plane-aero-20261109","Coverage 110 — Plane × Aero"],["coverage-111-cone-eddy-20261109","Coverage 111 — Cone × Eddy"],["coverage-112-cube-paint-daubs-20261109","Coverage 112 — Cube × Paint Daubs"],["coverage-113-ring-shockwave-20261109","Coverage 113 — Ring × Shockwave"],["coverage-113-ring-shockwave-20261109-fixed","Coverage 113 — Ring × Shockwave (Fixed)"],["coverage-114-disc-epicycle-20261109","Coverage 114 — Disc × Epicycle"],["coverage-115-image-zigzag-20261109","Coverage 115 — Image × Zigzag"],["coverage-116-video-zigzag-20261109","Coverage 116 — Video × Zigzag"],["coverage-117-cube-gaussian-20261109","Coverage 117 — Cube × Gaussian"],["coverage-118-disc-eddy-20261109","Coverage 118 — Disc × Eddy"],["coverage-119-grid-fronds-20261109","Coverage 119 — Grid × Fronds"],["coverage-120-cone-volume-fog-20261109","Coverage 120 — Cone × Volume Fog"],["coverage-120-cone-volume-fog-20261109-lite","Coverage 120 — Cone × Volume Fog (Lite)"],["coverage-120-cone-volume-fog-20261109-lites","Coverage 120 — Cone × Volume Fog (Lite S)"],["coverage-121-plane-morph-20261109","Coverage 121 — Plane × Morph"],["coverage-122-spiral-volume-fog-20261109","Coverage 122 — Spiral × Volume Fog"],["coverage-123-cube-harmonic-20261109","Coverage 123 — Cube × Harmonic"],["coverage-124-disc-lattice-20261109","Coverage 124 — Disc × Lattice"],["coverage-125-sphere-euler-20261109","Coverage 125 — Sphere × Euler"],["coverage-126-sphere-braidshell-20261109","Coverage 126 — Sphere × Braidshell"],["coverage-127-disc-euler-20261109","Coverage 127 — Disc × Euler"],["coverage-128-image-gyroflower-20261109","Coverage 128 — Image × Gyroflower"],["coverage-129-grid-capillary-sheet-20261109","Coverage 129 — Grid × Capillary Sheet"],["coverage-130-image-paint-daubs-20261109","Coverage 130 — Image × Paint Daubs"],["coverage-131-ring-tessellate-20261109","Coverage 131 — Ring × Tessellate"],["coverage-132-image-resonance-flux-20261109","Coverage 132 — Image × Resonance Flux"],["coverage-133-spiral-eclipse-halo-20261109","Coverage 133 — Spiral × Eclipse Halo"],["coverage-134-sphere-reaction-diffusion-20261109","Coverage 134 — Sphere × Reaction Diffusion"],["coverage-135-spiral-attractor-20261109","Coverage 135 — Spiral × Attractor"],["coverage-136-ring-radial-steps-20261109","Coverage 136 — Ring × Radial Steps"],["coverage-136-ring-radial-steps-20261109-fixed","Coverage 136 — Ring × Radial Steps (Fixed)"],["coverage-137-sphere-prism-20261109","Coverage 137 — Sphere × Prism"],["coverage-138-text-petals-20261109","Coverage 138 — Text × Petals"],["coverage-139-spiral-eddy-20261109","Coverage 139 — Spiral × Eddy"],["coverage-140-image-gaussian-20261109","Coverage 140 — Image × Gaussian"],["coverage-141-cone-clifford-20261109","Coverage 141 — Cone × Clifford"],["coverage-142-cube-euler-20261109","Coverage 142 — Cube × Euler"],["coverage-143-text-swirl-20261109","Coverage 143 — Text × Swirl"],["coverage-144-cone-tidal-20261109","Coverage 144 — Cone × Tidal"],["coverage-145-cube-fanout-20261109","Coverage 145 — Cube × Fanout"],["coverage-146-disc-zigzag-20261109","Coverage 146 — Disc × Zigzag"],["coverage-147-spiral-lattice-20261109","Coverage 147 — Spiral × Lattice"],["coverage-148-sphere-rossler-20261109","Coverage 148 — Sphere × Rossler"],["coverage-148-sphere-rossler-20261109-lite","Coverage 148 — Sphere × Rossler (Lite)"],["coverage-148-sphere-rossler-20261109-lites","Coverage 148 — Sphere × Rossler (Lite S)"],["coverage-149-image-prism-20261109","Coverage 149 — Image × Prism"],["coverage-150-cube-swirl-20261109","Coverage 150 — Cube × Swirl"],["coverage-151-sphere-labyrinth-20261109","Coverage 151 — Sphere × Labyrinth"],["coverage-152-plane-gyro-20261109","Coverage 152 — Plane × Gyro"],["coverage-153-text-gaussian-20261109","Coverage 153 — Text × Gaussian"],["coverage-154-image-braidshell-20261109","Coverage 154 — Image × Braidshell"],["coverage-155-plane-wind-20261109","Coverage 155 — Plane × Wind"],["coverage-156-cone-vortex-20261109","Coverage 156 — Cone × Vortex"],["coverage-157-image-rossler-20261109","Coverage 157 — Image × Rossler"],["coverage-158-cube-wave-20261109","Coverage 158 — Cube × Wave"],["coverage-159-image-liquid-20261109","Coverage 159 — Image × Liquid"],["coverage-160-image-phyllotaxis-20261109","Coverage 160 — Image × Phyllotaxis"],["coverage-161-sphere-harmonic-20261109","Coverage 161 — Sphere × Harmonic"],["coverage-161-sphere-harmonic-20261109-lite","Coverage 161 — Sphere × Harmonic (Lite)"],["coverage-161-sphere-harmonic-20261109-lites","Coverage 161 — Sphere × Harmonic (Lite S)"],["coverage-162-grid-gaussian-20261109","Coverage 162 — Grid × Gaussian"],["coverage-162-grid-gaussian-20261109-lite","Coverage 162 — Grid × Gaussian (Lite)"],["coverage-162-grid-gaussian-20261109-lites","Coverage 162 — Grid × Gaussian (Lite S)"],["coverage-162-grid-gaussian-20261109-litess","Coverage 162 — Grid × Gaussian (Lite SS)"],["coverage-163-image-tidal-20261109","Coverage 163 — Image × Tidal"],["coverage-164-cube-uniform-20261109","Coverage 164 — Cube × Uniform"],["coverage-164-cube-uniform-20261109-fixed","Coverage 164 — Cube × Uniform (Fixed)"],["coverage-165-video-tidal-lock-20261109","Coverage 165 — Video × Tidal Lock"],["coverage-166-sphere-tidal-lock-20261109","Coverage 166 — Sphere × Tidal Lock"],["coverage-167-cone-flow-20261109","Coverage 167 — Cone × Flow"],["coverage-168-disc-linear-20261109","Coverage 168 — Disc × Linear"],["coverage-168-disc-linear-20261109-lite","Coverage 168 — Disc × Linear (Lite)"],["coverage-168-disc-linear-20261109-lites","Coverage 168 — Disc × Linear (Lite S)"],["coverage-168-disc-linear-20261109-litess","Coverage 168 — Disc × Linear (Lite SS)"],["coverage-169-text-hopalong-20261109","Coverage 169 — Text × Hopalong"],["coverage-170-image-uniform-20261109","Coverage 170 — Image × Uniform"],["coverage-171-plane-echo-ring-20261109","Coverage 171 — Plane × Echo Ring"],["coverage-171-plane-echo-ring-20261109-lite","Coverage 171 — Plane × Echo Ring (Lite)"],["coverage-171-plane-echo-ring-20261109-lites","Coverage 171 — Plane × Echo Ring (Lite S)"],["coverage-172-disc-corrosion-front-20261109","Coverage 172 — Disc × Corrosion Front"],["coverage-173-grid-fanout-20261109","Coverage 173 — Grid × Fanout"],["coverage-174-cube-aux-20261109","Coverage 174 — Cube × Aux"],["coverage-175-video-euler-20261109","Coverage 175 — Video × Euler"],["coverage-176-sphere-gyro-20261109","Coverage 176 — Sphere × Gyro"],["coverage-176-sphere-gyro-20261109-lite","Coverage 176 — Sphere × Gyro (Lite)"],["coverage-176-sphere-gyro-20261109-lites","Coverage 176 — Sphere × Gyro (Lite S)"],["coverage-177-text-aux-20261109","Coverage 177 — Text × Aux"],["coverage-178-video-branch-propagation-20261109","Coverage 178 — Video × Branch Propagation"],["coverage-179-plane-eddy-20261109","Coverage 179 — Plane × Eddy"],["coverage-180-cube-vortex-20261109","Coverage 180 — Cube × Vortex"],["coverage-181-ring-liquid-20261109","Coverage 181 — Ring × Liquid"],["coverage-182-video-wave-20261109","Coverage 182 — Video × Wave"],["coverage-183-video-resonance-flux-20261109","Coverage 183 — Video × Resonance Flux"],["coverage-184-video-radial-steps-20261109","Coverage 184 — Video × Radial Steps"],["coverage-184-video-radial-steps-20261109-fixed","Coverage 184 — Video × Radial Steps (Fixed)"],["coverage-185-cube-corrosion-front-20261109","Coverage 185 — Cube × Corrosion Front"],["coverage-185-cube-corrosion-front-20261109-lite","Coverage 185 — Cube × Corrosion Front (Lite)"],["coverage-185-cube-corrosion-front-20261109-lites","Coverage 185 — Cube × Corrosion Front (Lite S)"],["coverage-186-image-fronds-20261109","Coverage 186 — Image × Fronds"],["coverage-187-cone-lattice-20261109","Coverage 187 — Cone × Lattice"],["coverage-188-grid-branch-propagation-20261109","Coverage 188 — Grid × Branch Propagation"],["coverage-189-grid-volume-fog-20261109","Coverage 189 — Grid × Volume Fog"],["coverage-190-plane-linear-20261109","Coverage 190 — Plane × Linear"],["coverage-190-plane-linear-20261109-lite","Coverage 190 — Plane × Linear (Lite)"],["coverage-190-plane-linear-20261109-lites","Coverage 190 — Plane × Linear (Lite S)"],["coverage-191-video-gaussian-20261109","Coverage 191 — Video × Gaussian"],["coverage-192-ring-wind-20261109","Coverage 192 — Ring × Wind"],["coverage-193-sphere-epicycle-20261109","Coverage 193 — Sphere × Epicycle"],["coverage-193-sphere-epicycle-20261109-fixed","Coverage 193 — Sphere × Epicycle (Fixed)"],["coverage-194-text-spring-20261109","Coverage 194 — Text × Spring"],["coverage-195-video-gravity-20261109","Coverage 195 — Video × Gravity"],["coverage-196-image-petals-20261109","Coverage 196 — Image × Petals"],["coverage-197-ring-field-20261109","Coverage 197 — Ring × Field"],["coverage-198-cube-coil-20261109","Coverage 198 — Cube × Coil"],["coverage-199-plane-phyllotaxis-20261109","Coverage 199 — Plane × Phyllotaxis"],["coverage-200-ring-gravity-20261109","Coverage 200 — Ring × Gravity"],["coverage-201-grid-phyllotaxis-20261109","Coverage 201 — Grid × Phyllotaxis"],["coverage-201-grid-phyllotaxis-20261109-lite","Coverage 201 — Grid × Phyllotaxis (Lite)"],["coverage-201-grid-phyllotaxis-20261109-lites","Coverage 201 — Grid × Phyllotaxis (Lite S)"],["coverage-202-grid-attractor-20261109","Coverage 202 — Grid × Attractor"],["coverage-203-cone-paint-daubs-20261109","Coverage 203 — Cone × Paint Daubs"],["coverage-204-video-tidal-20261109","Coverage 204 — Video × Tidal"],["coverage-205-grid-aux-20261109","Coverage 205 — Grid × Aux"],["coverage-206-grid-gyroflower-20261109","Coverage 206 — Grid × Gyroflower"],["coverage-206-grid-gyroflower-20261109-fixed","Coverage 206 — Grid × Gyroflower (Fixed)"],["coverage-207-image-spring-20261109","Coverage 207 — Image × Spring"],["coverage-208-plane-paint-daubs-20261109","Coverage 208 — Plane × Paint Daubs"],["coverage-209-cube-resonance-flux-20261109","Coverage 209 — Cube × Resonance Flux"],["coverage-209-cube-resonance-flux-20261109-fixed","Coverage 209 — Cube × Resonance Flux (Fixed)"],["coverage-210-sphere-petals-20261109","Coverage 210 — Sphere × Petals"],["coverage-211-cube-liquid-20261109","Coverage 211 — Cube × Liquid"],["coverage-212-ring-flow-20261109","Coverage 212 — Ring × Flow"],["coverage-213-spiral-gyro-20261109","Coverage 213 — Spiral × Gyro"],["coverage-214-plane-epicycle-20261109","Coverage 214 — Plane × Epicycle"],["coverage-215-disc-vortex-20261109","Coverage 215 — Disc × Vortex"],["coverage-216-cone-rossler-20261109","Coverage 216 — Cone × Rossler"],["coverage-217-disc-resonance-flux-20261109","Coverage 217 — Disc × Resonance Flux"],["coverage-218-grid-uniform-20261109","Coverage 218 — Grid × Uniform"],["coverage-218-grid-uniform-20261109-lite","Coverage 218 — Grid × Uniform (Lite)"],["coverage-218-grid-uniform-20261109-lites","Coverage 218 — Grid × Uniform (Lite S)"],["coverage-219-sphere-gaussian-20261109","Coverage 219 — Sphere × Gaussian"],["coverage-220-disc-fronds-20261109","Coverage 220 — Disc × Fronds"],["coverage-220-disc-fronds-20261109-lite","Coverage 220 — Disc × Fronds (Lite)"],["coverage-220-disc-fronds-20261109-lites","Coverage 220 — Disc × Fronds (Lite S)"],["coverage-221-cube-field-20261109","Coverage 221 — Cube × Field"],["coverage-222-cone-linear-20261109","Coverage 222 — Cone × Linear"],["coverage-223-cube-moebius-20261109","Coverage 223 — Cube × Moebius"],["coverage-224-ring-uniform-20261109","Coverage 224 — Ring × Uniform"],["coverage-224-ring-uniform-20261109-lite","Coverage 224 — Ring × Uniform (Lite)"],["coverage-224-ring-uniform-20261109-lites","Coverage 224 — Ring × Uniform (Lite S)"],["coverage-225-video-shockwave-20261109","Coverage 225 — Video × Shockwave"],["coverage-226-spiral-reaction-diffusion-20261109","Coverage 226 — Spiral × Reaction Diffusion"],["coverage-227-plane-zigzag-20261109","Coverage 227 — Plane × Zigzag"],["coverage-228-spiral-hopalong-20261109","Coverage 228 — Spiral × Hopalong"],["coverage-229-disc-gyro-20261109","Coverage 229 — Disc × Gyro"],["coverage-230-grid-vortex-20261109","Coverage 230 — Grid × Vortex"],["coverage-231-cube-eddy-20261109","Coverage 231 — Cube × Eddy"],["coverage-232-cube-tessellate-20261109","Coverage 232 — Cube × Tessellate"],["coverage-232-cube-tessellate-20261109-lite","Coverage 232 — Cube × Tessellate (Lite)"],["coverage-232-cube-tessellate-20261109-lites","Coverage 232 — Cube × Tessellate (Lite S)"],["coverage-233-spiral-flow-20261109","Coverage 233 — Spiral × Flow"],["coverage-234-image-branch-propagation-20261109","Coverage 234 — Image × Branch Propagation"],["coverage-235-sphere-attractor-20261109","Coverage 235 — Sphere × Attractor"],["coverage-236-cone-branch-propagation-20261109","Coverage 236 — Cone × Branch Propagation"],["coverage-237-sphere-phyllotaxis-20261109","Coverage 237 — Sphere × Phyllotaxis"],["coverage-238-text-eddy-20261109","Coverage 238 — Text × Eddy"],["coverage-239-cone-gyroflower-20261109","Coverage 239 — Cone × Gyroflower"],["coverage-240-disc-clifford-20261109","Coverage 240 — Disc × Clifford"],["coverage-241-cone-braidshell-20261109","Coverage 241 — Cone × Braidshell"],["coverage-242-plane-gyroflower-20261109","Coverage 242 — Plane × Gyroflower"],["coverage-242-plane-gyroflower-20261109-lite","Coverage 242 — Plane × Gyroflower (Lite)"],["coverage-242-plane-gyroflower-20261109-lites","Coverage 242 — Plane × Gyroflower (Lite S)"],["coverage-243-sphere-morph-20261109","Coverage 243 — Sphere × Morph"],["coverage-244-cone-corrosion-front-20261109","Coverage 244 — Cone × Corrosion Front"],["coverage-245-disc-braidshell-20261109","Coverage 245 — Disc × Braidshell"],["coverage-246-video-clifford-20261109","Coverage 246 — Video × Clifford"],["coverage-246-video-clifford-20261109-lite","Coverage 246 — Video × Clifford (Lite)"],["coverage-246-video-clifford-20261109-lites","Coverage 246 — Video × Clifford (Lite S)"],["coverage-247-text-coil-20261109","Coverage 247 — Text × Coil"],["coverage-248-cube-tidal-20261109","Coverage 248 — Cube × Tidal"],["coverage-249-cube-phyllotaxis-20261109","Coverage 249 — Cube × Phyllotaxis"],["coverage-250-video-gyroflower-20261109","Coverage 250 — Video × Gyroflower"],["coverage-251-image-fanout-20261109","Coverage 251 — Image × Fanout"],["coverage-252-text-resonance-flux-20261109","Coverage 252 — Text × Resonance Flux"],["coverage-253-cone-euler-20261109","Coverage 253 — Cone × Euler"],["coverage-254-video-hopalong-20261109","Coverage 254 — Video × Hopalong"],["coverage-255-text-flow-20261109","Coverage 255 — Text × Flow"],["coverage-256-ring-gaussian-20261109","Coverage 256 — Ring × Gaussian"],["coverage-257-video-petals-20261109","Coverage 257 — Video × Petals"],["coverage-258-cone-tessellate-20261109","Coverage 258 — Cone × Tessellate"],["coverage-259-image-labyrinth-20261109","Coverage 259 — Image × Labyrinth"],["coverage-260-video-field-20261109","Coverage 260 — Video × Field"],["coverage-260-video-field-20261109-lite","Coverage 260 — Video × Field (Lite)"],["coverage-260-video-field-20261109-lites","Coverage 260 — Video × Field (Lite S)"],["coverage-261-ring-harmonic-20261109","Coverage 261 — Ring × Harmonic"],["coverage-262-ring-capillary-sheet-20261109","Coverage 262 — Ring × Capillary Sheet"],["coverage-263-spiral-linear-20261109","Coverage 263 — Spiral × Linear"],["coverage-263-spiral-linear-20261109-fixed","Coverage 263 — Spiral × Linear (Fixed)"],["coverage-264-cone-reaction-diffusion-20261109","Coverage 264 — Cone × Reaction Diffusion"],["coverage-265-text-liquid-20261109","Coverage 265 — Text × Liquid"],["coverage-266-sphere-linear-20261109","Coverage 266 — Sphere × Linear"],["coverage-267-video-moebius-20261109","Coverage 267 — Video × Moebius"],["coverage-268-video-braidshell-20261109","Coverage 268 — Video × Braidshell"],["coverage-269-grid-spring-20261109","Coverage 269 — Grid × Spring"],["coverage-270-spiral-harmonic-20261109","Coverage 270 — Spiral × Harmonic"],["coverage-271-image-harmonic-20261109","Coverage 271 — Image × Harmonic"],["coverage-272-sphere-vortex-20261109","Coverage 272 — Sphere × Vortex"],["coverage-272-sphere-vortex-20261109-fixed","Coverage 272 — Sphere × Vortex (Fixed)"],["coverage-273-grid-flow-20261109","Coverage 273 — Grid × Flow"],["coverage-274-grid-wave-20261109","Coverage 274 — Grid × Wave"],["coverage-275-sphere-coil-20261109","Coverage 275 — Sphere × Coil"],["coverage-276-text-prism-20261109","Coverage 276 — Text × Prism"],["coverage-277-plane-shockwave-20261109","Coverage 277 — Plane × Shockwave"],["coverage-278-ring-attractor-20261109","Coverage 278 — Ring × Attractor"],["coverage-279-image-echo-ring-20261109","Coverage 279 — Image × Echo Ring"],["coverage-279-image-echo-ring-20261109-fixed","Coverage 279 — Image × Echo Ring (Fixed)"],["coverage-280-sphere-aero-20261109","Coverage 280 — Sphere × Aero"],["coverage-281-image-wave-20261109","Coverage 281 — Image × Wave"],["coverage-282-plane-radial-steps-20261109","Coverage 282 — Plane × Radial Steps"],["coverage-283-ring-aux-20261109","Coverage 283 — Ring × Aux"],["coverage-284-image-capillary-sheet-20261109","Coverage 284 — Image × Capillary Sheet"],["coverage-284-image-capillary-sheet-20261109-fixed","Coverage 284 — Image × Capillary Sheet (Fixed)"],["coverage-285-video-swirl-20261109","Coverage 285 — Video × Swirl"],["coverage-286-grid-pulse-grid-20261109","Coverage 286 — Grid × Pulse Grid"],["coverage-286-grid-pulse-grid-20261109-fixed","Coverage 286 — Grid × Pulse Grid (Fixed)"],["coverage-287-disc-liquid-20261109","Coverage 287 — Disc × Liquid"],["coverage-288-spiral-vortex-20261109","Coverage 288 — Spiral × Vortex"],["coverage-288-spiral-vortex-20261109-lite","Coverage 288 — Spiral × Vortex (Lite)"],["coverage-288-spiral-vortex-20261109-lites","Coverage 288 — Spiral × Vortex (Lite S)"],["coverage-288-spiral-vortex-20261109-litess","Coverage 288 — Spiral × Vortex (Lite SS)"],["coverage-289-cube-eclipse-halo-20261109","Coverage 289 — Cube × Eclipse Halo"],["coverage-290-grid-aero-20261109","Coverage 290 — Grid × Aero"],["coverage-290-grid-aero-20261109-lite","Coverage 290 — Grid × Aero (Lite)"],["coverage-290-grid-aero-20261109-lites","Coverage 290 — Grid × Aero (Lite S)"],["coverage-291-ring-lattice-20261109","Coverage 291 — Ring × Lattice"],["coverage-292-grid-braidshell-20261109","Coverage 292 — Grid × Braidshell"],["coverage-293-cone-morph-20261109","Coverage 293 — Cone × Morph"],["coverage-294-spiral-resonance-flux-20261109","Coverage 294 — Spiral × Resonance Flux"],["coverage-295-image-radial-steps-20261109","Coverage 295 — Image × Radial Steps"],["coverage-296-disc-fanout-20261109","Coverage 296 — Disc × Fanout"],["coverage-297-sphere-capillary-sheet-20261109","Coverage 297 — Sphere × Capillary Sheet"],["coverage-298-sphere-gravity-20261109","Coverage 298 — Sphere × Gravity"],["coverage-299-image-gravity-20261109","Coverage 299 — Image × Gravity"],["coverage-300-plane-moebius-20261109","Coverage 300 — Plane × Moebius"],["coverage-301-plane-attractor-20261109","Coverage 301 — Plane × Attractor"],["coverage-302-video-corrosion-front-20261109","Coverage 302 — Video × Corrosion Front"],["coverage-302-video-corrosion-front-20261109-lite","Coverage 302 — Video × Corrosion Front (Lite)"],["coverage-302-video-corrosion-front-20261109-lites","Coverage 302 — Video × Corrosion Front (Lite S)"],["coverage-303-disc-moebius-20261109","Coverage 303 — Disc × Moebius"],["coverage-304-video-volume-fog-20261109","Coverage 304 — Video × Volume Fog"],["coverage-305-cone-shockwave-20261109","Coverage 305 — Cone × Shockwave"],["coverage-306-video-labyrinth-20261109","Coverage 306 — Video × Labyrinth"],["coverage-307-image-shockwave-20261109","Coverage 307 — Image × Shockwave"],["coverage-308-cube-zigzag-20261109","Coverage 308 — Cube × Zigzag"],["coverage-309-plane-rossler-20261109","Coverage 309 — Plane × Rossler"],["coverage-310-ring-wave-20261109","Coverage 310 — Ring × Wave"],["coverage-311-video-eddy-20261109","Coverage 311 — Video × Eddy"],["coverage-312-disc-coil-20261109","Coverage 312 — Disc × Coil"],["coverage-313-cone-labyrinth-20261109","Coverage 313 — Cone × Labyrinth"],["coverage-314-ring-coil-20261109","Coverage 314 — Ring × Coil"],["coverage-315-disc-petals-20261109","Coverage 315 — Disc × Petals"],["coverage-316-text-epicycle-20261109","Coverage 316 — Text × Epicycle"],["coverage-316-text-epicycle-20261109-lite","Coverage 316 — Text × Epicycle (Lite)"],["coverage-316-text-epicycle-20261109-lites","Coverage 316 — Text × Epicycle (Lite S)"],["coverage-317-video-pulse-grid-20261109","Coverage 317 — Video × Pulse Grid"],["coverage-318-sphere-fanout-20261109","Coverage 318 — Sphere × Fanout"],["coverage-319-grid-clifford-20261109","Coverage 319 — Grid × Clifford"],["coverage-320-cube-radial-steps-20261109","Coverage 320 — Cube × Radial Steps"],["coverage-321-text-braidshell-20261109","Coverage 321 — Text × Braidshell"],["coverage-322-ring-braidshell-20261109","Coverage 322 — Ring × Braidshell"],["coverage-323-grid-hopalong-20261109","Coverage 323 — Grid × Hopalong"],["coverage-324-video-rossler-20261109","Coverage 324 — Video × Rossler"],["coverage-325-ring-paint-daubs-20261109","Coverage 325 — Ring × Paint Daubs"],["coverage-326-plane-liquid-20261109","Coverage 326 — Plane × Liquid"],["coverage-327-cone-zigzag-20261109","Coverage 327 — Cone × Zigzag"],["coverage-328-image-moebius-20261109","Coverage 328 — Image × Moebius"],["coverage-328-image-moebius-20261109-fixed","Coverage 328 — Image × Moebius (Fixed)"],["coverage-329-cone-radial-steps-20261109","Coverage 329 — Cone × Radial Steps"],["coverage-330-image-flow-20261109","Coverage 330 — Image × Flow"],["coverage-330-image-flow-20261109-lite","Coverage 330 — Image × Flow (Lite)"],["coverage-330-image-flow-20261109-lites","Coverage 330 — Image × Flow (Lite S)"],["coverage-330-image-flow-20261109-litess","Coverage 330 — Image × Flow (Lite SS)"],["coverage-331-image-lattice-20261109","Coverage 331 — Image × Lattice"],["coverage-332-spiral-rossler-20261109","Coverage 332 — Spiral × Rossler"],["coverage-333-plane-corrosion-front-20261109","Coverage 333 — Plane × Corrosion Front"],["coverage-334-sphere-resonance-flux-20261109","Coverage 334 — Sphere × Resonance Flux"],["coverage-335-grid-liquid-20261109","Coverage 335 — Grid × Liquid"],["coverage-336-sphere-pulse-grid-20261109","Coverage 336 — Sphere × Pulse Grid"],["coverage-337-sphere-clifford-20261109","Coverage 337 — Sphere × Clifford"],["coverage-338-plane-swirl-20261109","Coverage 338 — Plane × Swirl"],["coverage-339-text-eclipse-halo-20261109","Coverage 339 — Text × Eclipse Halo"],["coverage-340-cube-wind-20261109","Coverage 340 — Cube × Wind"],["coverage-341-image-gyro-20261109","Coverage 341 — Image × Gyro"],["coverage-342-image-wind-20261109","Coverage 342 — Image × Wind"],["coverage-343-spiral-field-20261109","Coverage 343 — Spiral × Field"],["coverage-344-grid-tidal-20261109","Coverage 344 — Grid × Tidal"],["coverage-345-disc-hopalong-20261109","Coverage 345 — Disc × Hopalong"],["coverage-346-image-hopalong-20261109","Coverage 346 — Image × Hopalong"],["coverage-347-cone-capillary-sheet-20261109","Coverage 347 — Cone × Capillary Sheet"],["coverage-348-grid-shockwave-20261109","Coverage 348 — Grid × Shockwave"],["coverage-349-text-wind-20261109","Coverage 349 — Text × Wind"],["coverage-349-text-wind-20261109-fixed","Coverage 349 — Text × Wind (Fixed)"],["coverage-350-cube-echo-ring-20261109","Coverage 350 — Cube × Echo Ring"],["coverage-351-grid-harmonic-20261109","Coverage 351 — Grid × Harmonic"],["coverage-352-cone-prism-20261109","Coverage 352 — Cone × Prism"],["coverage-353-sphere-moebius-20261109","Coverage 353 — Sphere × Moebius"],["coverage-354-cone-liquid-20261109","Coverage 354 — Cone × Liquid"],["coverage-354-cone-liquid-20261109-fixed","Coverage 354 — Cone × Liquid (Fixed)"],["coverage-355-spiral-corrosion-front-20261109","Coverage 355 — Spiral × Corrosion Front"],["coverage-356-plane-field-20261109","Coverage 356 — Plane × Field"],["coverage-357-disc-pulse-grid-20261109","Coverage 357 — Disc × Pulse Grid"],["coverage-358-disc-swirl-20261109","Coverage 358 — Disc × Swirl"],["coverage-358-disc-swirl-20261109-lite","Coverage 358 — Disc × Swirl (Lite)"],["coverage-358-disc-swirl-20261109-lites","Coverage 358 — Disc × Swirl (Lite S)"],["coverage-359-cone-gyro-20261109","Coverage 359 — Cone × Gyro"],["coverage-360-plane-branch-propagation-20261109","Coverage 360 — Plane × Branch Propagation"],["coverage-361-text-moebius-20261109","Coverage 361 — Text × Moebius"],["coverage-362-image-aero-20261109","Coverage 362 — Image × Aero"],["coverage-363-cone-fanout-20261109","Coverage 363 — Cone × Fanout"],["coverage-364-grid-linear-20261109","Coverage 364 — Grid × Linear"],["coverage-365-plane-fanout-20261109","Coverage 365 — Plane × Fanout"],["coverage-366-cube-capillary-sheet-20261109","Coverage 366 — Cube × Capillary Sheet"],["coverage-367-sphere-uniform-20261109","Coverage 367 — Sphere × Uniform"],["coverage-368-grid-coil-20261109","Coverage 368 — Grid × Coil"],["coverage-368-grid-coil-20261109-fixed","Coverage 368 — Grid × Coil (Fixed)"],["coverage-369-disc-shockwave-20261109","Coverage 369 — Disc × Shockwave"],["coverage-370-cube-fronds-20261109","Coverage 370 — Cube × Fronds"],["coverage-371-text-attractor-20261109","Coverage 371 — Text × Attractor"],["coverage-372-cone-pulse-grid-20261109","Coverage 372 — Cone × Pulse Grid"],["coverage-372-cone-pulse-grid-20261109-lite","Coverage 372 — Cone × Pulse Grid (Lite)"],["coverage-372-cone-pulse-grid-20261109-lites","Coverage 372 — Cone × Pulse Grid (Lite S)"],["coverage-373-sphere-liquid-20261109","Coverage 373 — Sphere × Liquid"],["coverage-374-spiral-wind-20261109","Coverage 374 — Spiral × Wind"],["coverage-375-cone-echo-ring-20261109","Coverage 375 — Cone × Echo Ring"],["coverage-376-spiral-echo-ring-20261109","Coverage 376 — Spiral × Echo Ring"],["coverage-377-image-field-20261109","Coverage 377 — Image × Field"],["coverage-378-spiral-euler-20261109","Coverage 378 — Spiral × Euler"],["coverage-379-cube-clifford-20261109","Coverage 379 — Cube × Clifford"],["coverage-380-plane-harmonic-20261109","Coverage 380 — Plane × Harmonic"],["coverage-381-plane-flow-20261109","Coverage 381 — Plane × Flow"],["coverage-382-image-eddy-20261109","Coverage 382 — Image × Eddy"],["coverage-383-text-vortex-20261109","Coverage 383 — Text × Vortex"],["coverage-384-spiral-capillary-sheet-20261109","Coverage 384 — Spiral × Capillary Sheet"],["coverage-385-plane-prism-20261109","Coverage 385 — Plane × Prism"],["coverage-386-image-attractor-20261109","Coverage 386 — Image × Attractor"],["coverage-386-image-attractor-20261109-lite","Coverage 386 — Image × Attractor (Lite)"],["coverage-386-image-attractor-20261109-lites","Coverage 386 — Image × Attractor (Lite S)"],["coverage-387-cone-hopalong-20261109","Coverage 387 — Cone × Hopalong"],["coverage-388-image-aux-20261109","Coverage 388 — Image × Aux"],["coverage-389-spiral-phyllotaxis-20261109","Coverage 389 — Spiral × Phyllotaxis"],["coverage-390-image-volume-fog-20261109","Coverage 390 — Image × Volume Fog"],["coverage-391-ring-zigzag-20261109","Coverage 391 — Ring × Zigzag"],["coverage-392-grid-resonance-flux-20261109","Coverage 392 — Grid × Resonance Flux"],["coverage-393-spiral-morph-20261109","Coverage 393 — Spiral × Morph"],["coverage-394-disc-morph-20261109","Coverage 394 — Disc × Morph"],["coverage-395-disc-volume-fog-20261109","Coverage 395 — Disc × Volume Fog"],["coverage-396-plane-eclipse-halo-20261109","Coverage 396 — Plane × Eclipse Halo"],["coverage-397-cube-linear-20261109","Coverage 397 — Cube × Linear"],["coverage-398-plane-volume-fog-20261109","Coverage 398 — Plane × Volume Fog"],["coverage-399-disc-branch-propagation-20261109","Coverage 399 — Disc × Branch Propagation"],["coverage-400-cone-moebius-20261109","Coverage 400 — Cone × Moebius"],["coverage-400-cone-moebius-20261109-lite","Coverage 400 — Cone × Moebius (Lite)"],["coverage-400-cone-moebius-20261109-lites","Coverage 400 — Cone × Moebius (Lite S)"],["coverage-401-spiral-fanout-20261109","Coverage 401 — Spiral × Fanout"],["coverage-402-video-lattice-20261109","Coverage 402 — Video × Lattice"],["coverage-403-ring-eddy-20261109","Coverage 403 — Ring × Eddy"],["coverage-403-ring-eddy-20261109-lite","Coverage 403 — Ring × Eddy (Lite)"],["coverage-403-ring-eddy-20261109-lites","Coverage 403 — Ring × Eddy (Lite S)"],["coverage-403-ring-eddy-20261109-litess","Coverage 403 — Ring × Eddy (Lite SS)"],["coverage-404-disc-capillary-sheet-20261109","Coverage 404 — Disc × Capillary Sheet"],["coverage-405-cone-wave-20261109","Coverage 405 — Cone × Wave"],["coverage-406-disc-uniform-20261109","Coverage 406 — Disc × Uniform"],["coverage-407-grid-swirl-20261109","Coverage 407 — Grid × Swirl"],["coverage-408-disc-flow-20261109","Coverage 408 — Disc × Flow"],["coverage-409-cone-eclipse-halo-20261109","Coverage 409 — Cone × Eclipse Halo"],["coverage-409-cone-eclipse-halo-20261109-lite","Coverage 409 — Cone × Eclipse Halo (Lite)"],["coverage-409-cone-eclipse-halo-20261109-lites","Coverage 409 — Cone × Eclipse Halo (Lite S)"],["coverage-410-sphere-volume-fog-20261109","Coverage 410 — Sphere × Volume Fog"],["coverage-411-ring-volume-fog-20261109","Coverage 411 — Ring × Volume Fog"],["coverage-412-spiral-radial-steps-20261109","Coverage 412 — Spiral × Radial Steps"],["coverage-413-grid-labyrinth-20261109","Coverage 413 — Grid × Labyrinth"],["coverage-414-cone-fronds-20261109","Coverage 414 — Cone × Fronds"],["coverage-414-cone-fronds-20261109-fixed","Coverage 414 — Cone × Fronds (Fixed)"],["coverage-415-text-tessellate-20261109","Coverage 415 — Text × Tessellate"],["coverage-416-ring-branch-propagation-20261109","Coverage 416 — Ring × Branch Propagation"],["coverage-417-cone-field-20261109","Coverage 417 — Cone × Field"],["coverage-418-image-morph-20261109","Coverage 418 — Image × Morph"],["coverage-419-plane-clifford-20261109","Coverage 419 — Plane × Clifford"],["coverage-420-text-lattice-20261109","Coverage 420 — Text × Lattice"],["coverage-421-plane-fronds-20261109","Coverage 421 — Plane × Fronds"],["coverage-422-disc-gravity-20261109","Coverage 422 — Disc × Gravity"],["coverage-423-image-reaction-diffusion-20261109","Coverage 423 — Image × Reaction Diffusion"],["coverage-424-video-capillary-sheet-20261109","Coverage 424 — Video × Capillary Sheet"],["coverage-424-video-capillary-sheet-20261109-fixed","Coverage 424 — Video × Capillary Sheet (Fixed)"],["coverage-425-ring-prism-20261109","Coverage 425 — Ring × Prism"],["coverage-426-plane-capillary-sheet-20261109","Coverage 426 — Plane × Capillary Sheet"],["coverage-427-spiral-tidal-lock-20261109","Coverage 427 — Spiral × Tidal Lock"],["coverage-428-cone-tidal-lock-20261109","Coverage 428 — Cone × Tidal Lock"],["coverage-428-cone-tidal-lock-20261109-lite","Coverage 428 — Cone × Tidal Lock (Lite)"],["coverage-428-cone-tidal-lock-20261109-lites","Coverage 428 — Cone × Tidal Lock (Lite S)"],["coverage-429-cube-morph-20261109","Coverage 429 — Cube × Morph"],["coverage-430-video-epicycle-20261109","Coverage 430 — Video × Epicycle"],["coverage-431-cone-petals-20261109","Coverage 431 — Cone × Petals"],["coverage-432-grid-reaction-diffusion-20261109","Coverage 432 — Grid × Reaction Diffusion"],["coverage-433-grid-eclipse-halo-20261109","Coverage 433 — Grid × Eclipse Halo"],["coverage-434-disc-harmonic-20261109","Coverage 434 — Disc × Harmonic"],["coverage-435-spiral-prism-20261109","Coverage 435 — Spiral × Prism"],["coverage-436-grid-zigzag-20261109","Coverage 436 — Grid × Zigzag"],["coverage-437-plane-labyrinth-20261109","Coverage 437 — Plane × Labyrinth"],["coverage-438-video-vortex-20261109","Coverage 438 — Video × Vortex"],["coverage-438-video-vortex-20261109-lite","Coverage 438 — Video × Vortex (Lite)"],["coverage-438-video-vortex-20261109-lites","Coverage 438 — Video × Vortex (Lite S)"],["coverage-438-video-vortex-20261109-litess","Coverage 438 — Video × Vortex (Lite SS)"],["coverage-439-cube-gravity-20261109","Coverage 439 — Cube × Gravity"],["coverage-440-video-coil-20261109","Coverage 440 — Video × Coil"],["coverage-441-spiral-gyroflower-20261109","Coverage 441 — Spiral × Gyroflower"],["coverage-442-spiral-fronds-20261109","Coverage 442 — Spiral × Fronds"],["coverage-442-spiral-fronds-20261109-lite","Coverage 442 — Spiral × Fronds (Lite)"],["coverage-442-spiral-fronds-20261109-lites","Coverage 442 — Spiral × Fronds (Lite S)"],["coverage-443-cube-tidal-lock-20261109","Coverage 443 — Cube × Tidal Lock"],["coverage-444-spiral-epicycle-20261109","Coverage 444 — Spiral × Epicycle"],["coverage-445-cube-spring-20261109","Coverage 445 — Cube × Spring"],["coverage-446-plane-coil-20261109","Coverage 446 — Plane × Coil"],["coverage-447-disc-labyrinth-20261109","Coverage 447 — Disc × Labyrinth"],["coverage-448-sphere-spring-20261109","Coverage 448 — Sphere × Spring"],["coverage-449-spiral-moebius-20261109","Coverage 449 — Spiral × Moebius"],["coverage-450-image-epicycle-20261109","Coverage 450 — Image × Epicycle"],["coverage-451-image-corrosion-front-20261109","Coverage 451 — Image × Corrosion Front"],["coverage-452-cone-gravity-20261109","Coverage 452 — Cone × Gravity"],["coverage-453-ring-moebius-20261109","Coverage 453 — Ring × Moebius"],["coverage-454-sphere-tidal-20261109","Coverage 454 — Sphere × Tidal"],["coverage-455-grid-eddy-20261109","Coverage 455 — Grid × Eddy"],["coverage-456-grid-tessellate-20261109","Coverage 456 — Grid × Tessellate"],["coverage-456-grid-tessellate-20261109-lite","Coverage 456 — Grid × Tessellate (Lite)"],["coverage-456-grid-tessellate-20261109-lites","Coverage 456 — Grid × Tessellate (Lite S)"],["coverage-457-cone-wind-20261109","Coverage 457 — Cone × Wind"],["coverage-458-video-reaction-diffusion-20261109","Coverage 458 — Video × Reaction Diffusion"],["coverage-459-spiral-petals-20261109","Coverage 459 — Spiral × Petals"],["coverage-460-plane-spring-20261109","Coverage 460 — Plane × Spring"],["coverage-461-cone-gaussian-20261109","Coverage 461 — Cone × Gaussian"],["coverage-462-video-gyro-20261109","Coverage 462 — Video × Gyro"],["coverage-463-disc-paint-daubs-20261109","Coverage 463 — Disc × Paint Daubs"],["coverage-464-sphere-branch-propagation-20261109","Coverage 464 — Sphere × Branch Propagation"],["coverage-464-sphere-branch-propagation-20261109-lite","Coverage 464 — Sphere × Branch Propagation (Lite)"],["coverage-464-sphere-branch-propagation-20261109-lites","Coverage 464 — Sphere × Branch Propagation (Lite S)"],["coverage-465-video-flow-20261109","Coverage 465 — Video × Flow"],["coverage-466-ring-petals-20261109","Coverage 466 — Ring × Petals"],["coverage-467-sphere-eclipse-halo-20261109","Coverage 467 — Sphere × Eclipse Halo"],["coverage-468-cone-epicycle-20261109","Coverage 468 — Cone × Epicycle"],["coverage-469-text-labyrinth-20261109","Coverage 469 — Text × Labyrinth"],["coverage-470-grid-wind-20261109","Coverage 470 — Grid × Wind"],["coverage-470-grid-wind-20261109-lite","Coverage 470 — Grid × Wind (Lite)"],["coverage-470-grid-wind-20261109-lites","Coverage 470 — Grid × Wind (Lite S)"],["coverage-471-plane-uniform-20261109","Coverage 471 — Plane × Uniform"],["coverage-472-cube-braidshell-20261109","Coverage 472 — Cube × Braidshell"],["coverage-472-cube-braidshell-20261109-fixed","Coverage 472 — Cube × Braidshell (Fixed)"],["coverage-473-disc-field-20261109","Coverage 473 — Disc × Field"],["coverage-474-text-euler-20261109","Coverage 474 — Text × Euler"],["coverage-475-grid-morph-20261109","Coverage 475 — Grid × Morph"],["dla-frost","DLA Frost"],["dla-grove","DLA Grove"],["dla-lightning","DLA Lightning"],["fft-spectrum-bloom","Audio FFT Spectrum Bloom"],["fft-sub-pulse","Audio FFT Sub Pulse"],["ignition-01-cross-echo-ring-20261109","Ignition 01 — Cross Echo Ring"],["ignition-02-cross-vortex-20261109","Ignition 02 — Cross Vortex"],["ignition-03-cross-spring-20261109","Ignition 03 — Cross Spring"],["ignition-04-cross-gravity-20261109","Ignition 04 — Cross Gravity"],["ignition-05-volumetric-braidshell-20261109","Ignition 05 — Volumetric Braidshell"],["ignition-06-verlet-gyro-20261109","Ignition 06 — Verlet Gyro"],["ignition-07-fluid-uniform-20261109","Ignition 07 — Fluid Uniform"],["ignition-08-cross-gyroflower-20261109","Ignition 08 — Cross Gyroflower"],["ignition-09-elastic-echo-ring-20261109","Ignition 09 — Elastic Echo Ring"],["ignition-10-verlet-reaction-diffusion-20261109","Ignition 10 — Verlet Reaction Diffusion"],["ignition-11-tube-corrosion-front-20261109","Ignition 11 — Tube Corrosion Front"],["ignition-11-tube-corrosion-front-20261109-lite","Ignition 11 — Tube Corrosion Front (Lite)"],["ignition-11-tube-corrosion-front-20261109-lites","Ignition 11 — Tube Corrosion Front (Lite S)"],["ignition-12-attractor-swap-hopalong-20261109","Ignition 12 — Attractor Swap Hopalong"],["ignition-13-volumetric-morph-20261109","Ignition 13 — Volumetric Morph"],["ignition-14-fluid-spring-20261109","Ignition 14 — Fluid Spring"],["ignition-15-sph-field-20261109","Ignition 15 — SPH Field"],["ignition-16-magnetic-flow-20261109","Ignition 16 — Magnetic Flow"],["ignition-17-ambient-euler-20261109","Ignition 17 — Ambient Euler"],["ignition-17-ambient-euler-20261109-fixed","Ignition 17 — Ambient Euler (Fixed)"],["ignition-18-sdf-collider-vfield-swap-flow-20261109","Ignition 18 — SDF Collider + VField Swap Flow"],["ignition-19-sph-gyro-20261109","Ignition 19 — SPH Gyro"],["ignition-20-verlet-corrosion-front-20261109","Ignition 20 — Verlet Corrosion Front"],["ignition-21-sph-branch-propagation-20261109","Ignition 21 — SPH Branch Propagation"],["ignition-22-metaball-ambient-flow-20261109","Ignition 22 — Metaball + Ambient Flow"],["ignition-23-attractor-swap-epicycle-20261109","Ignition 23 — Attractor Swap Epicycle"],["ignition-24-attractor-swap-tidal-lock-20261109","Ignition 24 — Attractor Swap Tidal Lock"],["ignition-25-verlet-gravity-20261109","Ignition 25 — Verlet Gravity"],["ignition-26-spring-gravity-20261109","Ignition 26 — Spring Gravity"],["ignition-27-volumetric-gyro-20261109","Ignition 27 — Volumetric Gyro"],["ignition-28-magnetic-wave-20261109","Ignition 28 — Magnetic Wave"],["ignition-29-sph-shockwave-20261109","Ignition 29 — SPH Shockwave"],["ignition-30-attractor-swap-harmonic-20261109","Ignition 30 — Attractor Swap Harmonic"],["ignition-31-attractor-swap-tidal-20261109","Ignition 31 — Attractor Swap Tidal"],["ignition-32-verlet-capillary-sheet-20261109","Ignition 32 — Verlet Capillary Sheet"],["ignition-33-spring-attractor-20261109","Ignition 33 — Spring Attractor"],["ignition-34-sdf-collider-reaction-diffusion-20261109","Ignition 34 — SDF Collider Reaction Diffusion"],["ignition-35-magnetic-aero-20261109","Ignition 35 — Magnetic Aero"],["ignition-36-verlet-linear-20261109","Ignition 36 — Verlet Linear"],["ignition-37-cross-liquid-20261109","Ignition 37 — Cross Liquid"],["ignition-38-magnetic-volume-fog-20261109","Ignition 38 — Magnetic Volume Fog"],["ignition-39-tube-magnetic-tidal-lock-20261109","Ignition 39 — Tube + Magnetic Tidal Lock"],["ignition-39-tube-magnetic-tidal-lock-20261109-lite","Ignition 39 — Tube + Magnetic Tidal Lock (Lite)"],["ignition-39-tube-magnetic-tidal-lock-20261109-lites","Ignition 39 — Tube + Magnetic Tidal Lock (Lite S)"],["ignition-40-vfield-swap-field-20261109","Ignition 40 — VField Swap Field"],["ignition-41-magnetic-tidal-lock-20261109","Ignition 41 — Magnetic Tidal Lock"],["ignition-42-sdf-collider-tessellate-20261109","Ignition 42 — SDF Collider Tessellate"],["ignition-43-verlet-ambient-rossler-20261109","Ignition 43 — Verlet + Ambient Rossler"],["ignition-44-elastic-gaussian-20261109","Ignition 44 — Elastic Gaussian"],["ignition-45-verlet-euler-20261109","Ignition 45 — Verlet Euler"],["ignition-46-ambient-tidal-20261109","Ignition 46 — Ambient Tidal"],["ignition-47-ambient-phyllotaxis-20261109","Ignition 47 — Ambient Phyllotaxis"],["ignition-48-sdf-collider-rossler-20261109","Ignition 48 — SDF Collider Rossler"],["ignition-49-cross-aero-20261109","Ignition 49 — Cross Aero"],["ignition-50-fluid-braidshell-20261109","Ignition 50 — Fluid Braidshell"],["ignition-51-ambient-tidal-lock-20261109","Ignition 51 — Ambient Tidal Lock"],["ignition-52-metaball-euler-20261109","Ignition 52 — Metaball Euler"],["ignition-53-vfield-swap-gyroflower-20261109","Ignition 53 — VField Swap Gyroflower"],["ignition-54-cross-phyllotaxis-20261109","Ignition 54 — Cross Phyllotaxis"],["ignition-55-magnetic-rossler-20261109","Ignition 55 — Magnetic Rossler"],["ignition-56-cross-clifford-20261109","Ignition 56 — Cross Clifford"],["ignition-57-metaball-vortex-20261109","Ignition 57 — Metaball Vortex"],["ignition-58-volumetric-metaball-euler-20261109","Ignition 58 — Volumetric + Metaball Euler"],["ignition-59-interlayer-collision-flow-20261109","Ignition 59 — InterLayer Collision Flow"],["ignition-60-volumetric-tidal-20261109","Ignition 60 — Volumetric Tidal"],["ignition-61-elastic-metaball-harmonic-20261109","Ignition 61 — Elastic + Metaball Harmonic"],["ignition-62-elastic-tidal-lock-20261109","Ignition 62 — Elastic Tidal Lock"],["ignition-63-metaball-corrosion-front-20261109","Ignition 63 — Metaball Corrosion Front"],["ignition-63-metaball-corrosion-front-20261109-lite","Ignition 63 — Metaball Corrosion Front (Lite)"],["ignition-63-metaball-corrosion-front-20261109-lites","Ignition 63 — Metaball Corrosion Front (Lite S)"],["ignition-64-verlet-morph-20261109","Ignition 64 — Verlet Morph"],["ignition-65-cross-tessellate-20261109","Ignition 65 — Cross Tessellate"],["ignition-66-cross-lattice-20261109","Ignition 66 — Cross Lattice"],["ignition-66-cross-lattice-20261109-fixed","Ignition 66 — Cross Lattice (Fixed)"],["ignition-67-cross-pulse-grid-20261109","Ignition 67 — Cross Pulse Grid"],["ignition-68-cross-field-20261109","Ignition 68 — Cross Field"],["ignition-69-cross-hopalong-20261109","Ignition 69 — Cross Hopalong"],["ignition-70-attractor-swap-elastic-aero-20261109","Ignition 70 — Attractor Swap + Elastic Aero"],["ignition-71-cross-gyro-20261109","Ignition 71 — Cross Gyro"],["ignition-71-cross-gyro-20261109-lite","Ignition 71 — Cross Gyro (Lite)"],["ignition-71-cross-gyro-20261109-lites","Ignition 71 — Cross Gyro (Lite S)"],["ignition-72-elastic-gravity-20261109","Ignition 72 — Elastic Gravity"],["ignition-73-sph-tidal-lock-20261109","Ignition 73 — SPH Tidal Lock"],["ignition-73-sph-tidal-lock-20261109-lite","Ignition 73 — SPH Tidal Lock (Lite)"],["ignition-73-sph-tidal-lock-20261109-lites","Ignition 73 — SPH Tidal Lock (Lite S)"],["ignition-74-verlet-reaction-diffusion-20261109","Ignition 74 — Verlet Reaction Diffusion"],["ignition-75-interlayer-collision-volumetric-hopalong-20261109","Ignition 75 — InterLayer Collision + Volumetric Hopalong"],["ignition-76-spring-fronds-20261109","Ignition 76 — Spring Fronds"],["ignition-77-cross-attractor-20261109","Ignition 77 — Cross Attractor"],["ignition-78-cross-zigzag-20261109","Ignition 78 — Cross Zigzag"],["ignition-79-sdf-collider-spring-aero-20261109","Ignition 79 — SDF Collider + Spring Aero"],["ignition-80-spring-attractor-20261109","Ignition 80 — Spring Attractor"],["ignition-81-cross-epicycle-20261109","Ignition 81 — Cross Epicycle"],["ignition-82-verlet-capillary-sheet-20261109","Ignition 82 — Verlet Capillary Sheet"],["ignition-83-metaball-wave-20261109","Ignition 83 — Metaball Wave"],["ignition-84-elastic-capillary-sheet-20261109","Ignition 84 — Elastic Capillary Sheet"],["ignition-85-fluid-metaball-uniform-20261109","Ignition 85 — Fluid + Metaball Uniform"],["ignition-86-vfield-swap-gaussian-20261109","Ignition 86 — VField Swap Gaussian"],["ignition-87-cross-radial-steps-20261109","Ignition 87 — Cross Radial Steps"],["ignition-88-verlet-tidal-20261109","Ignition 88 — Verlet Tidal"],["ignition-89-ambient-hopalong-20261109","Ignition 89 — Ambient Hopalong"],["ignition-90-attractor-swap-harmonic-20261109","Ignition 90 — Attractor Swap Harmonic"],["ignition-91-cross-pulse-grid-20261109","Ignition 91 — Cross Pulse Grid"],["ignition-92-elastic-sdf-collider-attractor-20261109","Ignition 92 — Elastic + SDF Collider Attractor"],["ignition-93-cross-shockwave-20261109","Ignition 93 — Cross Shockwave"],["ignition-93-cross-shockwave-20261109-fixed","Ignition 93 — Cross Shockwave (Fixed)"],["ignition-94-interlayer-collision-swirl-20261109","Ignition 94 — InterLayer Collision Swirl"],["ignition-95-cross-linear-20261109","Ignition 95 — Cross Linear"],["ignition-96-sdf-collider-eclipse-halo-20261109","Ignition 96 — SDF Collider Eclipse Halo"],["lenia-bubbles","Lenia Bubbles"],["lenia-cells","Lenia Cells"],["lenia-coral","Lenia Coral"],["lenia-orbium","Lenia Orbium"],["lsys-coral","L-System Coral"],["lsys-fern","L-System Fern"],["lsys-tree","L-System Tree"],["plife-cells","Particle Life Cells"],["plife-community","Particle Life Community"],["plife-ecology","Particle Life Ecology"],["plife-snakes","Particle Life Snakes"],["ray-blobs","Raymarch Blobs"],["ray-columns","Raymarch Columns"],["ray-mandelbulb","Raymarch Mandelbulb"],["theory-att-aizawa","Theory: Aizawa Attractor (GPGPU)"],["theory-att-chen","Theory: Chen Attractor (GPGPU)"],["theory-att-dejong","Theory: De Jong Attractor (GPGPU)"],["theory-att-halvorsen","Theory: Halvorsen Attractor (GPGPU)"],["theory-att-ikeda","Theory: Ikeda Attractor (GPGPU)"],["theory-att-lorenz","Theory: Lorenz Attractor (GPGPU)"],["theory-att-lu","Theory: Lü Attractor (GPGPU)"],["theory-att-rabinovich","Theory: Rabinovich Attractor (GPGPU)"],["theory-att-sprott","Theory: Sprott Attractor (GPGPU)"],["theory-e-physarum","Theory: Physarum (Slime Mould)"],["theory-f-fhn","Theory: FitzHugh-Nagumo (Reaction)"],["theory-k-sync","Theory: Kuramoto Sync (GPGPU)"],["theory-levy","Theory: Lévy Flight (GPGPU)"],["theory-motion-chen","Theory: Chen Motion"],["theory-motion-dejong","Theory: De Jong Motion"],["theory-motion-halvorsen","Theory: Halvorsen Motion"],["theory-motion-hopf","Theory: Hopf Fibration"],["theory-motion-ikeda","Theory: Ikeda Motion"],["theory-motion-lu","Theory: Lü Motion"],["theory-motion-quasicrystal","Theory: Quasicrystal"],["theory-motion-rabinovich","Theory: Rabinovich Motion"],["theory-motion-sprott","Theory: Sprott Motion"],["theory-vf-abc","Theory: ABC Flow (GPGPU field)"],["theory-vf-gyre","Theory: Double Gyre (GPGPU field)"],["theory-vf-worley","Theory: Worley Field (GPGPU)"],["theory-warp-l2","Theory: Domain Warp (Layer 2)"],["theory-warp-strong","Theory: Domain Warp (Strong, L2+L3)"]];
+const NOISE_TYPES=[["white","White"],["gaussian","Gaussian"],["pink","Pink"],["brown","Brown / Red"],["blue","Blue"],["violet","Violet"],["grey","Grey*"],["green","Green*"],["black","Black*"],["rumble","Rumble"],["powerhum","Power Hum"],["tinnitus","Tinnitus / Ear Ringing"],["vinyl","Vinyl"],["tape","Tape Hiss"],["wind","Wind"],["rain","Rain"],["hail","Hail"],["ocean","Ocean"],["crackle","Crackle"],["dust","Dust"],["paper","Paper Rustle"],["shot","Shot"],["geiger","Geiger Counter"],["velvet","Velvet"],["staticam","Static AM"],["shortwave","Shortwave Radio"],["digital","Digital / Bitcrush"],["modem","Dial-up Modem"],["glitch","Glitch Burst"],["harsh","Harsh Noise"],["hnw","HNW (Harsh Noise Wall)"],["feedback","Feedback"],["scrape","Metal Scrape"],["sand","Resonant Sand"],["desert","Desert Wind"],["fan","Fan"],["fridge","Refrigerator"],["airplane","Airplane Cabin"],["helicopter","Helicopter"],["fire","Fire / Campfire"],["stream","Stream"],["waterfall","Waterfall"],["thunder","Thunder"],["forest","Forest Leaves"],["birds","Birds / Dawn Chorus"],["snow","Snow / Muffled Quiet"],["city","City Traffic"],["crowd","Crowd Murmur"],["applause","Applause"],["highway","Highway"],["train","Train"],["subway","Subway"],["construction","Construction"],["shower","Shower"],["washer","Washing Machine"],["underwater","Underwater"],["sonar","Sonar"],["band","Resonant Band"],["organ","Organ Drone"],["grains","Granular Cloud"],["shimmer","Shimmer"],["furin","Furin / Wind Chime"],["bowl","Singing Bowl"],["chaos","Chaos (Logistic)"],["space","Space / Whistlers"],["cicadas","Cicadas"],["crickets","Crickets"],["heartbeat","Heartbeat"],["womb","Womb"],["breath","Breath"],["purr","Cat Purr"],["drops","Water Drops"],["dryer","Hair Dryer"],["vacuum","Vacuum Cleaner"],["clock","Clock Tick"],["typing","Typing"]];
+const NOISE_PRESET_NAMES=["Clean Pink Bed","Deep Rumble","Vinyl Archive","Storm Room","Ocean Drone","Electric Grid","Digital Ruin","Sparse Dust","Resonant Sand","Vintage Synth Bed","Unstable Tape Cloud","Ensemble Noise Choir","Resonant Mono Drone","Modulated Machine","Hyper Wide Air","Sub Pressure","Broken Radio Bloom","Metal Sandstorm","Cathedral Dust","Edge Air Halo","Sleep: Deep Brown","Sleep: Pink Drift","Sleep: Delta Binaural","Sleep: Rain Window","Sleep: Fan Room","Sleep: Ocean Night","Binaural: Theta Dream","Binaural: Alpha Calm","Binaural: Gamma Focus","Campfire Night","Mountain Stream","Waterfall Mist","Thunderstorm Far","Night Train","Forest Wind","Ref: Pure White","Ref: Pure Pink","Chaos Logistic","Granular Cloud","Resonant Band Sweep","Underwater Drone","Cabin Pressure","City Night Traffic","Shower Room","True Stereo Pink","True Stereo Rain","Cicada Evening","Cricket Night","Cat Purr Room","Womb","Heartbeat Sleep","Cave Drops","Hair Dryer","Old Clock Room","Typing Focus","Warm Tremolo Room","Scooped Rain Lab","Full Storm","Sleep: Violet Veil","Sleep: Blue Air","Sleep: Delta Brown Waves","Sleep: Grey Room Tone","Sleep: Womb Rain","Sleep: Monsoon Night","Focus: Grey Study","Focus: Blue Spark","Focus: Rain Library","Focus: Green Room","Focus: Deep Work Brown","Mask: Office Wall","Mask: Neighbor Shield","Mask: Violet Veil Day","Mask: Grey Curtain","Nature: Snowfield","Nature: River Stones","Nature: Deep Cave","Nature: Autumn Forest","Nature: High Falls","Healing: Breath Ocean","Healing: Heartbeat 60","Healing: Purr Therapy","Healing: Warm Dark","Drone: Brown Cathedral","Drone: Violet Halo","Drone: Blue Glass","Drone: Sub Bloom","Ref: Pure Blue","Ref: Pure Violet","HiFi: 384k Pink DXD","Furin Breeze","Nature: First Snow","Sleep: Snow Silence","Lab: Velvet Static","Crackle Hearth","Harsh Wall","Harsh: Tearing Storm","Move: Orbit Drone","Move: Rising Storm","Extreme: Total Wall","Extreme: Feedback Hell","Extreme: Triple Harsh","Sleep: Breath Cycle","Nature: Hailstorm","Nature: Dawn Chorus","Urban: Night Highway","Urban: Subway Depths","Urban: Crowd Square","Home: Laundry Room","Lab: Shortwave DX","Lab: Geiger Field","Lab: Modem Nostalgia","Drone: Temple Bowl","Drone: Deep Space","Extreme: Scrape Yard"];</script>
+<script>
+"use strict";
+/* ═══════════ SeedWorks — 統合シード作品機 ═══════════
+   マスターシード → splitmix32 で成分ごとに独立した乱数流を作り、
+   mulberry32 で各値を決定的に導出する。同じ入力 → 常に同じ出力。 */
+
+/* --- 小型でよく知られた決定的PRNG群 --- */
+function splitmix32(a){ return function(){ a|=0; a=(a+0x9E3779B9)|0; let t=(a^(a>>>16))>>>0; t=Math.imul(t,0x21F0AAAD); t=(t^(t>>>15))>>>0; t=Math.imul(t,0x735A2D97); t=(t^(t>>>15))>>>0; return t>>>0; }; }
+function mulberry32(seed){ let a=seed>>>0; return function(){ a=(a+0x6D2B79F5)|0; let t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+/* 文字列シード → uint32 (FNV-1a 32bit) */
+function hashSeedString(s){ let h=0x811C9DC5; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193); } return h>>>0; }
+function parseMasterSeed(raw){
+  const t=String(raw).trim();
+  if(t==='') return null;
+  if(/^-?\d+$/.test(t)){ const n=Number(t); return { input:t, hash:(n>>>0)||1, numeric:n }; }
+  return { input:t, hash:hashSeedString(t)||1, numeric:null };
+}
+/* 成分ごとの独立ストリーム: stream('music') 等 */
+function streamFor(hash, tag){ let th=hashSeedString(tag); const sm=splitmix32((hash^th)>>>0); return mulberry32(sm()); }
+function ri(r, n){ return Math.floor(r()*n); }
+function pick(r, arr){ return arr[Math.floor(r()*arr.length)]; }
+
+/* --- Meikyoshisui の実データ (本体コードから抽出) --- */
+/* 22-ui-functions.js の GENRES */
+const MEIKYO_GENRES=[
+  {id:'ambient', name:'Ambient'}, {id:'drone', name:'Drone'}, {id:'dark_ambient', name:'Dark Ambient'},
+  {id:'psychedelic', name:'Psychedelic'}, {id:'space', name:'Space Music'}, {id:'ritual', name:'Ritual'},
+  {id:'kosmische', name:'Kosmische'}, {id:'noise', name:'Noise / Industrial'}
+];
+/* 14-music-data.js の GENRE_SCALES */
+const MEIKYO_GENRE_SCALES={
+  ambient:['Lydian','Dorian','Mixolydian','Pentatonic Major','Overtone Scale','Lydian Dominant'],
+  drone:['Dorian','Pentatonic Minor','Hirajoshi','Insen','Phrygian','Gamelan Slendro'],
+  dark_ambient:['Phrygian','Locrian','Diminished (HW)','Harmonic Minor','Phrygian Dominant','Neapolitan Minor'],
+  psychedelic:['Whole Tone','Lydian Dominant','Double Harmonic Major','Prometheus Scale','Enigmatic Scale','Petrushka'],
+  space:['Lydian','Lydian Augmented','Whole Tone','Prometheus Scale','Overtone Scale','Messiaen Mode 1'],
+  ritual:['Pentatonic Minor','Hirajoshi','Insen','Iwato','Maqam Hijaz','Gamelan Pelog'],
+  kosmische:['Dorian','Mixolydian','Lydian','Pentatonic Major','Pentatonic Minor','Messiaen Mode 2'],
+  noise:['Chromatic','Diminished (HW)','Two-Semitone Tritone','Scelsi Cluster','Locrian','Xenakis Sieve']
+};
+/* 22-ui-functions.js の BASIC_CHORDS (本体の基本コード候補) */
+const MEIKYO_CHORDS=['C','Am','F','G','Dm','Em','Cmaj7','Am7','Fmaj7','G7','Dm9','Em7b5','Asus4','Bsus2','Dsus4'];
+
+/* --- タイトル生成用語彙 (SeedWorks 独自) --- */
+const T_EN_A=['Silent','Hollow','Amber','Static','Velvet','Distant','Lunar','Glass','Iron','Pale','Slow','Electric','Faded','Mineral','Humming'];
+const T_EN_B=['Tide','Garden','Machine','Choir','Weather','Archive','Signal','Drift','Cathedral','Field','Mirror','Orchard','Circuit','Monsoon','Reliquary'];
+const T_JP_A=['静かな','遠い','硝子の','鉄の','月下の','漂う','薄明の','眠る','白い','深い'];
+const T_JP_B=['潮汐','庭園','機械','合唱','残響','記録','回路','祭祀','水位','標本'];
+
+/* --- 本体URL --- */
+const MEIKYO_URL='https://varelser.github.io/meikyoshisui/';
+const NOISE_URL='https://varelser.github.io/noise.html';
+const KG_URL='https://monosphere.pages.dev/';
+const KG_PRESET_JSON='https://monosphere.pages.dev/presets/';
+
+/* ═══════════ 導出 (純関数: 同じ入力→同じ出力) ═══════════ */
+function derive(rawInput){
+  const ms=parseMasterSeed(rawInput);
+  if(!ms) return null;
+  const h=ms.hash;
+  const workId='SW-'+(splitmix32((h^0x57)>>>0)().toString(36).toUpperCase().padStart(6,'0')).slice(-6);
+
+  /* タイトル */
+  const rt=streamFor(h,'title');
+  const pattern=ri(rt,4);
+  let title;
+  if(pattern===0) title=pick(rt,T_EN_A)+' '+pick(rt,T_EN_B);
+  else if(pattern===1) title=pick(rt,T_JP_A)+pick(rt,T_JP_B);
+  else if(pattern===2) title=pick(rt,T_EN_A)+' '+pick(rt,T_EN_B)+' — '+pick(rt,T_JP_A)+pick(rt,T_JP_B);
+  else title=pick(rt,T_EN_B)+' No. '+(2+ri(rt,98));
+
+  /* Meikyoshisui */
+  const rm=streamFor(h,'music');
+  const genre=MEIKYO_GENRES[ri(rm,MEIKYO_GENRES.length)];
+  const music={
+    seed:(1+Math.floor(rm()*4294967294))>>>0,
+    genreId:genre.id, genreName:genre.name,
+    scale:pick(rm, MEIKYO_GENRE_SCALES[genre.id]),
+    chord:pick(rm, MEIKYO_CHORDS),
+    bpm:44+ri(rm,37),
+    bars:pick(rm,[8,16,16,32]),
+    rootOct:2+ri(rm,2)
+  };
+  /* 本体の共有スナップショット形式 {version:25, s:{...}} (29-state-persist.js / 79-ai-bridge.js) */
+  const snap={ version:25, label:'SeedWorks '+workId, s:{
+    seed:music.seed, seedLocked:true, genre:music.genreId, scale:music.scale,
+    bpm:music.bpm, bars:music.bars, rootOct:music.rootOct, _chordInput:music.chord
+  }};
+  music.link=MEIKYO_URL+'#s='+b64urlEncodeText(JSON.stringify(snap));
+
+  /* Noise */
+  const rn=streamFor(h,'noise');
+  const nTypes=[NOISE_TYPES[ri(rn,NOISE_TYPES.length)], NOISE_TYPES[ri(rn,NOISE_TYPES.length)], NOISE_TYPES[ri(rn,NOISE_TYPES.length)]];
+  const noise={
+    seed:1+Math.floor(rn()*2147483645),
+    presetName:pick(rn, NOISE_PRESET_NAMES),
+    typeA:nTypes[0], typeB:nTypes[1], typeC:nTypes[2],
+    bEnabled:rn()<0.8, cEnabled:rn()<0.45,
+    gainA:Math.round((0.6+rn()*0.4)*100)/100,
+    gainB:Math.round((0.3+rn()*0.4)*100)/100,
+    gainC:Math.round((0.25+rn()*0.35)*100)/100,
+    masterGain:Math.round((0.5+rn()*0.25)*100)/100,
+    duration:pick(rn,[120,180,240,300,600]),
+    binauralOn:rn()<0.35,
+    binauralBeat:Math.round((0.5+rn()*11.5)*10)/10
+  };
+  /* 本体のセッション形式: 部分JSONを DEFAULTS にマージして読み込む (loadSessionObject) */
+  const sess={ master_seed:noise.seed, master_duration:noise.duration, master_gain:noise.masterGain, master_batchCount:1,
+    A_enabled:true, A_type:noise.typeA[0], A_gain:noise.gainA,
+    B_enabled:noise.bEnabled, B_type:noise.typeB[0], B_gain:noise.gainB,
+    C_enabled:noise.cEnabled, C_type:noise.typeC[0], C_gain:noise.gainC,
+    master_binauralEnabled:noise.binauralOn, master_binauralBeat:noise.binauralBeat, master_binauralLevel:0.25 };
+  noise.sessionUrl=NOISE_URL+'?session='+b64urlEncodeText(JSON.stringify(sess));
+  noise.presetUrl=NOISE_URL+'?preset='+encodeURIComponent(noise.presetName);
+  noise.session=sess;
+
+  /* Kalokagathia */
+  const rk=streamFor(h,'visual');
+  const kgP=KG_PRESETS[ri(rk,KG_PRESETS.length)];
+  const visual={
+    presetId:kgP[0], presetName:kgP[1],
+    gpgpuSeed:1+ri(rk,99999),
+    dlaSeed:1+ri(rk,9999), lsysSeed:1+ri(rk,9999), plifeSeed:1+ri(rk,9999), shapeSeed:1+ri(rk,9999)
+  };
+  visual.linkP=KG_URL+'#p='+visual.presetId;
+
+  return { input:ms.input, hash:h, workId, title, music, noise, visual };
+}
+
+/* --- base64url (UTF-8安全) --- */
+function b64urlEncodeText(text){
+  const bytes=new TextEncoder().encode(text);
+  let bin=''; bytes.forEach(b=>{ bin+=String.fromCharCode(b); });
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+/* --- Kalokagathia #c= 生成 (本体 lib/shareLink.ts と同一方式: {name, config} → deflate-raw → base64url) --- */
+async function buildKgLinkC(work){
+  const res=await fetch(KG_PRESET_JSON+encodeURIComponent(work.visual.presetId)+'.json');
+  if(!res.ok) throw new Error('プリセットJSONの取得に失敗しました (HTTP '+res.status+')');
+  const rec=await res.json();
+  if(!rec || !rec.config) throw new Error('プリセットJSONの形式が想定と異なります');
+  const cfg=JSON.parse(JSON.stringify(rec.config));
+  const v=work.visual; const applied=[];
+  const setIf=(key,val)=>{ if(key in cfg){ cfg[key]=val; applied.push(key+'='+val); } };
+  setIf('gpgpuSeed', v.gpgpuSeed);
+  setIf('layer2DlaSeed', v.dlaSeed); setIf('layer3DlaSeed', v.dlaSeed);
+  setIf('layer2DlaSeedShape', v.shapeSeed); setIf('layer3DlaSeedShape', v.shapeSeed);
+  setIf('layer2LsysSeed', v.lsysSeed); setIf('layer3LsysSeed', v.lsysSeed);
+  setIf('gpgpuParticleLifeSeed', v.plifeSeed);
+  if(typeof CompressionStream==='undefined') throw new Error('このブラウザは CompressionStream 未対応のため #c= を生成できません');
+  const raw=new TextEncoder().encode(JSON.stringify({ name:work.title+' / '+v.presetName, config:cfg }));
+  const stream=new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+  const packed=new Uint8Array(await new Response(stream).arrayBuffer());
+  let bin=''; packed.forEach(b=>{ bin+=String.fromCharCode(b); });
+  const payload=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  return { link:KG_URL+'#c='+payload, applied };
+}
+
+/* ═══════════ 表示 ═══════════ */
+const $=id=>document.getElementById(id);
+let current=null, kgLinkC=null, kgApplied=null;
+
+function kv(el, rows){
+  el.innerHTML=rows.map(r=>'<tr><td class="k">'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+function creditsText(w, dateStr){
+  const m=w.music, n=w.noise, v=w.visual;
+  return [
+    w.title,
+    'Work ID: '+w.workId,
+    'Master Seed: '+w.input,
+    '',
+    'Music — Meikyoshisui',
+    '  Seed: '+m.seed+' / Genre: '+m.genreName+' / Scale: '+m.scale+' / Chord: '+m.chord+' / '+m.bpm+' BPM / '+m.bars+' bars',
+    '  '+m.link,
+    'Sound Bed — Noise',
+    '  Seed: '+n.seed+' / Preset base: '+n.presetName,
+    '  Layers: A='+n.typeA[1]+' / B='+(n.bEnabled?n.typeB[1]:'off')+' / C='+(n.cEnabled?n.typeC[1]:'off')+' / Duration: '+n.duration+'s',
+    '  '+n.sessionUrl,
+    'Visuals — Kalokagathia',
+    '  Preset: '+v.presetName+' ('+v.presetId+') / gpgpuSeed: '+v.gpgpuSeed,
+    '  '+v.linkP,
+    kgLinkC ? '  Seed-applied: '+kgLinkC : '',
+    '',
+    'Tools: Meikyoshisui / Noise / Kalokagathia — generated with SeedWorks',
+    '© '+dateStr.slice(0,4)+' Varelser — Original work. All rights reserved.',
+    'Date: '+dateStr
+  ].filter(x=>x!=='').join('\n');
+}
+
+function manifest(w, dateStr){
+  const m=w.music, n=w.noise, v=w.visual;
+  return {
+    tool:'SeedWorks', version:1,
+    workId:w.workId, title:w.title, masterSeed:w.input, masterSeedHash:w.hash,
+    createdAt:dateStr,
+    meikyoshisui:{ seed:m.seed, seedLocked:true, genre:m.genreId, genreName:m.genreName, scale:m.scale, chord:m.chord, bpm:m.bpm, bars:m.bars, rootOct:m.rootOct, link:m.link,
+      manualSteps:'リンクが使えない場合: Meikyoshisui を開き、コード入力に「'+m.chord+'」、ジャンル='+m.genreName+'、スケール='+m.scale+'、BPM='+m.bpm+'、小節数='+m.bars+' を設定し、Seed の LOCK を押してシード欄に '+m.seed+' を入力してから GENERATE してください。' },
+    noise:{ seed:n.seed, presetName:n.presetName, presetUrl:n.presetUrl, session:n.session, sessionUrl:n.sessionUrl,
+      layers:{ A:{type:n.typeA[0], label:n.typeA[1], gain:n.gainA, enabled:true}, B:{type:n.typeB[0], label:n.typeB[1], gain:n.gainB, enabled:n.bEnabled}, C:{type:n.typeC[0], label:n.typeC[1], gain:n.gainC, enabled:n.cEnabled} },
+      durationSec:n.duration, binaural:{ enabled:n.binauralOn, beatHz:n.binauralBeat } },
+    kalokagathia:{ presetId:v.presetId, presetName:v.presetName, linkP:v.linkP, linkC:kgLinkC,
+      seeds:{ gpgpuSeed:v.gpgpuSeed, dlaSeed:v.dlaSeed, lsysSeed:v.lsysSeed, plifeSeed:v.plifeSeed, shapeSeed:v.shapeSeed },
+      seedFieldsApplied:kgApplied },
+    credits:creditsText(w, dateStr)
+  };
+}
+
+function render(w){
+  current=w; kgLinkC=null; kgApplied=null;
+  const dateStr=new Date().toISOString().slice(0,10);
+  w._date=dateStr;
+  $('wTitle').textContent=w.title;
+  $('wMeta').textContent='Work ID: '+w.workId+'　/　Master Seed: '+w.input+'　/　Seed Hash: '+w.hash;
+  const m=w.music;
+  kv($('mKv'),[
+    ['Seed','<span class="mono">'+m.seed+'</span>（LOCK 済みとして読み込まれます）'],
+    ['ジャンル', esc(m.genreName)], ['スケール', esc(m.scale)],
+    ['コード', esc(m.chord)], ['BPM', m.bpm], ['小節数', m.bars+' bars']
+  ]);
+  $('mOpen').href=m.link;
+  const n=w.noise;
+  kv($('nKv'),[
+    ['Seed','<span class="mono">'+n.seed+'</span>'],
+    ['参考プリセット', esc(n.presetName)],
+    ['レイヤーA', esc(n.typeA[1])+'（gain '+n.gainA+'）'],
+    ['レイヤーB', (n.bEnabled? esc(n.typeB[1])+'（gain '+n.gainB+'）':'OFF')],
+    ['レイヤーC', (n.cEnabled? esc(n.typeC[1])+'（gain '+n.gainC+'）':'OFF')],
+    ['書き出し長', n.duration+' 秒'],
+    ['バイノーラル', n.binauralOn? n.binauralBeat+' Hz':'OFF']
+  ]);
+  $('nOpen').href=n.sessionUrl;
+  $('nPresetOpen').href=n.presetUrl;
+  const v=w.visual;
+  kv($('kKv'),[
+    ['プリセット', esc(v.presetName)],
+    ['プリセットID','<span class="mono">'+esc(v.presetId)+'</span>'],
+    ['gpgpuSeed','<span class="mono">'+v.gpgpuSeed+'</span>'],
+    ['その他シード','DLA '+v.dlaSeed+' / L-System '+v.lsysSeed+' / ParticleLife '+v.plifeSeed+'（プリセット側に項目がある場合のみ #c= で適用）']
+  ]);
+  $('kOpenP').href=v.linkP;
+  $('kOpenC').style.display='none'; $('kCopyC').style.display='none';
+  $('kCStatus').textContent='#c= リンクは、プリセット設定を本家サイトから取得し、シード項目（gpgpuSeed 等）をこの作品のシードに差し替えてから、本体と同じ deflate-raw 圧縮で生成します（要ネット接続）。';
+  $('kCStatus').className='status';
+  $('credits').textContent=creditsText(w, dateStr);
+  $('out').style.display='block';
+}
+
+function generate(){
+  const raw=$('seedInput').value;
+  const w=derive(raw);
+  if(!w){ alert('マスターシードを入力してください。'); return; }
+  /* 決定的生成セルフチェック: 同じ入力から2回導出して全項目一致を確認 */
+  const w2=derive(raw);
+  const ok=JSON.stringify(w)===JSON.stringify(w2);
+  const sc=$('selfcheck');
+  sc.textContent='決定的生成セルフチェック: '+(ok?'OK — 同一シードで2回導出し、全項目が一致しました':'NG — 導出が一致しませんでした');
+  sc.className=ok?'ok':'';
+  console.log('[SeedWorks] self-check', ok?'OK':'NG', w.workId);
+  render(w);
+  try{ history.replaceState(null,'','?seed='+encodeURIComponent(w.input)); }catch(_){}
+}
+
+function copyText(text, btn){
+  const done=()=>{ if(btn){ const o=btn.textContent; btn.textContent='コピーしました'; setTimeout(()=>{ btn.textContent=o; },1200); } };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(()=>{ fallbackCopy(text); done(); }); }
+  else { fallbackCopy(text); done(); }
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(_){} ta.remove();
+}
+
+$('genBtn').addEventListener('click', generate);
+$('seedInput').addEventListener('keydown', e=>{ if(e.key==='Enter') generate(); });
+$('randBtn').addEventListener('click', ()=>{
+  const a=new Uint32Array(1); crypto.getRandomValues(a);
+  $('seedInput').value=String(a[0]%1000000000);
+  generate();
+});
+$('mCopy').addEventListener('click', e=>{ if(current) copyText(current.music.link, e.currentTarget); });
+$('nCopy').addEventListener('click', e=>{ if(current) copyText(current.noise.sessionUrl, e.currentTarget); });
+$('kCopyP').addEventListener('click', e=>{ if(current) copyText(current.visual.linkP, e.currentTarget); });
+$('kCopyC').addEventListener('click', e=>{ if(kgLinkC) copyText(kgLinkC, e.currentTarget); });
+$('copyCredits').addEventListener('click', e=>{ if(current) copyText(creditsText(current, current._date), e.currentTarget); });
+$('kMakeC').addEventListener('click', async e=>{
+  if(!current) return;
+  const btn=e.currentTarget; btn.disabled=true;
+  $('kCStatus').textContent='#c= リンクを生成中…（プリセット設定を取得しています）';
+  try{
+    const r=await buildKgLinkC(current);
+    kgLinkC=r.link; kgApplied=r.applied;
+    $('kOpenC').href=r.link; $('kOpenC').style.display=''; $('kCopyC').style.display='';
+    $('kCStatus').textContent='生成しました。適用したシード項目: '+(r.applied.length? r.applied.join(', ') : 'なし（このプリセットにはシード項目がありませんでした）');
+    $('kCStatus').className='status ok';
+    $('credits').textContent=creditsText(current, current._date);
+  }catch(err){
+    $('kCStatus').textContent='生成できませんでした: '+err.message+' — #p= リンク（シード差し替えなし）をご利用ください。';
+    $('kCStatus').className='status err';
+  }finally{ btn.disabled=false; }
+});
+$('dlManifest').addEventListener('click', ()=>{
+  if(!current) return;
+  const data=manifest(current, current._date);
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=current.workId+'-manifest.json';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+});
+
+/* URL の ?seed= から復元 */
+(function(){
+  try{
+    const q=new URLSearchParams(location.search);
+    const s=q.get('seed');
+    if(s){ $('seedInput').value=s; generate(); }
+  }catch(_){}
+})();
+</script>
+</body>
+</html>
