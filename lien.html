@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lien</title>
+  <meta name="description" content="Lien — generative flow-field artwork that grows from a single seed." />
+  <meta name="theme-color" content="#000000" />
+  <meta property="og:title" content="Lien" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://varelser.github.io/lien.html" />
+  <meta property="og:description" content="Generative flow-field artwork that grows from a single seed." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%23000%27/%3E%3Cpath d=%27M4 22c6-1 7-11 13-12 5-.8 8 3 11 2%27 stroke=%27%23fff%27 stroke-width=%272%27 fill=%27none%27 stroke-linecap=%27round%27/%3E%3C/svg%3E" />
   <style>
     :root {
       --bg: #000000;
@@ -567,6 +574,207 @@
       outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
+  </style>
+  <style id="lien-refine-style">
+/* ==== Lien Refine (additive): UI polish + performance ==== */
+/* Perf: the floating panels inherited backdrop-filter blur(20px); the
+   browser re-blurred the animating canvas underneath on every frame.
+   Panels are near-opaque already, so drop the blur entirely. */
+.panel-shell {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The Customize button lives at the bottom-LEFT, but the config panel
+   opened at the bottom-right. Align the panel above its own button. */
+.floating-panel.config {
+  left: 24px;
+  right: auto;
+  width: 360px;
+  bottom: 68px;
+}
+@media (max-width: 767px) {
+  .floating-panel.config {
+    left: 16px;
+    right: 16px;
+    width: auto;
+  }
+}
+
+/* Dense layout: sliders go two-per-row so the panel stays short and
+   calm instead of one long scroll. Direction / Wave / width-pair /
+   colour keep full width. */
+#configPanel .panel-body { padding: 14px 16px; }
+#configPanel .config-scroll { max-height: min(64vh, 660px); }
+#configPanel .group { margin-bottom: 12px; }
+#configPanel .panel-body > section:nth-child(2) .group-stack,
+#configPanel .panel-body > section:nth-child(3) .group-stack {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+}
+#configPanel .panel-body > section:nth-child(2) .group-stack > div:not(.slider-block),
+#configPanel .panel-body > section:nth-child(3) .group-stack > .dual-grid,
+#configPanel .panel-body > section:nth-child(3) .group-stack > .checkbox-row {
+  grid-column: 1 / -1;
+}
+#configPanel .slider-head { font-size: 11px; }
+
+/* Toolbar centre: live status mirror (seed / wave / lines). */
+.toolbar { position: relative; }
+#lienStatus {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 760px) { #lienStatus { display: none; } }
+
+/* Seed direct numeric entry, next to the slider value. */
+.lien-seed-num {
+  width: 62px;
+  background: var(--control-bg);
+  color: var(--fg);
+  border: 0;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  text-align: right;
+}
+.lien-seed-num:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* Hide-UI immersive mode: header / footer float away, canvas fills. */
+.app-header, .app-footer { transition: opacity 0.25s ease; }
+body.lien-hide-ui .app-header,
+body.lien-hide-ui .app-footer { opacity: 0; pointer-events: none; }
+body.lien-hide-ui .app-header { position: absolute; top: 0; left: 0; right: 0; }
+body.lien-hide-ui .app-footer { position: absolute; bottom: 0; left: 0; right: 0; }
+body.lien-hide-ui .floating-panel { opacity: 0; pointer-events: none; }
+
+/* Texture modes: display-only filters on the view canvas.
+   Exports re-render from the art canvas and are never affected. */
+#viewCanvas.lien-tex-glow { filter: drop-shadow(0 0 5px rgba(255,255,255,0.45)) saturate(1.25) brightness(1.05); }
+#viewCanvas.lien-tex-neon { filter: saturate(1.9) contrast(1.18) drop-shadow(0 0 7px rgba(255,255,255,0.35)); }
+#viewCanvas.lien-tex-dream { filter: blur(0.8px) brightness(1.09) saturate(1.3); }
+#viewCanvas.lien-tex-liquid { filter: blur(0.7px) contrast(1.45) saturate(1.25) brightness(1.04); }
+#viewCanvas.lien-tex-psyche { animation: lien-hue-spin 9s linear infinite; }
+@keyframes lien-hue-spin { from { filter: hue-rotate(0deg) saturate(1.6); } to { filter: hue-rotate(360deg) saturate(1.6); } }
+
+/* Plus section */
+#lienPlusSection .lp-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+#lienPlusSection .lp-row .mini-btn { background: color-mix(in srgb, var(--fg) 6%, transparent); border-radius: 6px; padding: 5px 9px; }
+#lienPlusSection .lp-sub { margin-top: 12px; }
+#lienPlusSection .lp-sub:first-child { margin-top: 0; }
+#lienPlusSection .option-button.is-active { background: var(--option-active-bg); color: var(--option-active-fg); }
+#lienPlusSection .lp-name {
+  flex: 1 1 110px; min-width: 0;
+  background: var(--control-bg); color: var(--fg);
+  border: 0; border-radius: 6px; padding: 5px 8px; font-size: 11px;
+}
+#lienPlusSection .lp-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; letter-spacing: 0.06em;
+  padding: 4px 8px; border-radius: 9999px;
+  background: color-mix(in srgb, var(--fg) 7%, transparent);
+  color: var(--muted); cursor: pointer; white-space: nowrap;
+}
+#lienPlusSection .lp-item:hover { color: var(--fg); }
+#lienPlusSection .lp-item .lp-del { opacity: 0.55; font-size: 12px; padding: 0 2px; }
+#lienPlusSection .lp-item .lp-del:hover { opacity: 1; }
+#lienPlusSection .lp-swatches { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+#lienPlusSection .lp-swatch {
+  width: 26px; height: 26px; border-radius: 9999px; cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(127,127,127,0.35);
+}
+#lienPlusSection .lp-swatch:hover { transform: scale(1.12); }
+#lienPlusSection .lp-note { margin-top: 6px; }
+
+/* Toast */
+#lienToast {
+  position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%) translateY(8px);
+  z-index: 90; background: var(--overlay-bg); color: var(--overlay-fg);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  font-size: 12px; letter-spacing: 0.04em; padding: 9px 16px; border-radius: 9999px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease;
+  max-width: min(88vw, 560px); text-align: center;
+}
+#lienToast.lien-toast-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  #viewCanvas.lien-tex-psyche { animation: none; }
+  .floating-panel { animation-duration: 0.01ms; }
+  #lienToast { transition: none; }
+}
+  </style>
+  <style id="lien-expr-style">
+/* ==== Lien Expression (additive): ultimate expression layer ==== */
+#lienExprSection .lp-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+#lienExprSection .lp-row .mini-btn { background: color-mix(in srgb, var(--fg) 6%, transparent); border-radius: 6px; padding: 5px 9px; }
+#lienExprSection .lp-sub { margin-top: 12px; }
+#lienExprSection .lp-sub:first-child { margin-top: 0; }
+#lienExprSection .option-button.is-active { background: var(--option-active-bg); color: var(--option-active-fg); }
+#lienExprSection .lx-presets .option-button { flex: 1 1 30%; min-width: 84px; }
+#lienExprSection .lx-range { width: 130px; height: 4px; accent-color: var(--accent); }
+#lienExprSection .lx-inline { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
+#lxPalNow { width: 18px; height: 18px; border-radius: 9999px; box-shadow: inset 0 0 0 1px rgba(127,127,127,0.4); display: inline-block; vertical-align: middle; }
+
+#lienFxCanvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: none; pointer-events: none; touch-action: none;
+}
+.lien-fx-on #lienFxCanvas { display: block; }
+
+.lien-fx-layer { position: absolute; inset: 0; pointer-events: none; display: none; }
+.lien-fx-layer.on { display: block; }
+#lienTintLayer { mix-blend-mode: soft-light; opacity: 0.85; }
+#lienGrainLayer {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  opacity: 0.08; animation: lien-grain-jitter 0.45s steps(2) infinite alternate;
+}
+@keyframes lien-grain-jitter { from { transform: translate(0, 0); } to { transform: translate(-18px, 10px); } }
+#lienVigLayer { background: radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,0.6) 100%); }
+#lienScanLayer { background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0 1px, transparent 1px 3px); opacity: 0.55; }
+
+.lx-spin { animation: lien-spin 240s linear infinite; }
+@keyframes lien-spin { from { transform: rotate(0deg) scale(1.45); } to { transform: rotate(360deg) scale(1.45); } }
+.lx-breathe { animation: lien-breathe 9s ease-in-out infinite alternate; }
+@keyframes lien-breathe { from { transform: scale(1); } to { transform: scale(1.07); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-spin, .lx-breathe, #lienGrainLayer { animation: none; }
+}
+  </style>
+  <style id="lien-expr2-style">
+/* ==== Lien Expression II (additive): scene layers ==== */
+.lien-scene-layer { position: absolute; pointer-events: none; display: none; }
+#lienGalleryFrame {
+  inset: 14px;
+  border: 1px solid rgba(255,255,255,0.45);
+  mix-blend-mode: difference;
+}
+#lienGalleryFrame.on { display: block; }
+#lienGalleryCaption {
+  left: 0; right: 0; bottom: 30px;
+  text-align: center;
+  font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: #fff; mix-blend-mode: difference; white-space: nowrap;
+}
+#lienGalleryCaption.on { display: block; }
+#lienBigSeed {
+  inset: 0; align-items: center; justify-content: center;
+  font-size: 24vw; font-weight: 200; letter-spacing: 0.04em; line-height: 1;
+  color: #fff; opacity: 0.13; mix-blend-mode: difference;
+  overflow: hidden; white-space: nowrap;
+}
+#lienBigSeed.on { display: flex; }
+#lxRec.recording { color: #ff8080; }
   </style>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
@@ -2484,6 +2692,1632 @@
       if (savedOn) startLink();
     }
   })();
+  </script>
+  <script id="lien-plus-script">
+/* ==== Lien Plus (additive): power-up features.
+   Every configuration change goes through Lien's own share-link path:
+   setting location.hash to '#c=' + base64url(JSON) makes the core run
+   applyConfigPatch(sanitizeConfig(...), snapshot=true), so Undo,
+   sanitising and the single-reset rule are all the core's own. ==== */
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var viewCanvas = $('viewCanvas');
+  var configPanel = $('configPanel');
+  var panelBody = configPanel ? configPanel.querySelector('.panel-body') : null;
+  if (!viewCanvas || !panelBody) return;
+
+  var RANGES = {
+    seed: [1, 99999, true], stepsPerLine: [100, 10000, true], stepLength: [0.5, 50, false],
+    noiseFreq: [0.0001, 0.02, false], curlStrength: [0.1, 20, false],
+    particleCount: [100, 100000, true], clustering: [0, 0.99, false], opacity: [1, 255, true],
+    lineWidthMin: [0.1, 20, false], lineWidthMax: [0.1, 20, false], zoom: [0.5, 10, false]
+  };
+  var SLIDER_IDS = {
+    seed: 'seedInput', stepsPerLine: 'stepsPerLineInput', stepLength: 'stepLengthInput',
+    noiseFreq: 'noiseFreqInput', curlStrength: 'curlStrengthInput', particleCount: 'particleCountInput',
+    clustering: 'clusteringInput', opacity: 'opacityInput', lineWidthMin: 'lineWidthMinInput',
+    lineWidthMax: 'lineWidthMaxInput', zoom: 'zoomInput'
+  };
+
+  function toast(msg) {
+    var el = $('lienToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'lienToast';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add('lien-toast-show');
+    window.clearTimeout(toast._t);
+    toast._t = window.setTimeout(function () { el.classList.remove('lien-toast-show'); }, 2400);
+  }
+
+  function activeOption(key) {
+    var btn = document.querySelector('.option-button[data-config-key="' + key + '"].is-active');
+    return btn ? btn.getAttribute('data-config-value') : null;
+  }
+  function currentConfig() {
+    var cfg = {};
+    for (var k in SLIDER_IDS) cfg[k] = parseFloat($(SLIDER_IDS[k]).value);
+    cfg.flowDirection = activeOption('flowDirection') || 'omni';
+    cfg.waveMode = activeOption('waveMode') || 'perlin';
+    cfg.lineColor = $('lineColorInput').value;
+    cfg.colorInvert = !!$('colorInvertInput').checked;
+    return cfg;
+  }
+  function encode(cfg) {
+    var b = btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
+    return b.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function clampCfg(cfg) {
+    var out = currentConfig();
+    for (var k in RANGES) {
+      var v = Number(cfg[k]);
+      if (Number.isFinite(v)) {
+        v = Math.max(RANGES[k][0], Math.min(RANGES[k][1], v));
+        out[k] = RANGES[k][2] ? Math.round(v) : v;
+      }
+    }
+    if (['omni', 'down', 'left', 'diagonal'].indexOf(cfg.flowDirection) >= 0) out.flowDirection = cfg.flowDirection;
+    if (['perlin', 'vortex', 'radial', 'ridge', 'chaos'].indexOf(cfg.waveMode) >= 0) out.waveMode = cfg.waveMode;
+    if (typeof cfg.colorInvert === 'boolean') out.colorInvert = cfg.colorInvert;
+    if (typeof cfg.lineColor === 'string' && /^#[0-9a-f]{6}$/i.test(cfg.lineColor)) out.lineColor = cfg.lineColor.toLowerCase();
+    if (out.lineWidthMin > out.lineWidthMax) out.lineWidthMax = out.lineWidthMin;
+    return out;
+  }
+
+  var applying = false;
+  function applyFull(fullCfg) {
+    var cfg = clampCfg(fullCfg);
+    var target = '#c=' + encode(cfg);
+    applying = true;
+    if (window.location.hash === target) {
+      window.location.hash = '#lp';
+      window.setTimeout(function () { window.location.hash = target; }, 40);
+    } else {
+      window.location.hash = target;
+    }
+    window.setTimeout(function () {
+      applying = false;
+      refreshStatus();
+      recordHistory(cfg);
+    }, 120);
+    return cfg;
+  }
+  function applyPatch(patch) {
+    var cfg = currentConfig();
+    for (var k in patch) cfg[k] = patch[k];
+    return applyFull(cfg);
+  }
+
+  /* ---------- toolbar status mirror + seed numeric entry ---------- */
+  var statusEl = document.createElement('div');
+  statusEl.id = 'lienStatus';
+  var toolbar = document.querySelector('.toolbar');
+  if (toolbar) toolbar.appendChild(statusEl);
+  var lastPresetName = '';
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('[data-preset]') : null;
+    if (b) { lastPresetName = b.textContent.trim(); window.setTimeout(refreshStatus, 60); }
+  });
+  function fmt(n) { return Number(n).toLocaleString('en-US'); }
+  function refreshStatus() {
+    try {
+      var c = currentConfig();
+      statusEl.textContent = 'Seed ' + c.seed + ' · ' + c.waveMode + ' · ' + fmt(c.particleCount) + ' lines';
+      var num = $('lienSeedNum');
+      if (num && document.activeElement !== num) num.value = String(c.seed);
+    } catch (e) { /* panel not ready */ }
+  }
+
+  var seedValueEl = $('seedValue');
+  var seedNum = document.createElement('input');
+  seedNum.id = 'lienSeedNum';
+  seedNum.className = 'lien-seed-num';
+  seedNum.type = 'number';
+  seedNum.min = '1'; seedNum.max = '99999'; seedNum.step = '1';
+  seedNum.setAttribute('aria-label', 'Seed (direct entry)');
+  if (seedValueEl && seedValueEl.parentNode) seedValueEl.parentNode.appendChild(seedNum);
+  seedNum.addEventListener('change', function () {
+    var v = parseInt(seedNum.value, 10);
+    if (Number.isFinite(v)) { applyPatch({ seed: v }); toast('Seed ' + Math.max(1, Math.min(99999, v))); }
+  });
+  seedNum.addEventListener('keydown', function (e) { e.stopPropagation(); });
+
+  /* ---------- Plus section UI ---------- */
+  var section = document.createElement('section');
+  section.className = 'group';
+  section.id = 'lienPlusSection';
+  section.innerHTML =
+    '<h3 class="group-title">Plus</h3>' +
+    '<div class="lp-sub"><div class="small-label">Texture (display only — exports stay clean)</div>' +
+    '<div class="option-row" id="lpTexRow">' +
+    ['normal', 'glow', 'liquid', 'psyche', 'dream', 'neon'].map(function (t) {
+      return '<button class="option-button" data-tex="' + t + '" type="button">' + t + '</button>';
+    }).join('') + '</div></div>' +
+    '<div class="lp-sub"><div class="small-label">Create</div><div class="lp-row">' +
+    '<button class="mini-btn" id="lpRandom" type="button">Randomize</button>' +
+    '<button class="mini-btn" id="lpMutate" type="button">Mutate</button>' +
+    '<button class="mini-btn" id="lpEyedropper" type="button">Eyedropper</button>' +
+    '<button class="mini-btn" id="lpHideUi" type="button">Hide UI (H)</button>' +
+    '</div></div>' +
+    '<div class="lp-sub"><div class="small-label">My Presets</div><div class="lp-row">' +
+    '<input class="lp-name" id="lpPresetName" type="text" placeholder="Preset name" maxlength="24" />' +
+    '<button class="mini-btn" id="lpPresetSave" type="button">Save</button></div>' +
+    '<div class="lp-row" id="lpPresetList"></div></div>' +
+    '<div class="lp-sub"><div class="small-label">Recent Seeds</div><div class="lp-row" id="lpSeedChips"></div></div>' +
+    '<div class="lp-sub"><div class="small-label">History (click to restore)</div><div class="lp-row" id="lpHistory"></div></div>' +
+    '<div class="lp-sub"><div class="small-label">Palette (drop an image on the canvas)</div>' +
+    '<div class="lp-swatches" id="lpPalette"></div>' +
+    '<div class="small-label lp-note" id="lpPaletteNote">No palette yet — drop any image onto the artwork.</div></div>' +
+    '<div class="lp-sub"><div class="small-label">Config File</div><div class="lp-row">' +
+    '<button class="mini-btn" id="lpExportJson" type="button">Export JSON</button>' +
+    '<button class="mini-btn" id="lpImportJson" type="button">Import JSON</button>' +
+    '<button class="mini-btn" id="lpShare" type="button">Share</button>' +
+    '</div><div class="small-label lp-note">JSON can also be dropped onto the artwork.</div></div>' +
+    '<div class="lp-sub"><div class="small-label">Live</div>' +
+    '<div class="lp-row"><button class="mini-btn" id="lpPip" type="button">PiP Preview</button></div>' +
+    '<label class="checkbox-row" for="lpWake"><span>Keep screen awake (Wake Lock)</span>' +
+    '<input id="lpWake" class="checkbox-input" type="checkbox" /></label>' +
+    '<label class="checkbox-row" for="lpAutoPause"><span>Auto-pause when tab is hidden</span>' +
+    '<input id="lpAutoPause" class="checkbox-input" type="checkbox" /></label></div>' +
+    '<div class="small-label lp-note">Keys: 1–7 presets · H hide UI · P PiP · plus the shortcuts above.</div>';
+  panelBody.appendChild(section);
+
+  var fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.json,application/json,image/*';
+  fileInput.hidden = true;
+  document.body.appendChild(fileInput);
+
+  /* ---------- texture modes ---------- */
+  var TEX_CLASSES = ['lien-tex-glow', 'lien-tex-liquid', 'lien-tex-psyche', 'lien-tex-dream', 'lien-tex-neon'];
+  function setTexture(name, silent) {
+    TEX_CLASSES.forEach(function (c) { viewCanvas.classList.remove(c); });
+    if (name && name !== 'normal') viewCanvas.classList.add('lien-tex-' + name);
+    try { window.localStorage.setItem('lien.texture.v1', name); } catch (e) { /* ignore */ }
+    var btns = section.querySelectorAll('[data-tex]');
+    btns.forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-tex') === name); });
+    if (!silent) toast('Texture: ' + name);
+  }
+  section.querySelectorAll('[data-tex]').forEach(function (b) {
+    b.addEventListener('click', function () { setTexture(b.getAttribute('data-tex')); });
+  });
+  var savedTex = 'normal';
+  try { savedTex = window.localStorage.getItem('lien.texture.v1') || 'normal'; } catch (e) { /* ignore */ }
+  setTexture(savedTex, true);
+
+  /* ---------- randomize / mutate ---------- */
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function hslHex(h, s, l) {
+    s /= 100; l /= 100;
+    var k = function (n) { return (n + h / 30) % 12; };
+    var a = s * Math.min(l, 1 - l);
+    var f = function (n) { return l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); };
+    var to = function (x) { return Math.round(x * 255).toString(16).padStart(2, '0'); };
+    return '#' + to(f(0)) + to(f(8)) + to(f(4));
+  }
+  $('lpRandom').addEventListener('click', function () {
+    var wmin = Math.round(rnd(0.3, 0.8) * 10) / 10;
+    applyFull({
+      seed: 1 + Math.floor(Math.random() * 99999),
+      flowDirection: pick(['omni', 'omni', 'omni', 'down', 'left', 'diagonal']),
+      waveMode: pick(['perlin', 'vortex', 'radial', 'ridge', 'chaos']),
+      stepsPerLine: Math.round(rnd(800, 6000) / 100) * 100,
+      stepLength: Math.round(rnd(0.6, 3.4) * 10) / 10,
+      noiseFreq: Math.exp(rnd(Math.log(0.0003), Math.log(0.003))),
+      curlStrength: Math.round(rnd(0.8, 7) * 10) / 10,
+      particleCount: Math.round(rnd(3000, 18000) / 100) * 100,
+      clustering: pick([0, 0, 0.15, 0.35, 0.6]),
+      opacity: Math.round(rnd(6, 22)),
+      lineWidthMin: wmin,
+      lineWidthMax: Math.round((wmin + rnd(0.4, 1.4)) * 10) / 10,
+      lineColor: hslHex(Math.floor(rnd(0, 360)), Math.floor(rnd(45, 95)), Math.floor(rnd(55, 85))),
+      zoom: 1, colorInvert: currentConfig().colorInvert
+    });
+    toast('Randomized');
+  });
+  $('lpMutate').addEventListener('click', function () {
+    var c = currentConfig();
+    var j = function (v, amt) { return v * (1 + (Math.random() * 2 - 1) * amt); };
+    applyFull({
+      seed: Math.random() < 0.3 ? 1 + Math.floor(Math.random() * 99999) : c.seed,
+      flowDirection: c.flowDirection, waveMode: c.waveMode,
+      stepsPerLine: Math.round(j(c.stepsPerLine, 0.15) / 100) * 100,
+      stepLength: Math.round(j(c.stepLength, 0.15) * 10) / 10,
+      noiseFreq: j(c.noiseFreq, 0.25),
+      curlStrength: Math.round(j(c.curlStrength, 0.15) * 10) / 10,
+      particleCount: Math.round(j(c.particleCount, 0.15) / 100) * 100,
+      clustering: c.clustering, opacity: Math.round(j(c.opacity, 0.15)),
+      lineWidthMin: c.lineWidthMin, lineWidthMax: c.lineWidthMax,
+      lineColor: c.lineColor, zoom: c.zoom, colorInvert: c.colorInvert
+    });
+    toast('Mutated');
+  });
+
+  /* ---------- eyedropper ---------- */
+  $('lpEyedropper').addEventListener('click', function () {
+    if (!window.EyeDropper) { toast('EyeDropper is not supported in this browser'); return; }
+    new window.EyeDropper().open().then(function (res) {
+      if (res && res.sRGBHex) { applyPatch({ lineColor: res.sRGBHex.toLowerCase() }); toast('Line color ' + res.sRGBHex); }
+    }).catch(function () { /* cancelled */ });
+  });
+
+  /* ---------- hide UI ---------- */
+  function toggleHideUi() { document.body.classList.toggle('lien-hide-ui'); }
+  $('lpHideUi').addEventListener('click', toggleHideUi);
+
+  /* ---------- user presets ---------- */
+  var PRESET_KEY = 'lien.userPresets.v1';
+  function loadUserPresets() {
+    try { return JSON.parse(window.localStorage.getItem(PRESET_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function renderUserPresets() {
+    var list = $('lpPresetList');
+    list.innerHTML = '';
+    loadUserPresets().forEach(function (p, i) {
+      var chip = document.createElement('span');
+      chip.className = 'lp-item';
+      var label = document.createElement('span');
+      label.textContent = p.name;
+      label.addEventListener('click', function () { applyFull(p.cfg); toast('Preset: ' + p.name); });
+      var del = document.createElement('span');
+      del.className = 'lp-del'; del.textContent = '×';
+      del.addEventListener('click', function () {
+        var arr = loadUserPresets(); arr.splice(i, 1);
+        try { window.localStorage.setItem(PRESET_KEY, JSON.stringify(arr)); } catch (e) { /* ignore */ }
+        renderUserPresets();
+      });
+      chip.appendChild(label); chip.appendChild(del);
+      list.appendChild(chip);
+    });
+    if (!list.children.length) list.innerHTML = '<span class="small-label" style="margin:0;">None saved yet.</span>';
+  }
+  $('lpPresetSave').addEventListener('click', function () {
+    var name = ($('lpPresetName').value || '').trim() || ('Preset ' + (loadUserPresets().length + 1));
+    var arr = loadUserPresets();
+    arr.push({ name: name, cfg: currentConfig(), ts: Date.now() });
+    try { window.localStorage.setItem(PRESET_KEY, JSON.stringify(arr.slice(-24))); } catch (e) { /* ignore */ }
+    $('lpPresetName').value = '';
+    renderUserPresets();
+    toast('Saved preset: ' + name);
+  });
+  renderUserPresets();
+
+  /* ---------- history + recent seeds ---------- */
+  var HIST_KEY = 'lien.history.v1';
+  function loadHistory() {
+    try { return JSON.parse(window.localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function recordHistory(cfg) {
+    if (applying && recordHistory._skip) { recordHistory._skip = false; return; }
+    var arr = loadHistory();
+    var sig = JSON.stringify(cfg);
+    arr = arr.filter(function (h) { return JSON.stringify(h.cfg) !== sig; });
+    arr.unshift({ cfg: cfg, ts: Date.now() });
+    arr = arr.slice(0, 12);
+    try { window.localStorage.setItem(HIST_KEY, JSON.stringify(arr)); } catch (e) { /* ignore */ }
+    renderHistory();
+  }
+  function renderHistory() {
+    var box = $('lpHistory');
+    var seedsBox = $('lpSeedChips');
+    if (!box) return;
+    var arr = loadHistory();
+    box.innerHTML = '';
+    arr.forEach(function (h) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'lp-item';
+      chip.style.border = '0';
+      chip.textContent = 'Seed ' + h.cfg.seed + ' · ' + h.cfg.waveMode;
+      chip.addEventListener('click', function () { recordHistory._skip = true; applyFull(h.cfg); toast('Restored Seed ' + h.cfg.seed); });
+      box.appendChild(chip);
+    });
+    if (!arr.length) box.innerHTML = '<span class="small-label" style="margin:0;">Changes will appear here.</span>';
+    seedsBox.innerHTML = '';
+    var seen = {};
+    arr.forEach(function (h) {
+      if (seen[h.cfg.seed]) return;
+      seen[h.cfg.seed] = true;
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'lp-item';
+      chip.style.border = '0';
+      chip.textContent = String(h.cfg.seed);
+      chip.addEventListener('click', function () { applyPatch({ seed: h.cfg.seed }); });
+      seedsBox.appendChild(chip);
+    });
+    if (!seedsBox.children.length) seedsBox.innerHTML = '<span class="small-label" style="margin:0;">—</span>';
+  }
+  var histTimer = 0;
+  function recordHistorySoon() {
+    if (window.__lienPaletteActive) return; /* palette engine streams colour changes */
+    window.clearTimeout(histTimer);
+    histTimer = window.setTimeout(function () { if (!applying) recordHistory(currentConfig()); }, 1200);
+  }
+  configPanel.addEventListener('input', recordHistorySoon);
+  configPanel.addEventListener('change', recordHistorySoon);
+  configPanel.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('#lienPlusSection')) return;
+    recordHistorySoon();
+  });
+  renderHistory();
+  window.setTimeout(function () { recordHistory(currentConfig()); }, 600);
+
+  /* ---------- config JSON export / import ---------- */
+  function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+  function importConfigObject(obj) {
+    var raw = obj && obj.config ? obj.config : obj;
+    if (!raw || typeof raw !== 'object') { toast('That JSON is not a Lien config'); return; }
+    applyFull(raw);
+    toast('Config imported');
+  }
+  $('lpExportJson').addEventListener('click', function () {
+    var payload = { app: 'lien', version: 1, exportedAt: new Date().toISOString(), config: currentConfig() };
+    downloadBlob(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), 'lien-config-seed' + payload.config.seed + '.json');
+    toast('Config JSON exported');
+  });
+  $('lpImportJson').addEventListener('click', function () { fileInput.click(); });
+  fileInput.addEventListener('change', function () {
+    var f = fileInput.files && fileInput.files[0];
+    fileInput.value = '';
+    if (!f) return;
+    if (f.type.indexOf('image/') === 0) { handleImageFile(f); return; }
+    f.text().then(function (t) {
+      try { importConfigObject(JSON.parse(t)); } catch (e) { toast('Could not parse that JSON'); }
+    });
+  });
+
+  /* ---------- share ---------- */
+  $('lpShare').addEventListener('click', function () {
+    var url = window.location.href.split('#')[0] + '#c=' + encode(currentConfig());
+    if (navigator.share) {
+      navigator.share({ title: 'Lien', url: url }).catch(function () { /* cancelled */ });
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { toast('Share link copied'); });
+    } else {
+      toast(url);
+    }
+  });
+
+  /* ---------- snapshot PNG: copy / download / save-as / share ---------- */
+  function snapshotBlob() {
+    return new Promise(function (resolve, reject) {
+      viewCanvas.toBlob(function (b) { b ? resolve(b) : reject(new Error('PNG failed')); }, 'image/png');
+    });
+  }
+  function snapshotName() { return 'lien-snapshot-seed' + currentConfig().seed + '-' + Date.now() + '.png'; }
+  function addExportButton(label, handler) {
+    var list = document.querySelector('#savePanel .export-list');
+    if (!list) return;
+    var btn = document.createElement('button');
+    btn.className = 'export-btn';
+    btn.type = 'button';
+    btn.style.width = '100%';
+    btn.textContent = label;
+    btn.addEventListener('click', handler);
+    list.appendChild(btn);
+  }
+  addExportButton('Quick Snapshot (current view)', function () {
+    snapshotBlob().then(function (b) { downloadBlob(b, snapshotName()); toast('Snapshot saved'); }).catch(function () { toast('Snapshot failed'); });
+  });
+  addExportButton('Copy PNG', function () {
+    if (!navigator.clipboard || !window.ClipboardItem) { toast('Clipboard PNG is not supported here'); return; }
+    snapshotBlob().then(function (b) {
+      var item = {};
+      item['image/png'] = b;
+      return navigator.clipboard.write([new window.ClipboardItem(item)]);
+    }).then(function () { toast('PNG copied'); }).catch(function () { toast('Copy failed'); });
+  });
+  addExportButton('Save PNG As… / Share PNG', function () {
+    snapshotBlob().then(function (b) {
+      var file = new File([b], snapshotName(), { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        return navigator.share({ files: [file], title: 'Lien' }).then(function () { return 'shared'; });
+      }
+      if (window.showSaveFilePicker) {
+        return window.showSaveFilePicker({ suggestedName: file.name, types: [{ description: 'PNG', accept: { 'image/png': ['.png'] } }] })
+          .then(function (h) { return h.createWritable(); })
+          .then(function (w) { return w.write(b).then(function () { return w.close(); }); })
+          .then(function () { return 'saved'; });
+      }
+      downloadBlob(b, file.name);
+      return 'downloaded';
+    }).then(function (how) { if (how !== 'shared') toast('PNG ' + how); }).catch(function (e) {
+      if (e && e.name === 'AbortError') return;
+      toast('Save / share failed');
+    });
+  });
+
+  /* ---------- image drop -> palette ---------- */
+  function handleImageFile(file) {
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      URL.revokeObjectURL(url);
+      var S = 72;
+      var cv = document.createElement('canvas');
+      cv.width = S; cv.height = S;
+      var cx = cv.getContext('2d', { willReadFrequently: true });
+      var scale = Math.max(S / img.width, S / img.height);
+      cx.drawImage(img, (S - img.width * scale) / 2, (S - img.height * scale) / 2, img.width * scale, img.height * scale);
+      var data;
+      try { data = cx.getImageData(0, 0, S, S).data; } catch (e) { toast('Could not read that image'); return; }
+      var buckets = {};
+      for (var i = 0; i < data.length; i += 8) {
+        var r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+        if (a < 200) continue;
+        var key = (r >> 5) + ',' + (g >> 5) + ',' + (b >> 5);
+        var bk = buckets[key] || (buckets[key] = { n: 0, r: 0, g: 0, b: 0 });
+        bk.n++; bk.r += r; bk.g += g; bk.b += b;
+      }
+      var sorted = Object.keys(buckets).map(function (k) { return buckets[k]; }).sort(function (x, y) { return y.n - x.n; });
+      var chosen = [];
+      for (var j = 0; j < sorted.length && chosen.length < 6; j++) {
+        var bk2 = sorted[j];
+        var col = { r: Math.round(bk2.r / bk2.n), g: Math.round(bk2.g / bk2.n), b: Math.round(bk2.b / bk2.n) };
+        var far = chosen.every(function (c) {
+          var dr = c.r - col.r, dg = c.g - col.g, db = c.b - col.b;
+          return dr * dr + dg * dg + db * db > 3600;
+        });
+        if (far) chosen.push(col);
+      }
+      var box = $('lpPalette');
+      box.innerHTML = '';
+      chosen.forEach(function (c) {
+        var hex = '#' + [c.r, c.g, c.b].map(function (x) { return x.toString(16).padStart(2, '0'); }).join('');
+        var sw = document.createElement('button');
+        sw.type = 'button';
+        sw.className = 'lp-swatch';
+        sw.style.background = hex;
+        sw.title = hex + ' — apply as line color';
+        sw.addEventListener('click', function () { applyPatch({ lineColor: hex }); toast('Line color ' + hex); });
+        box.appendChild(sw);
+      });
+      var note = $('lpPaletteNote');
+      if (note) note.textContent = chosen.length ? 'Click a swatch to use it as the line color.' : 'No colours found in that image.';
+      toast(chosen.length ? 'Palette extracted — see Customize panel' : 'No palette found');
+      if (chosen.length) {
+        try {
+          window.__lienImagePalette = chosen.map(function (c) { return '#' + [c.r, c.g, c.b].map(function (x) { return x.toString(16).padStart(2, '0'); }).join(''); });
+          window.dispatchEvent(new CustomEvent('lien:image-palette', { detail: window.__lienImagePalette }));
+        } catch (err) { /* ignore */ }
+      }
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); toast('Could not load that image'); };
+    img.src = url;
+  }
+  var wrapper = $('wrapper');
+  if (wrapper) {
+    wrapper.addEventListener('dragover', function (e) { e.preventDefault(); });
+    wrapper.addEventListener('drop', function (e) {
+      e.preventDefault();
+      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (!f) return;
+      if (f.type.indexOf('image/') === 0) { handleImageFile(f); return; }
+      if (/\.json$/i.test(f.name) || f.type === 'application/json') {
+        f.text().then(function (t) {
+          try { importConfigObject(JSON.parse(t)); } catch (err) { toast('Could not parse that JSON'); }
+        });
+        return;
+      }
+      toast('Drop an image (palette) or a config JSON');
+    });
+  }
+  document.addEventListener('paste', function (e) {
+    var items = e.clipboardData && e.clipboardData.files;
+    if (items && items.length && items[0].type.indexOf('image/') === 0) handleImageFile(items[0]);
+  });
+
+  /* ---------- PiP preview (Document Picture-in-Picture) ---------- */
+  $('lpPip').addEventListener('click', function () {
+    if (!window.documentPictureInPicture) { toast('Document PiP is not supported in this browser'); return; }
+    window.documentPictureInPicture.requestWindow({ width: 520, height: 340 }).then(function (pipWin) {
+      pipWin.document.body.style.margin = '0';
+      pipWin.document.body.style.background = '#000';
+      var video = pipWin.document.createElement('video');
+      video.muted = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.objectFit = 'contain';
+      try { video.srcObject = viewCanvas.captureStream(30); } catch (e) { /* stream unsupported */ }
+      pipWin.document.body.appendChild(video);
+      var p = video.play && video.play();
+      if (p && p.catch) p.catch(function () { /* ignore */ });
+      toast('PiP preview open');
+    }).catch(function () { toast('PiP failed to open'); });
+  });
+
+  /* ---------- wake lock + auto-pause ---------- */
+  var wakeLock = null;
+  var wakeCheck = $('lpWake');
+  function requestWake() {
+    if (!navigator.wakeLock) { toast('Wake Lock is not supported in this browser'); if (wakeCheck) wakeCheck.checked = false; return; }
+    navigator.wakeLock.request('screen').then(function (lock) {
+      wakeLock = lock;
+      lock.addEventListener('release', function () { wakeLock = null; });
+    }).catch(function () { /* denied */ });
+  }
+  if (wakeCheck) wakeCheck.addEventListener('change', function () {
+    if (wakeCheck.checked) { requestWake(); toast('Wake Lock on'); }
+    else if (wakeLock) { wakeLock.release(); wakeLock = null; }
+  });
+  var autoPauseCheck = $('lpAutoPause');
+  try { if (autoPauseCheck) autoPauseCheck.checked = window.localStorage.getItem('lien.autopause.v1') === '1'; } catch (e) { /* ignore */ }
+  if (autoPauseCheck) autoPauseCheck.addEventListener('change', function () {
+    try { window.localStorage.setItem('lien.autopause.v1', autoPauseCheck.checked ? '1' : '0'); } catch (e) { /* ignore */ }
+  });
+  var pausedByAuto = false;
+  function isPaused() {
+    var pb = $('pauseBtn');
+    return !!(pb && pb.innerHTML.indexOf('5.653') >= 0);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+      if (wakeCheck && wakeCheck.checked && !wakeLock) requestWake();
+      if (pausedByAuto) { pausedByAuto = false; var pb2 = $('pauseBtn'); if (pb2 && isPaused()) pb2.click(); }
+    } else {
+      if (autoPauseCheck && autoPauseCheck.checked && !isPaused()) {
+        var pb = $('pauseBtn');
+        if (pb) { pausedByAuto = true; pb.click(); }
+      }
+    }
+  });
+
+  /* ---------- extra keys (core already handles Space/R/E/C/F/Esc/Ctrl+Z) ---------- */
+  document.addEventListener('keydown', function (e) {
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target;
+    var tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+    if (e.key >= '1' && e.key <= '7') {
+      var presets = document.querySelectorAll('[data-preset]');
+      var idx = Number(e.key) - 1;
+      if (presets[idx]) presets[idx].click();
+    } else if (e.key === 'h' || e.key === 'H') {
+      toggleHideUi();
+    } else if (e.key === 'p' || e.key === 'P') {
+      var pipBtn = $('lpPip');
+      if (pipBtn) pipBtn.click();
+    }
+  });
+
+  /* ---------- status polling (cheap DOM reads) ---------- */
+  refreshStatus();
+  window.setInterval(refreshStatus, 900);
+  window.__lienPlus = { currentConfig: currentConfig, applyFull: applyFull, applyPatch: applyPatch, setTexture: setTexture, toast: toast, version: 1 };
+})();
+  </script>
+  <script id="lien-expr-script">
+/* ==== Lien Expression (additive): the ultimate expression layer.
+   Four engines, all display-side except Palette Flow:
+   1) Palette Flow — Lien's line colour is a visual-only key, so changing
+      it mid-growth colours only the lines drawn afterwards. Cycling it
+      through a palette paints the artwork in colour bands, using the
+      core's own input event. (High-res re-render export flattens to one
+      colour; snapshots keep the bands.)
+   2) FX overlay canvas — feedback ghosts, mirrors, kaleidoscopes and
+      post effects drawn over a hidden view canvas each frame.
+   3) CSS overlay layers — tint / grain / vignette / scanlines.
+   4) Motion — slow spin, breathing zoom, pointer tilt; plus an animated
+      SVG turbulence "wobble" displacement. ==== */
+(function () {
+  'use strict';
+  var LP = window.__lienPlus;
+  if (!LP) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var viewCanvas = $('viewCanvas');
+  var wrapper = $('wrapper');
+  var panelBody = document.querySelector('#configPanel .panel-body');
+  if (!viewCanvas || !wrapper || !panelBody) return;
+  var toast = LP.toast;
+
+  /* ---------------- Plus Presets ---------------- */
+  var BASE = { seed: 1, flowDirection: 'omni', waveMode: 'perlin', stepsPerLine: 2000, stepLength: 1, noiseFreq: 0.0006, curlStrength: 1.5, particleCount: 6000, clustering: 0, opacity: 12, lineWidthMin: 0.5, lineWidthMax: 1.5, lineColor: '#ffffff', zoom: 1, colorInvert: false };
+  var PRESETS = [
+    ['Aurora', { seed: 31415, stepsPerLine: 3200, noiseFreq: 0.0004, curlStrength: 2.2, particleCount: 12000, clustering: 0.2, opacity: 9, lineWidthMin: 0.4, lineWidthMax: 1.1, lineColor: '#7dffce' }, 'glow', 'aurora'],
+    ['Nebula', { seed: 2718, waveMode: 'radial', stepsPerLine: 2400, curlStrength: 2, particleCount: 10000, clustering: 0.5, opacity: 11, lineColor: '#b78cff' }, 'dream', 'nebula'],
+    ['Lava', { seed: 60606, flowDirection: 'diagonal', waveMode: 'chaos', stepsPerLine: 1800, stepLength: 1.6, noiseFreq: 0.0016, curlStrength: 4.5, particleCount: 15000, opacity: 10, lineColor: '#ff6a00' }, 'neon', 'fire'],
+    ['Abyss', { seed: 8080, stepsPerLine: 2600, noiseFreq: 0.0005, curlStrength: 1.2, particleCount: 11000, clustering: 0.3, opacity: 10, lineColor: '#2ea6ff' }, 'glow', 'ocean'],
+    ['Sakura', { seed: 410, flowDirection: 'down', stepsPerLine: 900, stepLength: 2.2, noiseFreq: 0.0009, curlStrength: 2.5, particleCount: 12000, opacity: 15, lineWidthMin: 0.4, lineWidthMax: 1.0, lineColor: '#ffb7d5' }, 'dream', 'sakura'],
+    ['Ink', { seed: 1357, waveMode: 'ridge', stepsPerLine: 2400, noiseFreq: 0.0008, curlStrength: 3, particleCount: 8000, clustering: 0.15, opacity: 18, lineWidthMin: 0.8, lineWidthMax: 2.4, lineColor: '#d8d8d8' }, 'normal', 'ink'],
+    ['Neon Rain', { seed: 2049, flowDirection: 'down', waveMode: 'chaos', stepsPerLine: 700, stepLength: 4.5, noiseFreq: 0.0016, curlStrength: 4, particleCount: 16000, opacity: 12, lineColor: '#39e6ff' }, 'neon', 'neon'],
+    ['Solar', { seed: 777, waveMode: 'vortex', stepsPerLine: 2600, stepLength: 1.2, noiseFreq: 0.0012, curlStrength: 7, particleCount: 9000, opacity: 11, lineColor: '#ffd23e' }, 'glow', 'fire'],
+    ['Glacier', { seed: 1123, stepsPerLine: 3000, noiseFreq: 0.0003, curlStrength: 0.9, particleCount: 9000, opacity: 9, lineWidthMin: 0.4, lineWidthMax: 1.2, lineColor: '#bfe9ff' }, 'dream', 'ice'],
+    ['Forest', { seed: 5150, waveMode: 'ridge', stepsPerLine: 2200, noiseFreq: 0.0007, curlStrength: 2.6, particleCount: 10000, clustering: 0.25, opacity: 12, lineColor: '#57d977' }, 'normal', 'forest'],
+    ['Ultraviolet', { seed: 666, waveMode: 'chaos', stepsPerLine: 1800, noiseFreq: 0.0016, curlStrength: 4.5, particleCount: 15000, opacity: 9, lineColor: '#8a2be2' }, 'psyche', 'ultraviolet'],
+    ['Gold Thread', { seed: 8888, flowDirection: 'diagonal', waveMode: 'ridge', stepsPerLine: 2600, noiseFreq: 0.0008, curlStrength: 3, particleCount: 7000, opacity: 20, lineWidthMin: 0.3, lineWidthMax: 0.7, lineColor: '#e8c268' }, 'glow', 'gold'],
+    ['Whiteout', { seed: 2024, stepsPerLine: 2200, curlStrength: 1.8, particleCount: 8000, opacity: 14, lineColor: '#161616', colorInvert: true }, 'normal', 'charcoal'],
+    ['Crimson', { seed: 999, waveMode: 'vortex', stepsPerLine: 2600, noiseFreq: 0.0012, curlStrength: 8, particleCount: 9500, opacity: 11, lineColor: '#ff2244' }, 'neon', 'crimson'],
+    ['Moss', { seed: 3141, stepsPerLine: 1500, noiseFreq: 0.0009, curlStrength: 2.2, particleCount: 13000, clustering: 0.7, opacity: 13, lineColor: '#7fae4c' }, 'normal', 'forest'],
+    ['Thunder', { seed: 451, waveMode: 'chaos', stepsPerLine: 900, stepLength: 2.8, noiseFreq: 0.002, curlStrength: 9, particleCount: 14000, opacity: 12, lineColor: '#e8f4ff' }, 'glow', 'storm'],
+    ['Pastel', { seed: 7777, stepsPerLine: 3400, stepLength: 0.9, noiseFreq: 0.0004, curlStrength: 1.4, particleCount: 6000, opacity: 8, lineWidthMin: 0.6, lineWidthMax: 1.8, lineColor: '#ffd7f2' }, 'dream', 'pastel'],
+    ['Dense Ink', { seed: 4242, stepsPerLine: 4000, particleCount: 30000, opacity: 6, lineColor: '#ffffff' }, 'normal', 'ink']
+  ];
+
+  /* ---------------- Palettes ---------------- */
+  var PALETTES = {
+    rainbow: ['#ff004c', '#ff8a00', '#ffee00', '#00c853', '#0091ea', '#aa00ff'],
+    sunset: ['#ff5e62', '#ff9966', '#ffcc70', '#ff6e7f'],
+    ocean: ['#023e8a', '#0077b6', '#00b4d8', '#90e0ef', '#48cae4'],
+    fire: ['#ffba08', '#faa307', '#f48c06', '#e85d04', '#dc2f02', '#9d0208'],
+    ice: ['#caf0f8', '#ade8f4', '#90e0ef', '#48cae4', '#0077b6'],
+    sakura: ['#ffc2d4', '#ffb3c6', '#ff8fa3', '#fff0f3', '#ffe5ec'],
+    neon: ['#39ff14', '#00f5d4', '#00bbf9', '#f15bb5', '#fee440'],
+    pastel: ['#ffcbf2', '#f3c4fb', '#ecbcfd', '#d0a2f7', '#a2d2ff'],
+    forest: ['#40916c', '#74c69d', '#b7e4c7', '#2d6a4f'],
+    gold: ['#bf953f', '#fcf6ba', '#b38728', '#fbf5b7', '#aa771c'],
+    ink: ['#f5f5f5', '#d4d4d4', '#a3a3a3', '#e5e5e5'],
+    charcoal: ['#161616', '#3a3a3a', '#5a5a5a', '#2a2a2a'],
+    aurora: ['#72ffce', '#4ade80', '#22d3ee', '#a78bfa', '#f0abfc'],
+    nebula: ['#5a189a', '#9d4edd', '#ff70a6', '#ffd670', '#70d6ff'],
+    ultraviolet: ['#3a0ca3', '#7209b7', '#b5179e', '#f72585', '#4cc9f0'],
+    crimson: ['#590d22', '#a4133c', '#ff4d6d', '#ff758f', '#ffb3c1'],
+    storm: ['#e0fbfc', '#98c1d9', '#5c7cfa', '#3d5a80', '#293241']
+  };
+  function hexRgb(hex) { return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)]; }
+  function samplePalette(stops, t) {
+    var rgbs = stops.map(hexRgb);
+    var pos = ((t % 1) + 1) % 1 * rgbs.length;
+    var i = Math.floor(pos) % rgbs.length;
+    var f = pos - Math.floor(pos);
+    var a = rgbs[i], b = rgbs[(i + 1) % rgbs.length];
+    var c = a.map(function (v, k) { return Math.round(v + (b[k] - v) * f); });
+    return '#' + c.map(function (v) { return v.toString(16).padStart(2, '0'); }).join('');
+  }
+
+  var pal = { on: false, name: 'sunset', dur: 18, phase: 0, timer: 0, lastHex: '', style: 'smooth' };
+  var lineColorInput = $('lineColorInput');
+  function palTick() {
+    pal.phase += 90 / (pal.dur * 1000);
+    var t = pal.phase;
+    var n = PALETTES[pal.name].length;
+    if (pal.style === 'steps') t = Math.floor((t % 1) * n) / n + 0.0001;
+    else if (pal.style === 'pingpong') { var u = t % 2; t = u < 1 ? u : 2 - u; }
+    else if (pal.style === 'reverse') t = 1 - (t % 1);
+    var hex = samplePalette(PALETTES[pal.name], t);
+    var dot = $('lxPalNow');
+    if (dot) dot.style.background = hex;
+    if (hex === pal.lastHex) return;
+    pal.lastHex = hex;
+    window.__lienPaletteActive = true;
+    try {
+      lineColorInput.value = hex;
+      lineColorInput.dispatchEvent(new Event('input', { bubbles: true }));
+    } finally { window.__lienPaletteActive = false; }
+  }
+  function startPalette() {
+    if (pal.on) return;
+    pal.on = true;
+    pal.timer = window.setInterval(palTick, 90);
+    var btn = $('lxPalToggle');
+    if (btn) btn.textContent = 'Stop';
+    persist();
+  }
+  function stopPalette() {
+    if (!pal.on) return;
+    pal.on = false;
+    window.clearInterval(pal.timer);
+    var btn = $('lxPalToggle');
+    if (btn) btn.textContent = 'Start';
+    persist();
+  }
+  function selectPalette(name) {
+    if (!PALETTES[name]) return;
+    pal.name = name;
+    pal.lastHex = '';
+    document.querySelectorAll('#lxPalRow [data-pal]').forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-pal') === name);
+    });
+    persist();
+  }
+  if (lineColorInput) lineColorInput.addEventListener('pointerdown', function () { if (pal.on) { stopPalette(); toast('Palette Flow stopped (manual colour)'); } });
+
+  /* ---------------- FX overlay canvas ---------------- */
+  var fxCanvas = document.createElement('canvas');
+  fxCanvas.id = 'lienFxCanvas';
+  var exportOverlay = $('exportOverlay');
+  wrapper.insertBefore(fxCanvas, exportOverlay);
+  var fxCtx = fxCanvas.getContext('2d');
+  var ghost = document.createElement('canvas');
+  var ghostCtx = ghost.getContext('2d');
+  var small = document.createElement('canvas');
+  var smallCtx = small.getContext('2d', { willReadFrequently: true });
+  var fx = { mode: 'off', strength: 0.55, raf: 0, scale: 1.25, frames: 0, slowAvg: 16, invert: false, invTick: 0, krot: 0 };
+  var GHOST_MODES = ['trails', 'flow', 'drip', 'swirl', 'echo'];
+  var customFx = {}; /* plus3 registers extra modes: fn(ctx, srcCanvas, W, H, frame) */
+  function fxActive() { return fx.mode !== 'off'; }
+  function fxResize() {
+    var w = Math.max(1, Math.round(viewCanvas.clientWidth * fx.scale));
+    var h = Math.max(1, Math.round(viewCanvas.clientHeight * fx.scale));
+    if (fxCanvas.width !== w || fxCanvas.height !== h) { fxCanvas.width = w; fxCanvas.height = h; ghost.width = w; ghost.height = h; }
+  }
+  if (window.ResizeObserver) new window.ResizeObserver(function () { if (fxActive()) fxResize(); }).observe(wrapper);
+
+  function copyGhost(W, H) {
+    ghostCtx.globalCompositeOperation = 'source-over';
+    ghostCtx.globalAlpha = 1;
+    ghostCtx.setTransform(1, 0, 0, 1, 0, 0);
+    ghostCtx.clearRect(0, 0, W, H);
+    ghostCtx.drawImage(fxCanvas, 0, 0);
+  }
+  function drawGhost(W, H) {
+    fxCtx.save();
+    fxCtx.globalAlpha = fx.strength;
+    fxCtx.globalCompositeOperation = fx.invert ? 'multiply' : 'screen';
+    var cx = W / 2, cy = H / 2;
+    if (fx.mode === 'flow') fxCtx.translate(-W * 0.004, H * 0.002);
+    if (fx.mode === 'drip') { fxCtx.translate(0, H * 0.006); fxCtx.filter = 'blur(1px)'; }
+    if (fx.mode === 'swirl') { fxCtx.translate(cx, cy); fxCtx.rotate(0.02); fxCtx.scale(0.998, 0.998); fxCtx.translate(-cx, -cy); }
+    if (fx.mode === 'echo') { fxCtx.translate(cx, cy); fxCtx.scale(1.025, 1.025); fxCtx.translate(-cx, -cy); }
+    fxCtx.drawImage(ghost, 0, 0);
+    fxCtx.restore();
+  }
+  function drawQuad(qx, qy, W, H, flipX, flipY) {
+    fxCtx.save();
+    fxCtx.translate(qx + W / 4, qy + H / 4);
+    fxCtx.scale(flipX ? -0.5 : 0.5, flipY ? -0.5 : 0.5);
+    fxCtx.drawImage(viewCanvas, -W / 2, -H / 2, W, H);
+    fxCtx.restore();
+  }
+  function fxFrame(ts) {
+    if (!fxActive()) return;
+    var t0 = performance.now();
+    fxResize();
+    var W = fxCanvas.width, H = fxCanvas.height;
+    if ((fx.invTick++ & 31) === 0) { try { fx.invert = !!LP.currentConfig().colorInvert; } catch (e) { /* ignore */ } }
+    fxCtx.setTransform(1, 0, 0, 1, 0, 0);
+    fxCtx.globalAlpha = 1;
+    fxCtx.globalCompositeOperation = 'source-over';
+    fxCtx.filter = 'none';
+    var mode = fx.mode;
+    if (customFx[mode]) {
+      try { customFx[mode](fxCtx, viewCanvas, W, H, fx.frames); } catch (e) { /* ignore */ }
+    } else if (GHOST_MODES.indexOf(mode) >= 0) {
+      copyGhost(W, H); /* previous output, before this frame overwrites it */
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      drawGhost(W, H);
+    } else if (mode === 'mirrorx') {
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      fxCtx.save();
+      fxCtx.beginPath(); fxCtx.rect(W / 2, 0, W / 2, H); fxCtx.clip();
+      fxCtx.translate(W, 0); fxCtx.scale(-1, 1);
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      fxCtx.restore();
+    } else if (mode === 'mirrory') {
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      fxCtx.save();
+      fxCtx.beginPath(); fxCtx.rect(0, H / 2, W, H / 2); fxCtx.clip();
+      fxCtx.translate(0, H); fxCtx.scale(1, -1);
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      fxCtx.restore();
+    } else if (mode === 'quad') {
+      fxCtx.clearRect(0, 0, W, H);
+      drawQuad(0, 0, W, H, false, false);
+      drawQuad(W / 2, 0, W, H, true, false);
+      drawQuad(0, H / 2, W, H, false, true);
+      drawQuad(W / 2, H / 2, W, H, true, true);
+    } else if (mode === 'kaleid6' || mode === 'kaleid12') {
+      var N = mode === 'kaleid6' ? 6 : 12;
+      var seg = (Math.PI * 2) / N;
+      var R = Math.hypot(W, H) / 2;
+      fxCtx.clearRect(0, 0, W, H);
+      fxCtx.fillStyle = fx.invert ? '#ffffff' : '#000000';
+      fxCtx.fillRect(0, 0, W, H);
+      fx.krot += 0.0007; /* the mandala itself slowly turns */
+      for (var i = 0; i < N; i++) {
+        fxCtx.save();
+        fxCtx.translate(W / 2, H / 2);
+        fxCtx.rotate(fx.krot + i * seg);
+        if (i % 2 === 1) fxCtx.scale(1, -1);
+        fxCtx.beginPath();
+        fxCtx.moveTo(0, 0);
+        fxCtx.arc(0, 0, R, -seg / 2, seg / 2);
+        fxCtx.closePath();
+        fxCtx.clip();
+        fxCtx.drawImage(viewCanvas, -W / 2, -H / 2, W, H);
+        fxCtx.restore();
+      }
+    } else if (mode === 'chroma') {
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      fxCtx.save();
+      fxCtx.globalCompositeOperation = fx.invert ? 'multiply' : 'screen';
+      fxCtx.globalAlpha = 0.45;
+      fxCtx.filter = 'saturate(1.8) hue-rotate(-28deg)';
+      fxCtx.drawImage(viewCanvas, -3, 0, W, H);
+      fxCtx.filter = 'saturate(1.8) hue-rotate(28deg)';
+      fxCtx.drawImage(viewCanvas, 3, 0, W, H);
+      fxCtx.restore();
+    } else if (mode === 'bloom') {
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      fxCtx.save();
+      fxCtx.filter = 'blur(10px)';
+      fxCtx.globalCompositeOperation = fx.invert ? 'multiply' : 'screen';
+      fxCtx.globalAlpha = 0.3 + fx.strength * 0.5;
+      fxCtx.drawImage(viewCanvas, 0, 0, W, H);
+      fxCtx.restore();
+    } else if (mode === 'pixel') {
+      var pix = Math.round(6 + fx.strength * 22);
+      var pw = Math.max(2, Math.ceil(W / pix)), ph = Math.max(2, Math.ceil(H / pix));
+      small.width = pw; small.height = ph;
+      smallCtx.drawImage(viewCanvas, 0, 0, pw, ph);
+      fxCtx.imageSmoothingEnabled = false;
+      fxCtx.clearRect(0, 0, W, H);
+      fxCtx.drawImage(small, 0, 0, W, H);
+      fxCtx.imageSmoothingEnabled = true;
+    } else if (mode === 'poster') {
+      var scale = Math.min(1, 512 / W);
+      var ow = Math.max(2, Math.round(W * scale)), oh = Math.max(2, Math.round(H * scale));
+      small.width = ow; small.height = oh;
+      smallCtx.drawImage(viewCanvas, 0, 0, ow, oh);
+      try {
+        var img = smallCtx.getImageData(0, 0, ow, oh);
+        var d = img.data;
+        var levels = 3 + Math.round(fx.strength * 4);
+        var step = 255 / (levels - 1);
+        for (var p = 0; p < d.length; p += 4) {
+          d[p] = Math.round(d[p] / step) * step;
+          d[p + 1] = Math.round(d[p + 1] / step) * step;
+          d[p + 2] = Math.round(d[p + 2] / step) * step;
+        }
+        smallCtx.putImageData(img, 0, 0);
+        fxCtx.clearRect(0, 0, W, H);
+        fxCtx.drawImage(small, 0, 0, W, H);
+      } catch (e) { fxCtx.drawImage(viewCanvas, 0, 0, W, H); }
+    }
+    var dt = performance.now() - t0;
+    fx.slowAvg = fx.slowAvg * 0.92 + dt * 0.08;
+    if (++fx.frames % 90 === 0 && fx.slowAvg > 34 && fx.scale > 0.6) {
+      fx.scale = Math.max(0.6, fx.scale - 0.25);
+      fxCanvas.width = 1; /* force resize next frame */
+    }
+    fx.raf = window.requestAnimationFrame(fxFrame);
+  }
+  function setFx(mode) {
+    fx.mode = mode;
+    document.querySelectorAll('#lxFxRow [data-fx]').forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-fx') === mode);
+    });
+    if (fxActive()) {
+      document.body.classList.add('lien-fx-on');
+      viewCanvas.style.visibility = 'hidden';
+      fxResize();
+      ghostCtx && ghostCtx.clearRect(0, 0, ghost.width, ghost.height);
+      window.cancelAnimationFrame(fx.raf);
+      fx.raf = window.requestAnimationFrame(fxFrame);
+    } else {
+      document.body.classList.remove('lien-fx-on');
+      viewCanvas.style.visibility = '';
+      window.cancelAnimationFrame(fx.raf);
+    }
+    applyWobbleTarget();
+    persist();
+    if (mode !== 'off') toast('FX: ' + mode);
+  }
+
+  /* ---------------- overlay layers ---------------- */
+  function makeLayer(id) {
+    var el = document.createElement('div');
+    el.id = id;
+    el.className = 'lien-fx-layer';
+    wrapper.insertBefore(el, exportOverlay);
+    return el;
+  }
+  var tintLayer = makeLayer('lienTintLayer');
+  var grainLayer = makeLayer('lienGrainLayer');
+  var vigLayer = makeLayer('lienVigLayer');
+  var scanLayer = makeLayer('lienScanLayer');
+  var TINTS = {
+    none: '',
+    sunset: 'linear-gradient(160deg, rgba(255,94,58,0.55), rgba(255,190,80,0.25) 45%, rgba(64,0,128,0.5))',
+    ocean: 'linear-gradient(180deg, rgba(0,60,120,0.5), rgba(0,180,200,0.22), rgba(0,20,60,0.55))',
+    rose: 'linear-gradient(150deg, rgba(255,120,180,0.4), rgba(140,60,200,0.3), rgba(40,0,60,0.5))',
+    gold: 'linear-gradient(150deg, rgba(120,72,0,0.45), rgba(255,214,120,0.22), rgba(60,36,0,0.5))'
+  };
+  var tintName = 'none';
+  function setTint(name) {
+    tintName = TINTS[name] !== undefined ? name : 'none';
+    tintLayer.style.background = TINTS[tintName];
+    tintLayer.classList.toggle('on', tintName !== 'none');
+    document.querySelectorAll('#lxTintRow [data-tint]').forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-tint') === tintName);
+    });
+    persist();
+  }
+  function setLayerToggle(el, on) { el.classList.toggle('on', !!on); }
+
+  /* ---------------- motion + wobble ---------------- */
+  var motion = 'off';
+  function setMotion(name) {
+    motion = name;
+    [viewCanvas, fxCanvas].forEach(function (c) {
+      c.classList.remove('lx-spin', 'lx-breathe');
+      c.style.transform = '';
+      if (name === 'spin') c.classList.add('lx-spin');
+      if (name === 'breathe') c.classList.add('lx-breathe');
+    });
+    document.querySelectorAll('#lxMotionRow [data-motion]').forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-motion') === name);
+    });
+    persist();
+  }
+  wrapper.addEventListener('mousemove', function (e) {
+    if (motion !== 'tilt') return;
+    var r = wrapper.getBoundingClientRect();
+    var dx = (e.clientX - r.left) / r.width - 0.5;
+    var dy = (e.clientY - r.top) / r.height - 0.5;
+    var t = 'perspective(1100px) rotateX(' + (-dy * 7).toFixed(2) + 'deg) rotateY(' + (dx * 7).toFixed(2) + 'deg)';
+    viewCanvas.style.transform = t;
+    fxCanvas.style.transform = t;
+  });
+  wrapper.addEventListener('mouseleave', function () {
+    if (motion !== 'tilt') return;
+    viewCanvas.style.transform = '';
+    fxCanvas.style.transform = '';
+  });
+
+  var wobbleSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  wobbleSvg.setAttribute('width', '0'); wobbleSvg.setAttribute('height', '0');
+  wobbleSvg.style.position = 'absolute';
+  wobbleSvg.innerHTML = '<defs><filter id="lx-wobble-filter" x="-5%" y="-5%" width="110%" height="110%">' +
+    '<feTurbulence id="lx-turb" type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="n" />' +
+    '<feDisplacementMap in="SourceGraphic" in2="n" scale="7" /></filter></defs>';
+  document.body.appendChild(wobbleSvg);
+  var wobble = { on: false, timer: 0 };
+  function applyWobbleTarget() {
+    [viewCanvas, fxCanvas].forEach(function (c) { if (c.style.filter.indexOf('lx-wobble') >= 0) c.style.filter = ''; });
+    if (!wobble.on) return;
+    var target = fxActive() ? fxCanvas : viewCanvas;
+    target.style.filter = 'url("#lx-wobble-filter")';
+  }
+  function setWobble(on) {
+    wobble.on = !!on;
+    window.clearInterval(wobble.timer);
+    if (wobble.on) {
+      LP.setTexture('normal', true);
+      var turb = $('lx-turb');
+      var t0 = Date.now();
+      wobble.timer = window.setInterval(function () {
+        var t = (Date.now() - t0) / 1000;
+        if (turb) turb.setAttribute('baseFrequency', (0.012 + 0.004 * Math.sin(t * 0.7)).toFixed(4) + ' ' + (0.016 + 0.005 * Math.cos(t * 0.55)).toFixed(4));
+      }, 120);
+    }
+    applyWobbleTarget();
+    var chk = $('lxWobble');
+    if (chk) chk.checked = wobble.on;
+    persist();
+  }
+
+  /* ---------------- persistence ---------------- */
+  var EXPR_KEY = 'lien.expr.v1';
+  var booted = false; /* persist() stays silent until restore() has read the saved state */
+  function persist() {
+    if (!booted) return;
+    try {
+      window.localStorage.setItem(EXPR_KEY, JSON.stringify({
+        fx: fx.mode, strength: fx.strength, tint: tintName,
+        grain: grainLayer.classList.contains('on'), vig: vigLayer.classList.contains('on'), scan: scanLayer.classList.contains('on'),
+        motion: motion, wobble: wobble.on,
+        palName: pal.name, palDur: pal.dur, palOn: pal.on, flowStyle: pal.style
+      }));
+    } catch (e) { /* ignore */ }
+  }
+  function restore() {
+    var s = null;
+    try { s = JSON.parse(window.localStorage.getItem(EXPR_KEY) || 'null'); } catch (e) { /* ignore */ }
+    if (!s) return;
+    if (typeof s.strength === 'number') { fx.strength = s.strength; var r = $('lxFxStrength'); if (r) r.value = String(s.strength); }
+    if (s.palName) { selectPalette(s.palName); }
+    if (typeof s.palDur === 'number') { pal.dur = s.palDur; var pr = $('lxPalSpeed'); if (pr) pr.value = String(s.palDur); var pl = $('lxPalSpeedVal'); if (pl) pl.textContent = s.palDur + 's'; }
+    if (s.tint) setTint(s.tint);
+    if (s.grain) { setLayerToggle(grainLayer, true); var g = $('lxGrain'); if (g) g.checked = true; }
+    if (s.vig) { setLayerToggle(vigLayer, true); var v = $('lxVig'); if (v) v.checked = true; }
+    if (s.scan) { setLayerToggle(scanLayer, true); var sc = $('lxScan'); if (sc) sc.checked = true; }
+    if (s.motion) setMotion(s.motion);
+    if (s.wobble) setWobble(true);
+    if (s.flowStyle) pal.style = s.flowStyle;
+    if (s.fx && s.fx !== 'off') setFx(s.fx);
+    if (s.palOn) startPalette();
+  }
+  function setFlowStyle(name) {
+    if (['smooth', 'steps', 'pingpong', 'reverse'].indexOf(name) < 0) return;
+    pal.style = name;
+    pal.lastHex = '';
+    persist();
+  }
+  function registerPalette(name, stops) {
+    if (!stops || stops.length < 2) return false;
+    PALETTES[name] = stops.slice(0, 10);
+    var row = $('lxPalRow');
+    if (row && !row.querySelector('[data-pal="' + name + '"]')) {
+      var b = document.createElement('button');
+      b.className = 'option-button';
+      b.type = 'button';
+      b.setAttribute('data-pal', name);
+      b.textContent = name;
+      b.addEventListener('click', function () { selectPalette(name); if (!pal.on) startPalette(); });
+      row.appendChild(b);
+    }
+    return true;
+  }
+  window.addEventListener('lien:image-palette', function (e) {
+    if (e.detail && e.detail.length >= 2 && registerPalette('image', e.detail)) {
+      toast('Image palette ready — see Palette Flow');
+    }
+  });
+
+  /* ---------------- UI ---------------- */
+  var section = document.createElement('section');
+  section.className = 'group';
+  section.id = 'lienExprSection';
+  section.innerHTML =
+    '<h3 class="group-title">Expression</h3>' +
+    '<div class="lp-sub"><div class="small-label">Plus Presets (config + texture + palette)</div>' +
+    '<div class="option-row lx-presets" id="lxPresetRow">' +
+    PRESETS.map(function (p) { return '<button class="option-button" data-expr-preset="' + p[0] + '" type="button">' + p[0] + '</button>'; }).join('') +
+    '</div></div>' +
+    '<div class="lp-sub"><div class="small-label">Palette Flow — colour bands while it grows</div>' +
+    '<div class="option-row" id="lxPalRow">' +
+    Object.keys(PALETTES).map(function (k) { return '<button class="option-button" data-pal="' + k + '" type="button">' + k + '</button>'; }).join('') +
+    '</div><div class="lp-row"><button class="mini-btn" id="lxPalToggle" type="button">Start</button>' +
+    '<span id="lxPalNow"></span>' +
+    '<span class="lx-inline">Cycle <input class="lx-range" id="lxPalSpeed" type="range" min="4" max="60" step="1" value="18" /><span id="lxPalSpeedVal">18s</span></span></div>' +
+    '<div class="small-label" style="margin-top:4px;">Bands live in the artwork itself. Snapshots keep them; high-res re-render export flattens to one colour.</div></div>' +
+    '<div class="lp-sub"><div class="small-label">FX — feedback / mirror / post (live layer)</div>' +
+    '<div class="option-row" id="lxFxRow">' +
+    ['off', 'trails', 'flow', 'drip', 'swirl', 'echo', 'mirrorx', 'mirrory', 'quad', 'kaleid6', 'kaleid12', 'chroma', 'bloom', 'pixel', 'poster'].map(function (m) {
+      return '<button class="option-button" data-fx="' + m + '" type="button">' + m + '</button>';
+    }).join('') +
+    '</div><div class="lp-row"><span class="lx-inline">Strength <input class="lx-range" id="lxFxStrength" type="range" min="0" max="1" step="0.05" value="0.55" /></span>' +
+    '<button class="mini-btn" id="lxFxSnap" type="button">FX Snapshot PNG</button></div></div>' +
+    '<div class="lp-sub"><div class="small-label">Overlays</div>' +
+    '<div class="option-row" id="lxTintRow">' +
+    Object.keys(TINTS).map(function (k) { return '<button class="option-button" data-tint="' + k + '" type="button">' + k + '</button>'; }).join('') +
+    '</div>' +
+    '<label class="checkbox-row" for="lxGrain"><span>Film grain</span><input id="lxGrain" class="checkbox-input" type="checkbox" /></label>' +
+    '<label class="checkbox-row" for="lxVig"><span>Vignette</span><input id="lxVig" class="checkbox-input" type="checkbox" /></label>' +
+    '<label class="checkbox-row" for="lxScan"><span>Scanlines</span><input id="lxScan" class="checkbox-input" type="checkbox" /></label></div>' +
+    '<div class="lp-sub"><div class="small-label">Motion &amp; Distortion</div>' +
+    '<div class="option-row" id="lxMotionRow">' +
+    ['off', 'spin', 'breathe', 'tilt'].map(function (m) { return '<button class="option-button" data-motion="' + m + '" type="button">' + m + '</button>'; }).join('') +
+    '</div>' +
+    '<label class="checkbox-row" for="lxWobble"><span>Wobble (turbulence displacement)</span><input id="lxWobble" class="checkbox-input" type="checkbox" /></label></div>';
+  panelBody.appendChild(section);
+
+  section.querySelectorAll('[data-expr-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var name = b.getAttribute('data-expr-preset');
+      var found = PRESETS.filter(function (p) { return p[0] === name; })[0];
+      if (!found) return;
+      var cfg = {};
+      for (var k in BASE) cfg[k] = BASE[k];
+      for (var k2 in found[1]) cfg[k2] = found[1][k2];
+      LP.applyFull(cfg);
+      LP.setTexture(found[2], true);
+      if (found[3]) { selectPalette(found[3]); startPalette(); } else { stopPalette(); }
+      toast('Preset: ' + name);
+    });
+  });
+  section.querySelectorAll('#lxPalRow [data-pal]').forEach(function (b) {
+    b.addEventListener('click', function () { selectPalette(b.getAttribute('data-pal')); if (!pal.on) startPalette(); });
+  });
+  $('lxPalToggle').addEventListener('click', function () { pal.on ? stopPalette() : startPalette(); });
+  $('lxPalSpeed').addEventListener('input', function (e) {
+    pal.dur = parseFloat(e.target.value);
+    $('lxPalSpeedVal').textContent = pal.dur + 's';
+    persist();
+  });
+  section.querySelectorAll('#lxFxRow [data-fx]').forEach(function (b) {
+    b.addEventListener('click', function () { setFx(b.getAttribute('data-fx')); });
+  });
+  $('lxFxStrength').addEventListener('input', function (e) { fx.strength = parseFloat(e.target.value); persist(); });
+  $('lxFxSnap').addEventListener('click', function () {
+    var src = fxActive() ? fxCanvas : viewCanvas;
+    src.toBlob(function (blob) {
+      if (!blob) { toast('Snapshot failed'); return; }
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'lien-fx-' + fx.mode + '-' + Date.now() + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      window.setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      toast('FX snapshot saved (with live layers)');
+    }, 'image/png');
+  });
+  section.querySelectorAll('#lxTintRow [data-tint]').forEach(function (b) {
+    b.addEventListener('click', function () { setTint(b.getAttribute('data-tint')); });
+  });
+  $('lxGrain').addEventListener('change', function (e) { setLayerToggle(grainLayer, e.target.checked); persist(); });
+  $('lxVig').addEventListener('change', function (e) { setLayerToggle(vigLayer, e.target.checked); persist(); });
+  $('lxScan').addEventListener('change', function (e) { setLayerToggle(scanLayer, e.target.checked); persist(); });
+  section.querySelectorAll('#lxMotionRow [data-motion]').forEach(function (b) {
+    b.addEventListener('click', function () { setMotion(b.getAttribute('data-motion')); });
+  });
+  $('lxWobble').addEventListener('change', function (e) { setWobble(e.target.checked); });
+
+  selectPalette('sunset');
+  restore();
+  booted = true;
+  persist();
+  window.__lienExpr = {
+    setFx: setFx, startPalette: startPalette, stopPalette: stopPalette, selectPalette: selectPalette,
+    setTint: setTint, setMotion: setMotion, setWobble: setWobble,
+    setFlowStyle: setFlowStyle, registerPalette: registerPalette,
+    registerFx: function (name, fn) { customFx[name] = fn; },
+    hasFx: function (name) { return !!customFx[name]; },
+    paletteState: function () { return { on: pal.on, name: pal.name, dur: pal.dur, style: pal.style }; },
+    fxState: function () { return { mode: fx.mode, strength: fx.strength, scale: fx.scale, slowAvg: fx.slowAvg }; },
+    version: 2
+  };
+})();
+  </script>
+  <script id="lien-expr2-script">
+/* ==== Lien Expression II (additive): the second wave.
+   Registers 16 more FX modes into the Expression engine (gradient maps,
+   solarize, threshold, edge, halftone, ASCII, difference-mirror, tunnel,
+   rise, panel compositions), palette flow styles, gallery framing,
+   WebM recording of the live canvas, a surprise dice, and 10 scene
+   presets that compose everything. ==== */
+(function () {
+  'use strict';
+  var LP = window.__lienPlus;
+  var EX = window.__lienExpr;
+  if (!LP || !EX) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var viewCanvas = $('viewCanvas');
+  var wrapper = $('wrapper');
+  var exportOverlay = $('exportOverlay');
+  var section = $('lienExprSection');
+  if (!viewCanvas || !wrapper || !section) return;
+  var toast = LP.toast;
+
+  var invCache = { t: 0, v: false };
+  function isInvert() {
+    var now = performance.now();
+    if (now - invCache.t > 500) { try { invCache = { t: now, v: !!LP.currentConfig().colorInvert }; } catch (e) { /* ignore */ } }
+    return invCache.v;
+  }
+  function strength() { return EX.fxState().strength; }
+
+  /* ---------------- pixel pipeline ---------------- */
+  var work = document.createElement('canvas');
+  var wctx = work.getContext('2d', { willReadFrequently: true });
+  function processPixels(ctx, src, W, H, fn) {
+    var ow = Math.min(W, 560);
+    var oh = Math.max(2, Math.round(H * ow / W));
+    work.width = ow; work.height = oh;
+    wctx.drawImage(src, 0, 0, ow, oh);
+    var img;
+    try { img = wctx.getImageData(0, 0, ow, oh); } catch (e) { ctx.drawImage(src, 0, 0, W, H); return; }
+    fn(img.data, ow, oh);
+    wctx.putImageData(img, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(work, 0, 0, W, H);
+  }
+  function buildLut(stops) {
+    var lut = new Uint8Array(256 * 3);
+    for (var v = 0; v < 256; v++) {
+      var t = v / 255;
+      var a = stops[0], b = stops[stops.length - 1];
+      for (var i = 0; i < stops.length - 1; i++) {
+        if (t >= stops[i][0] && t <= stops[i + 1][0]) { a = stops[i]; b = stops[i + 1]; break; }
+      }
+      var f = (t - a[0]) / Math.max(0.0001, b[0] - a[0]);
+      for (var k = 0; k < 3; k++) lut[v * 3 + k] = Math.round(a[1][k] + (b[1][k] - a[1][k]) * f);
+    }
+    return lut;
+  }
+  var LUTS = {
+    gfire: buildLut([[0, [0, 0, 0]], [0.25, [128, 0, 64]], [0.5, [255, 60, 0]], [0.75, [255, 180, 0]], [1, [255, 255, 240]]]),
+    gice: buildLut([[0, [2, 10, 30]], [0.35, [0, 60, 120]], [0.65, [0, 160, 220]], [1, [230, 250, 255]]]),
+    gviridis: buildLut([[0, [68, 1, 84]], [0.25, [59, 82, 139]], [0.5, [33, 145, 140]], [0.75, [94, 201, 98]], [1, [253, 231, 37]]]),
+    gsunset: buildLut([[0, [20, 0, 40]], [0.3, [120, 20, 90]], [0.55, [240, 80, 60]], [0.8, [255, 170, 80]], [1, [255, 240, 200]]]),
+    gmiami: buildLut([[0, [0, 40, 50]], [0.5, [0, 180, 200]], [0.78, [255, 0, 160]], [1, [255, 230, 250]]]),
+    ggold: buildLut([[0, [10, 5, 0]], [0.4, [90, 55, 10]], [0.7, [200, 150, 50]], [1, [255, 250, 220]]])
+  };
+  var GAMMA = new Uint8Array(256); /* Lien art is dim: lift mids so maps use their full range */
+  for (var gv = 0; gv < 256; gv++) GAMMA[gv] = Math.round(255 * Math.pow(gv / 255, 0.72));
+  Object.keys(LUTS).forEach(function (name) {
+    var lut = LUTS[name];
+    EX.registerFx(name, function (ctx, src, W, H) {
+      processPixels(ctx, src, W, H, function (d) {
+        for (var i = 0; i < d.length; i += 4) {
+          var lum = GAMMA[(d[i] * 0.2126 + d[i + 1] * 0.7152 + d[i + 2] * 0.0722) | 0];
+          var o = lum * 3;
+          d[i] = lut[o]; d[i + 1] = lut[o + 1]; d[i + 2] = lut[o + 2];
+        }
+      });
+    });
+  });
+  EX.registerFx('solar', function (ctx, src, W, H) {
+    processPixels(ctx, src, W, H, function (d) {
+      for (var i = 0; i < d.length; i += 4) {
+        for (var k = 0; k < 3; k++) { var v = d[i + k]; d[i + k] = v > 127 ? 255 - v : v; }
+      }
+    });
+  });
+  EX.registerFx('thresh', function (ctx, src, W, H) {
+    var s = strength();
+    processPixels(ctx, src, W, H, function (d) {
+      /* adaptive: Lien art is dim, so anchor the cut to the frame's own histogram */
+      var hist = new Uint32Array(256);
+      var total = d.length / 4;
+      var i, lum;
+      for (i = 0; i < d.length; i += 4) hist[(d[i] * 0.2126 + d[i + 1] * 0.7152 + d[i + 2] * 0.0722) | 0]++;
+      var target = total * 0.9, acc = 0, p90 = 250;
+      for (i = 0; i < 256; i++) { acc += hist[i]; if (acc >= target) { p90 = i; break; } }
+      var t = Math.max(4, Math.min(250, p90 * (1.15 - s * 0.75)));
+      for (i = 0; i < d.length; i += 4) {
+        lum = d[i] * 0.2126 + d[i + 1] * 0.7152 + d[i + 2] * 0.0722;
+        var v = lum > t ? 255 : 0;
+        d[i] = v; d[i + 1] = v; d[i + 2] = v;
+      }
+    });
+  });
+  EX.registerFx('edge', function (ctx, src, W, H) {
+    processPixels(ctx, src, W, H, function (d, ow, oh) {
+      var lum = new Float32Array(ow * oh);
+      for (var i = 0, p = 0; i < d.length; i += 4, p++) lum[p] = d[i] * 0.2126 + d[i + 1] * 0.7152 + d[i + 2] * 0.0722;
+      for (var y = 0; y < oh; y++) {
+        for (var x = 0; x < ow; x++) {
+          var idx = y * ow + x;
+          var xm = x > 0 ? idx - 1 : idx, xp = x < ow - 1 ? idx + 1 : idx;
+          var ym = y > 0 ? idx - ow : idx, yp = y < oh - 1 ? idx + ow : idx;
+          var gx = lum[xp] - lum[xm];
+          var gy = lum[yp] - lum[ym];
+          var mag = Math.min(255, Math.sqrt(gx * gx + gy * gy) * 1.7);
+          var o = idx * 4;
+          d[o] = mag; d[o + 1] = mag; d[o + 2] = mag;
+        }
+      }
+    });
+  });
+
+  /* ---------------- grid renderers ---------------- */
+  function gridSample(src, gw, gh) {
+    work.width = gw; work.height = gh;
+    wctx.drawImage(src, 0, 0, gw, gh);
+    try { return wctx.getImageData(0, 0, gw, gh).data; } catch (e) { return null; }
+  }
+  EX.registerFx('halftone', function (ctx, src, W, H, frame) {
+    if (frame % 2 === 1) return;
+    var cell = Math.max(6, Math.round(16 - strength() * 9));
+    var gw = Math.ceil(W / cell), gh = Math.ceil(H / cell);
+    var d = gridSample(src, gw, gh);
+    if (!d) return;
+    var inv = isInvert();
+    ctx.fillStyle = inv ? '#ffffff' : '#000000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = inv ? '#000000' : '#ffffff';
+    for (var y = 0; y < gh; y++) {
+      for (var x = 0; x < gw; x++) {
+        var i = (y * gw + x) * 4;
+        var lum = (d[i] * 0.2126 + d[i + 1] * 0.7152 + d[i + 2] * 0.0722) / 255;
+        if (inv) lum = 1 - lum;
+        var r = lum * cell * 0.62;
+        if (r < 0.6) continue;
+        ctx.beginPath();
+        ctx.arc(x * cell + cell / 2, y * cell + cell / 2, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  });
+  var ASCII_CHARS = ' .·:;+*x%#@';
+  EX.registerFx('ascii', function (ctx, src, W, H, frame) {
+    if (frame % 2 === 1) return;
+    var cell = Math.max(9, Math.round(18 - strength() * 8));
+    var gw = Math.ceil(W / cell), gh = Math.ceil(H / cell);
+    var d = gridSample(src, gw, gh);
+    if (!d) return;
+    var inv = isInvert();
+    ctx.fillStyle = inv ? '#ffffff' : '#000000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = inv ? '#000000' : '#ffffff';
+    ctx.font = cell + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (var y = 0; y < gh; y++) {
+      for (var x = 0; x < gw; x++) {
+        var i = (y * gw + x) * 4;
+        var lum = (d[i] * 0.2126 + d[i + 1] * 0.7152 + d[i + 2] * 0.0722) / 255;
+        if (inv) lum = 1 - lum;
+        var ci = Math.min(ASCII_CHARS.length - 1, Math.floor(lum * ASCII_CHARS.length));
+        if (ci <= 0) continue;
+        ctx.fillText(ASCII_CHARS[ci], x * cell + cell / 2, y * cell + cell / 2);
+      }
+    }
+  });
+
+  /* ---------------- composite modes ---------------- */
+  EX.registerFx('diff', function (ctx, src, W, H) {
+    ctx.drawImage(src, 0, 0, W, H);
+    ctx.save();
+    ctx.globalCompositeOperation = 'difference';
+    ctx.translate(W, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(src, 0, 0, W, H);
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.drawImage(src, 0, 0, W, H);
+    ctx.restore();
+  });
+  function coverDraw(ctx, src, dx, dy, pw, ph, flipX, filter) {
+    var sa = src.width / src.height, pa = pw / ph;
+    var sw2, sh2, sx, sy;
+    if (sa > pa) { sh2 = src.height; sw2 = sh2 * pa; sx = (src.width - sw2) / 2; sy = 0; }
+    else { sw2 = src.width; sh2 = sw2 / pa; sx = 0; sy = (src.height - sh2) / 2; }
+    ctx.save();
+    if (filter) ctx.filter = filter;
+    if (flipX) {
+      ctx.translate(dx + pw, dy);
+      ctx.scale(-1, 1);
+      ctx.drawImage(src, sx, sy, sw2, sh2, 0, 0, pw, ph);
+    } else {
+      ctx.drawImage(src, sx, sy, sw2, sh2, dx, dy, pw, ph);
+    }
+    ctx.restore();
+  }
+  EX.registerFx('panels2', function (ctx, src, W, H) {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    var g = 6, pw = W / 2;
+    coverDraw(ctx, src, 0, 0, pw - g / 2, H, false, 'none');
+    coverDraw(ctx, src, pw + g / 2, 0, pw - g / 2, H, true, 'none');
+  });
+  EX.registerFx('panels3', function (ctx, src, W, H) {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    var g = 6, pw = W / 3;
+    coverDraw(ctx, src, 0, 0, pw - g / 2, H, false, 'none');
+    coverDraw(ctx, src, pw + g / 2, 0, pw - g, H, true, 'none');
+    coverDraw(ctx, src, 2 * pw + g / 2, 0, pw - g / 2, H, false, 'invert(1)');
+  });
+
+  /* ---------------- feedback variants (own ghost) ---------------- */
+  function makeFeedback(transform) {
+    var g = document.createElement('canvas');
+    var gx = g.getContext('2d');
+    return function (ctx, src, W, H) {
+      if (g.width !== W || g.height !== H) { g.width = W; g.height = H; }
+      gx.globalCompositeOperation = 'source-over';
+      gx.globalAlpha = 1;
+      gx.setTransform(1, 0, 0, 1, 0, 0);
+      gx.clearRect(0, 0, W, H);
+      gx.drawImage(ctx.canvas, 0, 0);
+      ctx.drawImage(src, 0, 0, W, H);
+      ctx.save();
+      ctx.globalAlpha = strength();
+      ctx.globalCompositeOperation = isInvert() ? 'multiply' : 'screen';
+      transform(ctx, W, H);
+      ctx.drawImage(g, 0, 0);
+      ctx.restore();
+    };
+  }
+  EX.registerFx('tunnel', makeFeedback(function (ctx, W, H) {
+    ctx.translate(W / 2, H / 2);
+    ctx.scale(0.965, 0.965);
+    ctx.rotate(-0.008);
+    ctx.translate(-W / 2, -H / 2);
+  }));
+  EX.registerFx('rise', makeFeedback(function (ctx, W, H) {
+    ctx.translate(0, -H * 0.006);
+    ctx.filter = 'blur(1px)';
+  }));
+
+  var FX2_MODES = ['gfire', 'gice', 'gviridis', 'gsunset', 'gmiami', 'ggold', 'solar', 'thresh', 'edge', 'halftone', 'ascii', 'diff', 'tunnel', 'rise', 'panels2', 'panels3'];
+  var FX1_MODES = ['trails', 'flow', 'drip', 'swirl', 'echo', 'mirrorx', 'mirrory', 'quad', 'kaleid6', 'kaleid12', 'chroma', 'bloom', 'pixel', 'poster'];
+
+  function syncFx2Row() {
+    var mode = EX.fxState().mode;
+    document.querySelectorAll('#lxFx2Row [data-fx2]').forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-fx2') === mode);
+    });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('#lxFxRow')) window.setTimeout(syncFx2Row, 0);
+  });
+
+  /* ---------------- scene overlays (gallery) ---------------- */
+  function makeSceneLayer(id) {
+    var el = document.createElement('div');
+    el.id = id;
+    el.className = 'lien-scene-layer';
+    wrapper.insertBefore(el, exportOverlay);
+    return el;
+  }
+  var frameEl = makeSceneLayer('lienGalleryFrame');
+  var captionEl = makeSceneLayer('lienGalleryCaption');
+  var bigEl = makeSceneLayer('lienBigSeed');
+  var scene = { gallery: false, bigseed: false, timer: 0 };
+  function sceneTick() {
+    var cfg;
+    try { cfg = LP.currentConfig(); } catch (e) { return; }
+    captionEl.textContent = 'Lien — Seed ' + cfg.seed + ' · ' + String(cfg.waveMode).toUpperCase() + ' · ' + Number(cfg.particleCount).toLocaleString('en-US') + ' lines';
+    bigEl.textContent = String(cfg.seed);
+  }
+  function persistScene() {
+    try { window.localStorage.setItem('lien.scene.v1', JSON.stringify(scene)); } catch (e) { /* ignore */ }
+  }
+  function setGallery(on) {
+    scene.gallery = !!on;
+    frameEl.classList.toggle('on', scene.gallery);
+    captionEl.classList.toggle('on', scene.gallery);
+    var c = $('lxGallery'); if (c) c.checked = scene.gallery;
+    sceneTick();
+    persistScene();
+  }
+  function setBigSeed(on) {
+    scene.bigseed = !!on;
+    bigEl.classList.toggle('on', scene.bigseed);
+    var c = $('lxBigSeed'); if (c) c.checked = scene.bigseed;
+    sceneTick();
+    persistScene();
+  }
+  scene.timer = window.setInterval(function () { if (scene.gallery || scene.bigseed) sceneTick(); }, 1200);
+  try {
+    var savedScene = JSON.parse(window.localStorage.getItem('lien.scene.v1') || 'null');
+    if (savedScene) { if (savedScene.gallery) setGallery(true); if (savedScene.bigseed) setBigSeed(true); }
+  } catch (e) { /* ignore */ }
+
+  /* ---------------- WebM recording ---------------- */
+  var rec = { mr: null, chunks: [], timer: 0, left: 0 };
+  function stopRecording() {
+    if (rec.mr && rec.mr.state !== 'inactive') rec.mr.stop();
+    window.clearInterval(rec.timer);
+    var btn = $('lxRec');
+    if (btn) { btn.textContent = 'Record WebM (15s)'; btn.classList.remove('recording'); }
+  }
+  function startRecording() {
+    if (!window.MediaRecorder) { toast('WebM recording is not supported in this browser'); return; }
+    var fxOn = EX.fxState().mode !== 'off';
+    var target = fxOn ? $('lienFxCanvas') : viewCanvas;
+    if (!target || !target.captureStream) { toast('Recording is not available here'); return; }
+    var stream = target.captureStream(60);
+    var mime = '';
+    ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'].forEach(function (m) {
+      if (!mime && window.MediaRecorder.isTypeSupported(m)) mime = m;
+    });
+    try { rec.mr = new window.MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 12000000 } : { videoBitsPerSecond: 12000000 }); }
+    catch (e) { toast('Recording failed to start'); return; }
+    rec.chunks = [];
+    rec.mr.ondataavailable = function (e) { if (e.data && e.data.size) rec.chunks.push(e.data); };
+    rec.mr.onstop = function () {
+      var blob = new Blob(rec.chunks, { type: 'video/webm' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'lien-recording-' + Date.now() + '.webm';
+      document.body.appendChild(a); a.click(); a.remove();
+      window.setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      toast('WebM saved (' + Math.round(blob.size / 1024) + ' KB)');
+    };
+    rec.mr.start(250);
+    rec.left = 15;
+    var btn = $('lxRec');
+    if (btn) { btn.textContent = '■ Stop (' + rec.left + 's)'; btn.classList.add('recording'); }
+    rec.timer = window.setInterval(function () {
+      rec.left -= 1;
+      var b = $('lxRec');
+      if (b) b.textContent = '■ Stop (' + Math.max(0, rec.left) + 's)';
+      if (rec.left <= 0) stopRecording();
+    }, 1000);
+    toast('Recording the live canvas…');
+  }
+
+  /* ---------------- surprise + scene presets ---------------- */
+  var DEF = { seed: 1, flowDirection: 'omni', waveMode: 'perlin', stepsPerLine: 2000, stepLength: 1, noiseFreq: 0.0006, curlStrength: 1.5, particleCount: 6000, clustering: 0, opacity: 12, lineWidthMin: 0.5, lineWidthMax: 1.5, lineColor: '#ffffff', zoom: 1, colorInvert: false };
+  function full(patch) {
+    var cfg = {};
+    for (var k in DEF) cfg[k] = DEF[k];
+    for (var k2 in patch) cfg[k2] = patch[k2];
+    LP.applyFull(cfg);
+  }
+  function clickExpr(name) {
+    var b = document.querySelector('[data-expr-preset="' + name + '"]');
+    if (b) b.click();
+  }
+  function setCheck(id, on) {
+    var c = $(id);
+    if (c && c.checked !== on) { c.checked = on; c.dispatchEvent(new Event('change', { bubbles: true })); }
+  }
+  var SCENES = [
+    ['Mandala', function () { clickExpr('Nebula'); EX.setFx('kaleid12'); }],
+    ['Ember', function () { clickExpr('Lava'); EX.setFx('gfire'); }],
+    ['Frozen', function () { clickExpr('Glacier'); EX.setFx('gice'); }],
+    ['Terminal', function () { full({ seed: 1337, waveMode: 'chaos', noiseFreq: 0.0016, curlStrength: 4, particleCount: 9000, opacity: 14, lineColor: '#33ff66' }); LP.setTexture('normal', true); EX.selectPalette('neon'); EX.setFlowStyle('steps'); EX.startPalette(); EX.setFx('ascii'); }],
+    ['Print Shop', function () { clickExpr('Ink'); EX.setFx('poster'); setCheck('lxGrain', true); setCheck('lxScan', true); }],
+    ['Tunnel Dive', function () { full({ seed: 31337, waveMode: 'vortex', curlStrength: 6.5, particleCount: 10000, opacity: 11, lineColor: '#cfe8ff' }); LP.setTexture('glow', true); EX.selectPalette('storm'); EX.startPalette(); EX.setFx('tunnel'); }],
+    ['Mirror Hall', function () { clickExpr('Solar'); EX.setFx('diff'); }],
+    ['Halftone Pop', function () { full({ seed: 555, stepsPerLine: 2400, particleCount: 11000, opacity: 16, lineWidthMin: 0.8, lineWidthMax: 2 }); LP.setTexture('normal', true); EX.stopPalette(); EX.setFx('halftone'); }],
+    ['Miami Night', function () { clickExpr('Neon Rain'); EX.setFx('gmiami'); }],
+    ['Museum Piece', function () { clickExpr('Ink'); EX.setFx('off'); setGallery(true); }]
+  ];
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function surprise() {
+    var presets = document.querySelectorAll('[data-expr-preset]');
+    if (presets.length) presets[Math.floor(Math.random() * presets.length)].click();
+    if (Math.random() < 0.6) EX.setFx(pick(FX1_MODES.concat(FX2_MODES)));
+    if (Math.random() < 0.4) EX.setTint(pick(['none', 'sunset', 'ocean', 'rose', 'gold']));
+    if (Math.random() < 0.35) {
+      var tex = document.querySelectorAll('#lienPlusSection [data-texture]');
+      if (tex.length) tex[Math.floor(Math.random() * tex.length)].click();
+    }
+    if (Math.random() < 0.3) EX.setFlowStyle(pick(['smooth', 'steps', 'pingpong', 'reverse']));
+    syncFx2Row();
+    toast('Surprise — a new combination');
+  }
+
+  /* ---------------- UI ---------------- */
+  var html =
+    '<div class="lp-sub"><div class="small-label">FX II — gradient maps / print / composites</div>' +
+    '<div class="option-row" id="lxFx2Row">' +
+    FX2_MODES.map(function (m) { return '<button class="option-button" data-fx2="' + m + '" type="button">' + m + '</button>'; }).join('') +
+    '</div></div>' +
+    '<div class="lp-sub"><div class="small-label">Palette Flow style</div>' +
+    '<div class="option-row" id="lxFlowRow">' +
+    ['smooth', 'steps', 'pingpong', 'reverse'].map(function (s) { return '<button class="option-button" data-flowstyle="' + s + '" type="button">' + s + '</button>'; }).join('') +
+    '</div></div>' +
+    '<div class="lp-sub"><div class="small-label">Scene presets II (everything combined)</div>' +
+    '<div class="option-row lx-presets" id="lxPreset2Row">' +
+    SCENES.map(function (s) { return '<button class="option-button" data-expr2-preset="' + s[0] + '" type="button">' + s[0] + '</button>'; }).join('') +
+    '</div></div>' +
+    '<div class="lp-sub"><div class="small-label">Gallery</div>' +
+    '<label class="checkbox-row" for="lxGallery"><span>Gallery frame + caption</span><input id="lxGallery" class="checkbox-input" type="checkbox" /></label>' +
+    '<label class="checkbox-row" for="lxBigSeed"><span>Giant seed type (difference blend)</span><input id="lxBigSeed" class="checkbox-input" type="checkbox" /></label></div>' +
+    '<div class="lp-sub"><div class="small-label">Output &amp; chance</div>' +
+    '<div class="lp-row"><button class="mini-btn" id="lxRec" type="button">Record WebM (15s)</button>' +
+    '<button class="mini-btn" id="lxDice" type="button">Surprise me</button></div>' +
+    '<div class="small-label" style="margin-top:4px;">Recording captures the live canvas including FX, palette flow and textures.</div></div>';
+  var holder = document.createElement('div');
+  holder.innerHTML = html;
+  while (holder.firstChild) section.appendChild(holder.firstChild);
+
+  section.querySelectorAll('#lxFx2Row [data-fx2]').forEach(function (b) {
+    b.addEventListener('click', function () { EX.setFx(b.getAttribute('data-fx2')); syncFx2Row(); });
+  });
+  function syncFlowRow() {
+    var st = EX.paletteState().style;
+    section.querySelectorAll('#lxFlowRow [data-flowstyle]').forEach(function (b) {
+      b.classList.toggle('is-active', b.getAttribute('data-flowstyle') === st);
+    });
+  }
+  section.querySelectorAll('#lxFlowRow [data-flowstyle]').forEach(function (b) {
+    b.addEventListener('click', function () { EX.setFlowStyle(b.getAttribute('data-flowstyle')); syncFlowRow(); });
+  });
+  section.querySelectorAll('[data-expr2-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var name = b.getAttribute('data-expr2-preset');
+      var found = SCENES.filter(function (s) { return s[0] === name; })[0];
+      if (!found) return;
+      found[1]();
+      syncFx2Row();
+      syncFlowRow();
+      toast('Scene: ' + name);
+    });
+  });
+  $('lxGallery').addEventListener('change', function (e) { setGallery(e.target.checked); });
+  $('lxBigSeed').addEventListener('change', function (e) { setBigSeed(e.target.checked); });
+  $('lxRec').addEventListener('click', function () { rec.mr && rec.mr.state !== 'inactive' ? stopRecording() : startRecording(); });
+  $('lxDice').addEventListener('click', surprise);
+  syncFx2Row();
+  syncFlowRow();
+  if (scene.gallery) { var gc = $('lxGallery'); if (gc) gc.checked = true; }
+  if (scene.bigseed) { var bc = $('lxBigSeed'); if (bc) bc.checked = true; }
+
+  window.__lienExpr2 = { modes: FX2_MODES, scenes: SCENES.map(function (s) { return s[0]; }), setGallery: setGallery, setBigSeed: setBigSeed, version: 1 };
+})();
   </script>
 </body>
 </html>
