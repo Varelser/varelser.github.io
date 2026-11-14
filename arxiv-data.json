@@ -941,6 +941,26 @@
   },
   {
     "authors": [
+      "Tomohiro Sawada",
+      "Kartik Goyal"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.CL"
+    ],
+    "field": "cs.LG",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-12T17:55:33Z",
+    "source": "arXiv",
+    "summaryHtml": "LoRAによる低ランク適応は、特に不均一な環境や継続学習ではフルファインチューニングに及ばず、大きな忘却を伴う。学習と忘却のトレードオフがつきまとう。本論文はその一因を特定する。高ランクのLoRAアダプタほど、設定したランクが与える容量を活かしきれていない。標準的なLoRAの更新は実効ランクが設定ランクをはるかに下回り、更新エネルギーの広がりが限られていたのである。<br><br>そこで著者は、元の目的関数を最適化しながらアダプタの実効ランクを最大化する学習手法を提案する。中心となるのは、言語モデリング損失に加える単純で安定、微分可能でSVD不要なレニー2実効ランク正則化項である。容量最大化とノルム制約つき更新の関係も示される。3モデルでの混合ドメインのランク掃引では、ペナルティ重みλ=0.01がランク16以上のすべての設定で未ペナルティのLoRAより平均Wikiパープレキシティを下げた。<br><br>単一タスクやスケジューリングの実験では、学習と保持のバランスが設定次第で変わることも示された。文献にある複数のLoRA変種も同じ容量問題を抱えており、本手法はそれらと補完的に使える。実効ランクはアダプタ品質の事後的な診断にとどまらず、学習と忘却のフロンティアを改善する訓練可能な目的だという結論である。出典：arXiv",
+    "timestamp": 1794506133000,
+    "title": "Maximizing Capacity Utilization of LoRA Adapters for Mitigating the Learning-Forgetting Trade-off",
+    "titleJa": "LoRAの容量を使い切る――学習と忘却のトレードオフを緩和する",
+    "url": "https://arxiv.org/abs/2611.17191"
+  },
+  {
+    "authors": [
       "Rui Sun",
       "Jinfeng Peng",
       "Zehua Cheng",
@@ -1106,6 +1126,28 @@
     "title": "FORGE: Force-Aware Multi-Granularity Control for Efficient Humanoid Loco-Manipulation",
     "titleJa": "力加減がわかるヒューマノイド――接触を感じながら動く制御FORGE",
     "url": "https://arxiv.org/abs/2611.17142"
+  },
+  {
+    "authors": [
+      "Tanzeel Abbas",
+      "Ahmad Kamran Malik",
+      "Nafees Qamar",
+      "Sana Liaqat"
+    ],
+    "categories": [
+      "cs.CL",
+      "cs.AI"
+    ],
+    "field": "cs.CL",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-12T17:21:12Z",
+    "source": "arXiv",
+    "summaryHtml": "小規模言語モデル（SLM）は、大規模な専有モデルが高コストな現場で臨床の自然言語処理を動かせるようにする。パラメータ効率的な微調整で汎用機でも特化できる。だが訓練後も一つの壁が残る。医療タスクでは、臨床の問いに対して必要以上に長い答えを返してしまう。意思決定支援や診療現場では時間が短く、推論が正しくても冗長な答えは扱いにくい。既存の長さ制御は選好最適化や報酬モデル、専有の教師モデルに依存し、SLMの手軽さを損なう。<br><br>本論文はPECA（Parameter-Efficient Conciseness Adaptation）を提案する。QLoRAによる教師あり微調整の目的関数に、微分可能な簡潔さの項を一つ加えるだけの手法である。トークン数は離散的で微分できないため、生成がトークン予算を超えたら文末確率を上げる滑らかな信号で代用し、通常の訓練の中で最適化する。選好データも補助モデルも不要で、汎用GPU1台で動く。<br><br>医療推論コーパスで微調整した17億パラメータのモデルでは、平均応答長が72.8%短くなりながら、多肢選択の診断精度は40.8%から44.0%へ上がった。簡潔さの強さを変える掃引では、簡潔さと診断の完全性のバランスを示す解釈可能なフロンティアが得られた。短さと正確さは両立しうるという成果である。出典：arXiv",
+    "timestamp": 1794504072000,
+    "title": "Parameter-Efficient Conciseness Adaptation: Differentiable Length Control for Concise Clinical Reasoning in Smaller Language Models",
+    "titleJa": "小さい言語モデルの臨床推論を短く正確に――PECA",
+    "url": "https://arxiv.org/abs/2611.17128"
   },
   {
     "authors": [
@@ -1790,46 +1832,5 @@
     "title": "In the Light of the Enlightenment: The False Theorization of a Dissonance Between the ʿUlamāʾ and Philosophy",
     "titleJa": "啓蒙の光のもとで――ウラマーと哲学の不協和という誤った理論化",
     "url": "https://doi.org/10.3390/rel17111332"
-  },
-  {
-    "authors": [
-      "Chan Kim",
-      "Seonkwon Kim",
-      "Jeong Hwan Song",
-      "Jongyoung Lee",
-      "Leejae Kim",
-      "Seongil Im",
-      "Hyunsu Ju",
-      "Yoon Seok Jung",
-      "Gun Hwan Kim",
-      "Jeong Ho Cho"
-    ],
-    "categories": [],
-    "field": "Nature Communications",
-    "genre": "Neuroscience",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-12T00:00:00Z",
-    "source": "Nature Communications",
-    "summaryHtml": "従来のフィードバック制御は中央処理と外部からの継続的な計算に依存するため、消費電力とシステムの複雑さが課題だった。本研究は、脳内の「オータプス（自己シナプス）」――ニューロンが自分の出力を自分のシナプス入力へ返送する仕組み――に着想を得て、局所的で双方向のフィードバック制御をハードウェアレベルで実現するニューロモルフィックシステムを開発した。<br><br>システムは、複数の入力を多重化できる固体電解質型シナプストランジスタと、双方向のリーキー積分発火型人工ニューロンを統合したものだ。ニューロンの出力を追加のシナプスゲートへ返すことで、興奮性と抑制性のフィードバックループをコンパクトな構造の中に実現した。人工的な体温調節プラットフォームを用いた実証では、温度依存の入力がニューロンの発火頻度を双方向に変調した。<br><br>集中処理に頼らず局所で完結する制御は、自律システムやエッジデバイスの省電力化につながる可能性がある。著者らは、コンパクトなニューロモルフィック素子の集合で生物的なフィードバック制御を再現できた点を成果として挙げており、自己調節するハードウェアへの新たな道を開くものとしている。出典：Nature Communications",
-    "timestamp": 1794441600000,
-    "title": "Autapse-inspired neuromorphic hardware with synapse–neuron integration for bidirectional feedback control",
-    "titleJa": "自己シナプスに着想を得たニューロモルフィックハードウェア――双方向フィードバック制御のためのシナプス・ニューロン統合",
-    "url": "https://www.nature.com/articles/s41467-026-79401-z"
-  },
-  {
-    "authors": [
-      "Benedetta Cogo"
-    ],
-    "categories": [],
-    "field": "Phenomenology and the Cognitive Sciences",
-    "genre": "Consciousness / Philosophy",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-12T00:00:00Z",
-    "source": "Crossref",
-    "summaryHtml": "意識の神経科学では、脳の神経エントロピーに注目する二つの枠組みが近年提案されている。エントロピック・ブレイン仮説（EBH）とイラプション理論（IT）である。両者は、主観的経験への科学的接近が原理的に難しいという「理解可能性問題」に陥ることなく、意識の神経基盤を研究しようとする試みだ。本論文は二つの枠組みを順に検討し、それぞれが異なる重要な限界を抱えていると論じる。<br><br>EBHについては、神経エントロピーの変動が統計的不確実性だけでなく、主観的経験における「不確実さの感覚」にも対応すると主張する点で、記述の範囲を超えていると指摘する。神経過程と経験のあいだに共有される性質を想定し、両者の理解可能な関係を打ち立てようとするが、それ自体が理解可能性問題の一例だという。一方ITは、理解可能性問題を明示的に認め、それを回避しながら意識の神経シグネチャーを特定する可能性を残す枠組みを提案する。<br><br>しかしITも、心的活動が神経エントロピーの測定によって間接的に定量化できるという前提に起因する、別種の重大な問題を抱えると論じられる。意識研究が神経ダイナミクスと主観的経験をどう結びつけるのかという根本的な問いを改めて浮き彫りにする、現象学と認知科学の接点における批評的考察である。出典：Crossref（Phenomenology and the Cognitive Sciences）",
-    "timestamp": 1794441600000,
-    "title": "Mind your head: Entropic Brain, irruption theory and the intelligibility problem",
-    "titleJa": "エントロピック・ブレイン仮説とイラプション理論――意識の「理解可能性問題」をめぐって",
-    "url": "https://doi.org/10.1007/s11097-026-10227-2"
   }
 ]
