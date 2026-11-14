@@ -605,6 +605,30 @@
 </div>
 
 <script>
+/* Varelser Link util (additive): SeedWorks-exact derivation + ?seed= param. */
+(function(){
+  'use strict';
+  function hashSeedString(s){ let h=0x811C9DC5; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193); } return h>>>0; }
+  function splitmix32(a){ return function(){ a|=0; a=(a+0x9E3779B9)|0; let x=(a^(a>>>16))>>>0; x=Math.imul(x,0x21F0AAAD); x=(x^(x>>>15))>>>0; x=Math.imul(x,0x735A2D97); x=(x^(x>>>15))>>>0; return x>>>0; }; }
+  function mulberry32(seed){ let a=seed>>>0; return function(){ a=(a+0x6D2B79F5)|0; let x=a; x=Math.imul(x^(x>>>15),x|1); x^=x+Math.imul(x^(x>>>7),x|61); return ((x^(x>>>14))>>>0)/4294967296; }; }
+  function streamFor(hash, tag){ const sm=splitmix32((hash^hashSeedString(tag))>>>0); return mulberry32(sm()); }
+  function masterHash(raw){ const s=String(raw).trim(); if(/^-?\d+$/.test(s)) return (Number(s)>>>0)||1; return hashSeedString(s)||1; }
+  window.__varelserLinkDerive=function(master){ const r=streamFor(masterHash(master),'leary'); return 1+Math.floor(r()*999999); };
+  window.__vlSeedParam=function(){
+    try{
+      let raw=null;
+      const q=new URLSearchParams(window.location.search||'');
+      if(q.has('seed')) raw=q.get('seed');
+      else { const mm=String(window.location.hash||'').match(/seed=(\d+)/); if(mm) raw=mm[1]; }
+      if(raw===null) return null;
+      const n=Number(raw);
+      if(Number.isInteger(n) && n>=1 && n<=999999999) return n;
+    }catch(e){}
+    return null;
+  };
+})();
+</script>
+<script>
 (() => {
   'use strict';
 
@@ -1739,6 +1763,7 @@
   }
 
   function init(){
+    try{ const __vlSeed = window.__vlSeedParam ? window.__vlSeedParam() : null; if(__vlSeed !== null) state.seed = __vlSeed; }catch(e){}
     document.querySelectorAll('.row').forEach(row => {
       const label = row.querySelector('label');
       const field = row.querySelector('input, select');
@@ -1752,6 +1777,77 @@
     updateExportEstimate();
     scheduleGeometryRender();
   }
+
+
+  /* ===== Varelser Link (additive; default OFF; leary.varelserLink.v1) ===== */
+  (function initVarelserLink(){
+    try{
+      const KEY='leary.varelserLink.v1';
+      const panel=document.querySelector('aside.panel')||document.body;
+      const box=document.createElement('div');
+      box.id='vlBox'; box.style.cssText='margin:10px 0;padding:10px;border-top:1px solid rgba(255,255,255,.14);font-size:12px;line-height:1.5';
+      box.innerHTML='<label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="vlToggle"> Varelser Link 送受信</label>'
+        +'<button type="button" id="vlSync" class="btn small" style="margin:8px 0">シードを全アプリに同期</button>'
+        +'<div id="vlNoise">Noise: —</div><div id="vlMeikyo">♪ Meikyoshisui: —</div><div id="vlMsg"></div>';
+      panel.appendChild(box);
+      const toggle=box.querySelector('#vlToggle'), syncBtn=box.querySelector('#vlSync');
+      const noiseEl=box.querySelector('#vlNoise'), meikyoEl=box.querySelector('#vlMeikyo'), msgEl=box.querySelector('#vlMsg');
+      let ch=null, applying=false, lastSeed=null, lastNoise=null, pollTimer=null;
+      const cv=document.getElementById('canvas');
+      function sendState(){ if(!ch) return; try{ ch.postMessage({app:'leary',type:'state',ts:Date.now(),seed:state.seed}); }catch(e){} }
+      function sendSeedSync(){ if(!ch) return; try{ ch.postMessage({app:'leary',type:'seed-sync',ts:Date.now(),master:String(state.seed)}); msgEl.textContent='シードを同期しました: '+state.seed; }catch(e){} }
+      function applyRemoteSeed(master){
+        const derived=window.__varelserLinkDerive(master);
+        applying=true;
+        try{ state.seed=derived; syncInputs(); rebuildBaseLines(); scheduleGeometryRender(); msgEl.textContent='シード同期を受信: '+derived; lastSeed=derived; }
+        catch(e){} finally{ applying=false; }
+      }
+      function applyNoiseFilter(){
+        if(!cv) return;
+        if(ch && lastNoise && (Date.now()-lastNoise.ts<1500) && lastNoise.playing){
+          const m=Math.max(0,Math.min(1,Number(lastNoise.master)||0));
+          cv.style.filter='brightness('+(0.85+0.3*m).toFixed(3)+')';
+        } else cv.style.filter='';
+      }
+      function start(){
+        if(ch || typeof BroadcastChannel==='undefined') return;
+        try{
+          ch=new BroadcastChannel('varelser-link-v1');
+          ch.onmessage=function(ev){
+            const d=ev && ev.data; if(!d || d.app==='leary') return;
+            try{
+              if(d.type==='seed-sync' && d.master!==undefined && !applying) applyRemoteSeed(d.master);
+              else if(d.app==='noise' && d.type==='state'){
+                lastNoise=d;
+                const l1=d.layers && d.layers[0] ? d.layers[0].type : '';
+                noiseEl.textContent='Noise: master '+(Number(d.master)||0).toFixed(2)+' / '+l1+' / '+(d.playing?'再生中':'停止');
+                applyNoiseFilter();
+              }
+              else if(d.app==='meikyoshisui' && d.type==='state'){
+                meikyoEl.textContent='♪ Meikyoshisui: '+d.bpm+' BPM / '+(d.genre||'')+' / '+(d.playing?'再生中':'停止');
+              }
+            }catch(e){}
+          };
+          lastSeed=state.seed; sendState();
+          pollTimer=setInterval(function(){
+            if(state.seed!==lastSeed){ lastSeed=state.seed; if(!applying) sendState(); }
+            applyNoiseFilter();
+          },500);
+          const rb=document.getElementById('btnRandomize');
+          if(rb) rb.addEventListener('click', function(){ setTimeout(function(){ if(ch && !applying) sendSeedSync(); },0); });
+        }catch(e){ ch=null; }
+      }
+      function stop(){
+        if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
+        if(ch){ try{ ch.close(); }catch(e){} ch=null; }
+        if(cv) cv.style.filter='';
+      }
+      let saved=false; try{ saved=localStorage.getItem(KEY)==='1'; }catch(e){}
+      toggle.checked=saved; if(saved) start();
+      toggle.addEventListener('change', function(){ try{ localStorage.setItem(KEY, toggle.checked?'1':'0'); }catch(e){} if(toggle.checked) start(); else stop(); });
+      syncBtn.addEventListener('click', sendSeedSync);
+    }catch(e){}
+  })();
 
   init();
 })();

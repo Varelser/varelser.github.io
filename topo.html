@@ -527,6 +527,15 @@
       <button id="applySeed" class="small">シード適用</button>
     </div>
 
+    <h4>Varelser Link</h4>
+    <div class="row">
+      <label><input id="varelserLinkToggle" type="checkbox">Varelser Link 送受信</label>
+    </div>
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="varelserLinkSync" class="small" type="button">シードを全アプリに同期</button>
+    </div>
+    <div id="varelserLinkStatus" class="row" style="font-size:11px;opacity:.8;">Varelser Link: OFF</div>
+
     <div class="row">
       <label for="exportScale">書き出し倍率</label>
       <select id="exportScale">
@@ -706,6 +715,30 @@ function canvasWrapSize() {
   return { w: window.innerWidth, h: window.innerHeight };
 }
 
+/* ?seed= / #seed= support (additive): parse an integer seed in
+   1..999999999 from location.search ('?seed=') or location.hash
+   ('#seed='). Returns null when absent or invalid. Guarded: any
+   parsing failure behaves exactly like no parameter was given. */
+function parseUrlSeedParam() {
+  try {
+    const raws = [];
+    try { const v = new URLSearchParams(window.location.search || '').get('seed'); if (v !== null) raws.push(v); } catch (err) { /* ignore */ }
+    const hash = String(window.location.hash || '').replace(/^#/, '');
+    if (hash && hash.indexOf('=') >= 0) {
+      try { const v = new URLSearchParams(hash).get('seed'); if (v !== null) raws.push(v); } catch (err) { /* ignore */ }
+    }
+    for (let i = 0; i < raws.length; i++) {
+      const t = String(raws[i]).trim();
+      if (!/^\d+$/.test(t)) continue;
+      const n = Number(t);
+      if (Number.isFinite(n) && n >= 1 && n <= 999999999) return Math.floor(n);
+    }
+    return null;
+  } catch (err) {
+    return null;
+  }
+}
+
 function setup() {
   const wrapSize = canvasWrapSize();
   params.CANVAS_W = wrapSize.w;
@@ -731,7 +764,22 @@ function setup() {
     syncAllControlValues();
     syncSelectedHoleControls();
   }
-  regenerateScene({ newSeed: !loaded });
+  // ?seed= hook (additive): the URL seed takes precedence over the
+  // stored seed only. Stored params/holes loaded above stay untouched;
+  // hole phases are recomputed for the new seed exactly as applySeed()
+  // does, and serializeSettings() (via scheduleSaveSettings) writes
+  // back the full current settings, so no other stored setting is lost.
+  const urlSeed = parseUrlSeedParam();
+  if (urlSeed !== null) {
+    seedVal = urlSeed;
+    for (let i = 0; i < holes.length; i++) {
+      holes[i].phase = computeHolePhase(i);
+    }
+    updateSeedDisplay();
+    scheduleSaveSettings();
+  }
+  regenerateScene({ newSeed: !loaded && urlSeed === null });
+  if (urlSeed !== null) setStatus(`シード ${urlSeed} をURLパラメータから適用しました`);
   redraw();
 
   window.addEventListener('resize', () => {
@@ -3939,6 +3987,251 @@ function downloadBlobFile(blob, filename) {
 function downloadTextFile(text, filename) {
   downloadBlobFile(new Blob([text], { type: 'application/json' }), filename);
 }
+</script>
+<script>
+/* ═══════════ Varelser Link (additive, TOPO) ═══════════
+   Cross-tab link over BroadcastChannel('varelser-link-v1'), same
+   channel/protocol as Noise / Meikyoshisui / Kalokagathia.
+   Default OFF; persisted in localStorage 'topo.varelserLink.v1' ('1'/'0').
+   - SEND  state:    {app:'topo', type:'state', ts, seed} — debounced,
+                     sent when the polled seed actually changes.
+   - SEND  seed-sync:{app:'topo', type:'seed-sync', ts, master:String(seed)}
+                     from the 「シードを全アプリに同期」 button.
+   - RECV  seed-sync (from other apps): derive a TOPO seed from the
+                     master via the exact SeedWorks hash/stream chain
+                     and apply it through the app's own applySeed(),
+                     with a loop guard so the apply never re-broadcasts.
+   - RECV  noise state: status line only + canvas brightness while the
+                     message is fresh (<1500 ms). Never regenerates.
+   - RECV  meikyoshisui state: status line only. Never regenerates.
+   This script is a separate classic script after the main one, so it
+   shares the main script's global lexical scope: seedVal (let) and
+   applySeed / setStatus (function declarations) are directly reachable
+   here — verified against the source (applySeed is a top-level
+   function declaration in the main <script>). */
+(function () {
+  'use strict';
+  var VLINK_KEY = 'topo.varelserLink.v1';
+  var CHANNEL_NAME = 'varelser-link-v1';
+
+  /* --- SeedWorks-exact deterministic derivation --- */
+  function splitmix32(a) { return function () { a |= 0; a = (a + 0x9E3779B9) | 0; var t = (a ^ (a >>> 16)) >>> 0; t = Math.imul(t, 0x21F0AAAD); t = (t ^ (t >>> 15)) >>> 0; t = Math.imul(t, 0x735A2D97); t = (t ^ (t >>> 15)) >>> 0; return t >>> 0; }; }
+  function mulberry32(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function hashSeedString(s) { var h = 0x811C9DC5; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; }
+  /* EXACTLY SeedWorks parseMasterSeed: numeric -> (Number>>>0)||1, else FNV-1a ||1; empty -> null */
+  function masterHash(raw) {
+    var t = String(raw == null ? '' : raw).trim();
+    if (t === '') return null;
+    if (/^-?\d+$/.test(t)) { return (Number(t) >>> 0) || 1; }
+    return hashSeedString(t) || 1;
+  }
+  function streamFor(hash, tag) { var th = hashSeedString(tag); var sm = splitmix32((hash ^ th) >>> 0); return mulberry32(sm()); }
+  function deriveTopoSeed(master) {
+    var h = masterHash(master);
+    if (h === null) return null;
+    var r = streamFor(h, 'topo');
+    return 1 + Math.floor(r() * 999999999);
+  }
+  window.__varelserLinkDerive = deriveTopoSeed;
+
+  /* --- State --- */
+  var channel = null;
+  var enabled = false;
+  var applyingRemote = false;   /* loop guard: true while applySeed() runs for a received seed-sync */
+  var lastSeedSent = null;
+  var lastSeedSeen = null;
+  var sendTimer = null;
+  var pendingDerivedSeed = null; /* seed-sync received before p5 setup() finished */
+  var lastNoiseAt = 0;
+  var lastNoiseMaster = null;
+  var filterTimer = null;
+
+  function $(id) { return document.getElementById(id); }
+  function clamp01(v) { v = Number(v); if (!Number.isFinite(v)) return 0; return Math.min(1, Math.max(0, v)); }
+  function currentSeed() {
+    try {
+      if (typeof seedVal === 'number' && Number.isFinite(seedVal) && seedVal > 0) return Math.floor(seedVal);
+    } catch (err) { /* main script not ready yet */ }
+    var el = $('seedVal');
+    if (el) { var n = parseInt(el.textContent, 10); if (Number.isFinite(n) && n > 0) return n; }
+    return null;
+  }
+  function linkStatus(text) {
+    var el = $('varelserLinkStatus');
+    if (el) el.textContent = text;
+  }
+  function appStatus(text) {
+    try { if (typeof setStatus === 'function') setStatus(text); } catch (err) { /* ignore */ }
+    linkStatus(text);
+  }
+
+  /* --- Sending --- */
+  function postState() {
+    if (!channel || applyingRemote) return;
+    var seed = currentSeed();
+    if (seed === null) return;
+    lastSeedSent = seed;
+    try { channel.postMessage({ app: 'topo', type: 'state', ts: Date.now(), seed: seed }); } catch (err) { /* ignore */ }
+  }
+  function schedulePostState() {
+    if (sendTimer) clearTimeout(sendTimer);
+    sendTimer = setTimeout(postState, 250); /* debounce */
+  }
+  /* Poll seedVal / its display: catches every seed change path
+     (applySeed, random regenerate, undo, settings import, ?seed=). */
+  function pollSeed() {
+    var seed = currentSeed();
+    if (seed !== null && seed !== lastSeedSeen) {
+      if (applyingRemote && seed !== lastSeedSent) {
+        /* A local change landed inside the loop-guard window: defer it
+           (leave lastSeedSeen untouched) so it is broadcast on a later
+           poll once the guard clears, instead of being dropped. */
+      } else {
+        var first = lastSeedSeen === null;
+        lastSeedSeen = seed;
+        if (channel && !applyingRemote && seed !== lastSeedSent) {
+          if (first) postState(); else schedulePostState();
+        }
+      }
+    }
+    /* A seed-sync that arrived before setup() finished is applied
+       as soon as the app has a live seed (i.e. setup has run). */
+    if (pendingDerivedSeed !== null && seed !== null) {
+      var pending = pendingDerivedSeed;
+      pendingDerivedSeed = null;
+      applyDerivedSeed(pending);
+    }
+  }
+  function sendSeedSync() {
+    if (!channel) startLink(true); /* explicit user action: make sure the sync actually goes out */
+    if (!channel) { appStatus('Varelser Link: BroadcastChannelを利用できません'); return; }
+    var seed = currentSeed();
+    if (seed === null) { appStatus('Varelser Link: シードがまだありません'); return; }
+    try {
+      channel.postMessage({ app: 'topo', type: 'seed-sync', ts: Date.now(), master: String(seed) });
+      appStatus('Varelser Link: シード ' + seed + ' を全アプリに同期しました');
+    } catch (err) { /* ignore */ }
+  }
+
+  /* --- Receiving --- */
+  function applyDerivedSeed(derived) {
+    if (!Number.isFinite(derived) || derived < 1 || derived > 999999999) return;
+    if (currentSeed() === null || typeof applySeed !== 'function') { pendingDerivedSeed = derived; return; }
+    applyingRemote = true;
+    try {
+      applySeed(derived);
+      lastSeedSeen = derived;
+      lastSeedSent = derived; /* never echo a received seed back as a state change */
+      appStatus('Varelser Link: シード同期を受信 → TOPOシード ' + derived + ' を適用しました');
+    } catch (err) {
+      pendingDerivedSeed = derived;
+    } finally {
+      setTimeout(function () { applyingRemote = false; }, 800);
+    }
+  }
+  function canvasEl() {
+    return document.querySelector('#canvasWrap canvas') || $('canvasWrap');
+  }
+  function refreshNoiseFilter() {
+    var el = canvasEl();
+    if (!el) return;
+    var fresh = lastNoiseMaster !== null && (Date.now() - lastNoiseAt) < 1500;
+    if (fresh) {
+      el.style.filter = 'brightness(' + (0.85 + 0.3 * clamp01(lastNoiseMaster)).toFixed(3) + ')';
+    } else if (el.style.filter) {
+      el.style.filter = '';
+    }
+  }
+  function onNoiseState(msg) {
+    /* Status line only (+ brightness while fresh). Do NOT regenerate. */
+    lastNoiseAt = Date.now();
+    lastNoiseMaster = (typeof msg.master === 'number' && Number.isFinite(msg.master)) ? clamp01(msg.master) : null;
+    var parts = [];
+    if (lastNoiseMaster !== null) parts.push('master ' + lastNoiseMaster.toFixed(2));
+    if (Array.isArray(msg.layers)) {
+      var names = [];
+      msg.layers.forEach(function (layer, i) {
+        if (layer && layer.on && layer.type) names.push('ABC'[i] + ':' + layer.type);
+      });
+      if (names.length) parts.push(names.join(' '));
+    }
+    if (typeof msg.binauralHz === 'number' && Number.isFinite(msg.binauralHz)) parts.push('binaural ' + msg.binauralHz + 'Hz');
+    parts.push(msg.playing ? 'playing' : 'stopped');
+    appStatus('♪ Noise: ' + parts.join(' / '));
+    refreshNoiseFilter();
+  }
+  function onMeikyoshisuiState(msg) {
+    /* Status line only. Do NOT regenerate. */
+    var parts = [];
+    if (msg.bpm != null && msg.bpm !== '') parts.push(String(msg.bpm) + ' BPM');
+    if (msg.genre) parts.push(String(msg.genre));
+    ['key', 'scale', 'mode', 'density', 'bars'].forEach(function (k) {
+      if (msg[k] != null && msg[k] !== '') parts.push(k + ' ' + msg[k]);
+    });
+    if (typeof msg.playing === 'boolean') parts.push(msg.playing ? 'playing' : 'stopped');
+    appStatus('♪ Meikyoshisui: ' + (parts.length ? parts.join(' / ') : 'state'));
+  }
+  function onMessage(ev) {
+    var msg = ev && ev.data;
+    if (!msg || typeof msg !== 'object') return;
+    if (msg.app === 'topo') return; /* ignore own messages */
+    if (msg.type === 'seed-sync' && msg.master != null && String(msg.master).trim() !== '') {
+      var derived = deriveTopoSeed(msg.master);
+      if (derived !== null) applyDerivedSeed(derived);
+      return;
+    }
+    if (msg.type !== 'state') return;
+    if (msg.app === 'noise') onNoiseState(msg);
+    else if (msg.app === 'meikyoshisui') onMeikyoshisuiState(msg);
+  }
+
+  /* --- Channel lifecycle / toggle --- */
+  function startLink(fromSyncButton) {
+    if (channel || typeof BroadcastChannel === 'undefined') return;
+    try {
+      channel = new BroadcastChannel(CHANNEL_NAME);
+      channel.onmessage = onMessage;
+      enabled = true;
+      if (!filterTimer) filterTimer = setInterval(refreshNoiseFilter, 300);
+      postState();
+      if (!fromSyncButton) appStatus('Varelser Link: ON（送受信中）');
+    } catch (err) {
+      channel = null;
+      enabled = false;
+    }
+  }
+  function stopLink() {
+    if (sendTimer) { clearTimeout(sendTimer); sendTimer = null; }
+    if (filterTimer) { clearInterval(filterTimer); filterTimer = null; }
+    if (channel) { try { channel.onmessage = null; channel.close(); } catch (err) { /* ignore */ } channel = null; }
+    enabled = false;
+    lastNoiseMaster = null;
+    var el = canvasEl();
+    if (el && el.style.filter) el.style.filter = '';
+    linkStatus('Varelser Link: OFF');
+  }
+  function setEnabled(on, fromSyncButton) {
+    var toggle = $('varelserLinkToggle');
+    if (toggle) toggle.checked = !!on;
+    try { localStorage.setItem(VLINK_KEY, on ? '1' : '0'); } catch (err) { /* ignore */ }
+    if (on) startLink(fromSyncButton); else stopLink();
+  }
+  function init() {
+    var toggle = $('varelserLinkToggle');
+    var syncBtn = $('varelserLinkSync');
+    var saved = false;
+    try { saved = localStorage.getItem(VLINK_KEY) === '1'; } catch (err) { saved = false; }
+    if (toggle) {
+      toggle.checked = saved;
+      toggle.addEventListener('change', function () { setEnabled(toggle.checked, false); });
+    }
+    if (syncBtn) syncBtn.addEventListener('click', sendSeedSync);
+    if (saved) startLink(false); else linkStatus('Varelser Link: OFF');
+    setInterval(pollSeed, 400);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
 </script>
 </body>
 </html>

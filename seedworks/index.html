@@ -51,7 +51,7 @@
 <div class="wrap">
   <header>
     <h1>SEED WORKS</h1>
-    <div class="sub">統合シード作品機 — 1つのマスターシードから、音楽（Meikyoshisui）・音響床（Noise）・映像（Kalokagathia）の3作品要素を決定的に導出します。同じシードからは、常に同じ作品レシピが得られます。</div>
+    <div class="sub">統合シード作品機 — 1つのマスターシードから、音楽（Meikyoshisui）・音響床（Noise）・映像（Kalokagathia）・流線（Lien / Leary）・等高線（TOPO）・図形（Yayoi）の7アプリ分を決定的に導出します。同じシードからは、常に同じ作品レシピが得られます。</div>
   </header>
 
   <div class="seedrow">
@@ -103,6 +103,46 @@
     </div>
 
     <div class="card">
+      <h2>FLOW LINES <span class="app">— Lien（フローフィールド）</span></h2>
+      <table class="kv" id="liKv"></table>
+      <div class="links">
+        <a class="btn" id="liOpen" href="#" target="_blank" rel="noopener">この設定で Lien を開く</a>
+        <button class="small ghost" id="liCopy" type="button">リンクをコピー</button>
+      </div>
+      <div class="note"><b>自動です。</b>リンクは Lien 本体の共有リンク形式（#c=）で、プリセット＋導出シードまで含めた完全な再現リンクです。</div>
+    </div>
+
+    <div class="card">
+      <h2>VORTEX LINES <span class="app">— Leary（渦型フローフィールド）</span></h2>
+      <table class="kv" id="leKv"></table>
+      <div class="links">
+        <a class="btn" id="leOpen" href="#" target="_blank" rel="noopener">シード付きで Leary を開く</a>
+        <button class="small ghost" id="leCopy" type="button">リンクをコピー</button>
+      </div>
+      <div class="note"><b>シードは自動です。</b>リンク（?seed=）で開くと導出シードが適用されます。リンクが使えない場合は Leary 側の Seed 欄に下記の値を直接入力してください。</div>
+    </div>
+
+    <div class="card">
+      <h2>CONTOURS <span class="app">— TOPO（等高線）</span></h2>
+      <table class="kv" id="toKv"></table>
+      <div class="links">
+        <a class="btn" id="toOpen" href="#" target="_blank" rel="noopener">シード付きで TOPO を開く</a>
+        <button class="small ghost" id="toCopy" type="button">リンクをコピー</button>
+      </div>
+      <div class="note"><b>シードは自動です。</b>リンク（?seed=）で開くと導出シードが適用されます。リンクが使えない場合は TOPO 側の「シードを指定」欄に下記の値を入力して「シード適用」を押してください。</div>
+    </div>
+
+    <div class="card">
+      <h2>SHAPES <span class="app">— Yayoi（図形配置）</span></h2>
+      <table class="kv" id="yaKv"></table>
+      <div class="links">
+        <a class="btn" id="yaOpen" href="#" target="_blank" rel="noopener">この設定で Yayoi を開く</a>
+        <button class="small ghost" id="yaCopy" type="button">リンクをコピー</button>
+      </div>
+      <div class="note"><b>自動です。</b>リンクは Yayoi 本体の共有リンク形式（#s=）で、プリセット＋導出シードまで含めた完全な再現リンクです（キャンバスサイズは本体デフォルト 3240×4050）。</div>
+    </div>
+
+    <div class="card">
       <h2>CREDITS <span class="app">— クレジット表記</span></h2>
       <pre class="credits mono" id="credits"></pre>
       <div class="links">
@@ -118,6 +158,7 @@
         <li>Meikyoshisui をリンクで開き、状態が読み込まれたことを確認 → 「⬡ GENERATE MIDI」→ MIDI ダウンロードで <span class="mono">.mid</span> を保存。<span class="dim">ステム分けは Multi-File Export、楽譜は MusicXML 書き出しも可。</span></li>
         <li>Noise をセッションURLで開き、再生して音響床を確認 → Export で WAV を書き出し。<span class="dim">書き出し形式はセッション側の設定（96kHz / 24bit / WAV）に従います。バリエーションが欲しい場合は Batch Seeds を増やしてください（Seed Step ずつずれた版が一括で出ます）。</span></li>
         <li>Kalokagathia を #c=（無ければ #p=）で開き、PNG 書き出しでジャケット画像を保存。<span class="dim">動画にする場合は決定論的レンダリングの PNG 連番 ZIP → 動画変換が最も再現性が高い経路です。</span></li>
+        <li>Lien / Yayoi をリンクで開き、PNG / SVG を書き出し。<span class="dim">Leary / TOPO は ?seed= リンクで開き（使えない場合はシード値を手入力）、PNG / SVG を書き出し。</span></li>
         <li>DAW / 動画編集で Meikyoshisui の MIDI（必要なら音源で鳴らす）と Noise の WAV 床、Kalokagathia の映像を合成。</li>
         <li>manifest.json とクレジットを素材と同じフォルダに入れ、ZIP 化して作品パック完成。<span class="dim">マスターシードさえ残せば、いつでもこのページで同じレシピを復元できます。</span></li>
       </ol>
@@ -126,7 +167,7 @@
 
   <footer>
     <div id="selfcheck">決定的生成セルフチェック: 未実行</div>
-    <div>SeedWorks は Varelser の3つの自作ツール（Meikyoshisui / Noise / Kalokagathia）の連携レシピ生成器です。各リンクは各本体に実在する共有機能だけを使っています。自動化の範囲は各カードに明記しています。</div>
+    <div>SeedWorks は Varelser の7つの自作ツール（Meikyoshisui / Noise / Kalokagathia / Lien / Leary / TOPO / Yayoi）の連携レシピ生成器です。各リンクは各本体に実在する共有機能だけを使っています。自動化の範囲は各カードに明記しています。</div>
   </footer>
 </div>
 
@@ -176,6 +217,45 @@ const MEIKYO_GENRE_SCALES={
 };
 /* 22-ui-functions.js の BASIC_CHORDS (本体の基本コード候補) */
 const MEIKYO_CHORDS=['C','Am','F','G','Dm','Em','Cmaj7','Am7','Fmaj7','G7','Dm9','Em7b5','Asus4','Bsus2','Dsus4'];
+
+/* --- Lien の実データ (本体コードから抽出: PRESET_DEFAULTS / PRESETS / sanitize・共有エンコード) --- */
+const LIEN_URL='https://varelser.github.io/lien.html';
+const LIEN_PRESET_DEFAULTS={ particleCount:6000, stepsPerLine:2000, stepLength:1.0, noiseFreq:0.0006, curlStrength:1.5, lineWidthMin:0.5, lineWidthMax:1.5, opacity:12, clustering:0.0, waveMode:'perlin', flowDirection:'omni', seed:1, zoom:1.0, colorInvert:false, lineColor:'#ffffff' };
+const LIEN_PRESETS={
+  drift:    { seed: 1,     flowDirection: 'omni', waveMode: 'perlin', stepsPerLine: 2000, stepLength: 1.0, noiseFreq: 0.0006,  curlStrength: 1.5, particleCount: 6000,  clustering: 0,    opacity: 12, lineWidthMin: 0.5, lineWidthMax: 1.5 },
+  vortex:   { seed: 4211,  flowDirection: 'omni', waveMode: 'vortex', stepsPerLine: 2600, stepLength: 1.2, noiseFreq: 0.0012,  curlStrength: 6,   particleCount: 9000,  clustering: 0,    opacity: 10, lineWidthMin: 0.5, lineWidthMax: 1.5 },
+  downpour: { seed: 730,   flowDirection: 'down',                     stepsPerLine: 1200, stepLength: 3.5, noiseFreq: 0.0009,  curlStrength: 2.5, particleCount: 12000, clustering: 0,    opacity: 16, lineWidthMin: 0.4, lineWidthMax: 1.0 },
+  silk:     { seed: 90210, flowDirection: 'omni', waveMode: 'perlin', stepsPerLine: 4200, stepLength: 0.8, noiseFreq: 0.00035, curlStrength: 1.1, particleCount: 4500,  clustering: 0,    opacity: 7,  lineWidthMin: 0.3, lineWidthMax: 0.9 },
+  chaos:    { seed: 555,   flowDirection: 'omni', waveMode: 'chaos',  stepsPerLine: 1800, stepLength: 1.4, noiseFreq: 0.0016,  curlStrength: 4.5, particleCount: 15000, clustering: 0,    opacity: 9,  lineWidthMin: 0.5, lineWidthMax: 1.5 },
+  ridges:   { seed: 2024,  flowDirection: 'omni', waveMode: 'ridge',  stepsPerLine: 2400, stepLength: 1.1, noiseFreq: 0.0008,  curlStrength: 3,   particleCount: 8000,  clustering: 0.15, opacity: 12, lineWidthMin: 0.5, lineWidthMax: 1.5 },
+  bloom:    { seed: 88,    flowDirection: 'omni', waveMode: 'radial', stepsPerLine: 2200, stepLength: 1.0, noiseFreq: 0.0006,  curlStrength: 2,   particleCount: 10000, clustering: 0.35, opacity: 11, lineWidthMin: 0.5, lineWidthMax: 1.5 }
+};
+const LIEN_PRESET_KEYS=Object.keys(LIEN_PRESETS);
+/* Lien 本体 encodeConfigForShare と同一: base64url(unescape(encodeURIComponent(JSON))) */
+function lienEncodeShare(cfg){ return btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+
+/* --- Leary / TOPO の URL --- */
+const LEARY_URL='https://varelser.github.io/leary.html';
+const TOPO_URL='https://varelser.github.io/topo.html';
+
+/* --- Yayoi の実データ (本体コードから抽出: DEFAULT_CONFIG / PRESETS / applyPresetConfig / encodeShareConfig) --- */
+const YAYOI_URL='https://varelser.github.io/yayoi.html';
+const YAYOI_SHAPE_ORDER=['circle','square','triangle','pentagon','hexagon','octagon','star','diamond','cross','ring','heart','arrow'];
+function yayoiDefaultMap(v){ const o={}; for(const k of YAYOI_SHAPE_ORDER) o[k]=v; return o; }
+/* DEFAULT_CONFIG と同一 (seed は本体では Date.now() だが、ここではプリセット適用時に導出シードで上書きされる) */
+const YAYOI_DEFAULT_CONFIG={ width:3240, height:4050, count:300, useBackground:false, backgroundColor:'#000000', zoom:1.0, sizeMode:'random', linearDirection:'vertical', linearStyle:'center', reverseSize:false, syncRadius:false, minRadius:20, maxRadius:120, shapeSizes:yayoiDefaultMap(60), depth:2500, spreadX:100, spreadY:100, layoutMode:'shape', layoutShape:'circle', layoutScale:100, shapeDistribution:'fill-random', activeShapes:['circle'], randomShapes:['circle'], solidShape:'sphere', solidDistribution:'surface', colorMode:'single', baseColor:'#ffffff', shapeColors:yayoiDefaultMap('#ffffff'), opacity:0.9, blendMode:'source-over', useStroke:false, strokeColor:'#000000', useShadow:false, shadowBlur:30, shadowColor:'#000000', gridX:10, gridY:10, gridZ:5, showAxes:false, seed:1, rotationX:0, rotationY:0 };
+const YAYOI_PRESETS=[
+  { name: '渦巻き', seed: 3001, patch: { layoutMode: 'shape', layoutShape: 'circle', shapeDistribution: 'stroke-random', count: 600, sizeMode: 'random', minRadius: 15, maxRadius: 70, depth: 1500, spreadX: 60, spreadY: 60, layoutScale: 100, colorMode: 'single', opacity: 0.9, rotationX: 0, rotationY: 0 } },
+  { name: 'リング', seed: 3002, patch: { layoutMode: 'shape', layoutShape: 'circle', shapeDistribution: 'stroke-linear', count: 360, sizeMode: 'fixed', minRadius: 36, depth: 600, layoutScale: 100, colorMode: 'single', opacity: 1, rotationX: 0, rotationY: 0 } },
+  { name: '万華鏡', seed: 3003, patch: { layoutMode: 'shape', layoutShape: 'hexagon', shapeDistribution: 'stroke-linear', count: 720, sizeMode: 'linear', linearDirection: 'horizontal', linearStyle: 'full', minRadius: 10, maxRadius: 60, depth: 1200, layoutScale: 110, colorMode: 'single', opacity: 1, rotationX: 0, rotationY: 0 } },
+  { name: 'グリッド', seed: 3004, patch: { layoutMode: 'grid', gridX: 14, gridY: 14, gridZ: 4, sizeMode: 'fixed', minRadius: 30, depth: 800, colorMode: 'single', opacity: 1, rotationX: 0, rotationY: 0 } },
+  { name: '球', seed: 3005, patch: { layoutMode: 'solid', solidShape: 'sphere', solidDistribution: 'surface', count: 1000, sizeMode: 'random', minRadius: 12, maxRadius: 55, depth: 2000, colorMode: 'single', opacity: 1, rotationX: 0, rotationY: 0 } },
+  { name: 'トーラス', seed: 3006, patch: { layoutMode: 'solid', solidShape: 'torus', solidDistribution: 'surface', count: 1200, sizeMode: 'random', minRadius: 10, maxRadius: 45, depth: 2000, colorMode: 'single', opacity: 1, rotationX: 0, rotationY: 0 } },
+  { name: '立方体', seed: 3007, patch: { layoutMode: 'solid', solidShape: 'cube', solidDistribution: 'surface', count: 800, sizeMode: 'fixed', minRadius: 28, depth: 1800, colorMode: 'single', opacity: 1, rotationX: 0, rotationY: 0 } },
+  { name: 'ミックス', seed: 3008, patch: { layoutMode: 'random', count: 500, sizeMode: 'random', minRadius: 15, maxRadius: 80, depth: 2500, spreadX: 90, spreadY: 90, colorMode: 'random', blendMode: 'screen', opacity: 1, rotationX: 0, rotationY: 0 } }
+];
+/* Yayoi 本体 encodeShareConfig と同一: #s= + base64url(JSON.stringify(pickConfigSubset(cfg, Object.keys(DEFAULT_CONFIG)))) */
+function yayoiEncodeShare(cfg){ const subset={}; for(const k of Object.keys(YAYOI_DEFAULT_CONFIG)) subset[k]=cfg[k]; return btoa(JSON.stringify(subset)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
 
 /* --- タイトル生成用語彙 (SeedWorks 独自) --- */
 const T_EN_A=['Silent','Hollow','Amber','Static','Velvet','Distant','Lunar','Glass','Iron','Pale','Slow','Electric','Faded','Mineral','Humming'];
@@ -260,7 +340,31 @@ function derive(rawInput){
   };
   visual.linkP=KG_URL+'#p='+visual.presetId;
 
-  return { input:ms.input, hash:h, workId, title, music, noise, visual };
+  /* Lien */
+  const rli=streamFor(h,'lien');
+  const lienPresetKey=pick(rli, LIEN_PRESET_KEYS);
+  const lien={ seed:1+Math.floor(rli()*99999), presetKey:lienPresetKey };
+  lien.config={ ...LIEN_PRESET_DEFAULTS, ...LIEN_PRESETS[lienPresetKey], seed:lien.seed };
+  lien.link=LIEN_URL+'#c='+lienEncodeShare(lien.config);
+
+  /* Leary */
+  const rle=streamFor(h,'leary');
+  const leary={ seed:1+Math.floor(rle()*999999) };
+  leary.link=LEARY_URL+'?seed='+leary.seed;
+
+  /* TOPO */
+  const rto=streamFor(h,'topo');
+  const topo={ seed:1+Math.floor(rto()*999999999) };
+  topo.link=TOPO_URL+'?seed='+topo.seed;
+
+  /* Yayoi (applyPresetConfig と同一: DEFAULT + patch + seed。width/height は本体デフォルトを維持) */
+  const rya=streamFor(h,'yayoi');
+  const yayoiPreset=pick(rya, YAYOI_PRESETS);
+  const yayoi={ seed:1+Math.floor(rya()*2147483646), presetName:yayoiPreset.name };
+  yayoi.config={ ...YAYOI_DEFAULT_CONFIG, shapeSizes:{...YAYOI_DEFAULT_CONFIG.shapeSizes}, shapeColors:{...YAYOI_DEFAULT_CONFIG.shapeColors}, activeShapes:[...YAYOI_DEFAULT_CONFIG.activeShapes], randomShapes:[...YAYOI_DEFAULT_CONFIG.randomShapes], ...yayoiPreset.patch, seed:yayoi.seed };
+  yayoi.link=YAYOI_URL+'#s='+yayoiEncodeShare(yayoi.config);
+
+  return { input:ms.input, hash:h, workId, title, music, noise, visual, lien, leary, topo, yayoi };
 }
 
 /* --- base64url (UTF-8安全) --- */
@@ -304,6 +408,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 
 function creditsText(w, dateStr){
   const m=w.music, n=w.noise, v=w.visual;
+  const li=w.lien, le=w.leary, to=w.topo, ya=w.yayoi;
   return [
     w.title,
     'Work ID: '+w.workId,
@@ -320,8 +425,20 @@ function creditsText(w, dateStr){
     '  Preset: '+v.presetName+' ('+v.presetId+') / gpgpuSeed: '+v.gpgpuSeed,
     '  '+v.linkP,
     kgLinkC ? '  Seed-applied: '+kgLinkC : '',
+    'Flow Lines — Lien',
+    '  Seed: '+li.seed+' / Preset: '+li.presetKey,
+    '  '+li.link,
+    'Vortex Lines — Leary',
+    '  Seed: '+le.seed,
+    '  '+le.link,
+    'Contours — TOPO',
+    '  Seed: '+to.seed,
+    '  '+to.link,
+    'Shapes — Yayoi',
+    '  Seed: '+ya.seed+' / Preset: '+ya.presetName,
+    '  '+ya.link,
     '',
-    'Tools: Meikyoshisui / Noise / Kalokagathia — generated with SeedWorks',
+    'Tools: Meikyoshisui / Noise / Kalokagathia / Lien / Leary / TOPO / Yayoi — generated with SeedWorks',
     '© '+dateStr.slice(0,4)+' Varelser — Original work. All rights reserved.',
     'Date: '+dateStr
   ].filter(x=>x!=='').join('\n');
@@ -329,6 +446,7 @@ function creditsText(w, dateStr){
 
 function manifest(w, dateStr){
   const m=w.music, n=w.noise, v=w.visual;
+  const li=w.lien, le=w.leary, to=w.topo, ya=w.yayoi;
   return {
     tool:'SeedWorks', version:1,
     workId:w.workId, title:w.title, masterSeed:w.input, masterSeedHash:w.hash,
@@ -341,6 +459,10 @@ function manifest(w, dateStr){
     kalokagathia:{ presetId:v.presetId, presetName:v.presetName, linkP:v.linkP, linkC:kgLinkC,
       seeds:{ gpgpuSeed:v.gpgpuSeed, dlaSeed:v.dlaSeed, lsysSeed:v.lsysSeed, plifeSeed:v.plifeSeed, shapeSeed:v.shapeSeed },
       seedFieldsApplied:kgApplied },
+    lien:{ seed:li.seed, presetKey:li.presetKey, config:li.config, link:li.link },
+    leary:{ seed:le.seed, link:le.link, manualSteps:'リンクが使えない場合: Leary を開き、Seed 欄に '+le.seed+' を入力してください。' },
+    topo:{ seed:to.seed, link:to.link, manualSteps:'リンクが使えない場合: TOPO を開き、「シードを指定」欄に '+to.seed+' を入力して「シード適用」を押してください。' },
+    yayoi:{ seed:ya.seed, presetName:ya.presetName, config:ya.config, link:ya.link },
     credits:creditsText(w, dateStr)
   };
 }
@@ -381,6 +503,28 @@ function render(w){
   $('kOpenC').style.display='none'; $('kCopyC').style.display='none';
   $('kCStatus').textContent='#c= リンクは、プリセット設定を本家サイトから取得し、シード項目（gpgpuSeed 等）をこの作品のシードに差し替えてから、本体と同じ deflate-raw 圧縮で生成します（要ネット接続）。';
   $('kCStatus').className='status';
+  const li=w.lien;
+  kv($('liKv'),[
+    ['Seed','<span class="mono">'+li.seed+'</span>'],
+    ['プリセット', esc(li.presetKey)]
+  ]);
+  $('liOpen').href=li.link;
+  const le=w.leary;
+  kv($('leKv'),[
+    ['Seed','<span class="mono">'+le.seed+'</span>（手入力でも再現可）']
+  ]);
+  $('leOpen').href=le.link;
+  const to=w.topo;
+  kv($('toKv'),[
+    ['Seed','<span class="mono">'+to.seed+'</span>（手入力でも再現可）']
+  ]);
+  $('toOpen').href=to.link;
+  const ya=w.yayoi;
+  kv($('yaKv'),[
+    ['Seed','<span class="mono">'+ya.seed+'</span>'],
+    ['プリセット', esc(ya.presetName)]
+  ]);
+  $('yaOpen').href=ya.link;
   $('credits').textContent=creditsText(w, dateStr);
   $('out').style.display='block';
 }
@@ -420,6 +564,10 @@ $('randBtn').addEventListener('click', ()=>{
 $('mCopy').addEventListener('click', e=>{ if(current) copyText(current.music.link, e.currentTarget); });
 $('nCopy').addEventListener('click', e=>{ if(current) copyText(current.noise.sessionUrl, e.currentTarget); });
 $('kCopyP').addEventListener('click', e=>{ if(current) copyText(current.visual.linkP, e.currentTarget); });
+$('liCopy').addEventListener('click', e=>{ if(current) copyText(current.lien.link, e.currentTarget); });
+$('leCopy').addEventListener('click', e=>{ if(current) copyText(current.leary.link, e.currentTarget); });
+$('toCopy').addEventListener('click', e=>{ if(current) copyText(current.topo.link, e.currentTarget); });
+$('yaCopy').addEventListener('click', e=>{ if(current) copyText(current.yayoi.link, e.currentTarget); });
 $('kCopyC').addEventListener('click', e=>{ if(kgLinkC) copyText(kgLinkC, e.currentTarget); });
 $('copyCredits').addEventListener('click', e=>{ if(current) copyText(creditsText(current, current._date), e.currentTarget); });
 $('kMakeC').addEventListener('click', async e=>{
