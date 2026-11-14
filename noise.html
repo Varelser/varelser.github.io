@@ -693,7 +693,7 @@
         <div class="session-actions">
           <button id="midiBtn" class="secondary" type="button" data-help="Web MIDIを有効化します。ノート=再生/停止、各種CCでパラメータ操作ができます。">MIDI入力を開始</button>
           <label class="check" data-help="ノートオフでも停止するかどうか。ONだと鍵盤を離した時に止まります。"><input id="midiNoteToggle" type="checkbox" checked><span>ノートで再生/停止</span></label>
-          <label class="check" data-help="同じブラウザ・同じサイトで開いている Kalokagathia などへ、マスター音量・各レイヤーの種類/音量/有効状態・バイノーラル・再生状態を200msごとに送ります（BroadcastChannel、同一オリジンのタブ間のみ届きます）。"><input id="varelserLinkToggle" type="checkbox"><span>Varelser Link 送信</span></label>
+          <label class="check" data-help="同じブラウザ・同じサイトで開いている Kalokagathia などへ、マスター音量・実音量レベル(RMS/ピーク)・各レイヤーの種類/音量/有効状態・バイノーラル・再生状態を200msごとに送ります（BroadcastChannel、同一オリジンのタブ間のみ届きます）。"><input id="varelserLinkToggle" type="checkbox"><span>Varelser Link 送信</span></label>
         </div>
         <div class="help">Web MIDI対応ブラウザで、ノート=再生/停止（連打しても再起動しません）、CC7=Master Gain、CC1=Width、CC74=Drive、CC20/21=Layer A/B Gain、CC22=Binaural Level、CC23=Space を操作できます。DAW連携の中心は WAV/AIFF 書き出しです（Loop Crossfade 使用時は WAV に smpl ループチャンクが付きます）。同じリポジトリの noise-cli.mjs を使えば、Node.js のある VM / サーバーからも同じプリセット・同じ音をヘッドレスで書き出せます。</div>
       </div>
@@ -5980,16 +5980,50 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
 
   // ---- Varelser Link (cross-tab state broadcast) ----
   const VLINK_KEY = 'noise.varelserLink.v1';
-  const vlinkState = { channel: null, timer: null };
+  const vlinkState = { channel: null, timer: null, levelBuf: null, levelBufB: null };
+  function vlinkLevel() {
+    /* Real output level from the playback analyser (Phase 3, additive).
+       Returns zeros whenever not playing / no analyser / on any error. */
+    let levelRms = 0, levelPeak = 0;
+    try {
+      const an = (typeof engine !== 'undefined' && engine && engine.playing) ? engine.analyser : null;
+      if (an) {
+        const size = an.fftSize | 0;
+        if (size > 0) {
+          if (typeof an.getFloatTimeDomainData === 'function') {
+            if (!vlinkState.levelBuf || vlinkState.levelBuf.length !== size) vlinkState.levelBuf = new Float32Array(size);
+            const buf = vlinkState.levelBuf;
+            an.getFloatTimeDomainData(buf);
+            let sum = 0, peak = 0;
+            for (let i = 0; i < buf.length; i++) { const v = buf[i]; sum += v * v; const a = v < 0 ? -v : v; if (a > peak) peak = a; }
+            levelRms = Math.min(1, Math.sqrt(sum / buf.length));
+            levelPeak = Math.min(1, peak);
+          } else if (typeof an.getByteTimeDomainData === 'function') {
+            if (!vlinkState.levelBufB || vlinkState.levelBufB.length !== size) vlinkState.levelBufB = new Uint8Array(size);
+            const buf = vlinkState.levelBufB;
+            an.getByteTimeDomainData(buf);
+            let sum = 0, peak = 0;
+            for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; sum += v * v; const a = v < 0 ? -v : v; if (a > peak) peak = a; }
+            levelRms = Math.min(1, Math.sqrt(sum / buf.length));
+            levelPeak = Math.min(1, peak);
+          }
+        }
+      }
+    } catch (_) { levelRms = 0; levelPeak = 0; }
+    return { levelRms, levelPeak };
+  }
   function vlinkSnapshot() {
     const p = getParams();
     const clamp01 = (v) => Math.min(1, Math.max(0, Number(v) || 0));
     const typeName = (id) => { const hit = NOISE_TYPES.find(([v]) => v === id); return hit ? hit[1] : String(id); };
+    const lvl = vlinkLevel();
     return {
       app: 'noise',
       type: 'state',
       ts: Date.now(),
       master: clamp01(p.master_gain),
+      levelRms: lvl.levelRms,
+      levelPeak: lvl.levelPeak,
       layers: ['A', 'B', 'C'].map(prefix => ({
         type: typeName(p[`${prefix}_type`]),
         gain: clamp01(p[`${prefix}_gain`]),

@@ -1802,12 +1802,24 @@
         try{ state.seed=derived; syncInputs(); rebuildBaseLines(); scheduleGeometryRender(); msgEl.textContent='シード同期を受信: '+derived; lastSeed=derived; }
         catch(e){} finally{ applying=false; }
       }
+      function noiseDriveOf(d){
+        /* Phase 3: real level (additive fields); null for old senders. */
+        if(!d || !d.playing) return null;
+        const hasRms=typeof d.levelRms==='number'&&Number.isFinite(d.levelRms);
+        const hasPeak=typeof d.levelPeak==='number'&&Number.isFinite(d.levelPeak);
+        if(!hasRms && !hasPeak) return null;
+        const c=v=>Math.max(0,Math.min(1,v));
+        return c(Math.max((hasPeak?c(d.levelPeak):0)*0.9,(hasRms?c(d.levelRms):0)*2.2));
+      }
       function applyNoiseFilter(){
         if(!cv) return;
         if(ch && lastNoise && (Date.now()-lastNoise.ts<1500) && lastNoise.playing){
           const m=Math.max(0,Math.min(1,Number(lastNoise.master)||0));
-          cv.style.filter='brightness('+(0.85+0.3*m).toFixed(3)+')';
-        } else cv.style.filter='';
+          const drive=noiseDriveOf(lastNoise);
+          cv.style.transition='filter 160ms linear';
+          if(drive!==null) cv.style.filter='brightness('+(0.85+0.25*m+0.35*drive).toFixed(3)+') contrast('+(1+0.12*drive).toFixed(3)+')';
+          else cv.style.filter='brightness('+(0.85+0.3*m).toFixed(3)+')';
+        } else { cv.style.transition=''; cv.style.filter=''; }
       }
       function start(){
         if(ch || typeof BroadcastChannel==='undefined') return;
@@ -1820,7 +1832,8 @@
               else if(d.app==='noise' && d.type==='state'){
                 lastNoise=d;
                 const l1=d.layers && d.layers[0] ? d.layers[0].type : '';
-                noiseEl.textContent='Noise: master '+(Number(d.master)||0).toFixed(2)+' / '+l1+' / '+(d.playing?'再生中':'停止');
+                const lv=(typeof d.levelPeak==='number'&&Number.isFinite(d.levelPeak))?' / level '+Math.max(0,Math.min(1,d.levelPeak)).toFixed(2):'';
+                noiseEl.textContent='Noise: master '+(Number(d.master)||0).toFixed(2)+' / '+l1+' / '+(d.playing?'再生中':'停止')+lv;
                 applyNoiseFilter();
               }
               else if(d.app==='meikyoshisui' && d.type==='state'){
@@ -1840,7 +1853,7 @@
       function stop(){
         if(pollTimer){ clearInterval(pollTimer); pollTimer=null; }
         if(ch){ try{ ch.close(); }catch(e){} ch=null; }
-        if(cv) cv.style.filter='';
+        if(cv){ cv.style.transition=''; cv.style.filter=''; }
       }
       let saved=false; try{ saved=localStorage.getItem(KEY)==='1'; }catch(e){}
       toggle.checked=saved; if(saved) start();

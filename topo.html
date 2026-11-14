@@ -4044,6 +4044,7 @@ function downloadTextFile(text, filename) {
   var pendingDerivedSeed = null; /* seed-sync received before p5 setup() finished */
   var lastNoiseAt = 0;
   var lastNoiseMaster = null;
+  var lastNoiseDrive = null; /* Phase 3: drive from real level, null for old senders / not playing */
   var filterTimer = null;
 
   function $(id) { return document.getElementById(id); }
@@ -4137,17 +4138,31 @@ function downloadTextFile(text, filename) {
     if (!el) return;
     var fresh = lastNoiseMaster !== null && (Date.now() - lastNoiseAt) < 1500;
     if (fresh) {
-      el.style.filter = 'brightness(' + (0.85 + 0.3 * clamp01(lastNoiseMaster)).toFixed(3) + ')';
-    } else if (el.style.filter) {
-      el.style.filter = '';
+      el.style.transition = 'filter 160ms linear';
+      if (lastNoiseDrive !== null) {
+        el.style.filter = 'brightness(' + (0.85 + 0.25 * clamp01(lastNoiseMaster) + 0.35 * lastNoiseDrive).toFixed(3) + ') contrast(' + (1 + 0.12 * lastNoiseDrive).toFixed(3) + ')';
+      } else {
+        el.style.filter = 'brightness(' + (0.85 + 0.3 * clamp01(lastNoiseMaster)).toFixed(3) + ')';
+      }
+    } else {
+      if (el.style.transition) el.style.transition = '';
+      if (el.style.filter) el.style.filter = '';
     }
   }
   function onNoiseState(msg) {
     /* Status line only (+ brightness while fresh). Do NOT regenerate. */
     lastNoiseAt = Date.now();
     lastNoiseMaster = (typeof msg.master === 'number' && Number.isFinite(msg.master)) ? clamp01(msg.master) : null;
+    /* Phase 3: real audio level (additive fields). Old senders without
+       level fields keep the Phase-2 master-only behaviour exactly. */
+    var hasRms = typeof msg.levelRms === 'number' && Number.isFinite(msg.levelRms);
+    var hasPeak = typeof msg.levelPeak === 'number' && Number.isFinite(msg.levelPeak);
+    lastNoiseDrive = (msg.playing && (hasRms || hasPeak))
+      ? clamp01(Math.max((hasPeak ? clamp01(msg.levelPeak) : 0) * 0.9, (hasRms ? clamp01(msg.levelRms) : 0) * 2.2))
+      : null;
     var parts = [];
     if (lastNoiseMaster !== null) parts.push('master ' + lastNoiseMaster.toFixed(2));
+    if (hasPeak) parts.push('level ' + clamp01(msg.levelPeak).toFixed(2));
     if (Array.isArray(msg.layers)) {
       var names = [];
       msg.layers.forEach(function (layer, i) {
@@ -4206,8 +4221,9 @@ function downloadTextFile(text, filename) {
     if (channel) { try { channel.onmessage = null; channel.close(); } catch (err) { /* ignore */ } channel = null; }
     enabled = false;
     lastNoiseMaster = null;
+    lastNoiseDrive = null;
     var el = canvasEl();
-    if (el && el.style.filter) el.style.filter = '';
+    if (el) { el.style.transition = ''; if (el.style.filter) el.style.filter = ''; }
     linkStatus('Varelser Link: OFF');
   }
   function setEnabled(on, fromSyncButton) {

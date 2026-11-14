@@ -2333,6 +2333,19 @@
 
     function clamp01(v) { var n = Number(v); return Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0; }
 
+    /* Phase 3: real audio level from Noise (levelRms/levelPeak, additive
+       fields). Returns null when the sender is an old version without
+       level fields — callers then use the Phase-2 master-only behaviour. */
+    function noiseDrive(d) {
+      if (!d || !d.playing) return null;
+      var hasRms = typeof d.levelRms === 'number' && Number.isFinite(d.levelRms);
+      var hasPeak = typeof d.levelPeak === 'number' && Number.isFinite(d.levelPeak);
+      if (!hasRms && !hasPeak) return null;
+      var rms = hasRms ? clamp01(d.levelRms) : 0;
+      var peak = hasPeak ? clamp01(d.levelPeak) : 0;
+      return clamp01(Math.max(peak * 0.9, rms * 2.2));
+    }
+
     function refreshNoiseModulation() {
       if (!viewCanvas) viewCanvas = document.getElementById('viewCanvas');
       if (!viewCanvas) return;
@@ -2340,8 +2353,16 @@
         typeof lastNoise.data.master === 'number' && Number.isFinite(lastNoise.data.master);
       if (fresh) {
         /* Non-destructive: CSS filter only; Lien's saved config is never mutated. */
-        viewCanvas.style.filter = 'brightness(' + (0.85 + 0.3 * clamp01(lastNoise.data.master)).toFixed(3) + ')';
+        var master = clamp01(lastNoise.data.master);
+        var drive = noiseDrive(lastNoise.data);
+        viewCanvas.style.transition = 'filter 160ms linear';
+        if (drive !== null) {
+          viewCanvas.style.filter = 'brightness(' + (0.85 + 0.25 * master + 0.35 * drive).toFixed(3) + ') contrast(' + (1 + 0.12 * drive).toFixed(3) + ')';
+        } else {
+          viewCanvas.style.filter = 'brightness(' + (0.85 + 0.3 * master).toFixed(3) + ')';
+        }
       } else {
+        viewCanvas.style.transition = '';
         viewCanvas.style.filter = '';
       }
     }
@@ -2370,7 +2391,8 @@
           if (chosen && typeof chosen.type === 'string' && chosen.type) layerName = chosen.type;
         }
         var masterTxt = (typeof msg.master === 'number' && Number.isFinite(msg.master)) ? msg.master.toFixed(2) : '—';
-        if (noiseStatusEl) noiseStatusEl.textContent = 'Noise: master ' + masterTxt + ' / ' + layerName + ' / ' + (msg.playing ? '再生中' : '停止');
+        var levelTxt = (typeof msg.levelPeak === 'number' && Number.isFinite(msg.levelPeak)) ? ' / level ' + clamp01(msg.levelPeak).toFixed(2) : '';
+        if (noiseStatusEl) noiseStatusEl.textContent = 'Noise: master ' + masterTxt + ' / ' + layerName + ' / ' + (msg.playing ? '再生中' : '停止') + levelTxt;
         refreshNoiseModulation();
         return;
       }
