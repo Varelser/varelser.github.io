@@ -345,6 +345,27 @@
   },
   {
     "authors": [
+      "Felix O'Mahony",
+      "Daniel Olmeda Reino",
+      "Roberto Cipolla",
+      "Ayush Tewari"
+    ],
+    "categories": [
+      "cs.CV"
+    ],
+    "field": "cs.CV",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-12T18:59:09Z",
+    "source": "arXiv",
+    "summaryHtml": "動画拡散モデルは見た目の質では優れているが、物理的におかしい動きを生みやすい。従来の設定では物理的な推論のすべてを拡散過程の中で同時に行わなければならず、それが破綻の原因だった。本論文は物理推論の役割を、言語モデルに支えられたキーフレーム生成モジュールへ移す手法「K2V」を提案する。<br><br>キーフレーム生成では言語による明示的な推論が働き、動画の重要な瞬間の見た目を細かく制御できる。キーフレームは言語で書かれた物理の筋書きとして働き、各場面で何が起きるべきかを明示する。生成されたキーフレームを条件として動画生成モデルに渡すことで、拡散モデルの役割は物理的に正しい中間状態のあいだを補間するだけの単純な作業になる。全体の系列を拡散だけで推論する必要がなくなる。<br><br>その結果、物理的正確さを測るベンチマークPhysics-IQ VerifiedとPhyGenBenchで従来手法を大きく上回り、最先端の性能を達成した。言語モデルの推論力と拡散モデルの生成力を分業させることで、見た目だけでなく物理的にもっともらしい動画生成へ近づく試みである。出典：arXiv",
+    "timestamp": 1794509949000,
+    "title": "K2V: Generative Keyframing For Physically Plausible Video Generation",
+    "titleJa": "物理的に正しい動画生成へ――言語モデルが描くキーフレーム「K2V」",
+    "url": "https://arxiv.org/abs/2611.17324"
+  },
+  {
+    "authors": [
       "Ethan Lin",
       "Akanksha Sarkar",
       "Ziang Liu",
@@ -1232,6 +1253,33 @@
   },
   {
     "authors": [
+      "Jiancheng Pan",
+      "Yuzheng Liu",
+      "Hengyuan Cao",
+      "Qiyuan Zhang",
+      "Yangyan Li",
+      "Biao Gong",
+      "Zheng Zhang",
+      "Ka Long Cheng",
+      "Xinyang Wang",
+      "Yujun Shen"
+    ],
+    "categories": [
+      "cs.CV"
+    ],
+    "field": "cs.CV",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-12T09:16:10Z",
+    "source": "arXiv",
+    "summaryHtml": "画像の理解と生成を一つのモデルで担う統一マルチモーダルモデルでは、注意機構の設計が性能を左右する。本論文は約90億パラメータのUniSpark-9Bを提案し、トークン間の明示的な相互作用を扱う完全注意と、文脈を圧縮して伝播させる線形注意（GatedDeltaNet）を組み合わせたハイブリッド注意を検証する。基盤はMixture-of-Transformer-Expertsである。<br><br>自己回帰的なテキスト予測と視覚フロー・マッチングを組み合わせ、視覚的質問応答、テキストからの画像生成、指示にもとづく画像編集、テキストと画像が交互に現れる生成に対応する。交互生成では、ノイズを含む視覚ターゲットを後続の予測から切り離し、クリーンな視覚表現だけが後の出力の文脈になるよう、ブロック単位の規則で区別を徹底した。<br><br>生成サンプル約1億5,970万件、理解サンプル約2億1,340万件、交互系列約62万件を用い、4段階のカリキュラムで学習した結果、画像合成は2K解像度まで対応し、MME-Sで2470.3、GenEvalで0.83を記録した。ハイブリッド注意が統一モデルの有効な基盤になることを示す結果である。出典：arXiv",
+    "timestamp": 1794474970000,
+    "title": "UniSpark: Exploring Hybrid Attention for Multimodal Understanding and Generation",
+    "titleJa": "理解と生成を一つのモデルに――ハイブリッド注意機構のUniSpark-9B",
+    "url": "https://arxiv.org/abs/2611.16517"
+  },
+  {
+    "authors": [
       "Muhua Huang",
       "Xijuan Zhang",
       "Christopher J. Soto",
@@ -1793,51 +1841,5 @@
     "title": "SO-Arena: Benchmarking the Capability Spectrum and Reliability of System One Models",
     "titleJa": "速い思考の実力と信頼性を測る――システム1モデルのベンチマークSO-Arena",
     "url": "https://arxiv.org/abs/2611.15777"
-  },
-  {
-    "authors": [
-      "Chengguang Gan",
-      "Yunhao Liang",
-      "Hanjun Wei",
-      "QingHao Zhang",
-      "Shiwen Ni"
-    ],
-    "categories": [
-      "cs.CL"
-    ],
-    "field": "cs.CL",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-11T14:53:50Z",
-    "source": "arXiv",
-    "summaryHtml": "ベンチマークの得点はモデルの能力の代理指標として読まれることが多い。本研究はその逆問題を扱う。モデルを狙った得点に落とすことはできるのか、そしてその失敗は本当に能力の低いモデルと似るのか。研究チームは、目標得点への較正、設問の難易度構造、実際の弱いモデルとの誤答分布の類似という3軸で「信ぴょう性のある性能低下」を定義し、数学・コード・多肢選択推論・ツール利用にわたる1,985問の項目反応理論較正済み課題「CapLadder」を作った。<br><br>弱い教師モデルによるLoRAのダイヤル操作では、推論課題で未見の目標得点に誤差1.9ポイントで到達できたが、プロンプトや温度、重みへのノイズでは同等の範囲と精度を両立できなかった。ただし多肢選択では、導入された誤答の最大97%が一つの選択肢の文字に集中し、QwenではD、LlamaではAに偏る「アンカー」が生じた。ロジットを調べるとほぼ一定のシフトが原因で、これを差し引くと失われた正答率の52〜59%が回復し、アンカーも消えた。<br><br>人手で分類した誤答の分布は推論課題では弱い参照モデルと一致したが、得点を精密に制御できても、能力低下が別のベンチマークへ持ち運べるとは限らない。全体を較正したダイヤルは他のベンチマークでは14.2ポイントの誤差を出した。得点の操作可能性と「本当に弱く見えること」は別問題だという結論である。出典：arXiv",
-    "timestamp": 1794408830000,
-    "title": "Can We Make an LLM Dumber, or Is It Just Playing Dumb? An Empirical Study of Believable Performance Throttling",
-    "titleJa": "LLMを「それらしく」賢くなくできるか――ベンチマーク得点の操作とその限界",
-    "url": "https://arxiv.org/abs/2611.15568"
-  },
-  {
-    "authors": [
-      "Jiali Cheng",
-      "Oleg Rokhlenko",
-      "Joo-Kyung Kim",
-      "Hadi Amiri",
-      "Xingzhi Guo"
-    ],
-    "categories": [
-      "cs.MA",
-      "cs.AI",
-      "cs.CL"
-    ],
-    "field": "cs.MA",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-11T14:13:26Z",
-    "source": "arXiv",
-    "summaryHtml": "個人向けAIエージェントの広がりは、全体を見渡すオーケストレーターに依存する集中型マルチエージェントシステムの限界を露わにする。拡張性とプライバシーの懸念があるからだ。分散環境では、エージェントは自分の局所的な状態しか見えず、隣接するエージェントとしかやり取りできない。地域外のツールや技能を自ら発見し、他のエージェントと協調して課題を解く必要がある。<br><br>本研究は、グラフで制約された通信のもとでの分散協調を評価するベンチマークを提案する。10万超のツールを備えた合成の大規模分散ツール呼び出し課題を含む。実験では、最先端のLLMエージェントでも地域外の関連リソースの発見や協調に苦戦し、標準的な強化学習ではこの限界を確実に克服できないことが分かった。<br><br>そこで、トポロジーを意識したウォームアップと自己改善型のLLMルーティングを組み合わせた強いベースライン「GraphHarness」を示した。課題の成功率が48.5ポイント、協調の質が30.6ポイント向上し、コストは34.0ポイント削減された。分散型マルチエージェントには、明示的なハーネスの仕組みが要ることを示す結果である。出典：arXiv",
-    "timestamp": 1794406406000,
-    "title": "DecArena: Evaluating Large-Scale Decentralized Multi-Agent Collaboration",
-    "titleJa": "DecArena――10万超のツールをもつ分散マルチエージェント協調の評価基盤",
-    "url": "https://arxiv.org/abs/2611.15521"
   }
 ]
