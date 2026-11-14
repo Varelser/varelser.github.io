@@ -693,6 +693,7 @@
         <div class="session-actions">
           <button id="midiBtn" class="secondary" type="button" data-help="Web MIDIを有効化します。ノート=再生/停止、各種CCでパラメータ操作ができます。">MIDI入力を開始</button>
           <label class="check" data-help="ノートオフでも停止するかどうか。ONだと鍵盤を離した時に止まります。"><input id="midiNoteToggle" type="checkbox" checked><span>ノートで再生/停止</span></label>
+          <label class="check" data-help="同じブラウザ・同じサイトで開いている Kalokagathia などへ、マスター音量・各レイヤーの種類/音量/有効状態・バイノーラル・再生状態を200msごとに送ります（BroadcastChannel、同一オリジンのタブ間のみ届きます）。"><input id="varelserLinkToggle" type="checkbox"><span>Varelser Link 送信</span></label>
         </div>
         <div class="help">Web MIDI対応ブラウザで、ノート=再生/停止（連打しても再起動しません）、CC7=Master Gain、CC1=Width、CC74=Drive、CC20/21=Layer A/B Gain、CC22=Binaural Level、CC23=Space を操作できます。DAW連携の中心は WAV/AIFF 書き出しです（Loop Crossfade 使用時は WAV に smpl ループチャンクが付きます）。同じリポジトリの noise-cli.mjs を使えば、Node.js のある VM / サーバーからも同じプリセット・同じ音をヘッドレスで書き出せます。</div>
       </div>
@@ -5977,6 +5978,54 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     }
   }
 
+  // ---- Varelser Link (cross-tab state broadcast) ----
+  const VLINK_KEY = 'noise.varelserLink.v1';
+  const vlinkState = { channel: null, timer: null };
+  function vlinkSnapshot() {
+    const p = getParams();
+    const clamp01 = (v) => Math.min(1, Math.max(0, Number(v) || 0));
+    const typeName = (id) => { const hit = NOISE_TYPES.find(([v]) => v === id); return hit ? hit[1] : String(id); };
+    return {
+      app: 'noise',
+      type: 'state',
+      ts: Date.now(),
+      master: clamp01(p.master_gain),
+      layers: ['A', 'B', 'C'].map(prefix => ({
+        type: typeName(p[`${prefix}_type`]),
+        gain: clamp01(p[`${prefix}_gain`]),
+        on: !!p[`${prefix}_enabled`]
+      })),
+      binauralHz: p.master_binauralEnabled ? Number(p.master_binauralBeat) : null,
+      playing: !!engine.playing
+    };
+  }
+  function vlinkStart() {
+    if (vlinkState.channel || typeof BroadcastChannel === 'undefined') return;
+    try {
+      vlinkState.channel = new BroadcastChannel('varelser-link-v1');
+      const send = () => { try { vlinkState.channel.postMessage(vlinkSnapshot()); } catch (_) {} };
+      send();
+      vlinkState.timer = setInterval(send, 200);
+    } catch (_) { vlinkState.channel = null; }
+  }
+  function vlinkStop() {
+    if (vlinkState.timer) { clearInterval(vlinkState.timer); vlinkState.timer = null; }
+    if (vlinkState.channel) { try { vlinkState.channel.close(); } catch (_) {} vlinkState.channel = null; }
+  }
+  function initVarelserLink() {
+    const el = $('varelserLinkToggle');
+    if (!el) return;
+    let saved = false;
+    try { saved = localStorage.getItem(VLINK_KEY) === '1'; } catch (_) {}
+    el.checked = saved;
+    if (saved) vlinkStart();
+    el.addEventListener('change', () => {
+      try { localStorage.setItem(VLINK_KEY, el.checked ? '1' : '0'); } catch (_) {}
+      if (el.checked) { vlinkStart(); setStatus('Varelser Link 送信を開始しました（同一オリジンのタブへ状態を送信します）。', 'ok'); }
+      else { vlinkStop(); setStatus('Varelser Link 送信を停止しました。'); }
+    });
+  }
+
   function swapLayers() {
     const p = getParams();
     const next = { ...p };
@@ -7121,6 +7170,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     $('aiProvider').addEventListener('change', aiApplyProviderToUi);
     aiApplyProviderToUi();
     $('midiBtn').addEventListener('click', toggleMidi);
+    initVarelserLink();
     $('copySessionBtn').addEventListener('click', copySessionJson);
     $('loadSessionBtn').addEventListener('click', () => $('sessionFile').click());
     $('clearAutosaveBtn').addEventListener('click', () => {
