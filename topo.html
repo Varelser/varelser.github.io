@@ -1709,6 +1709,15 @@ function coreNoise(core, x, y, z) {
   let n1 = 0;
   let n2 = 0;
   let n3 = 0;
+  // Fast path (bit-identical): when the sample sits exactly on the
+  // z = 0 plane (zi = zf = 0, which doubling preserves across all
+  // octaves), the z-blend factor 0.5 * (1 - cos(zf * PI)) is exactly
+  // 0, so the whole z layer contributes exactly 0 * (n2 - n1) = 0
+  // and n1 is unchanged whether it is computed or not. Every caller
+  // in this app samples with z = 0 (coreFbm passes 0), so the z
+  // layer is skipped there; any z != 0 input takes the full
+  // original path below, operation for operation.
+  const zFlat = (zi === 0 && zf === 0);
   for (let o = 0; o < 4; o++) {
     let of = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
     const rxf = 0.5 * (1 - Math.cos(xf * Math.PI));
@@ -1718,13 +1727,15 @@ function coreNoise(core, x, y, z) {
     n2 = perlin[(of + PERLIN_YWRAP) & PERLIN_SIZE];
     n2 += rxf * (perlin[(of + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n2);
     n1 += ryf * (n2 - n1);
-    of += PERLIN_ZWRAP;
-    n2 = perlin[of & PERLIN_SIZE];
-    n2 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n2);
-    n3 = perlin[(of + PERLIN_YWRAP) & PERLIN_SIZE];
-    n3 += rxf * (perlin[(of + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n3);
-    n2 += ryf * (n3 - n2);
-    n1 += (0.5 * (1 - Math.cos(zf * Math.PI))) * (n2 - n1);
+    if (!zFlat) {
+      of += PERLIN_ZWRAP;
+      n2 = perlin[of & PERLIN_SIZE];
+      n2 += rxf * (perlin[(of + 1) & PERLIN_SIZE] - n2);
+      n3 = perlin[(of + PERLIN_YWRAP) & PERLIN_SIZE];
+      n3 += rxf * (perlin[(of + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n3);
+      n2 += ryf * (n3 - n2);
+      n1 += (0.5 * (1 - Math.cos(zf * Math.PI))) * (n2 - n1);
+    }
     r += n1 * ampl;
     ampl *= 0.5;
     xi <<= 1; xf *= 2;
@@ -1953,6 +1964,12 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
       sinA: Math.sin(formAngle),
       sigmaAlong: sigmaAlong,
       sigmaAcross: sigmaAcross,
+      // Sampler hot-loop constants, precomputed with the exact
+      // same operations the sampler used to perform per sample
+      // (sigmaPx * sigmaPx, sign * strength), so every value the
+      // sampler derives from them is bit-identical.
+      sigmaSq: sigmaPx * sigmaPx,
+      signStrength: formSign * hole.strength,
       formCutoffSq: formType === 'slope' ? Infinity
         : formType === 'ring' ? Math.pow(ringR + ringSigma * cutoffU, 2)
         : formAniso ? Math.pow(sigmaAlong * cutoffU, 2) : isoCutoffSq,
@@ -1974,6 +1991,7 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
   return {
     holesPx: holesPx,
     waveScratch: new Float64Array(holesPx.length),
+    latticeScratch: new Float64Array(3),
     // ---- Mountain field parameters ----
     // Elevation = blended generalised-Gaussian peaks (one per
     // hole) + a long-wave swell + a low-frequency domain warp of
@@ -2117,6 +2135,46 @@ function coreBilinearLattice(arr, cols, rows, step, x, y) {
   return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
 }
 
+// Fused triple bilinear sample. The warp X / warp Y / swell
+// lattices always share one grid geometry, so their index math
+// (fractional position, cell origin, weights, base index) is done
+// once instead of three times. Each returned value is computed
+// with the identical expression, in the identical order, as a
+// separate coreBilinearLattice call on that lattice — the results
+// are bit-identical; only the redundant geometry work is shared.
+function coreBilinearLattice3(arrA, arrB, arrC, cols, rows, step, x, y, out) {
+  let fx = x / step;
+  let fy = y / step;
+  if (fx < 0) fx = 0;
+  if (fy < 0) fy = 0;
+  if (fx > cols - 1.001) fx = cols - 1.001;
+  if (fy > rows - 1.001) fy = rows - 1.001;
+  const x0 = Math.floor(fx);
+  const y0 = Math.floor(fy);
+  const tx = fx - x0;
+  const ty = fy - y0;
+  const i00 = y0 * cols + x0;
+  const i01 = i00 + 1;
+  const i10 = i00 + cols;
+  const i11 = i10 + 1;
+  let a = arrA[i00];
+  let b = arrA[i01];
+  let c = arrA[i10];
+  let d = arrA[i11];
+  out[0] = a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
+  a = arrB[i00];
+  b = arrB[i01];
+  c = arrB[i10];
+  d = arrB[i11];
+  out[1] = a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
+  a = arrC[i00];
+  b = arrC[i01];
+  c = arrC[i10];
+  d = arrC[i11];
+  out[2] = a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
+  return out;
+}
+
 function coreSampleFieldAt(core, prep, x, y, cull) {
   // Mountain-final elevation:
   //   height(x, y) = swell(x, y) + peaks(x, y),
@@ -2153,12 +2211,16 @@ function coreSampleFieldAt(core, prep, x, y, cull) {
   let sy = y;
   let value = 0;
   if (prep.warpPx > 0.01 || prep.swellAmp > 0.0001) {
-    coreEnsureWarpLattice(core, prep);
+    // The lattice is built once per prep; only pay the ensure
+    // call while it is still missing (coreEnsureWarpLattice
+    // itself early-returns when built, so skipping the call when
+    // the lattice exists changes nothing observable).
+    if (!prep.swellLattice) coreEnsureWarpLattice(core, prep);
     if (prep.swellLattice) {
-      sx += coreBilinearLattice(prep.warpXLattice, prep.warpLatticeCols, prep.warpLatticeRows, prep.warpLatticeStep, x, y);
-      sy += coreBilinearLattice(prep.warpYLattice, prep.warpLatticeCols, prep.warpLatticeRows, prep.warpLatticeStep, x, y);
-      const swell = coreBilinearLattice(prep.swellLattice, prep.warpLatticeCols, prep.warpLatticeRows, prep.warpLatticeStep, x, y);
-      value += (swell - 0.5) * 2 * prep.swellAmp;
+      const lo = coreBilinearLattice3(prep.warpXLattice, prep.warpYLattice, prep.swellLattice, prep.warpLatticeCols, prep.warpLatticeRows, prep.warpLatticeStep, x, y, prep.latticeScratch);
+      sx += lo[0];
+      sy += lo[1];
+      value += (lo[2] - 0.5) * 2 * prep.swellAmp;
     }
   }
   const holesPx = prep.holesPx;
@@ -2208,13 +2270,12 @@ function coreSampleFieldAt(core, prep, x, y, cull) {
         const qb = db / hole.sigmaAcross;
         t2 = qa * qa + qb * qb;
       } else {
-        const s = hole.sigmaPx;
-        t2 = distSq / (s * s);
+        t2 = distSq / hole.sigmaSq;
       }
       // (d/sigma)^p with t2 = (d/sigma)^2: raise to p/2. The
       // p = 2 branch is the plain Gaussian and skips the pow.
       const t = (p === 2) ? t2 : Math.pow(t2, p * 0.5);
-      h = hole.sign * hole.strength * Math.exp(-t);
+      h = hole.signStrength * Math.exp(-t);
     }
     sumH += h;
     if (blend > 0) {
@@ -2273,15 +2334,24 @@ function coreBlurField(field, cols, rows, passes) {
   if (n === 0 || passes <= 0) return field;
   const tmp = new Float32Array(n);
   for (let pass = 0; pass < passes; pass++) {
-    // horizontal
+    // horizontal: interior columns use direct neighbours; only
+    // the two edge columns need the clamped taps (where the
+    // original Math.max / Math.min selected the edge element
+    // itself). The arithmetic expression per element is unchanged.
     for (let gy = 0; gy < rows; gy++) {
       const rowOff = gy * cols;
-      for (let gx = 0; gx < cols; gx++) {
-        const l = field[rowOff + Math.max(0, gx - 1)];
-        const c = field[rowOff + gx];
-        const r = field[rowOff + Math.min(cols - 1, gx + 1)];
-        tmp[rowOff + gx] = (l + 2 * c + r) * 0.25;
+      if (cols === 1) {
+        const c = field[rowOff];
+        tmp[rowOff] = (c + 2 * c + c) * 0.25;
+        continue;
       }
+      tmp[rowOff] = (field[rowOff] + 2 * field[rowOff] + field[rowOff + 1]) * 0.25;
+      for (let gx = 1; gx < cols - 1; gx++) {
+        const idx = rowOff + gx;
+        tmp[idx] = (field[idx - 1] + 2 * field[idx] + field[idx + 1]) * 0.25;
+      }
+      const lastIdx = rowOff + cols - 1;
+      tmp[lastIdx] = (field[lastIdx - 1] + 2 * field[lastIdx] + field[lastIdx]) * 0.25;
     }
     // vertical
     for (let gy = 0; gy < rows; gy++) {
@@ -2313,7 +2383,12 @@ function coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, 
   const low = minField + range * 0.045;
   const bandLo = minField + range * 0.03;
   const bandHi = maxField - range * 0.015;
-  const grads = [];
+  // Gradient magnitudes land in a typed array: the values are the
+  // identical doubles the plain-array version collected, and the
+  // typed-array sort orders them by the same numeric order, so the
+  // p50 / p90 / max picks below are exactly the same elements.
+  const grads = new Float64Array(cols * rows);
+  let gradCount = 0;
   const inv2Step = 1 / Math.max(1e-6, 2 * gridStep);
   for (let gy = 1; gy < rows - 1; gy++) {
     for (let gx = 1; gx < cols - 1; gx++) {
@@ -2323,17 +2398,18 @@ function coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, 
       const gxGrad = (field[idx + 1] - field[idx - 1]) * inv2Step;
       const gyGrad = (field[idx + cols] - field[idx - cols]) * inv2Step;
       const g = Math.hypot(gxGrad, gyGrad);
-      if (g > 1e-9) grads.push(g);
+      if (g > 1e-9) grads[gradCount++] = g;
     }
   }
   let gradP50 = 0;
   let gradP90 = 0;
   let gradMax = 0;
-  if (grads.length > 0) {
-    grads.sort((a, b) => a - b);
-    gradP50 = grads[Math.floor(grads.length * 0.5)];
-    gradP90 = grads[Math.min(grads.length - 1, Math.floor(grads.length * 0.9))];
-    gradMax = grads[grads.length - 1];
+  if (gradCount > 0) {
+    const sorted = grads.subarray(0, gradCount);
+    sorted.sort();
+    gradP50 = sorted[Math.floor(gradCount * 0.5)];
+    gradP90 = sorted[Math.min(gradCount - 1, Math.floor(gradCount * 0.9))];
+    gradMax = sorted[gradCount - 1];
   }
   const cap = Math.max(2, Math.trunc(cp.NUM_RINGS));
   // Safety guard (mountain-final; floor raised 0.78 -> 0.90 by
@@ -2377,7 +2453,7 @@ function coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, 
   return {
     thresholds: thresholds,
     info: {
-      gradSamples: grads.length,
+      gradSamples: gradCount,
       gradP50: gradP50,
       gradP90: gradP90,
       gradMax: gradMax,
@@ -2440,22 +2516,37 @@ function coreSmoothPathObject(pathObj, passes, mix, maxDisp) {
   if (mix === undefined) mix = 0.35;
   if (!pathObj || pathObj.points.length < 3) return pathObj;
   const capDisp = (typeof maxDisp === 'number' && maxDisp > 0) ? maxDisp : 0;
-  let pts = pathObj.points.slice();
+  // The passes run on flat coordinate arrays instead of allocating
+  // a fresh {x, y} object per point per pass; the point objects are
+  // materialised once at the end. Every arithmetic expression (the
+  // 3-point average, the lerp, the displacement cap) is evaluated
+  // with the same operands in the same order as the object-based
+  // version, so the resulting coordinates are bit-identical.
+  const n = pathObj.points.length;
+  const closed = pathObj.closed;
+  let xs = new Float64Array(n);
+  let ys = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    xs[i] = pathObj.points[i].x;
+    ys[i] = pathObj.points[i].y;
+  }
+  let nx2 = new Float64Array(n);
+  let ny2 = new Float64Array(n);
   for (let pass = 0; pass < passes; pass++) {
-    const next = [];
-    const n = pts.length;
     for (let i = 0; i < n; i++) {
-      const prev = pts[(i - 1 + n) % n];
-      const cur = pts[i];
-      const following = pts[(i + 1) % n];
-      if (!pathObj.closed && (i === 0 || i === n - 1)) {
-        next.push({ x: cur.x, y: cur.y });
+      if (!closed && (i === 0 || i === n - 1)) {
+        nx2[i] = xs[i];
+        ny2[i] = ys[i];
         continue;
       }
-      const avgX = (prev.x + cur.x + following.x) / 3;
-      const avgY = (prev.y + cur.y + following.y) / 3;
-      let nx = coreLerp(cur.x, avgX, mix);
-      let ny = coreLerp(cur.y, avgY, mix);
+      const pi = i > 0 ? i - 1 : n - 1;
+      const fi = i < n - 1 ? i + 1 : 0;
+      const curX = xs[i];
+      const curY = ys[i];
+      const avgX = (xs[pi] + curX + xs[fi]) / 3;
+      const avgY = (ys[pi] + curY + ys[fi]) / 3;
+      let nx = coreLerp(curX, avgX, mix);
+      let ny = coreLerp(curY, avgY, mix);
       if (capDisp > 0) {
         // Displacement cap (mountain mode): a contour may be
         // smoothed, but never shoved into its neighbour. The
@@ -2463,20 +2554,24 @@ function coreSmoothPathObject(pathObj, passes, mix, maxDisp) {
         // tenth of the guaranteed centre spacing, so two adjacent
         // lines smoothed towards each other consume at most a
         // fifth of the gap between them.
-        const dx = nx - cur.x;
-        const dy = ny - cur.y;
+        const dx = nx - curX;
+        const dy = ny - curY;
         const d = Math.hypot(dx, dy);
         if (d > capDisp) {
           const s = capDisp / d;
-          nx = cur.x + dx * s;
-          ny = cur.y + dy * s;
+          nx = curX + dx * s;
+          ny = curY + dy * s;
         }
       }
-      next.push({ x: nx, y: ny });
+      nx2[i] = nx;
+      ny2[i] = ny;
     }
-    pts = next;
+    const tx = xs; xs = nx2; nx2 = tx;
+    const ty = ys; ys = ny2; ny2 = ty;
   }
-  return { points: pts, closed: pathObj.closed };
+  const out = new Array(n);
+  for (let i = 0; i < n; i++) out[i] = { x: xs[i], y: ys[i] };
+  return { points: out, closed: closed };
 }
 
 function coreCircularizePathObject(cp, pathObj, mix) {
@@ -2539,39 +2634,60 @@ function coreInterpCoord(p1, p2, v1, v2, threshold) {
 
 // Marching squares over one threshold. Segments are stored in a
 // flat number array [x1, y1, x2, y2, ...]; no per-cell objects.
-function coreMarchingSquaresPaths(field, cols, rows, step, threshold) {
+// The optional rowMin / rowMax bands (per field row, computed by
+// the caller over the final field) let a whole cell row be skipped
+// when the threshold cannot cross it: a cell can only produce a
+// segment when some corner is < threshold and some corner is
+// >= threshold, so a cell row whose two field rows are entirely
+// >= threshold (bandLo >= threshold) or entirely < threshold
+// (bandHi < threshold) yields mask 0 / 15 in every cell — skipping
+// it examines nothing and changes nothing. Rows containing a NaN
+// are given infinite bands by the caller and are never skipped.
+// Within a row, corner values slide (each cell's vb / vc become
+// the next cell's va / vd — the same array elements), and only the
+// edge crossings the mask actually uses are interpolated: an edge
+// is read by the switch exactly when its endpoints straddle the
+// threshold (verified case by case), and coreInterpCoord is pure,
+// so skipping the unused edges changes nothing but the work done.
+function coreMarchingSquaresPaths(field, cols, rows, step, threshold, rowMin, rowMax) {
   const segments = [];
   const edge = new Float64Array(8); // top, right, bottom, left (x,y pairs)
+  const hasBands = !!rowMin && !!rowMax;
 
   for (let gy = 0; gy < rows - 1; gy++) {
+    if (hasBands) {
+      const bandLo = Math.min(rowMin[gy], rowMin[gy + 1]);
+      const bandHi = Math.max(rowMax[gy], rowMax[gy + 1]);
+      if (bandLo >= threshold || bandHi < threshold) continue;
+    }
     const y0 = gy * step;
     const y1 = (gy + 1) * step;
+    let idx = gy * cols;
+    let va = field[idx];
+    let vd = field[idx + cols];
     for (let gx = 0; gx < cols - 1; gx++) {
-      const idx = gy * cols + gx;
-      const va = field[idx];
       const vb = field[idx + 1];
       const vc = field[idx + cols + 1];
-      const vd = field[idx + cols];
 
       const mask = ((va >= threshold) << 3) | ((vb >= threshold) << 2) | ((vc >= threshold) << 1) | (vd >= threshold);
-      if (mask === 0 || mask === 15) continue;
+      if (mask !== 0 && mask !== 15) {
+        const x0 = gx * step;
+        const x1 = (gx + 1) * step;
+        // top edge a->b, right edge b->c, bottom edge d->c, left edge a->d
+        if ((va >= threshold) !== (vb >= threshold)) { edge[0] = coreInterpCoord(x0, x1, va, vb, threshold); edge[1] = y0; }
+        if ((vb >= threshold) !== (vc >= threshold)) { edge[2] = x1; edge[3] = coreInterpCoord(y0, y1, vb, vc, threshold); }
+        if ((vd >= threshold) !== (vc >= threshold)) { edge[4] = coreInterpCoord(x0, x1, vd, vc, threshold); edge[5] = y1; }
+        if ((va >= threshold) !== (vd >= threshold)) { edge[6] = x0; edge[7] = coreInterpCoord(y0, y1, va, vd, threshold); }
 
-      const x0 = gx * step;
-      const x1 = (gx + 1) * step;
-      // top edge a->b, right edge b->c, bottom edge d->c, left edge a->d
-      edge[0] = coreInterpCoord(x0, x1, va, vb, threshold); edge[1] = y0;
-      edge[2] = x1; edge[3] = coreInterpCoord(y0, y1, vb, vc, threshold);
-      edge[4] = coreInterpCoord(x0, x1, vd, vc, threshold); edge[5] = y1;
-      edge[6] = x0; edge[7] = coreInterpCoord(y0, y1, va, vd, threshold);
-      const centerValue = (va + vb + vc + vd) * 0.25;
-
-      const T = 0, R = 2, B = 4, L = 6;
-      switch (mask) {
+        const T = 0, R = 2, B = 4, L = 6;
+        let centerValue = 0;
+        switch (mask) {
         case 1: segments.push(edge[L], edge[L + 1], edge[B], edge[B + 1]); break;
         case 2: segments.push(edge[B], edge[B + 1], edge[R], edge[R + 1]); break;
         case 3: segments.push(edge[L], edge[L + 1], edge[R], edge[R + 1]); break;
         case 4: segments.push(edge[T], edge[T + 1], edge[R], edge[R + 1]); break;
         case 5:
+          centerValue = (va + vb + vc + vd) * 0.25;
           if (centerValue >= threshold) {
             segments.push(edge[T], edge[T + 1], edge[L], edge[L + 1], edge[B], edge[B + 1], edge[R], edge[R + 1]);
           } else {
@@ -2583,6 +2699,7 @@ function coreMarchingSquaresPaths(field, cols, rows, step, threshold) {
         case 8: segments.push(edge[T], edge[T + 1], edge[L], edge[L + 1]); break;
         case 9: segments.push(edge[T], edge[T + 1], edge[B], edge[B + 1]); break;
         case 10:
+          centerValue = (va + vb + vc + vd) * 0.25;
           if (centerValue >= threshold) {
             segments.push(edge[T], edge[T + 1], edge[R], edge[R + 1], edge[L], edge[L + 1], edge[B], edge[B + 1]);
           } else {
@@ -2593,7 +2710,11 @@ function coreMarchingSquaresPaths(field, cols, rows, step, threshold) {
         case 12: segments.push(edge[L], edge[L + 1], edge[R], edge[R + 1]); break;
         case 13: segments.push(edge[B], edge[B + 1], edge[R], edge[R + 1]); break;
         case 14: segments.push(edge[L], edge[L + 1], edge[B], edge[B + 1]); break;
+        }
       }
+      va = vb;
+      vd = vc;
+      idx++;
     }
   }
 
@@ -2637,11 +2758,56 @@ function coreStitchSegmentsToPaths(segments, step) {
     const o = i * 4;
     const path = [segments[o], segments[o + 1], segments[o + 2], segments[o + 3]];
     coreExtendFlatPath(path, adjList, segments, used, true);
-    coreExtendFlatPath(path, adjList, segments, used, false);
-    const normalized = coreNormalizeFlatPath(path, step);
+    const head = coreCollectFlatPathHead(path, adjList, segments, used);
+    const fullPath = head.length > 0 ? head.concat(path) : path;
+    const normalized = coreNormalizeFlatPath(fullPath, step);
     if (normalized.points.length >= 2) paths.push(normalized);
   }
   return paths;
+}
+
+// Head extension for stitching: allocation-friendly twin of the
+// head mode of coreExtendFlatPath. The original prepends each
+// newly found point with Array.unshift, which costs O(path
+// length) per step — O(n^2) over the thousands-of-points open
+// paths that flat mode and slope scenes produce. This version
+// walks the identical anchor chain (same adjacency lookups, same
+// first-unused pick, same `used` marking) while collecting the
+// head points in discovery order with push, then reverses the
+// collected run PAIR-WISE (a flat [x, y, x, y, ...] array must
+// never be reversed element-wise — that would transpose every
+// point) so the caller can simply concatenate it in front of the
+// path, producing exactly the sequence the unshift loop built.
+function coreCollectFlatPathHead(path, adjList, segments, used) {
+  const found2 = [];
+  let anchorX = path[0];
+  let anchorY = path[1];
+  while (true) {
+    const items = adjList(anchorX, anchorY, false) || [];
+    let found = -1;
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (used[item >> 1]) continue;
+      found = item;
+      break;
+    }
+
+    if (found < 0) break;
+
+    used[found >> 1] = 1;
+    const o = (found >> 1) * 4;
+    const nextIdx = (found % 2 === 0) ? o + 2 : o;
+    anchorX = segments[nextIdx];
+    anchorY = segments[nextIdx + 1];
+    found2.push(anchorX, anchorY);
+  }
+  const head = new Array(found2.length);
+  for (let i = 0, j = found2.length - 2; j >= 0; i += 2, j -= 2) {
+    head[i] = found2[j];
+    head[i + 1] = found2[j + 1];
+  }
+  return head;
 }
 
 function coreExtendFlatPath(path, adjList, segments, used, extendTail) {
@@ -2796,9 +2962,29 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
   const rangeEnd = range
     ? Math.max(rangeStart, Math.min(thresholds.length, typeof range.end === 'number' ? Math.floor(range.end) : thresholds.length))
     : thresholds.length;
+  // Per-field-row value bands for the marching-squares row skip
+  // (see coreMarchingSquaresPaths): computed once over the final
+  // field. A row containing a NaN gets infinite bands so it is
+  // never skipped — the per-cell logic there is untouched.
+  const rowMin = new Float64Array(rows);
+  const rowMax = new Float64Array(rows);
+  for (let gy = 0; gy < rows; gy++) {
+    const rowOff = gy * cols;
+    let mn = Infinity;
+    let mx = -Infinity;
+    for (let gx = 0; gx < cols; gx++) {
+      const v = field[rowOff + gx];
+      if (Number.isNaN(v)) { mn = -Infinity; mx = Infinity; break; }
+      if (v < mn) mn = v;
+      if (v > mx) mx = v;
+    }
+    if (mn === Infinity) { mn = -Infinity; mx = Infinity; }
+    rowMin[gy] = mn;
+    rowMax[gy] = mx;
+  }
   let contours = [];
   for (let i = rangeStart; i < rangeEnd; i++) {
-    const paths = coreMarchingSquaresPaths(field, cols, rows, gridStep, thresholds[i]);
+    const paths = coreMarchingSquaresPaths(field, cols, rows, gridStep, thresholds[i], rowMin, rowMax);
     for (let j = 0; j < paths.length; j++) {
       if (paths[j].points.length >= 4) contours.push(paths[j]);
     }
@@ -3399,6 +3585,7 @@ const TOPO_CORE_FUNCTIONS = [
   coreFbm,
   coreEnsureWarpLattice,
   coreBilinearLattice,
+  coreBilinearLattice3,
   coreRandomSeed,
   coreRandomNext,
   coreRandom,
@@ -3428,6 +3615,7 @@ const TOPO_CORE_FUNCTIONS = [
   coreMarchingSquaresPaths,
   coreStitchSegmentsToPaths,
   coreExtendFlatPath,
+  coreCollectFlatPathHead,
   coreNormalizeFlatPath,
   coreBuildTextureDots,
   coreBuildSceneSteps,
