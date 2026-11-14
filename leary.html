@@ -2446,13 +2446,13 @@ body:not(.leary2-panel-open) .panel{display:none}
   setInterval(mirror, 400);
 })();
 </script>
-<script id="leary-chromaflow-bundle">
+<script>
 (() => {
   var __defProp = Object.defineProperty;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
-  // ts_src/engine/shaders.ts
+  // ts_src3/engine/shaders.ts
   var baseVertexShaderSource = `
   precision highp float;
   attribute vec2 aPosition;
@@ -2480,6 +2480,108 @@ body:not(.leary2-panel-open) .panel{display:none}
 
   void main () {
     gl_FragColor = value * texture2D(uTexture, vUv);
+  }
+`;
+  var viscosityShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  varying vec2 vL;
+  varying vec2 vR;
+  varying vec2 vT;
+  varying vec2 vB;
+  uniform sampler2D uVelocity;
+  uniform float uViscosity;
+
+  void main () {
+    vec2 C = texture2D(uVelocity, vUv).xy;
+    vec2 L = texture2D(uVelocity, vL).xy;
+    vec2 R = texture2D(uVelocity, vR).xy;
+    vec2 T = texture2D(uVelocity, vT).xy;
+    vec2 B = texture2D(uVelocity, vB).xy;
+    vec2 avg = 0.25 * (L + R + T + B);
+    vec2 vel = mix(C, avg, clamp(uViscosity, 0.0, 0.98));
+    gl_FragColor = vec4(vel, 0.0, 1.0);
+  }
+`;
+  var dyeMixTensionShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  varying vec2 vL;
+  varying vec2 vR;
+  varying vec2 vT;
+  varying vec2 vB;
+  uniform sampler2D uDye;
+  uniform vec2 texelSize;
+  uniform float uMixing;
+  uniform float uSurfaceTension;
+
+  void main () {
+    vec3 C = texture2D(uDye, vUv).rgb;
+    vec3 L = texture2D(uDye, vL).rgb;
+    vec3 R = texture2D(uDye, vR).rgb;
+    vec3 T = texture2D(uDye, vT).rgb;
+    vec3 B = texture2D(uDye, vB).rgb;
+
+    vec3 TL = texture2D(uDye, vUv + vec2(-texelSize.x,  texelSize.y)).rgb;
+    vec3 TR = texture2D(uDye, vUv + vec2( texelSize.x,  texelSize.y)).rgb;
+    vec3 BL = texture2D(uDye, vUv + vec2(-texelSize.x, -texelSize.y)).rgb;
+    vec3 BR = texture2D(uDye, vUv + vec2( texelSize.x, -texelSize.y)).rgb;
+
+    // Isotropic 9-point Patra-Karttunen stencil prevents horizontal/vertical stair-stepping
+    vec3 avg = 0.20 * (L + R + T + B) + 0.05 * (TL + TR + BL + BR);
+    vec3 minN = min(C, min(min(min(L, R), min(T, B)), min(min(TL, TR), min(BL, BR))));
+    vec3 maxN = max(C, max(max(max(L, R), max(T, B)), max(max(TL, TR), max(BL, BR))));
+
+    // 1. Controlled emulsion / pigment mixing across boundaries
+    vec3 res = mix(C, avg, clamp(uMixing * 0.22, 0.0, 0.55));
+
+    // 2. Isotropic interfacial surface-tension sharpening (TVD shock-capturing anti-diffusion)
+    if (uSurfaceTension > 0.005) {
+      vec3 lap = avg - res;
+      vec3 sharpened = res - lap * clamp(uSurfaceTension * 0.16, 0.0, 0.42);
+      res = clamp(sharpened, minN, maxN);
+    }
+
+    gl_FragColor = vec4(max(res, 0.0), 1.0);
+  }
+`;
+  var collisionMomentumShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  varying vec2 vL;
+  varying vec2 vR;
+  varying vec2 vT;
+  varying vec2 vB;
+  uniform sampler2D uVelocity;
+  uniform sampler2D uDye;
+  uniform float uCollisionMomentum;
+  uniform float dt;
+
+  float dyeLum(vec2 uv) {
+    return dot(texture2D(uDye, uv).rgb, vec3(0.299, 0.587, 0.114));
+  }
+
+  void main () {
+    vec2 vel = texture2D(uVelocity, vUv).xy;
+    vec2 velL = texture2D(uVelocity, vL).xy;
+    vec2 velR = texture2D(uVelocity, vR).xy;
+    vec2 velT = texture2D(uVelocity, vT).xy;
+    vec2 velB = texture2D(uVelocity, vB).xy;
+
+    // Velocity convergence (negative divergence = streams slamming together)
+    float conv = max(0.0, -0.5 * ((velR.x - velL.x) + (velT.y - velB.y)));
+
+    float dL = dyeLum(vL);
+    float dR = dyeLum(vR);
+    float dT = dyeLum(vT);
+    float dB = dyeLum(vB);
+    vec2 grad = vec2(dR - dL, dT - dB);
+    vec2 perp = vec2(-grad.y, grad.x);
+
+    // Deflect & curl dense colliding liquid fronts outward along interface
+    vec2 impactForce = (-grad * conv * 0.8 + perp * conv * 1.15) * uCollisionMomentum * 18.0;
+    vel += impactForce * dt;
+    gl_FragColor = vec4(clamp(vel, -1000.0, 1000.0), 0.0, 1.0);
   }
 `;
   var splatShaderSource = `
@@ -2529,17 +2631,118 @@ body:not(.leary2-panel-open) .panel{display:none}
     gl_FragColor = vec4(vel, base.z, 1.0);
   }
 `;
+  var attractSplatShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform sampler2D uTarget;
+  uniform float aspectRatio;
+  uniform vec2 point;
+  uniform float radius;
+  uniform float strength;
+
+  void main () {
+    vec2 p = vUv - point.xy;
+    p.x *= aspectRatio;
+    float distSq = dot(p, p);
+    float falloff = exp(-distSq / max(radius, 0.0001));
+    float len = length(p);
+    vec2 inward = len > 0.001 ? (-p / len) : vec2(0.0);
+    vec2 tangent = vec2(-inward.y, inward.x);
+    vec2 force = (inward * 0.92 + tangent * 0.35) * falloff * strength;
+    vec3 base = texture2D(uTarget, vUv).xyz;
+    gl_FragColor = vec4(base.xy + force, base.z, 1.0);
+  }
+`;
+  var obstacleStampShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform sampler2D uObstacles;
+  uniform float aspectRatio;
+  uniform vec2 point;
+  uniform float radius;
+  uniform float eraseMode;
+
+  void main () {
+    vec2 p = vUv - point.xy;
+    p.x *= aspectRatio;
+    float dist = length(p);
+    float r = sqrt(max(radius, 0.0001)) * 0.42;
+    float brush = 1.0 - smoothstep(r * 0.78, r, dist);
+    float curr = texture2D(uObstacles, vUv).x;
+    float nextVal = eraseMode > 0.5 ? min(curr, 1.0 - brush) : max(curr, brush);
+    gl_FragColor = vec4(nextVal, 0.0, 0.0, 1.0);
+  }
+`;
+  var obstaclePresetShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform float aspectRatio;
+  uniform float uMode;
+
+  void main () {
+    vec2 p = vUv - 0.5;
+    p.x *= aspectRatio;
+    float val = 0.0;
+
+    if (uMode > 0.5 && uMode < 1.5) {
+      // 1: Central Cylinder (Karman vortex shedder)
+      float d = length(p - vec2(0.0, -0.02));
+      val = 1.0 - smoothstep(0.072, 0.082, d);
+    } else if (uMode >= 1.5 && uMode < 2.5) {
+      // 2: Twin Staggered Pillars
+      float d1 = length(p - vec2(-0.17, 0.05));
+      float d2 = length(p - vec2(0.17, -0.05));
+      val = max(1.0 - smoothstep(0.058, 0.068, d1), 1.0 - smoothstep(0.058, 0.068, d2));
+    } else if (uMode >= 2.5 && uMode < 3.5) {
+      // 3: Slotted Containment Ring
+      float r = length(p);
+      float ring = 1.0 - smoothstep(0.018, 0.028, abs(r - 0.22));
+      float slitMask = smoothstep(0.055, 0.085, abs(p.y));
+      val = ring * slitMask;
+    } else if (uMode >= 3.5) {
+      // 4: Pinball Vortex Lattice
+      for (int ix = -1; ix <= 1; ix++) {
+        for (int iy = -1; iy <= 1; iy++) {
+          float ox = float(ix) * 0.22 + (iy == 0 ? 0.0 : 0.11);
+          float oy = float(iy) * 0.19;
+          float d = length(p - vec2(ox, oy));
+          val = max(val, 1.0 - smoothstep(0.028, 0.036, d));
+        }
+      }
+    }
+
+    gl_FragColor = vec4(clamp(val, 0.0, 1.0), 0.0, 0.0, 1.0);
+  }
+`;
+  var obstacleMaskShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform sampler2D uTarget;
+  uniform sampler2D uObstacles;
+
+  void main () {
+    float obs = texture2D(uObstacles, vUv).x;
+    vec4 val = texture2D(uTarget, vUv);
+    float keep = 1.0 - smoothstep(0.35, 0.65, obs);
+    gl_FragColor = vec4(val.rgb * keep, val.a);
+  }
+`;
   var externalForcesShaderSource = `
   precision highp float;
   varying vec2 vUv;
   uniform sampler2D uVelocity;
+  uniform sampler2D uDye;
   uniform float dt;
   uniform float aspectRatio;
   uniform float uTime;
   uniform vec2 uGravity;
+  uniform float uBuoyancy;
   uniform float uRadialForce;
+  uniform vec2 uRadialCenter;
+  uniform float uSwirlField;
   uniform float uTurbulence;
   uniform float uTurbulenceScale;
+  uniform float uTurbulenceSpeed;
 
   float hash21(vec2 p) {
     p = fract(p * vec2(123.34, 456.21));
@@ -2559,7 +2762,7 @@ body:not(.leary2-panel-open) .panel{display:none}
   }
 
   vec2 curlNoise(vec2 p) {
-    float e = 0.05;
+    float e = 0.06;
     float n1 = noise2(p + vec2(0.0, e));
     float n2 = noise2(p - vec2(0.0, e));
     float n3 = noise2(p + vec2(e, 0.0));
@@ -2572,24 +2775,29 @@ body:not(.leary2-panel-open) .panel{display:none}
   void main () {
     vec2 vel = texture2D(uVelocity, vUv).xy;
 
-    // Directional gravity / drift
     vel += uGravity * 6.5 * dt;
 
-    // Radial attractor / repeller around center
-    vec2 dir = vUv - vec2(0.5);
+    if (abs(uBuoyancy) > 0.001) {
+      float heat = dot(texture2D(uDye, vUv).rgb, vec3(0.299, 0.587, 0.114));
+      vel.y += heat * uBuoyancy * 5.8 * dt;
+    }
+
+    vec2 dir = vUv - uRadialCenter;
     dir.x *= aspectRatio;
     float dist = length(dir);
     if (dist > 0.002) {
       vec2 radialDir = dir / dist;
-      float falloff = smoothstep(0.0, 0.08, dist) * exp(-dist * 1.4);
+      float falloff = smoothstep(0.0, 0.07, dist) * exp(-dist * 1.15);
       vel += radialDir * uRadialForce * 14.0 * falloff * dt;
+      vec2 tangent = vec2(-radialDir.y, radialDir.x);
+      vel += tangent * uSwirlField * 12.0 * falloff * dt;
     }
 
-    // Continuous procedural curl turbulence
     if (uTurbulence > 0.001) {
-      vec2 np = (vUv - 0.5) * vec2(aspectRatio, 1.0) * uTurbulenceScale + vec2(uTime * 0.18, -uTime * 0.14);
+      vec2 np = (vUv - 0.5) * vec2(aspectRatio, 1.0) * uTurbulenceScale
+        + vec2(uTime * 0.16 * uTurbulenceSpeed, -uTime * 0.12 * uTurbulenceSpeed);
       vec2 cn = curlNoise(np);
-      vel += cn * uTurbulence * 4.2 * dt;
+      vel += cn * uTurbulence * 4.0 * dt;
     }
 
     gl_FragColor = vec4(clamp(vel, -1000.0, 1000.0), 0.0, 1.0);
@@ -2626,6 +2834,51 @@ body:not(.leary2-panel-open) .panel{display:none}
     gl_FragColor = result / decay;
   }
 `;
+  var advectionMacCormackShaderSource = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform sampler2D uVelocity;
+  uniform sampler2D uPhiN;
+  uniform sampler2D uPhiHat;
+  uniform sampler2D uPhiRev;
+  uniform vec2 texelSize;
+  uniform vec2 dyeTexelSize;
+  uniform float dt;
+  uniform float dissipation;
+  uniform float uSharpness;
+  uniform float uWrapBorders;
+
+  vec2 wrapOrClamp(vec2 uv) {
+    if (uWrapBorders > 0.5) return fract(uv);
+    return clamp(uv, 0.0005, 0.9995);
+  }
+
+  void main () {
+    vec2 vel = texture2D(uVelocity, vUv).xy;
+    vec2 coord = vUv - dt * vel * texelSize;
+
+    // 4-neighbor TVD clamping box from uPhiN around backward coordinate
+    vec2 st = coord / dyeTexelSize - 0.5;
+    vec2 iuv = floor(st);
+    vec4 n00 = texture2D(uPhiN, wrapOrClamp((iuv + vec2(0.5, 0.5)) * dyeTexelSize));
+    vec4 n10 = texture2D(uPhiN, wrapOrClamp((iuv + vec2(1.5, 0.5)) * dyeTexelSize));
+    vec4 n01 = texture2D(uPhiN, wrapOrClamp((iuv + vec2(0.5, 1.5)) * dyeTexelSize));
+    vec4 n11 = texture2D(uPhiN, wrapOrClamp((iuv + vec2(1.5, 1.5)) * dyeTexelSize));
+
+    vec4 minBound = min(min(n00, n10), min(n01, n11));
+    vec4 maxBound = max(max(n00, n10), max(n01, n11));
+
+    vec4 phiN = texture2D(uPhiN, vUv);
+    vec4 phiHat = texture2D(uPhiHat, vUv);
+    vec4 phiRev = texture2D(uPhiRev, vUv);
+
+    vec4 corrected = phiHat + 0.5 * uSharpness * (phiN - phiRev);
+    vec4 clamped = clamp(corrected, minBound, maxBound);
+
+    float decay = 1.0 + dissipation * dt;
+    gl_FragColor = clamped / decay;
+  }
+`;
   var divergenceShaderSource = `
   precision mediump float;
   varying highp vec2 vUv;
@@ -2634,21 +2887,31 @@ body:not(.leary2-panel-open) .panel{display:none}
   varying highp vec2 vT;
   varying highp vec2 vB;
   uniform sampler2D uVelocity;
+  uniform sampler2D uObstacles;
   uniform float uWrapBorders;
 
   void main () {
+    if (texture2D(uObstacles, vUv).x > 0.5) {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+      return;
+    }
+
     float L = texture2D(uVelocity, vL).x;
     float R = texture2D(uVelocity, vR).x;
     float T = texture2D(uVelocity, vT).y;
     float B = texture2D(uVelocity, vB).y;
 
+    vec2 C = texture2D(uVelocity, vUv).xy;
     if (uWrapBorders < 0.5) {
-      vec2 C = texture2D(uVelocity, vUv).xy;
       if (vL.x < 0.0) { L = -C.x; }
       if (vR.x > 1.0) { R = -C.x; }
       if (vT.y > 1.0) { T = -C.y; }
       if (vB.y < 0.0) { B = -C.y; }
     }
+    if (texture2D(uObstacles, vL).x > 0.5) { L = -C.x; }
+    if (texture2D(uObstacles, vR).x > 0.5) { R = -C.x; }
+    if (texture2D(uObstacles, vT).x > 0.5) { T = -C.y; }
+    if (texture2D(uObstacles, vB).x > 0.5) { B = -C.y; }
 
     float div = 0.5 * (R - L + T - B);
     gl_FragColor = vec4(div, 0.0, 0.0, 1.0);
@@ -2711,12 +2974,18 @@ body:not(.leary2-panel-open) .panel{display:none}
   varying highp vec2 vB;
   uniform sampler2D uPressure;
   uniform sampler2D uDivergence;
+  uniform sampler2D uObstacles;
 
   void main () {
-    float L = texture2D(uPressure, vL).x;
-    float R = texture2D(uPressure, vR).x;
-    float T = texture2D(uPressure, vT).x;
-    float B = texture2D(uPressure, vB).x;
+    if (texture2D(uObstacles, vUv).x > 0.5) {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+      return;
+    }
+    float C = texture2D(uPressure, vUv).x;
+    float L = texture2D(uObstacles, vL).x > 0.5 ? C : texture2D(uPressure, vL).x;
+    float R = texture2D(uObstacles, vR).x > 0.5 ? C : texture2D(uPressure, vR).x;
+    float T = texture2D(uObstacles, vT).x > 0.5 ? C : texture2D(uPressure, vT).x;
+    float B = texture2D(uObstacles, vB).x > 0.5 ? C : texture2D(uPressure, vB).x;
     float divergence = texture2D(uDivergence, vUv).x;
     float pressure = (L + R + B + T - divergence) * 0.25;
     gl_FragColor = vec4(pressure, 0.0, 0.0, 1.0);
@@ -2731,12 +3000,18 @@ body:not(.leary2-panel-open) .panel{display:none}
   varying highp vec2 vB;
   uniform sampler2D uPressure;
   uniform sampler2D uVelocity;
+  uniform sampler2D uObstacles;
 
   void main () {
-    float L = texture2D(uPressure, vL).x;
-    float R = texture2D(uPressure, vR).x;
-    float T = texture2D(uPressure, vT).x;
-    float B = texture2D(uPressure, vB).x;
+    if (texture2D(uObstacles, vUv).x > 0.5) {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+      return;
+    }
+    float C = texture2D(uPressure, vUv).x;
+    float L = texture2D(uObstacles, vL).x > 0.5 ? C : texture2D(uPressure, vL).x;
+    float R = texture2D(uObstacles, vR).x > 0.5 ? C : texture2D(uPressure, vR).x;
+    float T = texture2D(uObstacles, vT).x > 0.5 ? C : texture2D(uPressure, vT).x;
+    float B = texture2D(uObstacles, vB).x > 0.5 ? C : texture2D(uPressure, vB).x;
     vec2 velocity = texture2D(uVelocity, vUv).xy;
     velocity.xy -= vec2(R - L, T - B);
     gl_FragColor = vec4(velocity, 0.0, 1.0);
@@ -2783,34 +3058,54 @@ body:not(.leary2-panel-open) .panel{display:none}
   uniform sampler2D uVelocity;
   uniform sampler2D uCurl;
   uniform sampler2D uBloom;
+  uniform sampler2D uObstacles;
   uniform vec2 texelSize;
+  uniform vec2 uDyeTexelSize;
+  uniform vec2 uVelTexelSize;
   uniform float aspectRatio;
   uniform float uTime;
 
   uniform float uDomainWarp;
+  uniform float uShowObstacles;
+  uniform float uSmokeAmount;
+  uniform float uSmokeSelfShadow;
+  uniform float uSmokeWispyness;
+  uniform float uSmokeSoftness;
+  uniform float uContourGlow;
   uniform float uIridescence;
   uniform float uIridescenceScale;
   uniform float uSpecular;
   uniform float uSpecularPower;
   uniform float uRelief;
   uniform float uFresnel;
+  uniform float uSubsurface;
+  uniform float uEdgeCrispness;
+  uniform float uCollisionCrestGlow;
+  uniform float uAntiWashout;
   uniform float uLightAngle;
+  uniform float uLightElevation;
   uniform float uChromatic;
   uniform float uBloomIntensity;
   uniform float uHueShift;
+  uniform float uHueOffset;
   uniform float uSaturation;
   uniform float uContrast;
   uniform float uExposure;
   uniform float uGamma;
   uniform float uInvert;
+  uniform float uSolarize;
   uniform float uGrain;
   uniform float uVignette;
   uniform float uKaleidoscope;
   uniform float uKaleidoscopeAngle;
   uniform float uKaleidoscopeZoom;
+  uniform vec2 uKaleidoscopeOffset;
   uniform float uRippleAmount;
   uniform float uRippleFreq;
+  uniform float uRippleSpeed;
+  uniform float uTunnelWarp;
   uniform float uPaletteMode;
+  uniform float uToneMapping;
   uniform float uPaletteFreq;
   uniform float uWrapBorders;
 
@@ -2824,6 +3119,24 @@ body:not(.leary2-panel-open) .panel{display:none}
     vec3 p3 = fract(vec3(p.xyx) * 0.1031);
     p3 += dot(p3, p3.yzx + 33.33);
     return fract((p3.x + p3.y) * p3.z);
+  }
+
+  float smokeNoise2(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash12(i);
+    float b = hash12(i + vec2(1.0, 0.0));
+    float c = hash12(i + vec2(0.0, 1.0));
+    float d = hash12(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+  }
+
+  float smokeFbm(vec2 p) {
+    float v = 0.0;
+    v += 0.65 * smokeNoise2(p);
+    v += 0.35 * smokeNoise2(p * 2.13 + vec2(11.7, 5.3));
+    return v;
   }
 
   vec3 spectralCosine(float t) {
@@ -2840,24 +3153,117 @@ body:not(.leary2-panel-open) .panel{display:none}
 
   vec2 wrapOrClamp(vec2 uv) {
     if (uWrapBorders > 0.5) return fract(uv);
-    return clamp(uv, 0.001, 0.999);
+    return clamp(uv, 0.0005, 0.9995);
+  }
+
+  vec4 cubicWeights(float v) {
+    vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
+    vec4 s = n * n * n;
+    float x = s.x;
+    float y = s.y - 4.0 * s.x;
+    float z = s.z - 4.0 * s.y + 6.0 * s.x;
+    float w = 6.0 - x - y - z;
+    return vec4(x, y, z, w) * (1.0 / 6.0);
+  }
+
+  vec3 sampleDyeBicubic(vec2 uv) {
+    vec2 texSize = 1.0 / uDyeTexelSize;
+    vec2 tc = uv * texSize - 0.5;
+    vec2 fxy = fract(tc);
+    tc -= fxy;
+
+    vec4 xcubic = cubicWeights(fxy.x);
+    vec4 ycubic = cubicWeights(fxy.y);
+
+    vec4 c = tc.xxyy + vec2(-0.5, 1.5).xyxy;
+    vec4 s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+    vec4 offset = c + vec4(xcubic.yw, ycubic.yw) / s;
+    offset *= uDyeTexelSize.xxyy;
+
+    vec3 sample0 = texture2D(uDye, wrapOrClamp(offset.xz)).rgb;
+    vec3 sample1 = texture2D(uDye, wrapOrClamp(offset.yz)).rgb;
+    vec3 sample2 = texture2D(uDye, wrapOrClamp(offset.xw)).rgb;
+    vec3 sample3 = texture2D(uDye, wrapOrClamp(offset.yw)).rgb;
+
+    float sx = s.x / (s.x + s.y);
+    float sy = s.z / (s.z + s.w);
+
+    return max(mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy), 0.0);
+  }
+
+  vec2 sampleVelBicubic(vec2 uv) {
+    vec2 texSize = 1.0 / uVelTexelSize;
+    vec2 tc = uv * texSize - 0.5;
+    vec2 fxy = fract(tc);
+    tc -= fxy;
+
+    vec4 xcubic = cubicWeights(fxy.x);
+    vec4 ycubic = cubicWeights(fxy.y);
+
+    vec4 c = tc.xxyy + vec2(-0.5, 1.5).xyxy;
+    vec4 s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+    vec4 offset = c + vec4(xcubic.yw, ycubic.yw) / s;
+    offset *= uVelTexelSize.xxyy;
+
+    vec2 sample0 = texture2D(uVelocity, wrapOrClamp(offset.xz)).xy;
+    vec2 sample1 = texture2D(uVelocity, wrapOrClamp(offset.yz)).xy;
+    vec2 sample2 = texture2D(uVelocity, wrapOrClamp(offset.xw)).xy;
+    vec2 sample3 = texture2D(uVelocity, wrapOrClamp(offset.yw)).xy;
+
+    float sx = s.x / (s.x + s.y);
+    float sy = s.z / (s.z + s.w);
+
+    return mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
+  }
+
+  // Contrast-Adaptive Sharpening (CAS-style) over bicubic dye samples:
+  // Maximizes edge crispness while clamping overshoot to local extrema to eliminate ringing and jaggies.
+  vec3 sampleDyeCrisp(vec2 uv) {
+    vec3 center = sampleDyeBicubic(uv);
+    if (uEdgeCrispness <= 0.005) return center;
+
+    vec2 d = uDyeTexelSize * 0.9;
+    vec3 n = texture2D(uDye, wrapOrClamp(uv + vec2(0.0, d.y))).rgb;
+    vec3 s = texture2D(uDye, wrapOrClamp(uv - vec2(0.0, d.y))).rgb;
+    vec3 e = texture2D(uDye, wrapOrClamp(uv + vec2(d.x, 0.0))).rgb;
+    vec3 w = texture2D(uDye, wrapOrClamp(uv - vec2(d.x, 0.0))).rgb;
+    vec3 nw = texture2D(uDye, wrapOrClamp(uv + vec2(-d.x, d.y))).rgb;
+    vec3 ne = texture2D(uDye, wrapOrClamp(uv + vec2(d.x, d.y))).rgb;
+    vec3 sw = texture2D(uDye, wrapOrClamp(uv + vec2(-d.x, -d.y))).rgb;
+    vec3 se = texture2D(uDye, wrapOrClamp(uv + vec2(d.x, -d.y))).rgb;
+
+    vec3 localMin = min(center, min(min(min(n, s), min(e, w)), min(min(nw, ne), min(sw, se))));
+    vec3 localMax = max(center, max(max(max(n, s), max(e, w)), max(max(nw, ne), max(sw, se))));
+
+    vec3 blur = 0.20 * (n + s + e + w) + 0.05 * (nw + ne + sw + se);
+    vec3 diff = center - blur;
+
+    // Reduce sharpening gain at steep local extrema to keep curved liquid edges silky smooth
+    vec3 amp = clamp(min(localMin, 2.0 - localMax) / max(localMax, vec3(0.001)), 0.0, 1.0);
+    vec3 sharpened = center + diff * (uEdgeCrispness * 0.62) * (0.45 + 0.55 * amp);
+    return max(clamp(sharpened, localMin * 0.96, localMax * 1.04), 0.0);
   }
 
   vec2 applyGeometry(vec2 uv) {
-    vec2 centered = uv - 0.5;
+    vec2 centerPoint = vec2(0.5) + uKaleidoscopeOffset;
+    vec2 centered = uv - centerPoint;
     centered.x *= aspectRatio;
 
-    // Optional harmonic ripple lens distortion
     if (uRippleAmount > 0.001) {
       float r = length(centered);
-      float wave = sin(r * uRippleFreq - uTime * 2.4) * uRippleAmount * 0.028;
+      float wave = sin(r * uRippleFreq - uTime * 2.4 * uRippleSpeed) * uRippleAmount * 0.024;
       centered += normalize(centered + vec2(0.0001)) * wave;
     }
 
-    // Zoom
-    centered /= max(uKaleidoscopeZoom, 0.2);
+    if (abs(uTunnelWarp) > 0.001) {
+      float r = max(length(centered), 0.0001);
+      float power = clamp(1.0 + uTunnelWarp * 0.6, 0.2, 3.2);
+      float warpedR = pow(r * 2.0, power) * 0.5;
+      centered = centered * (warpedR / r);
+    }
 
-    // Optional kaleidoscope mirror fold
+    centered /= max(uKaleidoscopeZoom, 0.15);
+
     if (uKaleidoscope >= 1.5) {
       float r = length(centered);
       float a = atan(centered.y, centered.x) + uKaleidoscopeAngle;
@@ -2868,7 +3274,7 @@ body:not(.leary2-panel-open) .panel{display:none}
     }
 
     centered.x /= aspectRatio;
-    return wrapOrClamp(centered + 0.5);
+    return wrapOrClamp(centered + centerPoint);
   }
 
   vec3 adjustSaturation(vec3 color, float sat) {
@@ -2876,105 +3282,239 @@ body:not(.leary2-panel-open) .panel{display:none}
     return mix(vec3(luma), color, sat);
   }
 
-  float dyeHeight(vec2 uv) {
-    vec3 d = texture2D(uDye, uv).rgb;
-    return dot(d, vec3(0.299, 0.587, 0.114));
+  vec3 toneMapACES(vec3 x) {
+    vec3 v = max(x, 0.0);
+    return clamp((v * (2.51 * v + 0.03)) / (v * (2.43 * v + 0.59) + 0.14), 0.0, 1.0);
+  }
+
+  vec3 toneMapAgX(vec3 x) {
+    vec3 v = max(x, 0.0);
+    float luma = dot(v, vec3(0.2126, 0.7152, 0.0722));
+    vec3 soft = mix(v, vec3(luma), clamp((luma - 0.85) * 0.28, 0.0, 0.52));
+    return clamp(soft / (0.85 + soft) * 1.12, 0.0, 1.0);
+  }
+
+  float dyeHeightSmooth(vec2 uv) {
+    vec3 d = sampleDyeBicubic(uv);
+    float raw = dot(d, vec3(0.299, 0.587, 0.114));
+    return raw / (1.0 + 0.4 * raw);
+  }
+
+  vec3 studioReflection(vec3 reflDir, float angle, float elev) {
+    float keyBand = smoothstep(0.15, 0.88, dot(reflDir, normalize(vec3(cos(angle), sin(angle), max(elev, 0.12)))));
+    float softFill = smoothstep(-0.2, 0.75, reflDir.y);
+    return vec3(0.06, 0.07, 0.1) + vec3(0.45, 0.48, 0.55) * keyBand + vec3(0.14, 0.16, 0.2) * softFill;
   }
 
   void main () {
     vec2 uv = applyGeometry(vUv);
 
-    vec2 vel = texture2D(uVelocity, uv).xy;
+    vec2 vel = sampleVelBicubic(uv);
     float curlVal = texture2D(uCurl, uv).x;
 
-    vec2 warpOffset = vel * texelSize * uDomainWarp * 28.0;
+    float smokeBlend = clamp(uSmokeAmount, 0.0, 1.0);
+    float smokeFbmVal = 0.5;
+    vec2 warpOffset = vel * texelSize * uDomainWarp * 24.0;
     vec2 warpedUv = wrapOrClamp(uv - warpOffset);
 
-    vec2 dispDir = vel * texelSize * 12.0 + vec2(texelSize.x * 2.5, texelSize.y * 1.5);
+    if (smokeBlend > 0.005) {
+      vec2 noiseCoord = warpedUv * vec2(aspectRatio, 1.0) * 6.5 - vel * 0.04;
+      float nX = smokeFbm(noiseCoord + vec2(0.0, -uTime * 0.24));
+      float nY = smokeFbm(noiseCoord + vec2(17.3, -uTime * 0.19));
+      smokeFbmVal = nX;
+      vec2 wispDisp = vec2(nX - 0.5, nY - 0.5) * texelSize * (10.0 * smokeBlend * uSmokeWispyness);
+      warpedUv = wrapOrClamp(warpedUv + wispDisp);
+    }
+
+    vec2 dispDir = vel * texelSize * 8.5 + vec2(texelSize.x * 1.5, texelSize.y * 1.0);
     dispDir *= uChromatic;
 
-    float r = texture2D(uDye, wrapOrClamp(warpedUv + dispDir)).r;
-    float g = texture2D(uDye, warpedUv).g;
-    float b = texture2D(uDye, wrapOrClamp(warpedUv - dispDir)).b;
-    vec3 rawDye = max(vec3(r, g, b), 0.0);
+    vec3 rawDye;
+    if (abs(uChromatic) <= 0.005) {
+      rawDye = max(sampleDyeCrisp(warpedUv), 0.0);
+    } else {
+      float r = sampleDyeCrisp(warpedUv + dispDir).r;
+      float g = sampleDyeCrisp(warpedUv).g;
+      float b = sampleDyeCrisp(warpedUv - dispDir).b;
+      rawDye = max(vec3(r, g, b), 0.0);
+    }
+
+    // Prevent overlapping colliding colors from washing out to chalky white
+    if (uAntiWashout > 0.005) {
+      float maxC = max(rawDye.r, max(rawDye.g, rawDye.b));
+      float minC = min(rawDye.r, min(rawDye.g, rawDye.b));
+      vec3 pure = rawDye - vec3(minC * 0.42 * uAntiWashout);
+      pure = max(pure, 0.0) / (1.0 + maxC * 0.35 * uAntiWashout) * (1.0 + 0.25 * uAntiWashout);
+      rawDye = mix(rawDye, pure, uAntiWashout);
+    }
 
     float density = length(rawDye);
     float luma = dot(rawDye, vec3(0.299, 0.587, 0.114));
 
-    float eps = max(texelSize.x, texelSize.y) * 1.6;
-    float hL = dyeHeight(wrapOrClamp(warpedUv - vec2(eps, 0.0)));
-    float hR = dyeHeight(wrapOrClamp(warpedUv + vec2(eps, 0.0)));
-    float hB = dyeHeight(wrapOrClamp(warpedUv - vec2(0.0, eps)));
-    float hT = dyeHeight(wrapOrClamp(warpedUv + vec2(0.0, eps)));
+    vec2 e = uDyeTexelSize * 1.5;
+    float tl = dyeHeightSmooth(warpedUv + vec2(-e.x,  e.y));
+    float tc = dyeHeightSmooth(warpedUv + vec2( 0.0,  e.y));
+    float tr = dyeHeightSmooth(warpedUv + vec2( e.x,  e.y));
+    float ml = dyeHeightSmooth(warpedUv + vec2(-e.x,  0.0));
+    float mr = dyeHeightSmooth(warpedUv + vec2( e.x,  0.0));
+    float bl = dyeHeightSmooth(warpedUv + vec2(-e.x, -e.y));
+    float bc = dyeHeightSmooth(warpedUv + vec2( 0.0, -e.y));
+    float br = dyeHeightSmooth(warpedUv + vec2( e.x, -e.y));
 
-    vec3 normal = normalize(vec3((hL - hR) * uRelief * 2.4, (hB - hT) * uRelief * 2.4, 0.35));
-    vec3 lightDir1 = normalize(vec3(cos(uLightAngle) * 0.75, sin(uLightAngle) * 0.75, 0.72));
-    vec3 lightDir2 = normalize(vec3(-cos(uLightAngle) * 0.6, -sin(uLightAngle) * 0.5, 0.65));
+    float dX = (tr + 2.0 * mr + br) - (tl + 2.0 * ml + bl);
+    float dY = (tl + 2.0 * tc + tr) - (bl + 2.0 * bc + br);
+
+    float lightZ = clamp(uLightElevation, 0.08, 2.0);
+    vec3 normal = normalize(vec3(-dX * uRelief * 0.8, -dY * uRelief * 0.8, 0.38));
+    vec3 lightDir1 = normalize(vec3(cos(uLightAngle) * 0.75, sin(uLightAngle) * 0.75, lightZ));
+    vec3 lightDir2 = normalize(vec3(-cos(uLightAngle) * 0.55, -sin(uLightAngle) * 0.5, lightZ * 0.92));
     vec3 viewDir = vec3(0.0, 0.0, 1.0);
 
     vec3 half1 = normalize(lightDir1 + viewDir);
     vec3 half2 = normalize(lightDir2 + viewDir);
-    float spec1 = pow(max(dot(normal, half1), 0.0), max(uSpecularPower, 4.0));
-    float spec2 = pow(max(dot(normal, half2), 0.0), max(uSpecularPower * 0.65, 4.0));
-    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.4);
+    float NdotH1 = max(dot(normal, half1), 0.0);
+    float NdotH2 = max(dot(normal, half2), 0.0);
+    float spec1 = pow(NdotH1, max(uSpecularPower, 4.0));
+    float spec2 = pow(NdotH2, max(uSpecularPower * 0.55, 4.0));
 
-    float filmThickness = luma * uIridescenceScale + abs(curlVal) * 0.25 + length(vel) * 0.035;
-    float phase = filmThickness + uHueShift + uTime * 0.06;
+    float NdotV = max(dot(normal, viewDir), 0.0);
+    float schlickFresnel = 0.04 + 0.96 * pow(1.0 - NdotV, 4.2);
+
+    float totalHue = uHueShift + uHueOffset;
+    float filmThickness = luma * uIridescenceScale + abs(curlVal) * 0.2 + length(vel) * 0.025;
+    float phase = filmThickness + totalHue + uTime * 0.06;
     vec3 thinFilm = spectralCosine(phase);
 
     vec3 color = rawDye;
 
     if (uPaletteMode < 0.5) {
-      float palT = (luma * 0.72 + abs(curlVal) * 0.18) * uPaletteFreq + uHueShift;
+      float palT = (luma * 0.72 + abs(curlVal) * 0.16) * uPaletteFreq + totalHue;
       vec3 mapped = samplePalette(palT);
-      float mask = smoothstep(0.02, 0.65, density);
-      color = mix(rawDye * 0.35, mapped * (0.55 + luma * 0.85), mask);
+      float mask = smoothstep(0.012, 0.55, density);
+      color = mix(rawDye * 0.35, mapped * (0.58 + luma * 0.82), mask);
     } else if (uPaletteMode > 1.5) {
       vec3 shiftTint = spectralCosine(phase + 0.15);
-      color = mix(rawDye, rawDye * (0.45 + 1.35 * shiftTint), 0.55 * clamp(uIridescence, 0.0, 1.5));
+      color = mix(rawDye, rawDye * (0.48 + 1.3 * shiftTint), 0.52 * clamp(uIridescence, 0.0, 1.5));
     } else {
-      vec3 rainbow = spectralCosine((luma * 0.9 + curlVal * 0.25) * uPaletteFreq + uHueShift);
-      color = rainbow * smoothstep(0.02, 0.55, density) * (0.65 + 0.75 * luma);
+      vec3 rainbow = spectralCosine((luma * 0.88 + curlVal * 0.22) * uPaletteFreq + totalHue);
+      color = rainbow * smoothstep(0.012, 0.5, density) * (0.65 + 0.72 * luma);
     }
 
-    float ridge = clamp(length(vec2(hL - hR, hB - hT)) * 4.5 + fresnel * uFresnel, 0.0, 1.5);
-    float fluidPresence = smoothstep(0.015, 0.22, density);
-    color += thinFilm * ridge * uIridescence * 0.42 * fluidPresence;
+    float gradMag = length(vec2(dX, dY));
+    float fluidPresence = smoothstep(0.01, 0.16, density);
+    float liquidShadeScale = 1.0 - smokeBlend * 0.92;
 
-    // Fresnel rim highlight
-    color += thinFilm * fresnel * uFresnel * 0.28 * fluidPresence;
+    // Beer-Lambert subsurface depth absorption
+    float opticalDepth = clamp(density * 1.15, 0.0, 3.0);
+    vec3 subsurfaceScatter = color * exp(-opticalDepth * 0.35) * 0.45 * uSubsurface;
+    color = mix(
+      color,
+      color * (0.85 + 0.3 * NdotV) + subsurfaceScatter,
+      clamp(uSubsurface * 0.65, 0.0, 1.0) * fluidPresence * mix(1.0, 0.35, smokeBlend)
+    );
+
+    // Thin-film iridescence
+    float ridge = clamp(gradMag * 0.9 + schlickFresnel * uFresnel, 0.0, 1.4);
+    color += thinFilm * ridge * uIridescence * 0.38 * fluidPresence * liquidShadeScale;
+
+    // Collision wavefront & shear crest highlight
+    if (uCollisionCrestGlow > 0.005) {
+      float shearCrest = clamp(abs(curlVal) * 0.28 + length(vel) * 0.01, 0.0, 1.2) * clamp(gradMag * 1.4, 0.0, 1.2);
+      color += mix(vec3(1.0), thinFilm, 0.6) * shearCrest * uCollisionCrestGlow * 0.45 * fluidPresence;
+    }
+
+    // Luminous topographic gradient neon contour lines
+    if (uContourGlow > 0.005) {
+      float contour = smoothstep(0.18, 0.92, gradMag * 1.15);
+      vec3 contourCol = mix(thinFilm * 1.25, color * 1.6 + 0.35, 0.42);
+      color += contourCol * contour * uContourGlow * 0.72 * fluidPresence;
+    }
+
+    // Studio reflection & Fresnel rim (liquid surface mode)
+    vec3 reflDir = reflect(-viewDir, normal);
+    vec3 envRefl = studioReflection(reflDir, uLightAngle, lightZ);
+    color += envRefl * schlickFresnel * uSubsurface * 0.42 * fluidPresence * liquidShadeScale;
+    color += thinFilm * schlickFresnel * uFresnel * 0.24 * fluidPresence * liquidShadeScale;
 
     // Glossy specular highlights
-    vec3 specTint = mix(vec3(1.0), thinFilm, 0.45);
-    color += (spec1 * 0.95 + spec2 * 0.45) * specTint * uSpecular * fluidPresence;
+    vec3 specTint = mix(vec3(1.0), thinFilm, 0.35);
+    color += (spec1 * 0.88 + spec2 * 0.4) * specTint * uSpecular * fluidPresence * liquidShadeScale;
 
-    // Relief ambient shading
-    float diffuse = 0.65 + 0.35 * max(dot(normal, lightDir1), 0.0);
-    color *= mix(1.0, diffuse, clamp(uRelief * 0.55, 0.0, 0.85) * fluidPresence);
+    // Ambient relief shading
+    float diffuse = 0.72 + 0.28 * max(dot(normal, lightDir1), 0.0);
+    color *= mix(1.0, diffuse, clamp(uRelief * 0.45, 0.0, 0.8) * fluidPresence * liquidShadeScale);
 
-    // Bloom contribution
+    // Volumetric Smoke Scattering, Directional Self-Shadowing & Airy Edge Feathering
+    float wispOpacity = 1.0;
+    if (smokeBlend > 0.005) {
+      vec2 shadowStep = lightDir1.xy * uDyeTexelSize * 9.0;
+      float occ1 = dot(texture2D(uDye, wrapOrClamp(warpedUv + shadowStep * 0.7)).rgb, vec3(0.299, 0.587, 0.114));
+      float occ2 = dot(texture2D(uDye, wrapOrClamp(warpedUv + shadowStep * 1.8)).rgb, vec3(0.299, 0.587, 0.114));
+      float occ3 = dot(texture2D(uDye, wrapOrClamp(warpedUv + shadowStep * 3.3)).rgb, vec3(0.299, 0.587, 0.114));
+      float occDensity = occ1 * 0.45 + occ2 * 0.35 + occ3 * 0.20;
+
+      float selfShadow = exp(-occDensity * uSmokeSelfShadow * 1.85);
+      float billowLight = 0.55 + 0.45 * max(dot(normal, lightDir1), 0.0);
+      float powderTerm = 1.0 - exp(-density * 2.4);
+      float silverLining = pow(clamp(1.0 - occDensity * 0.85, 0.0, 1.0), 2.2) *
+        smoothstep(0.02, 0.28, density) * (0.25 + 0.55 * max(dot(normal, lightDir1), 0.0));
+
+      vec3 smokeShaded = color * mix(0.24, 1.18, selfShadow * billowLight) * (0.72 + 0.42 * powderTerm);
+      smokeShaded += mix(vec3(1.0), color, 0.45) * silverLining * 0.34 * uSmokeSelfShadow;
+      color = mix(color, smokeShaded, smokeBlend);
+
+      float edgeZone = 1.0 - smoothstep(0.14, 0.65, density);
+      float wispMod = clamp(0.68 + (smokeFbmVal - 0.38) * 1.15, 0.22, 1.25);
+      wispOpacity = mix(1.0, wispMod, smokeBlend * clamp(uSmokeWispyness * 0.75, 0.0, 1.0) * edgeZone);
+    }
+
     vec3 bloom = texture2D(uBloom, warpedUv).rgb * uBloomIntensity;
     color += bloom;
 
-    // Substrate blend
-    float bgMix = smoothstep(0.0, 0.18, density + length(bloom) * 0.6);
-    color = mix(uBgColor, color + uBgColor * 0.15, bgMix);
+    float liquidBgMix = smoothstep(0.0, 0.15, density + length(bloom) * 0.55);
+    float smokeTrans = 1.0 - exp(-pow(max(density + length(bloom) * 0.42, 0.0), 0.92) * (2.6 / max(uSmokeSoftness, 0.25)));
+    float bgMix = mix(liquidBgMix, clamp(smokeTrans * wispOpacity, 0.0, 1.0), smokeBlend);
+    color = mix(uBgColor, color + uBgColor * 0.12, bgMix);
 
-    // Exposure, Saturation & Contrast
+    if (uShowObstacles > 0.5) {
+      float obsC = texture2D(uObstacles, uv).x;
+      if (obsC > 0.05) {
+        float obsL = texture2D(uObstacles, uv - vec2(uVelTexelSize.x * 1.5, 0.0)).x;
+        float obsR = texture2D(uObstacles, uv + vec2(uVelTexelSize.x * 1.5, 0.0)).x;
+        float obsT = texture2D(uObstacles, uv + vec2(0.0, uVelTexelSize.y * 1.5)).x;
+        float obsB = texture2D(uObstacles, uv - vec2(0.0, uVelTexelSize.y * 1.5)).x;
+        float rim = clamp((1.0 - min(min(obsL, obsR), min(obsT, obsB))) * obsC * 2.0, 0.0, 1.0);
+        vec3 glassCore = mix(uBgColor * 0.6, vec3(0.04, 0.05, 0.08), 0.78) + color * 0.14;
+        vec3 obsCol = glassCore + mix(vec3(0.55, 0.65, 0.8), color, 0.4) * rim * 0.68;
+        color = mix(color, obsCol, smoothstep(0.15, 0.75, obsC));
+      }
+    }
+
     color *= uExposure;
     color = adjustSaturation(color, uSaturation);
     color = (color - 0.5) * uContrast + 0.5;
-    color = clamp(color, 0.0, 1.0);
+    color = max(color, 0.0);
+
+    if (uToneMapping > 1.5) {
+      color = toneMapAgX(color);
+    } else if (uToneMapping > 0.5) {
+      color = toneMapACES(color);
+    } else {
+      color = color / (1.0 + 0.18 * dot(color, vec3(0.2126, 0.7152, 0.0722)));
+      color = clamp(color, 0.0, 1.0);
+    }
+
+    if (uSolarize > 0.001) {
+      vec3 sol = 1.0 - abs(color * 2.0 - 1.0);
+      color = mix(color, sol, clamp(uSolarize, 0.0, 1.0));
+    }
 
     if (uInvert > 0.5) {
       color = 1.0 - color;
     }
 
-    // Soft highlight rolloff + Gamma
-    color = color / (1.0 + 0.18 * dot(color, vec3(0.2126, 0.7152, 0.0722)));
     color = pow(clamp(color, 0.0, 1.0), vec3(max(uGamma, 0.3)));
 
-    // Analog film grain & optical vignette
     if (uGrain > 0.001) {
       float n = hash12(vUv * vec2(1280.0, 720.0) + fract(uTime * 17.3)) - 0.5;
       color += n * uGrain;
@@ -2990,7 +3530,7 @@ body:not(.leary2-panel-open) .panel{display:none}
   }
 `;
 
-  // ts_src/engine/fluidEngine.ts
+  // ts_src3/engine/fluidEngine.ts
   function hexToRgbNormalized(hex) {
     const clean = hex.replace("#", "");
     const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean.padEnd(6, "0").slice(0, 6);
@@ -3041,6 +3581,7 @@ body:not(.leary2-panel-open) .panel{display:none}
       __publicField(this, "gl");
       __publicField(this, "isWebGL2");
       __publicField(this, "supportLinearFiltering");
+      __publicField(this, "maxTextureSize");
       __publicField(this, "halfFloatTexType");
       __publicField(this, "formatRGBA");
       __publicField(this, "formatRG");
@@ -3060,8 +3601,16 @@ body:not(.leary2-panel-open) .panel{display:none}
       __publicField(this, "clearProgram");
       __publicField(this, "splatProgram");
       __publicField(this, "vortexSplatProgram");
+      __publicField(this, "attractSplatProgram");
+      __publicField(this, "obstacleStampProgram");
+      __publicField(this, "obstaclePresetProgram");
+      __publicField(this, "obstacleMaskProgram");
       __publicField(this, "externalForcesProgram");
+      __publicField(this, "collisionMomentumProgram");
+      __publicField(this, "viscosityProgram");
+      __publicField(this, "dyeMixTensionProgram");
       __publicField(this, "advectionProgram");
+      __publicField(this, "advectionMacCormackProgram");
       __publicField(this, "divergenceProgram");
       __publicField(this, "curlProgram");
       __publicField(this, "vorticityProgram");
@@ -3072,15 +3621,30 @@ body:not(.leary2-panel-open) .panel{display:none}
       __publicField(this, "displayProgram");
       // Framebuffers
       __publicField(this, "dye");
+      __publicField(this, "dyeTmpHat");
+      __publicField(this, "dyeTmpRev");
       __publicField(this, "velocity");
+      __publicField(this, "velTmpHat");
+      __publicField(this, "velTmpRev");
       __publicField(this, "divergence");
       __publicField(this, "curl");
       __publicField(this, "pressure");
+      __publicField(this, "obstacles");
       __publicField(this, "bloom");
       __publicField(this, "bloomFramebuffers", []);
       __publicField(this, "quadBuffer");
+      __publicField(this, "indexBuffer");
+      __publicField(this, "createdPrograms", []);
       __publicField(this, "onContextLostCallback");
       __publicField(this, "onContextRestoredCallback");
+      __publicField(this, "audioSampler");
+      __publicField(this, "currentAudioBands", {
+        bass: 0,
+        mid: 0,
+        treble: 0,
+        overall: 0,
+        beatDetected: false
+      });
       __publicField(this, "handleContextLost", (e) => {
         var _a;
         e.preventDefault();
@@ -3097,16 +3661,37 @@ body:not(.leary2-panel-open) .panel{display:none}
         (_a = this.onContextRestoredCallback) == null ? void 0 : _a.call(this);
       });
       __publicField(this, "tick", (now) => {
+        var _a, _b, _c;
         if (!this.lastTime) this.lastTime = now;
         const rawDt = (now - this.lastTime) / 1e3;
         this.lastTime = now;
         const dt = Math.min(rawDt, 0.025);
+        this.currentAudioBands = this.audioSampler ? this.audioSampler() : { bass: 0, mid: 0, treble: 0, overall: 0, beatDetected: false };
         this.applyLfoModulation();
         this.applyInputs(dt);
         if (!this.paused) {
           this.elapsedTime += dt;
           this.kaleidoscopeAngle += dt * this.effectiveParams.kaleidoscopeRotation;
-          this.applyAutoFlow(dt);
+          if (this.currentAudioBands.beatDetected && ((_a = this.effectiveParams.audioConfig) == null ? void 0 : _a.beatBurst)) {
+            const jets = 4;
+            const baseHue = Math.random();
+            const impulse = (750 + this.currentAudioBands.bass * 1200) * ((_c = (_b = this.effectiveParams.audioConfig) == null ? void 0 : _b.sensitivity) != null ? _c : 1.2);
+            for (let i = 0; i < jets; i++) {
+              const angle = i / jets * Math.PI * 2 + this.elapsedTime * 0.9;
+              const x = 0.5 + Math.cos(angle) * 0.24;
+              const y = 0.5 + Math.sin(angle) * 0.24;
+              const color = this.generateColor((baseHue + i / jets) % 1);
+              this.splatSingle(
+                x,
+                y,
+                -Math.cos(angle) * impulse,
+                -Math.sin(angle) * impulse,
+                [color[0] * 0.55, color[1] * 0.55, color[2] * 0.55],
+                this.effectiveParams.autoEmitterSize || 0.16
+              );
+            }
+          }
+          this.applyAutoFlow(dt * this.effectiveParams.timeScale);
           this.stepPhysics(dt);
         }
         this.renderDisplay();
@@ -3136,11 +3721,14 @@ body:not(.leary2-panel-open) .panel{display:none}
         throw new Error("WebGL is not supported in this browser.");
       }
       this.gl = gl;
+      this.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 2048;
       let halfFloat = null;
       if (this.isWebGL2) {
         const gl2 = gl;
         gl2.getExtension("EXT_color_buffer_float");
-        this.supportLinearFiltering = Boolean(gl2.getExtension("OES_texture_float_linear"));
+        gl2.getExtension("EXT_color_buffer_half_float");
+        gl2.getExtension("OES_texture_float_linear");
+        this.supportLinearFiltering = true;
         this.halfFloatTexType = gl2.HALF_FLOAT;
         const rgba = this.getSupportedFormat(gl2.RGBA16F, gl2.RGBA, this.halfFloatTexType);
         const rg = this.getSupportedFormat(gl2.RG16F, gl2.RG, this.halfFloatTexType);
@@ -3150,7 +3738,6 @@ body:not(.leary2-panel-open) .panel{display:none}
         this.formatR = r || this.formatRGBA;
         if (!rgba) {
           this.halfFloatTexType = gl2.UNSIGNED_BYTE;
-          this.supportLinearFiltering = true;
         }
       } else {
         halfFloat = gl.getExtension("OES_texture_half_float");
@@ -3238,6 +3825,7 @@ body:not(.leary2-panel-open) .panel{display:none}
       gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(0);
       this.quadBuffer = buffer;
+      this.indexBuffer = indexBuffer;
     }
     compileShader(type, source) {
       const gl = this.gl;
@@ -3260,10 +3848,14 @@ body:not(.leary2-panel-open) .panel{display:none}
       gl.attachShader(program, fragmentShader);
       gl.bindAttribLocation(program, 0, "aPosition");
       gl.linkProgram(program);
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         const info = gl.getProgramInfoLog(program);
+        gl.deleteProgram(program);
         throw new Error(`Program link error: ${info}`);
       }
+      this.createdPrograms.push(program);
       const uniforms = {};
       const uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
       for (let i = 0; i < uniformCount; i++) {
@@ -3279,14 +3871,38 @@ body:not(.leary2-panel-open) .panel{display:none}
       };
     }
     initPrograms() {
+      this.createdPrograms = [];
       this.clearProgram = this.createProgram(baseVertexShaderSource, clearShaderSource);
       this.splatProgram = this.createProgram(baseVertexShaderSource, splatShaderSource);
       this.vortexSplatProgram = this.createProgram(baseVertexShaderSource, vortexSplatShaderSource);
+      this.attractSplatProgram = this.createProgram(baseVertexShaderSource, attractSplatShaderSource);
+      this.obstacleStampProgram = this.createProgram(
+        baseVertexShaderSource,
+        obstacleStampShaderSource
+      );
+      this.obstaclePresetProgram = this.createProgram(
+        baseVertexShaderSource,
+        obstaclePresetShaderSource
+      );
+      this.obstacleMaskProgram = this.createProgram(baseVertexShaderSource, obstacleMaskShaderSource);
       this.externalForcesProgram = this.createProgram(
         baseVertexShaderSource,
         externalForcesShaderSource
       );
+      this.collisionMomentumProgram = this.createProgram(
+        baseVertexShaderSource,
+        collisionMomentumShaderSource
+      );
+      this.viscosityProgram = this.createProgram(baseVertexShaderSource, viscosityShaderSource);
+      this.dyeMixTensionProgram = this.createProgram(
+        baseVertexShaderSource,
+        dyeMixTensionShaderSource
+      );
       this.advectionProgram = this.createProgram(baseVertexShaderSource, advectionShaderSource);
+      this.advectionMacCormackProgram = this.createProgram(
+        baseVertexShaderSource,
+        advectionMacCormackShaderSource
+      );
       this.divergenceProgram = this.createProgram(baseVertexShaderSource, divergenceShaderSource);
       this.curlProgram = this.createProgram(baseVertexShaderSource, curlShaderSource);
       this.vorticityProgram = this.createProgram(baseVertexShaderSource, vorticityShaderSource);
@@ -3306,8 +3922,8 @@ body:not(.leary2-panel-open) .panel{display:none}
       const gl = this.gl;
       let aspectRatio = gl.drawingBufferWidth / Math.max(1, gl.drawingBufferHeight);
       if (aspectRatio < 1) aspectRatio = 1 / aspectRatio;
-      const min = Math.round(resolution);
-      const max = Math.round(resolution * aspectRatio);
+      const min = Math.min(this.maxTextureSize, Math.round(resolution));
+      const max = Math.min(this.maxTextureSize, Math.round(resolution * aspectRatio));
       if (gl.drawingBufferWidth > gl.drawingBufferHeight) {
         return { width: max, height: min };
       }
@@ -3328,10 +3944,14 @@ body:not(.leary2-panel-open) .panel{display:none}
         this.applyWrapModeToFBO(this.dye.read, wrap);
         this.applyWrapModeToFBO(this.dye.write, wrap);
       }
+      if (this.dyeTmpHat) this.applyWrapModeToFBO(this.dyeTmpHat, wrap);
+      if (this.dyeTmpRev) this.applyWrapModeToFBO(this.dyeTmpRev, wrap);
       if (this.velocity) {
         this.applyWrapModeToFBO(this.velocity.read, wrap);
         this.applyWrapModeToFBO(this.velocity.write, wrap);
       }
+      if (this.velTmpHat) this.applyWrapModeToFBO(this.velTmpHat, wrap);
+      if (this.velTmpRev) this.applyWrapModeToFBO(this.velTmpRev, wrap);
       if (this.pressure) {
         this.applyWrapModeToFBO(this.pressure.read, wrap);
         this.applyWrapModeToFBO(this.pressure.write, wrap);
@@ -3450,6 +4070,24 @@ body:not(.leary2-panel-open) .panel{display:none}
           filtering
         );
       }
+      if (this.dyeTmpHat) this.deleteFBO(this.dyeTmpHat);
+      if (this.dyeTmpRev) this.deleteFBO(this.dyeTmpRev);
+      this.dyeTmpHat = this.createFBO(
+        dyeRes.width,
+        dyeRes.height,
+        rgba.internalFormat,
+        rgba.format,
+        texType,
+        filtering
+      );
+      this.dyeTmpRev = this.createFBO(
+        dyeRes.width,
+        dyeRes.height,
+        rgba.internalFormat,
+        rgba.format,
+        texType,
+        filtering
+      );
       if (!this.velocity) {
         this.velocity = this.createDoubleFBO(
           simRes.width,
@@ -3470,6 +4108,24 @@ body:not(.leary2-panel-open) .panel{display:none}
           filtering
         );
       }
+      if (this.velTmpHat) this.deleteFBO(this.velTmpHat);
+      if (this.velTmpRev) this.deleteFBO(this.velTmpRev);
+      this.velTmpHat = this.createFBO(
+        simRes.width,
+        simRes.height,
+        rg.internalFormat,
+        rg.format,
+        texType,
+        filtering
+      );
+      this.velTmpRev = this.createFBO(
+        simRes.width,
+        simRes.height,
+        rg.internalFormat,
+        rg.format,
+        texType,
+        filtering
+      );
       if (this.divergence) this.deleteFBO(this.divergence);
       if (this.curl) this.deleteFBO(this.curl);
       if (this.pressure) {
@@ -3500,6 +4156,29 @@ body:not(.leary2-panel-open) .panel{display:none}
         texType,
         gl.NEAREST
       );
+      if (!this.obstacles) {
+        this.obstacles = this.createDoubleFBO(
+          simRes.width,
+          simRes.height,
+          r.internalFormat,
+          r.format,
+          texType,
+          filtering
+        );
+        if (this.params.obstaclePreset && this.params.obstaclePreset !== "none") {
+          this.applyObstaclePreset(this.params.obstaclePreset);
+        }
+      } else {
+        this.obstacles = this.resizeDoubleFBO(
+          this.obstacles,
+          simRes.width,
+          simRes.height,
+          r.internalFormat,
+          r.format,
+          texType,
+          filtering
+        );
+      }
       this.initBloomFramebuffers();
     }
     initBloomFramebuffers() {
@@ -3538,7 +4217,7 @@ body:not(.leary2-panel-open) .panel{display:none}
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     }
     resize(width, height) {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
       const pixelWidth = Math.max(1, Math.floor(width * dpr));
       const pixelHeight = Math.max(1, Math.floor(height * dpr));
       if (this.canvas.width !== pixelWidth || this.canvas.height !== pixelHeight) {
@@ -3550,12 +4229,87 @@ body:not(.leary2-panel-open) .panel{display:none}
     updateParams(nextParams) {
       const resChanged = nextParams.simResolution !== this.params.simResolution || nextParams.dyeResolution !== this.params.dyeResolution;
       const wrapChanged = nextParams.wrapBorders !== this.params.wrapBorders;
+      const obstaclePresetChanged = nextParams.obstaclePreset !== this.params.obstaclePreset;
       this.params = { ...nextParams };
       if (resChanged) {
         this.initFramebuffers();
       } else if (wrapChanged) {
         this.updateTextureWrapModes();
       }
+      if (obstaclePresetChanged) {
+        this.applyObstaclePreset(nextParams.obstaclePreset);
+      }
+    }
+    applyObstaclePreset(preset) {
+      var _a;
+      if (!this.obstacles) return;
+      const gl = this.gl;
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const modeMap = {
+        none: 0,
+        cylinder: 1,
+        twinPillars: 2,
+        ring: 3,
+        lattice: 4
+      };
+      gl.disable(gl.BLEND);
+      this.obstaclePresetProgram.bind();
+      gl.uniform1f(this.obstaclePresetProgram.uniforms.aspectRatio, aspectRatio);
+      gl.uniform1f(this.obstaclePresetProgram.uniforms.uMode, (_a = modeMap[preset]) != null ? _a : 0);
+      this.blit(this.obstacles.write);
+      this.obstacles.swap();
+    }
+    clearObstacles() {
+      if (!this.obstacles) return;
+      const gl = this.gl;
+      gl.disable(gl.BLEND);
+      this.clearProgram.bind();
+      gl.uniform1f(this.clearProgram.uniforms.value, 0);
+      gl.uniform1i(this.clearProgram.uniforms.uTexture, this.obstacles.read.attach(0));
+      this.blit(this.obstacles.write);
+      this.obstacles.swap();
+    }
+    injectImage(img) {
+      if (!this.dye) return;
+      const gl = this.gl;
+      const w = this.dye.width;
+      const h = this.dye.height;
+      const offscreen = document.createElement("canvas");
+      offscreen.width = w;
+      offscreen.height = h;
+      const ctx = offscreen.getContext("2d");
+      if (!ctx) return;
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, w, h);
+      const scale = Math.min(
+        w * 0.78 / Math.max(1, img.naturalWidth || img.width),
+        h * 0.78 / Math.max(1, img.naturalHeight || img.height)
+      );
+      const dw = (img.naturalWidth || img.width) * scale;
+      const dh = (img.naturalHeight || img.height) * scale;
+      ctx.drawImage(img, (w - dw) * 0.5, (h - dh) * 0.5, dw, dh);
+      const tex = gl.createTexture();
+      if (!tex) return;
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, offscreen);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+      gl.disable(gl.BLEND);
+      this.clearProgram.bind();
+      gl.uniform1i(this.clearProgram.uniforms.uTexture, 0);
+      gl.uniform1f(
+        this.clearProgram.uniforms.value,
+        Math.min(1.6, Math.max(0.55, this.params.dyeStrength))
+      );
+      this.blit(this.dye.write);
+      this.dye.swap();
+      gl.deleteTexture(tex);
+      this.splatVortex(0.5, 0.5, 36, 0.45);
     }
     setPaused(paused) {
       this.paused = paused;
@@ -3572,15 +4326,23 @@ body:not(.leary2-panel-open) .panel{display:none}
       this.velocity.swap();
     }
     seedInitialPattern() {
-      const count = 6;
-      for (let i = 0; i < count; i++) {
-        const angle = i / count * Math.PI * 2;
-        const x = 0.5 + Math.cos(angle) * 0.22;
-        const y = 0.5 + Math.sin(angle) * 0.22;
-        const dx = -Math.sin(angle) * 900 + (this.rand() - 0.5) * 400;
-        const dy = Math.cos(angle) * 900 + (this.rand() - 0.5) * 400;
-        const color = this.generateColor(i / count);
-        this.splat(x, y, dx, dy, color, 0.36);
+      this.triggerCollision();
+    }
+    triggerCollision() {
+      const pairs = 2;
+      const baseHue = this.rand();
+      for (let i = 0; i < pairs * 2; i++) {
+        const angle = i / (pairs * 2) * Math.PI * 2 + 0.35;
+        const dist = 0.28;
+        const x = 0.5 + Math.cos(angle) * dist;
+        const y = 0.5 + Math.sin(angle) * dist;
+        const speed = 1550 + this.rand() * 400;
+        const tangentX = -Math.sin(angle) * 260;
+        const tangentY = Math.cos(angle) * 260;
+        const dx = -Math.cos(angle) * speed + tangentX;
+        const dy = -Math.sin(angle) * speed + tangentY;
+        const color = this.generateColor((baseHue + i * 0.27) % 1);
+        this.splatSingle(x, y, dx, dy, [color[0] * 1.1, color[1] * 1.1, color[2] * 1.1], 0.3);
       }
     }
     triggerShockwave() {
@@ -3602,10 +4364,10 @@ body:not(.leary2-panel-open) .panel{display:none}
       const strength = this.params.dyeStrength;
       if (!this.params.rainbowBrush && hueOverride === void 0) {
         const [r2, g2, b2] = hexToRgbNormalized(this.params.brushColor);
-        return [r2 * 0.45 * strength, g2 * 0.45 * strength, b2 * 0.45 * strength];
+        return [r2 * 0.48 * strength, g2 * 0.48 * strength, b2 * 0.48 * strength];
       }
       const h = hueOverride !== void 0 ? hueOverride : Math.random();
-      const [r, g, b] = hsvToRgb(h, 0.92, 0.48 * strength);
+      const [r, g, b] = hsvToRgb(h, 0.94, 0.5 * strength);
       return [r, g, b];
     }
     correctRadius(radius) {
@@ -3665,7 +4427,54 @@ body:not(.leary2-panel-open) .panel{display:none}
         this.splatSingle(rx, ry, rdx, rdy, color, radius, erase);
       }
     }
-    pointerDown(id, posX, posY) {
+    splatAttract(x, y, strength, radiusScale) {
+      const gl = this.gl;
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const r = this.correctRadius(radiusScale / 100 * 2.1);
+      const sym = this.params.emitterSymmetry;
+      const cx = x - 0.5;
+      const cy = y - 0.5;
+      for (let i = 0; i < sym; i++) {
+        const theta = i / sym * Math.PI * 2;
+        const cos = Math.cos(theta);
+        const sin = Math.sin(theta);
+        const rx = 0.5 + (cx * cos - cy * sin);
+        const ry = 0.5 + (cx * sin + cy * cos);
+        this.attractSplatProgram.bind();
+        gl.uniform1i(this.attractSplatProgram.uniforms.uTarget, this.velocity.read.attach(0));
+        gl.uniform1f(this.attractSplatProgram.uniforms.aspectRatio, aspectRatio);
+        gl.uniform2f(this.attractSplatProgram.uniforms.point, rx, ry);
+        gl.uniform1f(this.attractSplatProgram.uniforms.radius, r);
+        gl.uniform1f(this.attractSplatProgram.uniforms.strength, strength);
+        this.blit(this.velocity.write);
+        this.velocity.swap();
+      }
+    }
+    splatObstacle(x, y, radiusScale, erase = false) {
+      if (!this.obstacles) return;
+      const gl = this.gl;
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const r = this.correctRadius(radiusScale / 100 * 0.9);
+      const sym = this.params.emitterSymmetry;
+      const cx = x - 0.5;
+      const cy = y - 0.5;
+      for (let i = 0; i < sym; i++) {
+        const theta = i / sym * Math.PI * 2;
+        const cos = Math.cos(theta);
+        const sin = Math.sin(theta);
+        const rx = 0.5 + (cx * cos - cy * sin);
+        const ry = 0.5 + (cx * sin + cy * cos);
+        this.obstacleStampProgram.bind();
+        gl.uniform1i(this.obstacleStampProgram.uniforms.uObstacles, this.obstacles.read.attach(0));
+        gl.uniform1f(this.obstacleStampProgram.uniforms.aspectRatio, aspectRatio);
+        gl.uniform2f(this.obstacleStampProgram.uniforms.point, rx, ry);
+        gl.uniform1f(this.obstacleStampProgram.uniforms.radius, r);
+        gl.uniform1f(this.obstacleStampProgram.uniforms.eraseMode, erase ? 1 : 0);
+        this.blit(this.obstacles.write);
+        this.obstacles.swap();
+      }
+    }
+    pointerDown(id, posX, posY, altErase = false) {
       const rect = this.canvas.getBoundingClientRect();
       const tx = (posX - rect.left) / Math.max(1, rect.width);
       const ty = 1 - (posY - rect.top) / Math.max(1, rect.height);
@@ -3680,11 +4489,16 @@ body:not(.leary2-panel-open) .panel{display:none}
         deltaY: 0,
         down: true,
         moved: false,
+        altErase,
         color
       });
       const angle = Math.random() * Math.PI * 2;
       const burst = 280;
-      if (this.params.brushMode === "vortex") {
+      if (this.params.brushMode === "obstacle") {
+        this.splatObstacle(tx, ty, this.params.splatRadius, altErase);
+      } else if (this.params.brushMode === "attract") {
+        this.splatAttract(tx, ty, 120, this.params.splatRadius);
+      } else if (this.params.brushMode === "vortex") {
         this.splatVortex(tx, ty, 85, this.params.splatRadius);
       } else if (this.params.brushMode === "erase") {
         this.splat(tx, ty, 0, 0, [0, 0, 0], this.params.splatRadius * 1.4, true);
@@ -3737,12 +4551,16 @@ body:not(.leary2-panel-open) .panel{display:none}
         const dx = p.deltaX * this.params.splatForce;
         const dy = p.deltaY * this.params.splatForce;
         if (this.params.rainbowBrush) {
-          this.huePhase = (this.huePhase + dt * 0.35) % 1;
+          this.huePhase = (this.huePhase + dt * this.params.rainbowSpeed) % 1;
           p.color = this.generateColor(this.huePhase);
         } else {
           p.color = this.generateColor();
         }
-        if (this.params.brushMode === "erase") {
+        if (this.params.brushMode === "obstacle") {
+          this.splatObstacle(p.texcoordX, p.texcoordY, this.params.splatRadius, Boolean(p.altErase));
+        } else if (this.params.brushMode === "attract") {
+          this.splatAttract(p.texcoordX, p.texcoordY, 95, this.params.splatRadius);
+        } else if (this.params.brushMode === "erase") {
           this.splat(
             p.texcoordX,
             p.texcoordY,
@@ -3769,51 +4587,133 @@ body:not(.leary2-panel-open) .panel{display:none}
       });
     }
     applyLfoModulation() {
+      var _a, _b, _c, _d;
       const eff = { ...this.params };
-      const lfos = [this.params.lfo1, this.params.lfo2];
+      const lfos = [this.params.lfo1, this.params.lfo2, this.params.lfo3].filter(Boolean);
       for (const lfo of lfos) {
         const mod = evaluateLfo(lfo, this.elapsedTime);
         if (mod === 0) continue;
         switch (lfo.target) {
           case "hueShiftSpeed":
-            eff.hueShiftSpeed = Math.max(-1.5, Math.min(1.5, eff.hueShiftSpeed + mod * 0.8));
+            eff.hueShiftSpeed = Math.max(-5, Math.min(5, eff.hueShiftSpeed + mod * 1.5));
+            break;
+          case "hueOffset":
+            eff.hueOffset = eff.hueOffset + mod * 0.5;
             break;
           case "kaleidoscopeRotation":
             eff.kaleidoscopeRotation = Math.max(
-              -1,
-              Math.min(1, eff.kaleidoscopeRotation + mod * 0.6)
+              -4,
+              Math.min(4, eff.kaleidoscopeRotation + mod * 1.2)
+            );
+            break;
+          case "kaleidoscopeZoom":
+            eff.kaleidoscopeZoom = Math.max(
+              0.2,
+              Math.min(5, eff.kaleidoscopeZoom + mod * 0.8)
             );
             break;
           case "iridescenceScale":
             eff.iridescenceScale = Math.max(
-              0.5,
-              Math.min(6, eff.iridescenceScale + mod * 2)
+              0.2,
+              Math.min(15, eff.iridescenceScale + mod * 3.5)
             );
             break;
           case "curl":
-            eff.curl = Math.max(0, Math.min(65, eff.curl + mod * 25));
+            eff.curl = Math.max(0, Math.min(150, eff.curl + mod * 45));
             break;
           case "domainWarp":
-            eff.domainWarp = Math.max(0, Math.min(1.5, eff.domainWarp + mod * 0.5));
+            eff.domainWarp = Math.max(0, Math.min(4, eff.domainWarp + mod * 1));
             break;
           case "chromaticAberration":
             eff.chromaticAberration = Math.max(
               0,
-              Math.min(2, eff.chromaticAberration + mod * 0.8)
+              Math.min(5, eff.chromaticAberration + mod * 1.5)
             );
             break;
           case "radialForce":
-            eff.radialForce = Math.max(-2, Math.min(2, eff.radialForce + mod * 1.2));
+            eff.radialForce = Math.max(-8, Math.min(8, eff.radialForce + mod * 2.5));
+            break;
+          case "swirlField":
+            eff.swirlField = Math.max(-8, Math.min(8, eff.swirlField + mod * 2.5));
+            break;
+          case "gravityX":
+            eff.gravityX = Math.max(-8, Math.min(8, eff.gravityX + mod * 2));
+            break;
+          case "gravityY":
+            eff.gravityY = Math.max(-8, Math.min(8, eff.gravityY + mod * 2));
+            break;
+          case "turbulence":
+            eff.turbulence = Math.max(0, Math.min(6, eff.turbulence + mod * 1.5 + lfo.depth * 0.5));
+            break;
+          case "buoyancy":
+            eff.buoyancy = Math.max(-3, Math.min(5, eff.buoyancy + mod * 1.4));
+            break;
+          case "smokeAmount":
+            eff.smokeAmount = Math.max(0, Math.min(1, eff.smokeAmount + mod * 0.45));
+            break;
+          case "contourGlow":
+            eff.contourGlow = Math.max(0, Math.min(2.5, eff.contourGlow + mod * 0.85));
             break;
           case "rippleAmount":
-            eff.rippleAmount = Math.max(0, Math.min(1, eff.rippleAmount + mod * 0.5 + lfo.depth * 0.25));
+            eff.rippleAmount = Math.max(
+              0,
+              Math.min(3, eff.rippleAmount + mod * 0.8 + lfo.depth * 0.4)
+            );
             break;
           case "bloomIntensity":
-            eff.bloomIntensity = Math.max(0, Math.min(1.5, eff.bloomIntensity + mod * 0.55));
+            eff.bloomIntensity = Math.max(0, Math.min(4, eff.bloomIntensity + mod * 1));
+            break;
+          case "exposure":
+            eff.exposure = Math.max(0.2, Math.min(4, eff.exposure + mod * 0.6));
             break;
         }
       }
+      if (eff.vjMode) {
+        const t = this.elapsedTime;
+        eff.hueOffset = eff.hueOffset + Math.sin(t * 0.19) * 0.22;
+        eff.iridescenceScale = Math.max(
+          0.2,
+          Math.min(15, eff.iridescenceScale + Math.sin(t * 0.27) * 0.85)
+        );
+        eff.curl = Math.max(0, Math.min(150, eff.curl + Math.sin(t * 0.31) * 14));
+        eff.swirlField = Math.max(
+          -8,
+          Math.min(8, eff.swirlField + Math.sin(t * 0.13) * 0.55)
+        );
+        eff.radialForce = Math.max(
+          -8,
+          Math.min(8, eff.radialForce + Math.cos(t * 0.23) * 0.45)
+        );
+        eff.turbulence = Math.max(
+          0,
+          Math.min(6, eff.turbulence + (0.5 + 0.5 * Math.sin(t * 0.37)) * 0.35)
+        );
+        eff.domainWarp = Math.max(
+          0,
+          Math.min(4, eff.domainWarp + Math.sin(t * 0.21) * 0.18)
+        );
+      }
+      const bands = this.currentAudioBands;
+      if (bands.overall > 5e-3) {
+        const ac = eff.audioConfig;
+        const sens = (_a = ac == null ? void 0 : ac.sensitivity) != null ? _a : 1.2;
+        const bassVal = bands.bass * ((_b = ac == null ? void 0 : ac.bassGain) != null ? _b : 1) * sens;
+        const midVal = bands.mid * ((_c = ac == null ? void 0 : ac.midGain) != null ? _c : 0.85) * sens;
+        const trebleVal = bands.treble * ((_d = ac == null ? void 0 : ac.trebleGain) != null ? _d : 0.9) * sens;
+        eff.bloomIntensity = Math.min(4, eff.bloomIntensity + bassVal * 0.65);
+        eff.radialForce = Math.max(-8, Math.min(8, eff.radialForce + bassVal * 0.9));
+        eff.rippleAmount = Math.min(3, eff.rippleAmount + bassVal * 0.22);
+        eff.turbulence = Math.min(6, eff.turbulence + midVal * 0.9);
+        eff.domainWarp = Math.min(4, eff.domainWarp + midVal * 0.55);
+        eff.swirlField = Math.max(-8, Math.min(8, eff.swirlField + (midVal - 0.15) * 1.1));
+        eff.chromaticAberration = Math.min(5, eff.chromaticAberration + trebleVal * 0.85);
+        eff.iridescenceScale = Math.min(15, eff.iridescenceScale + trebleVal * 2.2);
+        eff.hueOffset = eff.hueOffset + trebleVal * 0.28;
+      }
       this.effectiveParams = eff;
+    }
+    setAudioSampler(sampler) {
+      this.audioSampler = sampler;
     }
     applyAutoFlow(dt) {
       const {
@@ -3822,14 +4722,36 @@ body:not(.leary2-panel-open) .panel{display:none}
         autoFlowSpeed,
         autoEmitterCount,
         autoEmitterRadius,
+        autoEmitterSize,
         pulseInterval
       } = this.effectiveParams;
       if (autoFlowMode === "manual" || autoFlowIntensity <= 0.01) return;
       const t = this.elapsedTime * autoFlowSpeed;
-      const force = 520 * autoFlowIntensity;
-      const count = Math.max(1, Math.min(8, Math.round(autoEmitterCount)));
+      const force = 560 * autoFlowIntensity;
+      const count = Math.max(1, Math.min(16, Math.round(autoEmitterCount)));
       const rad = autoEmitterRadius;
-      if (autoFlowMode === "vortex") {
+      const size = Math.max(0.03, autoEmitterSize || 0.18);
+      if (autoFlowMode === "collide") {
+        for (let i = 0; i < count; i++) {
+          const baseAngle = i / count * Math.PI * 2 + Math.sin(t * 0.35) * 0.45;
+          const x = 0.5 + Math.cos(baseAngle) * rad;
+          const y = 0.5 + Math.sin(baseAngle) * rad;
+          const weave = Math.sin(t * 1.45 + i * 1.57) * 0.32;
+          const dirAngle = baseAngle + Math.PI + weave;
+          const dx = Math.cos(dirAngle) * force * 1.15;
+          const dy = Math.sin(dirAngle) * force * 1.15;
+          const hue = (t * 0.06 + i / count) % 1;
+          const color = this.generateColor(hue);
+          this.splatSingle(
+            x,
+            y,
+            dx * dt * 60 * 0.16,
+            dy * dt * 60 * 0.16,
+            [color[0] * 0.24, color[1] * 0.24, color[2] * 0.24],
+            size
+          );
+        }
+      } else if (autoFlowMode === "vortex") {
         for (let i = 0; i < count; i++) {
           const offset = i / count * Math.PI * 2;
           const dirSign = i % 2 === 0 ? 0.9 : -0.75;
@@ -3846,8 +4768,8 @@ body:not(.leary2-panel-open) .panel{display:none}
             y,
             dx * dt * 60 * 0.16,
             dy * dt * 60 * 0.16,
-            [color[0] * 0.25, color[1] * 0.25, color[2] * 0.25],
-            0.22
+            [color[0] * 0.24, color[1] * 0.24, color[2] * 0.24],
+            size
           );
         }
       } else if (autoFlowMode === "fountains") {
@@ -3864,13 +4786,13 @@ body:not(.leary2-panel-open) .panel{display:none}
             y,
             dx * dt * 60 * 0.15,
             dy * dt * 60 * 0.15,
-            [color[0] * 0.24, color[1] * 0.24, color[2] * 0.24],
-            0.19
+            [color[0] * 0.22, color[1] * 0.22, color[2] * 0.22],
+            size
           );
         }
       } else if (autoFlowMode === "pulse") {
         this.pulseTimer += dt * autoFlowSpeed;
-        if (this.pulseTimer >= Math.max(0.25, pulseInterval)) {
+        if (this.pulseTimer >= Math.max(0.15, pulseInterval)) {
           this.pulseTimer = 0;
           const jets = Math.max(2, count * 2);
           const baseHue = t * 0.15 % 1;
@@ -3886,8 +4808,8 @@ body:not(.leary2-panel-open) .panel{display:none}
               y,
               dx,
               dy,
-              [color[0] * 0.65, color[1] * 0.65, color[2] * 0.65],
-              0.24
+              [color[0] * 0.62, color[1] * 0.62, color[2] * 0.62],
+              size * 1.2
             );
           }
         }
@@ -3906,28 +4828,141 @@ body:not(.leary2-panel-open) .panel{display:none}
             dx * dt * 60 * 0.14,
             dy * dt * 60 * 0.14,
             [color[0] * 0.22, color[1] * 0.22, color[2] * 0.22],
-            0.2
+            size
+          );
+        }
+      } else if (autoFlowMode === "smokePlume") {
+        const spreadSpan = Math.min(0.75, Math.max(0.08, rad * 1.6));
+        for (let i = 0; i < count; i++) {
+          const offsetNorm = count === 1 ? 0 : i / (count - 1) - 0.5;
+          const x = 0.5 + offsetNorm * spreadSpan + Math.sin(t * 1.15 + i * 2.09) * 0.045;
+          const y = 0.08 + Math.sin(t * 0.65 + i * 1.3) * 0.02;
+          const dx = Math.sin(t * 2.3 + i * 1.73) * force * 0.34;
+          const dy = force * (0.55 + 0.2 * Math.cos(t * 1.4 + i));
+          const hue = (t * 0.04 + i / count) % 1;
+          const color = this.effectiveParams.rainbowBrush ? this.generateColor(hue) : this.generateColor();
+          this.splatSingle(
+            x,
+            y,
+            dx * dt * 60 * 0.12,
+            dy * dt * 60 * 0.12,
+            [color[0] * 0.2, color[1] * 0.2, color[2] * 0.2],
+            size * 1.15
           );
         }
       }
+    }
+    advectField(target, tmpHat, tmpRev, dissipation, sharpness, dt) {
+      const gl = this.gl;
+      const manualBilerp = this.supportLinearFiltering ? 0 : 1;
+      if (sharpness <= 0.02) {
+        this.advectionProgram.bind();
+        gl.uniform2f(
+          this.advectionProgram.uniforms.texelSize,
+          this.velocity.texelSizeX,
+          this.velocity.texelSizeY
+        );
+        gl.uniform2f(
+          this.advectionProgram.uniforms.dyeTexelSize,
+          target.texelSizeX,
+          target.texelSizeY
+        );
+        gl.uniform1i(this.advectionProgram.uniforms.uVelocity, this.velocity.read.attach(0));
+        gl.uniform1i(this.advectionProgram.uniforms.uSource, target.read.attach(1));
+        gl.uniform1f(this.advectionProgram.uniforms.dt, dt);
+        gl.uniform1f(this.advectionProgram.uniforms.dissipation, dissipation);
+        gl.uniform1f(this.advectionProgram.uniforms.manualBilerp, manualBilerp);
+        this.blit(target.write);
+        target.swap();
+        return;
+      }
+      this.advectionProgram.bind();
+      gl.uniform2f(
+        this.advectionProgram.uniforms.texelSize,
+        this.velocity.texelSizeX,
+        this.velocity.texelSizeY
+      );
+      gl.uniform2f(
+        this.advectionProgram.uniforms.dyeTexelSize,
+        target.texelSizeX,
+        target.texelSizeY
+      );
+      gl.uniform1i(this.advectionProgram.uniforms.uVelocity, this.velocity.read.attach(0));
+      gl.uniform1i(this.advectionProgram.uniforms.uSource, target.read.attach(1));
+      gl.uniform1f(this.advectionProgram.uniforms.dt, dt);
+      gl.uniform1f(this.advectionProgram.uniforms.dissipation, 0);
+      gl.uniform1f(this.advectionProgram.uniforms.manualBilerp, manualBilerp);
+      this.blit(tmpHat);
+      gl.uniform1i(this.advectionProgram.uniforms.uSource, tmpHat.attach(1));
+      gl.uniform1f(this.advectionProgram.uniforms.dt, -dt);
+      this.blit(tmpRev);
+      this.advectionMacCormackProgram.bind();
+      gl.uniform2f(
+        this.advectionMacCormackProgram.uniforms.texelSize,
+        this.velocity.texelSizeX,
+        this.velocity.texelSizeY
+      );
+      gl.uniform2f(
+        this.advectionMacCormackProgram.uniforms.dyeTexelSize,
+        target.texelSizeX,
+        target.texelSizeY
+      );
+      gl.uniform1i(this.advectionMacCormackProgram.uniforms.uVelocity, this.velocity.read.attach(0));
+      gl.uniform1i(this.advectionMacCormackProgram.uniforms.uPhiN, target.read.attach(1));
+      gl.uniform1i(this.advectionMacCormackProgram.uniforms.uPhiHat, tmpHat.attach(2));
+      gl.uniform1i(this.advectionMacCormackProgram.uniforms.uPhiRev, tmpRev.attach(3));
+      gl.uniform1f(this.advectionMacCormackProgram.uniforms.dt, dt);
+      gl.uniform1f(this.advectionMacCormackProgram.uniforms.dissipation, dissipation);
+      gl.uniform1f(this.advectionMacCormackProgram.uniforms.uSharpness, sharpness);
+      gl.uniform1f(
+        this.advectionMacCormackProgram.uniforms.uWrapBorders,
+        this.effectiveParams.wrapBorders ? 1 : 0
+      );
+      this.blit(target.write);
+      target.swap();
     }
     stepPhysics(dt) {
       const gl = this.gl;
       gl.disable(gl.BLEND);
       const ep = this.effectiveParams;
       const scaledDt = dt * ep.timeScale;
-      const manualBilerp = this.supportLinearFiltering ? 0 : 1;
       const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
-      if (Math.abs(ep.gravityX) > 1e-3 || Math.abs(ep.gravityY) > 1e-3 || Math.abs(ep.radialForce) > 1e-3 || ep.turbulence > 1e-3) {
+      if (Math.abs(ep.gravityX) > 1e-3 || Math.abs(ep.gravityY) > 1e-3 || Math.abs(ep.buoyancy) > 1e-3 || Math.abs(ep.radialForce) > 1e-3 || Math.abs(ep.swirlField) > 1e-3 || ep.turbulence > 1e-3) {
         this.externalForcesProgram.bind();
         gl.uniform1i(this.externalForcesProgram.uniforms.uVelocity, this.velocity.read.attach(0));
+        gl.uniform1i(this.externalForcesProgram.uniforms.uDye, this.dye.read.attach(1));
         gl.uniform1f(this.externalForcesProgram.uniforms.dt, scaledDt);
         gl.uniform1f(this.externalForcesProgram.uniforms.aspectRatio, aspectRatio);
         gl.uniform1f(this.externalForcesProgram.uniforms.uTime, this.elapsedTime);
         gl.uniform2f(this.externalForcesProgram.uniforms.uGravity, ep.gravityX, ep.gravityY);
+        gl.uniform1f(this.externalForcesProgram.uniforms.uBuoyancy, ep.buoyancy);
         gl.uniform1f(this.externalForcesProgram.uniforms.uRadialForce, ep.radialForce);
+        gl.uniform2f(
+          this.externalForcesProgram.uniforms.uRadialCenter,
+          ep.radialCenterX,
+          ep.radialCenterY
+        );
+        gl.uniform1f(this.externalForcesProgram.uniforms.uSwirlField, ep.swirlField);
         gl.uniform1f(this.externalForcesProgram.uniforms.uTurbulence, ep.turbulence);
         gl.uniform1f(this.externalForcesProgram.uniforms.uTurbulenceScale, ep.turbulenceScale);
+        gl.uniform1f(this.externalForcesProgram.uniforms.uTurbulenceSpeed, ep.turbulenceSpeed);
+        this.blit(this.velocity.write);
+        this.velocity.swap();
+      }
+      if (ep.collisionMomentum > 5e-3) {
+        this.collisionMomentumProgram.bind();
+        gl.uniform2f(
+          this.collisionMomentumProgram.uniforms.texelSize,
+          this.velocity.texelSizeX,
+          this.velocity.texelSizeY
+        );
+        gl.uniform1i(this.collisionMomentumProgram.uniforms.uVelocity, this.velocity.read.attach(0));
+        gl.uniform1i(this.collisionMomentumProgram.uniforms.uDye, this.dye.read.attach(1));
+        gl.uniform1f(
+          this.collisionMomentumProgram.uniforms.uCollisionMomentum,
+          ep.collisionMomentum
+        );
+        gl.uniform1f(this.collisionMomentumProgram.uniforms.dt, scaledDt);
         this.blit(this.velocity.write);
         this.velocity.swap();
       }
@@ -3958,6 +4993,7 @@ body:not(.leary2-panel-open) .panel{display:none}
         this.velocity.texelSizeY
       );
       gl.uniform1i(this.divergenceProgram.uniforms.uVelocity, this.velocity.read.attach(0));
+      gl.uniform1i(this.divergenceProgram.uniforms.uObstacles, this.obstacles.read.attach(1));
       gl.uniform1f(this.divergenceProgram.uniforms.uWrapBorders, ep.wrapBorders ? 1 : 0);
       this.blit(this.divergence);
       this.clearProgram.bind();
@@ -3972,7 +5008,8 @@ body:not(.leary2-panel-open) .panel{display:none}
         this.velocity.texelSizeY
       );
       gl.uniform1i(this.pressureProgram.uniforms.uDivergence, this.divergence.attach(0));
-      const iters = Math.max(4, Math.min(48, Math.round(ep.pressureIterations)));
+      gl.uniform1i(this.pressureProgram.uniforms.uObstacles, this.obstacles.read.attach(2));
+      const iters = Math.max(4, Math.min(100, Math.round(ep.pressureIterations)));
       for (let i = 0; i < iters; i++) {
         gl.uniform1i(this.pressureProgram.uniforms.uPressure, this.pressure.read.attach(1));
         this.blit(this.pressure.write);
@@ -3986,37 +5023,61 @@ body:not(.leary2-panel-open) .panel{display:none}
       );
       gl.uniform1i(this.gradientSubtractProgram.uniforms.uPressure, this.pressure.read.attach(0));
       gl.uniform1i(this.gradientSubtractProgram.uniforms.uVelocity, this.velocity.read.attach(1));
+      gl.uniform1i(this.gradientSubtractProgram.uniforms.uObstacles, this.obstacles.read.attach(2));
       this.blit(this.velocity.write);
       this.velocity.swap();
-      this.advectionProgram.bind();
-      gl.uniform2f(
-        this.advectionProgram.uniforms.texelSize,
-        this.velocity.texelSizeX,
-        this.velocity.texelSizeY
+      this.advectField(
+        this.velocity,
+        this.velTmpHat,
+        this.velTmpRev,
+        ep.velocityDissipation,
+        ep.advectionSharpness * 0.85,
+        scaledDt
       );
-      gl.uniform2f(
-        this.advectionProgram.uniforms.dyeTexelSize,
-        this.velocity.texelSizeX,
-        this.velocity.texelSizeY
+      if (ep.viscosity > 5e-3) {
+        this.viscosityProgram.bind();
+        gl.uniform2f(
+          this.viscosityProgram.uniforms.texelSize,
+          this.velocity.texelSizeX,
+          this.velocity.texelSizeY
+        );
+        gl.uniform1f(this.viscosityProgram.uniforms.uViscosity, ep.viscosity);
+        const viscPasses = ep.viscosity > 0.5 ? 2 : 1;
+        for (let i = 0; i < viscPasses; i++) {
+          gl.uniform1i(this.viscosityProgram.uniforms.uVelocity, this.velocity.read.attach(0));
+          this.blit(this.velocity.write);
+          this.velocity.swap();
+        }
+      }
+      this.advectField(
+        this.dye,
+        this.dyeTmpHat,
+        this.dyeTmpRev,
+        ep.densityDissipation,
+        ep.advectionSharpness,
+        scaledDt
       );
-      const velId = this.velocity.read.attach(0);
-      gl.uniform1i(this.advectionProgram.uniforms.uVelocity, velId);
-      gl.uniform1i(this.advectionProgram.uniforms.uSource, velId);
-      gl.uniform1f(this.advectionProgram.uniforms.dt, scaledDt);
-      gl.uniform1f(this.advectionProgram.uniforms.dissipation, ep.velocityDissipation);
-      gl.uniform1f(this.advectionProgram.uniforms.manualBilerp, manualBilerp);
-      this.blit(this.velocity.write);
-      this.velocity.swap();
-      gl.uniform2f(
-        this.advectionProgram.uniforms.dyeTexelSize,
-        this.dye.texelSizeX,
-        this.dye.texelSizeY
-      );
-      gl.uniform1i(this.advectionProgram.uniforms.uVelocity, this.velocity.read.attach(0));
-      gl.uniform1i(this.advectionProgram.uniforms.uSource, this.dye.read.attach(1));
-      gl.uniform1f(this.advectionProgram.uniforms.dissipation, ep.densityDissipation);
+      if (ep.surfaceTension > 5e-3 || ep.mixingDiffusion > 5e-3) {
+        this.dyeMixTensionProgram.bind();
+        gl.uniform2f(
+          this.dyeMixTensionProgram.uniforms.texelSize,
+          this.dye.texelSizeX,
+          this.dye.texelSizeY
+        );
+        gl.uniform1i(this.dyeMixTensionProgram.uniforms.uDye, this.dye.read.attach(0));
+        gl.uniform1f(this.dyeMixTensionProgram.uniforms.uMixing, ep.mixingDiffusion);
+        gl.uniform1f(this.dyeMixTensionProgram.uniforms.uSurfaceTension, ep.surfaceTension);
+        this.blit(this.dye.write);
+        this.dye.swap();
+      }
+      this.obstacleMaskProgram.bind();
+      gl.uniform1i(this.obstacleMaskProgram.uniforms.uObstacles, this.obstacles.read.attach(1));
+      gl.uniform1i(this.obstacleMaskProgram.uniforms.uTarget, this.dye.read.attach(0));
       this.blit(this.dye.write);
       this.dye.swap();
+      gl.uniform1i(this.obstacleMaskProgram.uniforms.uTarget, this.velocity.read.attach(0));
+      this.blit(this.velocity.write);
+      this.velocity.swap();
     }
     renderBloom() {
       const ep = this.effectiveParams;
@@ -4061,6 +5122,7 @@ body:not(.leary2-panel-open) .panel{display:none}
       const p = this.effectiveParams;
       const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
       const paletteModeFloat = p.paletteMode === "palette" ? 0 : p.paletteMode === "spectral" ? 1 : 2;
+      const toneMappingFloat = p.toneMapping === "agx" ? 2 : p.toneMapping === "aces" ? 1 : 0;
       const c0 = hexToRgbNormalized(p.palette[0]);
       const c1 = hexToRgbNormalized(p.palette[1]);
       const c2 = hexToRgbNormalized(p.palette[2]);
@@ -4071,43 +5133,75 @@ body:not(.leary2-panel-open) .panel{display:none}
       gl.uniform1i(this.displayProgram.uniforms.uVelocity, this.velocity.read.attach(1));
       gl.uniform1i(this.displayProgram.uniforms.uCurl, this.curl.attach(2));
       gl.uniform1i(this.displayProgram.uniforms.uBloom, this.bloom.attach(3));
+      gl.uniform1i(this.displayProgram.uniforms.uObstacles, this.obstacles.read.attach(4));
       gl.uniform2f(
         this.displayProgram.uniforms.texelSize,
         1 / this.canvas.width,
         1 / this.canvas.height
       );
+      gl.uniform2f(
+        this.displayProgram.uniforms.uDyeTexelSize,
+        this.dye.texelSizeX,
+        this.dye.texelSizeY
+      );
+      gl.uniform2f(
+        this.displayProgram.uniforms.uVelTexelSize,
+        this.velocity.texelSizeX,
+        this.velocity.texelSizeY
+      );
       gl.uniform1f(this.displayProgram.uniforms.aspectRatio, aspectRatio);
       gl.uniform1f(this.displayProgram.uniforms.uTime, this.elapsedTime);
       gl.uniform1f(this.displayProgram.uniforms.uDomainWarp, p.domainWarp);
+      gl.uniform1f(this.displayProgram.uniforms.uShowObstacles, p.showObstacles ? 1 : 0);
+      gl.uniform1f(this.displayProgram.uniforms.uSmokeAmount, p.smokeAmount);
+      gl.uniform1f(this.displayProgram.uniforms.uSmokeSelfShadow, p.smokeSelfShadow);
+      gl.uniform1f(this.displayProgram.uniforms.uSmokeWispyness, p.smokeWispyness);
+      gl.uniform1f(this.displayProgram.uniforms.uSmokeSoftness, p.smokeSoftness);
+      gl.uniform1f(this.displayProgram.uniforms.uContourGlow, p.contourGlow);
       gl.uniform1f(this.displayProgram.uniforms.uIridescence, p.iridescence);
       gl.uniform1f(this.displayProgram.uniforms.uIridescenceScale, p.iridescenceScale);
       gl.uniform1f(this.displayProgram.uniforms.uSpecular, p.specular);
       gl.uniform1f(this.displayProgram.uniforms.uSpecularPower, p.specularPower);
       gl.uniform1f(this.displayProgram.uniforms.uRelief, p.relief);
       gl.uniform1f(this.displayProgram.uniforms.uFresnel, p.fresnelIntensity);
+      gl.uniform1f(this.displayProgram.uniforms.uSubsurface, p.subsurface);
+      gl.uniform1f(this.displayProgram.uniforms.uEdgeCrispness, p.edgeCrispness);
+      gl.uniform1f(this.displayProgram.uniforms.uCollisionCrestGlow, p.collisionCrestGlow);
+      gl.uniform1f(this.displayProgram.uniforms.uAntiWashout, p.antiWashout);
       gl.uniform1f(
         this.displayProgram.uniforms.uLightAngle,
         p.lightAngle * Math.PI / 180
       );
+      gl.uniform1f(this.displayProgram.uniforms.uLightElevation, p.lightElevation);
       gl.uniform1f(this.displayProgram.uniforms.uChromatic, p.chromaticAberration);
       gl.uniform1f(this.displayProgram.uniforms.uBloomIntensity, p.bloomIntensity);
       gl.uniform1f(
         this.displayProgram.uniforms.uHueShift,
         this.elapsedTime * p.hueShiftSpeed % 100
       );
+      gl.uniform1f(this.displayProgram.uniforms.uHueOffset, p.hueOffset);
       gl.uniform1f(this.displayProgram.uniforms.uSaturation, p.saturation);
       gl.uniform1f(this.displayProgram.uniforms.uContrast, p.contrast);
       gl.uniform1f(this.displayProgram.uniforms.uExposure, p.exposure);
       gl.uniform1f(this.displayProgram.uniforms.uGamma, p.gamma);
       gl.uniform1f(this.displayProgram.uniforms.uInvert, p.invert ? 1 : 0);
+      gl.uniform1f(this.displayProgram.uniforms.uSolarize, p.solarize);
       gl.uniform1f(this.displayProgram.uniforms.uGrain, p.grain);
       gl.uniform1f(this.displayProgram.uniforms.uVignette, p.vignette);
       gl.uniform1f(this.displayProgram.uniforms.uKaleidoscope, p.kaleidoscope);
       gl.uniform1f(this.displayProgram.uniforms.uKaleidoscopeAngle, this.kaleidoscopeAngle);
       gl.uniform1f(this.displayProgram.uniforms.uKaleidoscopeZoom, p.kaleidoscopeZoom);
+      gl.uniform2f(
+        this.displayProgram.uniforms.uKaleidoscopeOffset,
+        p.kaleidoscopeOffsetX,
+        p.kaleidoscopeOffsetY
+      );
       gl.uniform1f(this.displayProgram.uniforms.uRippleAmount, p.rippleAmount);
       gl.uniform1f(this.displayProgram.uniforms.uRippleFreq, p.rippleFreq);
+      gl.uniform1f(this.displayProgram.uniforms.uRippleSpeed, p.rippleSpeed);
+      gl.uniform1f(this.displayProgram.uniforms.uTunnelWarp, p.tunnelWarp);
       gl.uniform1f(this.displayProgram.uniforms.uPaletteMode, paletteModeFloat);
+      gl.uniform1f(this.displayProgram.uniforms.uToneMapping, toneMappingFloat);
       gl.uniform1f(this.displayProgram.uniforms.uPaletteFreq, p.paletteFrequency);
       gl.uniform1f(this.displayProgram.uniforms.uWrapBorders, p.wrapBorders ? 1 : 0);
       gl.uniform3f(this.displayProgram.uniforms.uPalette0, c0[0], c0[1], c0[2]);
@@ -4133,72 +5227,298 @@ body:not(.leary2-panel-open) .panel{display:none}
       this.renderDisplay();
       return this.canvas.toDataURL("image/png");
     }
+    captureSnapshotBlob() {
+      this.applyLfoModulation();
+      this.renderDisplay();
+      return new Promise((resolve) => {
+        this.canvas.toBlob((blob) => resolve(blob), "image/png");
+      });
+    }
     destroy() {
       this.stop();
       this.canvas.removeEventListener("webglcontextlost", this.handleContextLost);
       this.canvas.removeEventListener("webglcontextrestored", this.handleContextRestored);
-      this.gl.deleteBuffer(this.quadBuffer);
+      const gl = this.gl;
+      if (this.dye) {
+        this.deleteFBO(this.dye.read);
+        this.deleteFBO(this.dye.write);
+      }
+      if (this.dyeTmpHat) this.deleteFBO(this.dyeTmpHat);
+      if (this.dyeTmpRev) this.deleteFBO(this.dyeTmpRev);
+      if (this.velocity) {
+        this.deleteFBO(this.velocity.read);
+        this.deleteFBO(this.velocity.write);
+      }
+      if (this.velTmpHat) this.deleteFBO(this.velTmpHat);
+      if (this.velTmpRev) this.deleteFBO(this.velTmpRev);
+      if (this.divergence) this.deleteFBO(this.divergence);
+      if (this.curl) this.deleteFBO(this.curl);
+      if (this.pressure) {
+        this.deleteFBO(this.pressure.read);
+        this.deleteFBO(this.pressure.write);
+      }
+      if (this.obstacles) {
+        this.deleteFBO(this.obstacles.read);
+        this.deleteFBO(this.obstacles.write);
+      }
+      if (this.bloom) this.deleteFBO(this.bloom);
+      this.bloomFramebuffers.forEach((f) => this.deleteFBO(f));
+      this.bloomFramebuffers = [];
+      this.createdPrograms.forEach((p) => gl.deleteProgram(p));
+      this.createdPrograms = [];
+      if (this.quadBuffer) gl.deleteBuffer(this.quadBuffer);
+      if (this.indexBuffer) gl.deleteBuffer(this.indexBuffer);
     }
   };
 
-  // ts_src/data/presets.ts
+  // ts_src3/engine/audioReactive.ts
+  var AudioReactiveEngine = class {
+    constructor() {
+      __publicField(this, "ctx", null);
+      __publicField(this, "analyser", null);
+      __publicField(this, "dataArray", null);
+      __publicField(this, "micStream", null);
+      __publicField(this, "micSource", null);
+      __publicField(this, "audioEl", null);
+      __publicField(this, "fileSource", null);
+      __publicField(this, "objectUrl", null);
+      __publicField(this, "mode", "off");
+      __publicField(this, "fileName", "");
+      __publicField(this, "bassHistory", 0);
+      __publicField(this, "lastBeatTime", 0);
+    }
+    ensureContext() {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioCtx();
+      }
+      if (this.ctx.state === "suspended") {
+        void this.ctx.resume();
+      }
+      if (!this.analyser) {
+        this.analyser = this.ctx.createAnalyser();
+        this.analyser.fftSize = 512;
+        this.analyser.smoothingTimeConstant = 0.72;
+        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+      }
+      return this.ctx;
+    }
+    async startMic() {
+      var _a;
+      this.stopSource();
+      const ctx = this.ensureContext();
+      if (!((_a = navigator.mediaDevices) == null ? void 0 : _a.getUserMedia)) {
+        throw new Error("\u304A\u4F7F\u3044\u306E\u30D6\u30E9\u30A6\u30B6\u306F\u30DE\u30A4\u30AF\u5165\u529B\u306B\u5BFE\u5FDC\u3057\u3066\u3044\u307E\u305B\u3093");
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.micStream = stream;
+      this.micSource = ctx.createMediaStreamSource(stream);
+      this.micSource.connect(this.analyser);
+      this.mode = "mic";
+      this.fileName = "\u30DE\u30A4\u30AF\u5165\u529B";
+    }
+    async loadFile(file) {
+      this.stopSource();
+      const ctx = this.ensureContext();
+      const url = URL.createObjectURL(file);
+      this.objectUrl = url;
+      const audio = new Audio(url);
+      audio.crossOrigin = "anonymous";
+      audio.loop = true;
+      this.audioEl = audio;
+      this.fileSource = ctx.createMediaElementSource(audio);
+      this.fileSource.connect(this.analyser);
+      this.analyser.connect(ctx.destination);
+      this.mode = "file";
+      this.fileName = file.name;
+      await audio.play();
+    }
+    toggleFilePlay() {
+      var _a;
+      if (!this.audioEl) return false;
+      if (this.audioEl.paused) {
+        void ((_a = this.ctx) == null ? void 0 : _a.resume());
+        void this.audioEl.play();
+        return true;
+      }
+      this.audioEl.pause();
+      return false;
+    }
+    isFilePlaying() {
+      return Boolean(this.audioEl && !this.audioEl.paused);
+    }
+    getMode() {
+      return this.mode;
+    }
+    getLabel() {
+      return this.fileName;
+    }
+    stopSource() {
+      if (this.micSource) {
+        this.micSource.disconnect();
+        this.micSource = null;
+      }
+      if (this.micStream) {
+        this.micStream.getTracks().forEach((t) => t.stop());
+        this.micStream = null;
+      }
+      if (this.fileSource) {
+        this.fileSource.disconnect();
+        this.fileSource = null;
+      }
+      if (this.analyser) {
+        try {
+          this.analyser.disconnect();
+        } catch {
+        }
+      }
+      if (this.audioEl) {
+        this.audioEl.pause();
+        this.audioEl.src = "";
+        this.audioEl = null;
+      }
+      if (this.objectUrl) {
+        URL.revokeObjectURL(this.objectUrl);
+        this.objectUrl = null;
+      }
+      this.mode = "off";
+      this.fileName = "";
+      this.bassHistory = 0;
+    }
+    getBands() {
+      if (this.mode === "off" || !this.analyser || !this.dataArray) {
+        return { bass: 0, mid: 0, treble: 0, overall: 0, beatDetected: false };
+      }
+      this.analyser.getByteFrequencyData(this.dataArray);
+      const len = this.dataArray.length;
+      const bassEnd = Math.min(len, 6);
+      const midEnd = Math.min(len, 28);
+      const trebleEnd = Math.min(len, 96);
+      let bassSum = 0;
+      for (let i = 0; i < bassEnd; i++) bassSum += this.dataArray[i];
+      const bass = bassSum / (Math.max(1, bassEnd) * 255);
+      let midSum = 0;
+      for (let i = bassEnd; i < midEnd; i++) midSum += this.dataArray[i];
+      const mid = midSum / (Math.max(1, midEnd - bassEnd) * 255);
+      let trebleSum = 0;
+      for (let i = midEnd; i < trebleEnd; i++) trebleSum += this.dataArray[i];
+      const treble = trebleSum / (Math.max(1, trebleEnd - midEnd) * 255);
+      const overall = bass * 0.45 + mid * 0.35 + treble * 0.2;
+      const now = performance.now();
+      const beatDetected = bass > 0.34 && bass > this.bassHistory * 1.32 && now - this.lastBeatTime > 220;
+      if (beatDetected) {
+        this.lastBeatTime = now;
+      }
+      this.bassHistory = this.bassHistory * 0.88 + bass * 0.12;
+      return { bass, mid, treble, overall, beatDetected };
+    }
+    destroy() {
+      this.stopSource();
+      if (this.ctx) {
+        void this.ctx.close();
+        this.ctx = null;
+      }
+    }
+  };
+
+  // ts_src3/data/presets.ts
   var DEFAULT_PARAMS = {
-    simResolution: 128,
-    dyeResolution: 1024,
-    velocityDissipation: 0.35,
-    densityDissipation: 0.45,
-    curl: 34,
-    pressure: 0.8,
-    pressureIterations: 20,
-    domainWarp: 0.42,
+    simResolution: 256,
+    dyeResolution: 1440,
+    velocityDissipation: 0.3,
+    densityDissipation: 0.38,
+    viscosity: 0.16,
+    curl: 28,
+    pressure: 0.84,
+    pressureIterations: 26,
+    domainWarp: 0.28,
     timeScale: 1,
     wrapBorders: false,
+    advectionSharpness: 0.92,
+    surfaceTension: 0.48,
+    mixingDiffusion: 0.06,
+    collisionMomentum: 0.68,
+    edgeCrispness: 0.58,
+    collisionCrestGlow: 0.42,
+    antiWashout: 0.68,
     gravityX: 0,
     gravityY: 0,
+    buoyancy: 0,
     radialForce: 0,
-    turbulence: 0.15,
-    turbulenceScale: 2.2,
+    radialCenterX: 0.5,
+    radialCenterY: 0.5,
+    swirlField: 0,
+    turbulence: 0.06,
+    turbulenceScale: 2,
+    turbulenceSpeed: 1,
+    obstaclePreset: "none",
+    showObstacles: true,
     splatRadius: 0.28,
-    splatForce: 6200,
-    brushHardness: 1,
-    dyeStrength: 1,
+    splatForce: 6400,
+    brushHardness: 1.15,
+    dyeStrength: 1.05,
     emitterSymmetry: 1,
     brushMode: "splat",
     rainbowBrush: true,
+    rainbowSpeed: 0.35,
     brushColor: "#00f5d4",
-    iridescence: 1.05,
-    iridescenceScale: 2.6,
-    specular: 1.15,
-    specularPower: 42,
-    relief: 1.2,
-    fresnelIntensity: 0.65,
+    smokeAmount: 0,
+    smokeSelfShadow: 1.15,
+    smokeWispyness: 0.75,
+    smokeSoftness: 1,
+    contourGlow: 0,
+    iridescence: 0.95,
+    iridescenceScale: 2.4,
+    specular: 1.25,
+    specularPower: 64,
+    relief: 1.25,
+    fresnelIntensity: 0.72,
+    subsurface: 0.78,
     lightAngle: 48,
-    chromaticAberration: 0.65,
-    bloomIntensity: 0.55,
-    bloomThreshold: 0.45,
+    lightElevation: 0.76,
+    chromaticAberration: 0.32,
+    bloomIntensity: 0.42,
+    bloomThreshold: 0.52,
     paletteMode: "oil",
+    toneMapping: "aces",
     paletteFrequency: 1,
     palette: ["#ff2a85", "#ff9e00", "#00f5d4", "#5e60ce"],
     backgroundColor: "#060609",
-    hueShiftSpeed: 0.25,
+    hueShiftSpeed: 0.2,
+    hueOffset: 0,
     saturation: 1.25,
     contrast: 1.08,
     exposure: 1,
     gamma: 0.96,
     invert: false,
-    grain: 0.02,
-    vignette: 0.18,
+    solarize: 0,
+    grain: 0,
+    vignette: 0.15,
     kaleidoscope: 0,
     kaleidoscopeRotation: 0.12,
     kaleidoscopeZoom: 1,
+    kaleidoscopeOffsetX: 0,
+    kaleidoscopeOffsetY: 0,
     rippleAmount: 0,
     rippleFreq: 6,
-    autoFlowMode: "fountains",
-    autoFlowIntensity: 0.9,
-    autoFlowSpeed: 0.85,
-    autoEmitterCount: 3,
-    autoEmitterRadius: 0.28,
+    rippleSpeed: 1,
+    tunnelWarp: 0,
+    autoFlowMode: "collide",
+    autoFlowIntensity: 1,
+    autoFlowSpeed: 0.9,
+    autoEmitterCount: 4,
+    autoEmitterRadius: 0.34,
+    autoEmitterSize: 0.18,
     pulseInterval: 1.15,
+    smoothPresetMorph: true,
+    vjMode: false,
+    audioConfig: {
+      sensitivity: 1.2,
+      bassGain: 1,
+      midGain: 0.85,
+      trebleGain: 0.9,
+      beatBurst: true
+    },
     lfo1: {
       target: "none",
       waveform: "sine",
@@ -4210,83 +5530,111 @@ body:not(.leary2-panel-open) .panel{display:none}
       waveform: "triangle",
       rate: 0.2,
       depth: 0.35
+    },
+    lfo3: {
+      target: "none",
+      waveform: "sine",
+      rate: 0.15,
+      depth: 0.35
     }
   };
   var CURATED_PRESETS = [
     {
-      id: "oil-slick-prism",
-      name: "\u6CB9\u819C\u30D7\u30EA\u30BA\u30E0",
-      subtitle: "\u8584\u819C\u5E72\u6E09\u3068\u9AD8\u7C98\u6027\u30EA\u30AD\u30C3\u30C9\u306E\u63FA\u3089\u304E",
+      id: "liquid-collision",
+      name: "\u9AD8\u7CBE\u7D30\u5BFE\u5411\u885D\u7A81",
+      subtitle: "\u5BFE\u5411\u30B8\u30A7\u30C3\u30C8\u304C\u6B63\u9762\u885D\u7A81\u3057\u9BAE\u660E\u306A\u754C\u9762\u3067\u6DF7\u3056\u308A\u5408\u3046",
       params: {
         ...DEFAULT_PARAMS
       }
     },
     {
-      id: "liquid-mercury",
-      name: "\u6C34\u9280\u8679\u5F69",
-      subtitle: "\u92ED\u5229\u306A\u93E1\u9762\u30CF\u30A4\u30E9\u30A4\u30C8\u3068\u9AD8\u30B3\u30F3\u30C8\u30E9\u30B9\u30C8\u91D1\u5C5E\u5149\u6CA2",
+      id: "oil-slick-prism",
+      name: "\u6CB9\u819C\u30D7\u30EA\u30BA\u30E0",
+      subtitle: "\u8584\u819C\u5E72\u6E09\u3068\u9AD8\u8868\u9762\u5F35\u529B\u306B\u3088\u308B\u30B7\u30E3\u30FC\u30D7\u306A\u6CB9\u819C\u30DE\u30FC\u30D6\u30EB",
       params: {
         ...DEFAULT_PARAMS,
-        velocityDissipation: 0.22,
-        densityDissipation: 0.28,
-        curl: 42,
-        domainWarp: 0.28,
-        turbulence: 0.1,
-        iridescence: 1.35,
-        iridescenceScale: 3.8,
-        specular: 2.2,
-        specularPower: 92,
-        relief: 2,
+        autoFlowMode: "fountains",
+        surfaceTension: 0.72,
+        mixingDiffusion: 0.02,
+        advectionSharpness: 0.96,
+        edgeCrispness: 0.68
+      }
+    },
+    {
+      id: "liquid-mercury",
+      name: "\u6C34\u9280\u8679\u5F69",
+      subtitle: "\u92ED\u5229\u306A\u93E1\u9762\u30CF\u30A4\u30E9\u30A4\u30C8\u3068\u9AD8\u51DD\u96C6\u6DB2\u4F53\u91D1\u5C5E",
+      params: {
+        ...DEFAULT_PARAMS,
+        velocityDissipation: 0.2,
+        densityDissipation: 0.26,
+        viscosity: 0.26,
+        curl: 30,
+        domainWarp: 0.22,
+        surfaceTension: 0.95,
+        mixingDiffusion: 0.01,
+        collisionMomentum: 0.9,
+        edgeCrispness: 0.75,
+        collisionCrestGlow: 0.55,
+        iridescence: 1.25,
+        iridescenceScale: 3.4,
+        specular: 2.1,
+        specularPower: 98,
+        relief: 1.85,
         fresnelIntensity: 1.15,
+        subsurface: 0.95,
         lightAngle: 35,
-        chromaticAberration: 0.95,
-        bloomIntensity: 0.35,
-        hueShiftSpeed: 0.18,
+        chromaticAberration: 0.45,
+        bloomIntensity: 0.28,
+        hueShiftSpeed: 0.16,
         saturation: 1.15,
-        contrast: 1.32,
-        exposure: 1.08,
+        contrast: 1.26,
+        exposure: 1.06,
         paletteMode: "palette",
-        paletteFrequency: 1.6,
+        paletteFrequency: 1.45,
         palette: ["#e2e8f0", "#38bdf8", "#c084fc", "#f472b6"],
         backgroundColor: "#040507",
-        autoFlowMode: "vortex",
+        autoFlowMode: "collide",
         autoFlowIntensity: 1.05,
-        autoFlowSpeed: 0.75,
+        autoFlowSpeed: 0.8,
         autoEmitterCount: 2
       }
     },
     {
       id: "kaleido-mandala",
       name: "\u4E07\u83EF\u93E1\u30A2\u30B7\u30C3\u30C9",
-      subtitle: "8\u8EF8\u5BFE\u79F0\u30DF\u30E9\u30FC\u30FBLFO\u5909\u8ABF\u30FB\u9AD8\u901F\u4F4D\u76F8\u30B7\u30D5\u30C8",
+      subtitle: "8\u8EF8\u5BFE\u79F0\u30DF\u30E9\u30FC\u30FBLFO\u5909\u8ABF\u30FB\u9AD8\u9BAE\u660E\u8108\u52D5",
       params: {
         ...DEFAULT_PARAMS,
-        velocityDissipation: 0.48,
-        densityDissipation: 0.65,
-        curl: 48,
-        domainWarp: 0.55,
+        velocityDissipation: 0.42,
+        densityDissipation: 0.54,
+        viscosity: 0.14,
+        curl: 36,
+        domainWarp: 0.38,
         wrapBorders: true,
-        iridescence: 1.25,
+        advectionSharpness: 0.95,
+        surfaceTension: 0.55,
+        iridescence: 1.15,
         iridescenceScale: 2.2,
-        specular: 0.85,
-        specularPower: 36,
-        relief: 0.9,
-        chromaticAberration: 1.1,
-        bloomIntensity: 0.75,
-        hueShiftSpeed: 0.55,
-        saturation: 1.55,
-        contrast: 1.15,
+        specular: 0.95,
+        specularPower: 48,
+        relief: 1.05,
+        chromaticAberration: 0.55,
+        bloomIntensity: 0.58,
+        hueShiftSpeed: 0.52,
+        saturation: 1.48,
+        contrast: 1.14,
         kaleidoscope: 8,
         kaleidoscopeRotation: 0.22,
         kaleidoscopeZoom: 1.05,
-        rippleAmount: 0.12,
+        rippleAmount: 0.08,
         rippleFreq: 8,
         paletteMode: "spectral",
         palette: ["#ff006e", "#ffbe0b", "#00f5d4", "#8338ec"],
         backgroundColor: "#07040e",
         autoFlowMode: "pulse",
-        autoFlowIntensity: 1.1,
-        autoFlowSpeed: 1.1,
+        autoFlowIntensity: 1.15,
+        autoFlowSpeed: 1.05,
         autoEmitterCount: 6,
         pulseInterval: 0.95,
         emitterSymmetry: 4,
@@ -4294,126 +5642,254 @@ body:not(.leary2-panel-open) .panel{display:none}
           target: "iridescenceScale",
           waveform: "sine",
           rate: 0.28,
-          depth: 0.5
+          depth: 0.45
         }
       }
     },
     {
-      id: "bioluminescence",
-      name: "\u6DF1\u6D77\u767A\u5149\u30D7\u30E9\u30F3\u30AF\u30C8\u30F3",
-      subtitle: "\u4E0A\u6607\u6D6E\u529B\u3068\u30B7\u30A2\u30F3\u301C\u30D0\u30A4\u30AA\u30EC\u30C3\u30C8\u306E\u767A\u5149\u5E2F",
+      id: "ink-emulsion",
+      name: "\u30A4\u30F3\u30AF\u4E73\u5316\u30DF\u30C3\u30AF\u30B9",
+      subtitle: "\u5883\u754C\u304C\u6EB6\u3051\u5408\u3044\u67D4\u3089\u304B\u306B\u6DF7\u6FC1\u3059\u308B\u6C34\u5F69\u30FB\u30A4\u30F3\u30AF\u8868\u73FE",
       params: {
         ...DEFAULT_PARAMS,
-        velocityDissipation: 0.18,
-        densityDissipation: 0.52,
-        curl: 28,
-        domainWarp: 0.68,
-        wrapBorders: true,
-        gravityY: 0.42,
-        turbulence: 0.35,
-        turbulenceScale: 2.8,
-        iridescence: 0.7,
-        iridescenceScale: 1.9,
-        specular: 0.65,
-        relief: 0.75,
-        fresnelIntensity: 0.95,
-        chromaticAberration: 0.35,
-        bloomIntensity: 1.1,
-        bloomThreshold: 0.3,
-        hueShiftSpeed: 0.1,
-        saturation: 1.35,
-        contrast: 1.12,
-        paletteMode: "palette",
-        paletteFrequency: 1.25,
-        palette: ["#00f5d4", "#00bbf9", "#7209b7", "#4cc9f0"],
-        backgroundColor: "#02060c",
-        autoFlowMode: "convection",
+        viscosity: 0.12,
+        curl: 26,
+        advectionSharpness: 0.55,
+        surfaceTension: 0,
+        mixingDiffusion: 0.48,
+        collisionMomentum: 0.45,
+        edgeCrispness: 0.22,
+        collisionCrestGlow: 0.18,
+        antiWashout: 0.85,
+        iridescence: 0.45,
+        specular: 0.55,
+        relief: 0.65,
+        subsurface: 1.1,
+        bloomIntensity: 0.35,
+        paletteMode: "oil",
+        palette: ["#00f5d4", "#ff2a85", "#ffd60a", "#3b82f6"],
+        backgroundColor: "#03060a",
+        autoFlowMode: "collide",
         autoFlowIntensity: 0.95,
-        autoFlowSpeed: 0.65,
+        autoFlowSpeed: 0.72,
         autoEmitterCount: 4
-      }
-    },
-    {
-      id: "solar-plasma",
-      name: "\u592A\u967D\u7D05\u708E",
-      subtitle: "\u653E\u5C04\u53CD\u767A\u529B\u3068\u707C\u71B1\u30DE\u30BC\u30F3\u30BF\u30FB\u30A2\u30F3\u30D0\u30FC\u306E\u6E26",
-      params: {
-        ...DEFAULT_PARAMS,
-        velocityDissipation: 0.42,
-        densityDissipation: 0.75,
-        curl: 56,
-        splatForce: 8500,
-        domainWarp: 0.78,
-        radialForce: 0.35,
-        turbulence: 0.45,
-        iridescence: 0.85,
-        iridescenceScale: 3.1,
-        specular: 1,
-        relief: 1.1,
-        chromaticAberration: 0.85,
-        bloomIntensity: 0.95,
-        bloomThreshold: 0.35,
-        hueShiftSpeed: 0.32,
-        saturation: 1.45,
-        contrast: 1.24,
-        vignette: 0.35,
-        paletteMode: "palette",
-        paletteFrequency: 1.4,
-        palette: ["#ff4d00", "#ff0055", "#ffd60a", "#7209b7"],
-        backgroundColor: "#0c0304",
-        autoFlowMode: "fountains",
-        autoFlowIntensity: 1.35,
-        autoFlowSpeed: 1.25,
-        autoEmitterCount: 4,
-        emitterSymmetry: 2
       }
     },
     {
       id: "bismuth-contour",
       name: "\u30D3\u30B9\u30DE\u30B9\u7B49\u9AD8\u7DDA\u30DE\u30FC\u30D6\u30EB",
-      subtitle: "\u9AD8\u5468\u6CE2\u30D1\u30EC\u30C3\u30C8\u53CD\u5FA9\u306B\u3088\u308B\u5E7E\u4F55\u5B66\u7684\u6DB2\u4F53\u6A21\u69D8",
+      subtitle: "\u9AD8\u5468\u6CE2\u30D1\u30EC\u30C3\u30C8\u53CD\u5FA9\u306B\u3088\u308B\u6975\u9650\u307E\u3067\u9BAE\u660E\u306A\u30DE\u30FC\u30D6\u30EA\u30F3\u30B0",
       params: {
         ...DEFAULT_PARAMS,
         velocityDissipation: 0.14,
-        densityDissipation: 0.1,
-        curl: 24,
-        domainWarp: 0.36,
-        iridescence: 1.45,
-        iridescenceScale: 4.4,
+        densityDissipation: 0.08,
+        viscosity: 0.3,
+        curl: 20,
+        domainWarp: 0.24,
+        advectionSharpness: 1,
+        surfaceTension: 0.82,
+        mixingDiffusion: 0,
+        edgeCrispness: 0.88,
+        iridescence: 1.35,
+        iridescenceScale: 3.8,
         specular: 1.55,
-        specularPower: 68,
-        relief: 1.65,
-        fresnelIntensity: 0.9,
-        chromaticAberration: 0.5,
-        bloomIntensity: 0.25,
+        specularPower: 76,
+        relief: 1.5,
+        fresnelIntensity: 0.85,
+        subsurface: 0.85,
+        chromaticAberration: 0.25,
+        bloomIntensity: 0.2,
         hueShiftSpeed: 0.14,
-        saturation: 1.28,
-        contrast: 1.2,
+        saturation: 1.25,
+        contrast: 1.18,
         paletteMode: "palette",
-        paletteFrequency: 3.2,
+        paletteFrequency: 2.8,
         palette: ["#06b6d4", "#f43f5e", "#facc15", "#3b82f6"],
         backgroundColor: "#050608",
         autoFlowMode: "vortex",
-        autoFlowIntensity: 0.75,
-        autoFlowSpeed: 0.55,
+        autoFlowIntensity: 0.78,
+        autoFlowSpeed: 0.58,
         autoEmitterCount: 2
+      }
+    },
+    {
+      id: "incense-smoke",
+      name: "\u3086\u3089\u3081\u304F\u7159\u30FB\u30A4\u30F3\u30BB\u30F3\u30B9",
+      subtitle: "\u71B1\u6D6E\u529B\u3067\u7ACB\u3061\u6607\u308A\u81EA\u5DF1\u9670\u5F71\u3092\u4F34\u3063\u3066\u62E1\u6563\u3059\u308B\u30DC\u30EA\u30E5\u30FC\u30E1\u30C8\u30EA\u30C3\u30AF\u7159",
+      params: {
+        ...DEFAULT_PARAMS,
+        smokeAmount: 1,
+        smokeSelfShadow: 1.45,
+        smokeWispyness: 1.1,
+        smokeSoftness: 1.15,
+        buoyancy: 1.55,
+        velocityDissipation: 0.48,
+        densityDissipation: 0.65,
+        viscosity: 0.08,
+        curl: 42,
+        domainWarp: 0.32,
+        advectionSharpness: 0.72,
+        surfaceTension: 0,
+        mixingDiffusion: 0.38,
+        collisionMomentum: 0.35,
+        turbulence: 0.38,
+        turbulenceScale: 2.8,
+        turbulenceSpeed: 0.9,
+        iridescence: 0.12,
+        specular: 0.05,
+        relief: 0.45,
+        fresnelIntensity: 0.18,
+        subsurface: 0.35,
+        edgeCrispness: 0.18,
+        collisionCrestGlow: 0.1,
+        chromaticAberration: 0.08,
+        bloomIntensity: 0.25,
+        lightAngle: 62,
+        lightElevation: 0.65,
+        paletteMode: "palette",
+        paletteFrequency: 0.85,
+        palette: ["#e2e8f0", "#94a3b8", "#cbd5e1", "#64748b"],
+        backgroundColor: "#050608",
+        saturation: 0.45,
+        contrast: 1.12,
+        exposure: 1.1,
+        rainbowBrush: false,
+        brushColor: "#cbd5e1",
+        autoFlowMode: "smokePlume",
+        autoFlowIntensity: 0.95,
+        autoFlowSpeed: 0.85,
+        autoEmitterCount: 3,
+        autoEmitterRadius: 0.18,
+        autoEmitterSize: 0.16
+      }
+    },
+    {
+      id: "psychedelic-nebula",
+      name: "\u30B5\u30A4\u30B1\u30C7\u30EA\u30C3\u30AF\u30FB\u30B9\u30E2\u30FC\u30AF",
+      subtitle: "\u6975\u5F69\u8272\u306E\u7159\u5E55\u3068\u5149\u6563\u4E71\u304C\u7D61\u307F\u5408\u3046\u30CD\u30D3\u30E5\u30E9\u30B9\u30E2\u30FC\u30AF\u8868\u73FE",
+      params: {
+        ...DEFAULT_PARAMS,
+        smokeAmount: 0.94,
+        smokeSelfShadow: 1.35,
+        smokeWispyness: 0.95,
+        smokeSoftness: 1.05,
+        buoyancy: 1.1,
+        velocityDissipation: 0.34,
+        densityDissipation: 0.45,
+        viscosity: 0.08,
+        curl: 54,
+        domainWarp: 0.48,
+        advectionSharpness: 0.85,
+        surfaceTension: 0.05,
+        mixingDiffusion: 0.24,
+        collisionMomentum: 0.65,
+        turbulence: 0.45,
+        turbulenceScale: 2.4,
+        turbulenceSpeed: 1.15,
+        iridescence: 0.78,
+        iridescenceScale: 2.2,
+        specular: 0.15,
+        relief: 0.65,
+        fresnelIntensity: 0.35,
+        subsurface: 0.55,
+        edgeCrispness: 0.32,
+        collisionCrestGlow: 0.45,
+        chromaticAberration: 0.38,
+        bloomIntensity: 0.68,
+        hueShiftSpeed: 0.32,
+        saturation: 1.45,
+        contrast: 1.15,
+        paletteMode: "oil",
+        toneMapping: "aces",
+        backgroundColor: "#050409",
+        autoFlowMode: "smokePlume",
+        autoFlowIntensity: 1.15,
+        autoFlowSpeed: 1,
+        autoEmitterCount: 4,
+        autoEmitterRadius: 0.26,
+        autoEmitterSize: 0.2
+      }
+    },
+    {
+      id: "karman-vortex-smoke",
+      name: "\u30AB\u30EB\u30DE\u30F3\u6E26\u30FB\u7159\u3068\u5186\u67F1",
+      subtitle: "\u4E2D\u592E\u969C\u5BB3\u7269\u306B\u7159\u3068\u6D41\u4F53\u304C\u885D\u7A81\u3057\u4EA4\u4E92\u306B\u6E26\u5217\uFF08\u30AB\u30EB\u30DE\u30F3\u6E26\uFF09\u3092\u767A\u751F",
+      params: {
+        ...DEFAULT_PARAMS,
+        obstaclePreset: "cylinder",
+        showObstacles: true,
+        smokeAmount: 0.78,
+        smokeSelfShadow: 1.35,
+        smokeWispyness: 0.85,
+        smokeSoftness: 1.05,
+        buoyancy: 1.65,
+        curl: 48,
+        viscosity: 0.06,
+        velocityDissipation: 0.22,
+        densityDissipation: 0.42,
+        advectionSharpness: 0.92,
+        surfaceTension: 0.1,
+        mixingDiffusion: 0.16,
+        collisionMomentum: 0.55,
+        iridescence: 0.65,
+        specular: 0.22,
+        bloomIntensity: 0.48,
+        paletteMode: "oil",
+        toneMapping: "agx",
+        autoFlowMode: "smokePlume",
+        autoFlowIntensity: 1.15,
+        autoFlowSpeed: 0.95,
+        autoEmitterCount: 2,
+        autoEmitterRadius: 0.09,
+        autoEmitterSize: 0.16
+      }
+    },
+    {
+      id: "neon-contour-acid",
+      name: "\u30CD\u30AA\u30F3\u7B49\u9AD8\u7DDA\u30A2\u30B7\u30C3\u30C9",
+      subtitle: "\u6D41\u4F53\u5883\u754C\u306E\u52FE\u914D\u304C\u30CD\u30AA\u30F3\u30E9\u30A4\u30F3\u3068\u3057\u3066\u767A\u5149\u3059\u308B\u9AD8\u30B3\u30F3\u30C8\u30E9\u30B9\u30C8\u8868\u73FE",
+      params: {
+        ...DEFAULT_PARAMS,
+        contourGlow: 1.35,
+        edgeCrispness: 0.95,
+        surfaceTension: 0.85,
+        mixingDiffusion: 0.02,
+        collisionMomentum: 0.88,
+        curl: 34,
+        iridescence: 1.3,
+        iridescenceScale: 3,
+        specular: 0.85,
+        bloomIntensity: 0.62,
+        bloomThreshold: 0.45,
+        toneMapping: "agx",
+        paletteMode: "palette",
+        paletteFrequency: 1.8,
+        palette: ["#00f5d4", "#ff2a85", "#fee440", "#3a86ff"],
+        backgroundColor: "#030306",
+        autoFlowMode: "collide",
+        autoFlowIntensity: 1.05,
+        autoFlowSpeed: 0.88,
+        autoEmitterCount: 4
       }
     }
   ];
 
-  // ts_src/entry.ts
-  window.__ChromaFlow = { FluidEngine, DEFAULT_PARAMS, CURATED_PRESETS };
+  // ts_src3/entry.ts
+  window.__ChromaFlow = { FluidEngine, AudioReactiveEngine, DEFAULT_PARAMS, CURATED_PRESETS };
 })();
 
 </script>
-<script id="leary-chromaflow-ui">
-/* leary-chromaflow-ui: ChromaFlow (WebGL Navier-Stokes fluid sim,
-   ported from the supplied Chromaflow studio) integrated into Leary
-   as a switchable fluid mode. Additive: Leary's generation core,
-   state and exports are untouched; the fluid lives on its own WebGL
-   canvas layered over the stage. Palette defaults to Leary's own
-   colors/background, and the initial splats are seeded from Leary's
-   Seed so a fluid scene is reproducible from the same seed. */
+<script>
+/* leary-chromaflow-ui v7 (+ export parity, fluid JSON, auto quality, render scale, slideshow, audio meter): ChromaFlow final edition (WebGL
+   Navier-Stokes fluid sim, ported from the supplied Chromaflow studio v3)
+   integrated into Leary with FULL feature parity: every FluidParams key is
+   editable from the panel, plus LFO matrix (3ch), audio reactivity
+   (mic/file), preset morphing, randomize, custom presets, parameter
+   undo/redo, recipe links (#recipe=) and image injection (file drop /
+   paste / Leary canvas). Additive: Leary's generation core, state and
+   exports are untouched; the fluid lives on its own WebGL canvas layered
+   over the stage. Palette defaults to Leary's own colors/background, and
+   the initial collision is seeded from Leary's Seed. */
 (() => {
   'use strict';
   const CF = window.__ChromaFlow;
@@ -4433,10 +5909,78 @@ body:not(.leary2-panel-open) .panel{display:none}
     clearTimeout(t._h); t._h = setTimeout(() => { t.style.opacity = '0'; }, 2400);
   };
 
+  /* ---------- params state, merge, history ---------- */
+  const mergeParams = (base, incoming) => {
+    if (!incoming || typeof incoming !== 'object') return clone(base);
+    const raw = Object.assign(clone(base), clone(incoming));
+    raw.audioConfig = Object.assign(clone(base.audioConfig), incoming.audioConfig || {});
+    ['lfo1', 'lfo2', 'lfo3'].forEach(k => { raw[k] = Object.assign(clone(base[k]), incoming[k] || {}); });
+    Object.keys(base).forEach(k => {
+      if (typeof base[k] === 'number' && (typeof raw[k] !== 'number' || !Number.isFinite(raw[k]))) raw[k] = base[k];
+    });
+    const nearest = (v, opts, fb) => opts.includes(v) ? v : opts.reduce((p, c) => Math.abs(c - v) < Math.abs(p - v) ? c : p, fb);
+    raw.simResolution = nearest(raw.simResolution, [128, 256, 384, 512], base.simResolution);
+    raw.dyeResolution = nearest(raw.dyeResolution, [512, 1024, 1440, 2048], base.dyeResolution);
+    raw.kaleidoscope = nearest(raw.kaleidoscope, [0, 2, 3, 4, 5, 6, 8, 12, 16], base.kaleidoscope);
+    raw.emitterSymmetry = nearest(raw.emitterSymmetry, [1, 2, 3, 4, 6, 8, 12], base.emitterSymmetry);
+    if (!Array.isArray(raw.palette) || raw.palette.length < 4) raw.palette = clone(base.palette);
+    return raw;
+  };
+
   let params = clone(CF.DEFAULT_PARAMS);
   let engine = null, active = false, paused = false, ro = null;
   let recorder = null, recChunks = [], recording = false;
-  let activePreset = 'oil-slick-prism';
+  let renderScale = 1;
+  try { const rs0 = parseFloat(localStorage.getItem('leary-chromaflow-renderscale') || '1'); if ([1, 0.85, 0.7, 0.5].includes(rs0)) renderScale = rs0; } catch (e) {}
+  let autoQ = false;
+  try { autoQ = localStorage.getItem('leary-chromaflow-autoq') === '1'; } catch (e) {}
+  let autoCeil = { dye: 1440, scale: 1 }, autoPos = 0, autoUpCount = 0, lastAutoEval = 0;
+  let slideTimer = null, slideAdvancing = false;
+  let activePreset = '';
+  let morphRaf = null;
+
+  autoCeil = { dye: params.dyeResolution, scale: renderScale };
+  let history = [clone(params)], histIdx = 0, lastPush = 0, applyingHist = false;
+  function pushHistory(coalesce) {
+    if (applyingHist) return;
+    const now = Date.now();
+    if (coalesce && now - lastPush < 350 && histIdx === history.length - 1 && history.length > 1) {
+      history[histIdx] = clone(params);
+    } else {
+      history = history.slice(0, histIdx + 1);
+      history.push(clone(params));
+      if (history.length > 40) history.shift();
+      histIdx = history.length - 1;
+    }
+    lastPush = now;
+  }
+  function applyHistory(dir) {
+    const n = histIdx + dir;
+    if (n < 0 || n >= history.length) { toast(dir < 0 ? 'これ以上戻れません' : 'これ以上進めません'); return; }
+    histIdx = n; applyingHist = true;
+    params = clone(history[histIdx]);
+    if (engine) engine.updateParams(params);
+    syncUIFromParams(); applyingHist = false;
+    toast(dir < 0 ? '流体パラメータを元に戻しました' : '流体パラメータをやり直しました');
+  }
+  function importFluidJson(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result));
+        if (!parsed || typeof parsed !== 'object') throw new Error('bad json');
+        cancelMorphAnim();
+        params = mergeParams(CF.DEFAULT_PARAMS, parsed);
+        activePreset = '';
+        if (engine) engine.updateParams(params);
+        pushHistory(false); syncUIFromParams();
+        toast('流体設定JSONを読み込みました');
+      } catch (e) { toast('流体設定JSONの読み込みに失敗しました'); }
+    };
+    reader.onerror = () => toast('ファイルの読み込みに失敗しました');
+    reader.readAsText(file);
+  }
+  function commit(coalesce) { if (engine) engine.updateParams(params); pushHistory(!!coalesce); }
 
   /* ---------- fluid canvas ---------- */
   const fluidCanvas = document.createElement('canvas');
@@ -4445,11 +5989,32 @@ body:not(.leary2-panel-open) .panel{display:none}
   fluidCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:none;touch-action:none;cursor:crosshair';
   stage.appendChild(fluidCanvas);
   fluidCanvas.addEventListener('wheel', (e) => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
-  fluidCanvas.addEventListener('pointerdown', (e) => { if (!engine) return; try { fluidCanvas.setPointerCapture(e.pointerId); } catch (err) {} engine.pointerDown(e.pointerId, e.clientX, e.clientY); });
+  fluidCanvas.addEventListener('pointerdown', (e) => { if (!engine) return; try { fluidCanvas.setPointerCapture(e.pointerId); } catch (err) {} engine.pointerDown(e.pointerId, e.clientX, e.clientY, !!e.altKey); });
   fluidCanvas.addEventListener('pointermove', (e) => { if (engine) engine.pointerMove(e.pointerId, e.clientX, e.clientY); });
   const pUp = (e) => { if (engine) engine.pointerUp(e.pointerId); };
   fluidCanvas.addEventListener('pointerup', pUp);
   fluidCanvas.addEventListener('pointercancel', pUp);
+  fluidCanvas.addEventListener('dragover', (e) => { e.preventDefault(); });
+  fluidCanvas.addEventListener('drop', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f && (f.type === 'application/json' || /\.json$/i.test(f.name || ''))) importFluidJson(f);
+    else if (f && f.type && f.type.startsWith('image/')) injectImageFile(f);
+    else toast('画像ファイルか流体設定JSONをドロップしてください');
+  });
+  document.addEventListener('paste', (e) => {
+    if (!active || !engine) return;
+    const items = (e.clipboardData && e.clipboardData.items) || [];
+    for (const it of items) { if (it.type && it.type.startsWith('image/')) { const f = it.getAsFile(); if (f) { injectImageFile(f); toast('貼り付けた画像を取り込みました'); } break; } }
+  });
+  function injectImageFile(file) {
+    if (!engine) return;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { try { engine.injectImage(img); toast('画像を流体に取り込みました'); } catch (e) { toast('取り込みに失敗しました'); } URL.revokeObjectURL(url); };
+    img.onerror = () => { toast('画像の読み込みに失敗しました'); URL.revokeObjectURL(url); };
+    img.src = url;
+  }
 
   /* ---------- Leary palette / seed ---------- */
   const learySeed = () => { const el = $id('seedInput'); const v = el ? Number(el.value) : 0; return (Number.isFinite(v) && v > 0 ? v : 1) >>> 0; };
@@ -4464,16 +6029,45 @@ body:not(.leary2-panel-open) .panel{display:none}
     for (let i = 0; i < 4; i++) out.push(hexes[Math.floor(i * hexes.length / 4) % hexes.length]);
     return { palette: out, backgroundColor: bg };
   };
-  const applyLearyPalette = () => { const p = learyPalette(); params.palette = p.palette; params.backgroundColor = p.backgroundColor; params.paletteMode = 'palette'; syncUIFromParams(); if (engine) engine.updateParams(params); };
+  const applyLearyPalette = () => { const p = learyPalette(); params.palette = p.palette; params.backgroundColor = p.backgroundColor; params.paletteMode = 'palette'; if (engine) engine.updateParams(params); syncUIFromParams(); };
 
   /* ---------- panel section ---------- */
   const sec = document.createElement('div'); sec.className = 'section'; sec.id = 'cfSection';
   const h3 = document.createElement('h3'); h3.textContent = '流体 ChromaFlow'; sec.appendChild(h3);
 
   const toggleBtn = document.createElement('button'); toggleBtn.type = 'button'; toggleBtn.className = 'btn small';
-  toggleBtn.textContent = '流体モードにする'; toggleBtn.style.gridColumn = '1 / -1';
-  sec.appendChild(toggleBtn);
+  toggleBtn.textContent = '流体モードにする';
 
+  /* collapsible groups: each subhead is a toggle header; its rows live in a
+     display:contents body so the panel grid layout is unchanged when open. */
+  const GROUP_KEY = 'leary-chromaflow-groups-v1';
+  let groupState = {};
+  try { groupState = JSON.parse(localStorage.getItem(GROUP_KEY) || '{}') || {}; } catch (e) { groupState = {}; }
+  let currentBody = null, groupCount = 0;
+  const subhead = (text) => {
+    const idx = groupCount++;
+    const open = groupState[text] !== undefined ? !!groupState[text] : idx === 0;
+    const h = document.createElement('div'); h.dataset.cfGroup = text;
+    h.style.cssText = 'grid-column:1 / -1;font-size:10px;color:rgba(255,255,255,.72);letter-spacing:.08em;margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center';
+    const name = document.createElement('span'); name.textContent = text; h.appendChild(name);
+    const arrow = document.createElement('span'); arrow.textContent = open ? '\u25BE' : '\u25B8'; h.appendChild(arrow);
+    const body = document.createElement('div'); body.dataset.cfGroupBody = text;
+    body.style.display = open ? 'contents' : 'none';
+    h.addEventListener('click', () => {
+      const nowOpen = body.style.display === 'none';
+      body.style.display = nowOpen ? 'contents' : 'none';
+      arrow.textContent = nowOpen ? '\u25BE' : '\u25B8';
+      groupState[text] = nowOpen;
+      try { localStorage.setItem(GROUP_KEY, JSON.stringify(groupState)); } catch (e) {}
+    });
+    sec.appendChild(h); sec.appendChild(body);
+    currentBody = body;
+    return h;
+  };
+  const mkRow = (labelText) => { const r = document.createElement('div'); r.className = 'row';
+    const l = document.createElement('label'); l.textContent = labelText; r.appendChild(l); (currentBody || sec).appendChild(r); return r; };
+
+  /* presets (curated + custom) */
   const presetGrid = document.createElement('div'); presetGrid.className = 'grid-preset';
   CF.CURATED_PRESETS.forEach(pr => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small';
@@ -4483,97 +6077,589 @@ body:not(.leary2-panel-open) .panel{display:none}
   });
   sec.appendChild(presetGrid);
 
+  const CUSTOM_KEY = 'leary-chromaflow-custom-presets-v1';
+  const loadCustom = () => { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); } catch (e) { return []; } };
+  const customGrid = document.createElement('div'); customGrid.className = 'grid-preset';
+  function renderCustom() {
+    customGrid.innerHTML = '';
+    loadCustom().forEach(cp => {
+      const wrap = document.createElement('span'); wrap.style.cssText = 'display:inline-flex;gap:2px';
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small'; b.textContent = cp.name; b.dataset.cfCustom = cp.id;
+      b.addEventListener('click', () => applyCustomPreset(cp.id));
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'btn small'; x.textContent = '×'; x.title = 'カスタムプリセットを削除';
+      x.addEventListener('click', () => {
+        try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(loadCustom().filter(p => p.id !== cp.id))); } catch (e) {}
+        renderCustom(); toast('カスタムプリセットを削除しました');
+      });
+      wrap.appendChild(b); wrap.appendChild(x); customGrid.appendChild(wrap);
+    });
+  }
+  sec.appendChild(customGrid);
+
   const syncWrap = document.createElement('label');
   syncWrap.style.cssText = 'grid-column:1 / -1;display:flex;gap:6px;align-items:center;cursor:pointer;font-size:10px;color:rgba(255,255,255,.75)';
   const syncChk = document.createElement('input'); syncChk.type = 'checkbox'; syncChk.checked = true; syncChk.id = 'cfSyncPalette';
   syncWrap.appendChild(syncChk); syncWrap.appendChild(document.createTextNode('Learyの色と同期'));
   sec.appendChild(syncWrap);
 
-  const numInputs = {}, selInputs = {};
-  const mkRow = (labelText) => { const r = document.createElement('div'); r.className = 'row';
-    const l = document.createElement('label'); l.textContent = labelText; r.appendChild(l); sec.appendChild(r); return r; };
-  const NUMS = [
-    ['渦度', 'curl', 0, 65, 1], ['ワープ', 'domainWarp', 0, 1.5, 0.02],
-    ['干渉周波数', 'iridescenceScale', 0.5, 6, 0.1], ['虹彩', 'iridescence', 0, 2, 0.05],
-    ['鏡面', 'specular', 0, 2.5, 0.05], ['立体感', 'relief', 0, 2.5, 0.05],
-    ['色相シフト', 'hueShiftSpeed', -1.5, 1.5, 0.02], ['パレット反復', 'paletteFrequency', 0.4, 4.5, 0.05],
-    ['流れ強度', 'autoFlowIntensity', 0, 2, 0.05], ['流れ速度', 'autoFlowSpeed', 0.1, 2.5, 0.05],
-    ['ブラシ径', 'splatRadius', 0.05, 1, 0.01], ['色素濃度', 'dyeStrength', 0.2, 2.5, 0.05]
+  const seedLinkWrap = document.createElement('label');
+  seedLinkWrap.style.cssText = 'grid-column:1 / -1;display:flex;gap:6px;align-items:center;cursor:pointer;font-size:10px;color:rgba(255,255,255,.75)';
+  const seedLinkChk = document.createElement('input'); seedLinkChk.type = 'checkbox'; seedLinkChk.id = 'cfSeedLink';
+  try { seedLinkChk.checked = localStorage.getItem('leary-chromaflow-seedlink') !== '0'; } catch (e) { seedLinkChk.checked = true; }
+  seedLinkChk.addEventListener('change', () => { try { localStorage.setItem('leary-chromaflow-seedlink', seedLinkChk.checked ? '1' : '0'); } catch (e) {} });
+  seedLinkWrap.appendChild(seedLinkChk); seedLinkWrap.appendChild(document.createTextNode('Seed連動（LearyのSeed変更・Varelser Link同期で流体も再初期化）'));
+  sec.appendChild(seedLinkWrap);
+
+  /* ---------- parameter controls (full parity with the original specs) ---------- */
+  const numInputs = {}, selInputs = {}, chkInputs = {}, colorInputs = { palette: [] };
+  const NUM_GROUPS = [
+    ['流体力学・ソルバー', [
+      ['速度減衰', 'velocityDissipation', 0, 8, 0.05], ['色素減衰', 'densityDissipation', 0, 8, 0.05],
+      ['粘性', 'viscosity', 0, 0.98, 0.02], ['圧力', 'pressure', 0, 1.05, 0.02],
+      ['圧力反復', 'pressureIterations', 4, 100, 2], ['時間速度', 'timeScale', 0.05, 6, 0.05],
+      ['ワープ', 'domainWarp', 0, 4, 0.05], ['渦度', 'curl', 0, 150, 1]]],
+    ['鮮明度・衝突・混ざり', [
+      ['移流の鋭さ', 'advectionSharpness', 0, 1.2, 0.02], ['表面張力', 'surfaceTension', 0, 3, 0.05],
+      ['拡散', 'mixingDiffusion', 0, 2.5, 0.02], ['衝突運動量', 'collisionMomentum', 0, 6, 0.05],
+      ['輪郭', 'edgeCrispness', 0, 2.5, 0.05], ['衝突の輝き', 'collisionCrestGlow', 0, 4, 0.05],
+      ['白濁防止', 'antiWashout', 0, 1.5, 0.05], ['輪郭グロー', 'contourGlow', 0, 2.5, 0.05]]],
+    ['外力・渦・乱流', [
+      ['重力X', 'gravityX', -8, 8, 0.05], ['重力Y', 'gravityY', -8, 8, 0.05],
+      ['浮力', 'buoyancy', -3, 5, 0.05], ['放射力', 'radialForce', -8, 8, 0.05],
+      ['放射中心X', 'radialCenterX', 0, 1, 0.01], ['放射中心Y', 'radialCenterY', 0, 1, 0.01],
+      ['渦場', 'swirlField', -8, 8, 0.05], ['乱流', 'turbulence', 0, 6, 0.05],
+      ['乱流スケール', 'turbulenceScale', 0.2, 16, 0.1], ['乱流速度', 'turbulenceSpeed', 0, 5, 0.05]]],
+    ['薄膜・質感・光', [
+      ['干渉周波数', 'iridescenceScale', 0.2, 15, 0.1], ['虹彩', 'iridescence', 0, 4, 0.05],
+      ['鏡面', 'specular', 0, 6, 0.05], ['鏡面の鋭さ', 'specularPower', 4, 256, 2],
+      ['立体感', 'relief', 0, 6, 0.05], ['フレネル', 'fresnelIntensity', 0, 4, 0.05],
+      ['透過光', 'subsurface', 0, 3, 0.05], ['光の方位', 'lightAngle', 0, 360, 2],
+      ['光の高さ', 'lightElevation', 0.08, 2, 0.02], ['色収差', 'chromaticAberration', 0, 5, 0.05],
+      ['ブルーム', 'bloomIntensity', 0, 4, 0.05], ['ブルーム閾値', 'bloomThreshold', 0.02, 0.98, 0.02]]],
+    ['色調・階調', [
+      ['色相シフト', 'hueShiftSpeed', -5, 5, 0.05], ['色相オフセット', 'hueOffset', 0, 1, 0.01],
+      ['パレット反復', 'paletteFrequency', 0.2, 12, 0.1], ['彩度', 'saturation', 0, 4, 0.05],
+      ['コントラスト', 'contrast', 0.4, 3, 0.02], ['露出', 'exposure', 0.2, 4, 0.05],
+      ['ガンマ', 'gamma', 0.3, 2.5, 0.02], ['階調反転量', 'solarize', 0, 1, 0.02],
+      ['グレイン', 'grain', 0, 0.6, 0.01], ['ビネット', 'vignette', 0, 2, 0.02]]],
+    ['万華鏡・レンズ', [
+      ['万華鏡回転', 'kaleidoscopeRotation', -4, 4, 0.05], ['万華鏡ズーム', 'kaleidoscopeZoom', 0.2, 5, 0.05],
+      ['万華鏡中心X', 'kaleidoscopeOffsetX', -0.5, 0.5, 0.01], ['万華鏡中心Y', 'kaleidoscopeOffsetY', -0.5, 0.5, 0.01],
+      ['波紋', 'rippleAmount', 0, 3, 0.05], ['波紋周波数', 'rippleFreq', 0.5, 36, 0.5],
+      ['波紋速度', 'rippleSpeed', -4, 4, 0.1], ['トンネル', 'tunnelWarp', -1.5, 3, 0.05]]],
+    ['ブラシ・注入', [
+      ['ブラシ径', 'splatRadius', 0.02, 2.5, 0.01], ['噴射力', 'splatForce', 200, 35000, 200],
+      ['ブラシ硬度', 'brushHardness', 0.15, 5, 0.05], ['色素濃度', 'dyeStrength', 0.1, 5, 0.05],
+      ['虹ブラシ速度', 'rainbowSpeed', 0.02, 4, 0.02]]],
+    ['自動フロー', [
+      ['流れ強度', 'autoFlowIntensity', 0, 5, 0.05], ['流れ速度', 'autoFlowSpeed', 0.05, 6, 0.05],
+      ['エミッタ数', 'autoEmitterCount', 1, 16, 1], ['エミッタ半径', 'autoEmitterRadius', 0.02, 0.65, 0.01],
+      ['エミッタ径', 'autoEmitterSize', 0.04, 0.8, 0.01], ['パルス間隔', 'pulseInterval', 0.15, 5, 0.05]]],
+    ['煙', [
+      ['煙の量', 'smokeAmount', 0, 1, 0.02], ['煙の自己陰影', 'smokeSelfShadow', 0, 2.5, 0.05],
+      ['煙のたなびき', 'smokeWispyness', 0, 2, 0.05], ['煙の柔らかさ', 'smokeSoftness', 0.3, 2.5, 0.05]]]
   ];
-  NUMS.forEach(([label, key, min, max, step]) => {
-    const inp = document.createElement('input'); inp.type = 'number'; inp.min = min; inp.max = max; inp.step = step;
-    inp.addEventListener('input', () => { const v = Number(inp.value); if (Number.isFinite(v)) { params[key] = v; if (engine) engine.updateParams(params); } });
-    mkRow(label).appendChild(inp); numInputs[key] = inp;
+  NUM_GROUPS.forEach(([gname, items]) => {
+    subhead(gname);
+    items.forEach(([label, key, min, max, step]) => {
+      const inp = document.createElement('input'); inp.type = 'number'; inp.min = min; inp.max = max; inp.step = step; inp.dataset.cfNum = key;
+      inp.addEventListener('input', () => { const v = Number(inp.value); if (Number.isFinite(v)) { params[key] = v; commit(true); } });
+      mkRow(label).appendChild(inp); numInputs[key] = inp;
+    });
   });
+
+  subhead('モード・障害物');
   const SELS = [
-    ['流れ', 'autoFlowMode', [['fountains', '噴水'], ['vortex', '渦流'], ['pulse', 'パルス'], ['convection', '対流'], ['manual', '手動']], false],
-    ['ブラシ', 'brushMode', [['splat', '注入'], ['stir', '撹拌'], ['vortex', '渦'], ['erase', '消去']], false],
+    ['流れ', 'autoFlowMode', [['collide', '対向衝突'], ['smokePlume', '煙の上昇'], ['fountains', '噴水'], ['vortex', '渦流'], ['pulse', 'パルス'], ['convection', '対流'], ['manual', '手動']], false],
+    ['ブラシ', 'brushMode', [['splat', '注入'], ['stir', '撹拌'], ['vortex', '渦'], ['attract', '吸引'], ['obstacle', '障害物'], ['erase', '消去']], false],
     ['色付け', 'paletteMode', [['palette', 'パレット'], ['spectral', 'スペクトル'], ['oil', '油膜']], false],
-    ['万華鏡', 'kaleidoscope', [[0, 'なし'], [2, '2'], [4, '4'], [6, '6'], [8, '8'], [12, '12']], true],
-    ['対称', 'emitterSymmetry', [[1, '1'], [2, '2'], [4, '4'], [6, '6'], [8, '8']], true]
+    ['色調', 'toneMapping', [['standard', '標準'], ['aces', 'ACES'], ['agx', 'AgX']], false],
+    ['障害物', 'obstaclePreset', [['none', 'なし'], ['cylinder', '円柱'], ['twinPillars', '双柱'], ['ring', 'リング'], ['lattice', '格子']], false],
+    ['万華鏡', 'kaleidoscope', [[0, 'なし'], [2, '2'], [3, '3'], [4, '4'], [5, '5'], [6, '6'], [8, '8'], [12, '12'], [16, '16']], true],
+    ['対称', 'emitterSymmetry', [[1, '1'], [2, '2'], [3, '3'], [4, '4'], [6, '6'], [8, '8'], [12, '12']], true]
   ];
   SELS.forEach(([label, key, opts, numeric]) => {
-    const sel = document.createElement('select');
+    const sel = document.createElement('select'); sel.dataset.cfSel = key;
     opts.forEach(([v, t]) => { const o = document.createElement('option'); o.value = String(v); o.textContent = t; sel.appendChild(o); });
-    sel.addEventListener('input', () => { params[key] = numeric ? Number(sel.value) : sel.value; if (engine) engine.updateParams(params); });
+    sel.addEventListener('input', () => { params[key] = numeric ? Number(sel.value) : sel.value; commit(false); });
     mkRow(label).appendChild(sel); selInputs[key] = sel;
   });
 
-  const btnGrid = document.createElement('div'); btnGrid.className = 'grid-preset'; sec.appendChild(btnGrid);
+  const CHKS = [
+    ['境界をループ', 'wrapBorders'], ['虹ブラシ', 'rainbowBrush'], ['色を反転', 'invert'],
+    ['障害物を表示', 'showObstacles'], ['プリセット補間', 'smoothPresetMorph'], ['VJオートモーフ', 'vjMode']
+  ];
+  CHKS.forEach(([label, key]) => {
+    const wrap = document.createElement('label');
+    wrap.style.cssText = 'display:flex;gap:6px;align-items:center;cursor:pointer;font-size:10px;color:rgba(255,255,255,.75)';
+    const c = document.createElement('input'); c.type = 'checkbox'; c.dataset.cfChk = key;
+    c.addEventListener('change', () => { params[key] = c.checked; commit(false); });
+    wrap.appendChild(c); wrap.appendChild(document.createTextNode(label));
+    mkRow('').appendChild(wrap); chkInputs[key] = c;
+  });
+
+  subhead('画質・性能');
+  const SELS_Q = [
+    ['計算解像度', 'simResolution', [[128, '128'], [256, '256'], [384, '384'], [512, '512']], true],
+    ['描画解像度', 'dyeResolution', [[512, '512'], [1024, '1024'], [1440, '1440'], [2048, '2048']], true]
+  ];
+  SELS_Q.forEach(([label, key, opts, numeric]) => {
+    const sel = document.createElement('select'); sel.dataset.cfSel = key;
+    opts.forEach(([v, t]) => { const o = document.createElement('option'); o.value = String(v); o.textContent = t; sel.appendChild(o); });
+    sel.addEventListener('input', () => { params[key] = numeric ? Number(sel.value) : sel.value; commit(false); if (key === 'dyeResolution') resetAutoCeiling(); });
+    mkRow(label).appendChild(sel); selInputs[key] = sel;
+  });
+  const rsSel = document.createElement('select'); rsSel.id = 'cfRenderScale';
+  [[1, '100%'], [0.85, '85%'], [0.7, '70%'], [0.5, '50%']].forEach(([v, t]) => { const o = document.createElement('option'); o.value = String(v); o.textContent = t; rsSel.appendChild(o); });
+  rsSel.value = String(renderScale);
+  rsSel.addEventListener('input', () => { renderScale = Number(rsSel.value); try { localStorage.setItem('leary-chromaflow-renderscale', String(renderScale)); } catch (e) {} applySize(); resetAutoCeiling(); });
+  mkRow('描画スケール').appendChild(rsSel);
+  const aqWrap = document.createElement('label');
+  aqWrap.style.cssText = 'display:flex;gap:6px;align-items:center;cursor:pointer;font-size:10px;color:rgba(255,255,255,.75)';
+  const aqChk = document.createElement('input'); aqChk.type = 'checkbox'; aqChk.id = 'cfAutoQuality'; aqChk.checked = autoQ;
+  aqChk.addEventListener('change', () => { autoQ = aqChk.checked; try { localStorage.setItem('leary-chromaflow-autoq', autoQ ? '1' : '0'); } catch (e) {} if (autoQ) { resetAutoCeiling(); toast('自動画質をONにしました（重いときだけ一時的に下げ、余裕が戻れば戻します）'); } });
+  aqWrap.appendChild(aqChk); aqWrap.appendChild(document.createTextNode('自動画質（FPSで自動調整）'));
+  mkRow('').appendChild(aqWrap);
+  const fpsDiv = document.createElement('div'); fpsDiv.className = 'hint'; fpsDiv.id = 'cfFpsReadout'; fpsDiv.style.gridColumn = '1 / -1'; fpsDiv.textContent = '現在 - fps';
+  (currentBody || sec).appendChild(fpsDiv);
+
+  /* palette / colors direct edit */
+  subhead('パレット・色');
+  for (let i = 0; i < 4; i++) {
+    const inp = document.createElement('input'); inp.type = 'color'; inp.dataset.cfPal = String(i);
+    inp.addEventListener('input', () => { params.palette[i] = inp.value; params.paletteMode = 'palette'; syncChk.checked = false; commit(true); });
+    mkRow('パレット色' + (i + 1)).appendChild(inp); colorInputs.palette.push(inp);
+  }
+  const bgInp = document.createElement('input'); bgInp.type = 'color'; bgInp.id = 'cfBgColor';
+  bgInp.addEventListener('input', () => { params.backgroundColor = bgInp.value; syncChk.checked = false; commit(true); });
+  mkRow('背景色').appendChild(bgInp); colorInputs.background = bgInp;
+  const brushInp = document.createElement('input'); brushInp.type = 'color'; brushInp.id = 'cfBrushColor';
+  brushInp.addEventListener('input', () => { params.brushColor = brushInp.value; commit(true); });
+  mkRow('ブラシ色').appendChild(brushInp); colorInputs.brush = brushInp;
+
+  /* LFO matrix (3ch) */
+  subhead('LFO 自動変調（3ch）');
+  const LFO_TARGETS = [['none', 'なし'], ['hueShiftSpeed', '色相シフト'], ['hueOffset', '色相オフセット'], ['kaleidoscopeRotation', '万華鏡回転'], ['kaleidoscopeZoom', '万華鏡ズーム'], ['iridescenceScale', '干渉周波数'], ['curl', '渦度'], ['domainWarp', 'ワープ'], ['chromaticAberration', '色収差'], ['radialForce', '放射力'], ['swirlField', '渦場'], ['gravityX', '重力X'], ['gravityY', '重力Y'], ['turbulence', '乱流'], ['buoyancy', '浮力'], ['smokeAmount', '煙の量'], ['contourGlow', '輪郭グロー'], ['rippleAmount', '波紋'], ['bloomIntensity', 'ブルーム'], ['exposure', '露出']];
+  const lfoUI = {};
+  ['lfo1', 'lfo2', 'lfo3'].forEach((lk, i) => {
+    const tSel = document.createElement('select'); tSel.dataset.cfLfoTarget = lk;
+    LFO_TARGETS.forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; tSel.appendChild(o); });
+    tSel.addEventListener('input', () => { params[lk].target = tSel.value; commit(false); });
+    mkRow('LFO' + (i + 1) + ' 対象').appendChild(tSel);
+    const wSel = document.createElement('select'); wSel.dataset.cfLfoWave = lk;
+    [['sine', 'サイン'], ['triangle', '三角'], ['pulse', 'パルス']].forEach(([v, t]) => { const o = document.createElement('option'); o.value = v; o.textContent = t; wSel.appendChild(o); });
+    wSel.addEventListener('input', () => { params[lk].waveform = wSel.value; commit(false); });
+    mkRow('LFO' + (i + 1) + ' 波形').appendChild(wSel);
+    const rInp = document.createElement('input'); rInp.type = 'number'; rInp.min = 0.05; rInp.max = 6; rInp.step = 0.05; rInp.dataset.cfLfoRate = lk;
+    rInp.addEventListener('input', () => { const v = Number(rInp.value); if (Number.isFinite(v)) { params[lk].rate = v; commit(true); } });
+    mkRow('LFO' + (i + 1) + ' 速度').appendChild(rInp);
+    const dInp = document.createElement('input'); dInp.type = 'number'; dInp.min = 0; dInp.max = 2.5; dInp.step = 0.02; dInp.dataset.cfLfoDepth = lk;
+    dInp.addEventListener('input', () => { const v = Number(dInp.value); if (Number.isFinite(v)) { params[lk].depth = v; commit(true); } });
+    mkRow('LFO' + (i + 1) + ' 深度').appendChild(dInp);
+    lfoUI[lk] = { tSel, wSel, rInp, dInp };
+  });
+
+  /* audio reactivity */
+  subhead('オーディオ反応');
+  let audioEngine = null;
+  const ensureAudio = () => {
+    if (!audioEngine && CF.AudioReactiveEngine) {
+      audioEngine = new CF.AudioReactiveEngine();
+      if (engine) engine.setAudioSampler(() => audioEngine.getBands());
+    }
+    return audioEngine;
+  };
+  const audioStatus = document.createElement('div'); audioStatus.className = 'hint'; audioStatus.style.gridColumn = '1 / -1';
+  audioStatus.textContent = '音源: なし（マイク or 音楽ファイルで流体が音に反応します）';
+  const audioBtnGrid = document.createElement('div'); audioBtnGrid.className = 'grid-preset';
+  const mkABtn = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small'; b.textContent = label; b.addEventListener('click', fn); audioBtnGrid.appendChild(b); return b; };
+  mkABtn('マイク開始', async () => {
+    const ae = ensureAudio(); if (!ae) { toast('オーディオ未対応です'); return; }
+    try { await ae.startMic(); audioStatus.textContent = '音源: マイク入力'; toast('マイク入力を開始しました'); }
+    catch (e) { toast('マイクを開始できませんでした'); }
+  });
+  const filePlayBtn = mkABtn('ファイル再生', () => {
+    const ae = ensureAudio(); if (!ae || ae.getMode() !== 'file') { toast('先に音楽ファイルを選んでください'); return; }
+    const playing = ae.toggleFilePlay(); filePlayBtn.textContent = playing ? '一時停止' : 'ファイル再生';
+  });
+  mkABtn('音源を停止', () => { const ae = ensureAudio(); if (ae) { ae.stopSource(); audioStatus.textContent = '音源: なし'; filePlayBtn.textContent = 'ファイル再生'; } });
+  const audioFile = document.createElement('input'); audioFile.type = 'file'; audioFile.accept = 'audio/*'; audioFile.style.display = 'none';
+  audioFile.addEventListener('change', async () => {
+    const f = audioFile.files && audioFile.files[0]; if (!f) return;
+    const ae = ensureAudio(); if (!ae) return;
+    try { await ae.loadFile(f); audioStatus.textContent = '音源: ' + (ae.getLabel() || f.name); filePlayBtn.textContent = '一時停止'; toast('音楽ファイルを読み込みました'); }
+    catch (e) { toast('音楽ファイルの読み込みに失敗しました'); }
+  });
+  mkABtn('音楽ファイルを選ぶ', () => audioFile.click());
+  (currentBody || sec).appendChild(audioBtnGrid); (currentBody || sec).appendChild(audioFile); (currentBody || sec).appendChild(audioStatus);
+  const meterBox = document.createElement('div');
+  meterBox.style.cssText = 'grid-column:1 / -1;display:grid;gap:3px;margin-top:2px';
+  const meterFills = {};
+  [['bass', '低音'], ['mid', '中音'], ['treble', '高音'], ['overall', '全体']].forEach(([k, label]) => {
+    const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:6px;align-items:center;font-size:9px;color:rgba(255,255,255,.55)';
+    const lab = document.createElement('span'); lab.textContent = label; lab.style.width = '24px'; row.appendChild(lab);
+    const track = document.createElement('div'); track.style.cssText = 'flex:1;height:5px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden';
+    const fill = document.createElement('div'); fill.id = 'cfMeter-' + k; fill.style.cssText = 'height:100%;width:0%;background:#7ee787;border-radius:3px;transition:width 120ms linear';
+    track.appendChild(fill); row.appendChild(track); meterBox.appendChild(row); meterFills[k] = fill;
+  });
+  (currentBody || sec).appendChild(meterBox);
+  setInterval(() => {
+    if (!active || !audioEngine) return;
+    try { const b = audioEngine.getBands(); Object.keys(meterFills).forEach(k => { const v = Math.max(0, Math.min(1, Number(b[k]) || 0)); meterFills[k].style.width = Math.round(v * 100) + '%'; }); } catch (e) {}
+  }, 150);
+  const audioInputs = {};
+  [['感度', 'sensitivity', 0.1, 4, 0.05], ['低音ゲイン', 'bassGain', 0, 3, 0.05], ['中音ゲイン', 'midGain', 0, 3, 0.05], ['高音ゲイン', 'trebleGain', 0, 3, 0.05]].forEach(([label, key, min, max, step]) => {
+    const inp = document.createElement('input'); inp.type = 'number'; inp.min = min; inp.max = max; inp.step = step; inp.dataset.cfAudio = key;
+    inp.addEventListener('input', () => { const v = Number(inp.value); if (Number.isFinite(v)) { params.audioConfig[key] = v; commit(true); } });
+    mkRow(label).appendChild(inp); audioInputs[key] = inp;
+  });
+  const beatWrap = document.createElement('label');
+  beatWrap.style.cssText = 'display:flex;gap:6px;align-items:center;cursor:pointer;font-size:10px;color:rgba(255,255,255,.75)';
+  const beatChk = document.createElement('input'); beatChk.type = 'checkbox'; beatChk.id = 'cfBeatBurst';
+  beatChk.addEventListener('change', () => { params.audioConfig.beatBurst = beatChk.checked; commit(false); });
+  beatWrap.appendChild(beatChk); beatWrap.appendChild(document.createTextNode('ビートでバースト'));
+  mkRow('').appendChild(beatWrap);
+
+  /* action buttons */
+  subhead('アクション・保存');
+  const btnGrid = document.createElement('div'); btnGrid.className = 'grid-preset'; (currentBody || sec).appendChild(btnGrid);
   const mkBtn = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small'; b.textContent = label; b.addEventListener('click', fn); btnGrid.appendChild(b); return b; };
   mkBtn('衝撃波', () => { if (engine && active) { engine.triggerShockwave(); } else toast('流体モードで使えます'); });
+  mkBtn('対向衝突', () => { if (engine && active) { engine.triggerCollision(); } else toast('流体モードで使えます'); });
   mkBtn('消去', () => { if (engine && active) engine.clear(); else toast('流体モードで使えます'); });
   mkBtn('Seedで再初期化', () => { if (engine && active) reseed(); else toast('流体モードで使えます'); });
-  const pauseBtn = mkBtn('一時停止', () => { if (!engine || !active) { toast('流体モードで使えます'); return; } paused = !paused; engine.setPaused(paused); pauseBtn.textContent = paused ? '再開' : '一時停止'; });
+  const pauseBtn = mkBtn('一時停止', () => { if (!engine || !active) { toast('流体モードで使えます'); return; } setPaused(!paused); });
+  mkBtn('ランダム生成', () => { randomize(); });
+  mkBtn('初期設定に戻す', () => { cancelMorphAnim(); params = clone(CF.DEFAULT_PARAMS); activePreset = ''; if (syncChk.checked) applyLearyPalette(); commit(false); syncUIFromParams(); toast('流体の初期設定に戻しました'); });
+  mkBtn('元に戻す', () => applyHistory(-1));
+  mkBtn('やり直す', () => applyHistory(1));
+  mkBtn('Learyの絵を取り込む', () => {
+    if (!engine || !active) { toast('流体モードで使えます'); return; }
+    try { const img = new Image(); img.onload = () => { try { engine.injectImage(img); toast('Learyの絵を流体に取り込みました'); } catch (e) { toast('取り込みに失敗しました'); } }; img.src = mainCanvas.toDataURL('image/png'); }
+    catch (e) { toast('取り込みに失敗しました'); }
+  });
+  const imgFile = document.createElement('input'); imgFile.type = 'file'; imgFile.accept = 'image/*'; imgFile.style.display = 'none';
+  imgFile.addEventListener('change', () => { const f = imgFile.files && imgFile.files[0]; if (f) { if (engine && active) injectImageFile(f); else toast('流体モードで使えます'); } });
+  (currentBody || sec).appendChild(imgFile);
+  mkBtn('画像ファイルを取り込む', () => imgFile.click());
+  mkBtn('障害物を消去', () => { if (engine && active) { engine.clearObstacles(); params.obstaclePreset = 'none'; commit(false); syncUIFromParams(); } else toast('流体モードで使えます'); });
   mkBtn('流体PNG保存', () => {
     if (!engine || !active) { toast('流体モードで使えます'); return; }
     try { const a = document.createElement('a'); a.download = 'leary-fluid-seed' + learySeed() + '.png'; a.href = engine.captureSnapshot(); a.click(); toast('流体のPNGを保存しました'); }
     catch (e) { toast('PNG保存に失敗しました'); }
   });
   const recBtn = mkBtn('動画録画', () => toggleRecording());
+  const snapshotBlob = () => new Promise((resolve, reject) => {
+    try { const d = engine.captureSnapshot(); fetch(d).then(r => r.blob()).then(resolve, reject); } catch (e) { reject(e); }
+  });
+  mkBtn('流体PNGコピー', async () => {
+    if (!engine || !active) { toast('流体モードで使えます'); return; }
+    try { const blob = await snapshotBlob(); await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast('流体のPNGをコピーしました'); }
+    catch (e) { toast('コピーに失敗しました（この環境では未対応の可能性があります）'); }
+  });
+  mkBtn('流体を共有', async () => {
+    if (!engine || !active) { toast('流体モードで使えます'); return; }
+    try {
+      const blob = await snapshotBlob();
+      const file = new File([blob], 'leary-fluid-seed' + learySeed() + '.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: 'Leary Fluid' });
+      else if (navigator.share) await navigator.share({ title: 'Leary Fluid' });
+      else toast('このブラウザは共有に未対応です');
+    } catch (e) { if (e && e.name !== 'AbortError') toast('共有に失敗しました'); }
+  });
+  mkBtn('名前を付けて保存', async () => {
+    if (!engine || !active) { toast('流体モードで使えます'); return; }
+    try {
+      const blob = await snapshotBlob();
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({ suggestedName: 'leary-fluid-seed' + learySeed() + '.png', types: [{ description: 'PNG画像', accept: { 'image/png': ['.png'] } }] });
+        const w = await handle.createWritable(); await w.write(blob); await w.close(); toast('保存しました');
+      } else {
+        const a = document.createElement('a'); a.download = 'leary-fluid-seed' + learySeed() + '.png'; a.href = URL.createObjectURL(blob); a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000); toast('流体のPNGを保存しました');
+      }
+    } catch (e) { if (e && e.name !== 'AbortError') toast('保存に失敗しました'); }
+  });
+  mkBtn('流体設定JSON保存', () => {
+    try { const blob = new Blob([JSON.stringify(params, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.download = 'leary-fluid-settings-seed' + learySeed() + '.json'; a.href = URL.createObjectURL(blob); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); toast('流体設定JSONを保存しました'); }
+    catch (e) { toast('保存に失敗しました'); }
+  });
+  const jsonFile = document.createElement('input'); jsonFile.type = 'file'; jsonFile.accept = 'application/json,.json'; jsonFile.style.display = 'none'; jsonFile.id = 'cfJsonFile';
+  jsonFile.addEventListener('change', () => { const f = jsonFile.files && jsonFile.files[0]; if (f) importFluidJson(f); jsonFile.value = ''; });
+  (currentBody || sec).appendChild(jsonFile);
+  mkBtn('流体設定JSON読込', () => jsonFile.click());
+  const slideBtn = mkBtn('スライドショー開始', () => { if (slideTimer) stopSlideshow(); else startSlideshow(); });
+  slideBtn.id = 'cfSlideBtn';
+  const slideSel = document.createElement('select'); slideSel.id = 'cfSlideInterval';
+  [[8, '8秒'], [15, '15秒'], [30, '30秒'], [60, '60秒']].forEach(([v, t]) => { const o = document.createElement('option'); o.value = String(v); o.textContent = t; slideSel.appendChild(o); });
+  slideSel.value = '15';
+  slideSel.addEventListener('change', () => { if (slideTimer) { stopSlideshow(); startSlideshow(); } });
+  mkRow('スライドショー間隔').appendChild(slideSel);
+  mkBtn('レシピリンクをコピー', () => {
+    try {
+      const json = JSON.stringify(params);
+      const b64 = btoa(String.fromCharCode(...new TextEncoder().encode(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const url = location.origin + location.pathname + '#recipe=' + b64;
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(() => toast('レシピリンクをコピーしました'), () => toast('コピーに失敗しました'));
+      else toast('このブラウザはコピーに未対応です');
+    } catch (e) { toast('コピーに失敗しました'); }
+  });
+  mkBtn('カスタムとして保存', () => {
+    const name = window.prompt('カスタムプリセット名', 'マイ流体');
+    if (!name) return;
+    const list = loadCustom();
+    list.push({ id: 'custom-' + Date.now(), name: name, params: clone(params) });
+    try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(list)); } catch (e) {}
+    renderCustom(); toast('カスタムプリセット「' + name + '」を保存しました');
+  });
 
   const hint = document.createElement('div'); hint.className = 'hint'; hint.style.gridColumn = '1 / -1';
-  hint.textContent = '本物の流体シミュレーション（Navier-Stokes）。流体キャンバスをドラッグで操作。初期の渦はLearyのSeedから決まります。';
+  hint.textContent = '本物の流体シミュレーション（Navier-Stokes）最終版・全機能版。パネル上部のタブで Leary設定 / 流体設定 を切り替えます。キー: Space 一時停止 / B 衝撃波 / X 対向衝突 / C 消去 / Ctrl+Z・Y 取り消し・やり直し（流体モード時）。画像は流体キャンバスへのドロップ/貼り付けでも取り込めます。初期の衝突はLearyのSeedから決まり、Seed連動ONではSeed変更・Varelser Link同期にも追従します。画質・性能に自動画質と描画スケール、アクション・保存にPNGコピー/共有/名前保存・設定JSON・スライドショーがあります。';
   sec.appendChild(hint);
 
   const vl = panel.querySelector('#vlBox');
   if (vl) panel.insertBefore(sec, vl); else panel.appendChild(sec);
+  renderCustom();
 
+  /* ---------- settings UI mode switch (Leary / fluid tabs) ---------- */
+  let uiMode = 'leary';
+  try { uiMode = localStorage.getItem('leary-ui-mode') === 'fluid' ? 'fluid' : 'leary'; } catch (e) {}
+  const tabBar = document.createElement('div'); tabBar.id = 'cfUiTabs';
+  tabBar.style.cssText = 'display:flex;gap:4px;align-items:center;margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.12)';
+  const tabLeary = document.createElement('button'); tabLeary.type = 'button'; tabLeary.className = 'btn small'; tabLeary.textContent = 'Leary設定';
+  const tabFluid = document.createElement('button'); tabFluid.type = 'button'; tabFluid.className = 'btn small'; tabFluid.textContent = '流体 ChromaFlow';
+  toggleBtn.style.marginLeft = 'auto';
+  tabBar.appendChild(tabLeary); tabBar.appendChild(tabFluid); tabBar.appendChild(toggleBtn);
+  panel.insertBefore(tabBar, panel.firstChild);
+  function setUiMode(mode) {
+    uiMode = mode === 'fluid' ? 'fluid' : 'leary';
+    Array.from(panel.children).forEach(ch => {
+      if (ch === tabBar || ch.id === 'vlBox') { ch.style.display = ''; return; }
+      if (ch === sec) { ch.style.display = uiMode === 'fluid' ? '' : 'none'; return; }
+      ch.style.display = uiMode === 'fluid' ? 'none' : '';
+    });
+    tabLeary.style.outline = uiMode === 'leary' ? '1px solid #fff' : '';
+    tabFluid.style.outline = uiMode === 'fluid' ? '1px solid #fff' : '';
+    try { localStorage.setItem('leary-ui-mode', uiMode); } catch (e) {}
+  }
+  tabLeary.addEventListener('click', () => setUiMode('leary'));
+  tabFluid.addEventListener('click', () => setUiMode('fluid'));
+  setUiMode(uiMode);
+
+  /* ---------- sync UI ---------- */
   function syncUIFromParams() {
     Object.keys(numInputs).forEach(k => { if (params[k] !== undefined) numInputs[k].value = params[k]; });
     Object.keys(selInputs).forEach(k => { if (params[k] !== undefined) selInputs[k].value = String(params[k]); });
+    Object.keys(chkInputs).forEach(k => { chkInputs[k].checked = !!params[k]; });
+    colorInputs.palette.forEach((inp, i) => { if (params.palette && params.palette[i]) inp.value = params.palette[i]; });
+    if (colorInputs.background) colorInputs.background.value = params.backgroundColor || '#060609';
+    if (colorInputs.brush) colorInputs.brush.value = params.brushColor || '#00f5d4';
+    Object.keys(lfoUI).forEach(lk => { const u = lfoUI[lk], c = params[lk]; if (!c) return; u.tSel.value = c.target; u.wSel.value = c.waveform; u.rInp.value = c.rate; u.dInp.value = c.depth; });
+    Object.keys(audioInputs).forEach(k => { if (params.audioConfig) audioInputs[k].value = params.audioConfig[k]; });
+    beatChk.checked = !!(params.audioConfig && params.audioConfig.beatBurst);
     Array.from(presetGrid.querySelectorAll('.btn')).forEach(b => { b.style.outline = b.dataset.cfPreset === activePreset ? '1px solid #fff' : ''; });
     toggleBtn.style.outline = active ? '1px solid #fff' : '';
   }
 
-  function applyPreset(id) {
-    const pr = CF.CURATED_PRESETS.find(p => p.id === id); if (!pr) return;
-    params = Object.assign(clone(CF.DEFAULT_PARAMS), clone(pr.params));
-    activePreset = id; syncChk.checked = false;
-    if (engine) engine.updateParams(params);
-    syncUIFromParams();
-    if (!active) setActive(true);
-    if (engine) engine.triggerShockwave();
-    toast('流体プリセット: ' + pr.name);
+  /* ---------- morph (port of the original interpolateFluidParams) ---------- */
+  const DISCRETE_KEYS = new Set(['simResolution', 'dyeResolution', 'kaleidoscope', 'emitterSymmetry']);
+  const INTEGER_KEYS = new Set(['pressureIterations', 'autoEmitterCount', 'specularPower']);
+  const hexRgb = (hex) => { const c = String(hex || '#000000').replace('#', ''); const f = c.length === 3 ? c.split('').map(x => x + x).join('') : c; const n = parseInt(f, 16); return Number.isNaN(n) ? [0, 0, 0] : [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const lerpHex = (a, b, t) => { const A = hexRgb(a), B = hexRgb(b); const cl = (n) => Math.max(0, Math.min(255, n)).toString(16).padStart(2, '0'); return '#' + cl(Math.round(A[0] + (B[0] - A[0]) * t)) + cl(Math.round(A[1] + (B[1] - A[1]) * t)) + cl(Math.round(A[2] + (B[2] - A[2]) * t)); };
+  function interpolateParams(from, to, t) {
+    const next = clone(to);
+    next.palette = [0, 1, 2, 3].map(i => lerpHex(from.palette[i], to.palette[i], t));
+    next.backgroundColor = lerpHex(from.backgroundColor, to.backgroundColor, t);
+    next.brushColor = lerpHex(from.brushColor, to.brushColor, t);
+    Object.keys(to).forEach(k => {
+      if (DISCRETE_KEYS.has(k)) return;
+      const a = from[k], b = to[k];
+      if (typeof a === 'number' && typeof b === 'number') { const v = a + (b - a) * t; next[k] = INTEGER_KEYS.has(k) ? Math.round(v) : Number(v.toFixed(3)); }
+    });
+    return next;
+  }
+  function cancelMorphAnim() { if (morphRaf !== null) { cancelAnimationFrame(morphRaf); morphRaf = null; } }
+  function stopSlideshow() {
+    if (slideTimer) { clearInterval(slideTimer); slideTimer = null; }
+    const b = $id('cfSlideBtn'); if (b) b.textContent = 'スライドショー開始';
+  }
+  function startSlideshow() {
+    if (!active || !engine) { toast('流体モードで使えます'); return; }
+    const secInt = Number(($id('cfSlideInterval') || {}).value || 15);
+    const order = CF.CURATED_PRESETS.map(p => p.id);
+    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = order[i]; order[i] = order[j]; order[j] = t; }
+    let pos = -1;
+    const advance = () => { pos = (pos + 1) % order.length; slideAdvancing = true; applyPreset(order[pos], true); slideAdvancing = false; };
+    advance();
+    slideTimer = setInterval(advance, secInt * 1000);
+    const b = $id('cfSlideBtn'); if (b) b.textContent = 'スライドショー停止';
+    toast('スライドショーを開始しました（' + secInt + '秒間隔）');
+  }
+  function applyParamsAnimated(target, after, forceMorph) {
+    cancelMorphAnim();
+    if ((!params.smoothPresetMorph && !forceMorph) || !engine || !active) {
+      params = target; if (engine) engine.updateParams(params); pushHistory(false); syncUIFromParams(); if (after) after(); return;
+    }
+    const start = clone(params), t0 = performance.now(), dur = 900;
+    params = interpolateParams(start, target, 0);
+    engine.updateParams(params); syncUIFromParams();
+    const step = (now) => {
+      const raw = Math.max(0, Math.min(1, (now - t0) / dur));
+      const ease = 1 - Math.pow(1 - raw, 3);
+      params = raw >= 1 ? clone(target) : interpolateParams(start, target, ease);
+      if (engine) engine.updateParams(params);
+      if (raw < 1) { morphRaf = requestAnimationFrame(step); }
+      else { morphRaf = null; pushHistory(false); syncUIFromParams(); if (after) after(); }
+    };
+    morphRaf = requestAnimationFrame(step);
   }
 
+  function applyPreset(id, forceMorph) {
+    if (slideTimer && !slideAdvancing) stopSlideshow();
+    const pr = CF.CURATED_PRESETS.find(p => p.id === id); if (!pr) return;
+    const target = mergeParams(CF.DEFAULT_PARAMS, pr.params);
+    target.smoothPresetMorph = params.smoothPresetMorph;
+    activePreset = id; syncChk.checked = false;
+    const wasActive = active;
+    if (!active) setActive(true);
+    applyParamsAnimated(target, () => { if (engine && wasActive) engine.triggerCollision(); }, !!forceMorph);
+    if (!wasActive && engine) engine.triggerCollision();
+    toast('流体プリセット: ' + pr.name);
+  }
+  function applyCustomPreset(id) {
+    const cp = loadCustom().find(p => p.id === id); if (!cp) return;
+    const target = mergeParams(CF.DEFAULT_PARAMS, cp.params);
+    target.smoothPresetMorph = params.smoothPresetMorph;
+    activePreset = ''; syncChk.checked = false;
+    if (!active) setActive(true);
+    applyParamsAnimated(target, null);
+    toast('カスタムプリセット: ' + cp.name);
+  }
+
+  /* ---------- randomize (ported recipe from the original app) ---------- */
+  const hslHex = (h, s, l) => {
+    s /= 100; l /= 100; const k = (n) => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    const to = (x) => Math.round(255 * x).toString(16).padStart(2, '0');
+    return '#' + to(f(0)) + to(f(8)) + to(f(4));
+  };
+  function randomize() {
+    cancelMorphAnim();
+    const R = Math.random, baseHue = R() * 360;
+    const palette = [
+      hslHex(baseHue, 90, 56), hslHex((baseHue + 65 + R() * 40) % 360, 92, 58),
+      hslHex((baseHue + 170 + R() * 40) % 360, 88, 54), hslHex((baseHue + 255 + R() * 40) % 360, 85, 52)];
+    const isSmoke = R() < 0.28;
+    const n2 = (v) => Number(v.toFixed(2));
+    const next = Object.assign(clone(params), {
+      curl: Math.round(18 + R() * 64),
+      velocityDissipation: n2(0.12 + R() * 0.45), densityDissipation: n2(0.16 + R() * 0.6),
+      domainWarp: n2(0.15 + R() * 1.1),
+      surfaceTension: isSmoke ? n2(R() * 0.15) : n2(0.25 + R() * 0.95),
+      mixingDiffusion: isSmoke ? n2(0.15 + R() * 0.35) : params.mixingDiffusion,
+      collisionMomentum: n2(0.3 + R() * 1.3),
+      edgeCrispness: isSmoke ? n2(0.15 + R() * 0.35) : n2(0.45 + R() * 0.8),
+      buoyancy: isSmoke ? n2(0.75 + R() * 1.2) : 0,
+      smokeAmount: isSmoke ? n2(0.65 + R() * 0.35) : 0,
+      smokeSelfShadow: isSmoke ? n2(0.9 + R() * 1.0) : params.smokeSelfShadow,
+      smokeWispyness: isSmoke ? n2(0.65 + R() * 0.8) : params.smokeWispyness,
+      turbulence: n2(R() * 0.9), radialForce: n2(-0.5 + R() * 1.0), swirlField: n2(-0.6 + R() * 1.2),
+      iridescence: n2(0.55 + R() * 1.65), iridescenceScale: Number((1.4 + R() * 4.5).toFixed(1)),
+      specular: isSmoke ? n2(0.05 + R() * 0.35) : n2(0.5 + R() * 2.2),
+      specularPower: Math.round(24 + R() * 110), relief: n2(0.5 + R() * 2.1),
+      fresnelIntensity: n2(0.3 + R() * 1.4), chromaticAberration: n2(0.15 + R() * 1.4),
+      bloomIntensity: n2(0.2 + R() * 0.95), hueShiftSpeed: n2(-0.6 + R() * 1.3),
+      hueOffset: n2(R()), paletteFrequency: n2(0.8 + R() * 3.0),
+      kaleidoscope: [0, 0, 2, 3, 4, 5, 6, 8, 12, 16][Math.floor(R() * 10)],
+      kaleidoscopeRotation: n2(-0.4 + R() * 0.8),
+      tunnelWarp: R() < 0.25 ? n2(-0.3 + R() * 0.8) : 0,
+      rippleAmount: R() < 0.3 ? n2(0.08 + R() * 0.35) : 0,
+      paletteMode: ['oil', 'palette', 'spectral'][Math.floor(R() * 3)],
+      toneMapping: ['aces', 'agx'][Math.floor(R() * 2)],
+      palette: palette, invert: R() < 0.12,
+      solarize: R() < 0.12 ? n2(0.25 + R() * 0.55) : 0,
+      autoFlowMode: isSmoke ? 'smokePlume' : ['collide', 'fountains', 'vortex', 'pulse', 'convection', 'smokePlume'][Math.floor(R() * 6)],
+      autoFlowIntensity: n2(0.8 + R() * 1.1), autoFlowSpeed: n2(0.6 + R() * 1.0),
+      contourGlow: R() < 0.24 ? n2(0.4 + R() * 1.4) : 0
+    });
+    params = next; activePreset = ''; syncChk.checked = false;
+    if (!active) setActive(true);
+    if (engine) { engine.updateParams(params); engine.triggerShockwave(); }
+    pushHistory(false); syncUIFromParams();
+    toast('流体パラメータをランダム生成しました');
+  }
+
+  /* ---------- engine lifecycle ---------- */
+  function setPaused(p) { paused = p; if (engine) engine.setPaused(paused); pauseBtn.textContent = paused ? '再開' : '一時停止'; }
   function reseed() {
     if (!engine) return;
     engine.setSeed(learySeed()); engine.clear(); engine.seedInitialPattern();
     toast('Seed ' + learySeed() + ' で流体を初期化しました');
   }
-
+  function fluidSize() {
+    const w = Math.max(2, Math.round((fluidCanvas.clientWidth || stage.clientWidth || 960) * renderScale));
+    const h = Math.max(2, Math.round((fluidCanvas.clientHeight || stage.clientHeight || 540) * renderScale));
+    return [w, h];
+  }
+  function applySize() { if (engine) { const sz = fluidSize(); engine.resize(sz[0], sz[1]); } }
+  function resetAutoCeiling() { autoCeil = { dye: params.dyeResolution, scale: renderScale }; autoPos = 0; autoUpCount = 0; }
+  function autoLadder() {
+    const dyes = [2048, 1440, 1024, 512].filter(d => d <= autoCeil.dye);
+    const steps = [];
+    dyes.forEach((dye, i) => {
+      const cap = i === 0 ? autoCeil.scale : 0.85;
+      [1, 0.85, 0.7, 0.5].forEach(sc => { if (sc <= cap && !steps.some(x => x.dye === dye && x.scale === sc)) steps.push({ dye, scale: sc }); });
+    });
+    return steps.length ? steps : [{ dye: autoCeil.dye, scale: autoCeil.scale }];
+  }
+  function applyAutoStep(pos) {
+    const steps = autoLadder();
+    autoPos = Math.max(0, Math.min(steps.length - 1, pos));
+    const st = steps[autoPos];
+    if (st.dye !== params.dyeResolution) { params.dyeResolution = st.dye; if (engine) engine.updateParams(params); if (selInputs.dyeResolution) selInputs.dyeResolution.value = String(st.dye); }
+    if (st.scale !== renderScale) { renderScale = st.scale; const rs = $id('cfRenderScale'); if (rs) rs.value = String(st.scale); applySize(); }
+  }
+  function autoQualityTick(fps) {
+    if (!autoQ || !active) return;
+    const now = performance.now();
+    if (now - lastAutoEval < 2500) return;
+    lastAutoEval = now;
+    const steps = autoLadder();
+    if (fps < 45 && autoPos < steps.length - 1) { applyAutoStep(autoPos + 1); autoUpCount = 0; }
+    else if (fps > 57) { autoUpCount++; if (autoUpCount >= 3 && autoPos > 0) { applyAutoStep(autoPos - 1); autoUpCount = 0; } }
+    else autoUpCount = 0;
+  }
+  let fpsRaf = null;
+  function fpsLoopStart() {
+    if (fpsRaf !== null) return;
+    let frames = 0, lastT = performance.now();
+    const loop = () => {
+      if (!active) { fpsRaf = null; return; }
+      frames++;
+      const now = performance.now();
+      if (now - lastT >= 500) {
+        const fps = Math.round(frames * 1000 / (now - lastT));
+        frames = 0; lastT = now;
+        const ro = $id('cfFpsReadout');
+        if (ro) ro.textContent = '現在 ' + fps + ' fps（描画解像度 ' + params.dyeResolution + ' / 描画スケール ' + Math.round(renderScale * 100) + '%' + (autoQ ? ' / 自動画質ON' : '') + '）';
+        autoQualityTick(fps);
+      }
+      fpsRaf = requestAnimationFrame(loop);
+    };
+    fpsRaf = requestAnimationFrame(loop);
+  }
   function ensureEngine() {
     if (engine) return true;
-    try {
-      engine = new CF.FluidEngine(fluidCanvas, params);
-    } catch (e) { engine = null; toast('WebGL流体を初期化できませんでした（ハードウェア加速のあるブラウザでお試しください）'); return false; }
-    engine.resize(fluidCanvas.clientWidth || stage.clientWidth || 960, fluidCanvas.clientHeight || stage.clientHeight || 540);
-    ro = new ResizeObserver((entries) => { if (!engine) return; for (const en of entries) engine.resize(en.contentRect.width, en.contentRect.height); });
+    try { engine = new CF.FluidEngine(fluidCanvas, params); }
+    catch (e) { engine = null; toast('WebGL流体を初期化できませんでした（ハードウェア加速のあるブラウザでお試しください）'); return false; }
+    if (audioEngine) engine.setAudioSampler(() => audioEngine.getBands());
+    { const sz = fluidSize(); engine.resize(sz[0], sz[1]); }
+    let roTimer = null;
+    ro = new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(applySize, 120); });
     ro.observe(fluidCanvas);
     return true;
   }
-
   function setActive(on) {
     if (on) {
       try { const saved = localStorage.getItem('leary2-texture'); if (saved && saved !== 'none') { const b = document.querySelector('[data-tex="none"]'); if (b) b.click(); } } catch (e) {}
@@ -4581,13 +6667,17 @@ body:not(.leary2-panel-open) .panel{display:none}
       if (!ensureEngine()) { fluidCanvas.style.display = 'none'; return; }
       if (syncChk.checked) applyLearyPalette();
       engine.updateParams(params);
+      resetAutoCeiling();
       reseed();
       const ov = $id('overlay'); if (ov) ov.style.display = 'none';
       mainCanvas.style.visibility = 'hidden';
-      engine.setPaused(paused); engine.start();
+      engine.setPaused(paused); engine.start(); fpsLoopStart();
       active = true; toggleBtn.textContent = '流体モードを終了';
+      setUiMode('fluid');
     } else {
       if (recording) toggleRecording();
+      cancelMorphAnim();
+      stopSlideshow();
       active = false;
       if (engine) engine.stop();
       fluidCanvas.style.display = 'none';
@@ -4630,14 +6720,58 @@ body:not(.leary2-panel-open) .panel{display:none}
   });
   syncChk.addEventListener('change', () => { if (syncChk.checked && active) applyLearyPalette(); });
 
+  /* keyboard shortcuts (fluid mode only, not while typing) */
+  document.addEventListener('keydown', (e) => {
+    const t = e.target;
+    const typing = t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    if ((e.ctrlKey || e.metaKey) && !typing && active && (e.key.toLowerCase() === 'z' || e.key.toLowerCase() === 'y')) {
+      e.preventDefault(); applyHistory(e.key.toLowerCase() === 'z' && !e.shiftKey ? -1 : 1); return;
+    }
+    if (!active || !engine || typing || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.code === 'Space') { e.preventDefault(); setPaused(!paused); }
+    else if (e.key === 'b' || e.key === 'B') engine.triggerShockwave();
+    else if (e.key === 'x' || e.key === 'X') engine.triggerCollision();
+    else if (e.key === 'c' || e.key === 'C') engine.clear();
+  });
+
+  /* Seed / Varelser Link follow: when Leary's seed changes by any route
+     (manual edit, seed chips, shared link, or a Link seed-sync, which lands
+     in #seedInput via Leary's own syncInputs), reseed the fluid to match. */
+  let lastSeedSeen = learySeed(), seedWatchTimer = null;
+  setInterval(() => {
+    if (!active || !engine || !seedLinkChk.checked) return;
+    const s = learySeed();
+    if (s === lastSeedSeen) return;
+    lastSeedSeen = s;
+    clearTimeout(seedWatchTimer);
+    seedWatchTimer = setTimeout(() => { if (active && engine) { reseed(); } }, 400);
+  }, 700);
+
   document.addEventListener('visibilitychange', () => {
     if (!engine || !active) return;
     if (document.hidden) engine.stop(); else engine.start();
   });
 
+  /* recipe link (#recipe=...) — decode before first activation */
+  try {
+    if (location.hash && location.hash.startsWith('#recipe=')) {
+      const b64 = location.hash.slice('#recipe='.length).replace(/-/g, '+').replace(/_/g, '/');
+      const pad = b64.length % 4 === 0 ? '' : '='.repeat(4 - (b64.length % 4));
+      const bin = atob(b64 + pad);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const decoded = JSON.parse(new TextDecoder().decode(bytes));
+      if (decoded && typeof decoded === 'object') {
+        params = mergeParams(CF.DEFAULT_PARAMS, decoded);
+        history = [clone(params)]; histIdx = 0;
+        setTimeout(() => { setActive(true); toast('レシピリンクの流体設定を適用しました'); }, 900);
+      }
+    }
+  } catch (e) {}
+
   syncUIFromParams();
   try { if (localStorage.getItem('leary-chromaflow-active') === '1') setTimeout(() => setActive(true), 700); } catch (e) {}
-  window.__learyChromaFlow = { setActive, get active() { return active; }, get engine() { return engine; }, reseed, applyPreset };
+  window.__learyChromaFlow = { setActive, setUiMode, get uiMode() { return uiMode; }, get active() { return active; }, get engine() { return engine; }, get params() { return params; }, get renderScale() { return renderScale; }, get autoQuality() { return autoQ; }, get slideshow() { return !!slideTimer; }, reseed, applyPreset, randomize, startSlideshow, stopSlideshow };
 })();
 
 </script>
