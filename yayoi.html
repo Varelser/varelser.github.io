@@ -3143,5 +3143,218 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
       }
     })();
   </script>
+<!-- ══════════ Varelser Link (additive block; base Yayoi code untouched) ══════════ -->
+<style>
+  #varelser-link-panel{position:fixed;left:12px;bottom:84px;z-index:60;width:248px;padding:10px 12px;background:rgba(0,0,0,.92);border:1px solid #262626;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,.75);color:#e5e5e5;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;font-size:11px;line-height:1.5}
+  #varelser-link-panel .vl-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#a3a3a3;margin-bottom:6px}
+  #varelser-link-panel label.vl-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;color:#e5e5e5}
+  #varelser-link-panel label.vl-toggle input{accent-color:#fff}
+  #varelser-link-panel button.vl-sync{margin-top:8px;width:100%;padding:5px 8px;background:#171717;color:#e5e5e5;border:1px solid #404040;border-radius:8px;cursor:pointer;font-size:11px}
+  #varelser-link-panel button.vl-sync:hover:not(:disabled){background:#262626;border-color:#737373}
+  #varelser-link-panel button.vl-sync:disabled{opacity:.45;cursor:default}
+  #varelser-link-panel .vl-line{margin-top:6px;color:#a3a3a3;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+<script>
+(function () {
+  'use strict';
+  /* Varelser Link for Yayoi — additive only.
+     OFF (default): no BroadcastChannel is opened and nothing in the app changes.
+     ON: joins BroadcastChannel('varelser-link-v1').
+     Apply path for received seed-sync (documented in yayoi.REPORT.md):
+     Yayoi's React config state (useState(loadInitialConfig)) and its setter are
+     closures — not exposed globally, and there is no hashchange listener.
+     The only reliable external apply path is therefore: merge the derived seed
+     into the persisted config in localStorage 'yayoi-settings-v2', clear any
+     '#s=' share hash (it would take precedence over localStorage on boot),
+     then reload. Used ONLY for received seed-sync. */
+  var LINK_KEY = 'yayoi.varelserLink.v1';
+  var STORAGE_KEY = 'yayoi-settings-v2';
+  var APPLIED_KEY = 'yayoi.varelserLink.applied.v1';
+  var NOISE_FRESH_MS = 1500;
+
+  /* ── Seed derivation — EXACT copy of SeedWorks (base/seedworks/index.html) ── */
+  function splitmix32(a){ return function(){ a|=0; a=(a+0x9E3779B9)|0; var t=(a^(a>>>16))>>>0; t=Math.imul(t,0x21F0AAAD); t=(t^(t>>>15))>>>0; t=Math.imul(t,0x735A2D97); t=(t^(t>>>15))>>>0; return t>>>0; }; }
+  function mulberry32(seed){ var a=seed>>>0; return function(){ a=(a+0x6D2B79F5)|0; var t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+  function hashSeedString(s){ var h=0x811C9DC5; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193); } return h>>>0; }
+  /* parseMasterSeed from SeedWorks, hash part only: numeric -> (Number>>>0)||1, else FNV-1a||1 */
+  function masterHash(raw){
+    var t=String(raw==null?'':raw).trim();
+    if(t==='') return null;
+    if(/^-?\d+$/.test(t)){ var n=Number(t); return (n>>>0)||1; }
+    return hashSeedString(t)||1;
+  }
+  function streamFor(hash, tag){ var th=hashSeedString(tag); var sm=splitmix32((hash^th)>>>0); return mulberry32(sm()); }
+  function deriveYayoiSeed(master){
+    var h=masterHash(master);
+    if(h===null) return null;
+    var r=streamFor(h,'yayoi');
+    r(); /* SeedWorks derive() consumes the 1st value for its preset pick, then draws the seed — consume identically so sync matches SeedWorks (master '20261114' -> 1170892241) */
+    return 1+Math.floor(r()*2147483646);
+  }
+  window.__varelserLinkDerive = deriveYayoiSeed;
+  window.__varelserLinkMasterHash = masterHash;
+
+  /* ── Reading Yayoi's current config from outside React ──
+     The app persists its full config to localStorage 'yayoi-settings-v2'
+     (300ms debounce after every change), so that is the authoritative
+     external view of the current seed. Fallback: decode the '#s=' hash. */
+  function readStoredConfig(){
+    try{ var raw=localStorage.getItem(STORAGE_KEY); if(!raw) return null; var o=JSON.parse(raw); return (o&&typeof o==='object')?o:null; }catch(e){ return null; }
+  }
+  function decodeHashConfig(){
+    try{
+      var m=String(window.location.hash||'').match(/^#s=([A-Za-z0-9\-_]+)$/);
+      if(!m) return null;
+      var b64=m[1].replace(/-/g,'+').replace(/_/g,'/');
+      var o=JSON.parse(atob(b64));
+      return (o&&typeof o==='object')?o:null;
+    }catch(e){ return null; }
+  }
+  function seedOf(cfg){
+    if(!cfg) return null;
+    var n=Number(cfg.seed);
+    return Number.isFinite(n)?Math.floor(n):null;
+  }
+  function readCurrentSeed(){
+    var s=seedOf(readStoredConfig());
+    if(s!==null) return s;
+    return seedOf(decodeHashConfig());
+  }
+
+  /* ── Apply a received seed-sync: localStorage write + reload (loop-guarded) ── */
+  function applySeedSync(masterStr){
+    var seed=deriveYayoiSeed(masterStr);
+    if(seed===null) return;
+    try{
+      var ap=JSON.parse(sessionStorage.getItem(APPLIED_KEY)||'null');
+      if(ap&&ap.master===masterStr&&ap.seed===seed&&(Date.now()-Number(ap.ts||0))<10000) return; /* loop guard */
+    }catch(e){}
+    var markApplied=function(){
+      try{ sessionStorage.setItem(APPLIED_KEY, JSON.stringify({master:masterStr, seed:seed, ts:Date.now()})); }catch(e){}
+    };
+    if(readCurrentSeed()===seed){ markApplied(); return; } /* already there: no reload */
+    var cfg=readStoredConfig()||decodeHashConfig()||{};
+    cfg.seed=seed;
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg)); }catch(e){ return; }
+    markApplied();
+    /* A '#s=' hash would override localStorage in loadInitialConfig() — clear it. */
+    try{ window.history.replaceState(null,'',window.location.pathname+window.location.search); }catch(e){}
+    window.location.reload();
+  }
+
+  /* ── Panel UI ── */
+  var panel=document.createElement('div');
+  panel.id='varelser-link-panel';
+  panel.innerHTML=
+    '<div class="vl-title">Varelser Link</div>'+
+    '<label class="vl-toggle"><input type="checkbox" id="vl-toggle"> Varelser Link 送受信</label>'+
+    '<button type="button" class="vl-sync" id="vl-sync" disabled>シードを全アプリに同期</button>'+
+    '<div class="vl-line" id="vl-line-noise">Noise: —</div>'+
+    '<div class="vl-line" id="vl-line-meikyo">♪ Meikyoshisui: —</div>';
+  document.body.appendChild(panel);
+  var toggleEl=panel.querySelector('#vl-toggle');
+  var syncBtn=panel.querySelector('#vl-sync');
+  var lineNoise=panel.querySelector('#vl-line-noise');
+  var lineMeikyo=panel.querySelector('#vl-line-meikyo');
+
+  /* ── Link state ── */
+  var channel=null, loopTimer=null, lastSentSeed=null;
+  var lastNoise=null, lastNoiseAt=0;
+
+  function post(msg){ if(channel){ try{ channel.postMessage(msg); }catch(e){} } }
+  function sendState(){
+    var seed=readCurrentSeed();
+    if(seed===null||seed===lastSentSeed) return;
+    lastSentSeed=seed;
+    post({app:'yayoi', type:'state', ts:Date.now(), seed:seed});
+  }
+  function getCanvas(){ return document.querySelector('canvas'); }
+  function clearCanvasFilter(){ var c=getCanvas(); if(c) c.style.filter=''; }
+  function refreshNoiseFilter(){
+    var c=getCanvas();
+    if(!c) return;
+    if(channel&&lastNoise&&(Date.now()-lastNoiseAt)<NOISE_FRESH_MS){
+      /* CSS filter only — Yayoi config is never mutated by Noise state. */
+      c.style.filter='brightness('+(0.85+0.3*lastNoise.master).toFixed(3)+')';
+    } else {
+      c.style.filter='';
+    }
+  }
+  function handleNoise(msg){
+    var master=Number(msg.master);
+    if(!Number.isFinite(master)) return;
+    master=Math.min(1,Math.max(0,master));
+    lastNoise={master:master};
+    lastNoiseAt=Date.now();
+    var types=[];
+    if(Array.isArray(msg.layers)){
+      msg.layers.forEach(function(l){ if(l&&l.on&&typeof l.type==='string'&&l.type) types.push(l.type); });
+      if(!types.length) msg.layers.forEach(function(l){ if(l&&typeof l.type==='string'&&l.type) types.push(l.type); });
+    }
+    lineNoise.textContent='Noise: master '+master.toFixed(2)+' / '+(types.length?types.join(' / '):'—')+' / '+(msg.playing===true?'再生中':'停止');
+    refreshNoiseFilter();
+  }
+  function handleMeikyo(msg){
+    var bpm=Number(msg.bpm);
+    var genre=(typeof msg.genre==='string'&&msg.genre)?msg.genre:((typeof msg.genreName==='string'&&msg.genreName)?msg.genreName:'—');
+    var playing=(msg.playing===true||msg.isPlaying===true);
+    lineMeikyo.textContent='♪ Meikyoshisui: '+(Number.isFinite(bpm)?String(bpm):'—')+' BPM / '+genre+' / '+(playing?'再生中':'停止');
+  }
+  function onMessage(ev){
+    var msg=ev&&ev.data;
+    if(!msg||typeof msg!=='object') return;
+    if(msg.app==='yayoi') return; /* ignore own app (incl. other Yayoi tabs) */
+    if(msg.type==='seed-sync'){
+      if(msg.master===undefined||msg.master===null||String(msg.master).trim()==='') return;
+      applySeedSync(String(msg.master));
+      return;
+    }
+    if(msg.type!=='state') return;
+    if(msg.app==='noise') handleNoise(msg);
+    else if(msg.app==='meikyoshisui') handleMeikyo(msg);
+  }
+  function startLink(){
+    if(channel||typeof BroadcastChannel==='undefined') return;
+    try{ channel=new BroadcastChannel('varelser-link-v1'); }catch(e){ channel=null; return; }
+    channel.onmessage=onMessage;
+    syncBtn.disabled=false;
+    lastSentSeed=null;
+    sendState();
+    loopTimer=setInterval(function(){ sendState(); refreshNoiseFilter(); },250);
+  }
+  function stopLink(){
+    if(loopTimer){ clearInterval(loopTimer); loopTimer=null; }
+    if(channel){ try{ channel.onmessage=null; channel.close(); }catch(e){} channel=null; }
+    syncBtn.disabled=true;
+    lastNoise=null; lastNoiseAt=0;
+    clearCanvasFilter();
+    lineNoise.textContent='Noise: —';
+    lineMeikyo.textContent='♪ Meikyoshisui: —';
+  }
+
+  var syncBtnTimer=null;
+  syncBtn.addEventListener('click', function(){
+    if(!channel) return;
+    var seed=readCurrentSeed();
+    if(seed===null){ syncBtn.textContent='シード未取得'; }
+    else{
+      post({app:'yayoi', type:'seed-sync', ts:Date.now(), master:String(seed)});
+      syncBtn.textContent='同期を送信しました';
+    }
+    if(syncBtnTimer) clearTimeout(syncBtnTimer);
+    syncBtnTimer=setTimeout(function(){ syncBtn.textContent='シードを全アプリに同期'; },1600);
+  });
+
+  var savedOn=false;
+  try{ savedOn=localStorage.getItem(LINK_KEY)==='1'; }catch(e){}
+  toggleEl.checked=savedOn;
+  if(savedOn) startLink();
+  toggleEl.addEventListener('change', function(){
+    try{ localStorage.setItem(LINK_KEY, toggleEl.checked?'1':'0'); }catch(e){}
+    if(toggleEl.checked) startLink(); else stopLink();
+  });
+})();
+</script>
+<!-- ══════════ /Varelser Link ══════════ -->
 </body>
 </html>

@@ -2189,5 +2189,255 @@
       init();
     })();
   </script>
+  <!-- Varelser Link (additive): cross-app BroadcastChannel sync for Lien. Default OFF; when OFF no channel is opened and behaviour is unchanged. -->
+  <script>
+  (function () {
+    'use strict';
+    var VL_CHANNEL = 'varelser-link-v1';
+    var VL_STORAGE_KEY = 'lien.varelserLink.v1';
+    var LIEN_CONFIG_KEY = 'lien.config.v1';
+
+    /* --- SeedWorks-compatible deterministic derivation (verbatim algorithms) --- */
+    function hashSeedString(s) { var h = 0x811C9DC5; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; }
+    function splitmix32(a) { return function () { a |= 0; a = (a + 0x9E3779B9) | 0; var t = (a ^ (a >>> 16)) >>> 0; t = Math.imul(t, 0x21F0AAAD); t = (t ^ (t >>> 15)) >>> 0; t = Math.imul(t, 0x735A2D97); t = (t ^ (t >>> 15)) >>> 0; return t >>> 0; }; }
+    function mulberry32(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+    function streamFor(hash, tag) { var th = hashSeedString(tag); var sm = splitmix32((hash ^ th) >>> 0); return mulberry32(sm()); }
+    /* EXACTLY SeedWorks parseMasterSeed's hash: numeric string -> (Number>>>0)||1, else hashSeedString||1 (input trimmed first, empty -> null). */
+    function masterHash(raw) {
+      var t = String(raw).trim();
+      if (t === '') return null;
+      if (/^-?\d+$/.test(t)) { var n = Number(t); return (n >>> 0) || 1; }
+      return hashSeedString(t) || 1;
+    }
+    function deriveLienSeed(master) {
+      var h = masterHash(master);
+      if (h === null) return null;
+      var r = streamFor(h, 'lien');
+      r(); /* SeedWorks derive() consumes the 1st value for its preset pick, then draws the seed — consume identically so sync matches SeedWorks (master '20261114' -> 81434) */
+      return 1 + Math.floor(r() * 99999);
+    }
+    window.__varelserLinkDerive = deriveLienSeed;
+
+    /* --- Lien accessors (state.config lives in Lien's IIFE closure; the supported
+           external surface is the DOM + persisted config):
+           seed slider #seedInput, Random #randomSeedBtn, canvas #viewCanvas,
+           persisted config localStorage 'lien.config.v1'. --- */
+    function readSeed() {
+      var inp = document.getElementById('seedInput');
+      if (inp) { var v = parseInt(inp.value, 10); if (Number.isFinite(v)) return v; }
+      var cfg = readSavedConfig();
+      if (cfg && Number.isFinite(Number(cfg.seed))) return Math.round(Number(cfg.seed));
+      return null;
+    }
+    function readSavedConfig() {
+      try {
+        var raw = window.localStorage.getItem(LIEN_CONFIG_KEY);
+        if (!raw) return null;
+        var parsed = JSON.parse(raw);
+        return (parsed && typeof parsed === 'object') ? parsed : null;
+      } catch (e) { return null; }
+    }
+    function configFingerprint() {
+      var raw = null;
+      try { raw = window.localStorage.getItem(LIEN_CONFIG_KEY); } catch (e) { /* ignore */ }
+      return (raw || '') + '|seed=' + readSeed() + '|preset=' + (lastPreset || '');
+    }
+    /* Apply through Lien's own path: pointerdown on #seedInput captures the Undo
+       snapshot (Lien attaches captureUndo there for reset-keys), then setting the
+       value + dispatching 'input' runs Lien's slider handler -> setConfigValue('seed')
+       -> seed is a CONFIG_RESET_KEY, so the artwork restarts from the new seed. */
+    var applyingSeed = false;
+    var suppressSeedSyncUntil = 0;
+    function applyDerivedSeed(seed) {
+      applyingSeed = true;
+      suppressSeedSyncUntil = Date.now() + 2000;
+      lastPreset = null;
+      try {
+        var inp = document.getElementById('seedInput');
+        if (inp) {
+          try { inp.dispatchEvent(new Event('pointerdown', { bubbles: true })); } catch (e) { /* ignore */ }
+          inp.value = String(seed);
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+          /* Fallback: Lien's hashchange path (applyConfigPatch on #c= links). */
+          var cfg = readSavedConfig() || {};
+          cfg.seed = seed;
+          var b64 = btoa(unescape(encodeURIComponent(JSON.stringify(cfg)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+          window.location.hash = '#c=' + b64;
+        }
+      } catch (e) { /* ignore */ }
+      window.setTimeout(function () { applyingSeed = false; }, 100);
+    }
+
+    /* --- UI: one tiny section appended to the Configuration panel body
+           (#configPanel .panel-body.config-scroll, after the Shortcuts group),
+           reusing Lien's own panel classes (group / group-title / checkbox-row /
+           mini-btn / small-label). --- */
+    var styleEl = document.createElement('style');
+    styleEl.textContent = '#varelserLinkSection .vl-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;}' +
+      '#varelserLinkSection .vl-status{margin:4px 0 0;line-height:1.5;overflow-wrap:anywhere;}';
+    document.head.appendChild(styleEl);
+
+    var section = document.createElement('section');
+    section.className = 'group';
+    section.id = 'varelserLinkSection';
+    section.innerHTML =
+      '<h3 class="group-title">Varelser Link</h3>' +
+      '<label class="checkbox-row" for="varelserLinkToggle"><span>Varelser Link 送受信</span>' +
+      '<input id="varelserLinkToggle" class="checkbox-input" type="checkbox" /></label>' +
+      '<div class="vl-row"><span class="small-label" style="margin:0;">現在のシードを他アプリへ</span>' +
+      '<button id="varelserLinkSyncBtn" class="mini-btn" type="button">シードを全アプリに同期</button></div>' +
+      '<div id="varelserLinkNoiseStatus" class="small-label vl-status">Noise: —</div>' +
+      '<div id="varelserLinkMeikyoStatus" class="small-label vl-status">♪ Meikyoshisui: —</div>';
+    var panelBody = document.querySelector('#configPanel .config-scroll') || document.getElementById('configPanel');
+    if (panelBody) panelBody.appendChild(section);
+
+    var toggleEl = document.getElementById('varelserLinkToggle');
+    var syncBtn = document.getElementById('varelserLinkSyncBtn');
+    var noiseStatusEl = document.getElementById('varelserLinkNoiseStatus');
+    var meikyoStatusEl = document.getElementById('varelserLinkMeikyoStatus');
+    var viewCanvas = document.getElementById('viewCanvas');
+
+    /* --- Link state --- */
+    var channel = null;
+    var pollTimer = null;
+    var freshTimer = null;
+    var debounceTimer = null;
+    var lastSentFingerprint = null;
+    var lastPreset = null;
+    var lastNoise = null; /* {data, receivedAt} */
+    window.__varelserLinkLastNoise = null;
+
+    function isOn() { return !!(toggleEl && toggleEl.checked); }
+
+    function postState() {
+      if (!channel) return;
+      var seed = readSeed();
+      if (seed === null) return;
+      var msg = { app: 'lien', type: 'state', ts: Date.now(), seed: seed };
+      if (lastPreset) msg.preset = lastPreset;
+      try { channel.postMessage(msg); } catch (e) { /* ignore */ }
+      lastSentFingerprint = configFingerprint();
+    }
+    function scheduleStatePost() {
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(postState, 250);
+    }
+    function postSeedSync() {
+      if (!channel) return;
+      if (Date.now() < suppressSeedSyncUntil) return; /* never echo an applied seed-sync */
+      var seed = readSeed();
+      if (seed === null) return;
+      try { channel.postMessage({ app: 'lien', type: 'seed-sync', ts: Date.now(), master: String(seed) }); } catch (e) { /* ignore */ }
+    }
+
+    function clamp01(v) { var n = Number(v); return Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0; }
+
+    function refreshNoiseModulation() {
+      if (!viewCanvas) viewCanvas = document.getElementById('viewCanvas');
+      if (!viewCanvas) return;
+      var fresh = isOn() && lastNoise && (Date.now() - lastNoise.receivedAt < 1500) &&
+        typeof lastNoise.data.master === 'number' && Number.isFinite(lastNoise.data.master);
+      if (fresh) {
+        /* Non-destructive: CSS filter only; Lien's saved config is never mutated. */
+        viewCanvas.style.filter = 'brightness(' + (0.85 + 0.3 * clamp01(lastNoise.data.master)).toFixed(3) + ')';
+      } else {
+        viewCanvas.style.filter = '';
+      }
+    }
+
+    function onMessage(event) {
+      var msg = event && event.data;
+      if (!msg || typeof msg !== 'object') return;
+      if (msg.app === 'lien') return; /* ignore own app (incl. other Lien tabs) */
+      if (msg.type === 'seed-sync') {
+        if (msg.master === null || typeof msg.master === 'undefined') return;
+        var derived = deriveLienSeed(msg.master);
+        if (derived === null) return;
+        if (derived === readSeed()) return;
+        applyDerivedSeed(derived);
+        return;
+      }
+      if (msg.type !== 'state') return;
+      if (msg.app === 'noise') {
+        lastNoise = { data: msg, receivedAt: Date.now() };
+        window.__varelserLinkLastNoise = msg;
+        var layerName = '—';
+        if (Array.isArray(msg.layers) && msg.layers.length) {
+          var onLayer = null;
+          for (var i = 0; i < msg.layers.length; i++) { if (msg.layers[i] && msg.layers[i].on) { onLayer = msg.layers[i]; break; } }
+          var chosen = onLayer || msg.layers[0];
+          if (chosen && typeof chosen.type === 'string' && chosen.type) layerName = chosen.type;
+        }
+        var masterTxt = (typeof msg.master === 'number' && Number.isFinite(msg.master)) ? msg.master.toFixed(2) : '—';
+        if (noiseStatusEl) noiseStatusEl.textContent = 'Noise: master ' + masterTxt + ' / ' + layerName + ' / ' + (msg.playing ? '再生中' : '停止');
+        refreshNoiseModulation();
+        return;
+      }
+      if (msg.app === 'meikyoshisui' || msg.app === 'meikyo') {
+        var bpm = (typeof msg.bpm === 'number' && Number.isFinite(msg.bpm)) ? String(Math.round(msg.bpm)) : '—';
+        var genre = (typeof msg.genre === 'string' && msg.genre) ? msg.genre :
+          ((typeof msg.genreName === 'string' && msg.genreName) ? msg.genreName :
+          ((typeof msg.genreId === 'string' && msg.genreId) ? msg.genreId : '—'));
+        var playing = (typeof msg.playing === 'boolean') ? msg.playing : !!msg.isPlaying;
+        if (meikyoStatusEl) meikyoStatusEl.textContent = '♪ Meikyoshisui: ' + bpm + ' BPM / ' + genre + ' / ' + (playing ? '再生中' : '停止');
+        return;
+      }
+    }
+
+    function startLink() {
+      if (channel || typeof BroadcastChannel === 'undefined') return;
+      try { channel = new BroadcastChannel(VL_CHANNEL); } catch (e) { channel = null; return; }
+      channel.onmessage = onMessage;
+      lastSentFingerprint = configFingerprint();
+      postState();
+      pollTimer = window.setInterval(function () {
+        if (configFingerprint() !== lastSentFingerprint) scheduleStatePost();
+      }, 500);
+      freshTimer = window.setInterval(refreshNoiseModulation, 250);
+    }
+    function stopLink() {
+      window.clearTimeout(debounceTimer);
+      if (pollTimer) { window.clearInterval(pollTimer); pollTimer = null; }
+      if (freshTimer) { window.clearInterval(freshTimer); freshTimer = null; }
+      if (channel) { try { channel.onmessage = null; channel.close(); } catch (e) { /* ignore */ } channel = null; }
+      lastNoise = null;
+      window.__varelserLinkLastNoise = null;
+      refreshNoiseModulation(); /* isOn() is false here, so this removes the filter */
+    }
+
+    /* Preset tracking for the optional `preset` field of state messages. */
+    var presetBtns = document.querySelectorAll('[data-preset]');
+    for (var pi = 0; pi < presetBtns.length; pi++) {
+      presetBtns[pi].addEventListener('click', function (event) {
+        lastPreset = event.currentTarget.getAttribute('data-preset');
+      });
+    }
+    var defaultsBtn = document.getElementById('defaultsBtn');
+    if (defaultsBtn) defaultsBtn.addEventListener('click', function () { lastPreset = null; });
+    var seedInputEl = document.getElementById('seedInput');
+    if (seedInputEl) seedInputEl.addEventListener('input', function () { if (!applyingSeed) lastPreset = null; });
+
+    /* Random seed while ON also acts as an explicit seed-sync. Lien's own Random
+       handler was registered first, so the new seed is already applied (and shown
+       in #seedInput) by the time this listener runs. Poll-detected seed changes
+       alone only produce 'state', never 'seed-sync'. */
+    var randomBtn = document.getElementById('randomSeedBtn');
+    if (randomBtn) randomBtn.addEventListener('click', function () { if (isOn()) postSeedSync(); });
+    if (syncBtn) syncBtn.addEventListener('click', function () { if (isOn()) postSeedSync(); });
+
+    if (toggleEl) {
+      var savedOn = false;
+      try { savedOn = window.localStorage.getItem(VL_STORAGE_KEY) === '1'; } catch (e) { /* ignore */ }
+      toggleEl.checked = savedOn;
+      if (typeof BroadcastChannel === 'undefined') { toggleEl.disabled = true; }
+      toggleEl.addEventListener('change', function () {
+        try { window.localStorage.setItem(VL_STORAGE_KEY, toggleEl.checked ? '1' : '0'); } catch (e) { /* ignore */ }
+        if (toggleEl.checked) startLink(); else stopLink();
+      });
+      if (savedOn) startLink();
+    }
+  })();
+  </script>
 </body>
 </html>
