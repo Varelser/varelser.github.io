@@ -458,6 +458,65 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+
+<style id="leary-lien-v2">
+/* ==== leary-lien-v2: Lien layout — artwork first, panel floats ====
+   Layout only. Generation core, state, export sizes untouched. */
+#app{display:grid;grid-template-rows:56px minmax(0,1fr) 52px;grid-template-columns:minmax(0,1fr);height:100%;position:relative}
+.leary2-header{grid-row:1;display:flex;align-items:center;justify-content:center;position:relative;background:#000;z-index:40;user-select:none}
+.leary2-title{font-size:14px;font-weight:300;letter-spacing:.2em;color:rgba(255,255,255,.78)}
+.viewer{grid-row:2;min-height:0}
+.canvas-wrap{padding:0}
+.viewer::before{display:none}
+.viewer-top{top:12px;left:12px;right:12px;z-index:20}
+.pill{min-height:30px;padding:5px 11px;font-size:10.5px}
+/* Panel becomes a floating sheet above the 設定 button (Lien/TOPO pattern) */
+.panel{position:absolute;left:24px;bottom:64px;top:auto;width:min(356px,calc(100vw - 32px));max-height:calc(100vh - 140px);z-index:60;border:0;border-radius:12px;background:rgba(8,8,8,.97);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 25px 50px -12px rgba(0,0,0,.75);padding:14px 14px 26px;animation:leary2Up .2s ease-out}
+@keyframes leary2Up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.panel::after{display:none}
+body:not(.leary2-panel-open) .panel{display:none}
+.panel-head{display:none}
+.footer-space{display:none}
+.panel .toolbar{display:none}
+/* Bottom toolbar: text buttons only, primary keeps white fill */
+.leary2-toolbar{grid-row:3;display:flex;align-items:center;gap:4px;padding:0 16px 0 24px;background:#000;z-index:40;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap}
+.leary2-toolbar::-webkit-scrollbar{display:none}
+.leary2-toolbar .btn{border:0;background:transparent;border-radius:6px;padding:7px 10px;font-size:12px;letter-spacing:.08em;color:rgba(255,255,255,.85);transform:none;box-shadow:none;flex:0 0 auto}
+.leary2-toolbar .btn:hover{background:rgba(255,255,255,.10);transform:none}
+.leary2-toolbar .btn.primary{background:#fff;color:#000}
+.leary2-toolbar .btn.primary:hover{background:#e8e8e8}
+.leary2-toggle{font-weight:600}
+.leary2-spacer{flex:1 0 12px}
+.leary2-status{font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;flex:0 0 auto;padding-right:6px}
+.panel{width:min(200px,calc(100vw - 32px))}
+.panel .section{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px 6px;align-items:start;padding:9px 9px 10px;margin-bottom:8px}
+.panel .section>h3{grid-column:1/-1;font-size:11px;margin-bottom:1px}
+.panel .section>.row{display:flex;flex-direction:column;gap:2px;margin-bottom:0;min-width:0}
+.panel .section>.row>*:first-child{font-size:8px;line-height:1.15;letter-spacing:-.02em;color:rgba(255,255,255,.55);white-space:normal;overflow-wrap:anywhere;min-width:0}
+.panel .row input[type="number"],.panel .row input[type="text"],.panel .row select{width:100%;padding:2px 3px;font-size:10px;min-width:0}
+.panel .section>.row input[type="color"]{width:100%;height:20px;padding:0}
+.panel .section>.row:has(> select){grid-column:span 2}
+.panel .metrics{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.panel .metric{padding:3px 4px;font-size:8px}
+.panel .metric b,.panel .metric strong,.panel .metric .val{font-size:10px}
+.panel .grid-preset{grid-column:1/-1;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.panel .grid-preset .btn,.panel .btn.small{padding:4px 2px;font-size:10.5px}
+.panel .grid-2{grid-column:1/-1;gap:6px}
+.panel .grid-2 .row{grid-template-columns:16px minmax(0,1fr);gap:4px}
+.panel .switches{grid-column:1/-1}
+.panel .section-note,.panel .hint{grid-column:1/-1;font-size:9px;line-height:1.5}
+.panel .colors{grid-column:1/-1}
+.panel .color-item{display:grid;grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 20px;gap:5px;align-items:center}
+.panel .color-item input{padding:2px 3px;min-width:0}
+.panel .color-item input[type="color"]{width:100%;min-width:0;padding:0;height:20px}
+.panel .section>.inline{grid-column:1/-1}
+.panel #vlBox{overflow:hidden;overflow-wrap:anywhere;font-size:10.5px}
+@media (max-width:640px){
+  .panel{left:16px;bottom:60px}
+  .leary2-toolbar{padding:0 8px 0 16px}
+  .leary2-status{display:none}
+}
+</style>
 </head>
 <body>
 <div id="app">
@@ -796,8 +855,10 @@
     return colors[i % colors.length];
   }
 
-  function linePoints(lineX, startY, endY, cfg, swirls){
-    const pts = [];
+  const _lineBuf = { data: new Float64Array(16384) };
+  function linePointsInto(lineX, startY, endY, cfg, swirls){
+    let buf = _lineBuf.data;
+    let n = 0;
     const maxRad = Math.PI * cfg.swirlStrength;
     const s = Math.max(0.1, cfg.verticalStretch);
     const stretchFactor = 1.0 / s;
@@ -808,47 +869,83 @@
     const maxTurbulenceStep = cfg.turbulence > 0.1 ? (1.0 / (Math.max(0.001, cfg.turbulenceFreq) * 10)) : 100.0;
     const minStep = Math.max(0.1, cfg.segmentResolution);
     const maxStepAllowed = Math.min(50.0, maxTurbulenceStep);
+    const turbulence = cfg.turbulence;
+    const swirlStrength = cfg.swirlStrength;
+    const isVortex = cfg.swirlType === 'vortex';
+    const isAttract = cfg.swirlType === 'attract';
+    const turbCosX = turbulence > 0 ? Math.cos(lineX * turbFreqX) * turbulence : 0;
+    const swirlCount = swirls.length;
     let currentY = startY;
     while(currentY <= endY){
       let tx = lineX;
       let ty = currentY;
-      if(cfg.turbulence > 0){
-        tx += Math.sin(ty * turbFreqY) * cfg.turbulence;
-        ty += Math.cos(lineX * turbFreqX) * cfg.turbulence;
+      if(turbulence > 0){
+        tx += Math.sin(ty * turbFreqY) * turbulence;
+        ty += turbCosX;
       }
       let minDistToSwirlSq = Number.MAX_VALUE;
-      for(let j=0;j<swirls.length;j++){
+      for(let j=0;j<swirlCount;j++){
         const center = swirls[j];
-        const dx = tx - center.x;
-        const dy = (ty - center.y) * stretchFactor;
+        const cx = center.x;
+        const cy = center.y;
+        const dx = tx - cx;
+        const dy = (ty - cy) * stretchFactor;
         const distSq = dx*dx + dy*dy;
         if(distSq < minDistToSwirlSq) minDistToSwirlSq = distSq;
         const normDistSq = distSq / radiusSq;
         const falloff = 1 / (1 + normDistSq * safeTension);
         if(falloff > 0.00001){
-          const rdx = tx - center.x;
-          const rdy = ty - center.y;
-          if(cfg.swirlType === 'vortex'){
+          const rdx = dx;
+          const rdy = ty - cy;
+          if(isVortex){
             const angle = falloff * maxRad;
             const cosA = Math.cos(angle);
             const sinA = Math.sin(angle);
-            tx = center.x + cosA * rdx - sinA * rdy;
-            ty = center.y + sinA * rdx + cosA * rdy;
+            tx = cx + cosA * rdx - sinA * rdy;
+            ty = cy + sinA * rdx + cosA * rdy;
           } else {
-            const force = falloff * cfg.swirlStrength * 0.02;
-            if(cfg.swirlType === 'attract'){ tx -= rdx * force; ty -= rdy * force; }
+            const force = falloff * swirlStrength * 0.02;
+            if(isAttract){ tx -= rdx * force; ty -= rdy * force; }
             else { tx += rdx * force; ty += rdy * force; }
           }
         }
       }
-      if(Number.isFinite(tx) && Number.isFinite(ty)) pts.push([tx, ty]);
+      if(Number.isFinite(tx) && Number.isFinite(ty)){
+        if(n * 2 + 2 > buf.length){
+          const bigger = new Float64Array(buf.length * 2);
+          bigger.set(buf);
+          _lineBuf.data = bigger;
+          buf = bigger;
+        }
+        buf[n * 2] = tx;
+        buf[n * 2 + 1] = ty;
+        n++;
+      }
       const dist = Math.sqrt(minDistToSwirlSq);
       const dynamicStep = Math.max(minStep, Math.min(maxStepAllowed, dist * 0.2));
       currentY += dynamicStep;
       if(currentY > endY && currentY < endY + dynamicStep) currentY = endY;
       else if(currentY > endY) break;
     }
+    return n;
+  }
+
+  function linePoints(lineX, startY, endY, cfg, swirls){
+    const n = linePointsInto(lineX, startY, endY, cfg, swirls);
+    const buf = _lineBuf.data;
+    const pts = [];
+    for(let k=0;k<n;k++) pts.push([buf[k * 2], buf[k * 2 + 1]]);
     return pts;
+  }
+
+  function strokeLine(context, lineX, startY, endY, cfg, swirls){
+    const n = linePointsInto(lineX, startY, endY, cfg, swirls);
+    if(n < 2) return;
+    const buf = _lineBuf.data;
+    context.beginPath();
+    context.moveTo(buf[0], buf[1]);
+    for(let k=1;k<n;k++) context.lineTo(buf[k * 2], buf[k * 2 + 1]);
+    context.stroke();
   }
 
   function drawPolyline(context, points){
@@ -937,7 +1034,7 @@
         pctx.strokeStyle = colorDef.hex;
         const baseW = previewCfg.lineWidthMin + widths[i] * (previewCfg.lineWidthMax - previewCfg.lineWidthMin);
         pctx.lineWidth = Math.max(0.01, baseW * colorWidthFactor(colorDef));
-        drawPolyline(pctx, linePoints(xs[i], startY, endY, previewCfg, swirls));
+        strokeLine(pctx, xs[i], startY, endY, previewCfg, swirls);
       }
       updateStatus('描画中', end / count);
       compositePreview();
@@ -955,8 +1052,12 @@
   }
 
   function compositePreview(){
-    canvas.width = state.size.width;
-    canvas.height = state.size.height;
+    /* perf (bit-identical): setting canvas.width/height clears and
+       reallocates the bitmap even when the value is unchanged, and this
+       runs per animation frame during pan/zoom. Resize only on change;
+       every state the reset used to clear is set explicitly below. */
+    if(canvas.width !== state.size.width) canvas.width = state.size.width;
+    if(canvas.height !== state.size.height) canvas.height = state.size.height;
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.setTransform(state.view.zoom,0,0,state.view.zoom,state.view.x,state.view.y);
@@ -1040,9 +1141,14 @@
   function updateOverlay(){
     const activeEl = document.activeElement;
     const activeId = activeEl && activeEl.dataset && activeEl.dataset.id ? activeEl.dataset.id : null;
-    overlay.innerHTML = '';
     $('statusSwirls').textContent = String(state.swirls.length);
     $('viewInfo').textContent = `zoom ${state.view.zoom.toFixed(2)} / x ${Math.round(state.view.x)} / y ${Math.round(state.view.y)}`;
+    /* perf (bit-identical): rebuilding the source markers is wasted work
+       when swirls, view and stage size are all unchanged. */
+    const _ovSig = state.swirls.map(sw => sw.id + ':' + sw.x + ',' + sw.y).join('|') + '#' + state.view.x + ',' + state.view.y + ',' + state.view.zoom + '#' + stage.style.width + 'x' + stage.style.height;
+    if(state._ovSig === _ovSig && overlay.childElementCount === state.swirls.length) return;
+    state._ovSig = _ovSig;
+    overlay.innerHTML = '';
     state.swirls.forEach((swirl, idx) => {
       const p = worldToScreen(swirl.x, swirl.y);
       const el = document.createElement('div');
@@ -1600,7 +1706,7 @@
         context.strokeStyle = colorDef.hex;
         const baseW = cfg.lineWidthMin + widths[i] * (cfg.lineWidthMax - cfg.lineWidthMin);
         context.lineWidth = Math.max(0.01, baseW * colorWidthFactor(colorDef));
-        drawPolyline(context, linePoints(xs[i], startY, endY, cfg, swirls));
+        strokeLine(context, xs[i], startY, endY, cfg, swirls);
       }
       updateStatus(progressLabel, end / Math.max(1, count));
       await new Promise(requestAnimationFrame);
@@ -1919,6 +2025,425 @@
   );
   const head = document.querySelector('.panel-head');
   if (head && head.parentNode) head.parentNode.insertBefore(tools, head.nextSibling);
+})();
+</script>
+
+<script id="leary-lien-v2-script">
+/* leary-lien-v2: move Leary to the Lien shell — 56px header, full-area
+   canvas, bottom text toolbar, floating settings panel (closed by
+   default so the artwork opens large). Additive: existing buttons keep
+   their core listeners because the same elements are re-parented. */
+(() => {
+  'use strict';
+  const app = document.getElementById('app');
+  const panel = document.querySelector('aside.panel');
+  const viewer = document.getElementById('viewer');
+  if (!app || !panel || !viewer) return;
+
+  const header = document.createElement('header');
+  header.className = 'leary2-header';
+  header.innerHTML = '<div class="leary2-title">LEARY</div>';
+  app.insertBefore(header, app.firstChild);
+
+  const bar = document.createElement('nav');
+  bar.className = 'leary2-toolbar';
+  bar.setAttribute('aria-label', 'Leary toolbar');
+
+  const toggle = document.createElement('button');
+  toggle.className = 'btn leary2-toggle';
+  toggle.type = 'button';
+  toggle.textContent = '設定';
+  toggle.setAttribute('aria-expanded', 'false');
+  bar.appendChild(toggle);
+
+  const status = document.createElement('span');
+  status.className = 'leary2-status';
+  status.id = 'leary2Status';
+
+  const move = (id) => { const el = document.getElementById(id); if (el) bar.appendChild(el); return el; };
+  move('btnRandomize');
+  move('btnResetView');
+  const spacer = document.createElement('span'); spacer.className = 'leary2-spacer'; bar.appendChild(spacer);
+  bar.appendChild(status);
+  move('btnExportViewPng');
+  move('btnExportSvg');
+  move('btnExportSettings');
+  move('btnImportSettings');
+  move('btnExportPng');
+  app.appendChild(bar);
+
+  const setOpen = (open) => {
+    document.body.classList.toggle('leary2-panel-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    if (window.__leary2Resize) window.__leary2Resize();
+  };
+  toggle.addEventListener('click', () => setOpen(!document.body.classList.contains('leary2-panel-open')));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+
+  /* Canvas sizing uses the viewer box; tell it to refit after the shell
+     is in place and on the next frame (fonts/layout settle). */
+  const refit = () => window.dispatchEvent(new Event('resize'));
+  window.__leary2Resize = refit;
+  requestAnimationFrame(refit);
+  setTimeout(refit, 250);
+
+
+  /* ============ Leary power-up features (additive) ============ */
+  const $id = (i) => document.getElementById(i);
+  const toast = (msg) => {
+    let t = $id('leary2Toast');
+    if (!t) { t = document.createElement('div'); t.id = 'leary2Toast';
+      t.style.cssText = 'position:fixed;left:50%;bottom:70px;transform:translateX(-50%);background:rgba(10,10,10,.92);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 14px;font-size:12px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s';
+      document.body.appendChild(t); }
+    t.textContent = msg; t.style.opacity = '1';
+    clearTimeout(t._h); t._h = setTimeout(() => { t.style.opacity = '0'; }, 2400);
+  };
+  const NUMCFG = ['lineCount','lineWidthMin','lineWidthMax','opacity','flowCoverage','generationWidth','segmentResolution','batchLines','swirlRadius','swirlStrength','curveTension','turbulence','turbulenceFreq','verticalStretch'];
+  const SELCFG = { swirlType: 'swirlType', renderShape: 'renderShape', colorMode: 'colorMode' };
+  const snapshotSettings = () => {
+    const cfg = {};
+    NUMCFG.forEach(k => { const el = $id(k); if (el) cfg[k] = Number(el.value); });
+    Object.keys(SELCFG).forEach(k => { const el = $id(k); if (el) cfg[k] = el.value; });
+    const bg = $id('bgColor'); if (bg) cfg.bgColor = bg.value;
+    const bt = $id('bgTransparent'); if (bt) cfg.bgTransparent = bt.checked;
+    cfg.colors = Array.from(document.querySelectorAll('#colors .color-item')).map(item => {
+      const ins = item.querySelectorAll('input');
+      return { hex: ins[0].value, weight: Number(ins[1].value) || 1, width: Number(ins[2].value) || 1 };
+    });
+    const o = { app: 'Leary', version: 1, config: cfg };
+    const seed = $id('seedInput'); if (seed && seed.value !== '') o.seed = Number(seed.value);
+    const w = $id('width'), h = $id('height');
+    if (w && h) o.size = { width: Number(w.value), height: Number(h.value) };
+    const num = (id, key) => { const el = $id(id); if (el) o[key] = Number(el.value); };
+    num('exportScale', 'exportScale'); num('previewScale', 'previewScale');
+    num('exportSupersample', 'exportSupersample'); num('exportBatchLines', 'exportBatchLines');
+    const q = $id('exportQuality'); if (q) o.exportQuality = q.value;
+    const ap = $id('exportAutoProtect'); if (ap) o.exportAutoProtect = ap.checked;
+    return o;
+  };
+  const applySettings = (obj) => {
+    const sf = $id('settingsFile'); if (!sf) return false;
+    const file = new File([JSON.stringify(obj)], 'leary-settings.json', { type: 'application/json' });
+    const dt = new DataTransfer(); dt.items.add(file);
+    sf.files = dt.files; sf.dispatchEvent(new Event('change', { bubbles: true }));
+    setTimeout(() => { try { histPush(); } catch (e) {} }, 1000);
+    return true;
+  };
+  const waitRenderDone = (timeoutMs) => new Promise((resolve) => {
+    const t0 = Date.now(); let stable = 0;
+    const iv = setInterval(() => {
+      const done = $id('statusRender') && $id('statusRender').textContent.trim() === '待機'
+        && $id('statusProgress') && $id('statusProgress').textContent.trim() === '100%';
+      if (Date.now() - t0 > 700) { stable = done ? stable + 1 : 0; if (stable >= 2) { clearInterval(iv); resolve(true); } }
+      if (Date.now() - t0 > (timeoutMs || 60000)) { clearInterval(iv); resolve(false); }
+    }, 200);
+  });
+
+  /* ---- toolbar: share link + fullscreen ---- */
+  const mkBtn = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = label; b.addEventListener('click', fn); return b; };
+  bar.appendChild(mkBtn('共有リンク', async () => {
+    try {
+      const json = JSON.stringify(snapshotSettings());
+      const enc = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const url = location.origin + location.pathname + '#s=' + enc;
+      await navigator.clipboard.writeText(url);
+      toast('共有リンクをコピーしました（開くと設定が復元されます）');
+    } catch (e) { toast('共有リンクの作成に失敗しました'); }
+  }));
+  if (location.hash.indexOf('#s=') === 0) {
+    try {
+      let b64 = location.hash.slice(3).replace(/-/g, '+').replace(/_/g, '/'); while (b64.length % 4) b64 += '='; const json = decodeURIComponent(escape(atob(b64)));
+      const obj = JSON.parse(json);
+      setTimeout(() => { if (applySettings(obj)) toast('共有リンクの設定を復元しました'); }, 900);
+    } catch (e) {}
+  }
+
+  /* ---- extension section in the panel ---- */
+  const ext = document.createElement('div'); ext.className = 'section';
+  const extH = document.createElement('h3'); extH.textContent = '拡張'; ext.appendChild(extH);
+  const extGrid = document.createElement('div'); extGrid.className = 'grid-preset'; extGrid.style.gridColumn = '1 / -1';
+  ext.appendChild(extGrid);
+  const extBtn = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small'; b.textContent = label; b.addEventListener('click', fn); extGrid.appendChild(b); return b; };
+
+  const RANGES = { lineCount:[100,4000], lineWidthMin:[0.2,3], lineWidthMax:[1,9], opacity:[0.2,1], flowCoverage:[0.5,8], generationWidth:[0.5,8], segmentResolution:[0.3,3], swirlRadius:[250,3200], swirlStrength:[0.2,3.2], curveTension:[0,1.6], turbulence:[0,70], turbulenceFreq:[0.002,0.05], verticalStretch:[0.5,2] };
+  const SAN = { lineCount:[1,30000], lineWidthMin:[0.1,50], lineWidthMax:[0.1,50], opacity:[0,1], flowCoverage:[0.1,20], generationWidth:[0.1,20], segmentResolution:[0.1,20], batchLines:[10,4000], swirlRadius:[1,10000], swirlStrength:[0,10], curveTension:[0,10], turbulence:[0,200], turbulenceFreq:[0.0001,1], verticalStretch:[0.1,10] };
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const hex2 = (n) => Math.round(Math.max(0, Math.min(255, n))).toString(16).padStart(2, '0');
+  const grayHex = (v) => '#' + hex2(v) + hex2(v) + hex2(v);
+  const hslHex = (h, s, l) => { const c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2; let r = 0, g = 0, b = 0;
+    if (h < 60) { r = c; g = x; } else if (h < 120) { r = x; g = c; } else if (h < 180) { g = c; b = x; } else if (h < 240) { g = x; b = c; } else if (h < 300) { r = x; b = c; } else { r = c; b = x; }
+    return '#' + hex2((r + m) * 255) + hex2((g + m) * 255) + hex2((b + m) * 255); };
+
+  extBtn('ランダム設定', () => {
+    const o = snapshotSettings(); const cfg = o.config;
+    Object.keys(RANGES).forEach(k => { cfg[k] = Math.round(rnd(RANGES[k][0], RANGES[k][1]) * 100) / 100; });
+    cfg.lineCount = Math.round(cfg.lineCount); if (cfg.lineWidthMax < cfg.lineWidthMin) cfg.lineWidthMax = cfg.lineWidthMin + 0.5;
+    cfg.swirlType = pick(['vortex', 'attract', 'repel']); cfg.renderShape = pick(['rect', 'circle']); cfg.colorMode = pick(['sequence', 'linear', 'weighted']);
+    if (Math.random() < 0.55) { const dark = Math.random() < 0.7; cfg.bgColor = dark ? '#000000' : '#f2efe9';
+      const n = 2 + Math.floor(Math.random() * 3); cfg.colors = Array.from({ length: n }, () => ({ hex: grayHex(dark ? rnd(120, 255) : rnd(0, 110)), weight: 1, width: 1 }));
+    } else { const hue = rnd(0, 360); const dark = Math.random() < 0.65; cfg.bgColor = hslHex(hue, 0.35, dark ? 0.05 : 0.92);
+      const n = 2 + Math.floor(Math.random() * 3); cfg.colors = Array.from({ length: n }, (_, i) => ({ hex: hslHex((hue + i * rnd(15, 60)) % 360, rnd(0.35, 0.8), dark ? rnd(0.45, 0.85) : rnd(0.15, 0.5)), weight: 1, width: 1 })); }
+    o.seed = Math.floor(rnd(1, 999999999));
+    applySettings(o); toast('ランダム設定を適用しました');
+  });
+  extBtn('微変異', () => {
+    const o = snapshotSettings(); const cfg = o.config;
+    Object.keys(SAN).forEach(k => { if (typeof cfg[k] === 'number') { const f = rnd(0.86, 1.17); cfg[k] = Math.max(SAN[k][0], Math.min(SAN[k][1], Math.round(cfg[k] * f * 100) / 100)); } });
+    cfg.lineCount = Math.round(cfg.lineCount); cfg.batchLines = Math.round(cfg.batchLines);
+    if (Math.random() < 0.2) cfg.swirlType = pick(['vortex', 'attract', 'repel']);
+    applySettings(o); toast('微変異を適用しました');
+  });
+
+  /* undo / redo */
+  const hist = { stack: [], idx: -1, busy: false };
+  const histPush = () => { if (hist.busy) return; const s = JSON.stringify(snapshotSettings());
+    if (hist.stack[hist.idx] === s) return; hist.stack = hist.stack.slice(0, hist.idx + 1); hist.stack.push(s); if (hist.stack.length > 60) hist.stack.shift(); hist.idx = hist.stack.length - 1; };
+  let histTimer = null;
+  panel.addEventListener('input', () => { clearTimeout(histTimer); histTimer = setTimeout(histPush, 700); });
+  setTimeout(histPush, 1200);
+  const histGo = (d) => { const n = hist.idx + d; if (n < 0 || n >= hist.stack.length) { toast(d < 0 ? 'これ以上戻れません' : 'これ以上進めません'); return; }
+    hist.idx = n; hist.busy = true; applySettings(JSON.parse(hist.stack[n])); setTimeout(() => { hist.busy = false; }, 900); toast(d < 0 ? '元に戻しました' : 'やり直しました'); };
+  extBtn('元に戻す', () => histGo(-1));
+  extBtn('やり直す', () => histGo(1));
+
+  /* preview canvas copy / share */
+  const canvasBlob = () => new Promise(res => $id('canvas').toBlob(res, 'image/png'));
+  extBtn('PNGコピー', async () => { try { const b = await canvasBlob(); await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); toast('表示中のPNGをコピーしました'); } catch (e) { toast('コピーできませんでした'); } });
+  extBtn('共有', async () => { try { const b = await canvasBlob(); const f = new File([b], 'leary.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f] }); else toast('この環境では共有が使えません'); } catch (e) {} });
+
+  /* download router: send the next core download to a chosen file/folder */
+  const router = { mode: null, dir: null, waiter: null };
+  document.addEventListener('click', (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[download]') : null;
+    if (!a || !router.mode) return;
+    const done = (ok) => { if (router.waiter) { const w = router.waiter; router.waiter = null; w(ok); } router.mode = null; };
+    e.preventDefault(); e.stopImmediatePropagation();
+    (async () => {
+      try {
+        const blob = await (await fetch(a.href)).blob();
+        if (router.mode === 'picker') {
+          const handle = await window.showSaveFilePicker({ suggestedName: a.download || 'leary.png' });
+          const ws = await handle.createWritable(); await ws.write(blob); await ws.close(); toast('保存しました');
+        } else if (router.mode === 'dir' && router.dir) {
+          const handle = await router.dir.getFileHandle(a.download || 'leary.png', { create: true });
+          const ws = await handle.createWritable(); await ws.write(blob); await ws.close();
+        }
+        done(true);
+      } catch (err) { done(false); }
+    })();
+  }, true);
+  extBtn('保存先を選んで保存', async () => {
+    if (!window.showSaveFilePicker) { toast('このブラウザは保存先選択に未対応です'); return; }
+    router.mode = 'picker'; toast('保存先ダイアログで場所を選んでください'); $id('btnExportPng').click();
+  });
+
+  /* eyedropper */
+  const eye = async (apply) => { if (!window.EyeDropper) { toast('スポイトはこのブラウザで使えません'); return; }
+    try { const r = await new EyeDropper().open(); apply(r.sRGBHex); } catch (e) {} };
+  extBtn('スポイト背景色', () => eye((hex) => { const el = $id('bgColor'); el.value = hex; el.dispatchEvent(new Event('input', { bubbles: true })); toast('背景色に ' + hex); }));
+  extBtn('スポイト色追加', () => eye((hex) => { $id('btnAddColor').click(); const items = document.querySelectorAll('#colors .color-item'); const last = items[items.length - 1];
+    const ci = last.querySelector('input[type="color"]'); ci.value = hex; ci.dispatchEvent(new Event('input', { bubbles: true })); toast('色を追加しました ' + hex); }));
+
+  /* document picture-in-picture preview */
+  extBtn('PiPプレビュー', async () => {
+    if (!window.documentPictureInPicture) { toast('PiPはこのブラウザで使えません'); return; }
+    try {
+      const w = await documentPictureInPicture.requestWindow({ width: 480, height: 270 });
+      w.document.body.style.cssText = 'margin:0;background:#000;overflow:hidden';
+      const c = w.document.createElement('canvas'); c.style.cssText = 'width:100%;height:100%'; w.document.body.appendChild(c);
+      const ctx = c.getContext('2d'); const src = $id('canvas');
+      const iv = w.setInterval(() => { if (w.closed) { w.clearInterval(iv); return; } c.width = src.width; c.height = src.height; ctx.drawImage(src, 0, 0); }, 300);
+      c.width = src.width; c.height = src.height; ctx.drawImage(src, 0, 0);
+    } catch (e) { toast('PiPを開けませんでした'); }
+  });
+
+  /* batch export */
+  const batchWrap = document.createElement('div'); batchWrap.style.gridColumn = '1 / -1';
+  batchWrap.innerHTML = '<div style="font-size:10px;color:rgba(255,255,255,.55);margin:4px 0 3px">バッチ書き出し（Seed連番）</div>';
+  const bSeed = document.createElement('input'); bSeed.type = 'number'; bSeed.value = '1000'; bSeed.title = '開始Seed'; bSeed.style.cssText = 'width:64px;margin-right:4px';
+  const bCount = document.createElement('input'); bCount.type = 'number'; bCount.value = '6'; bCount.min = '1'; bCount.max = '50'; bCount.title = '件数'; bCount.style.cssText = 'width:44px;margin-right:4px';
+  const bGo = document.createElement('button'); bGo.type = 'button'; bGo.className = 'btn small'; bGo.textContent = '実行';
+  batchWrap.appendChild(bSeed); batchWrap.appendChild(bCount); batchWrap.appendChild(bGo);
+  ext.appendChild(batchWrap);
+  let batchRunning = false;
+  bGo.addEventListener('click', async () => {
+    if (batchRunning) return;
+    const start = Number(bSeed.value) || 0; const count = Math.max(1, Math.min(50, Number(bCount.value) || 1));
+    let dir = null;
+    if (window.showDirectoryPicker) { try { dir = await window.showDirectoryPicker(); } catch (e) { return; } }
+    batchRunning = true; bGo.textContent = '実行中…';
+    const base = snapshotSettings();
+    for (let i = 0; i < count; i++) {
+      const seed = start + i; const o = JSON.parse(JSON.stringify(base)); o.seed = seed;
+      applySettings(o); await waitRenderDone(90000);
+      const captured = new Promise(res => { router.waiter = res; setTimeout(() => res('timeout'), 120000); });
+      if (dir) { router.mode = 'dir'; router.dir = dir; } 
+      $id('btnExportPng').click();
+      const r = dir ? await captured : 'dl';
+      if (!dir) await new Promise(res => setTimeout(res, 800));
+      bGo.textContent = '実行中 ' + (i + 1) + '/' + count;
+      if (r === false) { toast('バッチを中断しました'); break; }
+    }
+    router.mode = null; router.dir = null; batchRunning = false; bGo.textContent = '実行';
+    toast('バッチ書き出しが終わりました（Seed ' + start + '〜' + (start + count - 1) + '）');
+  });
+
+
+  /* ---- texture modes: liquid expression (display-only) ---- */
+  const texSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  texSvg.setAttribute('width', '0'); texSvg.setAttribute('height', '0');
+  texSvg.style.position = 'absolute';
+  texSvg.innerHTML = '<defs>'
+    + '<filter id="leary2Goo"><feGaussianBlur stdDeviation="2.4" result="b"/><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -11"/></filter>'
+    + '<filter id="leary2Warp" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence id="leary2Turb" type="fractalNoise" baseFrequency="0.012 0.017" numOctaves="2" seed="2" result="n"/><feDisplacementMap id="leary2Disp" in="SourceGraphic" in2="n" scale="16"/></filter>'
+    + '</defs>';
+  document.body.appendChild(texSvg);
+  const mainCanvas = $id('canvas');
+  const glow = document.createElement('canvas');
+  glow.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen;opacity:.85;display:none';
+  if (mainCanvas && mainCanvas.parentElement) mainCanvas.parentElement.insertBefore(glow, mainCanvas.nextSibling);
+  const mkOverlay = () => { const c = document.createElement('canvas');
+    c.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none';
+    if (mainCanvas && mainCanvas.parentElement) mainCanvas.parentElement.insertBefore(c, mainCanvas.nextSibling); return c; };
+  const kaleido = mkOverlay(); const fb = mkOverlay();
+  let texMode = 'none', warpIv = null, glowIv = null, psyIv = null, kalIv = null, fbIv = null;
+  const stopTexLoops = () => { [warpIv, glowIv, psyIv, kalIv, fbIv].forEach(iv => { if (iv) clearInterval(iv); }); warpIv = glowIv = psyIv = kalIv = fbIv = null; };
+  const FBCONF = {
+    feedback: () => ({ dx: 0, dy: 0, rot: 0.004, sc: 1.025, a: 0.32 }),
+    flow: (t) => { const th = t * 0.021; return { dx: Math.cos(th) * 2.4, dy: Math.sin(th) * 2.4, rot: 0, sc: 1.0, a: 0.25 }; },
+    drip: (t) => ({ dx: Math.sin(t * 0.05) * 0.4, dy: 2.6, rot: 0, sc: 1.002, a: 0.22 }),
+    vortex: () => ({ dx: 0, dy: 0, rot: 0.02, sc: 1.01, a: 0.3 })
+  };
+  const applyTexture = (mode) => {
+    texMode = mode; stopTexLoops();
+    mainCanvas.style.filter = ''; glow.style.display = 'none'; kaleido.style.display = 'none'; fb.style.display = 'none'; mainCanvas.style.visibility = '';
+    if (mode === 'liquid') mainCanvas.style.filter = 'url(#leary2Goo)';
+    else if (mode === 'invert') mainCanvas.style.filter = 'invert(1) hue-rotate(180deg)';
+    else if (mode === 'warp') {
+      mainCanvas.style.filter = 'url(#leary2Warp)';
+      let seed = 2; const turb = $id('leary2Turb'); const disp = $id('leary2Disp');
+      warpIv = setInterval(() => { seed = (seed + 1) % 360; if (turb) turb.setAttribute('seed', String(seed));
+        if (disp) disp.setAttribute('scale', String(15 + Math.sin(seed * 0.12) * 8)); }, 220);
+    } else if (mode === 'psy') {
+      let hue = 0;
+      const step = () => { hue = (hue + 7) % 360; mainCanvas.style.filter = 'sepia(1) saturate(4.5) hue-rotate(' + hue + 'deg) brightness(1.05)'; };
+      step(); psyIv = setInterval(step, 90);
+    } else if (mode === 'kaleido') {
+      mainCanvas.style.visibility = 'hidden'; kaleido.style.display = 'block';
+      const kx = kaleido.getContext('2d'); const SEG = 8, stepA = Math.PI * 2 / SEG;
+      const draw = () => { const w = mainCanvas.width, h = mainCanvas.height; if (!w) return;
+        if (kaleido.width !== w) { kaleido.width = w; kaleido.height = h; }
+        const R = Math.max(w, h) * 0.72;
+        kx.clearRect(0, 0, w, h); kx.fillStyle = '#000'; kx.fillRect(0, 0, w, h);
+        for (let i = 0; i < SEG; i++) { kx.save(); kx.translate(w / 2, h / 2); kx.rotate(i * stepA); if (i % 2) kx.scale(-1, 1);
+          kx.beginPath(); kx.moveTo(0, 0); kx.arc(0, 0, R, -stepA / 2, stepA / 2); kx.closePath(); kx.clip();
+          kx.drawImage(mainCanvas, -w / 2, -h / 2); kx.restore(); } };
+      draw(); kalIv = setInterval(draw, 260);
+    } else if (FBCONF[mode]) {
+      fb.style.display = 'block'; const fx = fb.getContext('2d');
+      if (fb.width !== mainCanvas.width) { fb.width = mainCanvas.width; fb.height = mainCanvas.height; fx.drawImage(mainCanvas, 0, 0); }
+      let tick = 0;
+      const step = () => { const w = fb.width, h = fb.height; if (!w) return; const c = FBCONF[mode](tick++);
+        fx.save(); fx.translate(w / 2 + c.dx, h / 2 + c.dy); fx.rotate(c.rot); fx.scale(c.sc, c.sc); fx.drawImage(fb, -w / 2, -h / 2); fx.restore();
+        fx.globalAlpha = c.a; fx.drawImage(mainCanvas, 0, 0); fx.globalAlpha = 1; };
+      fbIv = setInterval(step, 120);
+    } else if (mode === 'glow') {
+      glow.style.display = 'block';
+      const gtx = glow.getContext('2d');
+      const draw = () => { if (glow.width !== mainCanvas.width) { glow.width = mainCanvas.width; glow.height = mainCanvas.height; }
+        gtx.clearRect(0, 0, glow.width, glow.height); gtx.filter = 'blur(6px) brightness(1.25)'; gtx.drawImage(mainCanvas, 0, 0); gtx.filter = 'none'; };
+      draw(); glowIv = setInterval(draw, 280);
+    }
+    try { localStorage.setItem('leary2-texture', mode); } catch (e) {}
+    Array.from(texRow.querySelectorAll('.btn')).forEach(b => { b.style.outline = b.dataset.tex === mode ? '1px solid #fff' : ''; });
+  };
+  const texWrap = document.createElement('div'); texWrap.style.gridColumn = '1 / -1';
+  texWrap.innerHTML = '<div style="font-size:10px;color:rgba(255,255,255,.55);margin:2px 0 3px">質感（表示のみ・保存には入りません）</div>';
+  const texRow = document.createElement('div'); texRow.className = 'grid-preset'; texRow.style.gridTemplateColumns = 'repeat(4,minmax(0,1fr))';
+  texWrap.appendChild(texRow);
+  [['none', '通常'], ['liquid', 'リキッド'], ['warp', 'ゆらぎ'], ['glow', 'グロー'], ['invert', '反転'], ['psy', 'サイケ'], ['kaleido', '万華鏡'], ['feedback', '残像'], ['flow', '流れ'], ['drip', '滴り'], ['vortex', '渦']].forEach(([m, label]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small'; b.textContent = label; b.dataset.tex = m;
+    b.addEventListener('click', () => { applyTexture(m); if (m !== 'none') toast('質感: ' + label); });
+    texRow.appendChild(b);
+  });
+  ext.insertBefore(texWrap, batchWrap);
+  try { const saved = localStorage.getItem('leary2-texture'); if (saved && saved !== 'none') setTimeout(() => applyTexture(saved), 600); else applyTexture('none'); } catch (e) { applyTexture('none'); }
+
+  const vl = panel.querySelector('#vlBox');
+  if (vl) panel.insertBefore(ext, vl); else panel.appendChild(ext);
+
+  /* seed history chips */
+  try {
+    const metrics = panel.querySelector('.metrics');
+    const histBox = document.createElement('div');
+    histBox.style.cssText = 'grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:4px;margin-top:2px';
+    if (metrics && metrics.parentElement) metrics.parentElement.insertBefore(histBox, metrics.nextSibling);
+    const renderChips = () => { const list = JSON.parse(localStorage.getItem('leary2-seed-history') || '[]');
+      histBox.innerHTML = list.length ? '<span style="font-size:9px;color:rgba(255,255,255,.45);width:100%">最近のSeed</span>' : '';
+      list.forEach(sd => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small'; b.textContent = sd;
+        b.addEventListener('click', () => { const o = snapshotSettings(); o.seed = sd; applySettings(o); }); histBox.appendChild(b); }); };
+    renderChips();
+    let lastSeed = null;
+    setInterval(() => { const el = $id('seedInput'); if (!el) return; const v = Number(el.value);
+      if (Number.isFinite(v) && v > 0 && v !== lastSeed) { lastSeed = v;
+        const list = JSON.parse(localStorage.getItem('leary2-seed-history') || '[]').filter(x => x !== v);
+        list.unshift(v); localStorage.setItem('leary2-seed-history', JSON.stringify(list.slice(0, 10))); renderChips(); } }, 1500);
+  } catch (e) {}
+
+  /* drag & drop: settings JSON or image (palette) */
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  window.addEventListener('drop', (e) => {
+    e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (!f) return;
+    if (f.type.indexOf('image/') === 0) {
+      const img = new Image();
+      img.onload = () => { try {
+        const cv = document.createElement('canvas'); cv.width = 48; cv.height = 48;
+        const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0, 48, 48);
+        const d = cx.getImageData(0, 0, 48, 48).data; const buckets = {};
+        for (let i = 0; i < d.length; i += 4) { const key = (d[i] >> 5) + ',' + (d[i + 1] >> 5) + ',' + (d[i + 2] >> 5);
+          const b = buckets[key] || (buckets[key] = { n: 0, r: 0, g: 0, bl: 0 }); b.n++; b.r += d[i]; b.g += d[i + 1]; b.bl += d[i + 2]; }
+        const sorted = Object.values(buckets).sort((a, b) => b.n - a.n);
+        const hexes = []; for (const b of sorted) { const hx = '#' + hex2(b.r / b.n) + hex2(b.g / b.n) + hex2(b.bl / b.n);
+          if (!hexes.some(x => Math.abs(parseInt(x.slice(1, 3), 16) - parseInt(hx.slice(1, 3), 16)) + Math.abs(parseInt(x.slice(3, 5), 16) - parseInt(hx.slice(3, 5), 16)) + Math.abs(parseInt(x.slice(5, 7), 16) - parseInt(hx.slice(5, 7), 16)) < 60)) hexes.push(hx);
+          if (hexes.length >= 4) break; }
+        URL.revokeObjectURL(img.src);
+        if (hexes.length) { const o = snapshotSettings(); o.config.colors = hexes.map(hex => ({ hex, weight: 1, width: 1 })); applySettings(o); toast('画像から ' + hexes.length + ' 色を抽出して適用しました'); }
+      } catch (err) { toast('パレット抽出に失敗しました'); } };
+      img.src = URL.createObjectURL(f);
+    } else if (/\.json$/i.test(f.name) || f.type === 'application/json') {
+      const sf = $id('settingsFile'); const dt = new DataTransfer(); dt.items.add(f); sf.files = dt.files;
+      sf.dispatchEvent(new Event('change', { bubbles: true })); toast('設定JSONを読み込みました');
+    }
+  });
+
+  /* wake lock while full export runs */
+  $id('btnExportPng').addEventListener('click', () => {
+    if (navigator.wakeLock) navigator.wakeLock.request('screen').then(l => setTimeout(() => l.release().catch(() => {}), 120000)).catch(() => {});
+  });
+
+  /* keyboard shortcuts */
+  document.addEventListener('keydown', (e) => {
+    const t = e.target; const typing = t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA');
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); histGo(e.shiftKey ? 1 : -1); return; }
+    if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (k === 'h') toggle.click();
+    else if (k === 's') $id('btnExportPng').click();
+    else if (k === 'r') $id('btnRandomize').click();
+    else if (/^[1-8]$/.test(k)) { const ps = panel.querySelectorAll('[data-preset]'); const b = ps[Number(k) - 1]; if (b) b.click(); }
+  });
+
+  /* Mirror the panel's status readouts into the toolbar / header so
+     progress stays visible while the panel is closed. */
+  const g = (id) => { const el = document.getElementById(id); return el ? el.textContent.trim() : ''; };
+  const mirror = () => {
+    const s = [g('statusRender'), g('statusProgress'), g('statusCount') ? g('statusCount') + '本' : ''].filter(Boolean).join(' · ');
+    status.textContent = s;
+  };
+  mirror();
+  setInterval(mirror, 400);
 })();
 </script>
 </body>
