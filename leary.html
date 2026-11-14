@@ -1811,15 +1811,33 @@
         const c=v=>Math.max(0,Math.min(1,v));
         return c(Math.max((hasPeak?c(d.levelPeak):0)*0.9,(hasRms?c(d.levelRms):0)*2.2));
       }
+      /* Phase 4: envelope-expansion follower (advanced once per Noise
+         message in the handler; applyNoiseFilter only renders).
+         Cases: playing WITH level -> pulse formula; playing WITHOUT
+         level (old sender) -> master-only baseline; stopped/stale/OFF
+         -> follower reset and filter cleared (existing behaviour). */
+      let vlFast=0, vlSlow=0, vlFollowerInit=false, vlHasLevel=false;
+      function vlFollowerUpdate(d){
+        const inst=noiseDriveOf(d); /* null when stopped or no level fields */
+        if(inst===null){ vlFast=0; vlSlow=0; vlFollowerInit=false; vlHasLevel=false; return; }
+        if(!vlFollowerInit){ vlFast=inst; vlSlow=inst; vlFollowerInit=true; }
+        else { vlFast+=0.65*(inst-vlFast); vlSlow+=0.08*(inst-vlSlow); }
+        vlHasLevel=true;
+      }
       function applyNoiseFilter(){
         if(!cv) return;
         if(ch && lastNoise && (Date.now()-lastNoise.ts<1500) && lastNoise.playing){
           const m=Math.max(0,Math.min(1,Number(lastNoise.master)||0));
-          const drive=noiseDriveOf(lastNoise);
-          cv.style.transition='filter 160ms linear';
-          if(drive!==null) cv.style.filter='brightness('+(0.85+0.25*m+0.35*drive).toFixed(3)+') contrast('+(1+0.12*drive).toFixed(3)+')';
+          cv.style.transition='filter 120ms linear';
+          if(vlHasLevel){
+            const swing=Math.min(0.75,Math.max(-0.45,(vlFast-vlSlow)*20));
+            const levelTerm=Math.max(0,Math.min(1,vlFast));
+            const b=Math.min(1.65,Math.max(0.55,0.82+0.22*m+0.22*levelTerm+0.38*swing));
+            const ct=Math.min(1.45,Math.max(0.85,1+0.10*levelTerm+0.18*swing));
+            cv.style.filter='brightness('+b.toFixed(3)+') contrast('+ct.toFixed(3)+')';
+          }
           else cv.style.filter='brightness('+(0.85+0.3*m).toFixed(3)+')';
-        } else { cv.style.transition=''; cv.style.filter=''; }
+        } else { vlFast=0; vlSlow=0; vlFollowerInit=false; vlHasLevel=false; cv.style.transition=''; cv.style.filter=''; }
       }
       function start(){
         if(ch || typeof BroadcastChannel==='undefined') return;
@@ -1831,6 +1849,7 @@
               if(d.type==='seed-sync' && d.master!==undefined && !applying) applyRemoteSeed(d.master);
               else if(d.app==='noise' && d.type==='state'){
                 lastNoise=d;
+                vlFollowerUpdate(d);
                 const l1=d.layers && d.layers[0] ? d.layers[0].type : '';
                 const lv=(typeof d.levelPeak==='number'&&Number.isFinite(d.levelPeak))?' / level '+Math.max(0,Math.min(1,d.levelPeak)).toFixed(2):'';
                 noiseEl.textContent='Noise: master '+(Number(d.master)||0).toFixed(2)+' / '+l1+' / '+(d.playing?'再生中':'停止')+lv;

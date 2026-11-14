@@ -2346,6 +2346,29 @@
       return clamp01(Math.max(peak * 0.9, rms * 2.2));
     }
 
+    /* Phase 4: envelope-expansion follower (updated once per Noise
+       message in onMessage; refreshNoiseModulation only renders).
+       fast EMA (a=0.65) chases the level, slow EMA (a=0.08) is the
+       baseline; their difference x20 is the visible swing. Cases:
+       playing WITH level -> pulse formula below; playing WITHOUT level
+       (old sender) -> Phase-2 master-only baseline; stopped/stale/OFF
+       -> follower reset, baseline while fresh, cleared when stale. */
+    var vlFast = 0, vlSlow = 0, vlFollowerInit = false, vlHasLevel = false;
+    function vlFollowerUpdate(d) {
+      var inst = noiseDrive(d); /* null when stopped or no level fields */
+      if (inst === null) { vlFast = 0; vlSlow = 0; vlFollowerInit = false; vlHasLevel = false; return; }
+      if (!vlFollowerInit) { vlFast = inst; vlSlow = inst; vlFollowerInit = true; }
+      else { vlFast += 0.65 * (inst - vlFast); vlSlow += 0.08 * (inst - vlSlow); }
+      vlHasLevel = true;
+    }
+    function vlPulseFilter(master) {
+      var swing = Math.min(0.75, Math.max(-0.45, (vlFast - vlSlow) * 20));
+      var levelTerm = clamp01(vlFast);
+      var b = Math.min(1.65, Math.max(0.55, 0.82 + 0.22 * master + 0.22 * levelTerm + 0.38 * swing));
+      var c = Math.min(1.45, Math.max(0.85, 1 + 0.10 * levelTerm + 0.18 * swing));
+      return 'brightness(' + b.toFixed(3) + ') contrast(' + c.toFixed(3) + ')';
+    }
+
     function refreshNoiseModulation() {
       if (!viewCanvas) viewCanvas = document.getElementById('viewCanvas');
       if (!viewCanvas) return;
@@ -2354,14 +2377,14 @@
       if (fresh) {
         /* Non-destructive: CSS filter only; Lien's saved config is never mutated. */
         var master = clamp01(lastNoise.data.master);
-        var drive = noiseDrive(lastNoise.data);
-        viewCanvas.style.transition = 'filter 160ms linear';
-        if (drive !== null) {
-          viewCanvas.style.filter = 'brightness(' + (0.85 + 0.25 * master + 0.35 * drive).toFixed(3) + ') contrast(' + (1 + 0.12 * drive).toFixed(3) + ')';
+        viewCanvas.style.transition = 'filter 120ms linear';
+        if (vlHasLevel && lastNoise.data.playing) {
+          viewCanvas.style.filter = vlPulseFilter(master);
         } else {
           viewCanvas.style.filter = 'brightness(' + (0.85 + 0.3 * master).toFixed(3) + ')';
         }
       } else {
+        vlFast = 0; vlSlow = 0; vlFollowerInit = false; vlHasLevel = false;
         viewCanvas.style.transition = '';
         viewCanvas.style.filter = '';
       }
@@ -2393,6 +2416,7 @@
         var masterTxt = (typeof msg.master === 'number' && Number.isFinite(msg.master)) ? msg.master.toFixed(2) : '—';
         var levelTxt = (typeof msg.levelPeak === 'number' && Number.isFinite(msg.levelPeak)) ? ' / level ' + clamp01(msg.levelPeak).toFixed(2) : '';
         if (noiseStatusEl) noiseStatusEl.textContent = 'Noise: master ' + masterTxt + ' / ' + layerName + ' / ' + (msg.playing ? '再生中' : '停止') + levelTxt;
+        vlFollowerUpdate(msg);
         refreshNoiseModulation();
         return;
       }

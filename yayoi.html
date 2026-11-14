@@ -3260,6 +3260,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   /* ── Link state ── */
   var channel=null, loopTimer=null, lastSentSeed=null;
   var lastNoise=null, lastNoiseAt=0;
+  var vlFast=0, vlSlow=0, vlFollowerInit=false; /* Phase 4 envelope-expansion follower */
 
   function post(msg){ if(channel){ try{ channel.postMessage(msg); }catch(e){} } }
   function sendState(){
@@ -3276,13 +3277,14 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
     if(!c) return;
     if(channel&&lastNoise&&(Date.now()-lastNoiseAt)<NOISE_FRESH_MS){
       /* CSS filter only — Yayoi config is never mutated by Noise state. */
-      c.style.transition='filter 160ms linear';
-      if(lastNoise.drive!==null&&lastNoise.drive!==undefined){
-        c.style.filter='brightness('+(0.85+0.25*lastNoise.master+0.35*lastNoise.drive).toFixed(3)+') contrast('+(1+0.12*lastNoise.drive).toFixed(3)+')';
+      c.style.transition='filter 120ms linear';
+      if(lastNoise.pulse){
+        c.style.filter='brightness('+lastNoise.pulse.b.toFixed(3)+') contrast('+lastNoise.pulse.c.toFixed(3)+')';
       } else {
         c.style.filter='brightness('+(0.85+0.3*lastNoise.master).toFixed(3)+')';
       }
     } else {
+      vlFast=0; vlSlow=0; vlFollowerInit=false;
       c.style.transition='';
       c.style.filter='';
     }
@@ -3294,11 +3296,23 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
     /* Phase 3: real audio level (additive fields); old senders -> drive null. */
     var hasRms=(typeof msg.levelRms==='number'&&Number.isFinite(msg.levelRms));
     var hasPeak=(typeof msg.levelPeak==='number'&&Number.isFinite(msg.levelPeak));
-    var drive=null;
+    /* Phase 4: envelope-expansion follower, advanced once per message.
+       Cases: playing WITH level -> pulse {b,c}; playing WITHOUT level
+       (old sender) -> Phase-2 master-only baseline (pulse null);
+       stopped -> follower reset, baseline while fresh. */
+    var pulse=null;
     if(msg.playing===true&&(hasRms||hasPeak)){
-      drive=clamp01(Math.max((hasPeak?clamp01(msg.levelPeak):0)*0.9,(hasRms?clamp01(msg.levelRms):0)*2.2));
-    }
-    lastNoise={master:master, drive:drive};
+      var vlInst=clamp01(Math.max((hasPeak?clamp01(msg.levelPeak):0)*0.9,(hasRms?clamp01(msg.levelRms):0)*2.2));
+      if(!vlFollowerInit){ vlFast=vlInst; vlSlow=vlInst; vlFollowerInit=true; }
+      else { vlFast+=0.65*(vlInst-vlFast); vlSlow+=0.08*(vlInst-vlSlow); }
+      var vlSwing=Math.min(0.75,Math.max(-0.45,(vlFast-vlSlow)*20));
+      var vlLevelTerm=clamp01(vlFast);
+      pulse={
+        b:Math.min(1.65,Math.max(0.55,0.82+0.22*master+0.22*vlLevelTerm+0.38*vlSwing)),
+        c:Math.min(1.45,Math.max(0.85,1+0.10*vlLevelTerm+0.18*vlSwing))
+      };
+    } else { vlFast=0; vlSlow=0; vlFollowerInit=false; }
+    lastNoise={master:master, pulse:pulse};
     lastNoiseAt=Date.now();
     var types=[];
     if(Array.isArray(msg.layers)){
