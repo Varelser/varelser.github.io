@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- TOPO mountain (2026-11-14; audit fixes 2026-11-15): real topographic contours — the field is a smooth band-limited elevation (Gaussian peaks per hole + long-wave swell + low-frequency domain warp), the field grid is Gaussian-blurred before marching squares, and thresholds are equally spaced with a spacing guarantee derived from the field gradient (adjacent lines keep a minimum px interval, so lines never touch / merge / white-out). Wave-ripple terms from the beautiful-prototype are removed. Base: topo-mountain. This pass exposes the mountain model to rich settings: MOUNTAIN_WIDTH / PEAK_SHARPNESS / PEAK_BLEND (peak shape), MIN_SPACING / SMOOTH / FIELD_BLUR (line discipline, stroke-aware spacing), swell relabelled from NOISE_* with a band-limit clamp, and mountain presets. Legacy keys (WAVE_DETAIL / INTERFERENCE_* / CENTER_BULGE) stay in params/settings for compatibility but have no panel UI and no effect on the mountain field. CIRCULARIZE_* also stays in params/settings for compatibility and has no panel UI, but it is a contour post-process rather than part of the field, so it DOES still apply when enabled; because its displacement is uncapped and can push mountain contours across each other, a one-time migration ('topo-migrated-mountain', see loadSettings) switches a stored ENABLE_CIRCULARIZE off once and resets CIRCULARIZE_MIX to the 0.05 default. The spacing floor was hardened in the same pass, after the audit's dense-layout counterexample (3.31px measured at MIN_SPACING 8): the gradient guard floor went 0.78 -> 0.90 of gradMax and the smoothing displacement budget a quarter -> a tenth of the target spacing, putting the design floor at 0.70 x target spacing; in the audit sweep (presets, extremes, 12-hole dense / overlapping / edge layouts) the measured worst case is back at delta / gradMax with all in-canvas crossings at zero. -->
+<!-- TOPO merged edition (2026-11-15, candidate — not yet shipped; base: the shipped mountain build incl. audit fixes, commit 35477927): the "mountain" was only ever an example — the real requirement is contour discipline (lines never touch / cross / white-out) over ANY smooth field. Each hole carries a shape type: 'bump' (the original positive generalised-Gaussian source), 'basin' (negative sign: contours wrap a depression), 'ridge' (anisotropic Gaussian, 2.3x along / 0.60x across the hole's angle: contours run in long lines), 'ring' (generalised Gaussian of the distance to a circle of radius coreRadius x 3.2, rim width 0.40 x sigma: a crater / donut crest) and 'slope' (a linear ramp along the hole's angle, normalised to +/- strength/2 over the canvas: parallel stripes the swell and warp bend into a flow; its angle is a true 0-359 deg heading, the others use 0-179). Holes without a type (all previously saved settings) behave as 'bump', bit-identically. PEAK_BLEND accumulates its pairwise product per sign group, so opposite-sign pairs never blend (a bump + basin at the same spot would otherwise dig a phantom depression); same-sign pairs blend exactly as before. The gradient-based spacing guarantee is shape-agnostic — thresholds still come from the sampled field's own gradients — and is re-verified for all five shapes by the merged sweep (108 cases; one documented exception: a five-type mix at MIN_SPACING 3 with FIELD_BLUR >= 1 can pinch to ~1.3px centre distance at a basin/slope saddle — no crossings, no touching; it passes at spacing >= 4, with blur 0, or without the slope). Slider ranges are the widened candidate-B set (limits/steps, PARAM_RANGES, sanitize and core clamps moved together; defaults and preset values unchanged), and NUM_RINGS now caps at 2000: in smooth mode the chosen line count self-limits to ~500 by geometry (field extent / guaranteed spacing, measured max 487 at FHD), while flat mode can really draw 2000 lines (~2 s build, SVG estimate ~27 MB so the confirm guard engages as designed). Panel wording is shape-neutral (「形」 section) and the presets are form studies: 窪み / 尾根 / 混合 / 流れ / 環 / 斜面. -->
 <!-- TOPO v7 (2026-11-12): Lien-style UI reskin — app header + bottom toolbar chrome, floating configuration panel (hidden by default, opened from the toolbar), Lien slider/option styling and zinc palette via CSS variables; layout is header / canvas-wrap / footer so the canvas fills the space between the bars; computation core, IDs and behaviour are unchanged from v6 except panelToggle now toggles and mousePressed converts to viewport coordinates for the controls hit-test. v6: audit fixes — hole phase is persisted in settings JSON and undo snapshots, so seed reproducibility survives hole deletion + reload (previously phases were recomputed by index on load while live holes kept their creation-time phase); ANGLE_STEPS slider step 8 -> 1 (default 900 was off-step: browsers snapped the display to 904 while params stayed 900); hole position clamp unified to 0.02-0.98 (drag/arrows were 0.02-0.98 but create/sanitize were 0.03-0.97, so edge holes shifted on reload); EXPORT_TRANSPARENT gained a UI checkbox (was reachable only by hand-editing settings JSON). v5: SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
@@ -319,6 +319,7 @@
       transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
     }
     .small:hover, .panel-btn:hover { border-color: #525252; color: var(--fg); background: transparent; }
+    .small[aria-pressed="true"] { border-color: var(--accent); color: var(--fg); background: rgba(255, 255, 255, 0.10); }
     #holeInfo {
       padding: 8px 10px;
       background: rgba(255, 255, 255, 0.05);
@@ -439,68 +440,68 @@
     </div>
     <div class="panel-body">
 
-    <h4 style="margin-top:0;">山の形</h4>
+    <h4 style="margin-top:0;">形</h4>
     <div class="row">
-      <label for="mtnWidth">山の広がり (MOUNTAIN_WIDTH) <span id="mtnWidthVal" class="val"></span></label>
-      <input id="mtnWidth" type="range" min="0.5" max="2.0" step="0.05" value="1.00">
+      <label for="mtnWidth">広がり (MOUNTAIN_WIDTH) <span id="mtnWidthVal" class="val"></span></label>
+      <input id="mtnWidth" type="range" min="0.30" max="3.00" step="0.01" value="1.00">
     </div>
 
     <div class="row">
-      <label for="peakSharp">山頂の鋭さ (PEAK_SHARPNESS) <span id="peakSharpVal" class="val"></span></label>
-      <input id="peakSharp" type="range" min="1.2" max="3.5" step="0.1" value="2.0">
+      <label for="peakSharp">鋭さ (PEAK_SHARPNESS) <span id="peakSharpVal" class="val"></span></label>
+      <input id="peakSharp" type="range" min="0.80" max="6.00" step="0.01" value="2.0">
     </div>
 
     <div class="row">
-      <label for="peakBlend">峰の合体ぐあい (PEAK_BLEND) <span id="peakBlendVal" class="val"></span></label>
-      <input id="peakBlend" type="range" min="0.0" max="1.0" step="0.05" value="0.00">
+      <label for="peakBlend">合体ぐあい (PEAK_BLEND) <span id="peakBlendVal" class="val"></span></label>
+      <input id="peakBlend" type="range" min="0.0" max="1.0" step="0.01" value="0.00">
     </div>
 
     <div class="row">
-      <label for="outer">山の裾の広がり (OUTER_RADIUS_RATIO) <span id="outerVal" class="val"></span></label>
-      <input id="outer" type="range" min="0.15" max="0.9" step="0.01" value="0.46">
+      <label for="outer">広がりの基準 (OUTER_RADIUS_RATIO) <span id="outerVal" class="val"></span></label>
+      <input id="outer" type="range" min="0.05" max="1.20" step="0.01" value="0.46">
     </div>
 
     <h4>うねり</h4>
     <div class="row">
       <label for="amp">うねりの強さ (NOISE_AMPLITUDE) <span id="ampVal" class="val"></span></label>
-      <input id="amp" type="range" min="0.0" max="0.5" step="0.01" value="0.14">
+      <input id="amp" type="range" min="0.0" max="0.50" step="0.01" value="0.14">
     </div>
 
     <div class="row">
       <label for="f">うねりの細かさ (NOISE_FREQ) <span id="fVal" class="val"></span></label>
-      <input id="f" type="range" min="0.5" max="8" step="0.1" value="3.5">
+      <input id="f" type="range" min="0.30" max="12.00" step="0.05" value="3.5">
     </div>
 
     <div class="row">
-      <label for="warp">地形の歪み (WARP) <span id="warpVal" class="val"></span></label>
-      <input id="warp" type="range" min="0.0" max="2.0" step="0.05" value="1.00">
+      <label for="warp">歪み (WARP) <span id="warpVal" class="val"></span></label>
+      <input id="warp" type="range" min="0.0" max="4.00" step="0.01" value="1.00">
     </div>
 
     <h4>線</h4>
     <div class="row">
       <label for="r">線の本数上限 (NUM_RINGS) <span id="rVal" class="val"></span></label>
-      <input id="r" type="range" min="8" max="220" step="1" value="70">
+      <input id="r" type="range" min="8" max="2000" step="1" value="70">
     </div>
     <div class="row muted">本数は上限です。実際の本数は「線の最小間隔」を保てる範囲で自動決定されます。</div>
 
     <div class="row">
       <label for="minSpacing">線の最小間隔 (MIN_SPACING, px) <span id="minSpacingVal" class="val"></span></label>
-      <input id="minSpacing" type="range" min="4" max="16" step="0.5" value="8">
+      <input id="minSpacing" type="range" min="3" max="24" step="0.25" value="8">
     </div>
 
     <div class="row">
       <label for="smoothAmt">線の滑らかさ (SMOOTH) <span id="smoothAmtVal" class="val"></span></label>
-      <input id="smoothAmt" type="range" min="0.0" max="1.0" step="0.05" value="0.50">
+      <input id="smoothAmt" type="range" min="0.0" max="1.0" step="0.01" value="0.50">
     </div>
 
     <div class="row">
       <label for="fieldBlur">場のぼかし (FIELD_BLUR) <span id="fieldBlurVal" class="val"></span></label>
-      <input id="fieldBlur" type="range" min="0.0" max="2.0" step="0.5" value="1.0">
+      <input id="fieldBlur" type="range" min="0.0" max="3.0" step="0.25" value="1.0">
     </div>
 
     <div class="row">
       <label for="w">線の太さ (WHITE_STROKE_WEIGHT) <span id="wVal" class="val"></span></label>
-      <input id="w" type="range" min="0.3" max="6" step="0.1" value="1.1">
+      <input id="w" type="range" min="0.20" max="8.00" step="0.05" value="1.1">
     </div>
 
     <div class="row">
@@ -511,7 +512,7 @@
     <h4>表示 / 効果</h4>
     <div class="row">
       <label for="red">赤影の透明度 (RED_SHADOW_ALPHA) <span id="redVal" class="val"></span></label>
-      <input id="red" type="range" min="0" max="200" step="2" value="42">
+      <input id="red" type="range" min="0" max="200" step="1" value="42">
     </div>
     <div class="checkrow row">
       <label><input id="showTexture" type="checkbox" checked>背景テクスチャ</label>
@@ -522,13 +523,18 @@
 
     <h4>プリセット</h4>
     <div class="row" style="display:flex;gap:8px;">
-      <button id="preset1" class="small">独立峰</button>
-      <button id="preset2" class="small">山並み</button>
+      <button id="preset1" class="small">窪み</button>
+      <button id="preset2" class="small">尾根</button>
     </div>
 
     <div class="row" style="display:flex;gap:8px;">
-      <button id="preset3" class="small">丘陵</button>
-      <button id="preset4" class="small">高原</button>
+      <button id="preset3" class="small">混合</button>
+      <button id="preset4" class="small">流れ</button>
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="preset5" class="small">環</button>
+      <button id="preset6" class="small">斜面</button>
     </div>
 
     <h4>シード / 設定</h4>
@@ -572,23 +578,37 @@
 
     <div class="row">
       <label for="holeRadius">選択穴の大きさ <span id="holeRadiusVal" class="val"></span></label>
-      <input id="holeRadius" type="range" min="0.10" max="4.00" step="0.01" value="1.00">
+      <input id="holeRadius" type="range" min="0.05" max="6.00" step="0.01" value="1.00">
     </div>
 
     <div class="row">
       <label for="holeStrength">選択穴の強さ <span id="holeStrengthVal" class="val"></span></label>
-      <input id="holeStrength" type="range" min="0.35" max="3.00" step="0.01" value="1.00">
+      <input id="holeStrength" type="range" min="0.35" max="5.00" step="0.01" value="1.00">
     </div>
 
     <div class="row">
-      <label for="holeWave">選択峰の鋭さ倍率 <span id="holeWaveVal" class="val"></span></label>
-      <input id="holeWave" type="range" min="0.00" max="2.50" step="0.01" value="1.00">
+      <label for="holeWave">選択元の鋭さ倍率 <span id="holeWaveVal" class="val"></span></label>
+      <input id="holeWave" type="range" min="0.00" max="4.00" step="0.01" value="1.00">
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;align-items:center;">
+      <span class="muted">選択元の型:</span>
+      <button id="holeTypeBump" class="small" type="button">隆起</button>
+      <button id="holeTypeBasin" class="small" type="button">窪み</button>
+      <button id="holeTypeRidge" class="small" type="button">尾根</button>
+      <button id="holeTypeRing" class="small" type="button">環</button>
+      <button id="holeTypeSlope" class="small" type="button">斜面</button>
+    </div>
+
+    <div class="row">
+      <label for="holeAngle">選択元の向き (尾根/斜面) <span id="holeAngleVal" class="val"></span></label>
+      <input id="holeAngle" type="range" min="0" max="179" step="1" value="0">
     </div>
 
     <div class="muted">
       操作: 何もない場所をクリックで穴追加（最大12個）/ 穴をドラッグで移動 / Delete または Backspace で選択穴削除。<br>
       キーボード: キャンバスをクリックしてフォーカスし、[ / ] で穴を選択、矢印キーで選択穴を移動（Shift同時押しで大きく移動）。<br>
-      R=再生成, S=PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数の峰を同条件で再計算します。
+      R=再生成, S=PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数の元を同条件で再計算します。
     </div>
     </div>
   </section>
@@ -693,25 +713,30 @@ const SVG_HARD_BYTES = 150000000;
 const SVG_BYTES_PER_POINT = 56;
 const SVG_BYTES_PER_DOT = 48;
 const DEFAULT_PARAMS = JSON.parse(JSON.stringify(params));
+// Range note (2026-11-15 widening): NOISE_AMPLITUDE stays capped
+// at 0.5 and hole strength at >= 0.35 on purpose — beyond those,
+// swell-dominated fields calibrate the threshold step down and
+// saddle pinches in the swell can pull adjacent lines below the
+// guaranteed spacing (verified by seed fuzz; see AUDIT notes).
 const PARAM_RANGES = {
-  NUM_RINGS: [8, 220],
+  NUM_RINGS: [8, 2000],
   ANGLE_STEPS: [128, 2000],
-  NOISE_FREQ: [0.5, 8],
+  NOISE_FREQ: [0.3, 12],
   NOISE_AMPLITUDE: [0, 0.5],
   CENTER_BULGE: [0.2, 2.5],
-  OUTER_RADIUS_RATIO: [0.15, 0.9],
+  OUTER_RADIUS_RATIO: [0.05, 1.2],
   RED_SHADOW_ALPHA: [0, 200],
-  WHITE_STROKE_WEIGHT: [0.3, 6],
+  WHITE_STROKE_WEIGHT: [0.2, 8],
   WAVE_DETAIL: [0.5, 3.5],
   INTERFERENCE_BOOST: [0, 3],
   CIRCULARIZE_MIX: [0, 1],
-  WARP: [0, 2],
-  MOUNTAIN_WIDTH: [0.5, 2.0],
-  PEAK_SHARPNESS: [1.2, 3.5],
+  WARP: [0, 4],
+  MOUNTAIN_WIDTH: [0.3, 3.0],
+  PEAK_SHARPNESS: [0.8, 6.0],
   PEAK_BLEND: [0, 1],
-  MIN_SPACING: [4, 16],
+  MIN_SPACING: [3, 24],
   SMOOTH: [0, 1],
-  FIELD_BLUR: [0, 2]
+  FIELD_BLUR: [0, 3]
 };
 const PARAM_BOOLEANS = ['ENABLE_INTERFERENCE', 'ENABLE_CIRCULARIZE', 'SHOW_TEXTURE', 'SHOW_RED_SHADOW', 'SHOW_HOLE_GUIDES', 'EXPORT_TRANSPARENT'];
 const SETTINGS_PARAM_KEYS = Object.keys(PARAM_RANGES).concat(PARAM_BOOLEANS, ['EXPORT_SCALE']);
@@ -823,6 +848,14 @@ function setup() {
   });
 }
 
+// Slider value labels: float sliders (step contains a decimal
+// point) always display with two decimals so fine steps stay
+// readable; integer sliders display as-is.
+function formatSliderLabel(el) {
+  const isFloat = String(el.step || '').includes('.');
+  return isFloat ? parseFloat(el.value).toFixed(2) : el.value;
+}
+
 function initControls() {
   const sliderMap = [
     ['r', 'NUM_RINGS', 'rVal'],
@@ -845,7 +878,7 @@ function initControls() {
     const el = document.getElementById(id);
     const valEl = document.getElementById(valId);
     if (!el || !valEl) return;
-    valEl.textContent = el.value;
+    valEl.textContent = formatSliderLabel(el);
     el.addEventListener('pointerdown', capturePreChange);
     el.addEventListener('focus', capturePreChange);
     el.addEventListener('change', resetPreChange);
@@ -853,7 +886,7 @@ function initControls() {
       commitPreChange();
       const isFloat = String(el.step || '').includes('.');
       params[key] = isFloat ? parseFloat(el.value) : parseInt(el.value, 10);
-      valEl.textContent = el.value;
+      valEl.textContent = formatSliderLabel(el);
       debouncedRegenerate(false);
       scheduleSaveSettings();
     });
@@ -947,80 +980,148 @@ function initControls() {
 
   updateUndoButton();
 
-  // Mountain presets: each one moves the mountain-model knobs to a
-  // visibly different regime. NOISE_AMPLITUDE is kept > 0 in all of
-  // them on purpose: 0 would switch the app into the legacy flat
-  // (SDF) mode instead of the mountain field.
+  // Form presets: each one sets both the field knobs and a hole
+  // layout (positions, types, ridge angles), because the shapes
+  // live on the holes. NOISE_AMPLITUDE is kept > 0 in all of them
+  // on purpose: 0 would switch the app into the legacy flat (SDF)
+  // mode instead of the smooth-field mode.
   document.getElementById('preset1').addEventListener('click', () => {
-    // 独立峰: one sharp, self-contained peak.
-    applyPreset({
-      NUM_RINGS: 80,
-      ANGLE_STEPS: 1000,
-      NOISE_AMPLITUDE: 0.08,
+    // 窪み: three depressions; contours wrap the basins and the
+    // land between them.
+    applyFormPreset({
+      NUM_RINGS: 70,
+      ANGLE_STEPS: 900,
+      NOISE_AMPLITUDE: 0.10,
       NOISE_FREQ: 2.5,
       WHITE_STROKE_WEIGHT: 1.1,
-      MOUNTAIN_WIDTH: 0.9,
-      PEAK_SHARPNESS: 3.2,
-      PEAK_BLEND: 0.0,
+      MOUNTAIN_WIDTH: 1.05,
+      PEAK_SHARPNESS: 2.0,
+      PEAK_BLEND: 0.1,
+      MIN_SPACING: 8,
+      SMOOTH: 0.5,
+      FIELD_BLUR: 1.0,
+      WARP: 0.7
+    }, [
+      { x: 0.32, y: 0.40, type: 'basin' },
+      { x: 0.68, y: 0.58, type: 'basin' },
+      { x: 0.52, y: 0.78, type: 'basin', radius: 0.8 }
+    ]);
+  });
+
+  document.getElementById('preset2').addEventListener('click', () => {
+    // 尾根: three elongated ridges at different angles; contours
+    // run in long lines along each ridge.
+    applyFormPreset({
+      NUM_RINGS: 70,
+      ANGLE_STEPS: 900,
+      NOISE_AMPLITUDE: 0.10,
+      NOISE_FREQ: 2.5,
+      WHITE_STROKE_WEIGHT: 1.1,
+      MOUNTAIN_WIDTH: 1.0,
+      PEAK_SHARPNESS: 2.2,
+      PEAK_BLEND: 0.3,
       MIN_SPACING: 8,
       SMOOTH: 0.5,
       FIELD_BLUR: 1.0,
       WARP: 0.5
-    });
+    }, [
+      { x: 0.30, y: 0.32, type: 'ridge', angle: 0.45, radius: 1.2 },
+      { x: 0.64, y: 0.52, type: 'ridge', angle: 2.85, radius: 1.3 },
+      { x: 0.42, y: 0.76, type: 'ridge', angle: 1.20, radius: 1.0 }
+    ]);
   });
 
-  document.getElementById('preset2').addEventListener('click', () => {
-    // 山並み: broad, strongly blended peaks that merge into a range.
-    applyPreset({
+  document.getElementById('preset3').addEventListener('click', () => {
+    // 混合: bumps and basins alternating — a saddle-rich abstract
+    // relief where contour families interlock without touching.
+    applyFormPreset({
       NUM_RINGS: 70,
       ANGLE_STEPS: 900,
       NOISE_AMPLITUDE: 0.12,
       NOISE_FREQ: 3.0,
       WHITE_STROKE_WEIGHT: 1.1,
-      MOUNTAIN_WIDTH: 1.2,
-      PEAK_SHARPNESS: 2.2,
-      PEAK_BLEND: 0.7,
+      MOUNTAIN_WIDTH: 1.1,
+      PEAK_SHARPNESS: 2.0,
+      PEAK_BLEND: 0.2,
       MIN_SPACING: 8,
       SMOOTH: 0.5,
       FIELD_BLUR: 1.0,
-      WARP: 0.8
-    });
+      WARP: 0.7
+    }, [
+      { x: 0.34, y: 0.36, type: 'bump' },
+      { x: 0.64, y: 0.34, type: 'basin' },
+      { x: 0.36, y: 0.68, type: 'basin' },
+      { x: 0.66, y: 0.66, type: 'bump' }
+    ]);
   });
 
-  document.getElementById('preset3').addEventListener('click', () => {
-    // 丘陵: gentle domes under a strong long-wave swell.
-    applyPreset({
-      NUM_RINGS: 60,
+  document.getElementById('preset4').addEventListener('click', () => {
+    // 流れ: near-parallel ridges under a strong swell and warp —
+    // contours stream like a current.
+    applyFormPreset({
+      NUM_RINGS: 70,
       ANGLE_STEPS: 900,
-      NOISE_AMPLITUDE: 0.30,
+      NOISE_AMPLITUDE: 0.35,
       NOISE_FREQ: 3.0,
       WHITE_STROKE_WEIGHT: 1.1,
-      MOUNTAIN_WIDTH: 1.5,
-      PEAK_SHARPNESS: 1.3,
+      MOUNTAIN_WIDTH: 1.3,
+      PEAK_SHARPNESS: 1.6,
       PEAK_BLEND: 0.3,
       MIN_SPACING: 9,
       SMOOTH: 0.6,
       FIELD_BLUR: 1.0,
-      WARP: 1.4
-    });
+      WARP: 1.8
+    }, [
+      { x: 0.32, y: 0.34, type: 'ridge', angle: 0.65, radius: 1.4 },
+      { x: 0.62, y: 0.58, type: 'ridge', angle: 0.80, radius: 1.4 },
+      { x: 0.78, y: 0.26, type: 'bump', radius: 0.8 }
+    ]);
   });
 
-  document.getElementById('preset4').addEventListener('click', () => {
-    // 高原: wide spacing, few lines, broad calm relief.
-    applyPreset({
-      NUM_RINGS: 30,
+  document.getElementById('preset5').addEventListener('click', () => {
+    // 環: a crater rim with a depressed floor and a small central
+    // cone (offset a touch so the bump/basin pair does not sit in
+    // the coincident-cancellation degenerate spot).
+    applyFormPreset({
+      NUM_RINGS: 90,
       ANGLE_STEPS: 900,
       NOISE_AMPLITUDE: 0.10,
       NOISE_FREQ: 2.5,
       WHITE_STROKE_WEIGHT: 1.1,
-      MOUNTAIN_WIDTH: 1.6,
-      PEAK_SHARPNESS: 1.6,
+      MOUNTAIN_WIDTH: 1.1,
+      PEAK_SHARPNESS: 2.0,
       PEAK_BLEND: 0.2,
-      MIN_SPACING: 14,
-      SMOOTH: 0.65,
-      FIELD_BLUR: 1.5,
+      MIN_SPACING: 8,
+      SMOOTH: 0.5,
+      FIELD_BLUR: 1.0,
       WARP: 0.6
-    });
+    }, [
+      { x: 0.50, y: 0.48, type: 'ring', radius: 2.0 },
+      { x: 0.50, y: 0.48, type: 'basin', radius: 0.9 },
+      { x: 0.54, y: 0.44, type: 'bump', radius: 0.45, strength: 0.9 }
+    ]);
+  });
+
+  document.getElementById('preset6').addEventListener('click', () => {
+    // 斜面: a single ramp whose parallel stripes the swell and
+    // warp bend into a current, curling around one bump.
+    applyFormPreset({
+      NUM_RINGS: 220,
+      ANGLE_STEPS: 900,
+      NOISE_AMPLITUDE: 0.35,
+      NOISE_FREQ: 3.0,
+      WHITE_STROKE_WEIGHT: 1.1,
+      MOUNTAIN_WIDTH: 1.2,
+      PEAK_SHARPNESS: 2.0,
+      PEAK_BLEND: 0.2,
+      MIN_SPACING: 8,
+      SMOOTH: 0.55,
+      FIELD_BLUR: 1.0,
+      WARP: 1.8
+    }, [
+      { x: 0.50, y: 0.50, type: 'slope', angle: 0.6, strength: 2.2 },
+      { x: 0.72, y: 0.30, type: 'bump', radius: 0.8 }
+    ]);
   });
 
   document.getElementById('addHole').addEventListener('click', () => {
@@ -1060,6 +1161,25 @@ function initControls() {
     if (!hasSelectedHole()) return;
     commitPreChange();
     holes[selectedHoleIndex].waveAmp = parseFloat(holeWave.value);
+    syncSelectedHoleControls();
+    debouncedRegenerate(false);
+    scheduleSaveSettings();
+  });
+
+  // Forms: per-hole shape type + ridge direction.
+  const holeAngle = document.getElementById('holeAngle');
+  document.getElementById('holeTypeBump').addEventListener('click', () => setSelectedHoleType('bump'));
+  document.getElementById('holeTypeBasin').addEventListener('click', () => setSelectedHoleType('basin'));
+  document.getElementById('holeTypeRidge').addEventListener('click', () => setSelectedHoleType('ridge'));
+  document.getElementById('holeTypeRing').addEventListener('click', () => setSelectedHoleType('ring'));
+  document.getElementById('holeTypeSlope').addEventListener('click', () => setSelectedHoleType('slope'));
+  holeAngle.addEventListener('pointerdown', capturePreChange);
+  holeAngle.addEventListener('focus', capturePreChange);
+  holeAngle.addEventListener('change', resetPreChange);
+  holeAngle.addEventListener('input', () => {
+    if (!hasSelectedHole()) return;
+    commitPreChange();
+    holes[selectedHoleIndex].angle = parseFloat(holeAngle.value) * Math.PI / 180;
     syncSelectedHoleControls();
     debouncedRegenerate(false);
     scheduleSaveSettings();
@@ -1179,14 +1299,26 @@ function initDefaultHoles() {
   syncSelectedHoleControls();
 }
 
+const HOLE_TYPES = ['bump', 'basin', 'ridge', 'ring', 'slope'];
+
+function sanitizeHoleType(value) {
+  return (value === 'basin' || value === 'ridge' || value === 'ring' || value === 'slope') ? value : 'bump';
+}
+
 function createHole(nx, ny, overrides = {}) {
+  const phase = overrides.phase ?? computeHolePhase(holes.length);
   return {
     x: clamp(nx, 0.02, 0.98),
     y: clamp(ny, 0.02, 0.98),
     radius: overrides.radius ?? 1.0,
     strength: overrides.strength ?? 1.0,
     waveAmp: overrides.waveAmp ?? 1.0,
-    phase: overrides.phase ?? computeHolePhase(holes.length)
+    phase: phase,
+    // Forms: shape type + ridge direction. Holes saved before
+    // types existed have neither field and behave as 'bump' with
+    // a phase-derived angle — i.e. exactly the old scenes.
+    type: sanitizeHoleType(overrides.type),
+    angle: Number.isFinite(overrides.angle) ? overrides.angle : (phase % Math.PI)
   };
 }
 
@@ -1200,6 +1332,39 @@ function applyPreset(p) {
   pushUndo();
   Object.assign(params, p);
   syncAllControlValues();
+  debouncedRegenerate(false);
+  scheduleSaveSettings();
+}
+
+// Form presets replace the hole layout as well as the params:
+// the shapes (types / ridge angles) live on the holes. Phases are
+// re-derived per index for the current seed, exactly as if the
+// holes had been created by hand in this order.
+function applyFormPreset(p, holeSpecs) {
+  pushUndo();
+  Object.assign(params, p);
+  holes = holeSpecs.map((spec, i) => createHole(spec.x, spec.y, {
+    radius: spec.radius ?? 1.0,
+    strength: spec.strength ?? 1.0,
+    waveAmp: spec.waveAmp ?? 1.0,
+    phase: computeHolePhase(i),
+    type: spec.type,
+    angle: spec.angle
+  }));
+  selectedHoleIndex = holes.length > 0 ? 0 : -1;
+  syncAllControlValues();
+  syncSelectedHoleControls();
+  debouncedRegenerate(false);
+  scheduleSaveSettings();
+}
+
+function setSelectedHoleType(type) {
+  if (!hasSelectedHole()) return;
+  const hole = holes[selectedHoleIndex];
+  if (hole.type === type) return;
+  pushUndo();
+  hole.type = type;
+  syncSelectedHoleControls();
   debouncedRegenerate(false);
   scheduleSaveSettings();
 }
@@ -1224,7 +1389,7 @@ function syncValueLabels() {
   pairs.forEach(([inputId, labelId]) => {
     const input = document.getElementById(inputId);
     const label = document.getElementById(labelId);
-    if (input && label) label.textContent = input.value;
+    if (input && label) label.textContent = formatSliderLabel(input);
   });
 }
 
@@ -1236,6 +1401,15 @@ function syncSelectedHoleControls() {
   const holeRadiusVal = document.getElementById('holeRadiusVal');
   const holeStrengthVal = document.getElementById('holeStrengthVal');
   const holeWaveVal = document.getElementById('holeWaveVal');
+  const holeAngle = document.getElementById('holeAngle');
+  const holeAngleVal = document.getElementById('holeAngleVal');
+  const typeButtons = {
+    bump: document.getElementById('holeTypeBump'),
+    basin: document.getElementById('holeTypeBasin'),
+    ridge: document.getElementById('holeTypeRidge'),
+    ring: document.getElementById('holeTypeRing'),
+    slope: document.getElementById('holeTypeSlope')
+  };
 
   const exists = hasSelectedHole();
   if (!exists) {
@@ -1246,6 +1420,11 @@ function syncSelectedHoleControls() {
     holeRadiusVal.textContent = '-';
     holeStrengthVal.textContent = '-';
     holeWaveVal.textContent = '-';
+    if (holeAngle) { holeAngle.disabled = true; }
+    if (holeAngleVal) holeAngleVal.textContent = '-';
+    Object.values(typeButtons).forEach((btn) => {
+      if (btn) { btn.disabled = true; btn.setAttribute('aria-pressed', 'false'); }
+    });
     return;
   }
 
@@ -1260,6 +1439,24 @@ function syncSelectedHoleControls() {
   holeRadiusVal.textContent = hole.radius.toFixed(2);
   holeStrengthVal.textContent = hole.strength.toFixed(2);
   holeWaveVal.textContent = hole.waveAmp.toFixed(2);
+  // Ridge direction is an axis (0-179 deg); slope direction is a
+  // true heading (0-359 deg), because flipping a ramp uphill <->
+  // downhill changes the field. The shared slider adapts its max.
+  const hasAngle = hole.type === 'ridge' || hole.type === 'slope';
+  const angleSpan = hole.type === 'slope' ? 360 : 180;
+  const angleDeg = Math.round(((hole.angle ?? 0) * 180 / Math.PI) % angleSpan);
+  if (holeAngle) {
+    holeAngle.disabled = !hasAngle;
+    holeAngle.max = String(angleSpan - 1);
+    holeAngle.value = String(angleDeg);
+  }
+  if (holeAngleVal) holeAngleVal.textContent = hasAngle ? `${angleDeg}°` : '-';
+  Object.entries(typeButtons).forEach(([type, btn]) => {
+    if (btn) {
+      btn.disabled = false;
+      btn.setAttribute('aria-pressed', hole.type === type ? 'true' : 'false');
+    }
+  });
 }
 
 function hasSelectedHole() {
@@ -1287,7 +1484,9 @@ function addHole(nx, ny) {
   const hole = createHole(nx, ny, {
     radius: hasSelectedHole() ? holes[selectedHoleIndex].radius : 1.0,
     strength: hasSelectedHole() ? holes[selectedHoleIndex].strength : 1.0,
-    waveAmp: hasSelectedHole() ? holes[selectedHoleIndex].waveAmp : 1.0
+    waveAmp: hasSelectedHole() ? holes[selectedHoleIndex].waveAmp : 1.0,
+    type: hasSelectedHole() ? holes[selectedHoleIndex].type : 'bump',
+    angle: hasSelectedHole() ? holes[selectedHoleIndex].angle : undefined
   });
   holes.push(hole);
   selectedHoleIndex = holes.length - 1;
@@ -1359,7 +1558,9 @@ function snapshotSceneHoles() {
     radius: h.radius,
     strength: h.strength,
     waveAmp: h.waveAmp,
-    phase: h.phase
+    phase: h.phase,
+    type: h.type,
+    angle: h.angle
   }));
 }
 
@@ -1659,12 +1860,12 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
     const n = (v == null || !isFinite(v)) ? fallback : v;
     return Math.min(hi, Math.max(lo, n));
   };
-  const mountainWidth = optNum(cp.MOUNTAIN_WIDTH, 1.0, 0.5, 2.0);
-  const peakSharpness = optNum(cp.PEAK_SHARPNESS, 2.0, 1.2, 3.5);
+  const mountainWidth = optNum(cp.MOUNTAIN_WIDTH, 1.0, 0.3, 3.0);
+  const peakSharpness = optNum(cp.PEAK_SHARPNESS, 2.0, 0.8, 6.0);
   const peakBlend = optNum(cp.PEAK_BLEND, 0.0, 0.0, 1.0);
-  const gapSpacingPx = optNum(cp.MIN_SPACING, 8, 4, 16);
+  const gapSpacingPx = optNum(cp.MIN_SPACING, 8, 3, 24);
   const smoothAmt = optNum(cp.SMOOTH, 0.5, 0.0, 1.0);
-  const strokeWeight = optNum(cp.WHITE_STROKE_WEIGHT, 1.1, 0.3, 6.0);
+  const strokeWeight = optNum(cp.WHITE_STROKE_WEIGHT, 1.1, 0.2, 8.0);
   // Centre-to-centre spacing used by the threshold guarantee: the
   // user's MIN_SPACING is the visible black gap, so the stroke
   // width is added on top. A fatter stroke therefore widens the
@@ -1688,8 +1889,45 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
     // u^p = 18 for this peak's p.
     const sigmaPx = Math.max(8, spreadPx * 1.05 * mountainWidth);
     const sharpMul = (hole.waveAmp == null || !isFinite(hole.waveAmp)) ? 1.0 : Math.max(0, hole.waveAmp);
-    const peakP = Math.min(5.0, Math.max(0.8, peakSharpness * sharpMul));
+    const peakP = Math.min(10.0, Math.max(0.8, peakSharpness * sharpMul));
     const cutoffU = Math.max(2.6, Math.pow(18, 1 / peakP));
+    // Forms prototype: each hole carries a "type" that shapes its
+    // generalised-Gaussian source. 'bump' is the original peak
+    // (and the default for holes saved before types existed, so
+    // legacy scenes are bit-identical). 'basin' is the same bump
+    // with a negative sign — contours wrap a depression instead of
+    // a rise. 'ridge' is an anisotropic bump: the metric is
+    // elliptical in the hole's own frame (angle, falling back to
+    // the hole's phase), stretched 2.3x along the axis and
+    // squeezed 0.60x across it, so contours run in long lines
+    // along the ridge instead of closing in rings around a point.
+    const formType = (hole.type === 'basin' || hole.type === 'ridge' || hole.type === 'ring' || hole.type === 'slope') ? hole.type : 'bump';
+    const formSign = formType === 'basin' ? -1 : 1;
+    const formAniso = formType === 'ridge';
+    const formAngle = isFinite(hole.angle) ? hole.angle : (isFinite(hole.phase) ? hole.phase : 0);
+    const sigmaAlong = formAniso ? sigmaPx * 2.3 : sigmaPx;
+    const sigmaAcross = formAniso ? sigmaPx * 0.60 : sigmaPx;
+    const isoCutoffSq = Math.pow(sigmaPx * cutoffU, 2);
+    // Merged forms (2026-11-15): two more source shapes.
+    // 'ring': the same generalised Gaussian evaluated on the
+    // distance to a circle, h = strength * exp(-(|d - R| /
+    // ringSigma)^p) — a crater rim / donut crest that contours
+    // wrap. R is the hole's core radius x 3.2, so the existing
+    // size slider scales the ring; the rim is thinner than a
+    // peak (0.40 x sigmaPx) so the crest reads as a line, and
+    // the cull radius covers the rim's outer falloff.
+    // 'slope': a linear ramp along the hole's angle,
+    // h = strength * proj * slopeNorm with proj measured from
+    // the hole centre and slopeNorm = 1 / (|W cos| + |H sin|),
+    // so h is normalised into [-strength/2, +strength/2] over
+    // the whole canvas however large it is. The gradient is
+    // uniform, so the gradient-based threshold machinery (and
+    // its spacing guarantee) applies unchanged, and contours
+    // come out as parallel stripes that the swell / warp bend
+    // into a flow. A slope contributes everywhere: no culling.
+    const ringR = coreRadiusPx * 3.2;
+    const ringSigma = Math.max(5, sigmaPx * 0.40);
+    const slopeNorm = 1 / Math.max(1, Math.abs(targetWidth * Math.cos(formAngle)) + Math.abs(targetHeight * Math.sin(formAngle)));
     holesPx.push({
       x: hole.x * targetWidth,
       y: hole.y * targetHeight,
@@ -1703,7 +1941,24 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
       cutoffSq: cutoff * cutoff,
       sigmaPx: sigmaPx,
       peakP: peakP,
-      mountainCutoffSq: Math.pow(sigmaPx * cutoffU, 2)
+      mountainCutoffSq: isoCutoffSq,
+      // Forms: sampler-facing shape data. For isotropic holes
+      // formCutoffSq is exactly mountainCutoffSq, so culling
+      // decisions (and therefore results) are unchanged.
+      type: formType,
+      sign: formSign,
+      angle: formAngle,
+      aniso: formAniso,
+      cosA: Math.cos(formAngle),
+      sinA: Math.sin(formAngle),
+      sigmaAlong: sigmaAlong,
+      sigmaAcross: sigmaAcross,
+      formCutoffSq: formType === 'slope' ? Infinity
+        : formType === 'ring' ? Math.pow(ringR + ringSigma * cutoffU, 2)
+        : formAniso ? Math.pow(sigmaAlong * cutoffU, 2) : isoCutoffSq,
+      ringR: ringR,
+      ringSigma: ringSigma,
+      slopeNorm: slopeNorm
     });
   }
   const minDim = Math.min(targetWidth, targetHeight);
@@ -1889,6 +2144,11 @@ function coreSampleFieldAt(core, prep, x, y, cull) {
   // a long wavelength (this is how the "wave" enters: lines
   // follow the swell, they are not ripples themselves). No
   // high-frequency term exists anywhere in the field.
+  // Forms prototype: h_i may be signed (basin) or anisotropic
+  // (ridge) — see corePrepareField. The spacing guarantee does
+  // not care: thresholds are still derived from the sampled
+  // field's own gradient statistics, whatever shape the field
+  // takes, and the swell/warp band limits are unchanged.
   let sx = x;
   let sy = y;
   let value = 0;
@@ -1904,26 +2164,70 @@ function coreSampleFieldAt(core, prep, x, y, cull) {
   const holesPx = prep.holesPx;
   const blend = prep.peakBlend || 0;
   let sumH = 0;
-  let sumSqH = 0;
+  // Forms: the pairwise blend is accumulated per sign group.
+  // PEAK_BLEND was designed as a *lift where two flanks of the
+  // same kind overlap*. With signed sources (basins) the raw
+  // product h_i * h_j turns negative for opposite-sign pairs, and
+  // applying it blindly corrupts the field: a bump and a basin at
+  // the same spot cancel in sumH (field 0) yet their pair term
+  // would dig a phantom depression of -0.7 * blend * h^2. So
+  // opposite-sign pairs never blend; same-sign pairs (two bumps,
+  // or two basins whose product is positive) blend exactly as
+  // before. For all-positive scenes sumPos/sumSqPos reduce to the
+  // original sumH/sumSqH arithmetic bit-for-bit.
+  let sumPos = 0;
+  let sumSqPos = 0;
+  let sumNeg = 0;
+  let sumSqNeg = 0;
   for (let i = 0; i < holesPx.length; i++) {
     const hole = holesPx[i];
     const dx = sx - hole.x;
     const dy = sy - hole.y;
     const distSq = dx * dx + dy * dy;
-    if (cull && distSq > hole.mountainCutoffSq) continue;
-    const s = hole.sigmaPx;
-    const t2 = distSq / (s * s);
-    // (d/sigma)^p with t2 = (d/sigma)^2: raise to p/2. The p = 2
-    // branch is the plain Gaussian and skips the pow entirely.
+    if (cull && distSq > hole.formCutoffSq) continue;
     const p = hole.peakP || 2;
-    const t = (p === 2) ? t2 : Math.pow(t2, p * 0.5);
-    const h = hole.strength * Math.exp(-t);
+    let h;
+    if (hole.type === 'slope') {
+      // Linear ramp: no falloff and no culling (formCutoffSq is
+      // Infinity); the sign is carried by the projection itself,
+      // and the pairwise blend below classifies this h by its
+      // sign at each sample point, exactly like a basin's lobe.
+      h = hole.strength * (dx * hole.cosA + dy * hole.sinA) * hole.slopeNorm;
+    } else if (hole.type === 'ring') {
+      // Generalised Gaussian of the distance to the rim circle.
+      const u = Math.abs(Math.sqrt(distSq) - hole.ringR) / hole.ringSigma;
+      const t = (p === 2) ? u * u : Math.pow(u, p);
+      h = hole.strength * Math.exp(-t);
+    } else {
+      let t2;
+      if (hole.aniso) {
+        // Ridge: elliptical metric in the hole's rotated frame.
+        const da = dx * hole.cosA + dy * hole.sinA;
+        const db = dy * hole.cosA - dx * hole.sinA;
+        const qa = da / hole.sigmaAlong;
+        const qb = db / hole.sigmaAcross;
+        t2 = qa * qa + qb * qb;
+      } else {
+        const s = hole.sigmaPx;
+        t2 = distSq / (s * s);
+      }
+      // (d/sigma)^p with t2 = (d/sigma)^2: raise to p/2. The
+      // p = 2 branch is the plain Gaussian and skips the pow.
+      const t = (p === 2) ? t2 : Math.pow(t2, p * 0.5);
+      h = hole.sign * hole.strength * Math.exp(-t);
+    }
     sumH += h;
-    if (blend > 0) sumSqH += h * h;
+    if (blend > 0) {
+      if (h >= 0) { sumPos += h; sumSqPos += h * h; }
+      else { sumNeg += h; sumSqNeg += h * h; }
+    }
   }
-  // Pairwise-product saddle lift: (sumH^2 - sumSqH) / 2 is
-  // sum_{i<j} h_i h_j, so the coefficient below is 0.7 * that.
-  value += blend > 0 ? sumH + blend * 0.35 * (sumH * sumH - sumSqH) : sumH;
+  // Pairwise-product saddle lift, per sign group: each group's
+  // (sum^2 - sumSq) / 2 is its sum_{i<j} h_i h_j, so the
+  // coefficient below is 0.7 * that, summed over both groups.
+  value += blend > 0
+    ? sumH + blend * 0.35 * ((sumPos * sumPos - sumSqPos) + (sumNeg * sumNeg - sumSqNeg))
+    : sumH;
   return value;
 }
 
@@ -2079,7 +2383,7 @@ function coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, 
       gradMax: gradMax,
       delta: delta,
       targetSpacingPx: targetSpacingPx,
-      gapSpacingPx: (cp.MIN_SPACING == null || !isFinite(cp.MIN_SPACING)) ? 8 : Math.min(16, Math.max(4, cp.MIN_SPACING)),
+      gapSpacingPx: (cp.MIN_SPACING == null || !isFinite(cp.MIN_SPACING)) ? 8 : Math.min(24, Math.max(3, cp.MIN_SPACING)),
       requestedRings: Math.max(2, Math.trunc(cp.NUM_RINGS)),
       chosenRings: count,
       capped: capped,
@@ -2423,7 +2727,9 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
     influenceSpreadPx: h.influenceSpreadPx,
     strength: h.strength,
     waveAmp: h.waveAmp,
-    phase: h.phase
+    phase: h.phase,
+    type: h.type,
+    angle: h.angle
   }));
 
   const flatMode = coreIsFlatFieldMode(cp);
@@ -2463,7 +2769,7 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
     // FIELD_BLUR maps to blur passes at 2 per unit (default 1.0
     // -> the mountain-prototype's 2 passes); older params without
     // the key also land on 2.
-    const blurAmt = (cp.FIELD_BLUR == null || !isFinite(cp.FIELD_BLUR)) ? 1.0 : Math.min(2, Math.max(0, cp.FIELD_BLUR));
+    const blurAmt = (cp.FIELD_BLUR == null || !isFinite(cp.FIELD_BLUR)) ? 1.0 : Math.min(3, Math.max(0, cp.FIELD_BLUR));
     const blurPasses = Math.round(blurAmt * 2);
     if (blurPasses > 0) coreBlurField(field, cols, rows, blurPasses);
     minField = Infinity;
@@ -2680,7 +2986,9 @@ function sampleFlatFieldAt(x, y, targetWidth, targetHeight, holesPx) {
     radius: h.radius,
     strength: h.strength,
     waveAmp: h.waveAmp,
-    phase: h.phase
+    phase: h.phase,
+    type: h.type,
+    angle: h.angle
   })), targetWidth, targetHeight, 0);
   return coreSampleFlatFieldAt(prep, x, y);
 }
@@ -2695,7 +3003,9 @@ function sampleFieldAt(x, y, targetWidth, targetHeight, holesPx, seed, flatMode 
     radius: h.radius,
     strength: h.strength,
     waveAmp: h.waveAmp,
-    phase: h.phase
+    phase: h.phase,
+    type: h.type,
+    angle: h.angle
   })), targetWidth, targetHeight, seed);
   return coreSampleFieldAt(core, prep, x, y, false);
 }
@@ -3588,6 +3898,30 @@ function drawHoleHandlesMain(holesPx, exportMode) {
     strokeWeight(isSelected ? 1.6 : 1.0);
     ellipse(hole.x, hole.y, radiusPx * 2, radiusPx * 2);
 
+    if (hole.type === 'ring' && hole.ringR) {
+      // Ring crest guide: the circle the rim actually follows.
+      ellipse(hole.x, hole.y, hole.ringR * 2, hole.ringR * 2);
+    }
+
+    if (hole.type === 'slope') {
+      // Slope direction arrow along the ramp, pointing uphill.
+      const ca = Math.cos(hole.angle || 0);
+      const sa = Math.sin(hole.angle || 0);
+      line(hole.x - ca * radiusPx, hole.y - sa * radiusPx, hole.x + ca * radiusPx, hole.y + sa * radiusPx);
+      line(hole.x + ca * radiusPx, hole.y + sa * radiusPx,
+        hole.x + ca * radiusPx * 0.55 - sa * radiusPx * 0.38, hole.y + sa * radiusPx * 0.55 + ca * radiusPx * 0.38);
+      line(hole.x + ca * radiusPx, hole.y + sa * radiusPx,
+        hole.x + ca * radiusPx * 0.55 + sa * radiusPx * 0.38, hole.y + sa * radiusPx * 0.55 - ca * radiusPx * 0.38);
+    }
+
+    if (hole.type === 'ridge') {
+      // Ridge direction tick: a line through the centre along
+      // the ridge axis, so the elongation reads at a glance.
+      const ca = Math.cos(hole.angle || 0);
+      const sa = Math.sin(hole.angle || 0);
+      line(hole.x - ca * radiusPx, hole.y - sa * radiusPx, hole.x + ca * radiusPx, hole.y + sa * radiusPx);
+    }
+
     stroke(255, isSelected ? 220 : 120);
     line(hole.x - 4, hole.y, hole.x + 4, hole.y);
     line(hole.x, hole.y - 4, hole.x, hole.y + 4);
@@ -4135,7 +4469,7 @@ function collectSettingsParams(source) {
 function snapshotState() {
   return {
     params: collectSettingsParams(),
-    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp, phase: h.phase })),
+    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp, phase: h.phase, type: h.type, angle: h.angle })),
     seed: seedVal,
     selectedHoleIndex
   };
@@ -4233,22 +4567,29 @@ function sanitizeSettings(obj) {
   if (obj && Array.isArray(obj.holes)) {
     cleanHoles = obj.holes.slice(0, MAX_HOLES).map((h, idx) => {
       const src = (h && typeof h === 'object') ? h : {};
+      const phase = sanitizeNumber(src.phase, 0, Math.PI * 2, computeHolePhase(idx, cleanSeed));
       return {
         x: sanitizeNumber(src.x, 0.02, 0.98, 0.5),
         y: sanitizeNumber(src.y, 0.02, 0.98, 0.5),
-        radius: sanitizeNumber(src.radius, 0.10, 4.00, 1.0),
-        strength: sanitizeNumber(src.strength, 0.35, 3.00, 1.0),
-        waveAmp: sanitizeNumber(src.waveAmp, 0.00, 2.50, 1.0),
+        radius: sanitizeNumber(src.radius, 0.05, 6.00, 1.0),
+        strength: sanitizeNumber(src.strength, 0.35, 5.00, 1.0),
+        waveAmp: sanitizeNumber(src.waveAmp, 0.00, 4.00, 1.0),
         // Phase is part of the scene identity: persist it so a scene
         // whose holes were deleted/reordered reproduces exactly after
         // reload. Settings saved before v6 have no phase; fall back to
         // the index-derived phase for the saved seed (the old rule).
-        phase: sanitizeNumber(src.phase, 0, Math.PI * 2, computeHolePhase(idx, cleanSeed))
+        phase: phase,
+        // Forms: shape type + ridge direction. Settings saved
+        // before types existed have neither; they load as 'bump'
+        // with a phase-derived angle, reproducing the old scene.
+        type: sanitizeHoleType(src.type),
+        angle: sanitizeNumber(src.angle, 0, Math.PI * 2, phase % Math.PI)
       };
     });
   }
   if (cleanHoles.length === 0) {
-    cleanHoles = [{ x: 0.5, y: 0.5, radius: 1.0, strength: 1.0, waveAmp: 1.0, phase: computeHolePhase(0, cleanSeed) }];
+    const fallbackPhase = computeHolePhase(0, cleanSeed);
+    cleanHoles = [{ x: 0.5, y: 0.5, radius: 1.0, strength: 1.0, waveAmp: 1.0, phase: fallbackPhase, type: 'bump', angle: fallbackPhase % Math.PI }];
   }
 
   return { params: cleanParams, holes: cleanHoles, seed: cleanSeed };
@@ -4257,14 +4598,19 @@ function sanitizeSettings(obj) {
 function applySettingsData(data) {
   Object.assign(params, data.params);
   seedVal = data.seed;
-  holes = data.holes.map((h, i) => ({
-    x: h.x,
-    y: h.y,
-    radius: h.radius,
-    strength: h.strength,
-    waveAmp: h.waveAmp,
-    phase: Number.isFinite(h.phase) ? h.phase : computeHolePhase(i)
-  }));
+  holes = data.holes.map((h, i) => {
+    const phase = Number.isFinite(h.phase) ? h.phase : computeHolePhase(i);
+    return {
+      x: h.x,
+      y: h.y,
+      radius: h.radius,
+      strength: h.strength,
+      waveAmp: h.waveAmp,
+      phase: phase,
+      type: sanitizeHoleType(h.type),
+      angle: Number.isFinite(h.angle) ? h.angle : (phase % Math.PI)
+    };
+  });
   selectedHoleIndex = holes.length > 0 ? 0 : -1;
 }
 
@@ -4272,7 +4618,7 @@ function serializeSettings() {
   return JSON.stringify({
     version: 1,
     params: collectSettingsParams(),
-    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp, phase: h.phase })),
+    holes: holes.map((h) => ({ x: h.x, y: h.y, radius: h.radius, strength: h.strength, waveAmp: h.waveAmp, phase: h.phase, type: h.type, angle: h.angle })),
     seed: seedVal
   }, null, 2);
 }

@@ -212,9 +212,33 @@ async function main() {
     const notObject = parseSettingsJSON('[1,2,3]');
     const clamped = parseSettingsJSON('{"params":{"NUM_RINGS":99999},"holes":"nope","seed":5}');
     bad.ok === false && notObject.ok === false &&
-    clamped.ok === true && clamped.data.params.NUM_RINGS === 220 && clamped.data.holes.length === 1;
+    clamped.ok === true && clamped.data.params.NUM_RINGS === 2000 && clamped.data.holes.length === 1;
   `);
   check('invalid JSON rejected and values sanitized', invalidResult === true);
+
+  // 11b. widened slider ranges (2026-11-15): sanitize clamps follow
+  // the new panel limits on both ends, including per-hole values.
+  const wideResult = run(`
+    const wide = parseSettingsJSON('{"params":{"MOUNTAIN_WIDTH":99,"PEAK_SHARPNESS":99,"MIN_SPACING":0.5,"FIELD_BLUR":99,"WARP":99,"NOISE_AMPLITUDE":99,"NOISE_FREQ":99,"WHITE_STROKE_WEIGHT":99,"OUTER_RADIUS_RATIO":99},"holes":[{"x":0.5,"y":0.5,"radius":99,"strength":99,"waveAmp":99,"phase":0}],"seed":5}');
+    const wp = wide.data.params;
+    const wh = wide.data.holes[0];
+    wide.ok === true &&
+    wp.MOUNTAIN_WIDTH === 3.0 && wp.PEAK_SHARPNESS === 6.0 && wp.MIN_SPACING === 3 &&
+    wp.FIELD_BLUR === 3 && wp.WARP === 4 && wp.NOISE_AMPLITUDE === 0.5 && wp.NOISE_FREQ === 12 &&
+    wp.WHITE_STROKE_WEIGHT === 8 && wp.OUTER_RADIUS_RATIO === 1.2 &&
+    wh.radius === 6 && wh.strength === 5 && wh.waveAmp === 4;
+  `);
+  check('widened ranges: upper sanitize clamps follow new limits', wideResult === true);
+
+  const wideLowResult = run(`
+    const wideLow = parseSettingsJSON('{"params":{"MOUNTAIN_WIDTH":0,"PEAK_SHARPNESS":0,"MIN_SPACING":99,"NOISE_FREQ":0},"holes":[{"x":0.5,"y":0.5,"radius":0,"strength":0,"phase":0}],"seed":5}');
+    const lp = wideLow.data.params;
+    const lh = wideLow.data.holes[0];
+    wideLow.ok === true &&
+    lp.MOUNTAIN_WIDTH === 0.3 && lp.PEAK_SHARPNESS === 0.8 && lp.MIN_SPACING === 24 &&
+    lp.NOISE_FREQ === 0.3 && lh.radius === 0.05 && lh.strength === 0.35;
+  `);
+  check('widened ranges: lower sanitize clamps follow new limits', wideLowResult === true);
 
   // 12. persistence save/load
   const persistResult = run(`
@@ -477,6 +501,124 @@ check('golden checksum regression: new core reproduces pre-v3 contours', () => {
   run(`__resetState(777)`);
   const sd = run(`buildSceneData(800, 600, 777)`);
   assert.equal(sceneChecksum(sd), GOLDEN_CHECKSUM);
+});
+
+check('forms: hole type/angle survive a settings round-trip; legacy holes load as bump', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    holes = [createHole(0.4, 0.4, { type: 'ridge', angle: 0.7 }), createHole(0.6, 0.6, { type: 'basin' })];
+    const parsed = parseSettingsJSON(serializeSettings());
+    if (!parsed.ok) return 'parse failed';
+    const hs = parsed.data.holes;
+    if (hs[0].type !== 'ridge' || Math.abs(hs[0].angle - 0.7) > 1e-9) return 'ridge type/angle lost';
+    if (hs[1].type !== 'basin') return 'basin type lost';
+    const legacy = parseSettingsJSON('{"holes":[{"x":0.5,"y":0.5,"radius":1,"strength":1,"waveAmp":1,"phase":1.0}],"seed":777}');
+    if (!legacy.ok) return 'legacy parse failed';
+    const lh = legacy.data.holes[0];
+    if (lh.type !== 'bump') return 'legacy hole not bump';
+    if (Math.abs(lh.angle - (1.0 % Math.PI)) > 1e-9) return 'legacy angle not phase-derived';
+    return 'ok';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('forms: opposite-sign pair never blends (coincident bump+basin: blend 1 === blend 0)', () => {
+  const sums = run(`(() => {
+    __resetState(777);
+    holes = [createHole(0.5, 0.5, { type: 'bump' }), createHole(0.5, 0.5, { type: 'basin' })];
+    const chk = (sd) => { let v = 0; for (const c of sd.contours) { v += c.points.length; for (const pt of c.points) v += pt.x * 0.123 + pt.y * 0.765; } return sd.contours.length + ':' + v.toFixed(4); };
+    params.PEAK_BLEND = 0;
+    const b0 = chk(buildSceneData(500, 400, 777));
+    params.PEAK_BLEND = 1;
+    const b1 = chk(buildSceneData(500, 400, 777));
+    params.PEAK_BLEND = 0;
+    return b0 + '|' + b1;
+  })()`);
+  const [b0, b1] = sums.split('|');
+  assert.equal(b1, b0);
+});
+
+check('forms: basin and ridge scenes build finite, and differ from the bump scene', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    const chk = (sd) => { let v = 0; for (const c of sd.contours) { v += c.points.length; for (const pt of c.points) { if (!Number.isFinite(pt.x) || !Number.isFinite(pt.y)) return 'nonfinite'; v += pt.x * 0.123 + pt.y * 0.765; } } return sd.contours.length + ':' + v.toFixed(4); };
+    holes = [createHole(0.5, 0.5, { type: 'bump' })];
+    const bump = chk(buildSceneData(500, 400, 777));
+    holes = [createHole(0.5, 0.5, { type: 'basin' })];
+    const basin = chk(buildSceneData(500, 400, 777));
+    holes = [createHole(0.5, 0.5, { type: 'ridge', angle: 0.7 })];
+    const ridge = chk(buildSceneData(500, 400, 777));
+    if (bump === 'nonfinite' || basin === 'nonfinite' || ridge === 'nonfinite') return 'nonfinite';
+    return (basin !== bump && ridge !== bump) ? 'ok' : 'identical';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('forms: ring/slope types survive a settings round-trip; slope heading beyond PI is kept', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    holes = [createHole(0.4, 0.4, { type: 'ring', angle: 0.7 }), createHole(0.6, 0.6, { type: 'slope', angle: 3.6 })];
+    const parsed = parseSettingsJSON(serializeSettings());
+    if (!parsed.ok) return 'parse failed';
+    const hs = parsed.data.holes;
+    if (hs[0].type !== 'ring') return 'ring type lost';
+    if (hs[1].type !== 'slope') return 'slope type lost';
+    if (Math.abs(hs[1].angle - 3.6) > 1e-9) return 'slope heading clamped: ' + hs[1].angle;
+    const bogus = parseSettingsJSON('{"holes":[{"x":0.5,"y":0.5,"radius":1,"strength":1,"waveAmp":1,"phase":1.0,"type":"volcano"}],"seed":777}');
+    if (!bogus.ok || bogus.data.holes[0].type !== 'bump') return 'unknown type not sanitized to bump';
+    return 'ok';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('forms: ring and slope scenes build finite and differ from the bump scene', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    const chk = (sd) => { let v = 0; for (const c of sd.contours) { v += c.points.length; for (const pt of c.points) { if (!Number.isFinite(pt.x) || !Number.isFinite(pt.y)) return 'nonfinite'; v += pt.x * 0.123 + pt.y * 0.765; } } return sd.contours.length + ':' + v.toFixed(4); };
+    holes = [createHole(0.5, 0.5, { type: 'bump' })];
+    const bump = chk(buildSceneData(500, 400, 777));
+    holes = [createHole(0.5, 0.5, { type: 'ring', radius: 2.0 })];
+    const ring = chk(buildSceneData(500, 400, 777));
+    holes = [createHole(0.5, 0.5, { type: 'slope', angle: 0.6, strength: 2.2 })];
+    const slope = chk(buildSceneData(500, 400, 777));
+    if (bump === 'nonfinite' || ring === 'nonfinite' || slope === 'nonfinite') return 'nonfinite';
+    return (ring !== bump && slope !== bump && ring !== slope) ? 'ok' : 'identical';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('forms: slope at fine spacing yields a large threshold count (mass-line route)', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    const keep = { MIN_SPACING: params.MIN_SPACING, NUM_RINGS: params.NUM_RINGS, WHITE_STROKE_WEIGHT: params.WHITE_STROKE_WEIGHT };
+    params.MIN_SPACING = 3;
+    params.NUM_RINGS = 2000;
+    params.WHITE_STROKE_WEIGHT = 0.2;
+    holes = [createHole(0.5, 0.5, { type: 'slope', angle: 0.6, strength: 5 })];
+    const sd = buildSceneData(1200, 900, 777);
+    Object.assign(params, keep);
+    return sd.thresholdInfo ? sd.thresholdInfo.chosenRings : -1;
+  })()`);
+  assert.ok(res > 300, 'expected > 300 slope thresholds at spacing 3, got ' + res);
+});
+
+check('forms: five-type mixed scene builds finite', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    holes = [
+      createHole(0.30, 0.35, { type: 'bump' }),
+      createHole(0.68, 0.32, { type: 'basin' }),
+      createHole(0.35, 0.68, { type: 'ridge', angle: 0.9 }),
+      createHole(0.70, 0.66, { type: 'ring', radius: 1.6 }),
+      createHole(0.52, 0.52, { type: 'slope', angle: 2.2, strength: 1.4 })
+    ];
+    const sd = buildSceneData(600, 450, 777);
+    for (const c of sd.contours) for (const pt of c.points) {
+      if (!Number.isFinite(pt.x) || !Number.isFinite(pt.y)) return 'nonfinite';
+    }
+    return sd.contours.length > 10 ? 'ok' : 'too few contours: ' + sd.contours.length;
+  })()`);
+  assert.equal(res, 'ok');
 });
 
 check('worker source assembled from core functions, runs identically in vm', () => {
