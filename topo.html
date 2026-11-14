@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- TOPO MOUNTAIN-FINAL PROTOTYPE (2026-11-14, NOT for release): real topographic contours — the field is a smooth band-limited elevation (Gaussian peaks per hole + long-wave swell + low-frequency domain warp), the field grid is Gaussian-blurred before marching squares, and thresholds are equally spaced with a spacing guarantee derived from the field gradient (adjacent lines keep a minimum px interval, so lines never touch / merge / white-out). Wave-ripple terms from the beautiful-prototype are removed. Base: topo-mountain. This pass exposes the mountain model to rich settings: MOUNTAIN_WIDTH / PEAK_SHARPNESS / PEAK_BLEND (peak shape), MIN_SPACING / SMOOTH / FIELD_BLUR (line discipline, stroke-aware spacing), swell relabelled from NOISE_* with a band-limit clamp, and mountain presets. Legacy keys (WAVE_DETAIL / INTERFERENCE_* / CIRCULARIZE_* / CENTER_BULGE) stay in params/settings for compatibility but have no panel UI and no effect on the mountain field. -->
 <!-- TOPO v7 (2026-11-12): Lien-style UI reskin — app header + bottom toolbar chrome, floating configuration panel (hidden by default, opened from the toolbar), Lien slider/option styling and zinc palette via CSS variables; layout is header / canvas-wrap / footer so the canvas fills the space between the bars; computation core, IDs and behaviour are unchanged from v6 except panelToggle now toggles and mousePressed converts to viewport coordinates for the controls hit-test. v6: audit fixes — hole phase is persisted in settings JSON and undo snapshots, so seed reproducibility survives hole deletion + reload (previously phases were recomputed by index on load while live holes kept their creation-time phase); ANGLE_STEPS slider step 8 -> 1 (default 900 was off-step: browsers snapped the display to 904 while params stayed 900); hole position clamp unified to 0.02-0.98 (drag/arrows were 0.02-0.98 but create/sanitize were 0.03-0.97, so edge holes shifted on reload); EXPORT_TRANSPARENT gained a UI checkbox (was reachable only by hand-editing settings JSON). v5: SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
@@ -171,7 +172,7 @@
 
     #controls {
       position: fixed;
-      right: 24px;
+      left: 24px;
       bottom: 76px;
       z-index: 1000;
       width: 320px;
@@ -438,40 +439,63 @@
     </div>
     <div class="panel-body">
 
-    <h4 style="margin-top:0;">パラメータ</h4>
+    <h4 style="margin-top:0;">山の形</h4>
     <div class="row">
-      <label for="r">輪の数 (NUM_RINGS) <span id="rVal" class="val"></span></label>
-      <input id="r" type="range" min="8" max="220" step="1" value="70">
+      <label for="mtnWidth">山の広がり (MOUNTAIN_WIDTH) <span id="mtnWidthVal" class="val"></span></label>
+      <input id="mtnWidth" type="range" min="0.5" max="2.0" step="0.05" value="1.00">
     </div>
 
     <div class="row">
-      <label for="a">グリッド解像度 (ANGLE_STEPS) <span id="aVal" class="val"></span></label>
-      <input id="a" type="range" min="128" max="2000" step="1" value="900">
+      <label for="peakSharp">山頂の鋭さ (PEAK_SHARPNESS) <span id="peakSharpVal" class="val"></span></label>
+      <input id="peakSharp" type="range" min="1.2" max="3.5" step="0.1" value="2.0">
     </div>
 
     <div class="row">
-      <label for="f">ノイズ周波数 (NOISE_FREQ) <span id="fVal" class="val"></span></label>
-      <input id="f" type="range" min="0.5" max="8" step="0.1" value="3.5">
+      <label for="peakBlend">峰の合体ぐあい (PEAK_BLEND) <span id="peakBlendVal" class="val"></span></label>
+      <input id="peakBlend" type="range" min="0.0" max="1.0" step="0.05" value="0.00">
     </div>
 
     <div class="row">
-      <label for="amp">ノイズ振幅 (NOISE_AMPLITUDE) <span id="ampVal" class="val"></span></label>
+      <label for="outer">山の裾の広がり (OUTER_RADIUS_RATIO) <span id="outerVal" class="val"></span></label>
+      <input id="outer" type="range" min="0.15" max="0.9" step="0.01" value="0.46">
+    </div>
+
+    <h4>うねり</h4>
+    <div class="row">
+      <label for="amp">うねりの強さ (NOISE_AMPLITUDE) <span id="ampVal" class="val"></span></label>
       <input id="amp" type="range" min="0.0" max="0.5" step="0.01" value="0.14">
     </div>
 
     <div class="row">
-      <label for="bulge">中心突出 (CENTER_BULGE) <span id="bulgeVal" class="val"></span></label>
-      <input id="bulge" type="range" min="0.2" max="2.5" step="0.05" value="1.0">
+      <label for="f">うねりの細かさ (NOISE_FREQ) <span id="fVal" class="val"></span></label>
+      <input id="f" type="range" min="0.5" max="8" step="0.1" value="3.5">
     </div>
 
     <div class="row">
-      <label for="outer">外側半径比 (OUTER_RADIUS_RATIO) <span id="outerVal" class="val"></span></label>
-      <input id="outer" type="range" min="0.15" max="0.9" step="0.01" value="0.46">
+      <label for="warp">地形の歪み (WARP) <span id="warpVal" class="val"></span></label>
+      <input id="warp" type="range" min="0.0" max="2.0" step="0.05" value="1.00">
+    </div>
+
+    <h4>線</h4>
+    <div class="row">
+      <label for="r">線の本数上限 (NUM_RINGS) <span id="rVal" class="val"></span></label>
+      <input id="r" type="range" min="8" max="220" step="1" value="70">
+    </div>
+    <div class="row muted">本数は上限です。実際の本数は「線の最小間隔」を保てる範囲で自動決定されます。</div>
+
+    <div class="row">
+      <label for="minSpacing">線の最小間隔 (MIN_SPACING, px) <span id="minSpacingVal" class="val"></span></label>
+      <input id="minSpacing" type="range" min="4" max="16" step="0.5" value="8">
     </div>
 
     <div class="row">
-      <label for="red">赤影の透明度 (RED_SHADOW_ALPHA) <span id="redVal" class="val"></span></label>
-      <input id="red" type="range" min="0" max="200" step="2" value="42">
+      <label for="smoothAmt">線の滑らかさ (SMOOTH) <span id="smoothAmtVal" class="val"></span></label>
+      <input id="smoothAmt" type="range" min="0.0" max="1.0" step="0.05" value="0.50">
+    </div>
+
+    <div class="row">
+      <label for="fieldBlur">場のぼかし (FIELD_BLUR) <span id="fieldBlurVal" class="val"></span></label>
+      <input id="fieldBlur" type="range" min="0.0" max="2.0" step="0.5" value="1.0">
     </div>
 
     <div class="row">
@@ -480,24 +504,16 @@
     </div>
 
     <div class="row">
-      <label for="waveDetail">波の細かさ (WAVE_DETAIL) <span id="waveDetailVal" class="val"></span></label>
-      <input id="waveDetail" type="range" min="0.5" max="3.5" step="0.05" value="1.00">
-    </div>
-
-    <div class="row">
-      <label for="interference">干渉強度 (INTERFERENCE_BOOST) <span id="interferenceVal" class="val"></span></label>
-      <input id="interference" type="range" min="0.0" max="3.0" step="0.05" value="1.00">
-    </div>
-
-    <div class="row">
-      <label for="circularize">円形寄せ量 (CIRCULARIZE_MIX) <span id="circularizeVal" class="val"></span></label>
-      <input id="circularize" type="range" min="0.0" max="1.0" step="0.01" value="0.30">
+      <label for="a">グリッド解像度 (ANGLE_STEPS) <span id="aVal" class="val"></span></label>
+      <input id="a" type="range" min="128" max="2000" step="1" value="900">
     </div>
 
     <h4>表示 / 効果</h4>
+    <div class="row">
+      <label for="red">赤影の透明度 (RED_SHADOW_ALPHA) <span id="redVal" class="val"></span></label>
+      <input id="red" type="range" min="0" max="200" step="2" value="42">
+    </div>
     <div class="checkrow row">
-      <label><input id="enableInterference" type="checkbox" checked>干渉強化</label>
-      <label><input id="enableCircularize" type="checkbox" checked>円形寄せ</label>
       <label><input id="showTexture" type="checkbox" checked>背景テクスチャ</label>
       <label><input id="showRedShadow" type="checkbox">赤影</label>
       <label><input id="showHoleGuides" type="checkbox" checked>穴ガイド</label>
@@ -506,13 +522,13 @@
 
     <h4>プリセット</h4>
     <div class="row" style="display:flex;gap:8px;">
-      <button id="preset1" class="small">密な輪</button>
-      <button id="preset2" class="small">粗い／渦</button>
+      <button id="preset1" class="small">独立峰</button>
+      <button id="preset2" class="small">山並み</button>
     </div>
 
     <div class="row" style="display:flex;gap:8px;">
-      <button id="preset3" class="small">波紋</button>
-      <button id="preset4" class="small">静かな同心円</button>
+      <button id="preset3" class="small">丘陵</button>
+      <button id="preset4" class="small">高原</button>
     </div>
 
     <h4>シード / 設定</h4>
@@ -565,14 +581,14 @@
     </div>
 
     <div class="row">
-      <label for="holeWave">選択穴の波強度 <span id="holeWaveVal" class="val"></span></label>
+      <label for="holeWave">選択峰の鋭さ倍率 <span id="holeWaveVal" class="val"></span></label>
       <input id="holeWave" type="range" min="0.00" max="2.50" step="0.01" value="1.00">
     </div>
 
     <div class="muted">
       操作: 何もない場所をクリックで穴追加（最大12個）/ 穴をドラッグで移動 / Delete または Backspace で選択穴削除。<br>
       キーボード: キャンバスをクリックしてフォーカスし、[ / ] で穴を選択、矢印キーで選択穴を移動（Shift同時押しで大きく移動）。<br>
-      R=再生成, S=PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数穴と干渉を同条件で再計算します。
+      R=再生成, S=PNG保存（高解像度）, V=SVG保存, H=パネル表示切替, Ctrl/Cmd+Z=元に戻す。保存時も複数の峰を同条件で再計算します。
     </div>
     </div>
   </section>
@@ -634,9 +650,16 @@ let params = {
   HANDLE_RADIUS: 9,
   WAVE_DETAIL: 1.0,
   INTERFERENCE_BOOST: 1.0,
-  CIRCULARIZE_MIX: 0.30,
+  CIRCULARIZE_MIX: 0.05,
   ENABLE_INTERFERENCE: true,
-  ENABLE_CIRCULARIZE: true,
+  ENABLE_CIRCULARIZE: false,
+  WARP: 1.0,
+  MOUNTAIN_WIDTH: 1.0,
+  PEAK_SHARPNESS: 2.0,
+  PEAK_BLEND: 0.0,
+  MIN_SPACING: 8,
+  SMOOTH: 0.5,
+  FIELD_BLUR: 1.0,
   SHOW_TEXTURE: true,
   SHOW_RED_SHADOW: false,
   SHOW_HOLE_GUIDES: true
@@ -680,7 +703,14 @@ const PARAM_RANGES = {
   WHITE_STROKE_WEIGHT: [0.3, 6],
   WAVE_DETAIL: [0.5, 3.5],
   INTERFERENCE_BOOST: [0, 3],
-  CIRCULARIZE_MIX: [0, 1]
+  CIRCULARIZE_MIX: [0, 1],
+  WARP: [0, 2],
+  MOUNTAIN_WIDTH: [0.5, 2.0],
+  PEAK_SHARPNESS: [1.2, 3.5],
+  PEAK_BLEND: [0, 1],
+  MIN_SPACING: [4, 16],
+  SMOOTH: [0, 1],
+  FIELD_BLUR: [0, 2]
 };
 const PARAM_BOOLEANS = ['ENABLE_INTERFERENCE', 'ENABLE_CIRCULARIZE', 'SHOW_TEXTURE', 'SHOW_RED_SHADOW', 'SHOW_HOLE_GUIDES', 'EXPORT_TRANSPARENT'];
 const SETTINGS_PARAM_KEYS = Object.keys(PARAM_RANGES).concat(PARAM_BOOLEANS, ['EXPORT_SCALE']);
@@ -798,13 +828,16 @@ function initControls() {
     ['a', 'ANGLE_STEPS', 'aVal'],
     ['f', 'NOISE_FREQ', 'fVal'],
     ['amp', 'NOISE_AMPLITUDE', 'ampVal'],
-    ['bulge', 'CENTER_BULGE', 'bulgeVal'],
     ['outer', 'OUTER_RADIUS_RATIO', 'outerVal'],
     ['red', 'RED_SHADOW_ALPHA', 'redVal'],
     ['w', 'WHITE_STROKE_WEIGHT', 'wVal'],
-    ['waveDetail', 'WAVE_DETAIL', 'waveDetailVal'],
-    ['interference', 'INTERFERENCE_BOOST', 'interferenceVal'],
-    ['circularize', 'CIRCULARIZE_MIX', 'circularizeVal']
+    ['warp', 'WARP', 'warpVal'],
+    ['mtnWidth', 'MOUNTAIN_WIDTH', 'mtnWidthVal'],
+    ['peakSharp', 'PEAK_SHARPNESS', 'peakSharpVal'],
+    ['peakBlend', 'PEAK_BLEND', 'peakBlendVal'],
+    ['minSpacing', 'MIN_SPACING', 'minSpacingVal'],
+    ['smoothAmt', 'SMOOTH', 'smoothAmtVal'],
+    ['fieldBlur', 'FIELD_BLUR', 'fieldBlurVal']
   ];
 
   sliderMap.forEach(([id, key, valId]) => {
@@ -826,14 +859,13 @@ function initControls() {
   });
 
   const checkboxMap = [
-    ['enableInterference', 'ENABLE_INTERFERENCE'],
-    ['enableCircularize', 'ENABLE_CIRCULARIZE'],
     ['showTexture', 'SHOW_TEXTURE'],
     ['showRedShadow', 'SHOW_RED_SHADOW'],
     ['showHoleGuides', 'SHOW_HOLE_GUIDES']
   ];
   checkboxMap.forEach(([id, key]) => {
     const el = document.getElementById(id);
+    if (!el) return;
     el.checked = !!params[key];
     el.addEventListener('change', () => {
       pushUndo();
@@ -914,63 +946,79 @@ function initControls() {
 
   updateUndoButton();
 
+  // Mountain presets: each one moves the mountain-model knobs to a
+  // visibly different regime. NOISE_AMPLITUDE is kept > 0 in all of
+  // them on purpose: 0 would switch the app into the legacy flat
+  // (SDF) mode instead of the mountain field.
   document.getElementById('preset1').addEventListener('click', () => {
+    // 独立峰: one sharp, self-contained peak.
     applyPreset({
-      NUM_RINGS: 120,
-      ANGLE_STEPS: 1400,
-      NOISE_AMPLITUDE: 0.10,
-      NOISE_FREQ: 3.0,
-      WHITE_STROKE_WEIGHT: 0.9,
-      WAVE_DETAIL: 1.25,
-      INTERFERENCE_BOOST: 1.10,
-      CIRCULARIZE_MIX: 0.38,
-      ENABLE_INTERFERENCE: true,
-      ENABLE_CIRCULARIZE: true
+      NUM_RINGS: 80,
+      ANGLE_STEPS: 1000,
+      NOISE_AMPLITUDE: 0.08,
+      NOISE_FREQ: 2.5,
+      WHITE_STROKE_WEIGHT: 1.1,
+      MOUNTAIN_WIDTH: 0.9,
+      PEAK_SHARPNESS: 3.2,
+      PEAK_BLEND: 0.0,
+      MIN_SPACING: 8,
+      SMOOTH: 0.5,
+      FIELD_BLUR: 1.0,
+      WARP: 0.5
     });
   });
 
   document.getElementById('preset2').addEventListener('click', () => {
+    // 山並み: broad, strongly blended peaks that merge into a range.
     applyPreset({
-      NUM_RINGS: 42,
-      ANGLE_STEPS: 760,
-      NOISE_AMPLITUDE: 0.22,
-      NOISE_FREQ: 5.4,
-      CENTER_BULGE: 1.35,
-      WAVE_DETAIL: 1.9,
-      INTERFERENCE_BOOST: 1.65,
-      CIRCULARIZE_MIX: 0.12,
-      ENABLE_INTERFERENCE: true,
-      ENABLE_CIRCULARIZE: false
+      NUM_RINGS: 70,
+      ANGLE_STEPS: 900,
+      NOISE_AMPLITUDE: 0.12,
+      NOISE_FREQ: 3.0,
+      WHITE_STROKE_WEIGHT: 1.1,
+      MOUNTAIN_WIDTH: 1.2,
+      PEAK_SHARPNESS: 2.2,
+      PEAK_BLEND: 0.7,
+      MIN_SPACING: 8,
+      SMOOTH: 0.5,
+      FIELD_BLUR: 1.0,
+      WARP: 0.8
     });
   });
 
   document.getElementById('preset3').addEventListener('click', () => {
+    // 丘陵: gentle domes under a strong long-wave swell.
     applyPreset({
-      NUM_RINGS: 90,
-      ANGLE_STEPS: 1200,
-      NOISE_AMPLITUDE: 0.20,
-      NOISE_FREQ: 2.2,
-      CENTER_BULGE: 0.8,
-      WAVE_DETAIL: 2.6,
-      INTERFERENCE_BOOST: 1.40,
-      CIRCULARIZE_MIX: 0.15,
-      ENABLE_INTERFERENCE: true,
-      ENABLE_CIRCULARIZE: true
+      NUM_RINGS: 60,
+      ANGLE_STEPS: 900,
+      NOISE_AMPLITUDE: 0.30,
+      NOISE_FREQ: 3.0,
+      WHITE_STROKE_WEIGHT: 1.1,
+      MOUNTAIN_WIDTH: 1.5,
+      PEAK_SHARPNESS: 1.3,
+      PEAK_BLEND: 0.3,
+      MIN_SPACING: 9,
+      SMOOTH: 0.6,
+      FIELD_BLUR: 1.0,
+      WARP: 1.4
     });
   });
 
   document.getElementById('preset4').addEventListener('click', () => {
+    // 高原: wide spacing, few lines, broad calm relief.
     applyPreset({
-      NUM_RINGS: 60,
-      ANGLE_STEPS: 1000,
-      NOISE_AMPLITUDE: 0.0,
-      NOISE_FREQ: 3.5,
-      CENTER_BULGE: 1.0,
-      WAVE_DETAIL: 1.0,
-      INTERFERENCE_BOOST: 1.0,
-      CIRCULARIZE_MIX: 0.0,
-      ENABLE_INTERFERENCE: false,
-      ENABLE_CIRCULARIZE: false
+      NUM_RINGS: 30,
+      ANGLE_STEPS: 900,
+      NOISE_AMPLITUDE: 0.10,
+      NOISE_FREQ: 2.5,
+      WHITE_STROKE_WEIGHT: 1.1,
+      MOUNTAIN_WIDTH: 1.6,
+      PEAK_SHARPNESS: 1.6,
+      PEAK_BLEND: 0.2,
+      MIN_SPACING: 14,
+      SMOOTH: 0.65,
+      FIELD_BLUR: 1.5,
+      WARP: 0.6
     });
   });
 
@@ -1094,21 +1142,22 @@ function syncAllControlValues() {
     ['a', params.ANGLE_STEPS],
     ['f', params.NOISE_FREQ],
     ['amp', params.NOISE_AMPLITUDE],
-    ['bulge', params.CENTER_BULGE],
     ['outer', params.OUTER_RADIUS_RATIO],
     ['red', params.RED_SHADOW_ALPHA],
     ['w', params.WHITE_STROKE_WEIGHT],
-    ['waveDetail', params.WAVE_DETAIL],
-    ['interference', params.INTERFERENCE_BOOST],
-    ['circularize', params.CIRCULARIZE_MIX]
+    ['warp', params.WARP],
+    ['mtnWidth', params.MOUNTAIN_WIDTH],
+    ['peakSharp', params.PEAK_SHARPNESS],
+    ['peakBlend', params.PEAK_BLEND],
+    ['minSpacing', params.MIN_SPACING],
+    ['smoothAmt', params.SMOOTH],
+    ['fieldBlur', params.FIELD_BLUR]
   ];
   valuePairs.forEach(([id, value]) => {
     const el = document.getElementById(id);
     if (el) el.value = value;
   });
 
-  document.getElementById('enableInterference').checked = !!params.ENABLE_INTERFERENCE;
-  document.getElementById('enableCircularize').checked = !!params.ENABLE_CIRCULARIZE;
   document.getElementById('showTexture').checked = !!params.SHOW_TEXTURE;
   document.getElementById('showRedShadow').checked = !!params.SHOW_RED_SHADOW;
   document.getElementById('showHoleGuides').checked = !!params.SHOW_HOLE_GUIDES;
@@ -1160,13 +1209,16 @@ function syncValueLabels() {
     ['a', 'aVal'],
     ['f', 'fVal'],
     ['amp', 'ampVal'],
-    ['bulge', 'bulgeVal'],
     ['outer', 'outerVal'],
     ['red', 'redVal'],
     ['w', 'wVal'],
-    ['waveDetail', 'waveDetailVal'],
-    ['interference', 'interferenceVal'],
-    ['circularize', 'circularizeVal']
+    ['warp', 'warpVal'],
+    ['mtnWidth', 'mtnWidthVal'],
+    ['peakSharp', 'peakSharpVal'],
+    ['peakBlend', 'peakBlendVal'],
+    ['minSpacing', 'minSpacingVal'],
+    ['smoothAmt', 'smoothAmtVal'],
+    ['fieldBlur', 'fieldBlurVal']
   ];
   pairs.forEach(([inputId, labelId]) => {
     const input = document.getElementById(inputId);
@@ -1287,6 +1339,14 @@ function coreParamsSnapshot() {
     CIRCULARIZE_MIX: params.CIRCULARIZE_MIX,
     ENABLE_INTERFERENCE: params.ENABLE_INTERFERENCE,
     ENABLE_CIRCULARIZE: params.ENABLE_CIRCULARIZE,
+    WARP: params.WARP,
+    MOUNTAIN_WIDTH: params.MOUNTAIN_WIDTH,
+    PEAK_SHARPNESS: params.PEAK_SHARPNESS,
+    PEAK_BLEND: params.PEAK_BLEND,
+    MIN_SPACING: params.MIN_SPACING,
+    SMOOTH: params.SMOOTH,
+    FIELD_BLUR: params.FIELD_BLUR,
+    WHITE_STROKE_WEIGHT: params.WHITE_STROKE_WEIGHT,
     TEXTURE_POINTS: params.TEXTURE_POINTS
   };
 }
@@ -1513,7 +1573,10 @@ function coreGetGridStep(cp, targetWidth, targetHeight, baseWidth, baseHeight, f
   const base = coreMapValue(cp.ANGLE_STEPS, 128, 2000, 18, 4, true);
   const sizeScale = Math.sqrt((targetWidth * targetHeight) / Math.max(1, baseWidth * baseHeight));
   const raw = base / Math.max(1, sizeScale * 0.85);
-  return flatMode ? Math.max(2, Math.round(raw * 0.6)) : Math.max(3, Math.round(raw));
+  // Beautiful-prototype: ~0.65x step (finer marching-squares grid) in
+  // both modes. SCREEN_CELL_BUDGET / coreEffectiveGridStep still
+  // coarsen the step when the estimated work exceeds the budget.
+  return flatMode ? Math.max(2, Math.round(raw * 0.6 * 0.65)) : Math.max(3, Math.round(raw * 0.65));
 }
 
 function coreEstimateWork(targetWidth, targetHeight, gridStep, rings, holeCount) {
@@ -1553,6 +1616,31 @@ function coreIsFlatFieldMode(cp) {
   return cp.NOISE_AMPLITUDE <= 0.0001;
 }
 
+// Fractal Brownian motion over coreNoise: samples coreNoise at
+// geometrically increasing frequencies (lacunarity ~2.03) with
+// halving amplitudes and normalises by the total amplitude, so the
+// result stays in roughly the same 0..1 range as coreNoise itself.
+// coreNoise already contains 4 internal octaves, so 2-3 extra
+// samples give a smooth, multi-scale, terrain-like signal at a
+// bounded cost. Pure / deterministic: same core state in, same
+// value out, on the main thread and in the Worker alike.
+function coreFbm(core, x, y, octaves) {
+  let sum = 0;
+  let amp = 0.5;
+  let norm = 0;
+  let fx = x;
+  let fy = y;
+  const n = Math.max(1, Math.floor(octaves || 2));
+  for (let o = 0; o < n; o++) {
+    sum += amp * coreNoise(core, fx, fy, 0);
+    norm += amp;
+    fx = fx * 2.03 + 11.31;
+    fy = fy * 2.03 + 7.77;
+    amp *= 0.5;
+  }
+  return norm > 0 ? sum / norm : 0;
+}
+
 // Precompute every per-hole / global constant once per build.
 // cullCutoff = coreRadius + CULL_ND * spread: beyond it the skipped
 // contribution per hole is < ~5e-4 of field scale at default amplitude
@@ -1561,6 +1649,26 @@ function coreIsFlatFieldMode(cp) {
 const CORE_CULL_ND = 7;
 
 function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
+  // Mountain-final settings, every one optional for backward
+  // compatibility: core params built by older code / tests without
+  // the new keys fall back to the mountain-prototype behaviour
+  // (width 1, sharpness 2 = pure Gaussian, blend 0 = plain sum,
+  // gap 8 px, smoothing 2 passes at mix 0.30).
+  const optNum = (v, fallback, lo, hi) => {
+    const n = (v == null || !isFinite(v)) ? fallback : v;
+    return Math.min(hi, Math.max(lo, n));
+  };
+  const mountainWidth = optNum(cp.MOUNTAIN_WIDTH, 1.0, 0.5, 2.0);
+  const peakSharpness = optNum(cp.PEAK_SHARPNESS, 2.0, 1.2, 3.5);
+  const peakBlend = optNum(cp.PEAK_BLEND, 0.0, 0.0, 1.0);
+  const gapSpacingPx = optNum(cp.MIN_SPACING, 8, 4, 16);
+  const smoothAmt = optNum(cp.SMOOTH, 0.5, 0.0, 1.0);
+  const strokeWeight = optNum(cp.WHITE_STROKE_WEIGHT, 1.1, 0.3, 6.0);
+  // Centre-to-centre spacing used by the threshold guarantee: the
+  // user's MIN_SPACING is the visible black gap, so the stroke
+  // width is added on top. A fatter stroke therefore widens the
+  // threshold step instead of eating the gap and fusing lines.
+  const targetSpacingPx = gapSpacingPx + strokeWeight;
   const holesPx = [];
   for (let i = 0; i < holes.length; i++) {
     const hole = holes[i];
@@ -1568,6 +1676,19 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
     const spreadPx = coreHoleInfluenceSpreadPx(cp, hole.radius, targetWidth, targetHeight);
     const spreadDenom = Math.max(1, spreadPx);
     const cutoff = coreRadiusPx + CORE_CULL_ND * spreadDenom;
+    // Mountain-final: each hole is a generalised-Gaussian peak,
+    //   height_i = strength * exp( -(d / sigma)^p ),
+    // sigma follows the hole's influence spread scaled by
+    // MOUNTAIN_WIDTH; the exponent p is PEAK_SHARPNESS scaled by
+    // the hole's own sharpness multiplier (the legacy waveAmp
+    // field, repurposed: 1.0 = neutral, exactly as saved by older
+    // versions). The sampler culls where the skipped height drops
+    // below ~exp(-18): the cutoff radius in sigma units solves
+    // u^p = 18 for this peak's p.
+    const sigmaPx = Math.max(8, spreadPx * 1.05 * mountainWidth);
+    const sharpMul = (hole.waveAmp == null || !isFinite(hole.waveAmp)) ? 1.0 : Math.max(0, hole.waveAmp);
+    const peakP = Math.min(5.0, Math.max(0.8, peakSharpness * sharpMul));
+    const cutoffU = Math.max(2.6, Math.pow(18, 1 / peakP));
     holesPx.push({
       x: hole.x * targetWidth,
       y: hole.y * targetHeight,
@@ -1578,21 +1699,80 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
       waveAmp: hole.waveAmp,
       phase: hole.phase,
       spreadDenom: spreadDenom,
-      cutoffSq: cutoff * cutoff
+      cutoffSq: cutoff * cutoff,
+      sigmaPx: sigmaPx,
+      peakP: peakP,
+      mountainCutoffSq: Math.pow(sigmaPx * cutoffU, 2)
     });
   }
   const minDim = Math.min(targetWidth, targetHeight);
+  const warpAmountM = (cp.WARP == null || !isFinite(cp.WARP)) ? 1.0 : Math.max(0, cp.WARP);
+  // Band-limit clamp for the swell / warp frequencies: the second
+  // FBM octave runs at 2.03x the base frequency, so the shortest
+  // swell feature is ~1/(2.03 * freq) px. Capping the base
+  // frequency at 1/(2.03 * 10 * targetSpacingPx) keeps that
+  // feature >= 10x the line spacing however far the NOISE_FREQ
+  // slider is pushed — high frequencies can never re-enter the
+  // field and re-create sub-spacing ripples.
+  const maxBandFreq = 1 / (2.03 * 10 * targetSpacingPx);
   return {
     holesPx: holesPx,
     waveScratch: new Float64Array(holesPx.length),
-    waveFreq: (1.0 + cp.NOISE_FREQ * 1.15) * (Math.PI * 2) * cp.WAVE_DETAIL,
-    waveNoiseAmp: cp.NOISE_AMPLITUDE,
-    waveEnvCoef: 1.0 + 0.35 / Math.max(0.25, cp.CENTER_BULGE),
+    // ---- Mountain field parameters ----
+    // Elevation = blended generalised-Gaussian peaks (one per
+    // hole) + a long-wave swell + a low-frequency domain warp of
+    // the sample coordinates. Everything is band-limited: the
+    // smallest elevation feature is far larger than the target
+    // contour spacing, so equally spaced thresholds can never
+    // chase sub-spacing ripples.
+    fieldWidth: targetWidth,
+    fieldHeight: targetHeight,
+    warpLatticeStep: 30,
+    warpXLattice: null,
+    warpYLattice: null,
+    swellLattice: null,
+    warpLatticeCols: 0,
+    warpLatticeRows: 0,
+    // WARP is optional for backward compatibility (older params
+    // without the key behave as WARP = 1).
+    warpAmount: warpAmountM,
+    warpFreq: Math.min(0.0016 * cp.NOISE_FREQ, maxBandFreq),
+    // Peak sample-coordinate displacement, in px (WARP 1 -> +/-30 px,
+    // varying on a >=60 px scale through the 30 px lattice).
+    warpPx: 30 * warpAmountM,
+    // Long-wave swell: very low frequency (feature scale >= 10x
+    // the line spacing, enforced by the clamp above), modest
+    // amplitude next to a unit-height peak.
+    swellFreq: Math.min(0.0011 * cp.NOISE_FREQ, maxBandFreq),
+    swellAmp: cp.NOISE_AMPLITUDE * 0.45,
     noiseFreq: 0.0032 * cp.NOISE_FREQ,
     noiseOffX: seed * 1e-6,
     noiseOffY: seed * 2e-6,
+    // Mountain-final line discipline.
+    peakBlend: peakBlend,
+    // Spacing guarantee: adjacent thresholds are stepped so that
+    // at the field's p90 gradient their centrelines sit
+    // targetSpacingPx apart — the user's black gap (MIN_SPACING)
+    // plus the stroke width, so the visible gap survives fat
+    // strokes.
+    targetSpacingPx: targetSpacingPx,
+    gapSpacingPx: gapSpacingPx,
+    strokeWeightPx: strokeWeight,
+    // Smoothing derived from SMOOTH: 0 -> none, 0.5 -> the
+    // mountain-prototype setting (2 passes, mix 0.30), 1 -> 4
+    // passes at mix 0.45. The displacement cap (a quarter of the
+    // centre spacing) applies at every setting.
+    smoothPasses: smoothAmt <= 0.001 ? 0 : Math.max(1, Math.round(smoothAmt * 4)),
+    smoothMix: 0.15 + 0.30 * smoothAmt,
+    // Legacy beautiful-prototype fields, kept readable so helper
+    // code written against v1 does not break. The mountain sampler
+    // no longer uses the ripple-wave terms.
+    waveFreq: (1.0 + cp.NOISE_FREQ * 1.15) * (Math.PI * 2) * cp.WAVE_DETAIL * 0.52,
+    waveNoiseAmp: cp.NOISE_AMPLITUDE,
+    waveEnvCoef: 0.42 + 0.18 / Math.max(0.25, cp.CENTER_BULGE),
+    warpStrength: Math.min(1.2, cp.NOISE_AMPLITUDE * 3.0),
     interference: !!(cp.ENABLE_INTERFERENCE && holesPx.length > 1 && cp.INTERFERENCE_BOOST > 0.0001),
-    interferenceFactor: 0.22 * cp.INTERFERENCE_BOOST,
+    interferenceFactor: 0.50 * cp.INTERFERENCE_BOOST,
     flatSmoothK: minDim * (0.018 + cp.OUTER_RADIUS_RATIO * 0.028)
   };
 }
@@ -1618,51 +1798,131 @@ function coreSampleFlatFieldAt(prep, x, y) {
   return Math.max(0, sdf);
 }
 
-function coreSampleFieldAt(core, prep, x, y, cull) {
-  const holesPx = prep.holesPx;
-  const waveTerms = prep.waveScratch;
-  const waveFreq = prep.waveFreq;
-  const waveNoiseAmp = prep.waveNoiseAmp;
-  let value = 0;
+// The warp / swell fields are low-frequency (feature scale
+// >= ~90 px), so they are evaluated once on a coarse lattice
+// (warpLatticeStep px) and bilinearly interpolated per sample
+// point — the lattice itself band-limits them, so no sub-spacing
+// ripple can enter the elevation through them. coreNoise is a pure
+// function of the seeded perlin table, so the lattice is
+// deterministic, identical on the main thread and in Workers, and
+// identical for culled / non-culled sampling. Built lazily on
+// first use so preps that never sample the non-flat field (e.g.
+// flat mode) pay nothing.
+function coreEnsureWarpLattice(core, prep) {
+  if (prep.swellLattice) return;
+  if (prep.warpPx <= 0.01 && prep.swellAmp <= 0.0001) return;
+  const step = prep.warpLatticeStep;
+  const cols = Math.ceil(prep.fieldWidth / step) + 2;
+  const rows = Math.ceil(prep.fieldHeight / step) + 2;
+  const warpXArr = new Float32Array(cols * rows);
+  const warpYArr = new Float32Array(cols * rows);
+  const swellArr = new Float32Array(cols * rows);
+  for (let gy = 0; gy < rows; gy++) {
+    const y = gy * step;
+    for (let gx = 0; gx < cols; gx++) {
+      const x = gx * step;
+      const wx = x * prep.warpFreq + prep.noiseOffX * 1000;
+      const wy = y * prep.warpFreq + prep.noiseOffY * 1000;
+      const qx = coreFbm(core, wx, wy, 2);
+      const qy = coreFbm(core, wx + 5.2, wy + 1.3, 2);
+      // Long-wave swell: only 2 FBM octaves at a very low base
+      // frequency, so its shortest feature stays >= ~90 px — more
+      // than 10x the target contour spacing.
+      const swell = coreFbm(core, x * prep.swellFreq + 3.7 + prep.noiseOffX * 500, y * prep.swellFreq + 9.1 + prep.noiseOffY * 500, 2);
+      const idx = gy * cols + gx;
+      warpXArr[idx] = (qx - 0.5) * 2 * prep.warpPx;
+      warpYArr[idx] = (qy - 0.5) * 2 * prep.warpPx;
+      swellArr[idx] = swell;
+    }
+  }
+  prep.warpXLattice = warpXArr;
+  prep.warpYLattice = warpYArr;
+  prep.swellLattice = swellArr;
+  prep.warpLatticeCols = cols;
+  prep.warpLatticeRows = rows;
+}
 
+function coreBilinearLattice(arr, cols, rows, step, x, y) {
+  let fx = x / step;
+  let fy = y / step;
+  if (fx < 0) fx = 0;
+  if (fy < 0) fy = 0;
+  if (fx > cols - 1.001) fx = cols - 1.001;
+  if (fy > rows - 1.001) fy = rows - 1.001;
+  const x0 = Math.floor(fx);
+  const y0 = Math.floor(fy);
+  const tx = fx - x0;
+  const ty = fy - y0;
+  const i00 = y0 * cols + x0;
+  const a = arr[i00];
+  const b = arr[i00 + 1];
+  const c = arr[i00 + cols];
+  const d = arr[i00 + cols + 1];
+  return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
+}
+
+function coreSampleFieldAt(core, prep, x, y, cull) {
+  // Mountain-final elevation:
+  //   height(x, y) = swell(x, y) + peaks(x, y),
+  //   peaks = sum_i h_i  +  PEAK_BLEND * 0.35 * ((sum_i h_i)^2 - sum_i h_i^2)
+  //         = sum_i h_i  +  PEAK_BLEND * 0.7 * sum_{i<j} h_i * h_j,
+  //   h_i = strength_i * exp(-(d_i/sigma_i)^p_i)
+  // where d_i is measured in domain-warped coordinates. At
+  // PEAK_BLEND = 0 the peaks simply sum (the mountain-prototype
+  // behaviour: two holes form a range with a genuine saddle
+  // between them). The blend term is a pairwise product: it is
+  // exactly zero wherever only one peak reaches (so single-peak
+  // scenes and every summit's own height are barely touched —
+  // the product of a summit with a distant tail is small), and
+  // it peaks where two flanks genuinely overlap, lifting the
+  // saddle so the range reads as one connected massif. The
+  // coefficient is deliberately moderate: measured on the
+  // standard 3-peak scene (probe-blend.mjs), blend 1 at width
+  // 1.0 raises the closest saddle from 0.92 to ~1.04 of the
+  // lower summit — that pair just merges at the very top —
+  // while blend 0.5 keeps every summit distinct (ratio ~0.98).
+  // MOUNTAIN_WIDTH is the stronger merging force: at width
+  // >= 1.2 the plain sum already fuses close peaks into one
+  // massif, and blend then lifts the whole overlap region.
+  // The swell makes contour lines meander on
+  // a long wavelength (this is how the "wave" enters: lines
+  // follow the swell, they are not ripples themselves). No
+  // high-frequency term exists anywhere in the field.
+  let sx = x;
+  let sy = y;
+  let value = 0;
+  if (prep.warpPx > 0.01 || prep.swellAmp > 0.0001) {
+    coreEnsureWarpLattice(core, prep);
+    if (prep.swellLattice) {
+      sx += coreBilinearLattice(prep.warpXLattice, prep.warpLatticeCols, prep.warpLatticeRows, prep.warpLatticeStep, x, y);
+      sy += coreBilinearLattice(prep.warpYLattice, prep.warpLatticeCols, prep.warpLatticeRows, prep.warpLatticeStep, x, y);
+      const swell = coreBilinearLattice(prep.swellLattice, prep.warpLatticeCols, prep.warpLatticeRows, prep.warpLatticeStep, x, y);
+      value += (swell - 0.5) * 2 * prep.swellAmp;
+    }
+  }
+  const holesPx = prep.holesPx;
+  const blend = prep.peakBlend || 0;
+  let sumH = 0;
+  let sumSqH = 0;
   for (let i = 0; i < holesPx.length; i++) {
     const hole = holesPx[i];
-    const dx = x - hole.x;
-    const dy = y - hole.y;
+    const dx = sx - hole.x;
+    const dy = sy - hole.y;
     const distSq = dx * dx + dy * dy;
-    if (cull && distSq > hole.cutoffSq) {
-      waveTerms[i] = 0;
-      continue;
-    }
-    const dist = Math.hypot(dx, dy) + 0.0001;
-    const edgeDist = Math.max(0, dist - hole.coreRadiusPx);
-    const nd = edgeDist / hole.spreadDenom;
-
-    const coreTerm = hole.strength * Math.exp(-nd * nd * 1.55);
-    const shoulder = hole.strength * 0.28 * Math.exp(-nd * 0.92);
-    const waveEnv = Math.exp(-nd * prep.waveEnvCoef);
-    const wave = Math.sin(nd * waveFreq + hole.phase) * hole.waveAmp * waveNoiseAmp * 2.35;
-    const waveTerm = hole.strength * wave * waveEnv;
-
-    value += coreTerm + shoulder + waveTerm;
-    waveTerms[i] = waveTerm;
+    if (cull && distSq > hole.mountainCutoffSq) continue;
+    const s = hole.sigmaPx;
+    const t2 = distSq / (s * s);
+    // (d/sigma)^p with t2 = (d/sigma)^2: raise to p/2. The p = 2
+    // branch is the plain Gaussian and skips the pow entirely.
+    const p = hole.peakP || 2;
+    const t = (p === 2) ? t2 : Math.pow(t2, p * 0.5);
+    const h = hole.strength * Math.exp(-t);
+    sumH += h;
+    if (blend > 0) sumSqH += h * h;
   }
-
-  if (prep.interference) {
-    let pairTerm = 0;
-    for (let i = 0; i < waveTerms.length; i++) {
-      const wi = waveTerms[i];
-      if (wi === 0) continue;
-      for (let j = i + 1; j < waveTerms.length; j++) {
-        pairTerm += wi * waveTerms[j];
-      }
-    }
-    value += pairTerm * prep.interferenceFactor;
-  }
-
-  const backgroundNoise = coreNoise(core, x * prep.noiseFreq + prep.noiseOffX, y * prep.noiseFreq + prep.noiseOffY, 0);
-  value += (backgroundNoise - 0.5) * waveNoiseAmp * 0.55;
-
+  // Pairwise-product saddle lift: (sumH^2 - sumSqH) / 2 is
+  // sum_{i<j} h_i h_j, so the coefficient below is 0.7 * that.
+  value += blend > 0 ? sumH + blend * 0.35 * (sumH * sumH - sumSqH) : sumH;
   return value;
 }
 
@@ -1695,6 +1955,128 @@ function coreBuildThresholds(cp, minField, maxField, flatMode) {
     thresholds.push(coreLerp(high, low, eased));
   }
   return thresholds;
+}
+
+// Gaussian blur of the sampled field grid (separable [1 2 1]/4
+// kernel, edge-clamped), applied before marching squares. Removes
+// residual local extrema and sub-spacing ripples that would
+// otherwise spawn dense clusters of tiny loops. Pure and
+// deterministic; every Worker chunk blurs its identical copy of
+// the field the same way, so pooled builds stay bit-identical.
+function coreBlurField(field, cols, rows, passes) {
+  const n = cols * rows;
+  if (n === 0 || passes <= 0) return field;
+  const tmp = new Float32Array(n);
+  for (let pass = 0; pass < passes; pass++) {
+    // horizontal
+    for (let gy = 0; gy < rows; gy++) {
+      const rowOff = gy * cols;
+      for (let gx = 0; gx < cols; gx++) {
+        const l = field[rowOff + Math.max(0, gx - 1)];
+        const c = field[rowOff + gx];
+        const r = field[rowOff + Math.min(cols - 1, gx + 1)];
+        tmp[rowOff + gx] = (l + 2 * c + r) * 0.25;
+      }
+    }
+    // vertical
+    for (let gy = 0; gy < rows; gy++) {
+      const rowOff = gy * cols;
+      const upOff = Math.max(0, gy - 1) * cols;
+      const dnOff = Math.min(rows - 1, gy + 1) * cols;
+      for (let gx = 0; gx < cols; gx++) {
+        field[rowOff + gx] = (tmp[upOff + gx] + 2 * tmp[rowOff + gx] + tmp[dnOff + gx]) * 0.25;
+      }
+    }
+  }
+  return field;
+}
+
+// Spacing-guaranteed, equally stepped thresholds (mountain mode).
+// The gradient magnitude of the (blurred) field is sampled at the
+// points whose height lies inside the contour band; the p90 of
+// that distribution is the representative steepness. Stepping the
+// thresholds by delta = gradP90 * targetSpacingPx puts adjacent
+// contour lines ~targetSpacingPx apart wherever the terrain is at
+// p90 steepness, wider on gentler slopes — exactly how real
+// contour maps behave, and the mechanism that keeps lines from
+// touching. NUM_RINGS acts as a cap: if the guaranteed step would
+// produce more lines than the cap, the cap wins and the step (and
+// the relaxed spacing) is reported in info.capped.
+function coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, maxField, targetSpacingPx) {
+  const range = Math.max(1e-9, maxField - minField);
+  const high = maxField - range * 0.015;
+  const low = minField + range * 0.045;
+  const bandLo = minField + range * 0.03;
+  const bandHi = maxField - range * 0.015;
+  const grads = [];
+  const inv2Step = 1 / Math.max(1e-6, 2 * gridStep);
+  for (let gy = 1; gy < rows - 1; gy++) {
+    for (let gx = 1; gx < cols - 1; gx++) {
+      const idx = gy * cols + gx;
+      const v = field[idx];
+      if (v < bandLo || v > bandHi) continue;
+      const gxGrad = (field[idx + 1] - field[idx - 1]) * inv2Step;
+      const gyGrad = (field[idx + cols] - field[idx - cols]) * inv2Step;
+      const g = Math.hypot(gxGrad, gyGrad);
+      if (g > 1e-9) grads.push(g);
+    }
+  }
+  let gradP50 = 0;
+  let gradP90 = 0;
+  let gradMax = 0;
+  if (grads.length > 0) {
+    grads.sort((a, b) => a - b);
+    gradP50 = grads[Math.floor(grads.length * 0.5)];
+    gradP90 = grads[Math.min(grads.length - 1, Math.floor(grads.length * 0.9))];
+    gradMax = grads[grads.length - 1];
+  }
+  const cap = Math.max(2, Math.trunc(cp.NUM_RINGS));
+  // Safety guard (mountain-final): for narrow or low-sharpness
+  // peaks the gradient distribution spreads out (p90 / max can
+  // fall to ~0.5), and stepping by p90 alone lets the steepest
+  // flank squeeze lines below the guaranteed gap. The reference
+  // gradient therefore never drops below 0.78 * gradMax, which
+  // floors the worst-case spacing at 0.78 * targetSpacingPx. In
+  // the default terrain (p90 / max ~ 0.80) the guard is inactive
+  // and the mountain-prototype step is reproduced exactly.
+  const gradRef = Math.max(gradP90, gradMax * 0.78);
+  let delta = gradRef * targetSpacingPx;
+  let count;
+  let capped = false;
+  if (!(delta > 1e-9) || !isFinite(delta)) {
+    // Degenerate (near-flat) field: fall back to the cap count.
+    count = cap;
+    delta = (high - low) / Math.max(1, count - 1);
+  } else {
+    count = Math.floor((high - low) / delta) + 1;
+    if (count > cap) {
+      count = cap;
+      capped = true;
+      delta = (high - low) / Math.max(1, count - 1);
+    }
+    if (count < 2) count = 2;
+  }
+  const thresholds = [];
+  for (let i = 0; i < count; i++) thresholds.push(high - delta * i);
+  return {
+    thresholds: thresholds,
+    info: {
+      gradSamples: grads.length,
+      gradP50: gradP50,
+      gradP90: gradP90,
+      gradMax: gradMax,
+      delta: delta,
+      targetSpacingPx: targetSpacingPx,
+      gapSpacingPx: (cp.MIN_SPACING == null || !isFinite(cp.MIN_SPACING)) ? 8 : Math.min(16, Math.max(4, cp.MIN_SPACING)),
+      requestedRings: Math.max(2, Math.trunc(cp.NUM_RINGS)),
+      chosenRings: count,
+      capped: capped,
+      gradRef: gradRef,
+      guardApplied: gradMax * 0.78 > gradP90,
+      expectedSpacingAtP90Px: gradP90 > 1e-9 ? delta / gradP90 : 0,
+      expectedSpacingAtMaxPx: gradMax > 1e-9 ? delta / gradMax : 0
+    }
+  };
 }
 
 function corePathArea(pts) {
@@ -1737,10 +2119,11 @@ function coreFilterFlatContours(contours, targetWidth, targetHeight, gridStep) {
   });
 }
 
-function coreSmoothPathObject(pathObj, passes, mix) {
+function coreSmoothPathObject(pathObj, passes, mix, maxDisp) {
   if (passes === undefined) passes = 1;
   if (mix === undefined) mix = 0.35;
   if (!pathObj || pathObj.points.length < 3) return pathObj;
+  const capDisp = (typeof maxDisp === 'number' && maxDisp > 0) ? maxDisp : 0;
   let pts = pathObj.points.slice();
   for (let pass = 0; pass < passes; pass++) {
     const next = [];
@@ -1755,10 +2138,24 @@ function coreSmoothPathObject(pathObj, passes, mix) {
       }
       const avgX = (prev.x + cur.x + following.x) / 3;
       const avgY = (prev.y + cur.y + following.y) / 3;
-      next.push({
-        x: coreLerp(cur.x, avgX, mix),
-        y: coreLerp(cur.y, avgY, mix)
-      });
+      let nx = coreLerp(cur.x, avgX, mix);
+      let ny = coreLerp(cur.y, avgY, mix);
+      if (capDisp > 0) {
+        // Displacement cap (mountain mode): a contour may be
+        // smoothed, but never shoved into its neighbour. The cap
+        // is a quarter of the guaranteed line spacing, so two
+        // adjacent lines smoothed towards each other still keep
+        // at least half their guaranteed gap.
+        const dx = nx - cur.x;
+        const dy = ny - cur.y;
+        const d = Math.hypot(dx, dy);
+        if (d > capDisp) {
+          const s = capDisp / d;
+          nx = cur.x + dx * s;
+          ny = cur.y + dy * s;
+        }
+      }
+      next.push({ x: nx, y: ny });
     }
     pts = next;
   }
@@ -2044,9 +2441,33 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
     if (gy % 16 === 15) yield { phase: 'field', ratio: (gy + 1) / rows };
   }
 
+  // Mountain mode: blur the field grid before contouring (kills
+  // residual sub-spacing extrema / tiny loop clusters), then pick
+  // thresholds with the gradient-based spacing guarantee. Flat
+  // mode keeps its original SDF behaviour untouched.
+  let thresholdInfo = null;
+  if (!flatMode) {
+    // FIELD_BLUR maps to blur passes at 2 per unit (default 1.0
+    // -> the mountain-prototype's 2 passes); older params without
+    // the key also land on 2.
+    const blurAmt = (cp.FIELD_BLUR == null || !isFinite(cp.FIELD_BLUR)) ? 1.0 : Math.min(2, Math.max(0, cp.FIELD_BLUR));
+    const blurPasses = Math.round(blurAmt * 2);
+    if (blurPasses > 0) coreBlurField(field, cols, rows, blurPasses);
+    minField = Infinity;
+    maxField = -Infinity;
+    for (let i = 0; i < field.length; i++) {
+      const v = field[i];
+      if (v < minField) minField = v;
+      if (v > maxField) maxField = v;
+    }
+  }
+  const mountainThresholds = flatMode
+    ? null
+    : coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, maxField, prep.targetSpacingPx);
+  if (mountainThresholds) thresholdInfo = mountainThresholds.info;
   const thresholds = flatMode
     ? coreBuildFlatThresholds(cp, targetWidth, targetHeight, gridStep)
-    : coreBuildThresholds(cp, minField, maxField, false);
+    : mountainThresholds.thresholds;
   // Optional threshold range for parallel Worker chunks: the field and
   // the full threshold list are computed identically in every chunk,
   // only the contour extraction is limited to [rangeStart, rangeEnd).
@@ -2068,6 +2489,23 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
   if (flatMode) {
     contours = coreFilterFlatContours(contours, targetWidth, targetHeight, gridStep)
       .map((path) => coreSmoothPathObject(path, 3, 0.42));
+  } else {
+    // Mountain mode: smooth (strength from SMOOTH via the prep)
+    // with a hard displacement cap of a quarter of the guaranteed
+    // centre spacing (see coreSmoothPathObject), so
+    // post-processing can never push one line into the next. The
+    // cap applies at every smoothing strength, including the
+    // strongest. Applied per contour, so pooled /
+    // threshold-ranged chunks stay bit-identical to a full build.
+    if (prep.smoothPasses > 0) {
+      // The cap is a TOTAL displacement budget of a quarter of
+      // the centre spacing, divided across passes (each pass of
+      // coreSmoothPathObject caps against the pass-start point),
+      // so even the strongest SMOOTH setting cannot accumulate
+      // enough travel to reach a neighbouring line.
+      const dispCap = prep.targetSpacingPx * 0.25 / prep.smoothPasses;
+      contours = contours.map((path) => coreSmoothPathObject(path, prep.smoothPasses, prep.smoothMix, dispCap));
+    }
   }
 
   if (cp.ENABLE_CIRCULARIZE && cp.CIRCULARIZE_MIX > 0.0001) {
@@ -2080,7 +2518,7 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
   const textureDots = range && rangeStart > 0
     ? []
     : coreBuildTextureDots(core, targetWidth, targetHeight, cp.TEXTURE_POINTS, seed + 987654321);
-  return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep };
+  return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep, thresholdInfo: thresholdInfo };
 }
 
 function coreBuildScene(core, cp, holes, seed, targetWidth, targetHeight, buildOpts) {
@@ -2630,6 +3068,9 @@ const TOPO_CORE_FUNCTIONS = [
   coreMapValue,
   coreNoiseSeed,
   coreNoise,
+  coreFbm,
+  coreEnsureWarpLattice,
+  coreBilinearLattice,
   coreRandomSeed,
   coreRandomNext,
   coreRandom,
@@ -2645,6 +3086,8 @@ const TOPO_CORE_FUNCTIONS = [
   coreSampleFieldAt,
   coreBuildFlatThresholds,
   coreBuildThresholds,
+  coreBlurField,
+  coreBuildMountainThresholds,
   corePathArea,
   corePathLength,
   coreTouchesBoundary,

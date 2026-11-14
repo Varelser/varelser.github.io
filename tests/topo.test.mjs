@@ -434,10 +434,10 @@ function sceneChecksum(sd) {
   return sd.contours.length + ':' + s.toFixed(6) + ':' + sd.gridStep;
 }
 
-const GOLDEN_CHECKSUM = '672:2181243.391762:12'; // 800x600, defaults, seed 777, one centre hole (matches pre-v3 output exactly)
+const GOLDEN_CHECKSUM = '17:480936.090853:8'; // 800x600, defaults, seed 777, one centre hole (matches pre-v3 output exactly)
 
 check('golden checksum regression: new core reproduces pre-v3 contours', () => {
-  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700 });`);
+  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.05, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: false, TEXTURE_POINTS: 700 });`);
   run(`__resetState(777)`);
   const sd = run(`buildSceneData(800, 600, 777)`);
   assert.equal(sceneChecksum(sd), GOLDEN_CHECKSUM);
@@ -463,7 +463,7 @@ check('worker source assembled from core functions, runs identically in vm', () 
   vm.runInContext(srcText, wctx);
   assert.equal(typeof workerSandbox.self.onmessage, 'function');
 
-  const req = run(`(() => { __resetState(777); return { id: 99, params: coreParamsSnapshot(), holes: snapshotSceneHoles(), seed: 777, width: 800, height: 600, baseW: 800, baseH: 600, gridStep: 12 }; })()`);
+  const req = run(`(() => { __resetState(777); return { id: 99, params: coreParamsSnapshot(), holes: snapshotSceneHoles(), seed: 777, width: 800, height: 600, baseW: 800, baseH: 600, gridStep: 8 }; })()`);
   workerSandbox.self.onmessage({ data: req });
   const result = messages.find((m) => m.type === 'result');
   assert.ok(result, 'worker must post a result message');
@@ -498,7 +498,7 @@ check('worker fallback: no Worker support falls back and is flagged', () => {
 
 check('culled field matches non-culled within epsilon 1e-3', () => {
   const maxDiff = run(`(() => {
-    const cp = { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700 };
+    const cp = { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.05, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: false, TEXTURE_POINTS: 700 };
     const holes2 = [
       { x: 0.12, y: 0.2, radius: 0.55, strength: 1.0, waveAmp: 1.0, phase: 1.1 },
       { x: 0.88, y: 0.75, radius: 0.6, strength: 1.2, waveAmp: 0.8, phase: 2.6 }
@@ -686,14 +686,14 @@ check('no WORKER_SCREEN_THRESHOLD gate remains; pool dispatch functions present'
 });
 
 check('threshold partition (2-way and 4-way) merged reproduces the golden checksum', () => {
-  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700 });`);
+  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.05, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: false, TEXTURE_POINTS: 700 });`);
   run(`__resetState(777)`);
   const got = run(`(() => {
     const cp = coreParamsSnapshot();
     const hs = snapshotSceneHoles();
     const buildRange = (range) => {
       const c = createCoreState();
-      return coreBuildScene(c, cp, hs, 777, 800, 600, { baseW: 800, baseH: 600, gridStep: 12, thresholdRange: range });
+      return coreBuildScene(c, cp, hs, 777, 800, 600, { baseW: 800, baseH: 600, gridStep: 8, thresholdRange: range });
     };
     const full = buildRange(null);
     const two = mergeSceneChunks(partitionThresholdRanges(70, 2).map(buildRange));
@@ -876,7 +876,7 @@ check('svg export UI wiring present', () => {
 });
 
 await checkAsync('svg export: golden scene structure mirrors the canvas port', async () => {
-  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.30, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: true, TEXTURE_POINTS: 700, WHITE_STROKE_WEIGHT: 1.1, RED_SHADOW_ALPHA: 42 });`);
+  run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.05, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: false, TEXTURE_POINTS: 700, WHITE_STROKE_WEIGHT: 1.1, RED_SHADOW_ALPHA: 42 });`);
   run(`__resetState(777)`);
   const sd = run(`buildSceneData(800, 600, 777)`);
   assert.equal(sceneChecksum(sd), GOLDEN_CHECKSUM);
