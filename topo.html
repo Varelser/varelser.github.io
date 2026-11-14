@@ -1566,11 +1566,9 @@ function snapshotSceneHoles() {
 
 function afterSceneBuilt(adapted) {
   invalidateArtworkCache();
-  if (adapted) {
-    setStatus('負荷軽減のためグリッドを粗くしました');
-  }
   syncSelectedHoleControls();
   updateSeedDisplay();
+  clearWorkerStatus();
 }
 
 function regenerateScene(options = {}) {
