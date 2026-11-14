@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- TOPO MOUNTAIN-FINAL PROTOTYPE (2026-11-14, NOT for release): real topographic contours — the field is a smooth band-limited elevation (Gaussian peaks per hole + long-wave swell + low-frequency domain warp), the field grid is Gaussian-blurred before marching squares, and thresholds are equally spaced with a spacing guarantee derived from the field gradient (adjacent lines keep a minimum px interval, so lines never touch / merge / white-out). Wave-ripple terms from the beautiful-prototype are removed. Base: topo-mountain. This pass exposes the mountain model to rich settings: MOUNTAIN_WIDTH / PEAK_SHARPNESS / PEAK_BLEND (peak shape), MIN_SPACING / SMOOTH / FIELD_BLUR (line discipline, stroke-aware spacing), swell relabelled from NOISE_* with a band-limit clamp, and mountain presets. Legacy keys (WAVE_DETAIL / INTERFERENCE_* / CIRCULARIZE_* / CENTER_BULGE) stay in params/settings for compatibility but have no panel UI and no effect on the mountain field. -->
+<!-- TOPO mountain (2026-11-14; audit fixes 2026-11-15): real topographic contours — the field is a smooth band-limited elevation (Gaussian peaks per hole + long-wave swell + low-frequency domain warp), the field grid is Gaussian-blurred before marching squares, and thresholds are equally spaced with a spacing guarantee derived from the field gradient (adjacent lines keep a minimum px interval, so lines never touch / merge / white-out). Wave-ripple terms from the beautiful-prototype are removed. Base: topo-mountain. This pass exposes the mountain model to rich settings: MOUNTAIN_WIDTH / PEAK_SHARPNESS / PEAK_BLEND (peak shape), MIN_SPACING / SMOOTH / FIELD_BLUR (line discipline, stroke-aware spacing), swell relabelled from NOISE_* with a band-limit clamp, and mountain presets. Legacy keys (WAVE_DETAIL / INTERFERENCE_* / CENTER_BULGE) stay in params/settings for compatibility but have no panel UI and no effect on the mountain field. CIRCULARIZE_* also stays in params/settings for compatibility and has no panel UI, but it is a contour post-process rather than part of the field, so it DOES still apply when enabled; because its displacement is uncapped and can push mountain contours across each other, a one-time migration ('topo-migrated-mountain', see loadSettings) switches a stored ENABLE_CIRCULARIZE off once and resets CIRCULARIZE_MIX to the 0.05 default. The spacing floor was hardened in the same pass, after the audit's dense-layout counterexample (3.31px measured at MIN_SPACING 8): the gradient guard floor went 0.78 -> 0.90 of gradMax and the smoothing displacement budget a quarter -> a tenth of the target spacing, putting the design floor at 0.70 x target spacing; in the audit sweep (presets, extremes, 12-hole dense / overlapping / edge layouts) the measured worst case is back at delta / gradMax with all in-canvas crossings at zero. -->
 <!-- TOPO v7 (2026-11-12): Lien-style UI reskin — app header + bottom toolbar chrome, floating configuration panel (hidden by default, opened from the toolbar), Lien slider/option styling and zinc palette via CSS variables; layout is header / canvas-wrap / footer so the canvas fills the space between the bars; computation core, IDs and behaviour are unchanged from v6 except panelToggle now toggles and mousePressed converts to viewport coordinates for the controls hit-test. v6: audit fixes — hole phase is persisted in settings JSON and undo snapshots, so seed reproducibility survives hole deletion + reload (previously phases were recomputed by index on load while live holes kept their creation-time phase); ANGLE_STEPS slider step 8 -> 1 (default 900 was off-step: browsers snapped the display to 904 while params stayed 900); hole position clamp unified to 0.02-0.98 (drag/arrows were 0.02-0.98 but create/sanitize were 0.03-0.97, so edge holes shifted on reload); EXPORT_TRANSPARENT gained a UI checkbox (was reachable only by hand-editing settings JSON). v5: SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
 <html lang="ja">
 <head>
@@ -669,6 +669,7 @@ const MAX_HOLES = 12;
 const UNDO_MAX = 50;
 const STORAGE_KEY = 'topo-settings-v1';
 const MIGRATION_KEY_V7 = 'topo-migrated-v7';
+const MIGRATION_KEY_MOUNTAIN = 'topo-migrated-mountain';
 const SCREEN_CELL_BUDGET = 50000000;
 // Pool the Worker computation (split by threshold ranges) only when the
 // scene is large enough for the duplicated field sampling to pay off.
@@ -1760,8 +1761,8 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
     strokeWeightPx: strokeWeight,
     // Smoothing derived from SMOOTH: 0 -> none, 0.5 -> the
     // mountain-prototype setting (2 passes, mix 0.30), 1 -> 4
-    // passes at mix 0.45. The displacement cap (a quarter of the
-    // centre spacing) applies at every setting.
+    // passes at mix 0.45. The displacement cap (a tenth of the
+    // centre spacing in total) applies at every setting.
     smoothPasses: smoothAmt <= 0.001 ? 0 : Math.max(1, Math.round(smoothAmt * 4)),
     smoothMix: 0.15 + 0.30 * smoothAmt,
     // Legacy beautiful-prototype fields, kept readable so helper
@@ -2031,15 +2032,26 @@ function coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, 
     gradMax = grads[grads.length - 1];
   }
   const cap = Math.max(2, Math.trunc(cp.NUM_RINGS));
-  // Safety guard (mountain-final): for narrow or low-sharpness
-  // peaks the gradient distribution spreads out (p90 / max can
-  // fall to ~0.5), and stepping by p90 alone lets the steepest
-  // flank squeeze lines below the guaranteed gap. The reference
-  // gradient therefore never drops below 0.78 * gradMax, which
-  // floors the worst-case spacing at 0.78 * targetSpacingPx. In
-  // the default terrain (p90 / max ~ 0.80) the guard is inactive
-  // and the mountain-prototype step is reproduced exactly.
-  const gradRef = Math.max(gradP90, gradMax * 0.78);
+  // Safety guard (mountain-final; floor raised 0.78 -> 0.90 by
+  // the 2026-11-15 audit fix): for narrow or low-sharpness peaks
+  // the gradient distribution spreads out (p90 / max can fall to
+  // ~0.5), and stepping by p90 alone lets the steepest flank
+  // squeeze lines below the guaranteed gap. The 0.78 floor turned
+  // out not to be enough: in dense multi-peak layouts, contours
+  // on either side of a saddle pinch far below delta / gradMax
+  // (audit finding 2: 3.31px measured against a 6.0px floor at
+  // MIN_SPACING 8), because the pinch is governed by the saddle
+  // geometry rather than the sampled gradients, and the smoothing
+  // budget then closes more of the remaining gap. The reference
+  // gradient therefore never drops below 0.90 * gradMax, which
+  // floors the pre-smoothing worst-case spacing at
+  // 0.90 * targetSpacingPx; together with the reduced smoothing
+  // budget (a tenth of the spacing per line, see
+  // coreBuildSceneSteps) the design floor is
+  // 0.70 * targetSpacingPx, and in the audit sweep the measured
+  // worst case sits back at delta / gradMax. In terrain whose
+  // p90 / max is above 0.90 the guard stays inactive.
+  const gradRef = Math.max(gradP90, gradMax * 0.90);
   let delta = gradRef * targetSpacingPx;
   let count;
   let capped = false;
@@ -2072,7 +2084,7 @@ function coreBuildMountainThresholds(cp, field, cols, rows, gridStep, minField, 
       chosenRings: count,
       capped: capped,
       gradRef: gradRef,
-      guardApplied: gradMax * 0.78 > gradP90,
+      guardApplied: gradMax * 0.90 > gradP90,
       expectedSpacingAtP90Px: gradP90 > 1e-9 ? delta / gradP90 : 0,
       expectedSpacingAtMaxPx: gradMax > 1e-9 ? delta / gradMax : 0
     }
@@ -2142,10 +2154,11 @@ function coreSmoothPathObject(pathObj, passes, mix, maxDisp) {
       let ny = coreLerp(cur.y, avgY, mix);
       if (capDisp > 0) {
         // Displacement cap (mountain mode): a contour may be
-        // smoothed, but never shoved into its neighbour. The cap
-        // is a quarter of the guaranteed line spacing, so two
-        // adjacent lines smoothed towards each other still keep
-        // at least half their guaranteed gap.
+        // smoothed, but never shoved into its neighbour. The
+        // caller passes a per-pass share of a total budget of a
+        // tenth of the guaranteed centre spacing, so two adjacent
+        // lines smoothed towards each other consume at most a
+        // fifth of the gap between them.
         const dx = nx - cur.x;
         const dy = ny - cur.y;
         const d = Math.hypot(dx, dy);
@@ -2491,19 +2504,24 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
       .map((path) => coreSmoothPathObject(path, 3, 0.42));
   } else {
     // Mountain mode: smooth (strength from SMOOTH via the prep)
-    // with a hard displacement cap of a quarter of the guaranteed
+    // with a hard displacement cap of a tenth of the guaranteed
     // centre spacing (see coreSmoothPathObject), so
     // post-processing can never push one line into the next. The
     // cap applies at every smoothing strength, including the
     // strongest. Applied per contour, so pooled /
     // threshold-ranged chunks stay bit-identical to a full build.
     if (prep.smoothPasses > 0) {
-      // The cap is a TOTAL displacement budget of a quarter of
-      // the centre spacing, divided across passes (each pass of
+      // The cap is a TOTAL displacement budget of a tenth of the
+      // centre spacing, divided across passes (each pass of
       // coreSmoothPathObject caps against the pass-start point),
       // so even the strongest SMOOTH setting cannot accumulate
-      // enough travel to reach a neighbouring line.
-      const dispCap = prep.targetSpacingPx * 0.25 / prep.smoothPasses;
+      // enough travel to reach a neighbouring line. The budget
+      // was a quarter until the 2026-11-15 audit fix; at a
+      // quarter, two adjacent lines closing from both sides plus
+      // the old 0.78 gradient floor let the design floor fall to
+      // 0.28 of the target spacing. A tenth per line against the
+      // 0.90 floor puts the design floor at 0.70 of the target.
+      const dispCap = prep.targetSpacingPx * 0.10 / prep.smoothPasses;
       contours = contours.map((path) => coreSmoothPathObject(path, prep.smoothPasses, prep.smoothMix, dispCap));
     }
   }
@@ -4307,6 +4325,26 @@ function loadSettings() {
     if (typeof localStorage !== 'undefined' && !localStorage.getItem(MIGRATION_KEY_V7)) {
       params.SHOW_RED_SHADOW = false;
       localStorage.setItem(MIGRATION_KEY_V7, '1');
+      saveSettings();
+    }
+  } catch (err) {
+    // Migration is best-effort; loading continues either way.
+  }
+  // Mountain migration (one-time): settings saved by the previous
+  // (Phase 4) version carry ENABLE_CIRCULARIZE: true with
+  // CIRCULARIZE_MIX 0.30. Circularize is a contour post-process
+  // whose displacement has no spacing cap, so in mountain mode it
+  // can push contours across each other (2026-11-14 audit, finding
+  // 1), and the panel no longer exposes it, so a user with a legacy
+  // setting had no way to turn it off. Switch it off once and put
+  // the mix back to the current default (0.05); other saved values
+  // are untouched, and deliberately re-enabling it afterwards (via
+  // a settings JSON import) sticks.
+  try {
+    if (typeof localStorage !== 'undefined' && !localStorage.getItem(MIGRATION_KEY_MOUNTAIN)) {
+      params.ENABLE_CIRCULARIZE = false;
+      params.CIRCULARIZE_MIX = DEFAULT_PARAMS.CIRCULARIZE_MIX;
+      localStorage.setItem(MIGRATION_KEY_MOUNTAIN, '1');
       saveSettings();
     }
   } catch (err) {

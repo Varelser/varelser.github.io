@@ -243,6 +243,42 @@ async function main() {
   `);
   check('v7 migration turns red shadow off once, re-enabling sticks', migrationResult === true);
 
+  // 12c. mountain one-time migration: legacy circularize (Phase 4
+  // default true / mix 0.30) is switched off once and the mix reset
+  // to the current default, because the uncapped circularize
+  // post-process can push mountain contours across each other.
+  const mountainMigrationResult = run(`
+    __resetState(4242);
+    params.ENABLE_CIRCULARIZE = true;
+    params.CIRCULARIZE_MIX = 0.30;
+    saveSettings();
+    localStorage.removeItem('topo-migrated-mountain');
+    const mmFirstLoad = loadSettings();
+    const mmStored = JSON.parse(localStorage.getItem('topo-settings-v1'));
+    mmFirstLoad === true &&
+    params.ENABLE_CIRCULARIZE === false &&
+    params.CIRCULARIZE_MIX === 0.05 &&
+    localStorage.getItem('topo-migrated-mountain') === '1' &&
+    mmStored.params.ENABLE_CIRCULARIZE === false &&
+    mmStored.params.CIRCULARIZE_MIX === 0.05;
+  `);
+  check('mountain migration turns legacy circularize off once and resets mix', mountainMigrationResult === true);
+
+  // 12d. the migration is one-time: with the flag set, a deliberate
+  // re-enable (e.g. via settings JSON) is left untouched.
+  const mountainMigrationOnceResult = run(`
+    __resetState(4242);
+    params.ENABLE_CIRCULARIZE = true;
+    params.CIRCULARIZE_MIX = 0.30;
+    saveSettings();
+    const mmLoadOk = loadSettings();
+    mmLoadOk === true &&
+    localStorage.getItem('topo-migrated-mountain') === '1' &&
+    params.ENABLE_CIRCULARIZE === true &&
+    params.CIRCULARIZE_MIX === 0.30;
+  `);
+  check('mountain migration leaves re-enabled circularize alone once migrated', mountainMigrationOnceResult === true);
+
   // 13. undo restores pre-change snapshot
   const undoResult = run(`
     __resetState(55);
@@ -434,7 +470,7 @@ function sceneChecksum(sd) {
   return sd.contours.length + ':' + s.toFixed(6) + ':' + sd.gridStep;
 }
 
-const GOLDEN_CHECKSUM = '17:480936.090853:8'; // 800x600, defaults, seed 777, one centre hole (matches pre-v3 output exactly)
+const GOLDEN_CHECKSUM = '15:430741.610762:8'; // 800x600, defaults, seed 777, one centre hole (re-measured 2026-11-15 after the spacing-floor hardening: gradient guard 0.78 -> 0.90, smoothing budget 0.25 -> 0.10)
 
 check('golden checksum regression: new core reproduces pre-v3 contours', () => {
   run(`Object.assign(params, { NUM_RINGS: 70, ANGLE_STEPS: 900, NOISE_FREQ: 3.5, NOISE_AMPLITUDE: 0.14, CENTER_BULGE: 1.0, OUTER_RADIUS_RATIO: 0.46, WAVE_DETAIL: 1.0, INTERFERENCE_BOOST: 1.0, CIRCULARIZE_MIX: 0.05, ENABLE_INTERFERENCE: true, ENABLE_CIRCULARIZE: false, TEXTURE_POINTS: 700 });`);
