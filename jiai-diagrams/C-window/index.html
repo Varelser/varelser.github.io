@@ -39,8 +39,7 @@ NODES.forEach((n,idx)=>{const a=act[idx],g=.86+.18*a;
 n.dots.forEach(d=>dot(n.x+d[0]*g,400+d[1]*g,d[2]*g,.22+.74*a));
 if(n.title.startsWith('再固定化')){txt('再固定化',n.x,528,21,true);txt('（Reconsolidation）',n.x,556,17,false,.62);}
 else txt(n.title,n.x,528,21,true);
-if(n.detail){const y0=n.title.startsWith('再固定化')?590:562;n.detail.split(/／|
-/).forEach((ln,j)=>txt(ln,n.x,y0+j*26,17,false,.62));}});
+if(n.detail){const y0=n.title.startsWith('再固定化')?590:562;n.detail.split(/／|\n/).forEach((ln,j)=>txt(ln,n.x,y0+j*26,17,false,.62));}});
 if(branch>.01){for(const yy of [452,478,636])dot(490,yy,2,.35*branch);
 ctx.globalAlpha=branch;txt('統合がなければ',150,688,21,true,1,'left');ctx.globalAlpha=1;
 const counts=[5,4,3,2],alphas=[.8,.65,.5,.35],items=['洞察の減衰','スピリチュアル・バイパシング','解離リスク','インフレーション'];
