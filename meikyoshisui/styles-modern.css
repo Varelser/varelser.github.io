@@ -1585,6 +1585,11 @@ select.chain-sel,
   display: flex; flex-direction: column; gap: 14px;
 }
 .fam-flyout-body > .panel { margin: 0 !important; flex: none; width: auto; }
+/* v5.1: チップ⇔フライアウト間の隙間を覆う見えない橋 (js/96 が配置)。
+   .fam-flyout は overflow:hidden のため ::before では外に張り出せないので
+   独立要素にする。ポインタが橋の上にいる間はフライアウト側にいる扱い。 */
+.fam-bridge { position: fixed; z-index: 89; background: transparent; }
+.fam-bridge[hidden] { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .fam-flyout { animation: none; }
   .lien-nav button.fam-chip { transition: none; }

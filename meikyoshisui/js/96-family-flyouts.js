@@ -11,7 +11,11 @@
    実装は additive: パネルの DOM ノードをそのまま系統コンテナへ
    移動するだけ (id・配線・保存形式は不変)。生成系 JS には触れない。
    CLASSIC では 95 の復元がパネルを元の位置へ戻すため、こちらは
-   バーとコンテナを畳むだけにする。 */
+   バーとコンテナを畳むだけにする。
+   v5.1 (2026-11-16): 「ホバー下に移動すると消えるの早すぎる」対策 —
+   閉じ猶予 300→900ms、発火時にポインタが回廊 (チップ⇔フライアウト
+   間の帯) にあれば再判定を繰り返す、隙間を覆う見えない橋 (.fam-bridge)
+   を place() が配置する。固定/Esc/外側クリックの即時閉じは不変。 */
 document.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
@@ -46,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let closeTimer = null;
   const chips = {};      // familyId -> button
   const flyouts = {};    // familyId -> container
+  const bridges = {};    // familyId -> 隙間を覆う見えない橋 (v5.1)
   const members = {};    // familyId -> [panel]
   let row = null;
 
@@ -92,6 +97,30 @@ document.addEventListener('DOMContentLoaded', () => {
       box.style.bottom = Math.round(vh - r.top + 8) + 'px';
       box.style.maxHeight = Math.max(220, r.top - 20) + 'px';
     }
+    placeBridge(id);
+  }
+
+  /* v5.1: チップとフライアウトの隙間 (8px) を覆う見えない橋を置く。
+     ポインタが橋の上にいる間は mouseenter が効き続け、閉タイマーが
+     止まるため、ゆっくりした移動でも途中で消えない。 */
+  function placeBridge(id) {
+    const br = bridges[id], box = flyouts[id], chip = chips[id];
+    if (!br || !box || !chip || box.hidden) return;
+    const c = chip.getBoundingClientRect(), b = box.getBoundingClientRect();
+    const left = Math.round(Math.max(0, Math.min(c.left, b.left)));
+    const right = Math.round(Math.min(window.innerWidth, Math.max(c.right, b.right)));
+    let top, height;
+    if (b.top >= c.bottom) {           // 下に開く: 隙間は chip.bottom .. box.top
+      top = Math.round(c.bottom) - 2;
+      height = Math.max(4, Math.round(b.top - c.bottom) + 4);
+    } else {                           // 上に反転: 隙間は box.bottom .. chip.top
+      top = Math.round(b.bottom) - 2;
+      height = Math.max(4, Math.round(c.top - b.bottom) + 4);
+    }
+    br.style.left = left + 'px';
+    br.style.width = Math.max(0, right - left) + 'px';
+    br.style.top = top + 'px';
+    br.style.height = height + 'px';
   }
 
   /* ════ 開閉 ════ */
@@ -109,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chip.classList.add('open');
     chip.setAttribute('aria-expanded', 'true');
     place(id);
+    if (bridges[id]) bridges[id].hidden = false;
     /* 折りたたみ中に初期化された canvas 類への再描画の合図 (84 と同じ作法) */
     requestAnimationFrame(() => setTimeout(() => window.dispatchEvent(new Event('resize')), 30));
     /* ピアノロール (82 の drawRoll) は生成時に clientWidth から幅を
@@ -123,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function hideBox(id) {
     const box = flyouts[id], chip = chips[id];
     if (box) box.hidden = true;
+    if (bridges[id]) bridges[id].hidden = true;
     if (chip) { chip.classList.remove('open'); chip.setAttribute('aria-expanded', 'false'); }
   }
   function close() {
@@ -134,9 +165,32 @@ document.addEventListener('DOMContentLoaded', () => {
     /* tier / 検索フィルタの表示状態へ戻す (69 の正規の経路) */
     if (window.__MEIKY_UI__) window.__MEIKY_UI__.applyFilters();
   }
+  /* v5.1: 閉じるのが早すぎる問題 (user: 「ホバー下に移動すると消えるの
+     早すぎる」) への対策。猶予を 300ms → 900ms に伸ばし、さらに発火の
+     瞬間にポインタが「回廊」(チップ⇔フライアウト間の帯) の中にあれば
+     移動中とみなして 250ms 後に再判定する (帯を抜けるまで閉じない)。
+     固定中は従来通り自動では閉じない。 */
+  const CLOSE_DELAY = 900;
+  let lastPX = -9999, lastPY = -9999;
+  document.addEventListener('mousemove', e => { lastPX = e.clientX; lastPY = e.clientY; }, { passive: true });
+  function pointerInBand() {
+    if (!openId) return false;
+    const chip = chips[openId], box = flyouts[openId];
+    if (!chip || !box || box.hidden) return false;
+    const c = chip.getBoundingClientRect(), b = box.getBoundingClientRect();
+    const left = Math.max(c.left, b.left) - 28, right = Math.min(c.right, b.right) + 28;
+    if (lastPX < left || lastPX > right) return false;
+    if (b.top >= c.bottom) return lastPY >= c.bottom - 10 && lastPY <= b.top + 10;
+    return lastPY >= b.bottom - 10 && lastPY <= c.top + 10;
+  }
   function scheduleClose() {
+    if (pinned) return;
     clearTimeout(closeTimer);
-    closeTimer = setTimeout(() => { if (openId && !pinned) close(); }, 300);
+    closeTimer = setTimeout(function onCloseTimer() {
+      if (!openId || pinned) return;
+      if (pointerInBand()) { closeTimer = setTimeout(onCloseTimer, 250); return; }
+      close();
+    }, CLOSE_DELAY);
   }
 
   /* ════ 構築 (冪等: CLASSIC 往復後も再利用できる) ════ */
@@ -183,6 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
           '<div class="fam-flyout-body"></div>';
         document.body.appendChild(box);
         flyouts[f.id] = box;
+        const br = document.createElement('div');
+        br.className = 'fam-bridge';
+        br.dataset.family = f.id;
+        br.hidden = true;
+        document.body.appendChild(br);
+        bridges[f.id] = br;
+        br.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+        br.addEventListener('mouseleave', () => { if (!pinned) scheduleClose(); });
         box.querySelector('.fam-flyout-close').addEventListener('click', () => close());
         box.addEventListener('mouseenter', () => clearTimeout(closeTimer));
         box.addEventListener('mouseleave', () => { if (!pinned) scheduleClose(); });
@@ -223,7 +285,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function teardown() {
     close();
-    for (const f of FAMILIES) if (flyouts[f.id]) flyouts[f.id].hidden = true;
+    for (const f of FAMILIES) {
+      if (flyouts[f.id]) flyouts[f.id].hidden = true;
+      if (bridges[f.id]) bridges[f.id].hidden = true;
+    }
     grouped = false;
   }
 
@@ -293,6 +358,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const box = flyouts[openId], chip = chips[openId];
     if (box && box.contains(ev.target)) return;
     if (chip && chip.contains(ev.target)) return;
+    const br = bridges[openId];
+    if (br && br.contains(ev.target)) return;
     close();
   });
   document.addEventListener('keydown', ev => { if (ev.key === 'Escape') close(); });
