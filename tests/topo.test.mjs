@@ -621,6 +621,134 @@ check('forms: five-type mixed scene builds finite', () => {
   assert.equal(res, 'ok');
 });
 
+check('distort: survives a settings round-trip, clamps to [0, 2], defaults to 0 for legacy saves', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    holes = [createHole(0.4, 0.4, { type: 'ring', angle: 0.7, distort: 1.25 }), createHole(0.6, 0.6, { type: 'bump', distort: 2 })];
+    const parsed = parseSettingsJSON(serializeSettings());
+    if (!parsed.ok) return 'parse failed';
+    if (parsed.data.holes[0].distort !== 1.25) return 'ring distort lost: ' + parsed.data.holes[0].distort;
+    if (parsed.data.holes[1].distort !== 2) return 'bump distort lost: ' + parsed.data.holes[1].distort;
+    const clamped = parseSettingsJSON('{"holes":[{"x":0.5,"y":0.5,"distort":99},{"x":0.4,"y":0.4,"distort":-3}],"seed":5}');
+    if (!clamped.ok || clamped.data.holes[0].distort !== 2 || clamped.data.holes[1].distort !== 0) return 'distort not clamped to [0, 2]';
+    const legacy = parseSettingsJSON('{"holes":[{"x":0.5,"y":0.5,"radius":1,"strength":1,"waveAmp":1,"phase":1.0}],"seed":777}');
+    if (!legacy.ok || legacy.data.holes[0].distort !== 0) return 'legacy hole without distort must default to 0';
+    return 'ok';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('distort: undo snapshot preserves the value', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    holes[0].distort = 0.8;
+    pushUndo();
+    holes[0].distort = 0;
+    undoLast();
+    return holes[0].distort === 0.8 ? 'ok' : 'distort after undo: ' + holes[0].distort;
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('distort: field is stretched along the hole angle (core sampler, isolated peak)', () => {
+  const res = run(`(() => {
+    const cp = JSON.parse(JSON.stringify(DEFAULT_PARAMS));
+    cp.NOISE_AMPLITUDE = 0; cp.WARP = 0; cp.PEAK_BLEND = 0;
+    const core = createCoreState();
+    coreNoiseSeed(core, 777);
+    const mk = (hole) => corePrepareField(cp, [hole], 800, 600, 777);
+    const base = { x: 0.5, y: 0.5, radius: 1.0, strength: 1.0, waveAmp: 1.0, phase: 1.0, type: 'bump' };
+    // distort 0: equal distances along x / y give exactly equal values
+    const p0 = mk({ ...base, angle: 0, distort: 0 });
+    const vx0 = coreSampleFieldAt(core, p0, 490, 300, false);
+    const vy0 = coreSampleFieldAt(core, p0, 400, 390, false);
+    if (vx0 !== vy0) return 'distort 0 not isotropic: ' + vx0 + ' vs ' + vy0;
+    // distort 2, angle 0 (axis = +x): the peak reaches further along x
+    const pA = mk({ ...base, angle: 0, distort: 2 });
+    const alongA = coreSampleFieldAt(core, pA, 490, 300, false);
+    const acrossA = coreSampleFieldAt(core, pA, 400, 390, false);
+    if (!(alongA > acrossA)) return 'angle 0: along-x should exceed across-y: ' + alongA + ' vs ' + acrossA;
+    // angle = PI/2 rotates the stretch onto +y
+    const pB = mk({ ...base, angle: Math.PI / 2, distort: 2 });
+    const alongB = coreSampleFieldAt(core, pB, 400, 390, false);
+    const acrossB = coreSampleFieldAt(core, pB, 490, 300, false);
+    if (!(alongB > acrossB)) return 'angle PI/2: along-y should exceed across-x: ' + alongB + ' vs ' + acrossB;
+    if (Math.abs(alongA - alongB) > 1e-9) return 'rotated stretch should sample identically: ' + alongA + ' vs ' + alongB;
+    // ring: the rim becomes an ellipse — on-rim points along and
+    // across the stretch both sit near the crest, the round-rim
+    // point on the axis does not.
+    const pR = mk({ ...base, type: 'ring', angle: 0, distort: 2 });
+    const R = pR.holesPx[0].ringR;
+    const s = Math.sqrt(3);
+    const vAlong = coreSampleFieldAt(core, pR, 400 + R * s, 300, false);
+    const vAcross = coreSampleFieldAt(core, pR, 400, 300 + R / s, false);
+    const vRound = coreSampleFieldAt(core, pR, 400 + R, 300, false);
+    if (!(vAlong > 0.9 && vAcross > 0.9)) return 'ring rim crest not reached on both axes: ' + vAlong + ', ' + vAcross;
+    if (!(vRound < 0.5)) return 'round-rim point should be off the elliptical rim: ' + vRound;
+    return 'ok';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('distort: scene with distort 0 is identical to no-distort; distort > 0 changes bump and ring scenes', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    holes = [createHole(0.5, 0.5, { type: 'bump' })];
+    const plain = __checksum(buildSceneData(500, 400, 777));
+    holes = [createHole(0.5, 0.5, { type: 'bump', distort: 0 })];
+    const zero = __checksum(buildSceneData(500, 400, 777));
+    if (plain !== zero) return 'distort 0 scene differs from no-distort scene';
+    holes = [createHole(0.5, 0.5, { type: 'bump', distort: 2, angle: 0 })];
+    const stretched = __checksum(buildSceneData(500, 400, 777));
+    if (stretched === plain) return 'distort 2 bump scene unchanged';
+    holes = [createHole(0.5, 0.5, { type: 'ring', radius: 2.0 })];
+    const ring0 = __checksum(buildSceneData(500, 400, 777));
+    holes = [createHole(0.5, 0.5, { type: 'ring', radius: 2.0, distort: 1.5, angle: 0.4 })];
+    const ringD = __checksum(buildSceneData(500, 400, 777));
+    if (ringD === ring0) return 'distort 1.5 ring scene unchanged';
+    return 'ok';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
+check('centre-add: avoidCrowd offsets deterministically, plain addHole keeps the exact position', () => {
+  const res = run(`(() => {
+    __resetState(777);
+    if (!addHole(0.5, 0.5, { avoidCrowd: true })) return 'first add failed';
+    const first = { x: holes[1].x, y: holes[1].y };
+    if (Math.hypot(first.x - 0.5, first.y - 0.5) < 0.04) return 'first add not offset from occupied centre: ' + JSON.stringify(first);
+    addHole(0.5, 0.5, { avoidCrowd: true });
+    addHole(0.5, 0.5, { avoidCrowd: true });
+    if (holes.length !== 4) return 'expected 4 holes, got ' + holes.length;
+    let minD = Infinity;
+    for (let i = 0; i < holes.length; i++) for (let j = i + 1; j < holes.length; j++) {
+      minD = Math.min(minD, Math.hypot(holes[i].x - holes[j].x, holes[i].y - holes[j].y));
+    }
+    if (minD < 0.04 - 1e-9) return 'holes closer than 0.04: ' + minD;
+    const status = document.getElementById('statusLine').textContent;
+    if (!status.includes('穴を追加しました（4/12）')) return 'missing added-status, got: ' + status;
+    // determinism: same operation sequence, same landing spot
+    __resetState(777);
+    addHole(0.5, 0.5, { avoidCrowd: true });
+    if (holes[1].x !== first.x || holes[1].y !== first.y) return 'offset not deterministic';
+    // free centre: the add lands exactly on the centre
+    holes[0].x = 0.15; holes[0].y = 0.15; holes.length = 1; selectedHoleIndex = 0;
+    addHole(0.5, 0.5, { avoidCrowd: true });
+    if (holes[1].x !== 0.5 || holes[1].y !== 0.5) return 'free centre not used exactly: ' + JSON.stringify(holes[1]);
+    // plain addHole (the canvas-click path) never offsets
+    __resetState(777);
+    addHole(0.3, 0.7);
+    if (holes[1].x !== 0.3 || holes[1].y !== 0.7) return 'plain add moved the position';
+    // centre-add copies distort from the selected hole
+    __resetState(777);
+    holes[0].distort = 1.25;
+    addHole(0.5, 0.5, { avoidCrowd: true });
+    if (holes[1].distort !== 1.25) return 'distort not copied on centre-add: ' + holes[1].distort;
+    return 'ok';
+  })()`);
+  assert.equal(res, 'ok');
+});
+
 check('worker source assembled from core functions, runs identically in vm', () => {
   const srcText = run(`getWorkerSourceText()`);
   assert.equal(typeof srcText, 'string');
