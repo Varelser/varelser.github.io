@@ -2562,18 +2562,28 @@ body.lien-hide-ui .floating-panel { opacity: 0; pointer-events: none; }
        (old sender) -> Phase-2 master-only baseline; stopped/stale/OFF
        -> follower reset, baseline while fresh, cleared when stale. */
     var vlFast = 0, vlSlow = 0, vlFollowerInit = false, vlHasLevel = false;
+    /* sync-config from Varelser Studio (protocol v1.1, R3) */
+    var vlCfgAmt = 1, vlCfgFast = 0.65, vlCfgSlow = 0.08;
+    function applySyncConfig(msg) {
+      var t = (msg.targets && msg.targets.lien) || null;
+      var g = msg.global || {};
+      if (t && typeof t.amount === 'number' && Number.isFinite(t.amount)) vlCfgAmt = clamp01(t.amount) * 2;
+      if (typeof g.attack === 'number' && Number.isFinite(g.attack)) vlCfgFast = 0.05 + 0.9 * clamp01(g.attack);
+      if (typeof g.release === 'number' && Number.isFinite(g.release)) vlCfgSlow = 0.01 + 0.29 * clamp01(g.release);
+      if (noiseStatusEl) noiseStatusEl.textContent = 'Studio sync-config: amount x' + vlCfgAmt.toFixed(2) + ' / attack ' + vlCfgFast.toFixed(2) + ' / release ' + vlCfgSlow.toFixed(2);
+    }
     function vlFollowerUpdate(d) {
       var inst = noiseDrive(d); /* null when stopped or no level fields */
       if (inst === null) { vlFast = 0; vlSlow = 0; vlFollowerInit = false; vlHasLevel = false; return; }
       if (!vlFollowerInit) { vlFast = inst; vlSlow = inst; vlFollowerInit = true; }
-      else { vlFast += 0.65 * (inst - vlFast); vlSlow += 0.08 * (inst - vlSlow); }
+      else { vlFast += vlCfgFast * (inst - vlFast); vlSlow += vlCfgSlow * (inst - vlSlow); }
       vlHasLevel = true;
     }
     function vlPulseFilter(master) {
       var swing = Math.min(0.75, Math.max(-0.45, (vlFast - vlSlow) * 20));
       var levelTerm = clamp01(vlFast);
-      var b = Math.min(1.65, Math.max(0.55, 0.82 + 0.22 * master + 0.22 * levelTerm + 0.38 * swing));
-      var c = Math.min(1.45, Math.max(0.85, 1 + 0.10 * levelTerm + 0.18 * swing));
+      var b = Math.min(1.65, Math.max(0.55, 0.82 + 0.22 * master + (0.22 * levelTerm + 0.38 * swing) * vlCfgAmt));
+      var c = Math.min(1.45, Math.max(0.85, 1 + (0.10 * levelTerm + 0.18 * swing) * vlCfgAmt));
       return 'brightness(' + b.toFixed(3) + ') contrast(' + c.toFixed(3) + ')';
     }
 
@@ -2610,6 +2620,7 @@ body.lien-hide-ui .floating-panel { opacity: 0; pointer-events: none; }
         applyDerivedSeed(derived);
         return;
       }
+      if (msg.app === 'studio' && msg.type === 'sync-config') { applySyncConfig(msg); return; }
       if (msg.type !== 'state') return;
       if (msg.app === 'noise') {
         lastNoise = { data: msg, receivedAt: Date.now() };
