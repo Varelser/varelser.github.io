@@ -33,10 +33,12 @@ ctx.clearRect(0,0,1600,900);
 txt('『慈愛体系』可塑性ウィンドウと統合',800,92,36);
 txt('統合の3段階 ― 準備期（体験前）／急性期（体験直後〜数日）／長期統合（数週間〜数ヶ月）',800,128,20,false,.6);
 const [pulse,act,branch]=act22(t);
-for(let x=150;x<=1390;x+=26)dot(x,400,2.2,x<=pulse?.55:.30);
+for(let i=0;i<48;i++){const fx=150+((i*26+t*16)%1248);dot(fx,400,2.2,fx<=pulse?.55:.30);}
 if(t%22<11.6){dot(pulse-30,400,6,.28);dot(pulse-15,400,8,.5);dot(pulse,400,11,.95);}
 NODES.forEach((n,idx)=>{const a=act[idx],g=.86+.18*a;
-n.dots.forEach(d=>dot(n.x+d[0]*g,400+d[1]*g,d[2]*g,.22+.74*a));
+n.dots.forEach((d,j)=>{let dx=d[0]*g,dy=d[1]*g;
+if(idx===1){const an=t*0.25,cs=Math.cos(an),sn=Math.sin(an);const rx=dx*cs-dy*sn,ry=dx*sn+dy*cs;dx=rx;dy=ry;}
+const ph=(idx*13+j*7)%6.28;dot(n.x+dx+Math.cos(t*0.9+ph)*3.2,400+dy+Math.sin(t*0.7+ph)*3.2,d[2]*g,.22+.74*a);});
 if(n.title.startsWith('再固定化')){txt('再固定化',n.x,528,21,true);txt('（Reconsolidation）',n.x,556,17,false,.62);}
 else txt(n.title,n.x,528,21,true);
 if(n.detail){const y0=n.title.startsWith('再固定化')?590:562;n.detail.split(/／|\n/).forEach((ln,j)=>txt(ln,n.x,y0+j*26,17,false,.62));}});
