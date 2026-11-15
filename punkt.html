@@ -4477,6 +4477,7 @@ body.plus-immersive .preview-toolbar { display: none !important; }
       setTimeout(function () { applyingRemote = false; }, 900);
       return;
     }
+    if (msg.app === 'studio' && msg.type === 'sync-config') { applySyncConfig(msg); return; }
     if (msg.type !== 'state') return;
     if (msg.app === 'noise') {
       lastNoise = { data: msg, at: Date.now() };
@@ -4494,6 +4495,28 @@ body.plus-immersive .preview-toolbar { display: none !important; }
       var playing = (typeof msg.playing === 'boolean') ? msg.playing : !!msg.isPlaying;
       $('plusLinkMeikyo').textContent = '♪ Meikyoshisui: ' + bpm + ' BPM / ' + genre + ' / ' + (playing ? '再生中' : '停止');
     }
+  }
+  /* sync-config from Varelser Studio (protocol v1.1, R3):
+     targets.punkt.amount -> syncAmt, global.attack -> syncAtk,
+     global.release -> syncRel (all 0..1 -> 0..100%). Persisted via saveUi(). */
+  function applySyncConfig(msg) {
+    var t = (msg.targets && msg.targets.punkt) || null;
+    var g = msg.global || {};
+    var changed = [];
+    function setPct(key, elId, valId, v, label) {
+      if (typeof v !== 'number' || !Number.isFinite(v)) return;
+      ui[key] = Math.round(clamp01(v) * 100);
+      var inp = $(elId); if (inp) inp.value = ui[key];
+      var val = $(valId); if (val) val.textContent = ui[key] + ' %';
+      changed.push(label + ' ' + ui[key] + '%');
+    }
+    if (t) setPct('syncAmt', 'plusSyncAmt', 'plusSyncAmtValue', t.amount, 'Amount');
+    setPct('syncAtk', 'plusSyncAtk', 'plusSyncAtkValue', g.attack, 'Attack');
+    setPct('syncRel', 'plusSyncRel', 'plusSyncRelValue', g.release, 'Release');
+    if (!changed.length) return;
+    saveUi();
+    linkStatus('Link: Studio から Sync 設定を受信 → ' + changed.join(' / '));
+    toast('Studio sync-config applied');
   }
   function startLink() {
     if (channel || typeof BroadcastChannel === 'undefined') return;
