@@ -60,7 +60,7 @@ def esc(s):
 
 
 def norm_title(s):
-    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+    return re.sub(r"[^\w]", "", (s or "").lower())  # keep CJK letters (\w is Unicode-aware); ASCII-only strip made every Japanese-only title "" and collided
 
 
 def md5hex(s):
