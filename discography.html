@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Discography — VARELSER</title>
 <meta name="theme-color" content="#ffffff" />
-<meta name="description" content="VARELSER（日米実験音楽デュオ）のディスコグラフィ。1st demo『Hymen』、正式シングル『Return To The Beginning』（2017年）などのリリース情報と、Bandcamp／Spotifyで聴ける導線をまとめたページ。" />
+<meta name="description" content="VARELSER（日米実験音楽デュオ）のディスコグラフィ。1st demo『Hymen』、正式シングル『Return To The Beginning』（2017年）などのリリース情報と、Bandcampで聴ける導線をまとめたページ。" />
 <link rel="canonical" href="https://varelser.github.io/discography.html" />
 <meta property="og:title" content="Discography — VARELSER" />
-<meta property="og:description" content="VARELSER（日米実験音楽デュオ）のディスコグラフィ。1st demo『Hymen』、正式シングル『Return To The Beginning』（2017年）などのリリース情報と、Bandcamp／Spotifyで聴ける導線をまとめたページ。" />
+<meta property="og:description" content="VARELSER（日米実験音楽デュオ）のディスコグラフィ。1st demo『Hymen』、正式シングル『Return To The Beginning』（2017年）などのリリース情報と、Bandcampで聴ける導線をまとめたページ。" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://varelser.github.io/discography.html" />
 <meta property="og:image" content="https://varelser.github.io/img/emblem.png" />
@@ -44,6 +44,21 @@ td.date{white-space:nowrap;font-weight:600}
 .foot a{text-decoration:none}
 .player{display:block;margin:12px 0 4px}
 .tag{display:inline-block;border:1px solid var(--border);border-radius:99px;padding:0 10px;font-size:12px;color:var(--muted);margin-left:8px;vertical-align:2px}
+
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
+@media (prefers-reduced-motion: reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+@supports (animation-timeline: view()){
+@media (prefers-reduced-motion: no-preference){
+section{animation:rise linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}}
+.player-facade{display:flex;align-items:center;gap:12px;width:100%;margin:12px 0 4px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.player-facade img{width:64px;height:64px;border-radius:6px;display:block}
+.player-facade .pf-t{font-weight:600}
+.player-facade .pf-s{color:var(--sub);font-size:.85em}
+.share-row{margin:20px 0 0}
+.share-btn{border:1px solid var(--line);background:#fff;color:inherit;border-radius:999px;padding:7px 16px;font:inherit;font-size:.9em;cursor:pointer}
 </style>
 </head>
 <body>
@@ -65,10 +80,9 @@ td.date{white-space:nowrap;font-weight:600}
 <div class="item">
 <h3>Return To The Beginning <span class="tag">Single</span></h3>
 <p class="meta">2017-08-15 リリース ／ 1曲 18分35秒 ／ Bandcamp：24-bit/44.1kHz ダウンロード<br>※Bandcamp上の表記は「Return To The Beginnig」（綴りママ）</p>
-<p>現在、公式に配信されている唯一の正式シングル。Bandcamp と Spotify で配信中。</p>
-<iframe class="player" style="border:0;width:100%;height:120px" src="https://bandcamp.com/EmbeddedPlayer/track=953091148/size=large/bgcol=ffffff/linkcol=333333/tracklist=false/artwork=small/transparent=true/" seamless title="Bandcamp プレイヤー — Return To The Beginnig"><a href="https://varelser.bandcamp.com/track/return-to-the-beginnig">Return To The Beginnig by VARELSER</a></iframe>
+<p>現在、公式に配信されている唯一の正式シングル。Bandcamp で配信中。</p>
+<button class="player-facade" id="bcFacade" type="button" aria-label="Bandcamp プレイヤーを読み込む"><img src="https://f4.bcbits.com/img/a1811871873_16.jpg" alt="Return To The Beginning のアートワーク" width="64" height="64" loading="lazy"><span><span class="pf-t">▶ Return To The Beginnig</span><br><span class="pf-s">Bandcamp プレイヤーを読み込む（18分35秒）</span></span></button>
 <a class="btn" href="https://varelser.bandcamp.com/track/return-to-the-beginnig" target="_blank" rel="noreferrer">Bandcamp で聴く</a>
-<a class="btn" href="https://open.spotify.com/artist/4FOjE9xs31tML6xk3vkpkM" target="_blank" rel="noreferrer">Spotify</a>
 </div>
 <div class="item">
 <h3>Hymen <span class="tag">1st Demo</span></h3>
@@ -84,7 +98,6 @@ td.date{white-space:nowrap;font-weight:600}
 <p class="label">Listen / Follow</p>
 <p>
 <a class="btn" href="https://varelser.bandcamp.com/" target="_blank" rel="noreferrer">Bandcamp</a>
-<a class="btn" href="https://open.spotify.com/artist/4FOjE9xs31tML6xk3vkpkM" target="_blank" rel="noreferrer">Spotify</a>
 <a class="btn" href="https://soundcloud.com/varelser" target="_blank" rel="noreferrer">SoundCloud</a>
 <a class="btn" href="https://www.youtube.com/@Varelserjp" target="_blank" rel="noreferrer">YouTube</a>
 </p>
@@ -92,11 +105,78 @@ td.date{white-space:nowrap;font-weight:600}
 </section>
 
 
+<div class="share-row"><button class="share-btn" id="shareBtn" type="button">このページを共有</button></div>
 </main>
 <footer class="foot">
 <span>© VARELSER</span>
 <span><a href="index.html">トップへ</a> ・ <a href="discography.html">Discography</a> ・ <a href="concert.html">Concert</a> ・ <a href="about.html">About</a></span>
 </footer>
 </div>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "MusicGroup",
+   "@id": "https://varelser.github.io/#varelser",
+   "name": "Varelser",
+   "url": "https://varelser.github.io/",
+   "genre": [
+    "Experimental",
+    "Noise",
+    "Ambient",
+    "Drone",
+    "Psychedelic"
+   ],
+   "foundingDate": "2009",
+   "foundingLocation": "Tokyo, Japan",
+   "member": [
+    {
+     "@type": "Person",
+     "name": "S"
+    },
+    {
+     "@type": "Person",
+     "name": "lll1lllwdlll1lll"
+    }
+   ],
+   "sameAs": [
+    "https://varelser.bandcamp.com/",
+    "https://www.youtube.com/channel/UCrMvsNAILvXVc4Kf6gqbLLQ",
+    "https://soundcloud.com/varelser",
+    "https://x.com/VARELSER_JP",
+    "https://www.instagram.com/varelser_jp"
+   ]
+  },
+  {
+   "@type": "MusicRecording",
+   "name": "Return To The Beginning",
+   "byArtist": {
+    "@id": "https://varelser.github.io/#varelser"
+   },
+   "duration": "PT18M35S",
+   "datePublished": "2017-08-15",
+   "url": "https://varelser.bandcamp.com/track/return-to-the-beginnig"
+  },
+  {
+   "@type": "MusicAlbum",
+   "name": "Hymen",
+   "byArtist": {
+    "@id": "https://varelser.github.io/#varelser"
+   },
+   "description": "1st demo"
+  }
+ ]
+}
+</script>
+<script type="speculationrules">
+{"prefetch": [{"source": "list", "urls": ["concert.html", "about.html", "index.html"], "eagerness": "moderate"}]}
+</script>
+<script>
+var f=document.getElementById('bcFacade');
+if(f){f.addEventListener('click',function(){var i=document.createElement('iframe');i.className='player';i.style.cssText='border:0;width:100%;height:120px';i.src='https://bandcamp.com/EmbeddedPlayer/track=953091148/size=large/bgcol=ffffff/linkcol=333333/tracklist=false/artwork=small/transparent=true/';i.title='Bandcamp プレイヤー — Return To The Beginnig';this.replaceWith(i);});}
+var b=document.getElementById('shareBtn');
+if(b){b.addEventListener('click',async function(){if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(e){}}else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);b.textContent='URLをコピーしました';setTimeout(function(){b.textContent='このページを共有';},2000);}catch(e){}}});}
+</script>
 </body>
 </html>

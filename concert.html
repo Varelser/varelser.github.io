@@ -43,6 +43,21 @@ td.date{white-space:nowrap;font-weight:600}
 .foot{width:min(680px,calc(100% - 40px));border-top:1px solid var(--border);padding:20px 0 36px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .foot a{text-decoration:none}
 .tag{display:inline-block;border:1px solid var(--border);border-radius:99px;padding:0 10px;font-size:12px;color:var(--muted);margin-left:8px;vertical-align:2px}
+
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
+@media (prefers-reduced-motion: reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+@supports (animation-timeline: view()){
+@media (prefers-reduced-motion: no-preference){
+section{animation:rise linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}}
+.player-facade{display:flex;align-items:center;gap:12px;width:100%;margin:12px 0 4px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.player-facade img{width:64px;height:64px;border-radius:6px;display:block}
+.player-facade .pf-t{font-weight:600}
+.player-facade .pf-s{color:var(--sub);font-size:.85em}
+.share-row{margin:20px 0 0}
+.share-btn{border:1px solid var(--line);background:#fff;color:inherit;border-radius:999px;padding:7px 16px;font:inherit;font-size:.9em;cursor:pointer}
 </style>
 </head>
 <body>
@@ -88,11 +103,71 @@ td.date{white-space:nowrap;font-weight:600}
 </section>
 
 
+<div class="share-row"><button class="share-btn" id="shareBtn" type="button">このページを共有</button></div>
 </main>
 <footer class="foot">
 <span>© VARELSER</span>
 <span><a href="index.html">トップへ</a> ・ <a href="discography.html">Discography</a> ・ <a href="concert.html">Concert</a> ・ <a href="about.html">About</a></span>
 </footer>
 </div>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "MusicGroup",
+   "@id": "https://varelser.github.io/#varelser",
+   "name": "Varelser",
+   "url": "https://varelser.github.io/"
+  },
+  {
+   "@type": "MusicEvent",
+   "name": "わるい空想",
+   "startDate": "2012-04-13",
+   "location": {
+    "@type": "MusicVenue",
+    "name": "東高円寺 U.F.O. CLUB"
+   },
+   "performer": {
+    "@id": "https://varelser.github.io/#varelser"
+   },
+   "description": "共演：papalion／サカシマ／サブマインズ／kyu-shoku"
+  },
+  {
+   "@type": "MusicEvent",
+   "name": "VARELSERとMonaural mini-Plug 企画Vol.1",
+   "startDate": "2012-05-06",
+   "location": {
+    "@type": "MusicVenue",
+    "name": "東高円寺 二万電圧"
+   },
+   "performer": {
+    "@id": "https://varelser.github.io/#varelser"
+   },
+   "description": "自主企画。共演：Monaural mini-Plug／6EYES／The mornings"
+  },
+  {
+   "@type": "MusicEvent",
+   "name": "ぐるぐる回る2012",
+   "startDate": "2012-09-16",
+   "location": {
+    "@type": "MusicVenue",
+    "name": "埼玉スタジアム2002"
+   },
+   "performer": {
+    "@id": "https://varelser.github.io/#varelser"
+   },
+   "description": "フェス出演"
+  }
+ ]
+}
+</script>
+<script type="speculationrules">
+{"prefetch": [{"source": "list", "urls": ["discography.html", "about.html", "index.html"], "eagerness": "moderate"}]}
+</script>
+<script>
+var b=document.getElementById('shareBtn');
+if(b){b.addEventListener('click',async function(){if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(e){}}else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);b.textContent='URLをコピーしました';setTimeout(function(){b.textContent='このページを共有';},2000);}catch(e){}}});}
+</script>
 </body>
 </html>
