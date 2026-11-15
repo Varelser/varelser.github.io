@@ -6276,6 +6276,163 @@ fn studioReflection(reflDir: vec3<f32>, angle: f32, elev: f32) -> vec3<f32> {
 }`
   );
 
+  // ts_src_gpu/engine/shadersCompute.ts
+  var C = (extraUniforms, textures, outFormat, workgroupSize, code) => ({ extraUniforms, textures, outFormat, workgroupSize, code });
+  var HELPERS = (
+    /* wgsl */
+    `
+fn clampCoord(p: vec2<i32>, dims: vec2<i32>) -> vec2<i32> {
+  return clamp(p, vec2<i32>(0, 0), dims - vec2<i32>(1, 1));
+}
+fn flowCoord(p: vec2<i32>, dims: vec2<i32>, wrap: bool) -> vec2<i32> {
+  if (wrap) {
+    return vec2<i32>(
+      ((p.x % dims.x) + dims.x) % dims.x,
+      ((p.y % dims.y) + dims.y) % dims.y
+    );
+  }
+  return clampCoord(p, dims);
+}
+`
+  );
+  var WGSL_COMPUTE_PASSES = {
+    divergenceC: C(
+      [["uWrapBorders", "f32"]],
+      2,
+      "rgba16float",
+      [8, 8],
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var T1: texture_2d<f32>;
+@group(0) @binding(3) var OUT: texture_storage_2d<rgba16float, write>;
+${HELPERS}
+@compute @workgroup_size(8, 8) fn cs(@builtin(global_invocation_id) gid: vec3<u32>) {
+  let dims = vec2<i32>(U.dims);
+  if (i32(gid.x) >= dims.x || i32(gid.y) >= dims.y) { return; }
+  let p = vec2<i32>(i32(gid.x), i32(gid.y));
+  let wrap = U.uWrapBorders > 0.5;
+  let obsC = textureLoad(T1, clampCoord(p, dims), 0).x;
+  if (obsC > 0.5) {
+    textureStore(OUT, p, vec4<f32>(0.0, 0.0, 0.0, 1.0));
+    return;
+  }
+  let obsL = textureLoad(T1, clampCoord(p + vec2<i32>(-1, 0), dims), 0).x;
+  let obsR = textureLoad(T1, clampCoord(p + vec2<i32>(1, 0), dims), 0).x;
+  let obsT = textureLoad(T1, clampCoord(p + vec2<i32>(0, 1), dims), 0).x;
+  let obsB = textureLoad(T1, clampCoord(p + vec2<i32>(0, -1), dims), 0).x;
+  var L = textureLoad(T0, flowCoord(p + vec2<i32>(-1, 0), dims, wrap), 0).x;
+  var R = textureLoad(T0, flowCoord(p + vec2<i32>(1, 0), dims, wrap), 0).x;
+  var T = textureLoad(T0, flowCoord(p + vec2<i32>(0, 1), dims, wrap), 0).y;
+  var B = textureLoad(T0, flowCoord(p + vec2<i32>(0, -1), dims, wrap), 0).y;
+  let Cv = textureLoad(T0, p, 0).xy;
+  if (!wrap) {
+    if (p.x == 0) { L = -Cv.x; }
+    if (p.x == dims.x - 1) { R = -Cv.x; }
+    if (p.y == dims.y - 1) { T = -Cv.y; }
+    if (p.y == 0) { B = -Cv.y; }
+  }
+  if (obsL > 0.5) { L = -Cv.x; }
+  if (obsR > 0.5) { R = -Cv.x; }
+  if (obsT > 0.5) { T = -Cv.y; }
+  if (obsB > 0.5) { B = -Cv.y; }
+  let div = 0.5 * (R - L + T - B);
+  textureStore(OUT, p, vec4<f32>(div, 0.0, 0.0, 1.0));
+}`
+    ),
+    pressureC: C(
+      [["uWrapBorders", "f32"]],
+      3,
+      "rgba16float",
+      [16, 16],
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var T1: texture_2d<f32>;
+@group(0) @binding(3) var T2: texture_2d<f32>;
+@group(0) @binding(4) var OUT: texture_storage_2d<rgba16float, write>;
+${HELPERS}
+var<workgroup> tileP: array<array<f32, 18>, 18>;
+var<workgroup> tileO: array<array<f32, 18>, 18>;
+@compute @workgroup_size(16, 16) fn cs(
+  @builtin(global_invocation_id) gid: vec3<u32>,
+  @builtin(local_invocation_id) lid: vec3<u32>,
+  @builtin(workgroup_id) wid: vec3<u32>
+) {
+  let dims = vec2<i32>(U.dims);
+  let wrap = U.uWrapBorders > 0.5;
+  let origin = vec2<i32>(i32(wid.x) * 16 - 1, i32(wid.y) * 16 - 1);
+  let tid = i32(lid.y) * 16 + i32(lid.x);
+  // Cooperative load of the 18x18 tile (324 cells, 256 threads).
+  for (var k = tid; k < 324; k += 256) {
+    let tx = k % 18;
+    let ty = k / 18;
+    let g = origin + vec2<i32>(tx, ty);
+    tileP[ty][tx] = textureLoad(T0, flowCoord(g, dims, wrap), 0).x;
+    tileO[ty][tx] = textureLoad(T2, clampCoord(g, dims), 0).x;
+  }
+  workgroupBarrier();
+  let p = vec2<i32>(i32(gid.x), i32(gid.y));
+  if (p.x >= dims.x || p.y >= dims.y) { return; }
+  let lx = i32(lid.x) + 1;
+  let ly = i32(lid.y) + 1;
+  let obsC = tileO[ly][lx];
+  if (obsC > 0.5) {
+    textureStore(OUT, p, vec4<f32>(0.0, 0.0, 0.0, 1.0));
+    return;
+  }
+  let Cp = tileP[ly][lx];
+  var L = tileP[ly][lx - 1];
+  if (tileO[ly][lx - 1] > 0.5) { L = Cp; }
+  var R = tileP[ly][lx + 1];
+  if (tileO[ly][lx + 1] > 0.5) { R = Cp; }
+  var T = tileP[ly + 1][lx];
+  if (tileO[ly + 1][lx] > 0.5) { T = Cp; }
+  var B = tileP[ly - 1][lx];
+  if (tileO[ly - 1][lx] > 0.5) { B = Cp; }
+  let divergence = textureLoad(T1, p, 0).x;
+  let pressure = (L + R + B + T - divergence) * 0.25;
+  textureStore(OUT, p, vec4<f32>(pressure, 0.0, 0.0, 1.0));
+}`
+    ),
+    gradientSubtractC: C(
+      [["uWrapBorders", "f32"]],
+      3,
+      "rgba16float",
+      [8, 8],
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var T1: texture_2d<f32>;
+@group(0) @binding(3) var T2: texture_2d<f32>;
+@group(0) @binding(4) var OUT: texture_storage_2d<rgba16float, write>;
+${HELPERS}
+@compute @workgroup_size(8, 8) fn cs(@builtin(global_invocation_id) gid: vec3<u32>) {
+  let dims = vec2<i32>(U.dims);
+  if (i32(gid.x) >= dims.x || i32(gid.y) >= dims.y) { return; }
+  let p = vec2<i32>(i32(gid.x), i32(gid.y));
+  let wrap = U.uWrapBorders > 0.5;
+  let obsC = textureLoad(T2, clampCoord(p, dims), 0).x;
+  if (obsC > 0.5) {
+    textureStore(OUT, p, vec4<f32>(0.0, 0.0, 0.0, 1.0));
+    return;
+  }
+  let Cp = textureLoad(T0, p, 0).x;
+  var L = textureLoad(T0, flowCoord(p + vec2<i32>(-1, 0), dims, wrap), 0).x;
+  if (textureLoad(T2, clampCoord(p + vec2<i32>(-1, 0), dims), 0).x > 0.5) { L = Cp; }
+  var R = textureLoad(T0, flowCoord(p + vec2<i32>(1, 0), dims, wrap), 0).x;
+  if (textureLoad(T2, clampCoord(p + vec2<i32>(1, 0), dims), 0).x > 0.5) { R = Cp; }
+  var T = textureLoad(T0, flowCoord(p + vec2<i32>(0, 1), dims, wrap), 0).x;
+  if (textureLoad(T2, clampCoord(p + vec2<i32>(0, 1), dims), 0).x > 0.5) { T = Cp; }
+  var B = textureLoad(T0, flowCoord(p + vec2<i32>(0, -1), dims, wrap), 0).x;
+  if (textureLoad(T2, clampCoord(p + vec2<i32>(0, -1), dims), 0).x > 0.5) { B = Cp; }
+  var velocity = textureLoad(T1, p, 0).xy;
+  velocity -= vec2<f32>(R - L, T - B);
+  textureStore(OUT, p, vec4<f32>(velocity, 0.0, 1.0));
+}`
+    )
+  };
+
   // ts_src_gpu/engine/fluidEngineGPU.ts
   function hexToRgbNormalized2(hex) {
     const clean = hex.replace("#", "");
@@ -6375,7 +6532,8 @@ struct VSOut {
     format;
     filter;
     wrapGroup;
-    constructor(device, w, h, format, filter, wrapGroup) {
+    storage;
+    constructor(device, w, h, format, filter, wrapGroup, storage = false) {
       this.width = w;
       this.height = h;
       this.texelSizeX = 1 / w;
@@ -6383,11 +6541,12 @@ struct VSOut {
       this.format = format;
       this.filter = filter;
       this.wrapGroup = wrapGroup;
+      this.storage = storage;
       this.texture = device.createTexture({
         size: [w, h],
         format,
-        usage: 1 | 16 | 4
-        // COPY_SRC | TEXTURE_BINDING | RENDER_ATTACHMENT
+        usage: 1 | 16 | 4 | (storage ? 8 : 0)
+        // COPY_SRC | RENDER_ATTACHMENT | TEXTURE_BINDING (| STORAGE_BINDING)
       });
       this.view = this.texture.createView();
     }
@@ -6497,6 +6656,60 @@ struct VSOut {
       return this.bgl;
     }
   };
+  var ComputePass = class {
+    def;
+    device;
+    pipeline;
+    bgl;
+    fields = [];
+    uniformSize;
+    constructor(device, def) {
+      this.device = device;
+      this.def = def;
+      const all = [["dims", "vec2u"], ...def.extraUniforms];
+      let offset = 0;
+      for (const [name, kind] of all) {
+        const align = kind === "vec2u" ? 8 : 4;
+        const size = kind === "vec2u" ? 8 : 4;
+        offset = Math.ceil(offset / align) * align;
+        this.fields.push({ name, kind, offset });
+        offset += size;
+      }
+      this.uniformSize = Math.max(16, Math.ceil(offset / 8) * 8);
+      const structSrc = "struct UniformsC {\n" + this.fields.map((f) => `  ${f.name}: ${f.kind === "vec2u" ? "vec2<u32>" : "f32"},`).join("\n") + "\n};\n";
+      const code = structSrc + "@group(0) @binding(0) var<uniform> U: UniformsC;\n" + def.code;
+      const module = device.createShaderModule({ code });
+      const entries = [
+        {
+          binding: 0,
+          visibility: 4,
+          // COMPUTE
+          buffer: { type: "uniform", hasDynamicOffset: true }
+        }
+      ];
+      for (let i = 0; i < def.textures; i++) {
+        entries.push({
+          binding: 1 + i,
+          visibility: 4,
+          texture: { sampleType: "float", viewDimension: "2d" }
+        });
+      }
+      entries.push({
+        binding: 1 + def.textures,
+        visibility: 4,
+        storageTexture: { access: "write-only", format: def.outFormat, viewDimension: "2d" }
+      });
+      this.bgl = device.createBindGroupLayout({ entries });
+      const layout = device.createPipelineLayout({ bindGroupLayouts: [this.bgl] });
+      this.pipeline = device.createComputePipeline({
+        layout,
+        compute: { module, entryPoint: "cs" }
+      });
+    }
+    get bindGroupLayout() {
+      return this.bgl;
+    }
+  };
   var FluidEngineGPU = class {
     backend = "webgpu";
     ready;
@@ -6512,6 +6725,15 @@ struct VSOut {
     isReady = false;
     destroyed = false;
     passes = /* @__PURE__ */ new Map();
+    computePasses = /* @__PURE__ */ new Map();
+    computeAvailable = false;
+    /** When true (and compute pipelines built OK), the pressure projection
+     * (divergence / Jacobi / gradient subtract) runs as compute dispatches
+     * instead of fragment passes. Public so tests/benchmarks can A/B it. */
+    useComputeProjection = true;
+    get projectionMode() {
+      return this.computeAvailable && this.useComputeProjection ? "compute" : "fragment";
+    }
     arena = null;
     arenaSize = 0;
     arenaCursor = 0;
@@ -6608,6 +6830,22 @@ struct VSOut {
       });
       for (const [name, def] of Object.entries(WGSL_PASSES)) {
         this.passes.set(name, new Pass(this.device, def));
+      }
+      try {
+        this.device.pushErrorScope("validation");
+        for (const [name, def] of Object.entries(WGSL_COMPUTE_PASSES)) {
+          this.computePasses.set(name, new ComputePass(this.device, def));
+        }
+        const scopeErr = await this.device.popErrorScope();
+        this.computeAvailable = !scopeErr && this.computePasses.size > 0;
+        if (scopeErr) {
+          this.__gpuErrors.push("compute init: " + (scopeErr.message || scopeErr));
+          this.computePasses.clear();
+        }
+      } catch (e) {
+        this.computeAvailable = false;
+        this.computePasses.clear();
+        this.__gpuErrors.push("compute init threw: " + e?.message);
       }
       this.arenaSize = 1 << 19;
       this.arena = this.device.createBuffer({
@@ -6706,6 +6944,44 @@ struct VSOut {
       rp.draw(3);
       rp.end();
     }
+    /** Encode one compute dispatch. `target` is the write-only storage
+     * texture; dims are taken from it. Inputs are sampled textures read via
+     * textureLoad (no samplers). */
+    dispatch(passName, target, values, textures) {
+      const pass = this.computePasses.get(passName);
+      const offset = this.allocUniform(pass);
+      const enc = this.encoder();
+      const buf = new ArrayBuffer(pass.uniformSize);
+      const f32 = new Float32Array(buf);
+      const u32 = new Uint32Array(buf);
+      for (const f of pass.fields) {
+        const base = f.offset / 4;
+        if (f.kind === "vec2u") {
+          u32[base] = target.width;
+          u32[base + 1] = target.height;
+        } else {
+          const v = values[f.name];
+          if (v !== void 0) f32[base] = v;
+        }
+      }
+      this.device.queue.writeBuffer(this.arena, offset, buf);
+      const entries = [
+        { binding: 0, resource: { buffer: this.arena, offset: 0, size: pass.uniformSize } }
+      ];
+      textures.forEach((rt, i) => {
+        entries.push({ binding: 1 + i, resource: rt.view });
+      });
+      entries.push({ binding: 1 + textures.length, resource: target.view });
+      const bg = this.device.createBindGroup({ layout: pass.bindGroupLayout, entries });
+      const cp = enc.beginComputePass();
+      cp.setPipeline(pass.pipeline);
+      cp.setBindGroup(0, bg, [offset]);
+      cp.dispatchWorkgroups(
+        Math.ceil(target.width / pass.def.workgroupSize[0]),
+        Math.ceil(target.height / pass.def.workgroupSize[1])
+      );
+      cp.end();
+    }
     /* ---------------- framebuffers ---------------- */
     getResolution(resolution) {
       let aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
@@ -6715,8 +6991,8 @@ struct VSOut {
       if (this.canvas.width > this.canvas.height) return { width: max, height: min };
       return { width: min, height: max };
     }
-    makeRT(w, h, format, filter, wrapGroup) {
-      return new RT(this.device, w, h, format, filter, wrapGroup);
+    makeRT(w, h, format, filter, wrapGroup, storage = false) {
+      return new RT(this.device, w, h, format, filter, wrapGroup, storage);
     }
     copyRT(src, dst) {
       this.draw("clear", dst, [dst.texelSizeX, dst.texelSizeY], { value: 1 }, [src]);
@@ -6726,9 +7002,10 @@ struct VSOut {
       const fmt = target.read.format;
       const filter = target.read.filter;
       const wrapGroup = target.read.wrapGroup;
-      const newRead = this.makeRT(w, h, fmt, filter, wrapGroup);
+      const storage = target.read.storage;
+      const newRead = this.makeRT(w, h, fmt, filter, wrapGroup, storage);
       this.copyRT(target.read, newRead);
-      const newWrite = this.makeRT(w, h, fmt, filter, wrapGroup);
+      const newWrite = this.makeRT(w, h, fmt, filter, wrapGroup, storage);
       target.destroy();
       const out = new DoubleRT(newRead, newWrite);
       return out;
@@ -6740,6 +7017,8 @@ struct VSOut {
         const RGBA = "rgba16float";
         const RG = "rg16float";
         const R = "r16float";
+        const VEL = this.computeAvailable ? RGBA : RG;
+        const SCL = this.computeAvailable ? RGBA : R;
         this.dye = this.dye ? this.resizeDoubleRT(this.dye, dyeRes.width, dyeRes.height) : new DoubleRT(
           this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow"),
           this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow")
@@ -6749,8 +7028,8 @@ struct VSOut {
         this.dyeTmpHat = this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow");
         this.dyeTmpRev = this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow");
         this.velocity = this.velocity ? this.resizeDoubleRT(this.velocity, simRes.width, simRes.height) : new DoubleRT(
-          this.makeRT(simRes.width, simRes.height, RG, "linear", "flow"),
-          this.makeRT(simRes.width, simRes.height, RG, "linear", "flow")
+          this.makeRT(simRes.width, simRes.height, VEL, "linear", "flow", true),
+          this.makeRT(simRes.width, simRes.height, VEL, "linear", "flow", true)
         );
         this.velTmpHat?.destroy();
         this.velTmpRev?.destroy();
@@ -6759,11 +7038,11 @@ struct VSOut {
         this.divergence?.destroy();
         this.curlRT?.destroy();
         if (this.pressure) this.pressure.destroy();
-        this.divergence = this.makeRT(simRes.width, simRes.height, R, "nearest", "flow");
+        this.divergence = this.makeRT(simRes.width, simRes.height, SCL, "nearest", "flow", true);
         this.curlRT = this.makeRT(simRes.width, simRes.height, R, "nearest", "flow");
         this.pressure = new DoubleRT(
-          this.makeRT(simRes.width, simRes.height, R, "nearest", "flow"),
-          this.makeRT(simRes.width, simRes.height, R, "nearest", "flow")
+          this.makeRT(simRes.width, simRes.height, SCL, "nearest", "flow", true),
+          this.makeRT(simRes.width, simRes.height, SCL, "nearest", "flow", true)
         );
         const hadObstacles = Boolean(this.obstacles);
         this.obstacles = this.obstacles ? this.resizeDoubleRT(this.obstacles, simRes.width, simRes.height) : new DoubleRT(
@@ -7528,13 +7807,22 @@ struct VSOut {
         [this.velocity.read, this.curlRT]
       );
       this.velocity.swap();
-      this.draw(
-        "divergence",
-        this.divergence,
-        velTexel,
-        { uWrapBorders: ep.wrapBorders ? 1 : 0 },
-        [this.velocity.read, this.obstacles.read]
-      );
+      const useCompute = this.computeAvailable && this.useComputeProjection;
+      const wrapVal = ep.wrapBorders ? 1 : 0;
+      if (useCompute) {
+        this.dispatch("divergenceC", this.divergence, { uWrapBorders: wrapVal }, [
+          this.velocity.read,
+          this.obstacles.read
+        ]);
+      } else {
+        this.draw(
+          "divergence",
+          this.divergence,
+          velTexel,
+          { uWrapBorders: wrapVal },
+          [this.velocity.read, this.obstacles.read]
+        );
+      }
       this.draw(
         "clear",
         this.pressure.write,
@@ -7545,22 +7833,38 @@ struct VSOut {
       this.pressure.swap();
       const iters = Math.max(4, Math.min(100, Math.round(ep.pressureIterations)));
       for (let i = 0; i < iters; i++) {
-        this.draw(
-          "pressure",
-          this.pressure.write,
-          velTexel,
-          {},
-          [this.pressure.read, this.divergence, this.obstacles.read]
-        );
+        if (useCompute) {
+          this.dispatch("pressureC", this.pressure.write, { uWrapBorders: wrapVal }, [
+            this.pressure.read,
+            this.divergence,
+            this.obstacles.read
+          ]);
+        } else {
+          this.draw(
+            "pressure",
+            this.pressure.write,
+            velTexel,
+            {},
+            [this.pressure.read, this.divergence, this.obstacles.read]
+          );
+        }
         this.pressure.swap();
       }
-      this.draw(
-        "gradientSubtract",
-        this.velocity.write,
-        velTexel,
-        {},
-        [this.pressure.read, this.velocity.read, this.obstacles.read]
-      );
+      if (useCompute) {
+        this.dispatch("gradientSubtractC", this.velocity.write, { uWrapBorders: wrapVal }, [
+          this.pressure.read,
+          this.velocity.read,
+          this.obstacles.read
+        ]);
+      } else {
+        this.draw(
+          "gradientSubtract",
+          this.velocity.write,
+          velTexel,
+          {},
+          [this.pressure.read, this.velocity.read, this.obstacles.read]
+        );
+      }
       this.velocity.swap();
       this.advectField(
         this.velocity,
@@ -8491,17 +8795,172 @@ struct VSOut {
       return false;
     }
   }
+  var BACKEND_CACHE_KEY = "leary-backend-cache-v1";
+  var BACKEND_FORCE_KEY = "leary-backend-force";
+  async function adapterFingerprint() {
+    try {
+      const gpu = navigator.gpu;
+      if (!gpu) return "no-webgpu";
+      const adapter = await gpu.requestAdapter();
+      if (!adapter) return "no-adapter";
+      let info = adapter.info || {};
+      if (!info.vendor && !info.architecture && typeof adapter.requestAdapterInfo === "function") {
+        try {
+          info = await adapter.requestAdapterInfo();
+        } catch {
+        }
+      }
+      const fp = [info.vendor || "", info.architecture || "", info.device || "", info.description || ""].join("|").replace(/\|+$/, "");
+      return fp || "unknown-gpu";
+    } catch {
+      return "unknown-gpu";
+    }
+  }
+  async function timeSteps(step, sync) {
+    for (let i = 0; i < 5; i++) step();
+    await sync();
+    const p0 = performance.now();
+    for (let i = 0; i < 5; i++) step();
+    await sync();
+    const est = (performance.now() - p0) / 5;
+    if (est > 400) return est;
+    const n = Math.max(5, Math.min(20, Math.floor(1200 / Math.max(est, 0.01))));
+    const runs = [];
+    for (let r = 0; r < 3; r++) {
+      const t0 = performance.now();
+      for (let i = 0; i < n; i++) step();
+      await sync();
+      runs.push((performance.now() - t0) / n);
+    }
+    runs.sort((a, b) => a - b);
+    return runs[1];
+  }
+  async function runAdaptiveBench(params) {
+    const bp = JSON.parse(JSON.stringify(params));
+    bp.simResolution = Math.min(bp.simResolution || 256, 256);
+    bp.dyeResolution = Math.min(bp.dyeResolution || 1024, 1024);
+    const results = {};
+    let gpuBest = null;
+    try {
+      const c = document.createElement("canvas");
+      c.width = 480;
+      c.height = 300;
+      const eng = new FluidEngineGPU(c, bp, { offscreen: true });
+      await eng.ready;
+      eng.setSeed(999);
+      eng.clear();
+      eng.triggerCollision();
+      const sync = () => eng.device.queue.onSubmittedWorkDone();
+      const step = () => {
+        eng.stepPhysics(1 / 60);
+        eng.renderDisplay();
+      };
+      eng.useComputeProjection = false;
+      results.fragment = await timeSteps(step, sync);
+      let mode = "fragment";
+      let best = results.fragment;
+      if (eng.computeAvailable) {
+        eng.useComputeProjection = true;
+        results.compute = await timeSteps(step, sync);
+        if (results.compute < results.fragment * 0.92) {
+          mode = "compute";
+          best = results.compute;
+        }
+      }
+      gpuBest = { mode, ms: best };
+      eng.destroy();
+    } catch {
+    }
+    let glMs = null;
+    try {
+      const c = document.createElement("canvas");
+      c.width = 480;
+      c.height = 300;
+      const eng = new FluidEngine(c, bp, {});
+      eng.setSeed(999);
+      eng.clear();
+      eng.triggerCollision();
+      const gl = eng.gl;
+      const px = new Uint8Array(4);
+      const sync = async () => {
+        gl.finish();
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      };
+      const step = () => {
+        eng.stepPhysics(1 / 60);
+        eng.renderDisplay();
+      };
+      glMs = await timeSteps(step, sync);
+      results.webgl2 = glMs;
+      eng.destroy();
+    } catch {
+    }
+    if (gpuBest && glMs !== null && glMs < gpuBest.ms * 0.9) {
+      return { backend: "webgl2", projection: gpuBest.mode, source: "bench", bench: results };
+    }
+    if (gpuBest) return { backend: "webgpu", projection: gpuBest.mode, source: "bench", bench: results };
+    if (glMs !== null) return { backend: "webgl2", projection: "fragment", source: "bench", bench: results };
+    return { backend: "webgl2", projection: "fragment", source: "bench-failed", bench: results };
+  }
   async function createEngine(canvas, params, callbacks) {
-    if (await webgpuAvailable()) {
+    const W = window;
+    let force = null;
+    try {
+      force = localStorage.getItem(BACKEND_FORCE_KEY);
+    } catch {
+    }
+    let choice = null;
+    if (force === "webgl2" || force === "webgpu-fragment" || force === "webgpu-compute") {
+      choice = {
+        backend: force === "webgl2" ? "webgl2" : "webgpu",
+        projection: force === "webgpu-fragment" ? "fragment" : "compute",
+        source: "force"
+      };
+    }
+    const gpuOk = await webgpuAvailable();
+    if (!choice && gpuOk) {
+      const fp = await adapterFingerprint();
+      let cache = {};
+      try {
+        cache = JSON.parse(localStorage.getItem(BACKEND_CACHE_KEY) || "{}");
+      } catch {
+      }
+      if (cache[fp] && cache[fp].backend) {
+        choice = {
+          backend: cache[fp].backend,
+          projection: cache[fp].projection || "compute",
+          source: "cache",
+          bench: cache[fp].bench
+        };
+      } else {
+        try {
+          choice = await runAdaptiveBench(params);
+          cache[fp] = { backend: choice.backend, projection: choice.projection, bench: choice.bench, ts: Date.now() };
+          try {
+            localStorage.setItem(BACKEND_CACHE_KEY, JSON.stringify(cache));
+          } catch {
+          }
+        } catch {
+          choice = null;
+        }
+      }
+      W.__ChromaFlow.benchInfo = { fingerprint: fp, ...choice || {} };
+    }
+    if (choice && choice.backend === "webgl2") {
+      W.__ChromaFlow.backend = "webgl2";
+      return new FluidEngine(canvas, params, callbacks);
+    }
+    if (gpuOk) {
       try {
         const engine = new FluidEngineGPU(canvas, params, callbacks);
         await engine.ready;
-        window.__ChromaFlow.backend = "webgpu";
+        if (choice && choice.projection === "fragment") engine.useComputeProjection = false;
+        W.__ChromaFlow.backend = "webgpu";
         return engine;
       } catch {
       }
     }
-    window.__ChromaFlow.backend = "webgl2";
+    W.__ChromaFlow.backend = "webgl2";
     return new FluidEngine(canvas, params, callbacks);
   }
   window.__ChromaFlow = {
@@ -8511,7 +8970,8 @@ struct VSOut {
     DEFAULT_PARAMS,
     CURATED_PRESETS,
     createEngine,
-    backend: "webgl2"
+    backend: "webgl2",
+    benchInfo: null
   };
 })();
 
@@ -9282,7 +9742,7 @@ struct VSOut {
         const fps = Math.round(frames * 1000 / (now - lastT));
         frames = 0; lastT = now;
         const ro = $id('cfFpsReadout');
-        if (ro) ro.textContent = '現在 ' + fps + ' fps（' + ((window.__ChromaFlow && window.__ChromaFlow.backend === 'webgpu') ? 'WebGPU' : 'WebGL2') + ' / 描画解像度 ' + params.dyeResolution + ' / 描画スケール ' + Math.round(renderScale * 100) + '%' + (autoQ ? ' / 自動画質ON' : '') + '）';
+        if (ro) ro.textContent = '現在 ' + fps + ' fps（' + ((window.__ChromaFlow && window.__ChromaFlow.backend === 'webgpu') ? ((engine && engine.projectionMode === 'compute') ? 'WebGPU Compute' : 'WebGPU') : 'WebGL2') + ' / 描画解像度 ' + params.dyeResolution + ' / 描画スケール ' + Math.round(renderScale * 100) + '%' + (autoQ ? ' / 自動画質ON' : '') + '）';
         autoQualityTick(fps);
       }
       fpsRaf = requestAnimationFrame(loop);
@@ -9427,5 +9887,6 @@ struct VSOut {
 })();
 
 </script>
+
 </body>
 </html>
