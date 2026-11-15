@@ -1,6 +1,6 @@
 /* MEIKYOSHISUI Service Worker — cache-first for same-origin GET.
    Bump CACHE_VERSION on every release so clients pick up new files. */
-const CACHE_VERSION = 'meikyoshisui-v30-20261115';
+const CACHE_VERSION = 'meikyoshisui-v31-20261115';
 const CORE = [
  "./",
  "./index.html",

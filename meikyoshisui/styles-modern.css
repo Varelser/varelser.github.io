@@ -1085,3 +1085,350 @@ header { padding-bottom: 8px !important; }
   0% { box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 8px 28px rgba(0,0,0,.45); }
   100% { box-shadow: 0 0 0 0 rgba(255,255,255,0), 0 8px 28px rgba(0,0,0,.45); }
 }
+/* ════════════════════════════════════════════════════════════════
+   MEIKYOSHISUI — Lien typography (2026-11-15 v3)
+   「フォントから Lien の真似」: v1/v2 は色と面を寄せたが、文字の
+   寸法が旧態 (7–9px + 字間 2–3px のマイクロラベルが数百件) のまま
+   残り、テクノ風の古さが消えなかった。ここでは MODERN の全文字を
+   Lien の寸法系へ移す:
+   - 書体は system-ui スタックのみ。等幅は Lien の mono スタック
+     (ui-monospace, SFMono-Regular, Menlo, Consolas) のみ。
+     Orbitron / Rajdhani / Share Tech Mono は使わない。
+   - 最小サイズは 10px (Lien の下限)。短い英字ラベルは group-title
+     寸法 (10px / 500 / .16em)、ボタン類は mini-btn 寸法 (.12em)。
+   - 数値の読み出しは 12px mono + tabular-nums。
+   - 日本語の説明文は字間 normal・11px・行間 1.7 (Lien help 寸法)。
+   - 広い字間 + 大文字は短い英字ラベルだけに限る。
+   インライン style の寸法は属性セレクタで、styles.css のクラス
+   寸法は生成ルール (build.py が styles.css から機械生成) で倒す。
+   生成・保存・配線には触れない。CLASSIC ではこのブロックごと無効。
+   ════════════════════════════════════════════════════════════════ */
+:root {
+  --lien-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --lien-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ── 書体の全面リセット (Lien スタックへ) ── */
+body, body * { font-family: var(--lien-font) !important; }
+.pval, .log, .chord-box, .chord-status, .ui-macro-val, .sv,
+[class*="readout"], [class*="lcd"], .seed-input, #eucPatternDisplay {
+  font-family: var(--lien-mono) !important;
+}
+
+/* ── インラインの広すぎる字間 (2–4px) を Lien 寸法へ ──
+   styles-readable.css が body.readable-ui + 属性セレクタ (詳細度
+   0,2,1) で寸法を上書きするため、同じ詳細度のセレクタで対抗する
+   (modern は後読みなので同詳細度ならこちらが勝つ)。 */
+[style*="letter-spacing:2px"], [style*="letter-spacing: 2px"],
+[style*="letter-spacing:3px"], [style*="letter-spacing: 3px"],
+[style*="letter-spacing:4px"], [style*="letter-spacing: 4px"],
+body.readable-ui [style*="letter-spacing:2px"], body.readable-ui [style*="letter-spacing: 2px"],
+body.readable-ui [style*="letter-spacing:3px"], body.readable-ui [style*="letter-spacing: 3px"],
+body.readable-ui [style*="letter-spacing:4px"], body.readable-ui [style*="letter-spacing: 4px"] {
+  letter-spacing: .12em !important;
+}
+
+/* ── インラインのマイクロラベル (5–9.5px) を group-title 寸法へ ── */
+[style*="font-size:5px"], [style*="font-size: 5px"],
+[style*="font-size:6px"], [style*="font-size: 6px"],
+[style*="font-size:7px"], [style*="font-size: 7px"],
+[style*="font-size:8px"], [style*="font-size: 8px"],
+[style*="font-size:9px"], [style*="font-size: 9px"],
+[style*="font-size:9.5px"], [style*="font-size: 9.5px"],
+body.readable-ui [style*="font-size:5px"], body.readable-ui [style*="font-size: 5px"],
+body.readable-ui [style*="font-size:6px"], body.readable-ui [style*="font-size: 6px"],
+body.readable-ui [style*="font-size:7px"], body.readable-ui [style*="font-size: 7px"],
+body.readable-ui [style*="font-size:8px"], body.readable-ui [style*="font-size: 8px"],
+body.readable-ui [style*="font-size:9px"], body.readable-ui [style*="font-size: 9px"],
+body.readable-ui [style*="font-size:9.5px"], body.readable-ui [style*="font-size: 9.5px"] {
+  font-family: var(--lien-font) !important;
+  font-size: 10px !important;
+  letter-spacing: .16em !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+}
+
+/* ── 数値の読み出し (id 末尾 V の慣習 + 個別指定) は 12px mono ── */
+[id$="V"]:not(input), #eucPatternDisplay, #rcNV, #rcVoicesV, #jiBlendV, #jiHarmonicLimitV {
+  font-family: var(--lien-mono) !important;
+  font-size: 12px !important;
+  letter-spacing: .02em !important;
+  font-weight: 400 !important;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4 !important;
+}
+
+/* ── コード入力: 静かな mono 16px (Lien の seed 入力と同じ扱い。
+   入力要素向け総則 (0,1,1) に勝つため #chordInput を併記) ── */
+#chordInput, input.chord-box {
+  font-family: var(--lien-mono) !important;
+  font-size: 16px !important; font-weight: 500 !important;
+  letter-spacing: .04em !important; line-height: 1.4 !important;
+}
+.chord-status { font-size: 11px !important; letter-spacing: .04em !important; }
+
+/* ── 日本語の説明文: 字間 normal・行間 1.7 ── */
+.tog-desc, .param-desc, [class*="-desc"], [class*="-info"] {
+  letter-spacing: normal !important; line-height: 1.6 !important;
+}
+
+/* ── ビジュアライザー (index 内蔵 style の寸法を Lien へ) ── */
+#vizPanel .viz-title { letter-spacing: .16em !important; }
+#vizPanel .viz-badge { font-size: 10px !important; letter-spacing: .12em !important; }
+#vizPanel .viz-sec { font-size: 10px !important; letter-spacing: .16em !important; font-weight: 500; }
+#vizPanel .viz-sec .now { font-family: var(--lien-mono) !important; font-size: 11px !important; letter-spacing: .04em !important; }
+#vizPanel .viz-legend { font-size: 11px !important; letter-spacing: normal !important; line-height: 1.7 !important; }
+
+/* ── 残りの既知の寸法漏れ ── */
+.badge { font-size: 10px !important; letter-spacing: .12em !important; }
+.seed-label { font-size: 10px !important; letter-spacing: .12em !important; }
+#genBarStatus { letter-spacing: .04em !important; }
+/* 69 が注入するステータスチップ (styles.css に無いため生成対象外) */
+.status-chip { font-size: 10px !important; letter-spacing: .08em !important; }
+/* JS 注入パネルの見出し群 (11px / 字間3px) をセクションヘッド寸法へ */
+.tp-head, .ab-head, .daw-head, .vl-head, .crt-head, .rnd-head {
+  font-size: 12px !important; letter-spacing: .12em !important; font-weight: 600 !important;
+}
+
+/* ── 理論系の開閉 (Theory Pack + GATE TIME ブロック) ──
+   .tp-head クリックでパック単位に畳む。状態は 95 が
+   localStorage 'meikyoshisui_ui_packs_v1' に保存する (既定は開)。
+   パネル側の折りたたみ (84) とは独立だが、全て開く/閉じるには連動。 */
+.tp-head { cursor: pointer; user-select: none; display: flex; align-items: center; }
+.tp-head::after, .lien-subhead::after {
+  content: "▾"; margin-left: auto; padding-left: 10px;
+  font-size: 11px; color: rgba(255,255,255,.45);
+  transition: transform .2s ease;
+}
+.pack-collapsed > .tp-head::after, .pack-collapsed > .lien-subhead::after { transform: rotate(-90deg); }
+.pack-collapsed > *:not(.tp-head):not(.lien-subhead) { display: none !important; }
+.lien-subhead { cursor: pointer; user-select: none; display: flex; align-items: center; }
+
+/* ── 生成ルール: styles.css の 10px 未満クラス → ラベル寸法 (10px/.16em/500) ── */
+.sec-label,
+.g-sub,
+.scale-sync-text,
+.ti-block h4,
+.ti-block .sub,
+.oct-label,
+.param-label,
+.ab-label,
+.seed-label,
+.seed-input,
+.midi-in-select,
+.midi-in-status,
+footer,
+.chain-label,
+select.chain-sel,
+.gate-indicator,
+.resolve-indicator,
+.ls-lstr,
+.nh-field label,
+.nh-prog-label,
+.nh-axis-bar .axis-label,
+.nh-chord-card .chord-notes-nh,
+.nh-section-label,
+.ecb-title,
+.ecb-group-label,
+.ecb-label,
+.hum-meter-label,
+.mkv-cell,
+.mkv-axis,
+.sv-row label,
+.sv-op,
+.sv-density-bar,
+.sv-viz-label,
+.boids-agent .ag-name,
+.boids-agent .ag-vel,
+.boids-rule-card .rc-title,
+.boids-out-card .oc-label,
+.sf-fc-name,
+.sf-fc-cat,
+.sf-cat-label,
+.sf-sel-summary,
+.bb-carrier-label,
+.ct-iv-name,
+.lz-state,
+.ca-rule-name,
+.ca-override-label,
+.sp-resonant,
+.cp-slot-bars,
+.cp-borrowed-src-label,
+.cp-smooth-label,
+.sm-slot-scale,
+.sm-slot-bars,
+.sm-slot-del,
+.sm-add-select,
+.sm-smooth-label,
+.sm-seq-seg,
+.sm-diff-pair,
+.at-map-label,
+.at-map-select,
+.at-param-label,
+.cca-lane-label,
+.cca-lane-cc-name,
+.cca-ctrl-label,
+.cca-select,
+.pcs-ctrl-label,
+.pcs-hover-detail,
+.prev-title,
+.prev-time,
+.prev-ch-label,
+.sp-title,
+.sp-input,
+.sp-slot-name,
+.sp-slot-date,
+.sp-slot-del {
+  font-family: var(--lien-font) !important;
+  font-size: 10px !important; letter-spacing: .16em !important;
+  font-weight: 500 !important; line-height: 1.4 !important;
+}
+
+/* ── 生成ルール: ボタン/バッジ類 → mini-btn 寸法 (10px/.12em/500) ── */
+.t-tab,
+.scale-sync-badge,
+.scale-output-badge,
+.scale-track-warn-chip,
+.s-btn,
+.seed-btn,
+.midi-in-btn,
+.badge,
+.c-btn,
+.ep-btn,
+.ls-add-btn,
+.ls-pre-btn,
+.ls-grow-btn,
+.ecb-preset-btn,
+.ecb-badge,
+.hum-mode-btn,
+.mkv-bias-btn,
+.mkv-scale-btn,
+.mkv-note-pill,
+.sv-badge,
+.sv-add-btn,
+.sv-mode-btn,
+.sv-preset-btn,
+.boids-badge,
+.boids-mode-btn,
+.boids-preset-btn,
+.sf-badge,
+.sf-mode-btn,
+.sf-preset-btn,
+.bb-band-btn,
+.bb-preset-btn,
+.bb-mode-btn,
+.ct-temp-btn,
+.ct-sync-btn,
+.ct-ch-btn,
+.lz-badge,
+.lz-preset-btn,
+.ca-badge,
+.ca-rule-btn,
+.ca-seed-btn,
+.rb-badge,
+.rb-preset-btn,
+.rb-dir-btn,
+.sp-badge,
+.sp-timbre-btn,
+.cp-badge,
+.cp-preset-btn,
+.cp-sim-badge span,
+.cp-borrowed-btn,
+.cp-borrowed-btn7,
+.cp-add-btn,
+.cp-mode-btn,
+.sm-badge,
+.sm-preset-btn,
+.sm-add-btn,
+.sm-mode-btn,
+.nr-preset-btn,
+.nr-op-btn--combo,
+.nr-op-btn--reset,
+.nr-path-btn,
+.nr-add-prog-btn,
+.nr-add-chord-btn,
+.cv-edit-btn,
+.cv-reset-btn,
+.rc-mode-btn,
+.rc-preset-btn,
+.ji-mode-btn,
+.at-badge,
+.at-type-btn,
+.at-preset-btn,
+.cca-badge,
+.cca-preset-btn,
+.me-layer-btn,
+.pcs-mode-btn,
+.prev-badge,
+.sp-btn,
+.sp-btn-auto {
+  font-family: var(--lien-font) !important;
+  font-size: 10px !important; letter-spacing: .12em !important;
+  font-weight: 500 !important; line-height: 1.4 !important;
+}
+
+/* ── 生成ルール: 説明文クラス → help 寸法 (11px/字間normal/行間1.7) ── */
+.scale-active-info,
+.tog-desc,
+.ls-sym-card .sc-desc,
+.ls-info,
+.nh-info-box,
+.mkv-info,
+.sv-info-box,
+.boids-rule-card .rc-desc,
+.boids-info-box,
+.sf-fc-desc,
+.sf-info-box,
+.bb-beat-desc,
+.bb-info,
+.ct-info,
+.lz-info,
+.ca-info,
+.rb-info,
+.sp-info,
+.cp-info-line,
+.cp-info,
+.sm-info-line,
+.sm-info,
+.cv-info,
+.rc-info,
+.ji-info,
+.at-info,
+.cca-info,
+.pcs-info-row,
+.sp-empty {
+  font-family: var(--lien-font) !important;
+  font-size: 11px !important; letter-spacing: normal !important;
+  font-weight: 400 !important; line-height: 1.6 !important;
+}
+
+/* ── 生成ルール: 数値クラス → 12px mono / tabular ── */
+.nh-slot .slot-num,
+.sv-result-bar,
+.rb-ratio,
+.sp-score-label,
+.nr-path-result,
+.cca-num,
+.cca-val {
+  font-family: var(--lien-mono) !important;
+  font-size: 12px !important; letter-spacing: .02em !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 高さの補正 (寸法を上げた分を Noise 寸法の余白で吸収) ──
+   パネル内余白は Noise のセクション body と同じ 16px、行間は
+   Noise の .field と同じ 10px。文字寸法は一切下げない。 */
+.panel, .ecb { padding: 16px !important; }
+.param-row { margin-bottom: 10px !important; }
+.tog-row { padding: 6px 0 !important; }
+.g-btn { padding: 10px !important; }
+.sec-label { margin-bottom: 10px !important; }
+/* 注入パネルの見出しは上マージン 26px が Lien 寸法外 — 詰める */
+.tp-head, .ab-head, .daw-head, .vl-head, .crt-head, .rnd-head {
+  margin-top: 14px !important; margin-bottom: 8px !important;
+}
+/* 1800px 以上は v2 の方針 (広い画面では行間をさらに詰める) を継続 */
+@media (min-width: 1800px) {
+  .param-row { margin-bottom: 8px !important; }
+  .tog-row { padding: 5px 0 !important; }
+}

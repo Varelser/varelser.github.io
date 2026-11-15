@@ -351,3 +351,119 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.__MEIKY_LIEN__ = { distribute, restore, gotoSlug, nav };
 });
+
+/* ── 2026-11-15 v3: Service Worker 更新の自動反映 ──────────────────
+   cache-first の SW は更新後も旧キャッシュを出し続け、利用者が古い
+   見た目を見続ける事故が起きた。新 SW が制御を取得したら (前任
+   controller が居た場合のみ = 更新時のみ) 1回だけ自動リロードする。
+   初回インストールではリロードしない。sessionStorage フラグと
+   二重発火ガードでループを防ぐ。fetch 戦略自体は変更しない。 */
+(function () {
+  'use strict';
+  if (!('serviceWorker' in navigator)) return;
+  var hadController = !!navigator.serviceWorker.controller;
+  var done = false;
+  window.__MEIKY_SW__ = { listenerRegistered: true, hadController: hadController, reloaded: false };
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (done || !hadController) return;
+    try {
+      if (sessionStorage.getItem('meikyoshisui.swReloaded') === '1') return;
+      sessionStorage.setItem('meikyoshisui.swReloaded', '1');
+    } catch (e) { /* storage 不可でも done フラグで1回に制限 */ }
+    done = true;
+    window.__MEIKY_SW__.reloaded = true;
+    location.reload();
+  });
+})();
+
+/* ── 2026-11-15 v3: 理論系セクションの開閉 ────────────────────────
+   Rhythmic Canons パネル内の Theory Pack (5セクション) と、Macros
+   パネル内の GATE TIME ブロックを個別に開閉できるようにする。
+   見出しクリックで畳み、状態は localStorage
+   'meikyoshisui_ui_packs_v1' に保存 (既定は開いた状態 = 従来通り)。
+   パネル側のキー (meikyoshisui_ui_panels_v1) には触れない。
+   理論トグル (33/70/85-88) の動作には一切触れない。 */
+(function () {
+  'use strict';
+  var KEY = 'meikyoshisui_ui_packs_v1';
+  var PACK_IDS = ['theoryPackSec', 'theoryPack3Sec', 'theoryPack4Sec', 'theoryPack5Sec', 'theoryPack6Sec'];
+  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  var state = load();
+  function relayout() {
+    if (window.__MEIKY_LIEN__ && window.__MEIKY_LIEN__.distribute) {
+      setTimeout(function () { window.__MEIKY_LIEN__.distribute(); }, 80);
+    }
+  }
+  function apply(sec, key) { sec.classList.toggle('pack-collapsed', !!state[key]); }
+  function setPack(key, collapsed) {
+    state[key] = !!collapsed; save();
+    document.querySelectorAll('[data-pack-key="' + key + '"]').forEach(function (s) { apply(s, key); });
+    relayout();
+  }
+  function expandAll() { Object.keys(state).forEach(function (k) { state[k] = false; }); save(); document.querySelectorAll('[data-pack-key]').forEach(function (s) { apply(s, s.dataset.packKey); }); relayout(); }
+  function collapseAll() { document.querySelectorAll('[data-pack-key]').forEach(function (s) { state[s.dataset.packKey] = true; }); save(); document.querySelectorAll('[data-pack-key]').forEach(function (s) { apply(s, s.dataset.packKey); }); relayout(); }
+  window.__MEIKY_PACKS__ = {
+    expandAll: expandAll, collapseAll: collapseAll,
+    expand: function (id) { setPack(id, false); },
+    isCollapsed: function (id) { return !!state[id]; },
+    keys: function () { return Object.keys(state); }
+  };
+  function bindPack(sec) {
+    if (!sec || sec.dataset.packBound) return;
+    var head = sec.querySelector(':scope > .tp-head');
+    if (!head) return;
+    sec.dataset.packBound = '1'; sec.dataset.packKey = sec.id;
+    apply(sec, sec.id);
+    head.addEventListener('click', function () { setPack(sec.id, !state[sec.id]); });
+  }
+  function bindGate() {
+    document.querySelectorAll('.panel div').forEach(function (d) {
+      if (d.dataset.gateBound) return;
+      var t = (d.textContent || '').trim();
+      if (t.indexOf('GATE TIME') !== 0 || t.length > 80) return;
+      if ((d.getAttribute('style') || '').indexOf('letter-spacing:3px') < 0) return;
+      if (d.querySelector('input,button,select,textarea')) return;
+      var wrap = d.parentElement;
+      if (!wrap || wrap.dataset.packBound) return;
+      d.dataset.gateBound = '1';
+      wrap.dataset.packBound = '1'; wrap.dataset.packKey = 'sub:gate-time';
+      d.classList.add('lien-subhead');
+      apply(wrap, 'sub:gate-time');
+      d.addEventListener('click', function () { setPack('sub:gate-time', !state['sub:gate-time']); });
+    });
+  }
+  function bindTools() {
+    document.querySelectorAll('.meikyo-panel-tools button').forEach(function (b) {
+      if (b.dataset.packToolBound) return;
+      b.dataset.packToolBound = '1';
+      b.addEventListener('click', function () {
+        if (b.textContent.indexOf('全て開く') >= 0) expandAll();
+        else if (b.textContent.indexOf('全て閉じる') >= 0) collapseAll();
+      });
+    });
+  }
+  function init() {
+    PACK_IDS.forEach(function (id) { bindPack(document.getElementById(id)); });
+    bindGate(); bindTools();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    init();
+    var tries = 0;
+    var iv = setInterval(function () {
+      tries++;
+      init();
+      var found = PACK_IDS.filter(function (id) { var s = document.getElementById(id); return s && s.dataset.packBound; }).length;
+      if (found >= PACK_IDS.length || tries > 20) clearInterval(iv);
+    }, 300);
+  });
+  /* 動線ジャンプ (理論パック) では畳まれたパックを先に開く */
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest && ev.target.closest('button[data-goto="rhythmic-canons"]');
+    if (b) expandAll();
+  }, true);
+  /* 検索中はパック内も到達できるよう全パックを開く */
+  document.addEventListener('input', function (ev) {
+    if (ev.target && ev.target.id === 'uiSearch' && ev.target.value) expandAll();
+  });
+})();
