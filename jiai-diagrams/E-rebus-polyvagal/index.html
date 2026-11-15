@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E REBUS×ポリヴェーガル統合仮説 ― 『慈愛体系』</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+.wrap{max-width:1020px;margin:0 auto;padding:20px 16px 40px}h1{font-size:22px;letter-spacing:.1em;text-align:center}
+canvas{width:100%;height:auto;display:block}.controls{text-align:center;margin:10px 0}
+button{border:1px solid #111;background:#111;color:#fff;border-radius:999px;padding:7px 18px;font-size:14px;cursor:pointer}
+.foot{border-top:1px solid rgba(0,0,0,.12);margin-top:12px;padding-top:10px;font-size:12.5px;color:rgba(0,0,0,.55);text-align:center;line-height:1.8}
+</style></head><body><div class="wrap"><h1>『慈愛体系』統合仮説</h1>
+<canvas id="cv" width="1600" height="900" aria-label="『慈愛体系』統合仮説 のアニメーション"></canvas>
+<div class="controls"><button id="btn">一時停止</button></div>
+<div class="foot">ポリヴェーガル理論については学術的論争があり、本書はそれを明記した上で臨床的枠組みとして採用しています<br>図は原典の要約であり、医学的助言ではありません</div></div>
+<script>
+
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let playing=true,t=0,last=performance.now();
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){playing=false;document.getElementById('btn').textContent='再生';}
+document.getElementById('btn').onclick=e=>{playing=!playing;e.target.textContent=playing?'一時停止':'再生';last=performance.now();};
+function smooth(a,b,x){if(x<=a)return 0;if(x>=b)return 1;const f=(x-a)/(b-a);return f*f*(3-2*f);}
+function dot(x,y,r,o){ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fillStyle='rgba(0,0,0,'+o+')';ctx.fill();}
+function txt(s,x,y,size,bold,alpha,anchor){ctx.font=(bold?'700 ':'')+size+'px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';ctx.fillStyle='rgba(17,17,17,'+(alpha===undefined?1:alpha)+')';ctx.textAlign=anchor||'center';ctx.fillText(s,x,y);}
+
+const SPREAD=[[-43.306545679755075, -7.398920425051294], [-21.024280100454327, -31.302426628275597], [-26.21701653279716, 34.31502441642374], [67.63121300422088, 56.0664471599861], [19.558933433627814, -15.015547262109656], [-33.765370992772965, 67.06926691856194], [68.67523087769482, 26.106443484168935], [62.10919419902507, -53.912803258541004], [38.40566157376456, 58.96513655851281], [-79.80356235886853, 19.48617677722848], [-25.878866568606256, 11.48663696918237], [-62.85461589011496, 22.584642279417494], [-46.44976817100934, 0.1559751710496613], [50.30674435049593, 43.81906265349052], [13.88168788306389, -63.361677711124415], [17.54089492298371, 10.4200841152728], [-67.7844517867436, 6.311566367816525], [-36.01398126023105, 37.388794644495476], [-0.6115030118710507, 6.571888664660946], [-53.11187742839587, -8.27450970649683], [-45.083718705173084, 8.764332444406392], [-65.84712698859198, -43.79286206991887], [72.2344976427193, 33.39688224109349], [5.791573993720661, 52.54066589677842], [68.94027390482626, -26.329692888746408], [77.81716834851136, 66.85055273382105], [-60.17808371246989, 45.42115008209987], [-74.58762764187453, 64.77438396284049], [13.848181822747009, -32.00141501410087], [-37.26656457632829, -66.54554934116582], [31.765260839412207, 41.25713624764974], [22.76338755784562, -15.552887551677962], [24.5945580756256, -0.30517143706475736], [-15.042398664590735, -13.737417604776418]];
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(playing)t+=dt;
+ctx.clearRect(0,0,1600,900);
+txt('『慈愛体系』REBUS×ポリヴェーガル統合仮説',800,86,36);
+for(const yy of [118,158])for(let x=170;x<=1430;x+=18)dot(x,yy,1.8,.5);
+txt('REBUS × ポリヴェーガル統合仮説 ― 著者の提案（独自提案／仮説＝グレードD、検証計画は究極版・第15章）',800,147,21,true);
+txt('REBUSモデル ― 高次予測（信念）の精度が緩む',800,196,22);
+for(let i=0;i<SPREAD.length;i++){let p=((i*53+t*38)%210)/210;dot(800+SPREAD[i][0]*(1-p*.55),195+p*175,5.2,.45+p*.4);
+p=((i*47+t*34)%210)/210;dot(800+SPREAD[i][1]*(1-p*.55),725-p*175,5.2,.45+p*.4);}
+const rr=118+4*Math.sin(6.2832*(t%20)/4);
+for(let i=0;i<40;i++){const a=i/40*6.2832;dot(800+rr*Math.cos(a),460+rr*Math.sin(a),5.6,.95);}
+txt('統合仮説の原則',800,452,19,false,.62);txt('安全が弛緩を許す',800,488,24,true);
+txt('ポリヴェーガル ― 身体が「安全」と評価できること（ニューロセプション）',800,782,22);
+txt('ポリヴェーガル理論については学術的論争があり、本書はそれを明記した上で臨床的枠組みとして採用しています',800,838,17,false,.55);
+requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+
+</script></body></html>
