@@ -6,7 +6,7 @@
 .wrap{max-width:1020px;margin:0 auto;padding:20px 16px 44px}
 h1{font-size:22px;letter-spacing:.12em;text-align:center}
 .sub{text-align:center;color:rgba(0,0,0,.6);font-size:13.5px}
-svg{width:100%;height:auto} .ch:focus{outline:none} .ch:focus .halo,.ch.sel .halo{stroke:rgba(0,0,0,.55)}
+svg{width:100%;height:auto} .ch:focus{outline:none} .ch:focus .halo,.ch.sel .halo,.ch.lit .halo{stroke:rgba(0,0,0,.55)} .ch{transition:transform .6s ease;transform-box:fill-box;transform-origin:center} .ch.lit{transform:scale(1.05)}
 .detail{border-top:1px solid #111;margin-top:8px;padding:16px 6px;min-height:150px}
 .detail h2{font-size:20px;margin:0 0 6px} .detail p{margin:4px 0;line-height:1.8}
 .kw{color:rgba(0,0,0,.6);font-size:13.5px} .kn{font-size:13.5px;color:rgba(0,0,0,.6)}
@@ -37,4 +37,41 @@ document.querySelectorAll('.ch').forEach(e=>{
   e.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); select(e.dataset.id, true); } });
 });
 select(location.hash.replace('#','') in byId ? location.hash.replace('#','') : 'prologue', false);
+// ---- auto tour: a pulse travels the chapters in reading order ----
+const TOUR = [["prologue", 850, 360], ["ch01", 520, 830], ["ch02", 1080, 830], ["ch03", 360, 1300], ["ch04", 820, 1300], ["ch05", 1280, 1300], ["ch06", 360, 1770], ["ch07", 820, 1770], ["ch08", 1280, 1770], ["ch09", 360, 2240], ["ch10", 820, 2240], ["ch11", 1280, 2240], ["ch12", 360, 2570], ["ch13", 820, 2570], ["ch14", 1280, 2570], ["final", 850, 3040]];
+const svgEl = document.querySelector('svg');
+const pulse = document.createElementNS('http://www.w3.org/2000/svg','circle');
+pulse.setAttribute('r','10'); pulse.setAttribute('fill','rgba(0,0,0,.92)'); svgEl.appendChild(pulse);
+const chEls = {}; document.querySelectorAll('.ch').forEach(e=>chEls[e.dataset.id]=e);
+let tourOn = !matchMedia('(prefers-reduced-motion: reduce)').matches, tt0 = performance.now(), curChapter = -1;
+const LEG = 1.7, LOOP = LEG * TOUR.length;
+const tbtn = document.createElement('button');
+tbtn.textContent = tourOn ? '巡回を止める' : '巡回する';
+tbtn.style.cssText = 'display:block;margin:10px auto 0;border:1px solid #111;background:#111;color:#fff;border-radius:999px;padding:6px 16px;font-size:13.5px;cursor:pointer';
+tbtn.onclick = ()=>{ tourOn = !tourOn; tbtn.textContent = tourOn ? '巡回を止める' : '巡回する'; tt0 = performance.now(); if(!tourOn){ pulse.style.display='none'; document.querySelectorAll('.ch.lit').forEach(e=>e.classList.remove('lit')); } else pulse.style.display=''; };
+document.querySelector('.sub').after(tbtn);
+function ease(f){ return f*f*(3-2*f); }
+function tourFrame(now){
+  if(tourOn){
+    const tt = ((now - tt0)/1000) % LOOP, k = Math.floor(tt / LEG), f = (tt - k*LEG) / LEG;
+    const a = TOUR[k], b = TOUR[(k+1) % TOUR.length];
+    let x, y;
+    if(f < 0.62){ const e = ease(f/0.62); x = a[1]+(b[1]-a[1])*e; y = a[2]+(b[2]-a[2])*e; }
+    else { x = b[1]; y = b[2]; }
+    pulse.setAttribute('cx', x); pulse.setAttribute('cy', y);
+    const cur = f < 0.62 ? k : (k+1) % TOUR.length;
+    if(cur !== curChapter){
+      curChapter = cur;
+      TOUR.forEach((c,i)=>{ const el = chEls[c[0]]; if(el) el.classList.toggle('lit', i===cur); });
+      if(window.self !== window.top){
+        const scale = svgEl.clientWidth / 1600, pageY = svgEl.getBoundingClientRect().top + window.scrollY + TOUR[cur][2]*scale;
+        const target = pageY - window.innerHeight/2;
+        if(Math.abs(target - window.scrollY) > 60) window.scrollTo({top: target, behavior: 'smooth'});
+      }
+    }
+  }
+  requestAnimationFrame(tourFrame);
+}
+if(tourOn) requestAnimationFrame(tourFrame); else pulse.style.display='none';
+
 </script></body></html>
