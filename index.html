@@ -145,6 +145,41 @@
     .link:hover .ic,.link:focus-visible .ic{animation-iteration-count:1;}
     .link.m-jitter:hover .ic,.link.m-jitter:focus-visible .ic{animation-iteration-count:2;}
     .link:hover .svg-topo circle,.link:hover .svg-punkt circle,.link:hover .svg-lien path,.link:hover .svg-yayoi circle,.link:hover .svg-studio circle,.link:hover .svg-kn circle,.link:hover .svg-kalo circle,.link:hover .svg-meikyo circle,.link:hover .svg-disc circle,.link:hover .svg-concert circle{animation-duration:.8s;}
+
+    /* always-on loops for the 28 img icons (stage1 loop versions, gentler than hover, staggered) */
+    @keyframes lp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+    @keyframes lp-flip{0%,100%{transform:rotateY(0deg)}50%{transform:rotateY(32deg) scale(1.05)}}
+    @keyframes lp-tilt{0%,100%{transform:rotate(0deg)}50%{transform:rotate(7deg) scale(1.07)}}
+    @keyframes lp-pop{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+    @keyframes lp-rise{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2.5px) scale(1.06)}}
+    @keyframes lp-slide{0%,100%{transform:translateX(0)}50%{transform:translateX(2.5px) skewX(-4deg)}}
+    @keyframes lp-shutter{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.8) scaleX(1.05)}}
+    @keyframes lp-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3.5px) scale(1.05)}}
+    @keyframes lp-jitter{0%,88%,100%{transform:translate(0,0)}90%{transform:translate(1px,-.8px)}94%{transform:translate(-1px,.8px)}98%{transform:translate(.6px,.4px)}}
+    @keyframes lp-swing{0%,100%{transform:rotate(-5deg) scale(1.04)}50%{transform:rotate(5deg) scale(1.04)}}
+    @keyframes lp-sway{0%,100%{transform:translateX(-2.2px)}50%{transform:translateX(2.2px)}}
+    @keyframes lp-wiggle{0%,100%{transform:rotate(-4.5deg) scale(1.05)}50%{transform:rotate(4.5deg) scale(1.05)}}
+    @keyframes lp-write{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-9deg) translateY(-1.5px) scale(1.07)}}
+    @keyframes lp-roll{to{transform:rotate(360deg)}}
+    @keyframes lp-crest{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+    .link.m-pulse img.ic{animation:lp-pulse 3.4s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-flip img.ic{animation:lp-flip 4.2s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-tilt img.ic{animation:lp-tilt 3.8s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-pop img.ic{animation:lp-pop 3.6s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-rise img.ic{animation:lp-rise 4s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-slide img.ic{animation:lp-slide 3.7s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-shutter img.ic{animation:lp-shutter 3.2s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-bounce img.ic{animation:lp-bounce 3.3s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-jitter img.ic{animation:lp-jitter 2.9s linear infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-swing img.ic{animation:lp-swing 3.9s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-sway img.ic{animation:lp-sway 4.4s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-wiggle img.ic{animation:lp-wiggle 3.5s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-write img.ic{animation:lp-write 3.6s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-roll img.ic{animation:lp-roll 9s linear infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link.m-spin-half img.ic{animation:lp-crest 5s ease-in-out infinite;animation-delay:calc(var(--n,0)*-.47s);}
+    .link:hover img.ic,.link:focus-visible img.ic{animation-delay:0s;animation-iteration-count:1;}
+    .link.m-jitter:hover img.ic,.link.m-jitter:focus-visible img.ic{animation-iteration-count:2;}
+    .link.m-pulse:hover img.ic,.link.m-flip:hover img.ic,.link.m-tilt:hover img.ic,.link.m-rise:hover img.ic,.link.m-bounce:hover img.ic{animation-duration:.55s;}
     @media (prefers-reduced-motion: reduce){
       .link .ic,.link svg.ic circle,.link svg.ic path{animation:none !important;}
     }
