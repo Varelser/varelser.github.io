@@ -209,8 +209,8 @@
       .link .ic,.link svg.ic circle,.link svg.ic path{animation:none !important;}
     }
   
-@keyframes ip-play{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}45%{transform:scale(.92)}60%{transform:scale(1.12)}}
-.link .svg-yt .yt-tri{transform-box:fill-box;transform-origin:center;animation:ip-play 2.2s ease-in-out infinite}
+@keyframes ip-play{0%,100%{transform:scale(1)}26%{transform:scale(1.58)}40%{transform:scale(.85)}54%{transform:scale(1.3)}68%{transform:scale(.96)}82%{transform:scale(1.08)}}
+.link .svg-yt .yt-tri{transform-box:fill-box;transform-origin:center;animation:ip-play 1.6s ease-in-out infinite}
 @keyframes ip-coin{0%,55%,100%{transform:perspective(160px) rotateY(0deg)}80%{transform:perspective(160px) rotateY(360deg)}}
 .link.m-pop[aria-label="Gumroad"] img.ic{animation:ip-coin 3.8s ease-in-out infinite}
 @keyframes ip-wave{0%,100%{transform:rotate(0deg) translateY(0)}25%{transform:rotate(4deg) translateY(-.8px)}55%{transform:rotate(-3.5deg) translateY(.4px)}80%{transform:rotate(2deg) translateY(-.4px)}}
@@ -246,7 +246,11 @@
 .link[aria-label="Discography"] .svg-disc circle{transform-box:fill-box;transform-origin:center;animation:ip-discnote 1.7s ease-in-out infinite;animation-delay:calc(var(--i)*.85s)}
 @keyframes ip-bow{0%,100%{transform:translateY(0) rotate(0deg)}30%{transform:translateY(-1.6px) rotate(0deg)}52%{transform:translateY(-.6px) rotate(3.2deg)}70%{transform:translateY(-1.2px) rotate(-1.6deg)}86%{transform:translateY(-.3px) rotate(.6deg)}}
 .link.m-spin-half[aria-label="About"] img.ic{animation:ip-bow 3.8s ease-in-out infinite}
-@media (prefers-reduced-motion: reduce){.link .svg-yt .yt-tri,.link .svg-world .wn-meridian,.link .svg-lit .lit-mark,.link .svg-art .col,.link[aria-label="Varelser Studio"] .svg-studio circle,.link[aria-label="Yayoi"] .svg-yayoi circle,.link[aria-label="Kalokagathia Catalog"] .svg-kalo circle,.link .svg-os .os-ellipse,.link[aria-label="Knowledge Network"] .svg-kn circle,.link[aria-label="Discography"] .svg-disc circle{animation:none !important}}
+@media (prefers-reduced-motion: reduce){.link .svg-yt .yt-tri,.link .svg-yt>path:first-of-type,.link .svg-world .wn-meridian,.link .svg-lit .lit-mark,.link .svg-art .col,.link[aria-label="Varelser Studio"] .svg-studio circle,.link[aria-label="Yayoi"] .svg-yayoi circle,.link[aria-label="Kalokagathia Catalog"] .svg-kalo circle,.link .svg-os .os-ellipse,.link[aria-label="Knowledge Network"] .svg-kn circle,.link[aria-label="Discography"] .svg-disc circle{animation:none !important}}
+
+@keyframes ip-ytframe{0%,100%{transform:scale(1,1)}26%{transform:scale(1.04,.93)}40%{transform:scale(.97,1.04)}54%{transform:scale(1.02,.97)}}
+.link .svg-yt>path:first-of-type{transform-box:fill-box;transform-origin:center;animation:ip-ytframe 1.6s ease-in-out infinite}
+.link[aria-label="YouTube"] svg.ic{width:40px;height:40px}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798"
      crossorigin="anonymous"></script>
