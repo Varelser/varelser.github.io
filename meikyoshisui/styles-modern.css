@@ -399,3 +399,689 @@ button:focus-visible, input:focus-visible, select:focus-visible, .sec-label:focu
    short instead of one tall single column. ── */
 #theoryPackSec,#theoryPack3Sec,#theoryPack4Sec,#theoryPack5Sec,#theoryPack6Sec{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(430px,100%),1fr));column-gap:28px;align-items:start;}
 #theoryPackSec>.tp-head,#theoryPack3Sec>.tp-head,#theoryPack4Sec>.tp-head,#theoryPack5Sec>.tp-head,#theoryPack6Sec>.tp-head,#theoryPackSec>.tog-desc,#theoryPack3Sec>.tog-desc,#theoryPack4Sec>.tog-desc,#theoryPack5Sec>.tog-desc,#theoryPack6Sec>.tog-desc{grid-column:1/-1;}
+/* ════════════════════════════════════════════════════════════════
+   MEIKYOSHISUI — Lien-standard refine (2026-11-15)
+   出荷済み Lien (2026-11-15 最終形) + Noise v2-lien-refine の作法へ:
+   - ヘッダーは Lien の 64px ブランドバー (左 VARELSER ワードマーク /
+     中央タイトル / 右 家紋エンブレム、両端はトップへのリンク)
+   - 地は純黒 #000。パネルは #0a0a0a の面 (Lien の panel-header
+     rgba(10,10,10,.5) の実色 / Noise の --s1 と同値) で受ける
+   - READABLE / DESIGN トグルはヘッダーから ECB 内のユーティリティ行へ
+   - レイアウトはマルチカラムを廃し Noise 型 CSS grid へ
+     (1列 <1280px / 2列 >=1280px / 3列 >=1800px、広いパネルは全幅)
+   - MODERN では装飾色を全て白・グレー階調へ (CLASSIC は不変)
+   生成・保存・配線には一切触れない。DESIGN: CLASSIC で従来へ戻る。
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── 地: 純黒 (Lien --bg #000000) ── */
+body { background: #000 !important; }
+
+/* ── ヘッダー: Lien 64px ブランドバー ── */
+header { padding: 0 0 12px !important; text-align: left !important; }
+.app-header {
+  height: 64px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; gap: 8px; position: relative; background: #000; user-select: none;
+}
+.app-title {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font-size: 1rem !important; line-height: 1 !important; letter-spacing: .2em !important;
+  font-weight: 300 !important; color: rgba(255,255,255,.78) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.78) !important;
+  background: none !important; margin: 0 !important; padding: 0 !important;
+}
+.app-brand { display: inline-flex; align-items: center; color: #fff; text-decoration: none; transition: opacity .2s ease; -webkit-tap-highlight-color: transparent; }
+.app-brand:hover { opacity: .75; }
+.app-brand:focus-visible { outline: 2px solid rgba(255,255,255,.4) !important; outline-offset: 3px; }
+.app-brand img { height: 24px; width: auto; display: block; }
+.app-brand .app-emblem { width: 28px; height: 28px; object-fit: contain; display: block; flex: none; }
+@media (max-width: 640px) {
+  .app-header { padding: 0 10px; }
+  .app-brand img { height: 20px; }
+  .app-brand .app-emblem { width: 24px; height: 24px; }
+  .app-title { font-size: .8rem !important; }
+}
+/* 旧ブロックのトグル絶対配置 (header 内前提) を無効化 — トグルは ECB 内へ移動済み */
+header .ecb-preset-btn { position: static !important; float: none !important; }
+#osc { margin-top: 2px !important; }
+
+/* ── ユーティリティ行: READABLE / DESIGN (ECB 内・右寄せ・Lien テキストボタン) ── */
+.lien-util { display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin: 0 0 12px; }
+.lien-util .ecb-preset-btn {
+  float: none !important; position: static !important; margin: 0 !important;
+  background: transparent !important; color: #a3a3a3 !important;
+  font-size: 11px !important; letter-spacing: .08em !important;
+  padding: 8px 12px !important; min-height: 36px; border-radius: 8px !important;
+}
+.lien-util .ecb-preset-btn:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
+
+/* ── パネル面: 純黒地に #0a0a0a (フレームレス・角丸12・影は既存ブロック) ── */
+.panel, .ecb { background: #0a0a0a !important; }
+.sp-panel {
+  border: 0 !important; border-radius: 12px !important; background: #0a0a0a !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.45) !important; padding: 18px 20px !important;
+}
+.sp-badge { background: #1a1a1f !important; border: 0 !important; color: #a3a3a3 !important; }
+.log { background: #0a0a0a !important; }
+#uiControlBar { background: rgba(0,0,0,.90) !important; }
+
+/* ── レイアウト: マルチカラム廃止 → Noise 型 grid ── */
+.wrap {
+  display: grid !important; grid-template-columns: minmax(0,1fr);
+  gap: 20px; align-items: start; column-count: auto !important; column-gap: normal !important;
+}
+@media (min-width: 1280px) { .wrap { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (min-width: 1800px) { .wrap { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+.wrap > header, .wrap > .ecb, .wrap > .meikyo-panel-tools, .wrap > footer,
+.wrap > div:has(> .gen-row),
+.wrap > .panel[data-section="cc-automation"], .wrap > .panel[data-section="lorenz"],
+.wrap > .panel[data-section="rubato"], .wrap > .panel[data-section="spectral"],
+.wrap > .panel[data-section="rhythmic-canons"] { grid-column: 1 / -1; }
+.wrap > .panel { column-span: none !important; }
+.g2, .g3 { display: contents !important; }
+#uiControlBar { grid-column: 1 / -1; position: relative !important; top: auto !important; }
+.wrap > .panel, .wrap > .ecb, .wrap > .sp-panel,
+.g2 > .panel, .g3 > .panel { margin-bottom: 0 !important; }
+.meikyo-panel-tools { margin: 0 !important; }
+
+/* ── セクション見出し / パネルツール: Lien 寸法へ統一 ── */
+.sec-label { display: flex !important; align-items: center; gap: 8px; }
+.meikyo-panel-tools button {
+  padding: 8px 12px !important; font-size: 12px !important; line-height: 1rem !important;
+  min-height: 36px; border-radius: 8px !important; letter-spacing: .04em !important;
+  color: rgba(255,255,255,.78) !important; background: transparent !important;
+}
+.meikyo-panel-tools button:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
+
+/* ── 色の中和: ECB プリセット (ID 特異度で readable の [style*=] 規定にも勝つ) ── */
+#engineControlBar .ecb-preset-btn { color: #a3a3a3 !important; border-color: transparent !important; }
+#engineControlBar .ecb-preset-btn:hover { color: #fff !important; }
+
+/* ── 色の中和: インライン style の飽和色 (文字・罫) ── */
+  [style*="#00e5ff"],
+  [style*="#00e676"],
+  [style*="#8c3fff"],
+  [style*="#a855f7"],
+  [style*="#c084fc"],
+  [style*="#9b6fff"],
+  [style*="#ff9100"],
+  [style*="#ff6d00"],
+  [style*="#ffcc00"],
+  [style*="#ffe082"],
+  [style*="#d7b25a"],
+  [style*="#1de9b6"],
+  [style*="#00bcd4"],
+  [style*="#7dd3fc"],
+  [style*="#f44336"],
+  [style*="#ff4081"],
+  [style*="#ff5252"],
+  [style*="#ff6b35"],
+  [style*="#b2ebf2"],
+  [style*="#9ad7e1"],
+  [style*="#ffab91"],
+  [style*="#ffcc80"],
+  [style*="#aaffaa"],
+  [style*="#0288d1"],
+  [style*="#00ffff"],
+  [style*="#7fff00"],
+  [style*="#ff9500"],
+  [style*="#ffc107"],
+  [style*="#f87171"],
+  [style*="#713f12"],
+  [style*="#7f1d1d"],
+  [style*="#b7f7d1"],
+  [style*="#5b8"],
+  [style*="0,229,255"],
+  [style*="0,230,118"],
+  [style*="140,63,255"],
+  [style*="168,85,247"],
+  [style*="192,132,252"],
+  [style*="255,145,0"],
+  [style*="255,149,0"],
+  [style*="255,109,0"],
+  [style*="255,204,0"],
+  [style*="255,193,7"],
+  [style*="29,233,182"],
+  [style*="0,188,212"],
+  [style*="255,64,129"],
+  [style*="255,82,82"],
+  [style*="127,255,0"],
+  [style*="255,140,0"],
+  [style*="255,183,77"],
+  [style*="255,138,128"],
+  [style*="0,180,100"],
+  body.readable-ui [style*="#00e5ff"],
+  body.readable-ui [style*="#00e676"],
+  body.readable-ui [style*="#8c3fff"],
+  body.readable-ui [style*="#a855f7"],
+  body.readable-ui [style*="#c084fc"],
+  body.readable-ui [style*="#9b6fff"],
+  body.readable-ui [style*="#ff9100"],
+  body.readable-ui [style*="#ff6d00"],
+  body.readable-ui [style*="#ffcc00"],
+  body.readable-ui [style*="#ffe082"],
+  body.readable-ui [style*="#d7b25a"],
+  body.readable-ui [style*="#1de9b6"],
+  body.readable-ui [style*="#00bcd4"],
+  body.readable-ui [style*="#7dd3fc"],
+  body.readable-ui [style*="#f44336"],
+  body.readable-ui [style*="#ff4081"],
+  body.readable-ui [style*="#ff5252"],
+  body.readable-ui [style*="#ff6b35"],
+  body.readable-ui [style*="#b2ebf2"],
+  body.readable-ui [style*="#9ad7e1"],
+  body.readable-ui [style*="#ffab91"],
+  body.readable-ui [style*="#ffcc80"],
+  body.readable-ui [style*="#aaffaa"],
+  body.readable-ui [style*="#0288d1"],
+  body.readable-ui [style*="#00ffff"],
+  body.readable-ui [style*="#7fff00"],
+  body.readable-ui [style*="#ff9500"],
+  body.readable-ui [style*="#ffc107"],
+  body.readable-ui [style*="#f87171"],
+  body.readable-ui [style*="#713f12"],
+  body.readable-ui [style*="#7f1d1d"],
+  body.readable-ui [style*="#b7f7d1"],
+  body.readable-ui [style*="#5b8"],
+  body.readable-ui [style*="0,229,255"],
+  body.readable-ui [style*="0,230,118"],
+  body.readable-ui [style*="140,63,255"],
+  body.readable-ui [style*="168,85,247"],
+  body.readable-ui [style*="192,132,252"],
+  body.readable-ui [style*="255,145,0"],
+  body.readable-ui [style*="255,149,0"],
+  body.readable-ui [style*="255,109,0"],
+  body.readable-ui [style*="255,204,0"],
+  body.readable-ui [style*="255,193,7"],
+  body.readable-ui [style*="29,233,182"],
+  body.readable-ui [style*="0,188,212"],
+  body.readable-ui [style*="255,64,129"],
+  body.readable-ui [style*="255,82,82"],
+  body.readable-ui [style*="127,255,0"],
+  body.readable-ui [style*="255,140,0"],
+  body.readable-ui [style*="255,183,77"],
+  body.readable-ui [style*="255,138,128"],
+  body.readable-ui [style*="0,180,100"]
+  { color: #a3a3a3 !important; border-color: #262626 !important; }
+/* ── 色の中和: インライン style の飽和色 (背景) ── */
+  [style*="background"][style*="#00e5ff"],
+  [style*="background"][style*="#00e676"],
+  [style*="background"][style*="#8c3fff"],
+  [style*="background"][style*="#a855f7"],
+  [style*="background"][style*="#c084fc"],
+  [style*="background"][style*="#9b6fff"],
+  [style*="background"][style*="#ff9100"],
+  [style*="background"][style*="#ff6d00"],
+  [style*="background"][style*="#ffcc00"],
+  [style*="background"][style*="#ffe082"],
+  [style*="background"][style*="#d7b25a"],
+  [style*="background"][style*="#1de9b6"],
+  [style*="background"][style*="#00bcd4"],
+  [style*="background"][style*="#7dd3fc"],
+  [style*="background"][style*="#f44336"],
+  [style*="background"][style*="#ff4081"],
+  [style*="background"][style*="#ff5252"],
+  [style*="background"][style*="#ff6b35"],
+  [style*="background"][style*="#b2ebf2"],
+  [style*="background"][style*="#9ad7e1"],
+  [style*="background"][style*="#ffab91"],
+  [style*="background"][style*="#ffcc80"],
+  [style*="background"][style*="#aaffaa"],
+  [style*="background"][style*="#0288d1"],
+  [style*="background"][style*="#00ffff"],
+  [style*="background"][style*="#7fff00"],
+  [style*="background"][style*="#ff9500"],
+  [style*="background"][style*="#ffc107"],
+  [style*="background"][style*="#f87171"],
+  [style*="background"][style*="#713f12"],
+  [style*="background"][style*="#7f1d1d"],
+  [style*="background"][style*="#b7f7d1"],
+  [style*="background"][style*="#5b8"],
+  [style*="background"][style*="0,229,255"],
+  [style*="background"][style*="0,230,118"],
+  [style*="background"][style*="140,63,255"],
+  [style*="background"][style*="168,85,247"],
+  [style*="background"][style*="192,132,252"],
+  [style*="background"][style*="255,145,0"],
+  [style*="background"][style*="255,149,0"],
+  [style*="background"][style*="255,109,0"],
+  [style*="background"][style*="255,204,0"],
+  [style*="background"][style*="255,193,7"],
+  [style*="background"][style*="29,233,182"],
+  [style*="background"][style*="0,188,212"],
+  [style*="background"][style*="255,64,129"],
+  [style*="background"][style*="255,82,82"],
+  [style*="background"][style*="127,255,0"],
+  [style*="background"][style*="255,140,0"],
+  [style*="background"][style*="255,183,77"],
+  [style*="background"][style*="255,138,128"],
+  [style*="background"][style*="0,180,100"],
+  body.readable-ui [style*="background"][style*="#00e5ff"],
+  body.readable-ui [style*="background"][style*="#00e676"],
+  body.readable-ui [style*="background"][style*="#8c3fff"],
+  body.readable-ui [style*="background"][style*="#a855f7"],
+  body.readable-ui [style*="background"][style*="#c084fc"],
+  body.readable-ui [style*="background"][style*="#9b6fff"],
+  body.readable-ui [style*="background"][style*="#ff9100"],
+  body.readable-ui [style*="background"][style*="#ff6d00"],
+  body.readable-ui [style*="background"][style*="#ffcc00"],
+  body.readable-ui [style*="background"][style*="#ffe082"],
+  body.readable-ui [style*="background"][style*="#d7b25a"],
+  body.readable-ui [style*="background"][style*="#1de9b6"],
+  body.readable-ui [style*="background"][style*="#00bcd4"],
+  body.readable-ui [style*="background"][style*="#7dd3fc"],
+  body.readable-ui [style*="background"][style*="#f44336"],
+  body.readable-ui [style*="background"][style*="#ff4081"],
+  body.readable-ui [style*="background"][style*="#ff5252"],
+  body.readable-ui [style*="background"][style*="#ff6b35"],
+  body.readable-ui [style*="background"][style*="#b2ebf2"],
+  body.readable-ui [style*="background"][style*="#9ad7e1"],
+  body.readable-ui [style*="background"][style*="#ffab91"],
+  body.readable-ui [style*="background"][style*="#ffcc80"],
+  body.readable-ui [style*="background"][style*="#aaffaa"],
+  body.readable-ui [style*="background"][style*="#0288d1"],
+  body.readable-ui [style*="background"][style*="#00ffff"],
+  body.readable-ui [style*="background"][style*="#7fff00"],
+  body.readable-ui [style*="background"][style*="#ff9500"],
+  body.readable-ui [style*="background"][style*="#ffc107"],
+  body.readable-ui [style*="background"][style*="#f87171"],
+  body.readable-ui [style*="background"][style*="#713f12"],
+  body.readable-ui [style*="background"][style*="#7f1d1d"],
+  body.readable-ui [style*="background"][style*="#b7f7d1"],
+  body.readable-ui [style*="background"][style*="#5b8"],
+  body.readable-ui [style*="background"][style*="0,229,255"],
+  body.readable-ui [style*="background"][style*="0,230,118"],
+  body.readable-ui [style*="background"][style*="140,63,255"],
+  body.readable-ui [style*="background"][style*="168,85,247"],
+  body.readable-ui [style*="background"][style*="192,132,252"],
+  body.readable-ui [style*="background"][style*="255,145,0"],
+  body.readable-ui [style*="background"][style*="255,149,0"],
+  body.readable-ui [style*="background"][style*="255,109,0"],
+  body.readable-ui [style*="background"][style*="255,204,0"],
+  body.readable-ui [style*="background"][style*="255,193,7"],
+  body.readable-ui [style*="background"][style*="29,233,182"],
+  body.readable-ui [style*="background"][style*="0,188,212"],
+  body.readable-ui [style*="background"][style*="255,64,129"],
+  body.readable-ui [style*="background"][style*="255,82,82"],
+  body.readable-ui [style*="background"][style*="127,255,0"],
+  body.readable-ui [style*="background"][style*="255,140,0"],
+  body.readable-ui [style*="background"][style*="255,183,77"],
+  body.readable-ui [style*="background"][style*="255,138,128"],
+  body.readable-ui [style*="background"][style*="0,180,100"]
+  { background-color: #171717 !important; background-image: none !important; }
+/* ── 色の中和 (補足): JS が style に書いた色は CSSOM が空白入り rgba/rgb で
+     直列化し、16進色も rgb() へ変換するため、空白入り表記でも受ける ── */
+  [style*="0, 229, 255"],
+  [style*="0, 230, 118"],
+  [style*="140, 63, 255"],
+  [style*="168, 85, 247"],
+  [style*="192, 132, 252"],
+  [style*="255, 145, 0"],
+  [style*="255, 149, 0"],
+  [style*="255, 109, 0"],
+  [style*="255, 204, 0"],
+  [style*="255, 193, 7"],
+  [style*="29, 233, 182"],
+  [style*="0, 188, 212"],
+  [style*="255, 64, 129"],
+  [style*="255, 82, 82"],
+  [style*="127, 255, 0"],
+  [style*="255, 140, 0"],
+  [style*="255, 183, 77"],
+  [style*="255, 138, 128"],
+  [style*="0, 180, 100"],
+  body.readable-ui [style*="0, 229, 255"],
+  body.readable-ui [style*="0, 230, 118"],
+  body.readable-ui [style*="140, 63, 255"],
+  body.readable-ui [style*="168, 85, 247"],
+  body.readable-ui [style*="192, 132, 252"],
+  body.readable-ui [style*="255, 145, 0"],
+  body.readable-ui [style*="255, 149, 0"],
+  body.readable-ui [style*="255, 109, 0"],
+  body.readable-ui [style*="255, 204, 0"],
+  body.readable-ui [style*="255, 193, 7"],
+  body.readable-ui [style*="29, 233, 182"],
+  body.readable-ui [style*="0, 188, 212"],
+  body.readable-ui [style*="255, 64, 129"],
+  body.readable-ui [style*="255, 82, 82"],
+  body.readable-ui [style*="127, 255, 0"],
+  body.readable-ui [style*="255, 140, 0"],
+  body.readable-ui [style*="255, 183, 77"],
+  body.readable-ui [style*="255, 138, 128"],
+  body.readable-ui [style*="0, 180, 100"]
+  { color: #a3a3a3 !important; border-color: #262626 !important; }
+  [style*="background"][style*="0, 229, 255"],
+  [style*="background"][style*="0, 230, 118"],
+  [style*="background"][style*="140, 63, 255"],
+  [style*="background"][style*="168, 85, 247"],
+  [style*="background"][style*="192, 132, 252"],
+  [style*="background"][style*="255, 145, 0"],
+  [style*="background"][style*="255, 149, 0"],
+  [style*="background"][style*="255, 109, 0"],
+  [style*="background"][style*="255, 204, 0"],
+  [style*="background"][style*="255, 193, 7"],
+  [style*="background"][style*="29, 233, 182"],
+  [style*="background"][style*="0, 188, 212"],
+  [style*="background"][style*="255, 64, 129"],
+  [style*="background"][style*="255, 82, 82"],
+  [style*="background"][style*="127, 255, 0"],
+  [style*="background"][style*="255, 140, 0"],
+  [style*="background"][style*="255, 183, 77"],
+  [style*="background"][style*="255, 138, 128"],
+  [style*="background"][style*="0, 180, 100"],
+  body.readable-ui [style*="background"][style*="0, 229, 255"],
+  body.readable-ui [style*="background"][style*="0, 230, 118"],
+  body.readable-ui [style*="background"][style*="140, 63, 255"],
+  body.readable-ui [style*="background"][style*="168, 85, 247"],
+  body.readable-ui [style*="background"][style*="192, 132, 252"],
+  body.readable-ui [style*="background"][style*="255, 145, 0"],
+  body.readable-ui [style*="background"][style*="255, 149, 0"],
+  body.readable-ui [style*="background"][style*="255, 109, 0"],
+  body.readable-ui [style*="background"][style*="255, 204, 0"],
+  body.readable-ui [style*="background"][style*="255, 193, 7"],
+  body.readable-ui [style*="background"][style*="29, 233, 182"],
+  body.readable-ui [style*="background"][style*="0, 188, 212"],
+  body.readable-ui [style*="background"][style*="255, 64, 129"],
+  body.readable-ui [style*="background"][style*="255, 82, 82"],
+  body.readable-ui [style*="background"][style*="127, 255, 0"],
+  body.readable-ui [style*="background"][style*="255, 140, 0"],
+  body.readable-ui [style*="background"][style*="255, 183, 77"],
+  body.readable-ui [style*="background"][style*="255, 138, 128"],
+  body.readable-ui [style*="background"][style*="0, 180, 100"]
+  { background-color: #171717 !important; background-image: none !important; }
+/* ── Markov 遷移行列: 確率ヒートマップは色相を捨て輝度だけを残す ── */
+.mkv-cell { filter: grayscale(1) !important; }
+
+/* ── 色の中和: styles.css クラス経由のアクセント (hover) ── */
+  .scale-track-warn-chip:hover { border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .scale-track-warn-chip.suggest:hover { border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .scale-track-warn-chip.action:hover { border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .btn-gen.warn:hover { box-shadow:none !important; }
+  .ab-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .seed-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .midi-in-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .lz-preset-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .ca-rule-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .ca-seed-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .rb-preset-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .rb-dir-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .sp-timbre-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .cp-preset-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .cp-slot-del:hover { color:#fff !important; border-color:#525252 !important; }
+  .cp-borrowed-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .cp-add-btn:hover { background-color:rgba(255,255,255,.08) !important; }
+  .cp-mode-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .sm-preset-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .sm-slot-del:hover { color:#fff !important; background-color:rgba(255,255,255,.08) !important; }
+  .sm-add-btn:hover { background-color:rgba(255,255,255,.08) !important; }
+  .sm-mode-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .nr-preset-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .nr-op-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .nr-op-btn--combo:hover { color:#fff !important; }
+  .nr-op-btn--reset:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .nr-path-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .nr-add-prog-btn:hover { border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .nr-add-chord-btn:hover { border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .cv-edit-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .cv-reset-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .rc-mode-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .rc-preset-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .ji-mode-btn:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .at-type-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .at-preset-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .cca-preset-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .pcs-mode-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .prev-btn:hover:not(:disabled) { color:#fff !important; border-color:#525252 !important; }
+  .prev-mixer-toggle:hover { color:#fff !important; border-color:#525252 !important; }
+  .sp-btn:hover { color:#fff !important; border-color:#525252 !important; }
+  .sp-btn-save:hover { color:#fff !important; border-color:#525252 !important; background-color:rgba(255,255,255,.08) !important; }
+  .sp-slot:hover { border-color:#525252 !important; }
+  .sp-slot-name:hover { color:#fff !important; }
+  .sp-slot-del:hover { color:#fff !important; }
+/* ── 色の中和: styles.css クラス経由のアクセント (選択状態) ── */
+  .scale-sync-status.on { border-color:#f5f5f5 !important; }
+  .scale-sync-status.on .scale-sync-badge { border-color:#f5f5f5 !important; }
+  .s-btn.linked.on { border-color:#f5f5f5 !important; box-shadow:none !important; }
+  .ab-btn.on { border-color:#f5f5f5 !important; }
+  .boids-agent.active { border-color:#f5f5f5 !important; box-shadow:none !important; }
+  .boids-mode-btn.on { border-color:#f5f5f5 !important; }
+  .ct-sync-btn.on { border-color:#f5f5f5 !important; }
+  .lz-preset-btn.on { border-color:#f5f5f5 !important; }
+  .ca-rule-btn.on { border-color:#f5f5f5 !important; }
+  .ca-seed-btn.on { border-color:#f5f5f5 !important; }
+  .rb-preset-btn.on { border-color:#f5f5f5 !important; }
+  .rb-dir-btn.on { border-color:#f5f5f5 !important; }
+  .sp-timbre-btn.on { border-color:#f5f5f5 !important; }
+  .cp-preset-btn.on { border-color:#f5f5f5 !important; }
+  .cp-slot.active { border-color:#f5f5f5 !important; }
+  .cp-mode-btn.on { border-color:#f5f5f5 !important; }
+  .sm-preset-btn.on { border-color:#f5f5f5 !important; }
+  .sm-mode-btn.on { border-color:#f5f5f5 !important; }
+  .nr-preset-btn.on { border-color:#f5f5f5 !important; }
+  .nr-op-btn.active { border-color:#f5f5f5 !important; box-shadow:none !important; }
+  .cv-edit-btn.on { border-color:#f5f5f5 !important; box-shadow:none !important; }
+  .rc-mode-btn.on { border-color:#f5f5f5 !important; box-shadow:none !important; }
+  .rc-preset-btn.on { border-color:#f5f5f5 !important; }
+  .ji-mode-btn.on { border-color:#f5f5f5 !important; box-shadow:none !important; }
+  .at-type-btn.on { border-color:#f5f5f5 !important; }
+  .at-preset-btn.on { border-color:#f5f5f5 !important; }
+  .at-preset-btn[data-atype="lorenz"].on { border-color:#f5f5f5 !important; }
+  .at-preset-btn[data-atype="rossler"].on { border-color:#f5f5f5 !important; }
+  .at-preset-btn[data-atype="thomas"].on { border-color:#f5f5f5 !important; }
+  .cca-preset-btn.on { border-color:#f5f5f5 !important; }
+  .cca-lane.active { border-color:#f5f5f5 !important; }
+  .cca-lane-tog.on { border-color:#f5f5f5 !important; }
+  .cca-lane-tog.on::after { background-color:#000 !important; }
+  .me-layer-btn.on { border-color:#f5f5f5 !important; }
+  .pcs-mode-btn.on { border-color:#f5f5f5 !important; }
+/* ── 色の中和: styles.css クラス経由のアクセント (常時) ── */
+  .scale-sync-status.warn { border-color:#262626 !important; background-color:#171717 !important; }
+  .scale-output-badge { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .scale-output-badge.warn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .scale-track-warn { color:#a3a3a3 !important; }
+  .scale-track-warn-chip { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .scale-track-warn-chip.suggest { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .scale-track-warn-chip.action { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .me-layer-btn.warn-focus { color:#a3a3a3 !important; border-color:#262626 !important; box-shadow:none !important; }
+  .s-btn.linked { border-color:#262626 !important; box-shadow:none !important; }
+  .s-btn .scale-link-dot { background-color:rgba(255,255,255,.45) !important; box-shadow:none !important; }
+  .tog-row.warn-focus { border-color:#262626 !important; background-color:#171717 !important; box-shadow:none !important; }
+  .seed-val { color:#a3a3a3 !important; }
+  .seed-btn.locked { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .badge.pink { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .ls-arrow { color:#a3a3a3 !important; }
+  .ls-add-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nh-chord-card.shad { border-color:#262626 !important; background-color:#171717 !important; }
+  .ecb-label { color:#a3a3a3 !important; }
+  .sv-row label { color:#a3a3a3 !important; }
+  .sv-input { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sv-add-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sv-result-bar { color:#a3a3a3 !important; }
+  .sv-viz-label { color:#a3a3a3 !important; }
+  canvas.sv-cv { border-color:#262626 !important; background-color:#000 !important; }
+  .sv-preset-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sv-info-box { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .boids-agent .ag-vel { color:#a3a3a3 !important; }
+  .boids-agent .ag-bar { background-color:rgba(255,255,255,.15) !important; }
+  .boids-rule-card { border-color:#262626 !important; background-color:#171717 !important; }
+  canvas#boidsViz { border-color:#262626 !important; background-color:#000 !important; }
+  .boids-preset-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .boids-out-card { border-color:#262626 !important; background-color:#171717 !important; }
+  .boids-out-card .oc-label { color:#a3a3a3 !important; }
+  .boids-info-box { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .lz-badge { color:#a3a3a3 !important; border-color:#262626 !important; }
+  .lz-state { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .lz-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .ca-badge { color:#a3a3a3 !important; border-color:#262626 !important; }
+  .ca-rule-name { color:#a3a3a3 !important; }
+  .ca-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .rb-badge { color:#a3a3a3 !important; border-color:#262626 !important; }
+  .rb-ratio { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .rb-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sp-badge { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sp-score-value { color:#a3a3a3 !important; }
+  .sp-resonant { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sp-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cp-badge { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cp-slot-del { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cp-borrowed-src-label { color:#a3a3a3 !important; }
+  .cp-add-input:focus { border-color:#525252 !important; }
+  .cp-add-input.ok { border-color:#262626 !important; }
+  .cp-add-input.err { border-color:#262626 !important; }
+  .cp-add-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cp-info-line { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cp-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sm-badge { color:#a3a3a3 !important; border-color:#262626 !important; }
+  .sm-slot-del { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sm-add-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sm-info-line { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sm-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-preset-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-op-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-op-btn--combo { color:#a3a3a3 !important; }
+  .nr-op-btn--reset { color:#a3a3a3 !important; border-color:#262626 !important; }
+  .nr-cur-chord { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-canvas { border-color:#262626 !important; background-color:#000 !important; }
+  .nr-path-input { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-path-input:focus { border-color:#525252 !important; }
+  .nr-path-arrow { color:#a3a3a3 !important; }
+  .nr-path-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-path-result { color:#a3a3a3 !important; }
+  .nr-add-prog-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-add-bars { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .nr-add-chord-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cv-canvas { border-color:#262626 !important; background-color:#000 !important; }
+  .cv-edit-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cv-reset-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .rc-mode-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .rc-preset-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .rc-pattern-canvas { border-color:#262626 !important; background-color:#000 !important; }
+  .ji-mode-btn { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .ji-deviation-canvas { border-color:#262626 !important; background-color:#000 !important; }
+  .sm-diff-canvas { border-color:#262626 !important; background-color:#000 !important; }
+  .at-badge { color:#a3a3a3 !important; border-color:#262626 !important; }
+  .at-map-label { color:#a3a3a3 !important; }
+  #atCanvas { border-color:#262626 !important; background-color:#000 !important; }
+  .at-lorenz-color { color:#a3a3a3 !important; }
+  .at-rossler-color { color:#a3a3a3 !important; }
+  .at-thomas-color { color:#a3a3a3 !important; }
+  .at-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cca-badge { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .cca-lane-label { color:#a3a3a3 !important; }
+  .cca-select:focus { border-color:#525252 !important; }
+  .cca-num:focus { border-color:#525252 !important; }
+  .cca-step-cell input[type=range]::-webkit-slider-thumb { background-color:#f5f5f5 !important; }
+  .cca-step-cell input[type=range]::-webkit-slider-runnable-track { background-color:#171717 !important; }
+  .cca-step-bar { background-color:rgba(255,255,255,.45) !important; }
+  #ccaCanvas { border-color:#262626 !important; background-color:#000 !important; }
+  .cca-info { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .pcs-hover-detail { color:#a3a3a3 !important; }
+  .prev-badge { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .prev-seek::-webkit-slider-thumb { border-color:#262626 !important; background-color:#f5f5f5 !important; }
+  .prev-seek::-moz-range-thumb { border-color:#262626 !important; background-color:#f5f5f5 !important; }
+  .prev-ch-vol::-webkit-slider-thumb { border-color:#262626 !important; background-color:#f5f5f5 !important; }
+  .prev-ch-vol::-moz-range-thumb { border-color:#262626 !important; background-color:#f5f5f5 !important; }
+  .sp-badge { color:#a3a3a3 !important; border-color:#262626 !important; background-color:#171717 !important; }
+  .sp-input:focus { border-color:#525252 !important; }
+  .sp-btn-save { color:#a3a3a3 !important; border-color:#262626 !important; }
+
+/* ── フォーカス: リンクも Lien の :focus-visible へ ── */
+a:focus-visible { outline: 2px solid rgba(255,255,255,.85) !important; outline-offset: 2px; }
+/* ════════════════════════════════════════════════════════════════
+   MEIKYOSHISUI — Lien-standard refine v2 (2026-11-15)
+   v1 の課題だった「また縦長」を解消し、動線を簡易化する上書き:
+   - レイアウトは 95-lien-layout.js が列セグメント (LPT 詰め込み) を
+     組む。ここではその受け側 (.lien-cols / .lien-col) と、JS が無い
+     場合に v1 grid へ戻る前提の最小限の指定だけを持つ
+   - 余白の圧縮: パネル padding 24→20 (Lien panel-body 寸法)、
+     セクション見出しの下 16→12、行間・列間は 16 (Noise grid gap)
+   - 理論パックは minmax 430→300px で列数を増やし縦を詰める
+   - 列内では Synthesis / Macros / Just Intonation の中身を 2カラム化
+   - 動線帯 (.lien-nav)、tier 説明、生成後チップ、ジャンプ先の強調
+   生成・保存・配線には一切触れない。DESIGN: CLASSIC で従来へ戻る。
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── 余白の圧縮 (Lien / Noise 寸法) ── */
+.panel, .ecb { padding: 20px !important; }
+.sec-label { margin-bottom: 12px !important; }
+.ecb-group { gap: 2px !important; padding: 6px 8px !important; }
+.lien-util { margin-bottom: 8px !important; }
+#uiControlBar { padding: 8px 12px !important; }
+.sp-panel { padding: 14px 20px !important; }
+
+/* ── 列セグメント (95 が組む) の受け側 ── */
+.wrap.lien-on { display: block !important; }
+.wrap.lien-on > * { margin-bottom: 16px !important; }
+.wrap.lien-on > footer { margin-bottom: 0 !important; }
+.lien-cols { display: flex; gap: 16px; align-items: flex-start; }
+.lien-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.lien-col > *, .lien-col > .full { margin-bottom: 0 !important; }
+
+/* ── 理論パック: 列数を増やして縦を詰める ── */
+#theoryPackSec, #theoryPack3Sec, #theoryPack4Sec, #theoryPack5Sec, #theoryPack6Sec {
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+}
+/* 1920px 級では行間をさらに詰める */
+@media (min-width: 1800px) {
+  .wrap.lien-on > * { margin-bottom: 6px !important; }
+  .lien-cols { gap: 8px; }
+  .lien-col { gap: 8px; }
+}
+header { padding-bottom: 8px !important; }
+/* 生成クラスターのインライン margin-top を行間に揃える */
+.wrap.lien-on > div:has(> .gen-row) { margin-top: 0 !important; }
+
+/* ── 列内パネルの内部 2カラム (行・ブロック単位で割る) ── */
+.lien-col .panel[data-section="synthesis"],
+.lien-col .panel[data-section="macros"],
+.lien-col .panel[data-section="just-intonation"] { column-count: 2; column-gap: 20px; }
+.lien-col .panel[data-section="synthesis"] > .sec-label,
+.lien-col .panel[data-section="macros"] > .sec-label,
+.lien-col .panel[data-section="just-intonation"] > .sec-label { column-span: all; }
+.lien-col .panel[data-section="synthesis"] > *,
+.lien-col .panel[data-section="macros"] > *,
+.lien-col .panel[data-section="just-intonation"] > * { break-inside: avoid; }
+.lien-col .panel[data-section="just-intonation"] canvas { max-width: 100%; }
+.lien-pair { break-inside: avoid; }
+
+/* ── 動線帯: クイックスタート + 目的別ジャンプ ── */
+.lien-nav {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 6px 10px; border-radius: 12px; background: #0a0a0a;
+  box-shadow: 0 8px 28px rgba(0,0,0,.45);
+}
+.lien-nav-row { display: flex; align-items: center; flex-wrap: wrap; gap: 2px 4px; }
+.lien-nav-label {
+  font-size: 10px !important; letter-spacing: .14em !important; color: #737373 !important;
+  text-transform: uppercase; margin-right: 2px; white-space: nowrap;
+}
+.lien-nav button {
+  background: transparent !important; border: 0 !important; border-radius: 8px !important;
+  color: rgba(255,255,255,.78) !important; font-size: 12px !important; letter-spacing: .02em !important;
+  padding: 6px 10px !important; min-height: 32px; cursor: pointer; white-space: nowrap;
+  transition: background-color .2s ease, color .2s ease;
+}
+.lien-nav button:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
+.lien-nav .lien-adv { margin-left: auto; color: #a3a3a3 !important; }
+.lien-arrow { color: #525252; font-size: 11px; }
+.lien-jumps button { font-size: 11px !important; color: #a3a3a3 !important; min-height: 30px; padding: 5px 9px !important; }
+.lien-jumps button:hover { color: #fff !important; }
+.lien-nav-tools { margin-left: auto; display: flex; align-items: center; }
+.lien-nav-tools .meikyo-panel-tools { margin: 0 !important; }
+@media (max-width: 640px) {
+  .lien-nav .lien-adv { margin-left: 0; }
+  .lien-nav-tools { margin-left: 0; }
+  .lien-nav button { padding: 6px 8px !important; }
+}
+
+/* ── tier の 1行説明 / 生成後の案内チップ / ジャンプ先の強調 ── */
+#lienTierDesc { font-size: 11px; color: #a3a3a3; letter-spacing: .04em; margin-left: 8px; }
+#lienGenHint {
+  background: rgba(255,255,255,.14) !important; color: #fff !important;
+  border-radius: 8px !important; font-weight: 600;
+}
+.panel, #uiControlBar, #engineControlBar, #midiPreviewPanel { scroll-margin-top: 10px; }
+.lien-flash { animation: lienFlash 1.25s ease-out; }
+@keyframes lienFlash {
+  0% { box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 8px 28px rgba(0,0,0,.45); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0), 0 8px 28px rgba(0,0,0,.45); }
+}
