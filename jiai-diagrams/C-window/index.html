@@ -28,7 +28,7 @@ XS.forEach(x=>act.push(pulse>=x?1:Math.max(0,1-(x-pulse)/130)));
 if(tt>19){const fade=1-smooth(19,22,tt)*.85;act=act.map(a=>a*fade);}
 const branch=tt>=11.5?smooth(11.5,14.5,tt)*(1-smooth(20.5,22,tt)*.6):0;
 return [pulse,act,branch];}
-function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(playing)t+=dt;
+function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing)t+=dt;
 ctx.clearRect(0,0,1600,900);
 txt('『慈愛体系』可塑性ウィンドウと統合',800,92,36);
 txt('統合の3段階 ― 準備期（体験前）／急性期（体験直後〜数日）／長期統合（数週間〜数ヶ月）',800,128,20,false,.6);

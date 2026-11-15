@@ -43,7 +43,7 @@ function target(p, k, tt){
   return [g[0], g[1]-70, g[3]];
 }
 function frame(now){
-  const dt = Math.min(0.05, (now-last)/1000); last = now;
+  const dt = Math.min(0.05, Math.max(0, (now-last)/1000)); last = now;
   if (playing) t += dt;
   const k = stageAt(t);
   if (k!==curStage){ curStage=k; head.textContent = STAGES[k].head; desc.textContent = STAGES[k].desc; sub.textContent = STAGES[k].sub||'';

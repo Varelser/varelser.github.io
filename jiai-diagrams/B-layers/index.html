@@ -26,7 +26,7 @@ const LAYERS=[{name:'物語層',intro:'物語',desc:'「私」という語り。
 {name:'からだ層',intro:'からだ',desc:'生体の現在。自律神経・内受容・ホルモン',band:620,amp:38,freq:1.1,rate:0.7,off:4.2}];
 const COM={amp:26,freq:1.9,rate:1.0},N=56;
 function divg(tt){tt%=20;if(tt<7)return 1;if(tt<12)return 1-smooth(7,12,tt);if(tt<17)return 0;return smooth(17,20,tt);}
-function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(playing)t+=dt;
+function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing)t+=dt;
 ctx.clearRect(0,0,1600,900);
 txt('『慈愛体系』3層モデル',800,92,36);txt('3層＋2つのつまみ',800,128,20,false,.6);
 const d=divg(t);

@@ -32,7 +32,7 @@ function render(t){const tt=t%10;
  let pulse=null;const f=clamp((tt-0.6)/7.8,0,1);if(tt>0.5&&tt<9.3){const e=f*f*(3-2*f);pulse=[180+(1280-180)*e,420];}
  draw(mult,pulse);}
 
-function frame(now){const dt=Math.min(.05,(now-last)/1000);last=performance.now();if(playing)t+=dt;
+function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing)t+=dt;
 ctx.clearRect(0,0,1600,1000);render(t);requestAnimationFrame(frame);}
 requestAnimationFrame(frame);
 </script></body></html>
