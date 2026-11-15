@@ -4293,8 +4293,28 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
       var m = ev && ev.data; if (!m || typeof m !== 'object') return;
       if (m.app === 'noise' && m.type === 'state') { noise = m; noiseAt = Date.now(); }
       if (m.app === 'meikyoshisui' && m.type === 'state') { meikyo = m; meikyoAt = Date.now(); }
+      if (m.app === 'studio' && m.type === 'sync-config') { applySyncConfig(m); }
     };
   } catch (e) {}
+
+  /* ---------- sync-config from Varelser Studio (protocol v1.1, R3) ----------
+     {app:'studio', type:'sync-config', ts, global:{amount,attack,release},
+      targets:{yayoi:{amount}}} — maps onto this section's own parameters:
+     targets.yayoi.amount (0..1) -> master (0..200%), global.attack (0..1) ->
+     attack (1..95), global.release (0..1) -> release (1..60). Values persist
+     via the normal save(); the panel is rebuilt so sliders reflect them. */
+  function applySyncConfig(m) {
+    var t = (m.targets && m.targets.yayoi) || null;
+    var g = m.global || {};
+    var changed = [];
+    if (t && typeof t.amount === 'number' && isFinite(t.amount)) { P.master = Math.round(clamp01(t.amount) * 200); changed.push('マスター量 ' + P.master + '%'); }
+    if (typeof g.attack === 'number' && isFinite(g.attack)) { P.attack = Math.round(1 + clamp01(g.attack) * 94); changed.push('アタック ' + P.attack); }
+    if (typeof g.release === 'number' && isFinite(g.release)) { P.release = Math.round(1 + clamp01(g.release) * 59); changed.push('リリース ' + P.release); }
+    if (!changed.length) return;
+    save();
+    try { refreshSync(); } catch (e) {}
+    toast('Studio から Sync 設定を受信: ' + changed.join(' / '));
+  }
 
   function features(t) {
     var f = { drive: 0, swing: 0, master: 0, layers: [0, 0, 0], layerTypes: [], binaural: 0, bpm: 0, playing: false, src: '—', genre: '', chord: '' };
