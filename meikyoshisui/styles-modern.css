@@ -1432,3 +1432,160 @@ select.chain-sel,
   .param-row { margin-bottom: 8px !important; }
   .tog-row { padding: 5px 0 !important; }
 }
+/* ════════════════════════════════════════════════════════════════
+   MEIKYOSHISUI — Card lift (2026-11-15 v4)
+   user: 「項目を並べて、カーソル合わせると浮き上がるようにしたい」。
+   v1–v3 でフレームレス (罫なし・面のみ) に寄せたパネルを、Lien の
+   panel-border (#262626) を持つ「カード」として輪郭づけ、hover で
+   わずかに浮き上がらせる。色は使わない (影は無彩色の黒のみ)。
+   - レイアウト (95) は flow 配置で transform を一切使わないため、
+     浮上は独立プロパティ translate で行う。offsetHeight の計測・
+     文書高・隣接パネルの位置には影響しない (検証で実測)。
+   - 罫の追加で増える 2px は padding (16→15 / sp 18・20→17・19) で
+     相殺し、静止時の外寸と文書高は v3 と同一に保つ。
+   - hover は (hover:hover) and (pointer:fine) のデバイスのみ。
+     prefers-reduced-motion では浮上そのものが発動しない。
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── カードの輪郭 (静止時): Lien panel-border / 角丸12は既存を継承 ── */
+.panel, .ecb {
+  border: 1px solid #262626 !important;
+  padding: 15px !important;
+}
+.sp-panel {
+  border: 1px solid #262626 !important;
+  padding: 17px 19px !important;
+}
+.panel, .ecb, .sp-panel {
+  transition: translate .18s ease-out, border-color .18s ease-out, box-shadow .18s ease-out;
+}
+
+/* ── 中の項目 (チップ/カード型コントロール) の遷移 ──
+   styles.css 側の transition:all を浮上に必要な分へ置き換える
+   (背景・文字・罫の状態遷移は従来通り残す)。 */
+.panel button[class*="-btn"]:not(.del-btn):not(.btn-gen):not(.btn-dl),
+.ecb button[class*="-btn"]:not(.del-btn):not(.btn-gen):not(.btn-dl),
+.panel button.chip, .ecb button.chip,
+.panel .oct-pill, .panel .cca-lane-tog, .panel .bb-beat-tog,
+.ecb .ecb-tog {
+  transition: translate .16s ease-out, box-shadow .16s ease-out,
+    background-color .16s ease-out, color .16s ease-out, border-color .16s ease-out !important;
+}
+/* トグルスイッチは背景遷移 (modern 既存) を保ったまま浮上を足す */
+.panel .tog, .ecb .tog {
+  transition: background .18s, translate .16s ease-out, box-shadow .16s ease-out !important;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  /* パネルカード: −3px 浮上 + 罫を一段明るく + 柔らかい黒影。
+     translate はスタッキング文脈を作るため、浮いたカードが隣の
+     カードの上に描かれる。lien-flash 中はリングを優先し影は触らない。 */
+  .panel:hover, .ecb:hover, .sp-panel:hover {
+    translate: 0 -3px;
+    border-color: #404040 !important;
+  }
+  .panel:hover:not(.lien-flash), .ecb:hover, .sp-panel:hover {
+    box-shadow: 0 16px 38px rgba(0,0,0,.6) !important;
+  }
+  /* 中の項目: −2px の小さな浮上 + 影 + 面を一段明るく (白の薄転写)。
+     このスキンのチップ類は設計上 border:0 のため、「罫を明るく」は
+     面の明度アップ + 影で表現する (罫のある項目は下で罫も上げる)。 */
+  .panel button[class*="-btn"]:not(.del-btn):not(.btn-gen):not(.btn-dl):hover,
+  .ecb button[class*="-btn"]:not(.del-btn):not(.btn-gen):not(.btn-dl):hover,
+  .panel button.chip:hover, .ecb button.chip:hover,
+  .panel .oct-pill:hover, .panel .cca-lane-tog:hover, .panel .bb-beat-tog:hover,
+  .ecb .ecb-tog:hover {
+    translate: 0 -2px;
+    box-shadow: 0 5px 14px rgba(0,0,0,.5) !important;
+    background-image: linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,.05)) !important;
+  }
+  /* 罫を持つ項目 (ピル/レーントグル) は罫も一段明るく */
+  .panel .oct-pill:hover, .panel .cca-lane-tog:hover, .panel .bb-beat-tog:hover {
+    border-color: #404040 !important;
+  }
+  /* トグルスイッチ: −1px の最小の浮上 + 影のみ */
+  .panel .tog:hover, .ecb .tog:hover {
+    translate: 0 -1px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.5);
+  }
+}
+
+/* reduced-motion では遷移も止める (浮上自体は上の条件で発動しない) */
+@media (prefers-reduced-motion: reduce) {
+  .panel, .ecb, .sp-panel,
+  .panel button[class*="-btn"], .ecb button[class*="-btn"],
+  .panel button.chip, .ecb button.chip,
+  .panel .tog, .ecb .tog {
+    transition: none !important;
+  }
+}
+/* ════════════════════════════════════════════════════════════════
+   MEIKYOSHISUI — Family flyouts (2026-11-15 v5)
+   user: 「同じ系統でまとめてカーソルで出す方式」→「全系統で試作」。
+   パネルを系統ごとにまとめ、動線帯の中に系統バー (アイコン +
+   ラベル + ON バッジのチップ) を置く。チップにホバーすると、
+   その系統のパネルが Lien 流のフローティングパネル (フライア
+   ウト) として浮いて出る。パネル自体は js/96-family-flyouts.js
+   が DOM ノードのまま系統コンテナへ移す (配線・保存は不変)。
+   - コア導線 (コード入力 / ジャンル / 生成 / プレビュー / 保存 /
+     書き出し) はページに残り、系統パネルだけが本文から抜ける
+   - 色は使わない。面 #0a0a0a / 罫 #262626 / 角丸12 / 黒の柔ら
+     かい影は v1–v4 の作法を継承
+   - CLASSIC では 96 がバーを畳み、95 の復元でパネルが戻る
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── 系統バー (動線帯の3行目) ── */
+.lien-fam-row { border-top: 1px solid rgba(255,255,255,.06); padding-top: 5px; margin-top: 3px; }
+.lien-nav button.fam-chip {
+  display: inline-flex !important; align-items: center; gap: 7px;
+  border: 1px solid #262626 !important; border-radius: 8px !important;
+  background: transparent !important; color: rgba(255,255,255,.78) !important;
+  font-size: 12px !important; letter-spacing: .04em !important;
+  padding: 6px 10px !important; min-height: 32px; cursor: pointer;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+}
+.lien-nav button.fam-chip:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; border-color: #404040 !important; }
+.lien-nav button.fam-chip.open { border-color: #525252 !important; color: #fff !important; background: rgba(255,255,255,.06) !important; }
+.lien-nav button.fam-chip:focus-visible { outline: 2px solid rgba(255,255,255,.4); outline-offset: 2px; }
+.fam-ico { display: inline-flex; flex: none; }
+.fam-ico svg { width: 16px; height: 16px; display: block; }
+.fam-badge {
+  font-family: var(--lien-mono); font-size: 10px; line-height: 1;
+  background: #e8e8e8; color: #111; border-radius: 999px; padding: 2px 6px;
+  font-variant-numeric: tabular-nums;
+}
+.fam-badge[hidden] { display: none; }
+.fam-hint { font-size: 11px; color: #737373; margin-left: auto; white-space: nowrap; }
+@media (max-width: 640px) { .fam-hint { display: none; } }
+
+/* ── フライアウト (Lien のフローティングパネル) ── */
+.fam-flyout {
+  position: fixed; z-index: 90; width: min(880px, 94vw);
+  background: #0a0a0a; border: 1px solid #262626; border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.65);
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: famIn .14s ease-out;
+}
+.fam-flyout[hidden] { display: none !important; }
+@keyframes famIn { from { opacity: 0; translate: 0 4px; } }
+.fam-flyout-head {
+  display: flex; align-items: center; gap: 10px; flex: none;
+  padding: 10px 14px; border-bottom: 1px solid #1c1c1c;
+}
+.fam-flyout-title { font-size: 12px; font-weight: 600; letter-spacing: .12em; color: rgba(255,255,255,.85); }
+.fam-flyout-en { font-size: 10px; font-weight: 500; letter-spacing: .16em; color: #737373; margin-left: 6px; }
+.fam-flyout-close {
+  margin-left: auto; background: transparent; border: 0; color: #a3a3a3;
+  font-size: 16px; line-height: 1; width: 30px; height: 30px;
+  border-radius: 8px; cursor: pointer; flex: none;
+}
+.fam-flyout-close:hover { background: rgba(255,255,255,.08); color: #fff; }
+.fam-flyout-body {
+  overflow-y: auto; padding: 14px; min-height: 0;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.fam-flyout-body > .panel { margin: 0 !important; flex: none; width: auto; }
+@media (prefers-reduced-motion: reduce) {
+  .fam-flyout { animation: none; }
+  .lien-nav button.fam-chip { transition: none; }
+}
