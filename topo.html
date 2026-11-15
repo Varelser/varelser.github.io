@@ -5059,6 +5059,16 @@ function downloadTextFile(text, filename) {
   var lastNoiseMaster = null;
   var lastNoiseDrive = null; /* Phase 3: drive from real level, null for old senders / not playing */
   var vlFast = 0, vlSlow = 0, vlFollowerInit = false; /* Phase 4 envelope-expansion follower */
+  /* sync-config from Varelser Studio (protocol v1.1, R3) */
+  var vlCfgAmt = 1, vlCfgFast = 0.65, vlCfgSlow = 0.08;
+  function applySyncConfig(msg) {
+    var t = (msg.targets && msg.targets.topo) || null;
+    var g = msg.global || {};
+    if (t && typeof t.amount === 'number' && Number.isFinite(t.amount)) vlCfgAmt = clamp01(t.amount) * 2;
+    if (typeof g.attack === 'number' && Number.isFinite(g.attack)) vlCfgFast = 0.05 + 0.9 * clamp01(g.attack);
+    if (typeof g.release === 'number' && Number.isFinite(g.release)) vlCfgSlow = 0.01 + 0.29 * clamp01(g.release);
+    linkStatus('Studio sync-config: amount x' + vlCfgAmt.toFixed(2) + ' / attack ' + vlCfgFast.toFixed(2) + ' / release ' + vlCfgSlow.toFixed(2));
+  }
   var lastNoisePulse = null; /* Phase 4: {b, c} filter values precomputed per Noise message */
   var filterTimer = null;
 
@@ -5181,13 +5191,13 @@ function downloadTextFile(text, filename) {
     if (msg.playing && (hasRms || hasPeak)) {
       var vlInst = clamp01(Math.max((hasPeak ? clamp01(msg.levelPeak) : 0) * 0.9, (hasRms ? clamp01(msg.levelRms) : 0) * 2.2));
       if (!vlFollowerInit) { vlFast = vlInst; vlSlow = vlInst; vlFollowerInit = true; }
-      else { vlFast += 0.65 * (vlInst - vlFast); vlSlow += 0.08 * (vlInst - vlSlow); }
+      else { vlFast += vlCfgFast * (vlInst - vlFast); vlSlow += vlCfgSlow * (vlInst - vlSlow); }
       var vlSwing = Math.min(0.75, Math.max(-0.45, (vlFast - vlSlow) * 20));
       var vlLevelTerm = clamp01(vlFast);
       var vlMaster = (lastNoiseMaster !== null) ? lastNoiseMaster : 0;
       lastNoisePulse = {
-        b: Math.min(1.65, Math.max(0.55, 0.82 + 0.22 * vlMaster + 0.22 * vlLevelTerm + 0.38 * vlSwing)),
-        c: Math.min(1.45, Math.max(0.85, 1 + 0.10 * vlLevelTerm + 0.18 * vlSwing))
+        b: Math.min(1.65, Math.max(0.55, 0.82 + 0.22 * vlMaster + (0.22 * vlLevelTerm + 0.38 * vlSwing) * vlCfgAmt)),
+        c: Math.min(1.45, Math.max(0.85, 1 + (0.10 * vlLevelTerm + 0.18 * vlSwing) * vlCfgAmt))
       };
       lastNoiseDrive = vlInst;
     } else {
@@ -5229,6 +5239,7 @@ function downloadTextFile(text, filename) {
       if (derived !== null) applyDerivedSeed(derived);
       return;
     }
+    if (msg.app === 'studio' && msg.type === 'sync-config') { applySyncConfig(msg); return; }
     if (msg.type !== 'state') return;
     if (msg.app === 'noise') onNoiseState(msg);
     else if (msg.app === 'meikyoshisui') onMeikyoshisuiState(msg);
