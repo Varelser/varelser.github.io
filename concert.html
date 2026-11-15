@@ -4,7 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Concert — VARELSER</title>
-<meta name="theme-color" content="#ffffff" />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101010" />
 <meta name="description" content="VARELSER のコンサート／ライブ史。自主企画『VARELSERとMonaural mini-Plug 企画Vol.1』（2012年、東高円寺 二万電圧）、ぐるぐる回る2012（埼玉スタジアム2002）出演など、確認済みの公演記録をまとめたページ。" />
 <link rel="canonical" href="https://varelser.github.io/concert.html" />
 <meta property="og:title" content="Concert — VARELSER" />
@@ -34,7 +35,7 @@ p{font-size:15px;line-height:1.85;margin:0 0 12px}
 .meta{font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 8px}
 a{color:var(--fg)}
 .btn{display:inline-block;border:1px solid var(--fg);border-radius:99px;padding:5px 16px;font-size:13px;text-decoration:none;margin:4px 6px 0 0}
-.btn:hover{background:#111;color:#fff}
+.btn:hover{background:var(--fg);color:var(--bg)}
 .note{font-size:13px;color:var(--muted);line-height:1.8}
 table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.7}
 td,th{border-top:1px solid var(--faint);padding:12px 8px 12px 0;text-align:left;vertical-align:top}
@@ -52,12 +53,25 @@ td.date{white-space:nowrap;font-weight:600}
 section{animation:rise linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 }}
-.player-facade{display:flex;align-items:center;gap:12px;width:100%;margin:12px 0 4px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.player-facade{display:flex;align-items:center;gap:12px;width:100%;margin:12px 0 4px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);cursor:pointer;text-align:left;font:inherit;color:inherit}
 .player-facade img{width:64px;height:64px;border-radius:6px;display:block}
 .player-facade .pf-t{font-weight:600}
-.player-facade .pf-s{color:var(--sub);font-size:.85em}
+.player-facade .pf-s{color:var(--muted);font-size:.85em}
 .share-row{margin:20px 0 0}
-.share-btn{border:1px solid var(--line);background:#fff;color:inherit;border-radius:999px;padding:7px 16px;font:inherit;font-size:.9em;cursor:pointer}
+.share-btn{border:1px solid var(--border);background:var(--bg);color:inherit;border-radius:999px;padding:7px 16px;font:inherit;font-size:.9em;cursor:pointer}
+
+:root{color-scheme:light dark}
+@media (prefers-color-scheme: dark){
+:root{--bg:#101010;--fg:#f2f2f2;--muted:rgba(255,255,255,.6);--border:rgba(255,255,255,.16);--faint:#262626}
+.app-header .brand img,.app-header .crest img{filter:invert(1)}
+}
+@media print{
+:root{--bg:#fff;--fg:#000;--muted:rgba(0,0,0,.6);--border:rgba(0,0,0,.2);--faint:#ddd}
+.app-header .brand img,.app-header .crest img{filter:none}
+.share-row,.player-facade{display:none}
+section{animation:none}
+a{text-decoration:none}
+}
 </style>
 </head>
 <body>
