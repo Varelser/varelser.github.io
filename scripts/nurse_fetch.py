@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Nurse News fixed candidate fetcher (stdlib only, no API keys).
 
-Fetches candidates from the 11 configured sources, applies each
+Fetches candidates from the 36 configured sources, applies each
 source's editorial filters (date window, keyword gates, minimum
 abstract length, page-body requirement for FDA / NHS England), dedupes
 against the existing stock in nurse-news-data.json (URL, normalized
 title, DOI) and within the candidate set, and writes a JSON list of
 {sourceName, originalTitle, url, publishedAt, abstract, doi?} to --out.
+medRxiv candidates are labelled "medRxiv Preprint" (not peer reviewed).
 
 Modes:
-  recent   (default) past-45-days window for all 11 sources.
+  recent   (default) past-45-days window for all 36 sources.
   backfill past-7-years window, scholarly sources only (PubMed,
            Europe PMC, BMC Nursing via Crossref), larger result sets.
 
@@ -24,6 +25,8 @@ import gzip
 import json
 import re
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -35,13 +38,31 @@ TIMEOUT = 30
 NOW = datetime.now(timezone.utc)
 
 
+RETRY_CODES = (401, 403, 429, 500, 502, 503, 504)
+
+
 def http_get(url, accept=None):
-    req = urllib.request.Request(url, headers=dict(UA, **({"Accept": accept} if accept else {})))
-    with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
-        raw = r.read()
-        if r.headers.get("Content-Encoding") == "gzip" or raw[:2] == b"\x1f\x8b":
-            raw = gzip.decompress(raw)
-        return raw.decode("utf-8", "replace")
+    # Transient blocks (FDA's intermittent 401, Europe PMC / publisher
+    # 5xx) get up to 3 attempts with a short backoff before giving up.
+    last = None
+    for attempt in range(3):
+        req = urllib.request.Request(
+            url, headers=dict(UA, **({"Accept": accept} if accept else {})))
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                raw = r.read()
+                if r.headers.get("Content-Encoding") == "gzip" or raw[:2] == b"\x1f\x8b":
+                    raw = gzip.decompress(raw)
+                return raw.decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            last = e
+            if e.code not in RETRY_CODES:
+                raise
+        except Exception as e:  # URLError, timeouts, resets
+            last = e
+        if attempt < 2:
+            time.sleep(3 * (attempt + 1))
+    raise last
 
 
 def strip_tags(s):
@@ -318,9 +339,13 @@ def src_europepmc(days, backfill=False):
     cursor = "*"
     pages = 3 if backfill else 1
     for _ in range(pages):
+        # NOTE: no "sort" parameter — sort=FIRST_PDATE_D makes the
+        # Europe PMC API return HTTP 503 (verified 2026-11-15). The
+        # 45-day FIRST_PDATE window keeps results recent, and main()
+        # sorts all candidates by publishedAt at the end anyway.
         q = urllib.parse.urlencode({
             "query": query, "format": "json", "resultType": "core",
-            "pageSize": 50, "cursorMark": cursor, "sort": "FIRST_PDATE_D"})
+            "pageSize": 50, "cursorMark": cursor})
         data = json.loads(http_get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?" + q))
         for r in data.get("resultList", {}).get("result", []):
             abstract = r.get("abstractText", "")
@@ -370,13 +395,300 @@ def src_bmc(days, backfill=False):
     return out
 
 
+# ---------------- Additional journal sources (added 2026-11-15) ----------------
+
+CARE_KEYS = ("nurs", "patient", "care", "hospital", "clinic", "older",
+             "elderly", "dementia", "infection", "vaccin", "maternal",
+             "pregnan", "mental", "palliativ", "primary care",
+             "health service", "workforce", "safety", "fall", "delirium",
+             "chronic", "community", "long-term", "rehabil", "medication",
+             "sepsis", "antimicrobial", "guideline", "screening", "diabetes",
+             "cardiovascular", "stroke", "cancer", "respiratory", "kidney",
+             "dialysis", "wound", "pain", "nutrition", "obesity", "child",
+             "infant", "adolescen", "women", "midwif", "emergency",
+             "triage", "telemedicine", "digital health", "hiv", "depress",
+             "anxiety", "psych", "surgery", "intensive", "icu")
+
+
+def src_crossref_journal(issn, name, days, keys=CARE_KEYS, rows=20):
+    """Any Crossref-indexed journal with deposited abstracts (BMC family
+    and other Springer Nature open-access titles), by ISSN."""
+    start = (NOW - timedelta(days=days)).strftime("%Y-%m-%d")
+    end = NOW.strftime("%Y-%m-%d")
+    q = urllib.parse.urlencode({
+        "sort": "published", "order": "desc", "rows": rows,
+        "filter": f"from-pub-date:{start},until-pub-date:{end}"})
+    data = json.loads(http_get(
+        f"https://api.crossref.org/journals/{issn}/works?" + q,
+        accept="application/json"))
+    out = []
+    for item in data.get("message", {}).get("items", []):
+        abstract = strip_tags(item.get("abstract", ""))
+        if len(abstract) < 400:
+            continue
+        title = (item.get("title") or [""])[0]
+        if keys and not any(k in (title + " " + abstract).lower() for k in keys):
+            continue
+        parts = item.get("published", {}).get("date-parts", [[None]])[0]
+        if not parts or not parts[0]:
+            continue
+        dt = datetime(parts[0], parts[1] if len(parts) > 1 else 1,
+                      parts[2] if len(parts) > 2 else 1, tzinfo=timezone.utc)
+        if not within(dt, days):
+            continue
+        out.append(cand(name, title, item.get("URL", ""), dt,
+                        abstract, item.get("DOI")))
+    return out
+
+
+CROSSREF_JOURNALS = [
+    ("BMC Public Health", "1471-2458"),
+    ("BMC Geriatrics", "1471-2318"),
+    ("BMC Health Services Research", "1472-6963"),
+    ("BMC Medicine", "1741-7015"),
+    ("BMC Infectious Diseases", "1471-2334"),
+    ("BMC Palliative Care", "1472-684X"),
+    ("BMC Pregnancy and Childbirth", "1471-2393"),
+    ("BMC Psychiatry", "1471-244X"),
+    ("BMC Primary Care", "2731-4553"),
+    ("BMC Emergency Medicine", "1471-227X"),
+    ("BMC Women's Health", "1472-6874"),
+    ("BMC Pediatrics", "1471-2431"),
+    ("Human Resources for Health", "1478-4491"),
+    ("International Journal for Equity in Health", "1475-9276"),
+    ("Implementation Science", "1748-5908"),
+]
+
+
+def _crossref_source(issn, name):
+    def run(days):
+        return src_crossref_journal(issn, name, days)
+    return run
+
+
+PLOS_ONE_KEYS = PLOS_KEYS + (
+    "maternal", "mental health", "diabetes", "hypertension", "screening",
+    "hiv", "tuberculosis", "malaria", "nutrition", "obesity", "smoking",
+    "alcohol", "antimicrobial", "sepsis", "stroke", "heart", "kidney",
+    "pregnan", "child", "infant", "adolescen", "vaccine", "covid",
+    "influenza", "emergency", "surgery", "rehabilitation", "telemedicine",
+    "digital", "climate", "air pollution", "cancer", "depress", "anxiety")
+
+
+def src_plos_feed(url, name, days, keys):
+    out = []
+    for e in fetch_atom(url):
+        if e["title"].lower().startswith(("correction:", "retraction:")):
+            continue
+        abstract = e["summary"] or e["content"]
+        if len(abstract) >= 400 and within(e["dt"], days) \
+                and any(k in (e["title"] + " " + abstract).lower() for k in keys):
+            out.append(cand(name, e["title"], e["link"], e["dt"],
+                            abstract, doi_of(e["id"])))
+    return out
+
+
+def src_plos_one(days):
+    return src_plos_feed("https://journals.plos.org/plosone/feed/atom",
+                         "PLOS ONE", days, PLOS_ONE_KEYS)
+
+
+def src_plos_gph(days):
+    return src_plos_feed("https://journals.plos.org/globalpublichealth/feed/atom",
+                         "PLOS Global Public Health", days, PLOS_ONE_KEYS)
+
+
+JMIR_KEYS = ("nurs", "patient", "clinical", "care", "hospital", "older",
+             "elderly", "caregiv", "mental", "depress", "anxiety", "psych")
+
+
+def src_jmir_feed(url, name, days, keys=None):
+    out = []
+    for e in fetch_atom(url):
+        if within(e["dt"], days) and len(e["summary"]) >= 400:
+            if keys and not any(k in (e["title"] + " " + e["summary"]).lower()
+                                for k in keys):
+                continue
+            out.append(cand(name, e["title"], e["link"], e["dt"],
+                            e["summary"], doi_of(e["id"]) or doi_of(e["link"])))
+    return out
+
+
+def src_jmir_aging(days):
+    return src_jmir_feed("https://aging.jmir.org/feed/atom", "JMIR Aging", days)
+
+
+def src_jmir_public_health(days):
+    return src_jmir_feed("https://publichealth.jmir.org/feed/atom",
+                         "JMIR Public Health and Surveillance", days)
+
+
+def src_jmir_medinform(days):
+    return src_jmir_feed("https://medinform.jmir.org/feed/atom",
+                         "JMIR Medical Informatics", days, JMIR_KEYS)
+
+
+def src_jmir_mental(days):
+    return src_jmir_feed("https://mental.jmir.org/feed/atom",
+                         "JMIR Mental Health", days, JMIR_KEYS)
+
+
+def src_frontiers_medicine(days):
+    out = []
+    for i in fetch_rss("https://www.frontiersin.org/journals/medicine/rss")[:20]:
+        if within(i["dt"], days) and len(strip_tags(i["desc"])) >= 400 \
+                and any(k in (i["title"] + " " + i["desc"]).lower()
+                        for k in FRONTIERS_KEYS):
+            out.append(cand("Frontiers in Medicine", i["title"], i["link"],
+                            i["dt"], i["desc"], doi_of(i["link"])))
+    return out
+
+
+DC_NS = {"dc": "http://purl.org/dc/elements/1.1/"}
+
+
+def src_jan(days):
+    # Wiley's RSS: the plain <description> is only a citation line; the
+    # full abstract lives in <dc:description>.
+    root = ET.fromstring(http_get(
+        "https://onlinelibrary.wiley.com/feed/13652648/most-recent"))
+    out = []
+    for item in root.iter("item"):
+        def txt(tag):
+            el = item.find(tag)
+            return el.text if el is not None and el.text else ""
+        el = item.find("dc:description", DC_NS)
+        abstract = strip_tags(el.text) if el is not None and el.text else ""
+        abstract = re.sub(r"^ABSTRACT\s*", "", abstract)
+        if len(abstract) < 400:
+            continue
+        try:
+            dt = parsedate_to_datetime(txt("pubDate"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+        except Exception:
+            continue
+        if not within(dt, days):
+            continue
+        out.append(cand("Journal of Advanced Nursing", txt("title"),
+                        txt("link"), dt, abstract,
+                        doi_of(txt("guid")) or doi_of(txt("link"))))
+    return out
+
+
+def _crossref_doi_for_title(title):
+    q = urllib.parse.urlencode({"query.title": title, "rows": 1})
+    data = json.loads(http_get("https://api.crossref.org/works?" + q,
+                               accept="application/json"))
+    items = data.get("message", {}).get("items", [])
+    if not items:
+        return None
+    found = (items[0].get("title") or [""])[0]
+    if norm_title(found) != norm_title(title):
+        return None
+    return items[0].get("DOI")
+
+
+def _pubmed_by_doi(doi):
+    base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+    q = urllib.parse.urlencode({"db": "pubmed", "term": f"{doi}[doi]",
+                                "retmode": "json"})
+    ids = json.loads(http_get(base + "esearch.fcgi?" + q))["esearchresult"]["idlist"]
+    if not ids:
+        return None
+    q2 = urllib.parse.urlencode({"db": "pubmed", "id": ids[0], "retmode": "xml"})
+    root = ET.fromstring(http_get(base + "efetch.fcgi?" + q2))
+    art = root.find(".//PubmedArticle")
+    if art is None:
+        return None
+    abstract = " ".join("".join(x.itertext())
+                        for x in art.findall(".//AbstractText"))
+    date_el = art.find(".//ArticleDate")
+    if date_el is None:
+        return None
+    dt = datetime(int(date_el.findtext("Year")), int(date_el.findtext("Month")),
+                  int(date_el.findtext("Day")), tzinfo=timezone.utc)
+    return abstract, dt
+
+
+def src_ijns(days):
+    # The ScienceDirect RSS carries neither abstract nor date, so each
+    # item is enriched: title -> Crossref DOI -> PubMed abstract/date.
+    root = ET.fromstring(http_get(
+        "https://rss.sciencedirect.com/publication/science/00207489"))
+    items = []
+    for item in root.iter("item"):
+        def txt(tag):
+            el = item.find(tag)
+            return el.text if el is not None and el.text else ""
+        if txt("title"):
+            items.append((txt("title"), txt("link")))
+    out = []
+    for title, link in items[:12]:
+        try:
+            doi = _crossref_doi_for_title(title)
+            if not doi:
+                continue
+            got = _pubmed_by_doi(doi)
+            if not got:
+                continue
+            abstract, dt = got
+            if len(abstract) < 400 or not within(dt, days):
+                continue
+            out.append(cand("International Journal of Nursing Studies",
+                            title, link, dt, abstract, doi))
+        except Exception:
+            continue
+    return out
+
+
+RSS1_NS = {"r1": "http://purl.org/rss/1.0/",
+           "dc": "http://purl.org/dc/elements/1.1/"}
+
+
+def src_medrxiv(days):
+    # RSS 1.0 feed; candidates are preprints (not peer reviewed) and are
+    # labelled as such in sourceName for the editorial gate.
+    root = ET.fromstring(http_get(
+        "https://connect.medrxiv.org/medrxiv_xml.php?subject=nursing"))
+    out = []
+    for e in root.findall("r1:item", RSS1_NS):
+        def txt(path):
+            el = e.find(path, RSS1_NS)
+            return el.text if el is not None and el.text else ""
+        abstract = strip_tags(txt("r1:description"))
+        if len(abstract) < 400:
+            continue
+        try:
+            dt = datetime.fromisoformat(txt("dc:date").replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+        except Exception:
+            continue
+        if not within(dt, days):
+            continue
+        link = txt("r1:link")
+        out.append(cand("medRxiv Preprint", txt("r1:title"), link, dt,
+                        abstract, doi_of(link)))
+    return out
+
+
 RECENT_SOURCES = [
     ("ScienceDaily Health", src_sciencedaily), ("WHO", src_who), ("CDC", src_cdc),
     ("PubMed Nursing", src_pubmed), ("Europe PMC", src_europepmc),
     ("JMIR Nursing", src_jmir), ("FDA", src_fda), ("NHS England", src_nhs),
     ("Frontiers in Public Health", src_frontiers), ("PLOS Medicine", src_plos),
     ("BMC Nursing", src_bmc),
-]
+    ("Frontiers in Medicine", src_frontiers_medicine),
+    ("PLOS ONE", src_plos_one), ("PLOS Global Public Health", src_plos_gph),
+    ("JMIR Aging", src_jmir_aging),
+    ("JMIR Public Health and Surveillance", src_jmir_public_health),
+    ("JMIR Medical Informatics", src_jmir_medinform),
+    ("JMIR Mental Health", src_jmir_mental),
+    ("Journal of Advanced Nursing", src_jan),
+    ("International Journal of Nursing Studies", src_ijns),
+    ("medRxiv Preprint", src_medrxiv),
+] + [(name, _crossref_source(issn, name)) for name, issn in CROSSREF_JOURNALS]
 BACKFILL_SOURCES = [
     ("PubMed Nursing", src_pubmed), ("Europe PMC", src_europepmc),
     ("BMC Nursing", src_bmc),
