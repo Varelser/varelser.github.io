@@ -622,5 +622,113 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
   } catch (e) { /* look switcher is decorative; never break the app */ }
 })();
 </script>
+<script>
+// Thought Workbench hover panels (overlay): hovering a side panel's toggle
+// opens it; leaving the panel + toggle for a while closes it again.
+// A click on the toggle while hover-opened pins it open (manual control wins).
+(function () {
+  try {
+    if (window.__twHoverPanels) return;
+    window.__twHoverPanels = true;
+    var OPEN_DWELL = 150, CLOSE_DELAY = 700;
+    var sides = {
+      L: { open: false, openTimer: 0, closeTimer: 0, synthetic: false },
+      R: { open: false, openTimer: 0, closeTimer: 0, synthetic: false }
+    };
+    function toggleBtn(side) {
+      var name = side === 'L' ? '左パネルを' : '右パネルを';
+      var btns = document.querySelectorAll('button[aria-label^="' + name + '"]');
+      return btns.length ? btns[0] : null;
+    }
+    function isOpen(side) {
+      var b = toggleBtn(side);
+      return !!(b && (b.getAttribute('aria-label') || '').indexOf('閉じる') > -1);
+    }
+    function asideFor(side) {
+      var list = document.querySelectorAll('aside');
+      for (var i = 0; i < list.length; i++) {
+        var c = list[i].className || '';
+        if (side === 'L' && c.indexOf('rounded-r') > -1) return list[i];
+        if (side === 'R' && c.indexOf('rounded-l') > -1) return list[i];
+      }
+      return list.length ? list[side === 'L' ? 0 : list.length - 1] : null;
+    }
+    function clickToggle(side) {
+      var b = toggleBtn(side), s = sides[side];
+      if (!b) return;
+      s.synthetic = true;
+      try { b.click(); } catch (e) {}
+      s.synthetic = false;
+    }
+    function inZone(side, el) {
+      if (!el || !el.closest) return false;
+      var b = toggleBtn(side), a = asideFor(side);
+      if (b && el.closest('button') === b) return true;
+      if (a && (el === a || el.closest('aside') === a)) return true;
+      return false;
+    }
+    function sideOf(el) {
+      if (!el || !el.closest) return null;
+      var b = el.closest('button');
+      if (b) {
+        var l = b.getAttribute('aria-label') || '';
+        if (l.indexOf('左パネルを') === 0) return 'L';
+        if (l.indexOf('右パネルを') === 0) return 'R';
+      }
+      var a = el.closest('aside');
+      if (a) {
+        var c = a.className || '';
+        if (c.indexOf('rounded-r') > -1) return 'L';
+        if (c.indexOf('rounded-l') > -1) return 'R';
+      }
+      return null;
+    }
+    document.addEventListener('mouseover', function (e) {
+      var side = sideOf(e.target);
+      if (!side) return;
+      var s = sides[side];
+      if (e.relatedTarget && inZone(side, e.relatedTarget)) return; // moving within zone
+      clearTimeout(s.closeTimer);
+      var b = toggleBtn(side);
+      if (b && (b.getAttribute('aria-label') || '').indexOf('開く') > -1 && !s.openTimer) {
+        s.openTimer = setTimeout(function () {
+          s.openTimer = 0;
+          if (!isOpen(side)) { clickToggle(side); s.open = true; }
+        }, OPEN_DWELL);
+      }
+    }, true);
+    document.addEventListener('mouseout', function (e) {
+      var side = sideOf(e.target);
+      if (!side) return;
+      if (e.relatedTarget && inZone(side, e.relatedTarget)) return; // still in zone
+      var s = sides[side];
+      clearTimeout(s.openTimer); s.openTimer = 0;
+      if (s.open) {
+        clearTimeout(s.closeTimer);
+        s.closeTimer = setTimeout(function () {
+          s.closeTimer = 0;
+          if (s.open && isOpen(side)) clickToggle(side);
+          s.open = false;
+        }, CLOSE_DELAY);
+      }
+    }, true);
+    document.addEventListener('click', function (e) {
+      var side = sideOf(e.target);
+      if (!side) return;
+      var s = sides[side];
+      if (s.synthetic) return; // our own toggle click: let it through
+      var b = e.target.closest && e.target.closest('button');
+      if (b && b === toggleBtn(side) && s.open) {
+        // first manual click while hover-opened: pin it open, swallow the click
+        e.stopPropagation(); e.preventDefault();
+        s.open = false;
+        clearTimeout(s.closeTimer);
+      } else if (b && b === toggleBtn(side)) {
+        s.open = false; clearTimeout(s.closeTimer); clearTimeout(s.openTimer); s.openTimer = 0;
+      }
+    }, true);
+  } catch (e) { /* hover panels are decorative; never break the app */ }
+})();
+</script>
 </body>
 </html>
