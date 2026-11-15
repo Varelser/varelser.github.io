@@ -730,5 +730,61 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
   } catch (e) { /* hover panels are decorative; never break the app */ }
 })();
 </script>
+<script>
+// Thought Workbench sphere bar autohide (overlay): the bottom sphere-look bar
+// stays hidden until the cursor moves over where it sits, then fades back out
+// when the cursor leaves. The app still decides (via display) whether the
+// sphere view is active at all; this only gates opacity/visibility.
+(function () {
+  try {
+    if (window.__twSphereBarHover) return;
+    window.__twSphereBarHover = true;
+    var style = document.createElement('style');
+    style.textContent =
+      '#twSphereBar{opacity:0;visibility:hidden;transform:translate(-50%,10px);' +
+      'transition:opacity .22s ease,transform .22s ease,visibility 0s linear .22s;pointer-events:none}' +
+      '#twSphereBar.tw-reveal{opacity:1;visibility:visible;transform:translate(-50%,0);' +
+      'transition:opacity .22s ease,transform .22s ease;pointer-events:auto}';
+    document.head.appendChild(style);
+    var MARGIN = 16, HIDE_DELAY = 500;
+    var hideTimer = 0, rafPending = false, lastX = -1, lastY = -1;
+    function bar() { return document.getElementById('twSphereBar'); }
+    function active(b) { return b && b.style.display !== 'none' && b.getClientRects().length > 0; }
+    function reveal(b) {
+      clearTimeout(hideTimer); hideTimer = 0;
+      if (!b.classList.contains('tw-reveal')) b.classList.add('tw-reveal');
+    }
+    function scheduleHide(b) {
+      if (!b.classList.contains('tw-reveal') || hideTimer) return;
+      hideTimer = setTimeout(function () {
+        hideTimer = 0;
+        var bb = bar();
+        if (bb) bb.classList.remove('tw-reveal');
+      }, HIDE_DELAY);
+    }
+    function evaluate() {
+      rafPending = false;
+      var b = bar();
+      if (!active(b)) { if (b) b.classList.remove('tw-reveal'); return; }
+      var r = b.getBoundingClientRect();
+      var inside = lastX >= r.left - MARGIN && lastX <= r.right + MARGIN &&
+                   lastY >= r.top - MARGIN && lastY <= r.bottom + MARGIN;
+      if (inside) reveal(b); else scheduleHide(b);
+    }
+    document.addEventListener('mousemove', function (e) {
+      lastX = e.clientX; lastY = e.clientY;
+      if (!rafPending) { rafPending = true; requestAnimationFrame(evaluate); }
+    }, true);
+    document.addEventListener('focusin', function (e) {
+      var b = bar();
+      if (b && e.target && b.contains(e.target) && active(b)) reveal(b);
+    }, true);
+    document.addEventListener('focusout', function () {
+      var b = bar();
+      if (b) scheduleHide(b);
+    }, true);
+  } catch (e) { /* sphere bar autohide is decorative; never break the app */ }
+})();
+</script>
 </body>
 </html>
