@@ -27,31 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── 2026-11-10: デザイン切替 (Modern Skin) ──
-     styles-modern.css の link を有効/無効にするだけの表示専用トグル。
-     既定は MODERN。CLASSIC で従来の外観に戻る。localStorage に保存。 */
-  const DESIGN_KEY = 'meikyoshisui_design';
+  /* ── 2026-11-16 v5.2: デザイン切替 (CLASSIC) を廃止し MODERN に一本化 ──
+     user 判断「CLASSICを外して」。切替ボタン #designToggle は生成しない。
+     過去に CLASSIC を選んだ訪問者の端末には localStorage
+     'meikyoshisui_design' = 'classic' が残るため、ここでキーを破棄し、
+     modernSkinLink を常時有効に固定する (移行でエラーは出さない)。
+     84 / 94 / 95 / 96 は skinLink.disabled と #designToggle の有無を
+     ガード付きで参照するだけなので、常時 MODERN でそのまま動作する。 */
   const skinLink = document.getElementById('modernSkinLink');
-  if (skinLink && btn && btn.parentElement) {
-    const dBtn = document.createElement('button');
-    dBtn.id = 'designToggle';
-    dBtn.className = 'ecb-preset-btn';
-    dBtn.style.cssText = 'float:right;margin-right:8px';
-    dBtn.title = 'デザイン切替: MODERN (洗練されたソリッドな外観) / CLASSIC (従来)';
-    const applyDesign = modern => {
-      skinLink.disabled = !modern;
-      dBtn.textContent = modern ? 'DESIGN: MODERN' : 'DESIGN: CLASSIC';
-    };
-    let modern = true;
-    try { modern = localStorage.getItem(DESIGN_KEY) !== 'classic'; } catch (_) { /* 既定 MODERN */ }
-    applyDesign(modern);
-    dBtn.addEventListener('click', () => {
-      modern = skinLink.disabled; /* 現在無効なら MODERN へ */
-      applyDesign(modern);
-      try { localStorage.setItem(DESIGN_KEY, modern ? 'modern' : 'classic'); } catch (_) { /* 保存不可でも切替は有効 */ }
-    });
-    btn.parentElement.insertBefore(dBtn, btn);
-  }
+  if (skinLink) skinLink.disabled = false;
+  try { localStorage.removeItem('meikyoshisui_design'); } catch (_) { /* storage 不可でも MODERN 固定は有効 */ }
 
   /* ── first-run chord seed ── */
   try {

@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const CLOSE_DELAY = 900;
   let lastPX = -9999, lastPY = -9999;
   document.addEventListener('mousemove', e => { lastPX = e.clientX; lastPY = e.clientY; }, { passive: true });
+  document.addEventListener('touchmove', e => { if (e.touches && e.touches[0]) { lastPX = e.touches[0].clientX; lastPY = e.touches[0].clientY; } }, { passive: true });
   function pointerInBand() {
     if (!openId) return false;
     const chip = chips[openId], box = flyouts[openId];
@@ -363,7 +364,33 @@ document.addEventListener('DOMContentLoaded', () => {
     close();
   });
   document.addEventListener('keydown', ev => { if (ev.key === 'Escape') close(); });
-  window.addEventListener('scroll', () => { if (openId && !pinned) close(); }, { capture: true, passive: true });
+  /* v5.2 スクロール閉じの発生源区別 (user 2026-11-16「音律とか下に
+     スクロールできない」): 従来は capture の window scroll が
+     .fam-flyout-body 自身のスクロールでも発火し、ホバー (未固定) で
+     開いたフライアウトが最初のホイールで即閉じしていた (実測:
+     音律 body は scrollHeight 1602 / clientHeight 361 と正常で、
+     被さる要素も無し — 原因はこのリスナーだけだった)。
+     - イベント対象がフライアウト内部の要素 → 内部スクロールなので閉じない
+     - ポインタがチップ/フライアウト/橋の上にある間の document
+       スクロール → 末尾到達後の連鎖スクロールとみなし閉じない
+     - それ以外のページスクロール → 従来通り閉じる */
+  function pointerOverOpenArea() {
+    if (!openId) return false;
+    for (const el of [chips[openId], flyouts[openId], bridges[openId]]) {
+      if (!el || el.hidden) continue;
+      const r = el.getBoundingClientRect();
+      if (lastPX >= r.left - 4 && lastPX <= r.right + 4 && lastPY >= r.top - 4 && lastPY <= r.bottom + 4) return true;
+    }
+    return false;
+  }
+  window.addEventListener('scroll', ev => {
+    if (!openId || pinned) return;
+    const box = flyouts[openId];
+    const t = ev.target;
+    if (box && t && t !== document && t.nodeType === 1 && box.contains(t)) return;
+    if (pointerOverOpenArea()) return;
+    close();
+  }, { capture: true, passive: true });
   window.addEventListener('resize', () => { if (openId) place(openId); });
 
   /* ════ バッジの追随 (トグルの class 変化を観察) ════ */
