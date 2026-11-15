@@ -2448,11 +2448,7 @@ body:not(.leary2-panel-open) .panel{display:none}
 </script>
 <script>
 (() => {
-  var __defProp = Object.defineProperty;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-
-  // ts_src3/engine/shaders.ts
+  // ts_src_gpu/engine/shaders.ts
   var baseVertexShaderSource = `
   precision highp float;
   attribute vec2 aPosition;
@@ -3530,7 +3526,7 @@ body:not(.leary2-panel-open) .panel{display:none}
   }
 `;
 
-  // ts_src3/engine/fluidEngine.ts
+  // ts_src_gpu/engine/fluidEngine.ts
   function hexToRgbNormalized(hex) {
     const clean = hex.replace("#", "");
     const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean.padEnd(6, "0").slice(0, 6);
@@ -3576,132 +3572,94 @@ body:not(.leary2-panel-open) .panel{display:none}
     return wave * lfo.depth;
   }
   var FluidEngine = class {
+    canvas;
+    gl;
+    isWebGL2;
+    supportLinearFiltering;
+    maxTextureSize;
+    halfFloatTexType;
+    formatRGBA;
+    formatRG;
+    formatR;
+    params;
+    effectiveParams;
+    paused = false;
+    rafId = null;
+    lastTime = 0;
+    elapsedTime = 0;
+    huePhase = 0;
+    kaleidoscopeAngle = 0;
+    pulseTimer = 0;
+    rng = null;
+    setSeed(seed) {
+      let a = seed >>> 0 || 1;
+      this.rng = () => {
+        a |= 0;
+        a = a + 1831565813 | 0;
+        let x = a;
+        x = Math.imul(x ^ x >>> 15, x | 1);
+        x ^= x + Math.imul(x ^ x >>> 7, x | 61);
+        return ((x ^ x >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    rand() {
+      return this.rng ? this.rng() : Math.random();
+    }
+    pointers = /* @__PURE__ */ new Map();
+    // Programs
+    clearProgram;
+    splatProgram;
+    vortexSplatProgram;
+    attractSplatProgram;
+    obstacleStampProgram;
+    obstaclePresetProgram;
+    obstacleMaskProgram;
+    externalForcesProgram;
+    collisionMomentumProgram;
+    viscosityProgram;
+    dyeMixTensionProgram;
+    advectionProgram;
+    advectionMacCormackProgram;
+    divergenceProgram;
+    curlProgram;
+    vorticityProgram;
+    pressureProgram;
+    gradientSubtractProgram;
+    bloomPrefilterProgram;
+    bloomBlurProgram;
+    displayProgram;
+    // Framebuffers
+    dye;
+    dyeTmpHat;
+    dyeTmpRev;
+    velocity;
+    velTmpHat;
+    velTmpRev;
+    divergence;
+    curl;
+    pressure;
+    obstacles;
+    bloom;
+    bloomFramebuffers = [];
+    quadBuffer;
+    indexBuffer;
+    createdPrograms = [];
+    onContextLostCallback;
+    onContextRestoredCallback;
+    audioSampler;
+    currentAudioBands = {
+      bass: 0,
+      mid: 0,
+      treble: 0,
+      overall: 0,
+      beatDetected: false
+    };
     constructor(canvas, initialParams, callbacks) {
-      __publicField(this, "canvas");
-      __publicField(this, "gl");
-      __publicField(this, "isWebGL2");
-      __publicField(this, "supportLinearFiltering");
-      __publicField(this, "maxTextureSize");
-      __publicField(this, "halfFloatTexType");
-      __publicField(this, "formatRGBA");
-      __publicField(this, "formatRG");
-      __publicField(this, "formatR");
-      __publicField(this, "params");
-      __publicField(this, "effectiveParams");
-      __publicField(this, "paused", false);
-      __publicField(this, "rafId", null);
-      __publicField(this, "lastTime", 0);
-      __publicField(this, "elapsedTime", 0);
-      __publicField(this, "huePhase", 0);
-      __publicField(this, "kaleidoscopeAngle", 0);
-      __publicField(this, "pulseTimer", 0);
-      __publicField(this, "rng", null);
-      __publicField(this, "pointers", /* @__PURE__ */ new Map());
-      // Programs
-      __publicField(this, "clearProgram");
-      __publicField(this, "splatProgram");
-      __publicField(this, "vortexSplatProgram");
-      __publicField(this, "attractSplatProgram");
-      __publicField(this, "obstacleStampProgram");
-      __publicField(this, "obstaclePresetProgram");
-      __publicField(this, "obstacleMaskProgram");
-      __publicField(this, "externalForcesProgram");
-      __publicField(this, "collisionMomentumProgram");
-      __publicField(this, "viscosityProgram");
-      __publicField(this, "dyeMixTensionProgram");
-      __publicField(this, "advectionProgram");
-      __publicField(this, "advectionMacCormackProgram");
-      __publicField(this, "divergenceProgram");
-      __publicField(this, "curlProgram");
-      __publicField(this, "vorticityProgram");
-      __publicField(this, "pressureProgram");
-      __publicField(this, "gradientSubtractProgram");
-      __publicField(this, "bloomPrefilterProgram");
-      __publicField(this, "bloomBlurProgram");
-      __publicField(this, "displayProgram");
-      // Framebuffers
-      __publicField(this, "dye");
-      __publicField(this, "dyeTmpHat");
-      __publicField(this, "dyeTmpRev");
-      __publicField(this, "velocity");
-      __publicField(this, "velTmpHat");
-      __publicField(this, "velTmpRev");
-      __publicField(this, "divergence");
-      __publicField(this, "curl");
-      __publicField(this, "pressure");
-      __publicField(this, "obstacles");
-      __publicField(this, "bloom");
-      __publicField(this, "bloomFramebuffers", []);
-      __publicField(this, "quadBuffer");
-      __publicField(this, "indexBuffer");
-      __publicField(this, "createdPrograms", []);
-      __publicField(this, "onContextLostCallback");
-      __publicField(this, "onContextRestoredCallback");
-      __publicField(this, "audioSampler");
-      __publicField(this, "currentAudioBands", {
-        bass: 0,
-        mid: 0,
-        treble: 0,
-        overall: 0,
-        beatDetected: false
-      });
-      __publicField(this, "handleContextLost", (e) => {
-        var _a;
-        e.preventDefault();
-        this.stop();
-        (_a = this.onContextLostCallback) == null ? void 0 : _a.call(this);
-      });
-      __publicField(this, "handleContextRestored", () => {
-        var _a;
-        this.initGeometry();
-        this.initPrograms();
-        this.initFramebuffers();
-        this.seedInitialPattern();
-        this.start();
-        (_a = this.onContextRestoredCallback) == null ? void 0 : _a.call(this);
-      });
-      __publicField(this, "tick", (now) => {
-        var _a, _b, _c;
-        if (!this.lastTime) this.lastTime = now;
-        const rawDt = (now - this.lastTime) / 1e3;
-        this.lastTime = now;
-        const dt = Math.min(rawDt, 0.025);
-        this.currentAudioBands = this.audioSampler ? this.audioSampler() : { bass: 0, mid: 0, treble: 0, overall: 0, beatDetected: false };
-        this.applyLfoModulation();
-        this.applyInputs(dt);
-        if (!this.paused) {
-          this.elapsedTime += dt;
-          this.kaleidoscopeAngle += dt * this.effectiveParams.kaleidoscopeRotation;
-          if (this.currentAudioBands.beatDetected && ((_a = this.effectiveParams.audioConfig) == null ? void 0 : _a.beatBurst)) {
-            const jets = 4;
-            const baseHue = Math.random();
-            const impulse = (750 + this.currentAudioBands.bass * 1200) * ((_c = (_b = this.effectiveParams.audioConfig) == null ? void 0 : _b.sensitivity) != null ? _c : 1.2);
-            for (let i = 0; i < jets; i++) {
-              const angle = i / jets * Math.PI * 2 + this.elapsedTime * 0.9;
-              const x = 0.5 + Math.cos(angle) * 0.24;
-              const y = 0.5 + Math.sin(angle) * 0.24;
-              const color = this.generateColor((baseHue + i / jets) % 1);
-              this.splatSingle(
-                x,
-                y,
-                -Math.cos(angle) * impulse,
-                -Math.sin(angle) * impulse,
-                [color[0] * 0.55, color[1] * 0.55, color[2] * 0.55],
-                this.effectiveParams.autoEmitterSize || 0.16
-              );
-            }
-          }
-          this.applyAutoFlow(dt * this.effectiveParams.timeScale);
-          this.stepPhysics(dt);
-        }
-        this.renderDisplay();
-        this.rafId = requestAnimationFrame(this.tick);
-      });
       this.canvas = canvas;
       this.params = { ...initialParams };
       this.effectiveParams = { ...initialParams };
-      this.onContextLostCallback = callbacks == null ? void 0 : callbacks.onContextLost;
-      this.onContextRestoredCallback = callbacks == null ? void 0 : callbacks.onContextRestored;
+      this.onContextLostCallback = callbacks?.onContextLost;
+      this.onContextRestoredCallback = callbacks?.onContextRestored;
       const contextOptions = {
         alpha: false,
         depth: false,
@@ -3759,20 +3717,19 @@ body:not(.leary2-panel-open) .panel{display:none}
       this.canvas.addEventListener("webglcontextlost", this.handleContextLost, false);
       this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored, false);
     }
-    setSeed(seed) {
-      let a = seed >>> 0 || 1;
-      this.rng = () => {
-        a |= 0;
-        a = a + 1831565813 | 0;
-        let x = a;
-        x = Math.imul(x ^ x >>> 15, x | 1);
-        x ^= x + Math.imul(x ^ x >>> 7, x | 61);
-        return ((x ^ x >>> 14) >>> 0) / 4294967296;
-      };
-    }
-    rand() {
-      return this.rng ? this.rng() : Math.random();
-    }
+    handleContextLost = (e) => {
+      e.preventDefault();
+      this.stop();
+      this.onContextLostCallback?.();
+    };
+    handleContextRestored = () => {
+      this.initGeometry();
+      this.initPrograms();
+      this.initFramebuffers();
+      this.seedInitialPattern();
+      this.start();
+      this.onContextRestoredCallback?.();
+    };
     getSupportedFormat(internalFormat, format, type) {
       if (!this.supportRenderTextureFormat(internalFormat, format, type)) {
         if (this.isWebGL2) {
@@ -4241,7 +4198,6 @@ body:not(.leary2-panel-open) .panel{display:none}
       }
     }
     applyObstaclePreset(preset) {
-      var _a;
       if (!this.obstacles) return;
       const gl = this.gl;
       const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
@@ -4255,7 +4211,7 @@ body:not(.leary2-panel-open) .panel{display:none}
       gl.disable(gl.BLEND);
       this.obstaclePresetProgram.bind();
       gl.uniform1f(this.obstaclePresetProgram.uniforms.aspectRatio, aspectRatio);
-      gl.uniform1f(this.obstaclePresetProgram.uniforms.uMode, (_a = modeMap[preset]) != null ? _a : 0);
+      gl.uniform1f(this.obstaclePresetProgram.uniforms.uMode, modeMap[preset] ?? 0);
       this.blit(this.obstacles.write);
       this.obstacles.swap();
     }
@@ -4587,7 +4543,6 @@ body:not(.leary2-panel-open) .panel{display:none}
       });
     }
     applyLfoModulation() {
-      var _a, _b, _c, _d;
       const eff = { ...this.params };
       const lfos = [this.params.lfo1, this.params.lfo2, this.params.lfo3].filter(Boolean);
       for (const lfo of lfos) {
@@ -4696,10 +4651,10 @@ body:not(.leary2-panel-open) .panel{display:none}
       const bands = this.currentAudioBands;
       if (bands.overall > 5e-3) {
         const ac = eff.audioConfig;
-        const sens = (_a = ac == null ? void 0 : ac.sensitivity) != null ? _a : 1.2;
-        const bassVal = bands.bass * ((_b = ac == null ? void 0 : ac.bassGain) != null ? _b : 1) * sens;
-        const midVal = bands.mid * ((_c = ac == null ? void 0 : ac.midGain) != null ? _c : 0.85) * sens;
-        const trebleVal = bands.treble * ((_d = ac == null ? void 0 : ac.trebleGain) != null ? _d : 0.9) * sens;
+        const sens = ac?.sensitivity ?? 1.2;
+        const bassVal = bands.bass * (ac?.bassGain ?? 1) * sens;
+        const midVal = bands.mid * (ac?.midGain ?? 0.85) * sens;
+        const trebleVal = bands.treble * (ac?.trebleGain ?? 0.9) * sens;
         eff.bloomIntensity = Math.min(4, eff.bloomIntensity + bassVal * 0.65);
         eff.radialForce = Math.max(-8, Math.min(8, eff.radialForce + bassVal * 0.9));
         eff.rippleAmount = Math.min(3, eff.rippleAmount + bassVal * 0.22);
@@ -5211,6 +5166,42 @@ body:not(.leary2-panel-open) .panel{display:none}
       gl.uniform3f(this.displayProgram.uniforms.uBgColor, bg[0], bg[1], bg[2]);
       this.blit(null);
     }
+    tick = (now) => {
+      if (!this.lastTime) this.lastTime = now;
+      const rawDt = (now - this.lastTime) / 1e3;
+      this.lastTime = now;
+      const dt = Math.min(rawDt, 0.025);
+      this.currentAudioBands = this.audioSampler ? this.audioSampler() : { bass: 0, mid: 0, treble: 0, overall: 0, beatDetected: false };
+      this.applyLfoModulation();
+      this.applyInputs(dt);
+      if (!this.paused) {
+        this.elapsedTime += dt;
+        this.kaleidoscopeAngle += dt * this.effectiveParams.kaleidoscopeRotation;
+        if (this.currentAudioBands.beatDetected && this.effectiveParams.audioConfig?.beatBurst) {
+          const jets = 4;
+          const baseHue = Math.random();
+          const impulse = (750 + this.currentAudioBands.bass * 1200) * (this.effectiveParams.audioConfig?.sensitivity ?? 1.2);
+          for (let i = 0; i < jets; i++) {
+            const angle = i / jets * Math.PI * 2 + this.elapsedTime * 0.9;
+            const x = 0.5 + Math.cos(angle) * 0.24;
+            const y = 0.5 + Math.sin(angle) * 0.24;
+            const color = this.generateColor((baseHue + i / jets) % 1);
+            this.splatSingle(
+              x,
+              y,
+              -Math.cos(angle) * impulse,
+              -Math.sin(angle) * impulse,
+              [color[0] * 0.55, color[1] * 0.55, color[2] * 0.55],
+              this.effectiveParams.autoEmitterSize || 0.16
+            );
+          }
+        }
+        this.applyAutoFlow(dt * this.effectiveParams.timeScale);
+        this.stepPhysics(dt);
+      }
+      this.renderDisplay();
+      this.rafId = requestAnimationFrame(this.tick);
+    };
     start() {
       if (this.rafId !== null) return;
       this.lastTime = performance.now();
@@ -5271,22 +5262,2627 @@ body:not(.leary2-panel-open) .panel{display:none}
     }
   };
 
-  // ts_src3/engine/audioReactive.ts
-  var AudioReactiveEngine = class {
-    constructor() {
-      __publicField(this, "ctx", null);
-      __publicField(this, "analyser", null);
-      __publicField(this, "dataArray", null);
-      __publicField(this, "micStream", null);
-      __publicField(this, "micSource", null);
-      __publicField(this, "audioEl", null);
-      __publicField(this, "fileSource", null);
-      __publicField(this, "objectUrl", null);
-      __publicField(this, "mode", "off");
-      __publicField(this, "fileName", "");
-      __publicField(this, "bassHistory", 0);
-      __publicField(this, "lastBeatTime", 0);
+  // ts_src_gpu/engine/shadersWGSL.ts
+  var P = (uniforms, textures, frag) => ({
+    uniforms,
+    textures,
+    frag
+  });
+  var WGSL_PASSES = {
+    clear: P(
+      [["value", "f32"]],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  return U.value * textureSample(T0, S0, in.vUv);
+}`
+    ),
+    viscosity: P(
+      [["uViscosity", "f32"]],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let C = textureSample(T0, S0, in.vUv).xy;
+  let L = textureSample(T0, S0, in.vL).xy;
+  let R = textureSample(T0, S0, in.vR).xy;
+  let T = textureSample(T0, S0, in.vT).xy;
+  let B = textureSample(T0, S0, in.vB).xy;
+  let avg = 0.25 * (L + R + T + B);
+  let vel = mix(C, avg, clamp(U.uViscosity, 0.0, 0.98));
+  return vec4<f32>(vel, 0.0, 1.0);
+}`
+    ),
+    dyeMixTension: P(
+      [
+        ["uMixing", "f32"],
+        ["uSurfaceTension", "f32"]
+      ],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let ts = U.texelSize;
+  let C = textureSample(T0, S0, in.vUv).rgb;
+  let L = textureSample(T0, S0, in.vL).rgb;
+  let R = textureSample(T0, S0, in.vR).rgb;
+  let T = textureSample(T0, S0, in.vT).rgb;
+  let B = textureSample(T0, S0, in.vB).rgb;
+  let TL = textureSample(T0, S0, in.vUv + vec2<f32>(-ts.x, ts.y)).rgb;
+  let TR = textureSample(T0, S0, in.vUv + vec2<f32>(ts.x, ts.y)).rgb;
+  let BL = textureSample(T0, S0, in.vUv + vec2<f32>(-ts.x, -ts.y)).rgb;
+  let BR = textureSample(T0, S0, in.vUv + vec2<f32>(ts.x, -ts.y)).rgb;
+  let avg = 0.20 * (L + R + T + B) + 0.05 * (TL + TR + BL + BR);
+  let minN = min(C, min(min(min(L, R), min(T, B)), min(min(TL, TR), min(BL, BR))));
+  let maxN = max(C, max(max(max(L, R), max(T, B)), max(max(TL, TR), max(BL, BR))));
+  var res = mix(C, avg, clamp(U.uMixing * 0.22, 0.0, 0.55));
+  if (U.uSurfaceTension > 0.005) {
+    let lap = avg - res;
+    let sharpened = res - lap * clamp(U.uSurfaceTension * 0.16, 0.0, 0.42);
+    res = clamp(sharpened, minN, maxN);
+  }
+  return vec4<f32>(max(res, vec3<f32>(0.0)), 1.0);
+}`
+    ),
+    collisionMomentum: P(
+      [
+        ["uCollisionMomentum", "f32"],
+        ["dt", "f32"]
+      ],
+      2,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+fn dyeLum(uv: vec2<f32>) -> f32 {
+  return dot(textureSample(T1, S1, uv).rgb, vec3<f32>(0.299, 0.587, 0.114));
+}
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var vel = textureSample(T0, S0, in.vUv).xy;
+  let velL = textureSample(T0, S0, in.vL).xy;
+  let velR = textureSample(T0, S0, in.vR).xy;
+  let velT = textureSample(T0, S0, in.vT).xy;
+  let velB = textureSample(T0, S0, in.vB).xy;
+  let conv = max(0.0, -0.5 * ((velR.x - velL.x) + (velT.y - velB.y)));
+  let dL = dyeLum(in.vL);
+  let dR = dyeLum(in.vR);
+  let dT = dyeLum(in.vT);
+  let dB = dyeLum(in.vB);
+  let grad = vec2<f32>(dR - dL, dT - dB);
+  let perp = vec2<f32>(-grad.y, grad.x);
+  let impactForce = (-grad * conv * 0.8 + perp * conv * 1.15) * U.uCollisionMomentum * 18.0;
+  vel += impactForce * U.dt;
+  return vec4<f32>(clamp(vel, vec2<f32>(-1000.0), vec2<f32>(1000.0)), 0.0, 1.0);
+}`
+    ),
+    splat: P(
+      [
+        ["aspectRatio", "f32"],
+        ["color", "vec3"],
+        ["point", "vec2"],
+        ["radius", "f32"],
+        ["hardness", "f32"],
+        ["eraseMode", "f32"]
+      ],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var p = in.vUv - U.point;
+  p.x *= U.aspectRatio;
+  let d2 = dot(p, p) / max(U.radius, 0.0001);
+  let splat = exp(-pow(d2, max(U.hardness, 0.15)));
+  let base = textureSample(T0, S0, in.vUv).xyz;
+  if (U.eraseMode > 0.5) {
+    let result = mix(base, vec3<f32>(0.0), clamp(splat * 0.85, 0.0, 1.0));
+    return vec4<f32>(result, 1.0);
+  }
+  return vec4<f32>(base + splat * U.color, 1.0);
+}`
+    ),
+    vortexSplat: P(
+      [
+        ["aspectRatio", "f32"],
+        ["point", "vec2"],
+        ["radius", "f32"],
+        ["strength", "f32"]
+      ],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var p = in.vUv - U.point;
+  p.x *= U.aspectRatio;
+  let distSq = dot(p, p);
+  let falloff = exp(-distSq / max(U.radius, 0.0001));
+  var tangent = vec2<f32>(-p.y, p.x);
+  let len = length(tangent);
+  if (len > 0.0001) { tangent /= len; }
+  let base = textureSample(T0, S0, in.vUv).xyz;
+  let vel = base.xy + tangent * falloff * U.strength;
+  return vec4<f32>(vel, base.z, 1.0);
+}`
+    ),
+    attractSplat: P(
+      [
+        ["aspectRatio", "f32"],
+        ["point", "vec2"],
+        ["radius", "f32"],
+        ["strength", "f32"]
+      ],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var p = in.vUv - U.point;
+  p.x *= U.aspectRatio;
+  let distSq = dot(p, p);
+  let falloff = exp(-distSq / max(U.radius, 0.0001));
+  let len = length(p);
+  var inward = vec2<f32>(0.0);
+  if (len > 0.001) { inward = -p / len; }
+  let tangent = vec2<f32>(-inward.y, inward.x);
+  let force = (inward * 0.92 + tangent * 0.35) * falloff * U.strength;
+  let base = textureSample(T0, S0, in.vUv).xyz;
+  return vec4<f32>(base.xy + force, base.z, 1.0);
+}`
+    ),
+    obstacleStamp: P(
+      [
+        ["aspectRatio", "f32"],
+        ["point", "vec2"],
+        ["radius", "f32"],
+        ["eraseMode", "f32"]
+      ],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var p = in.vUv - U.point;
+  p.x *= U.aspectRatio;
+  let dist = length(p);
+  let r = sqrt(max(U.radius, 0.0001)) * 0.42;
+  let brush = 1.0 - smoothstep(r * 0.78, r, dist);
+  let curr = textureSample(T0, S0, in.vUv).x;
+  var nextVal = max(curr, brush);
+  if (U.eraseMode > 0.5) { nextVal = min(curr, 1.0 - brush); }
+  return vec4<f32>(nextVal, 0.0, 0.0, 1.0);
+}`
+    ),
+    obstaclePreset: P(
+      [
+        ["aspectRatio", "f32"],
+        ["uMode", "f32"]
+      ],
+      0,
+      /* wgsl */
+      `
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var p = in.vUv - 0.5;
+  p.x *= U.aspectRatio;
+  var val = 0.0;
+  if (U.uMode > 0.5 && U.uMode < 1.5) {
+    let d = length(p - vec2<f32>(0.0, -0.02));
+    val = 1.0 - smoothstep(0.072, 0.082, d);
+  } else if (U.uMode >= 1.5 && U.uMode < 2.5) {
+    let d1 = length(p - vec2<f32>(-0.17, 0.05));
+    let d2 = length(p - vec2<f32>(0.17, -0.05));
+    val = max(1.0 - smoothstep(0.058, 0.068, d1), 1.0 - smoothstep(0.058, 0.068, d2));
+  } else if (U.uMode >= 2.5 && U.uMode < 3.5) {
+    let r = length(p);
+    let ring = 1.0 - smoothstep(0.018, 0.028, abs(r - 0.22));
+    let slitMask = smoothstep(0.055, 0.085, abs(p.y));
+    val = ring * slitMask;
+  } else if (U.uMode >= 3.5) {
+    for (var ix = -1; ix <= 1; ix++) {
+      for (var iy = -1; iy <= 1; iy++) {
+        var ox = f32(ix) * 0.22;
+        if (iy == 0) { ox += 0.0; } else { ox += 0.11; }
+        let oy = f32(iy) * 0.19;
+        let d = length(p - vec2<f32>(ox, oy));
+        val = max(val, 1.0 - smoothstep(0.028, 0.036, d));
+      }
     }
+  }
+  return vec4<f32>(clamp(val, 0.0, 1.0), 0.0, 0.0, 1.0);
+}`
+    ),
+    obstacleMask: P(
+      [],
+      2,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let obs = textureSample(T1, S1, in.vUv).x;
+  let val = textureSample(T0, S0, in.vUv);
+  let keep = 1.0 - smoothstep(0.35, 0.65, obs);
+  return vec4<f32>(val.rgb * keep, val.a);
+}`
+    ),
+    externalForces: P(
+      [
+        ["dt", "f32"],
+        ["aspectRatio", "f32"],
+        ["uTime", "f32"],
+        ["uGravity", "vec2"],
+        ["uBuoyancy", "f32"],
+        ["uRadialForce", "f32"],
+        ["uRadialCenter", "vec2"],
+        ["uSwirlField", "f32"],
+        ["uTurbulence", "f32"],
+        ["uTurbulenceScale", "f32"],
+        ["uTurbulenceSpeed", "f32"]
+      ],
+      2,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+fn hash21(p0: vec2<f32>) -> f32 {
+  var p = fract(p0 * vec2<f32>(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+fn noise2(p: vec2<f32>) -> f32 {
+  let i = floor(p);
+  let f0 = fract(p);
+  let f = f0 * f0 * (3.0 - 2.0 * f0);
+  let a = hash21(i);
+  let b = hash21(i + vec2<f32>(1.0, 0.0));
+  let c = hash21(i + vec2<f32>(0.0, 1.0));
+  let d = hash21(i + vec2<f32>(1.0, 1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+fn curlNoise(p: vec2<f32>) -> vec2<f32> {
+  let e = 0.06;
+  let n1 = noise2(p + vec2<f32>(0.0, e));
+  let n2 = noise2(p - vec2<f32>(0.0, e));
+  let n3 = noise2(p + vec2<f32>(e, 0.0));
+  let n4 = noise2(p - vec2<f32>(e, 0.0));
+  let a = (n1 - n2) / (2.0 * e);
+  let b = (n3 - n4) / (2.0 * e);
+  return vec2<f32>(a, -b);
+}
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var vel = textureSample(T0, S0, in.vUv).xy;
+  vel += U.uGravity * 6.5 * U.dt;
+  if (abs(U.uBuoyancy) > 0.001) {
+    let heat = dot(textureSample(T1, S1, in.vUv).rgb, vec3<f32>(0.299, 0.587, 0.114));
+    vel.y += heat * U.uBuoyancy * 5.8 * U.dt;
+  }
+  var dir = in.vUv - U.uRadialCenter;
+  dir.x *= U.aspectRatio;
+  let dist = length(dir);
+  if (dist > 0.002) {
+    let radialDir = dir / dist;
+    let falloff = smoothstep(0.0, 0.07, dist) * exp(-dist * 1.15);
+    vel += radialDir * U.uRadialForce * 14.0 * falloff * U.dt;
+    let tangent = vec2<f32>(-radialDir.y, radialDir.x);
+    vel += tangent * U.uSwirlField * 12.0 * falloff * U.dt;
+  }
+  if (U.uTurbulence > 0.001) {
+    let np = (in.vUv - 0.5) * vec2<f32>(U.aspectRatio, 1.0) * U.uTurbulenceScale
+      + vec2<f32>(U.uTime * 0.16 * U.uTurbulenceSpeed, -U.uTime * 0.12 * U.uTurbulenceSpeed);
+    let cn = curlNoise(np);
+    vel += cn * U.uTurbulence * 4.0 * U.dt;
+  }
+  return vec4<f32>(clamp(vel, vec2<f32>(-1000.0), vec2<f32>(1000.0)), 0.0, 1.0);
+}`
+    ),
+    advection: P(
+      [
+        ["dyeTexelSize", "vec2"],
+        ["dt", "f32"],
+        ["dissipation", "f32"],
+        ["manualBilerp", "f32"]
+      ],
+      2,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+fn bilerp(uv: vec2<f32>, tsize: vec2<f32>) -> vec4<f32> {
+  let st = uv / tsize - 0.5;
+  let iuv = floor(st);
+  let fuv = fract(st);
+  let a = textureSample(T1, S1, (iuv + vec2<f32>(0.5, 0.5)) * tsize);
+  let b = textureSample(T1, S1, (iuv + vec2<f32>(1.5, 0.5)) * tsize);
+  let c = textureSample(T1, S1, (iuv + vec2<f32>(0.5, 1.5)) * tsize);
+  let d = textureSample(T1, S1, (iuv + vec2<f32>(1.5, 1.5)) * tsize);
+  return mix(mix(a, b, fuv.x), mix(c, d, fuv.x), fuv.y);
+}
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let coord = in.vUv - U.dt * textureSample(T0, S0, in.vUv).xy * U.texelSize;
+  var result = textureSample(T1, S1, coord);
+  if (U.manualBilerp > 0.5) { result = bilerp(coord, U.dyeTexelSize); }
+  let decay = 1.0 + U.dissipation * U.dt;
+  return result / decay;
+}`
+    ),
+    advectionMacCormack: P(
+      [
+        ["dyeTexelSize", "vec2"],
+        ["dt", "f32"],
+        ["dissipation", "f32"],
+        ["uSharpness", "f32"],
+        ["uWrapBorders", "f32"]
+      ],
+      4,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+@group(0) @binding(5) var T2: texture_2d<f32>;
+@group(0) @binding(6) var S2: sampler;
+@group(0) @binding(7) var T3: texture_2d<f32>;
+@group(0) @binding(8) var S3: sampler;
+fn wrapOrClamp(uv: vec2<f32>) -> vec2<f32> {
+  if (U.uWrapBorders > 0.5) { return fract(uv); }
+  return clamp(uv, vec2<f32>(0.0005), vec2<f32>(0.9995));
+}
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let vel = textureSample(T0, S0, in.vUv).xy;
+  let coord = in.vUv - U.dt * vel * U.texelSize;
+  let st = coord / U.dyeTexelSize - 0.5;
+  let iuv = floor(st);
+  let n00 = textureSample(T1, S1, wrapOrClamp((iuv + vec2<f32>(0.5, 0.5)) * U.dyeTexelSize));
+  let n10 = textureSample(T1, S1, wrapOrClamp((iuv + vec2<f32>(1.5, 0.5)) * U.dyeTexelSize));
+  let n01 = textureSample(T1, S1, wrapOrClamp((iuv + vec2<f32>(0.5, 1.5)) * U.dyeTexelSize));
+  let n11 = textureSample(T1, S1, wrapOrClamp((iuv + vec2<f32>(1.5, 1.5)) * U.dyeTexelSize));
+  let minBound = min(min(n00, n10), min(n01, n11));
+  let maxBound = max(max(n00, n10), max(n01, n11));
+  let phiN = textureSample(T1, S1, in.vUv);
+  let phiHat = textureSample(T2, S2, in.vUv);
+  let phiRev = textureSample(T3, S3, in.vUv);
+  let corrected = phiHat + 0.5 * U.uSharpness * (phiN - phiRev);
+  let clamped = clamp(corrected, minBound, maxBound);
+  let decay = 1.0 + U.dissipation * U.dt;
+  return clamped / decay;
+}`
+    ),
+    divergence: P(
+      [["uWrapBorders", "f32"]],
+      2,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let obsC = textureSample(T1, S1, in.vUv).x;
+  let obsL = textureSample(T1, S1, in.vL).x;
+  let obsR = textureSample(T1, S1, in.vR).x;
+  let obsT = textureSample(T1, S1, in.vT).x;
+  let obsB = textureSample(T1, S1, in.vB).x;
+  var L = textureSample(T0, S0, in.vL).x;
+  var R = textureSample(T0, S0, in.vR).x;
+  var T = textureSample(T0, S0, in.vT).y;
+  var B = textureSample(T0, S0, in.vB).y;
+  let C = textureSample(T0, S0, in.vUv).xy;
+  if (obsC > 0.5) {
+    return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+  }
+  if (U.uWrapBorders < 0.5) {
+    if (in.vL.x < 0.0) { L = -C.x; }
+    if (in.vR.x > 1.0) { R = -C.x; }
+    if (in.vT.y > 1.0) { T = -C.y; }
+    if (in.vB.y < 0.0) { B = -C.y; }
+  }
+  if (obsL > 0.5) { L = -C.x; }
+  if (obsR > 0.5) { R = -C.x; }
+  if (obsT > 0.5) { T = -C.y; }
+  if (obsB > 0.5) { B = -C.y; }
+  let div = 0.5 * (R - L + T - B);
+  return vec4<f32>(div, 0.0, 0.0, 1.0);
+}`
+    ),
+    curl: P(
+      [],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let L = textureSample(T0, S0, in.vL).y;
+  let R = textureSample(T0, S0, in.vR).y;
+  let T = textureSample(T0, S0, in.vT).x;
+  let B = textureSample(T0, S0, in.vB).x;
+  let vorticity = R - L - T + B;
+  return vec4<f32>(0.5 * vorticity, 0.0, 0.0, 1.0);
+}`
+    ),
+    vorticity: P(
+      [
+        ["curl", "f32"],
+        ["dt", "f32"]
+      ],
+      2,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let L = textureSample(T1, S1, in.vL).x;
+  let R = textureSample(T1, S1, in.vR).x;
+  let T = textureSample(T1, S1, in.vT).x;
+  let B = textureSample(T1, S1, in.vB).x;
+  let C = textureSample(T1, S1, in.vUv).x;
+  var force = 0.5 * vec2<f32>(abs(T) - abs(B), abs(R) - abs(L));
+  force /= length(force) + 0.0001;
+  force *= U.curl * C;
+  force.y *= -1.0;
+  var velocity = textureSample(T0, S0, in.vUv).xy;
+  velocity += force * U.dt;
+  velocity = min(max(velocity, vec2<f32>(-1000.0)), vec2<f32>(1000.0));
+  return vec4<f32>(velocity, 0.0, 1.0);
+}`
+    ),
+    pressure: P(
+      [],
+      3,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+@group(0) @binding(5) var T2: texture_2d<f32>;
+@group(0) @binding(6) var S2: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let obsC = textureSample(T2, S2, in.vUv).x;
+  let C = textureSample(T0, S0, in.vUv).x;
+  let pL = textureSample(T0, S0, in.vL).x;
+  let pR = textureSample(T0, S0, in.vR).x;
+  let pT = textureSample(T0, S0, in.vT).x;
+  let pB = textureSample(T0, S0, in.vB).x;
+  let oL = textureSample(T2, S2, in.vL).x;
+  let oR = textureSample(T2, S2, in.vR).x;
+  let oT = textureSample(T2, S2, in.vT).x;
+  let oB = textureSample(T2, S2, in.vB).x;
+  let divergence = textureSample(T1, S1, in.vUv).x;
+  if (obsC > 0.5) {
+    return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+  }
+  var L = pL;
+  if (oL > 0.5) { L = C; }
+  var R = pR;
+  if (oR > 0.5) { R = C; }
+  var T = pT;
+  if (oT > 0.5) { T = C; }
+  var B = pB;
+  if (oB > 0.5) { B = C; }
+  let pressure = (L + R + B + T - divergence) * 0.25;
+  return vec4<f32>(pressure, 0.0, 0.0, 1.0);
+}`
+    ),
+    gradientSubtract: P(
+      [],
+      3,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+@group(0) @binding(5) var T2: texture_2d<f32>;
+@group(0) @binding(6) var S2: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let obsC = textureSample(T2, S2, in.vUv).x;
+  let C = textureSample(T0, S0, in.vUv).x;
+  let pL = textureSample(T0, S0, in.vL).x;
+  let pR = textureSample(T0, S0, in.vR).x;
+  let pT = textureSample(T0, S0, in.vT).x;
+  let pB = textureSample(T0, S0, in.vB).x;
+  let oL = textureSample(T2, S2, in.vL).x;
+  let oR = textureSample(T2, S2, in.vR).x;
+  let oT = textureSample(T2, S2, in.vT).x;
+  let oB = textureSample(T2, S2, in.vB).x;
+  var velocity = textureSample(T1, S1, in.vUv).xy;
+  if (obsC > 0.5) {
+    return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+  }
+  var L = pL;
+  if (oL > 0.5) { L = C; }
+  var R = pR;
+  if (oR > 0.5) { R = C; }
+  var T = pT;
+  if (oT > 0.5) { T = C; }
+  var B = pB;
+  if (oB > 0.5) { B = C; }
+  velocity -= vec2<f32>(R - L, T - B);
+  return vec4<f32>(velocity, 0.0, 1.0);
+}`
+    ),
+    bloomPrefilter: P(
+      [
+        ["curve", "vec3"],
+        ["threshold", "f32"]
+      ],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var c = textureSample(T0, S0, in.vUv).rgb;
+  let br = max(c.r, max(c.g, c.b));
+  var rq = clamp(br - U.curve.x, 0.0, U.curve.y);
+  rq = U.curve.z * rq * rq;
+  c *= max(rq, br - U.threshold) / max(br, 0.0001);
+  return vec4<f32>(c, 1.0);
+}`
+    ),
+    bloomBlur: P(
+      [],
+      1,
+      /* wgsl */
+      `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  var sum = vec4<f32>(0.0);
+  sum += textureSample(T0, S0, in.vL);
+  sum += textureSample(T0, S0, in.vR);
+  sum += textureSample(T0, S0, in.vT);
+  sum += textureSample(T0, S0, in.vB);
+  sum *= 0.25;
+  return sum;
+}`
+    )
+  };
+  WGSL_PASSES.display = P(
+    [
+      ["uDyeTexelSize", "vec2"],
+      ["uVelTexelSize", "vec2"],
+      ["aspectRatio", "f32"],
+      ["uTime", "f32"],
+      ["uDomainWarp", "f32"],
+      ["uShowObstacles", "f32"],
+      ["uSmokeAmount", "f32"],
+      ["uSmokeSelfShadow", "f32"],
+      ["uSmokeWispyness", "f32"],
+      ["uSmokeSoftness", "f32"],
+      ["uContourGlow", "f32"],
+      ["uIridescence", "f32"],
+      ["uIridescenceScale", "f32"],
+      ["uSpecular", "f32"],
+      ["uSpecularPower", "f32"],
+      ["uRelief", "f32"],
+      ["uFresnel", "f32"],
+      ["uSubsurface", "f32"],
+      ["uEdgeCrispness", "f32"],
+      ["uCollisionCrestGlow", "f32"],
+      ["uAntiWashout", "f32"],
+      ["uLightAngle", "f32"],
+      ["uLightElevation", "f32"],
+      ["uChromatic", "f32"],
+      ["uBloomIntensity", "f32"],
+      ["uHueShift", "f32"],
+      ["uHueOffset", "f32"],
+      ["uSaturation", "f32"],
+      ["uContrast", "f32"],
+      ["uExposure", "f32"],
+      ["uGamma", "f32"],
+      ["uInvert", "f32"],
+      ["uSolarize", "f32"],
+      ["uGrain", "f32"],
+      ["uVignette", "f32"],
+      ["uKaleidoscope", "f32"],
+      ["uKaleidoscopeAngle", "f32"],
+      ["uKaleidoscopeZoom", "f32"],
+      ["uKaleidoscopeOffset", "vec2"],
+      ["uRippleAmount", "f32"],
+      ["uRippleFreq", "f32"],
+      ["uRippleSpeed", "f32"],
+      ["uTunnelWarp", "f32"],
+      ["uPaletteMode", "f32"],
+      ["uToneMapping", "f32"],
+      ["uPaletteFreq", "f32"],
+      ["uWrapBorders", "f32"],
+      ["uPalette0", "vec3"],
+      ["uPalette1", "vec3"],
+      ["uPalette2", "vec3"],
+      ["uPalette3", "vec3"],
+      ["uBgColor", "vec3"]
+    ],
+    5,
+    /* wgsl */
+    `
+@group(0) @binding(1) var T0: texture_2d<f32>;
+@group(0) @binding(2) var S0: sampler;
+@group(0) @binding(3) var T1: texture_2d<f32>;
+@group(0) @binding(4) var S1: sampler;
+@group(0) @binding(5) var T2: texture_2d<f32>;
+@group(0) @binding(6) var S2: sampler;
+@group(0) @binding(7) var T3: texture_2d<f32>;
+@group(0) @binding(8) var S3: sampler;
+@group(0) @binding(9) var T4: texture_2d<f32>;
+@group(0) @binding(10) var S4: sampler;
+fn hash12(p: vec2<f32>) -> f32 {
+  var p3 = fract(vec3<f32>(p.x, p.y, p.x) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+fn smokeNoise2(p: vec2<f32>) -> f32 {
+  let i = floor(p);
+  let f0 = fract(p);
+  let f = f0 * f0 * (3.0 - 2.0 * f0);
+  let a = hash12(i);
+  let b = hash12(i + vec2<f32>(1.0, 0.0));
+  let c = hash12(i + vec2<f32>(0.0, 1.0));
+  let d = hash12(i + vec2<f32>(1.0, 1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+fn smokeFbm(p: vec2<f32>) -> f32 {
+  var v = 0.0;
+  v += 0.65 * smokeNoise2(p);
+  v += 0.35 * smokeNoise2(p * 2.13 + vec2<f32>(11.7, 5.3));
+  return v;
+}
+fn spectralCosine(t: f32) -> vec3<f32> {
+  return 0.5 + 0.5 * cos(6.28318 * (t + vec3<f32>(0.0, 0.33, 0.67)));
+}
+fn samplePalette(t: f32) -> vec3<f32> {
+  let x = fract(t) * 4.0;
+  if (x < 1.0) { return mix(U.uPalette0, U.uPalette1, smoothstep(0.0, 1.0, x)); }
+  if (x < 2.0) { return mix(U.uPalette1, U.uPalette2, smoothstep(0.0, 1.0, x - 1.0)); }
+  if (x < 3.0) { return mix(U.uPalette2, U.uPalette3, smoothstep(0.0, 1.0, x - 2.0)); }
+  return mix(U.uPalette3, U.uPalette0, smoothstep(0.0, 1.0, x - 3.0));
+}
+fn wrapOrClamp(uv: vec2<f32>) -> vec2<f32> {
+  if (U.uWrapBorders > 0.5) { return fract(uv); }
+  return clamp(uv, vec2<f32>(0.0005), vec2<f32>(0.9995));
+}
+fn cubicWeights(v: f32) -> vec4<f32> {
+  let n = vec4<f32>(1.0, 2.0, 3.0, 4.0) - v;
+  let s = n * n * n;
+  let x = s.x;
+  let y = s.y - 4.0 * s.x;
+  let z = s.z - 4.0 * s.y + 6.0 * s.x;
+  let w = 6.0 - x - y - z;
+  return vec4<f32>(x, y, z, w) * (1.0 / 6.0);
+}
+fn sampleDyeBicubic(uv: vec2<f32>) -> vec3<f32> {
+  let texSize = 1.0 / U.uDyeTexelSize;
+  var tc = uv * texSize - 0.5;
+  let fxy = fract(tc);
+  tc -= fxy;
+  let xcubic = cubicWeights(fxy.x);
+  let ycubic = cubicWeights(fxy.y);
+  let c = tc.xxyy + vec4<f32>(-0.5, 1.5, -0.5, 1.5);
+  let s = vec4<f32>(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+  var offset = c + vec4<f32>(xcubic.yw, ycubic.yw) / s;
+  offset *= U.uDyeTexelSize.xxyy;
+  let sample0 = textureSample(T0, S0, wrapOrClamp(offset.xz)).rgb;
+  let sample1 = textureSample(T0, S0, wrapOrClamp(offset.yz)).rgb;
+  let sample2 = textureSample(T0, S0, wrapOrClamp(offset.xw)).rgb;
+  let sample3 = textureSample(T0, S0, wrapOrClamp(offset.yw)).rgb;
+  let sx = s.x / (s.x + s.y);
+  let sy = s.z / (s.z + s.w);
+  return max(mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy), vec3<f32>(0.0));
+}
+fn sampleVelBicubic(uv: vec2<f32>) -> vec2<f32> {
+  let texSize = 1.0 / U.uVelTexelSize;
+  var tc = uv * texSize - 0.5;
+  let fxy = fract(tc);
+  tc -= fxy;
+  let xcubic = cubicWeights(fxy.x);
+  let ycubic = cubicWeights(fxy.y);
+  let c = tc.xxyy + vec4<f32>(-0.5, 1.5, -0.5, 1.5);
+  let s = vec4<f32>(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+  var offset = c + vec4<f32>(xcubic.yw, ycubic.yw) / s;
+  offset *= U.uVelTexelSize.xxyy;
+  let sample0 = textureSample(T1, S1, wrapOrClamp(offset.xz)).xy;
+  let sample1 = textureSample(T1, S1, wrapOrClamp(offset.yz)).xy;
+  let sample2 = textureSample(T1, S1, wrapOrClamp(offset.xw)).xy;
+  let sample3 = textureSample(T1, S1, wrapOrClamp(offset.yw)).xy;
+  let sx = s.x / (s.x + s.y);
+  let sy = s.z / (s.z + s.w);
+  return mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
+}
+fn sampleDyeCrisp(uv: vec2<f32>) -> vec3<f32> {
+  let center = sampleDyeBicubic(uv);
+  if (U.uEdgeCrispness <= 0.005) { return center; }
+  let d = U.uDyeTexelSize * 0.9;
+  let n = textureSample(T0, S0, wrapOrClamp(uv + vec2<f32>(0.0, d.y))).rgb;
+  let s2 = textureSample(T0, S0, wrapOrClamp(uv - vec2<f32>(0.0, d.y))).rgb;
+  let e = textureSample(T0, S0, wrapOrClamp(uv + vec2<f32>(d.x, 0.0))).rgb;
+  let w = textureSample(T0, S0, wrapOrClamp(uv - vec2<f32>(d.x, 0.0))).rgb;
+  let nw = textureSample(T0, S0, wrapOrClamp(uv + vec2<f32>(-d.x, d.y))).rgb;
+  let ne = textureSample(T0, S0, wrapOrClamp(uv + vec2<f32>(d.x, d.y))).rgb;
+  let sw = textureSample(T0, S0, wrapOrClamp(uv + vec2<f32>(-d.x, -d.y))).rgb;
+  let se = textureSample(T0, S0, wrapOrClamp(uv + vec2<f32>(d.x, -d.y))).rgb;
+  let localMin = min(center, min(min(min(n, s2), min(e, w)), min(min(nw, ne), min(sw, se))));
+  let localMax = max(center, max(max(max(n, s2), max(e, w)), max(max(nw, ne), max(sw, se))));
+  let blur = 0.20 * (n + s2 + e + w) + 0.05 * (nw + ne + sw + se);
+  let diff = center - blur;
+  let amp = clamp(min(localMin, vec3<f32>(2.0) - localMax) / max(localMax, vec3<f32>(0.001)), vec3<f32>(0.0), vec3<f32>(1.0));
+  let sharpened = center + diff * (U.uEdgeCrispness * 0.62) * (0.45 + 0.55 * amp);
+  return max(clamp(sharpened, localMin * 0.96, localMax * 1.04), vec3<f32>(0.0));
+}
+fn applyGeometry(uv0: vec2<f32>) -> vec2<f32> {
+  let centerPoint = vec2<f32>(0.5) + U.uKaleidoscopeOffset;
+  var centered = uv0 - centerPoint;
+  centered.x *= U.aspectRatio;
+  if (U.uRippleAmount > 0.001) {
+    let r = length(centered);
+    let wave = sin(r * U.uRippleFreq - U.uTime * 2.4 * U.uRippleSpeed) * U.uRippleAmount * 0.024;
+    centered += normalize(centered + vec2<f32>(0.0001)) * wave;
+  }
+  if (abs(U.uTunnelWarp) > 0.001) {
+    let r = max(length(centered), 0.0001);
+    let power = clamp(1.0 + U.uTunnelWarp * 0.6, 0.2, 3.2);
+    let warpedR = pow(r * 2.0, power) * 0.5;
+    centered = centered * (warpedR / r);
+  }
+  centered /= max(U.uKaleidoscopeZoom, 0.15);
+  if (U.uKaleidoscope >= 1.5) {
+    let r = length(centered);
+    var a = atan2(centered.y, centered.x) + U.uKaleidoscopeAngle;
+    let segAngle = 6.2831853 / U.uKaleidoscope;
+    a = a - segAngle * floor(a / segAngle);
+    a = abs(a - segAngle * 0.5);
+    centered = vec2<f32>(cos(a), sin(a)) * r;
+  }
+  centered.x /= U.aspectRatio;
+  return wrapOrClamp(centered + centerPoint);
+}
+fn adjustSaturation(color: vec3<f32>, sat: f32) -> vec3<f32> {
+  let luma = dot(color, vec3<f32>(0.2126, 0.7152, 0.0722));
+  return mix(vec3<f32>(luma), color, sat);
+}
+fn toneMapACES(x: vec3<f32>) -> vec3<f32> {
+  let v = max(x, vec3<f32>(0.0));
+  return clamp((v * (2.51 * v + 0.03)) / (v * (2.43 * v + 0.59) + 0.14), vec3<f32>(0.0), vec3<f32>(1.0));
+}
+fn toneMapAgX(x: vec3<f32>) -> vec3<f32> {
+  let v = max(x, vec3<f32>(0.0));
+  let luma = dot(v, vec3<f32>(0.2126, 0.7152, 0.0722));
+  let soft = mix(v, vec3<f32>(luma), clamp((luma - 0.85) * 0.28, 0.0, 0.52));
+  return clamp(soft / (0.85 + soft) * 1.12, vec3<f32>(0.0), vec3<f32>(1.0));
+}
+fn dyeHeightSmooth(uv: vec2<f32>) -> f32 {
+  let d = sampleDyeBicubic(uv);
+  let raw = dot(d, vec3<f32>(0.299, 0.587, 0.114));
+  return raw / (1.0 + 0.4 * raw);
+}
+fn studioReflection(reflDir: vec3<f32>, angle: f32, elev: f32) -> vec3<f32> {
+  let keyBand = smoothstep(0.15, 0.88, dot(reflDir, normalize(vec3<f32>(cos(angle), sin(angle), max(elev, 0.12)))));
+  let softFill = smoothstep(-0.2, 0.75, reflDir.y);
+  return vec3<f32>(0.06, 0.07, 0.1) + vec3<f32>(0.45, 0.48, 0.55) * keyBand + vec3<f32>(0.14, 0.16, 0.2) * softFill;
+}
+@fragment fn fs(in: VSOut) -> @location(0) vec4<f32> {
+  let uv = applyGeometry(in.vUv);
+  let vel = sampleVelBicubic(uv);
+  let curlVal = textureSample(T2, S2, uv).x;
+  let smokeBlend = clamp(U.uSmokeAmount, 0.0, 1.0);
+  var smokeFbmVal = 0.5;
+  let warpOffset = vel * U.texelSize * U.uDomainWarp * 24.0;
+  var warpedUv = wrapOrClamp(uv - warpOffset);
+  if (smokeBlend > 0.005) {
+    let noiseCoord = warpedUv * vec2<f32>(U.aspectRatio, 1.0) * 6.5 - vel * 0.04;
+    let nX = smokeFbm(noiseCoord + vec2<f32>(0.0, -U.uTime * 0.24));
+    let nY = smokeFbm(noiseCoord + vec2<f32>(17.3, -U.uTime * 0.19));
+    smokeFbmVal = nX;
+    let wispDisp = vec2<f32>(nX - 0.5, nY - 0.5) * U.texelSize * (10.0 * smokeBlend * U.uSmokeWispyness);
+    warpedUv = wrapOrClamp(warpedUv + wispDisp);
+  }
+  var dispDir = vel * U.texelSize * 8.5 + vec2<f32>(U.texelSize.x * 1.5, U.texelSize.y * 1.0);
+  dispDir *= U.uChromatic;
+  var rawDye: vec3<f32>;
+  if (abs(U.uChromatic) <= 0.005) {
+    rawDye = max(sampleDyeCrisp(warpedUv), vec3<f32>(0.0));
+  } else {
+    let r = sampleDyeCrisp(warpedUv + dispDir).r;
+    let g = sampleDyeCrisp(warpedUv).g;
+    let b = sampleDyeCrisp(warpedUv - dispDir).b;
+    rawDye = max(vec3<f32>(r, g, b), vec3<f32>(0.0));
+  }
+  if (U.uAntiWashout > 0.005) {
+    let maxC = max(rawDye.r, max(rawDye.g, rawDye.b));
+    let minC = min(rawDye.r, min(rawDye.g, rawDye.b));
+    var pure = rawDye - vec3<f32>(minC * 0.42 * U.uAntiWashout);
+    pure = max(pure, vec3<f32>(0.0)) / (1.0 + maxC * 0.35 * U.uAntiWashout) * (1.0 + 0.25 * U.uAntiWashout);
+    rawDye = mix(rawDye, pure, U.uAntiWashout);
+  }
+  let density = length(rawDye);
+  let luma = dot(rawDye, vec3<f32>(0.299, 0.587, 0.114));
+  let e = U.uDyeTexelSize * 1.5;
+  let tl = dyeHeightSmooth(warpedUv + vec2<f32>(-e.x, e.y));
+  let tc = dyeHeightSmooth(warpedUv + vec2<f32>(0.0, e.y));
+  let tr = dyeHeightSmooth(warpedUv + vec2<f32>(e.x, e.y));
+  let ml = dyeHeightSmooth(warpedUv + vec2<f32>(-e.x, 0.0));
+  let mr = dyeHeightSmooth(warpedUv + vec2<f32>(e.x, 0.0));
+  let bl = dyeHeightSmooth(warpedUv + vec2<f32>(-e.x, -e.y));
+  let bc = dyeHeightSmooth(warpedUv + vec2<f32>(0.0, -e.y));
+  let br = dyeHeightSmooth(warpedUv + vec2<f32>(e.x, -e.y));
+  let dX = (tr + 2.0 * mr + br) - (tl + 2.0 * ml + bl);
+  let dY = (tl + 2.0 * tc + tr) - (bl + 2.0 * bc + br);
+  let lightZ = clamp(U.uLightElevation, 0.08, 2.0);
+  let normal = normalize(vec3<f32>(-dX * U.uRelief * 0.8, -dY * U.uRelief * 0.8, 0.38));
+  let lightDir1 = normalize(vec3<f32>(cos(U.uLightAngle) * 0.75, sin(U.uLightAngle) * 0.75, lightZ));
+  let lightDir2 = normalize(vec3<f32>(-cos(U.uLightAngle) * 0.55, -sin(U.uLightAngle) * 0.5, lightZ * 0.92));
+  let viewDir = vec3<f32>(0.0, 0.0, 1.0);
+  let half1 = normalize(lightDir1 + viewDir);
+  let half2 = normalize(lightDir2 + viewDir);
+  let NdotH1 = max(dot(normal, half1), 0.0);
+  let NdotH2 = max(dot(normal, half2), 0.0);
+  let spec1 = pow(NdotH1, max(U.uSpecularPower, 4.0));
+  let spec2 = pow(NdotH2, max(U.uSpecularPower * 0.55, 4.0));
+  let NdotV = max(dot(normal, viewDir), 0.0);
+  let schlickFresnel = 0.04 + 0.96 * pow(1.0 - NdotV, 4.2);
+  let totalHue = U.uHueShift + U.uHueOffset;
+  let filmThickness = luma * U.uIridescenceScale + abs(curlVal) * 0.2 + length(vel) * 0.025;
+  let phase = filmThickness + totalHue + U.uTime * 0.06;
+  let thinFilm = spectralCosine(phase);
+  var color = rawDye;
+  if (U.uPaletteMode < 0.5) {
+    let palT = (luma * 0.72 + abs(curlVal) * 0.16) * U.uPaletteFreq + totalHue;
+    let mapped = samplePalette(palT);
+    let mask = smoothstep(0.012, 0.55, density);
+    color = mix(rawDye * 0.35, mapped * (0.58 + luma * 0.82), mask);
+  } else if (U.uPaletteMode > 1.5) {
+    let shiftTint = spectralCosine(phase + 0.15);
+    color = mix(rawDye, rawDye * (0.48 + 1.3 * shiftTint), 0.52 * clamp(U.uIridescence, 0.0, 1.5));
+  } else {
+    let rainbow = spectralCosine((luma * 0.88 + curlVal * 0.22) * U.uPaletteFreq + totalHue);
+    color = rainbow * smoothstep(0.012, 0.5, density) * (0.65 + 0.72 * luma);
+  }
+  let gradMag = length(vec2<f32>(dX, dY));
+  let fluidPresence = smoothstep(0.01, 0.16, density);
+  let liquidShadeScale = 1.0 - smokeBlend * 0.92;
+  let opticalDepth = clamp(density * 1.15, 0.0, 3.0);
+  let subsurfaceScatter = color * exp(-opticalDepth * 0.35) * 0.45 * U.uSubsurface;
+  color = mix(
+    color,
+    color * (0.85 + 0.3 * NdotV) + subsurfaceScatter,
+    clamp(U.uSubsurface * 0.65, 0.0, 1.0) * fluidPresence * mix(1.0, 0.35, smokeBlend)
+  );
+  let ridge = clamp(gradMag * 0.9 + schlickFresnel * U.uFresnel, 0.0, 1.4);
+  color += thinFilm * ridge * U.uIridescence * 0.38 * fluidPresence * liquidShadeScale;
+  if (U.uCollisionCrestGlow > 0.005) {
+    let shearCrest = clamp(abs(curlVal) * 0.28 + length(vel) * 0.01, 0.0, 1.2) * clamp(gradMag * 1.4, 0.0, 1.2);
+    color += mix(vec3<f32>(1.0), thinFilm, 0.6) * shearCrest * U.uCollisionCrestGlow * 0.45 * fluidPresence;
+  }
+  if (U.uContourGlow > 0.005) {
+    let contour = smoothstep(0.18, 0.92, gradMag * 1.15);
+    let contourCol = mix(thinFilm * 1.25, color * 1.6 + 0.35, 0.42);
+    color += contourCol * contour * U.uContourGlow * 0.72 * fluidPresence;
+  }
+  let reflDir = reflect(-viewDir, normal);
+  let envRefl = studioReflection(reflDir, U.uLightAngle, lightZ);
+  color += envRefl * schlickFresnel * U.uSubsurface * 0.42 * fluidPresence * liquidShadeScale;
+  color += thinFilm * schlickFresnel * U.uFresnel * 0.24 * fluidPresence * liquidShadeScale;
+  let specTint = mix(vec3<f32>(1.0), thinFilm, 0.35);
+  color += (spec1 * 0.88 + spec2 * 0.4) * specTint * U.uSpecular * fluidPresence * liquidShadeScale;
+  let diffuse = 0.72 + 0.28 * max(dot(normal, lightDir1), 0.0);
+  color *= mix(1.0, diffuse, clamp(U.uRelief * 0.45, 0.0, 0.8) * fluidPresence * liquidShadeScale);
+  var wispOpacity = 1.0;
+  if (smokeBlend > 0.005) {
+    let shadowStep = lightDir1.xy * U.uDyeTexelSize * 9.0;
+    let occ1 = dot(textureSample(T0, S0, wrapOrClamp(warpedUv + shadowStep * 0.7)).rgb, vec3<f32>(0.299, 0.587, 0.114));
+    let occ2 = dot(textureSample(T0, S0, wrapOrClamp(warpedUv + shadowStep * 1.8)).rgb, vec3<f32>(0.299, 0.587, 0.114));
+    let occ3 = dot(textureSample(T0, S0, wrapOrClamp(warpedUv + shadowStep * 3.3)).rgb, vec3<f32>(0.299, 0.587, 0.114));
+    let occDensity = occ1 * 0.45 + occ2 * 0.35 + occ3 * 0.20;
+    let selfShadow = exp(-occDensity * U.uSmokeSelfShadow * 1.85);
+    let billowLight = 0.55 + 0.45 * max(dot(normal, lightDir1), 0.0);
+    let powderTerm = 1.0 - exp(-density * 2.4);
+    let silverLining = pow(clamp(1.0 - occDensity * 0.85, 0.0, 1.0), 2.2) *
+      smoothstep(0.02, 0.28, density) * (0.25 + 0.55 * max(dot(normal, lightDir1), 0.0));
+    var smokeShaded = color * mix(0.24, 1.18, selfShadow * billowLight) * (0.72 + 0.42 * powderTerm);
+    smokeShaded += mix(vec3<f32>(1.0), color, 0.45) * silverLining * 0.34 * U.uSmokeSelfShadow;
+    color = mix(color, smokeShaded, smokeBlend);
+    let edgeZone = 1.0 - smoothstep(0.14, 0.65, density);
+    let wispMod = clamp(0.68 + (smokeFbmVal - 0.38) * 1.15, 0.22, 1.25);
+    wispOpacity = mix(1.0, wispMod, smokeBlend * clamp(U.uSmokeWispyness * 0.75, 0.0, 1.0) * edgeZone);
+  }
+  let bloom = textureSample(T3, S3, warpedUv).rgb * U.uBloomIntensity;
+  color += bloom;
+  let liquidBgMix = smoothstep(0.0, 0.15, density + length(bloom) * 0.55);
+  let smokeTrans = 1.0 - exp(-pow(max(density + length(bloom) * 0.42, 0.0), 0.92) * (2.6 / max(U.uSmokeSoftness, 0.25)));
+  let bgMix = mix(liquidBgMix, clamp(smokeTrans * wispOpacity, 0.0, 1.0), smokeBlend);
+  color = mix(U.uBgColor, color + U.uBgColor * 0.12, bgMix);
+  let obsC0 = textureSample(T4, S4, uv).x;
+  let obsL0 = textureSample(T4, S4, uv - vec2<f32>(U.uVelTexelSize.x * 1.5, 0.0)).x;
+  let obsR0 = textureSample(T4, S4, uv + vec2<f32>(U.uVelTexelSize.x * 1.5, 0.0)).x;
+  let obsT0 = textureSample(T4, S4, uv + vec2<f32>(0.0, U.uVelTexelSize.y * 1.5)).x;
+  let obsB0 = textureSample(T4, S4, uv - vec2<f32>(0.0, U.uVelTexelSize.y * 1.5)).x;
+  if (U.uShowObstacles > 0.5) {
+    let obsC = obsC0;
+    if (obsC > 0.05) {
+      let obsL = obsL0;
+      let obsR = obsR0;
+      let obsT = obsT0;
+      let obsB = obsB0;
+      let rim = clamp((1.0 - min(min(obsL, obsR), min(obsT, obsB))) * obsC * 2.0, 0.0, 1.0);
+      let glassCore = mix(U.uBgColor * 0.6, vec3<f32>(0.04, 0.05, 0.08), 0.78) + color * 0.14;
+      let obsCol = glassCore + mix(vec3<f32>(0.55, 0.65, 0.8), color, 0.4) * rim * 0.68;
+      color = mix(color, obsCol, smoothstep(0.15, 0.75, obsC));
+    }
+  }
+  color *= U.uExposure;
+  color = adjustSaturation(color, U.uSaturation);
+  color = (color - 0.5) * U.uContrast + 0.5;
+  color = max(color, vec3<f32>(0.0));
+  if (U.uToneMapping > 1.5) {
+    color = toneMapAgX(color);
+  } else if (U.uToneMapping > 0.5) {
+    color = toneMapACES(color);
+  } else {
+    color = color / (1.0 + 0.18 * dot(color, vec3<f32>(0.2126, 0.7152, 0.0722)));
+    color = clamp(color, vec3<f32>(0.0), vec3<f32>(1.0));
+  }
+  if (U.uSolarize > 0.001) {
+    let sol = 1.0 - abs(color * 2.0 - 1.0);
+    color = mix(color, sol, clamp(U.uSolarize, 0.0, 1.0));
+  }
+  if (U.uInvert > 0.5) {
+    color = 1.0 - color;
+  }
+  color = pow(clamp(color, vec3<f32>(0.0), vec3<f32>(1.0)), vec3<f32>(max(U.uGamma, 0.3)));
+  if (U.uGrain > 0.001) {
+    let n = hash12(in.vUv * vec2<f32>(1280.0, 720.0) + fract(U.uTime * 17.3)) - 0.5;
+    color += n * U.uGrain;
+  }
+  if (U.uVignette > 0.001) {
+    let vc = in.vUv - 0.5;
+    let vig = smoothstep(0.85, 0.2, dot(vc, vc) * (1.2 + U.uVignette * 1.4));
+    color *= mix(1.0, vig, clamp(U.uVignette, 0.0, 1.0));
+  }
+  return vec4<f32>(clamp(color, vec3<f32>(0.0), vec3<f32>(1.0)), 1.0);
+}`
+  );
+
+  // ts_src_gpu/engine/fluidEngineGPU.ts
+  function hexToRgbNormalized2(hex) {
+    const clean = hex.replace("#", "");
+    const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean.padEnd(6, "0").slice(0, 6);
+    const num = parseInt(full, 16);
+    return [(num >> 16 & 255) / 255, (num >> 8 & 255) / 255, (num & 255) / 255];
+  }
+  function hsvToRgb2(h, s, v) {
+    const i = Math.floor(h * 6);
+    const f = h * 6 - i;
+    const p = v * (1 - s);
+    const q = v * (1 - f * s);
+    const t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+      case 0:
+        return [v, t, p];
+      case 1:
+        return [q, v, p];
+      case 2:
+        return [p, v, t];
+      case 3:
+        return [p, q, v];
+      case 4:
+        return [t, p, v];
+      default:
+        return [v, p, q];
+    }
+  }
+  function evaluateLfo2(lfo, time) {
+    if (lfo.target === "none" || lfo.depth <= 1e-3) return 0;
+    const phase = time * lfo.rate % 1;
+    let wave = 0;
+    if (lfo.waveform === "sine") {
+      wave = Math.sin(phase * Math.PI * 2);
+    } else if (lfo.waveform === "triangle") {
+      wave = 1 - 4 * Math.abs(Math.round(phase - 0.25) - (phase - 0.25));
+    } else {
+      wave = phase < 0.5 ? 1 : -1;
+    }
+    return wave * lfo.depth;
+  }
+  var KIND_ALIGN = { f32: 4, vec2: 8, vec3: 16 };
+  var KIND_SIZE = { f32: 4, vec2: 8, vec3: 12 };
+  var KIND_WGSL = {
+    f32: "f32",
+    vec2: "vec2<f32>",
+    vec3: "vec3<f32>"
+  };
+  function layoutUniforms(def) {
+    const all = [["texelSize", "vec2"], ...def.uniforms];
+    let offset = 0;
+    const fields = [];
+    for (const [name, kind] of all) {
+      const align = KIND_ALIGN[kind];
+      offset = Math.ceil(offset / align) * align;
+      fields.push({ name, kind, offset });
+      offset += KIND_SIZE[kind];
+    }
+    const size = Math.max(16, Math.ceil(offset / 16) * 16);
+    const structSrc = "struct Uniforms {\n" + fields.map((f) => `  ${f.name}: ${KIND_WGSL[f.kind]},`).join("\n") + "\n};\n";
+    return { fields, size, structSrc };
+  }
+  var VERT_SRC = `
+struct VSOut {
+  @builtin(position) pos: vec4<f32>,
+  @location(0) vUv: vec2<f32>,
+  @location(1) vL: vec2<f32>,
+  @location(2) vR: vec2<f32>,
+  @location(3) vT: vec2<f32>,
+  @location(4) vB: vec2<f32>,
+};
+@vertex fn vs(@builtin(vertex_index) i: u32) -> VSOut {
+  var pts = array<vec2<f32>, 3>(vec2<f32>(-1.0, -1.0), vec2<f32>(3.0, -1.0), vec2<f32>(-1.0, 3.0));
+  let xy = pts[i];
+  var o: VSOut;
+  o.pos = vec4<f32>(xy, 0.0, 1.0);
+  // WebGPU texture row 0 is the framebuffer TOP row, so v must grow with the
+  // framebuffer row (downward) for read/write consistency within a pass:
+  // the fragment writing texture row j must sample at v = (j + 0.5) / H.
+  // (GL-style v = xy.y * 0.5 + 0.5 would sample the vertically mirrored
+  // texel, flipping every field once per pass and breaking coupled passes.)
+  o.vUv = vec2<f32>(xy.x * 0.5 + 0.5, 0.5 - xy.y * 0.5);
+  o.vL = o.vUv - vec2<f32>(U.texelSize.x, 0.0);
+  o.vR = o.vUv + vec2<f32>(U.texelSize.x, 0.0);
+  o.vT = o.vUv + vec2<f32>(0.0, U.texelSize.y);
+  o.vB = o.vUv - vec2<f32>(0.0, U.texelSize.y);
+  return o;
+}
+`;
+  var RT = class {
+    texture;
+    view;
+    width;
+    height;
+    texelSizeX;
+    texelSizeY;
+    format;
+    filter;
+    wrapGroup;
+    constructor(device, w, h, format, filter, wrapGroup) {
+      this.width = w;
+      this.height = h;
+      this.texelSizeX = 1 / w;
+      this.texelSizeY = 1 / h;
+      this.format = format;
+      this.filter = filter;
+      this.wrapGroup = wrapGroup;
+      this.texture = device.createTexture({
+        size: [w, h],
+        format,
+        usage: 1 | 16 | 4
+        // COPY_SRC | TEXTURE_BINDING | RENDER_ATTACHMENT
+      });
+      this.view = this.texture.createView();
+    }
+    destroy() {
+      this.texture?.destroy();
+    }
+  };
+  var DoubleRT = class {
+    width;
+    height;
+    texelSizeX;
+    texelSizeY;
+    a;
+    b;
+    constructor(a, b) {
+      this.a = a;
+      this.b = b;
+      this.width = a.width;
+      this.height = a.height;
+      this.texelSizeX = a.texelSizeX;
+      this.texelSizeY = a.texelSizeY;
+    }
+    get read() {
+      return this.a;
+    }
+    set read(v) {
+      this.a = v;
+    }
+    get write() {
+      return this.b;
+    }
+    set write(v) {
+      this.b = v;
+    }
+    swap() {
+      const t = this.a;
+      this.a = this.b;
+      this.b = t;
+    }
+    destroy() {
+      this.a.destroy();
+      this.b.destroy();
+    }
+  };
+  var Pass = class {
+    def;
+    device;
+    module;
+    bgl;
+    pipelineLayout;
+    pipelines = /* @__PURE__ */ new Map();
+    fields;
+    uniformSize;
+    constructor(device, def) {
+      this.device = device;
+      this.def = def;
+      const { fields, size, structSrc } = layoutUniforms(def);
+      this.fields = fields;
+      this.uniformSize = size;
+      const code = structSrc + "@group(0) @binding(0) var<uniform> U: Uniforms;\n" + VERT_SRC + def.frag;
+      this.module = device.createShaderModule({ code });
+      const entries = [
+        {
+          binding: 0,
+          visibility: 1 | 2,
+          // VERTEX | FRAGMENT
+          buffer: { type: "uniform", hasDynamicOffset: true }
+        }
+      ];
+      for (let i = 0; i < def.textures; i++) {
+        entries.push({
+          binding: 1 + i * 2,
+          visibility: 2,
+          // FRAGMENT
+          texture: { sampleType: "float", viewDimension: "2d" }
+        });
+        entries.push({
+          binding: 2 + i * 2,
+          visibility: 2,
+          sampler: { type: "filtering" }
+        });
+      }
+      this.bgl = device.createBindGroupLayout({ entries });
+      this.pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [this.bgl] });
+    }
+    pipelineFor(format, additive) {
+      const key = format + (additive ? "|add" : "");
+      let p = this.pipelines.get(key);
+      if (p) return p;
+      const target = { format };
+      if (additive) {
+        target.blend = {
+          color: { srcFactor: "one", dstFactor: "one", operation: "add" },
+          alpha: { srcFactor: "one", dstFactor: "one", operation: "add" }
+        };
+      }
+      p = this.device.createRenderPipeline({
+        layout: this.pipelineLayout,
+        vertex: { module: this.module, entryPoint: "vs" },
+        fragment: { module: this.module, entryPoint: "fs", targets: [target] },
+        primitive: { topology: "triangle-list" }
+      });
+      this.pipelines.set(key, p);
+      return p;
+    }
+    get bindGroupLayout() {
+      return this.bgl;
+    }
+  };
+  var FluidEngineGPU = class {
+    backend = "webgpu";
+    ready;
+    canvas;
+    params;
+    effectiveParams;
+    onContextLostCallback;
+    onContextRestoredCallback;
+    adapter = null;
+    device = null;
+    ctx = null;
+    canvasFormat = "bgra8unorm";
+    isReady = false;
+    destroyed = false;
+    passes = /* @__PURE__ */ new Map();
+    arena = null;
+    arenaSize = 0;
+    arenaCursor = 0;
+    arenaAlign = 256;
+    samplerCache = /* @__PURE__ */ new Map();
+    batch = null;
+    // GPUCommandEncoder
+    batchDepth = 0;
+    dye;
+    dyeTmpHat;
+    dyeTmpRev;
+    velocity;
+    velTmpHat;
+    velTmpRev;
+    divergence;
+    curlRT;
+    pressure;
+    obstacles;
+    bloom;
+    bloomFramebuffers = [];
+    maxTextureSize = 8192;
+    paused = false;
+    wantRunning = false;
+    rafId = null;
+    lastTime = 0;
+    elapsedTime = 0;
+    huePhase = 0;
+    kaleidoscopeAngle = 0;
+    pulseTimer = 0;
+    rng = null;
+    pointers = /* @__PURE__ */ new Map();
+    audioSampler;
+    currentAudioBands = {
+      bass: 0,
+      mid: 0,
+      treble: 0,
+      overall: 0,
+      beatDetected: false
+    };
+    lastSnapshotDataUrl = "";
+    offscreen = false;
+    displayRT = null;
+    /** Dev/test diagnostics: WebGPU validation errors + device-lost info. */
+    __gpuErrors = [];
+    __lostInfo = "";
+    setSeed(seed) {
+      let a = seed >>> 0 || 1;
+      this.rng = () => {
+        a |= 0;
+        a = a + 1831565813 | 0;
+        let x = a;
+        x = Math.imul(x ^ x >>> 15, x | 1);
+        x ^= x + Math.imul(x ^ x >>> 7, x | 61);
+        return ((x ^ x >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    rand() {
+      return this.rng ? this.rng() : Math.random();
+    }
+    constructor(canvas, initialParams, callbacks) {
+      this.canvas = canvas;
+      this.params = { ...initialParams };
+      this.effectiveParams = { ...initialParams };
+      this.onContextLostCallback = callbacks?.onContextLost;
+      this.onContextRestoredCallback = callbacks?.onContextRestored;
+      this.offscreen = Boolean(callbacks?.offscreen);
+      this.ready = this.init();
+    }
+    async init() {
+      const gpu = navigator.gpu;
+      if (!gpu) throw new Error("WebGPU is not available in this browser.");
+      this.adapter = await gpu.requestAdapter();
+      if (!this.adapter) throw new Error("WebGPU adapter not available.");
+      this.device = await this.adapter.requestDevice();
+      this.device.addEventListener("uncapturederror", (e) => {
+        this.__gpuErrors.push("uncaptured: " + (e?.error?.message || e));
+      });
+      this.device.lost.then((info) => {
+        this.__lostInfo = info?.message || "device lost";
+        if (!this.destroyed) this.onContextLostCallback?.();
+      });
+      this.maxTextureSize = Math.min(
+        8192,
+        this.device.limits.maxTextureDimension2D || 8192
+      );
+      this.arenaAlign = this.device.limits.minUniformBufferOffsetAlignment || 256;
+      this.ctx = this.canvas.getContext("webgpu");
+      if (!this.ctx) throw new Error("Could not create WebGPU canvas context.");
+      this.canvasFormat = gpu.getPreferredCanvasFormat();
+      this.ctx.configure({
+        device: this.device,
+        format: this.canvasFormat,
+        alphaMode: "opaque"
+      });
+      for (const [name, def] of Object.entries(WGSL_PASSES)) {
+        this.passes.set(name, new Pass(this.device, def));
+      }
+      this.arenaSize = 1 << 19;
+      this.arena = this.device.createBuffer({
+        size: this.arenaSize,
+        usage: 64 | 8
+        // UNIFORM | COPY_DST
+      });
+      this.isReady = true;
+      this.initFramebuffers();
+      this.seedInitialPattern();
+      this.flushBatch();
+      if (this.wantRunning) this.start();
+    }
+    /* ---------------- batching ---------------- */
+    encoder() {
+      if (!this.batch) {
+        this.batch = this.device.createCommandEncoder();
+      }
+      return this.batch;
+    }
+    flushBatch() {
+      if (this.batch) {
+        this.device.queue.submit([this.batch.finish()]);
+        this.batch = null;
+      }
+      this.arenaCursor = 0;
+    }
+    inBatch(fn) {
+      if (!this.isReady || this.destroyed) return;
+      const outermost = this.batchDepth === 0;
+      this.batchDepth++;
+      try {
+        fn();
+      } finally {
+        this.batchDepth--;
+        if (outermost) this.flushBatch();
+      }
+    }
+    samplerFor(rt) {
+      const wrap = rt.wrapGroup === "flow" && this.params.wrapBorders;
+      const key = rt.filter + "|" + (wrap ? "repeat" : "clamp");
+      let s = this.samplerCache.get(key);
+      if (!s) {
+        s = this.device.createSampler({
+          magFilter: rt.filter,
+          minFilter: rt.filter,
+          addressModeU: wrap ? "repeat" : "clamp-to-edge",
+          addressModeV: wrap ? "repeat" : "clamp-to-edge"
+        });
+        this.samplerCache.set(key, s);
+      }
+      return s;
+    }
+    allocUniform(pass) {
+      const stride = Math.ceil(pass.uniformSize / this.arenaAlign) * this.arenaAlign;
+      if (this.arenaCursor + stride > this.arenaSize) {
+        this.flushBatch();
+      }
+      const offset = this.arenaCursor;
+      this.arenaCursor += stride;
+      return offset;
+    }
+    /** Encode one fullscreen pass. `target` needs view+format. */
+    draw(passName, target, texelSize, values, textures, additive = false) {
+      const pass = this.passes.get(passName);
+      const offset = this.allocUniform(pass);
+      const enc = this.encoder();
+      const data = new Float32Array(pass.uniformSize / 4);
+      for (const f of pass.fields) {
+        const v = f.name === "texelSize" ? texelSize : values[f.name];
+        if (v === void 0) continue;
+        const base = f.offset / 4;
+        if (typeof v === "number") data[base] = v;
+        else {
+          data[base] = v[0];
+          data[base + 1] = v[1];
+          if (f.kind === "vec3") data[base + 2] = v[2];
+        }
+      }
+      this.device.queue.writeBuffer(this.arena, offset, data);
+      const entries = [
+        { binding: 0, resource: { buffer: this.arena, offset: 0, size: pass.uniformSize } }
+      ];
+      textures.forEach((rt, i) => {
+        entries.push({ binding: 1 + i * 2, resource: rt.view });
+        entries.push({ binding: 2 + i * 2, resource: this.samplerFor(rt) });
+      });
+      const bg = this.device.createBindGroup({ layout: pass.bindGroupLayout, entries });
+      const rp = enc.beginRenderPass({
+        colorAttachments: [
+          { view: target.view, loadOp: "load", storeOp: "store" }
+        ]
+      });
+      rp.setPipeline(pass.pipelineFor(target.format, additive));
+      rp.setBindGroup(0, bg, [offset]);
+      rp.draw(3);
+      rp.end();
+    }
+    /* ---------------- framebuffers ---------------- */
+    getResolution(resolution) {
+      let aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      if (aspectRatio < 1) aspectRatio = 1 / aspectRatio;
+      const min = Math.min(this.maxTextureSize, Math.round(resolution));
+      const max = Math.min(this.maxTextureSize, Math.round(resolution * aspectRatio));
+      if (this.canvas.width > this.canvas.height) return { width: max, height: min };
+      return { width: min, height: max };
+    }
+    makeRT(w, h, format, filter, wrapGroup) {
+      return new RT(this.device, w, h, format, filter, wrapGroup);
+    }
+    copyRT(src, dst) {
+      this.draw("clear", dst, [dst.texelSizeX, dst.texelSizeY], { value: 1 }, [src]);
+    }
+    resizeDoubleRT(target, w, h) {
+      if (target.width === w && target.height === h) return target;
+      const fmt = target.read.format;
+      const filter = target.read.filter;
+      const wrapGroup = target.read.wrapGroup;
+      const newRead = this.makeRT(w, h, fmt, filter, wrapGroup);
+      this.copyRT(target.read, newRead);
+      const newWrite = this.makeRT(w, h, fmt, filter, wrapGroup);
+      target.destroy();
+      const out = new DoubleRT(newRead, newWrite);
+      return out;
+    }
+    initFramebuffers() {
+      this.inBatch(() => {
+        const simRes = this.getResolution(this.params.simResolution);
+        const dyeRes = this.getResolution(this.params.dyeResolution);
+        const RGBA = "rgba16float";
+        const RG = "rg16float";
+        const R = "r16float";
+        this.dye = this.dye ? this.resizeDoubleRT(this.dye, dyeRes.width, dyeRes.height) : new DoubleRT(
+          this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow"),
+          this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow")
+        );
+        this.dyeTmpHat?.destroy();
+        this.dyeTmpRev?.destroy();
+        this.dyeTmpHat = this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow");
+        this.dyeTmpRev = this.makeRT(dyeRes.width, dyeRes.height, RGBA, "linear", "flow");
+        this.velocity = this.velocity ? this.resizeDoubleRT(this.velocity, simRes.width, simRes.height) : new DoubleRT(
+          this.makeRT(simRes.width, simRes.height, RG, "linear", "flow"),
+          this.makeRT(simRes.width, simRes.height, RG, "linear", "flow")
+        );
+        this.velTmpHat?.destroy();
+        this.velTmpRev?.destroy();
+        this.velTmpHat = this.makeRT(simRes.width, simRes.height, RG, "linear", "flow");
+        this.velTmpRev = this.makeRT(simRes.width, simRes.height, RG, "linear", "flow");
+        this.divergence?.destroy();
+        this.curlRT?.destroy();
+        if (this.pressure) this.pressure.destroy();
+        this.divergence = this.makeRT(simRes.width, simRes.height, R, "nearest", "flow");
+        this.curlRT = this.makeRT(simRes.width, simRes.height, R, "nearest", "flow");
+        this.pressure = new DoubleRT(
+          this.makeRT(simRes.width, simRes.height, R, "nearest", "flow"),
+          this.makeRT(simRes.width, simRes.height, R, "nearest", "flow")
+        );
+        const hadObstacles = Boolean(this.obstacles);
+        this.obstacles = this.obstacles ? this.resizeDoubleRT(this.obstacles, simRes.width, simRes.height) : new DoubleRT(
+          this.makeRT(simRes.width, simRes.height, R, "linear", "fixed"),
+          this.makeRT(simRes.width, simRes.height, R, "linear", "fixed")
+        );
+        if (!hadObstacles && this.params.obstaclePreset && this.params.obstaclePreset !== "none") {
+          this.applyObstaclePreset(this.params.obstaclePreset);
+        }
+        this.initBloomFramebuffers();
+      });
+    }
+    initBloomFramebuffers() {
+      const res = this.getResolution(256);
+      this.bloom?.destroy();
+      this.bloomFramebuffers.forEach((f) => f.destroy());
+      this.bloomFramebuffers = [];
+      this.bloom = this.makeRT(res.width, res.height, "rgba16float", "linear", "fixed");
+      for (let i = 0; i < 4; i++) {
+        const w = Math.max(2, res.width >> i + 1);
+        const h = Math.max(2, res.height >> i + 1);
+        this.bloomFramebuffers.push(this.makeRT(w, h, "rgba16float", "linear", "fixed"));
+      }
+    }
+    /* ---------------- public API (mirrors FluidEngine) ---------------- */
+    resize(width, height) {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      const pixelWidth = Math.max(1, Math.floor(width * dpr));
+      const pixelHeight = Math.max(1, Math.floor(height * dpr));
+      if (this.canvas.width !== pixelWidth || this.canvas.height !== pixelHeight) {
+        this.canvas.width = pixelWidth;
+        this.canvas.height = pixelHeight;
+        if (this.isReady) {
+          this.ctx.configure({
+            device: this.device,
+            format: this.canvasFormat,
+            alphaMode: "opaque"
+          });
+          this.initFramebuffers();
+        }
+      }
+    }
+    updateParams(nextParams) {
+      const resChanged = nextParams.simResolution !== this.params.simResolution || nextParams.dyeResolution !== this.params.dyeResolution;
+      const obstaclePresetChanged = nextParams.obstaclePreset !== this.params.obstaclePreset;
+      this.params = { ...nextParams };
+      if (resChanged && this.isReady) this.initFramebuffers();
+      if (obstaclePresetChanged && this.isReady) {
+        this.applyObstaclePreset(nextParams.obstaclePreset);
+      }
+    }
+    applyObstaclePreset(preset) {
+      if (!this.obstacles) return;
+      this.inBatch(() => {
+        const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+        const modeMap = {
+          none: 0,
+          cylinder: 1,
+          twinPillars: 2,
+          ring: 3,
+          lattice: 4
+        };
+        this.draw(
+          "obstaclePreset",
+          this.obstacles.write,
+          [this.obstacles.texelSizeX, this.obstacles.texelSizeY],
+          { aspectRatio, uMode: modeMap[preset] ?? 0 },
+          []
+        );
+        this.obstacles.swap();
+      });
+    }
+    clearObstacles() {
+      if (!this.obstacles) return;
+      this.inBatch(() => {
+        this.draw(
+          "clear",
+          this.obstacles.write,
+          [this.obstacles.texelSizeX, this.obstacles.texelSizeY],
+          { value: 0 },
+          [this.obstacles.read]
+        );
+        this.obstacles.swap();
+      });
+    }
+    injectImage(img) {
+      if (!this.dye || !this.isReady) return;
+      const w = this.dye.width;
+      const h = this.dye.height;
+      const offscreen = document.createElement("canvas");
+      offscreen.width = w;
+      offscreen.height = h;
+      const ctx2d = offscreen.getContext("2d");
+      if (!ctx2d) return;
+      ctx2d.fillStyle = "#000000";
+      ctx2d.fillRect(0, 0, w, h);
+      const scale = Math.min(
+        w * 0.78 / Math.max(1, img.naturalWidth || img.width),
+        h * 0.78 / Math.max(1, img.naturalHeight || img.height)
+      );
+      const dw = (img.naturalWidth || img.width) * scale;
+      const dh = (img.naturalHeight || img.height) * scale;
+      ctx2d.drawImage(img, (w - dw) * 0.5, (h - dh) * 0.5, dw, dh);
+      const tex = this.device.createTexture({
+        size: [w, h],
+        format: "rgba8unorm",
+        usage: 2 | 4
+        // COPY_DST | TEXTURE_BINDING
+      });
+      this.device.queue.copyExternalImageToTexture(
+        { source: offscreen, flipY: false },
+        { texture: tex },
+        [w, h]
+      );
+      const imgRT = {
+        view: tex.createView(),
+        filter: "linear",
+        wrapGroup: "fixed"
+      };
+      this.inBatch(() => {
+        this.draw(
+          "clear",
+          this.dye.write,
+          [this.dye.texelSizeX, this.dye.texelSizeY],
+          { value: Math.min(1.6, Math.max(0.55, this.params.dyeStrength)) },
+          [imgRT]
+        );
+        this.dye.swap();
+      });
+      tex.destroy();
+      this.splatVortex(0.5, 0.5, 36, 0.45);
+    }
+    setPaused(paused) {
+      this.paused = paused;
+    }
+    clear() {
+      this.inBatch(() => {
+        this.draw(
+          "clear",
+          this.dye.write,
+          [this.dye.texelSizeX, this.dye.texelSizeY],
+          { value: 0 },
+          [this.dye.read]
+        );
+        this.dye.swap();
+        this.draw(
+          "clear",
+          this.velocity.write,
+          [this.velocity.texelSizeX, this.velocity.texelSizeY],
+          { value: 0 },
+          [this.velocity.read]
+        );
+        this.velocity.swap();
+      });
+    }
+    seedInitialPattern() {
+      this.triggerCollision();
+    }
+    triggerCollision() {
+      this.inBatch(() => {
+        const pairs = 2;
+        const baseHue = this.rand();
+        for (let i = 0; i < pairs * 2; i++) {
+          const angle = i / (pairs * 2) * Math.PI * 2 + 0.35;
+          const dist = 0.28;
+          const x = 0.5 + Math.cos(angle) * dist;
+          const y = 0.5 + Math.sin(angle) * dist;
+          const speed = 1550 + this.rand() * 400;
+          const tangentX = -Math.sin(angle) * 260;
+          const tangentY = Math.cos(angle) * 260;
+          const dx = -Math.cos(angle) * speed + tangentX;
+          const dy = -Math.sin(angle) * speed + tangentY;
+          const color = this.generateColor((baseHue + i * 0.27) % 1);
+          this.splatSingle(x, y, dx, dy, [color[0] * 1.1, color[1] * 1.1, color[2] * 1.1], 0.3);
+        }
+      });
+    }
+    triggerShockwave() {
+      this.inBatch(() => {
+        const numJets = 10;
+        const baseHue = Math.random();
+        for (let i = 0; i < numJets; i++) {
+          const angle = i / numJets * Math.PI * 2 + (Math.random() - 0.5) * 0.25;
+          const r = 0.04;
+          const x = 0.5 + Math.cos(angle) * r;
+          const y = 0.5 + Math.sin(angle) * r;
+          const speed = 1800 + Math.random() * 800;
+          const dx = Math.cos(angle) * speed;
+          const dy = Math.sin(angle) * speed;
+          const color = this.generateColor((baseHue + i / numJets) % 1);
+          this.splat(x, y, dx, dy, color, this.params.splatRadius * 1.15);
+        }
+      });
+    }
+    generateColor(hueOverride) {
+      const strength = this.params.dyeStrength;
+      if (!this.params.rainbowBrush && hueOverride === void 0) {
+        const [r2, g2, b2] = hexToRgbNormalized2(this.params.brushColor);
+        return [r2 * 0.48 * strength, g2 * 0.48 * strength, b2 * 0.48 * strength];
+      }
+      const h = hueOverride !== void 0 ? hueOverride : Math.random();
+      const [r, g, b] = hsvToRgb2(h, 0.94, 0.5 * strength);
+      return [r, g, b];
+    }
+    correctRadius(radius) {
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      if (aspectRatio > 1) return radius * aspectRatio;
+      return radius;
+    }
+    splatSingle(x, y, dx, dy, color, radiusScale, erase = false) {
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const r = this.correctRadius(radiusScale / 100 * 0.85);
+      const iy = 1 - y;
+      this.draw(
+        "splat",
+        this.velocity.write,
+        [this.velocity.texelSizeX, this.velocity.texelSizeY],
+        {
+          aspectRatio,
+          point: [x, iy],
+          color: [dx, -dy, 0],
+          radius: r,
+          hardness: this.params.brushHardness,
+          eraseMode: 0
+        },
+        [this.velocity.read]
+      );
+      this.velocity.swap();
+      this.draw(
+        "splat",
+        this.dye.write,
+        [this.dye.texelSizeX, this.dye.texelSizeY],
+        {
+          aspectRatio,
+          point: [x, iy],
+          color: [color[0], color[1], color[2]],
+          radius: r,
+          hardness: this.params.brushHardness,
+          eraseMode: erase ? 1 : 0
+        },
+        [this.dye.read]
+      );
+      this.dye.swap();
+    }
+    splatVortex(x, y, strength, radiusScale) {
+      this.inBatch(() => {
+        const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+        const r = this.correctRadius(radiusScale / 100 * 1.8);
+        this.draw(
+          "vortexSplat",
+          this.velocity.write,
+          [this.velocity.texelSizeX, this.velocity.texelSizeY],
+          { aspectRatio, point: [x, 1 - y], radius: r, strength },
+          [this.velocity.read]
+        );
+        this.velocity.swap();
+      });
+    }
+    splat(x, y, dx, dy, color, radius = this.params.splatRadius, erase = false) {
+      this.inBatch(() => {
+        const sym = this.params.emitterSymmetry;
+        if (sym <= 1) {
+          this.splatSingle(x, y, dx, dy, color, radius, erase);
+          return;
+        }
+        const cx = x - 0.5;
+        const cy = y - 0.5;
+        for (let i = 0; i < sym; i++) {
+          const theta = i / sym * Math.PI * 2;
+          const cos = Math.cos(theta);
+          const sin = Math.sin(theta);
+          const rx = 0.5 + (cx * cos - cy * sin);
+          const ry = 0.5 + (cx * sin + cy * cos);
+          const rdx = dx * cos - dy * sin;
+          const rdy = dx * sin + dy * cos;
+          this.splatSingle(rx, ry, rdx, rdy, color, radius, erase);
+        }
+      });
+    }
+    splatAttract(x, y, strength, radiusScale) {
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const r = this.correctRadius(radiusScale / 100 * 2.1);
+      const sym = this.params.emitterSymmetry;
+      const cx = x - 0.5;
+      const cy = y - 0.5;
+      for (let i = 0; i < sym; i++) {
+        const theta = i / sym * Math.PI * 2;
+        const cos = Math.cos(theta);
+        const sin = Math.sin(theta);
+        const rx = 0.5 + (cx * cos - cy * sin);
+        const ry = 0.5 + (cx * sin + cy * cos);
+        this.draw(
+          "attractSplat",
+          this.velocity.write,
+          [this.velocity.texelSizeX, this.velocity.texelSizeY],
+          { aspectRatio, point: [rx, 1 - ry], radius: r, strength },
+          [this.velocity.read]
+        );
+        this.velocity.swap();
+      }
+    }
+    splatObstacle(x, y, radiusScale, erase = false) {
+      if (!this.obstacles) return;
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const r = this.correctRadius(radiusScale / 100 * 0.9);
+      const sym = this.params.emitterSymmetry;
+      const cx = x - 0.5;
+      const cy = y - 0.5;
+      for (let i = 0; i < sym; i++) {
+        const theta = i / sym * Math.PI * 2;
+        const cos = Math.cos(theta);
+        const sin = Math.sin(theta);
+        const rx = 0.5 + (cx * cos - cy * sin);
+        const ry = 0.5 + (cx * sin + cy * cos);
+        this.draw(
+          "obstacleStamp",
+          this.obstacles.write,
+          [this.obstacles.texelSizeX, this.obstacles.texelSizeY],
+          { aspectRatio, point: [rx, 1 - ry], radius: r, eraseMode: erase ? 1 : 0 },
+          [this.obstacles.read]
+        );
+        this.obstacles.swap();
+      }
+    }
+    pointerDown(id, posX, posY, altErase = false) {
+      const rect = this.canvas.getBoundingClientRect();
+      const tx = (posX - rect.left) / Math.max(1, rect.width);
+      const ty = 1 - (posY - rect.top) / Math.max(1, rect.height);
+      const color = this.generateColor();
+      this.pointers.set(id, {
+        id,
+        texcoordX: tx,
+        texcoordY: ty,
+        prevTexcoordX: tx,
+        prevTexcoordY: ty,
+        deltaX: 0,
+        deltaY: 0,
+        down: true,
+        moved: false,
+        altErase,
+        color
+      });
+      this.inBatch(() => {
+        const angle = Math.random() * Math.PI * 2;
+        const burst = 280;
+        if (this.params.brushMode === "obstacle") {
+          this.splatObstacle(tx, ty, this.params.splatRadius, altErase);
+        } else if (this.params.brushMode === "attract") {
+          this.splatAttract(tx, ty, 120, this.params.splatRadius);
+        } else if (this.params.brushMode === "vortex") {
+          this.splatVortex(tx, ty, 85, this.params.splatRadius);
+        } else if (this.params.brushMode === "erase") {
+          this.splat(tx, ty, 0, 0, [0, 0, 0], this.params.splatRadius * 1.4, true);
+        } else if (this.params.brushMode === "stir") {
+          this.splat(tx, ty, Math.cos(angle) * burst, Math.sin(angle) * burst, [0, 0, 0], this.params.splatRadius);
+        } else {
+          this.splat(tx, ty, Math.cos(angle) * burst, Math.sin(angle) * burst, color, this.params.splatRadius);
+        }
+      });
+    }
+    pointerMove(id, posX, posY) {
+      const pointer = this.pointers.get(id);
+      if (!pointer || !pointer.down) return;
+      const rect = this.canvas.getBoundingClientRect();
+      const tx = (posX - rect.left) / Math.max(1, rect.width);
+      const ty = 1 - (posY - rect.top) / Math.max(1, rect.height);
+      pointer.prevTexcoordX = pointer.texcoordX;
+      pointer.prevTexcoordY = pointer.texcoordY;
+      pointer.texcoordX = tx;
+      pointer.texcoordY = ty;
+      const aspectRatio = rect.width / Math.max(1, rect.height);
+      let dx = pointer.texcoordX - pointer.prevTexcoordX;
+      let dy = pointer.texcoordY - pointer.prevTexcoordY;
+      if (aspectRatio < 1) dx *= aspectRatio;
+      if (aspectRatio > 1) dy /= aspectRatio;
+      pointer.deltaX = dx;
+      pointer.deltaY = dy;
+      pointer.moved = Math.abs(dx) > 0 || Math.abs(dy) > 0;
+    }
+    pointerUp(id) {
+      this.pointers.delete(id);
+    }
+    applyInputs(dt) {
+      this.pointers.forEach((p) => {
+        if (!p.moved) return;
+        p.moved = false;
+        const dx = p.deltaX * this.params.splatForce;
+        const dy = p.deltaY * this.params.splatForce;
+        if (this.params.rainbowBrush) {
+          this.huePhase = (this.huePhase + dt * this.params.rainbowSpeed) % 1;
+          p.color = this.generateColor(this.huePhase);
+        } else {
+          p.color = this.generateColor();
+        }
+        if (this.params.brushMode === "obstacle") {
+          this.splatObstacle(p.texcoordX, p.texcoordY, this.params.splatRadius, Boolean(p.altErase));
+        } else if (this.params.brushMode === "attract") {
+          this.splatAttract(p.texcoordX, p.texcoordY, 95, this.params.splatRadius);
+        } else if (this.params.brushMode === "erase") {
+          this.splat(p.texcoordX, p.texcoordY, dx * 0.2, dy * 0.2, [0, 0, 0], this.params.splatRadius * 1.4, true);
+        } else if (this.params.brushMode === "stir") {
+          this.splat(p.texcoordX, p.texcoordY, dx * 1.3, dy * 1.3, [0, 0, 0], this.params.splatRadius * 1.15);
+        } else if (this.params.brushMode === "vortex") {
+          this.splatVortex(p.texcoordX, p.texcoordY, 65, this.params.splatRadius);
+        } else {
+          this.splat(p.texcoordX, p.texcoordY, dx, dy, p.color, this.params.splatRadius);
+        }
+      });
+    }
+    setAudioSampler(sampler) {
+      this.audioSampler = sampler;
+    }
+    applyLfoModulation() {
+      const eff = { ...this.params };
+      const lfos = [this.params.lfo1, this.params.lfo2, this.params.lfo3].filter(Boolean);
+      for (const lfo of lfos) {
+        const mod = evaluateLfo2(lfo, this.elapsedTime);
+        if (mod === 0) continue;
+        switch (lfo.target) {
+          case "hueShiftSpeed":
+            eff.hueShiftSpeed = Math.max(-5, Math.min(5, eff.hueShiftSpeed + mod * 1.5));
+            break;
+          case "hueOffset":
+            eff.hueOffset = eff.hueOffset + mod * 0.5;
+            break;
+          case "kaleidoscopeRotation":
+            eff.kaleidoscopeRotation = Math.max(
+              -4,
+              Math.min(4, eff.kaleidoscopeRotation + mod * 1.2)
+            );
+            break;
+          case "kaleidoscopeZoom":
+            eff.kaleidoscopeZoom = Math.max(
+              0.2,
+              Math.min(5, eff.kaleidoscopeZoom + mod * 0.8)
+            );
+            break;
+          case "iridescenceScale":
+            eff.iridescenceScale = Math.max(
+              0.2,
+              Math.min(15, eff.iridescenceScale + mod * 3.5)
+            );
+            break;
+          case "curl":
+            eff.curl = Math.max(0, Math.min(150, eff.curl + mod * 45));
+            break;
+          case "domainWarp":
+            eff.domainWarp = Math.max(0, Math.min(4, eff.domainWarp + mod * 1));
+            break;
+          case "chromaticAberration":
+            eff.chromaticAberration = Math.max(
+              0,
+              Math.min(5, eff.chromaticAberration + mod * 1.5)
+            );
+            break;
+          case "radialForce":
+            eff.radialForce = Math.max(-8, Math.min(8, eff.radialForce + mod * 2.5));
+            break;
+          case "swirlField":
+            eff.swirlField = Math.max(-8, Math.min(8, eff.swirlField + mod * 2.5));
+            break;
+          case "gravityX":
+            eff.gravityX = Math.max(-8, Math.min(8, eff.gravityX + mod * 2));
+            break;
+          case "gravityY":
+            eff.gravityY = Math.max(-8, Math.min(8, eff.gravityY + mod * 2));
+            break;
+          case "turbulence":
+            eff.turbulence = Math.max(0, Math.min(6, eff.turbulence + mod * 1.5 + lfo.depth * 0.5));
+            break;
+          case "buoyancy":
+            eff.buoyancy = Math.max(-3, Math.min(5, eff.buoyancy + mod * 1.4));
+            break;
+          case "smokeAmount":
+            eff.smokeAmount = Math.max(0, Math.min(1, eff.smokeAmount + mod * 0.45));
+            break;
+          case "contourGlow":
+            eff.contourGlow = Math.max(0, Math.min(2.5, eff.contourGlow + mod * 0.85));
+            break;
+          case "rippleAmount":
+            eff.rippleAmount = Math.max(
+              0,
+              Math.min(3, eff.rippleAmount + mod * 0.8 + lfo.depth * 0.4)
+            );
+            break;
+          case "bloomIntensity":
+            eff.bloomIntensity = Math.max(0, Math.min(4, eff.bloomIntensity + mod * 1));
+            break;
+          case "exposure":
+            eff.exposure = Math.max(0.2, Math.min(4, eff.exposure + mod * 0.6));
+            break;
+        }
+      }
+      if (eff.vjMode) {
+        const t = this.elapsedTime;
+        eff.hueOffset = eff.hueOffset + Math.sin(t * 0.19) * 0.22;
+        eff.iridescenceScale = Math.max(
+          0.2,
+          Math.min(15, eff.iridescenceScale + Math.sin(t * 0.27) * 0.85)
+        );
+        eff.curl = Math.max(0, Math.min(150, eff.curl + Math.sin(t * 0.31) * 14));
+        eff.swirlField = Math.max(
+          -8,
+          Math.min(8, eff.swirlField + Math.sin(t * 0.13) * 0.55)
+        );
+        eff.radialForce = Math.max(
+          -8,
+          Math.min(8, eff.radialForce + Math.cos(t * 0.23) * 0.45)
+        );
+        eff.turbulence = Math.max(
+          0,
+          Math.min(6, eff.turbulence + (0.5 + 0.5 * Math.sin(t * 0.37)) * 0.35)
+        );
+        eff.domainWarp = Math.max(
+          0,
+          Math.min(4, eff.domainWarp + Math.sin(t * 0.21) * 0.18)
+        );
+      }
+      const bands = this.currentAudioBands;
+      if (bands.overall > 5e-3) {
+        const ac = eff.audioConfig;
+        const sens = ac?.sensitivity ?? 1.2;
+        const bassVal = bands.bass * (ac?.bassGain ?? 1) * sens;
+        const midVal = bands.mid * (ac?.midGain ?? 0.85) * sens;
+        const trebleVal = bands.treble * (ac?.trebleGain ?? 0.9) * sens;
+        eff.bloomIntensity = Math.min(4, eff.bloomIntensity + bassVal * 0.65);
+        eff.radialForce = Math.max(-8, Math.min(8, eff.radialForce + bassVal * 0.9));
+        eff.rippleAmount = Math.min(3, eff.rippleAmount + bassVal * 0.22);
+        eff.turbulence = Math.min(6, eff.turbulence + midVal * 0.9);
+        eff.domainWarp = Math.min(4, eff.domainWarp + midVal * 0.55);
+        eff.swirlField = Math.max(-8, Math.min(8, eff.swirlField + (midVal - 0.15) * 1.1));
+        eff.chromaticAberration = Math.min(5, eff.chromaticAberration + trebleVal * 0.85);
+        eff.iridescenceScale = Math.min(15, eff.iridescenceScale + trebleVal * 2.2);
+        eff.hueOffset = eff.hueOffset + trebleVal * 0.28;
+      }
+      this.effectiveParams = eff;
+    }
+    applyAutoFlow(dt) {
+      const {
+        autoFlowMode,
+        autoFlowIntensity,
+        autoFlowSpeed,
+        autoEmitterCount,
+        autoEmitterRadius,
+        autoEmitterSize,
+        pulseInterval
+      } = this.effectiveParams;
+      if (autoFlowMode === "manual" || autoFlowIntensity <= 0.01) return;
+      const t = this.elapsedTime * autoFlowSpeed;
+      const force = 560 * autoFlowIntensity;
+      const count = Math.max(1, Math.min(16, Math.round(autoEmitterCount)));
+      const rad = autoEmitterRadius;
+      const size = Math.max(0.03, autoEmitterSize || 0.18);
+      if (autoFlowMode === "collide") {
+        for (let i = 0; i < count; i++) {
+          const baseAngle = i / count * Math.PI * 2 + Math.sin(t * 0.35) * 0.45;
+          const x = 0.5 + Math.cos(baseAngle) * rad;
+          const y = 0.5 + Math.sin(baseAngle) * rad;
+          const weave = Math.sin(t * 1.45 + i * 1.57) * 0.32;
+          const dirAngle = baseAngle + Math.PI + weave;
+          const dx = Math.cos(dirAngle) * force * 1.15;
+          const dy = Math.sin(dirAngle) * force * 1.15;
+          const hue = (t * 0.06 + i / count) % 1;
+          const color = this.generateColor(hue);
+          this.splatSingle(
+            x,
+            y,
+            dx * dt * 60 * 0.16,
+            dy * dt * 60 * 0.16,
+            [color[0] * 0.24, color[1] * 0.24, color[2] * 0.24],
+            size
+          );
+        }
+      } else if (autoFlowMode === "vortex") {
+        for (let i = 0; i < count; i++) {
+          const offset = i / count * Math.PI * 2;
+          const dirSign = i % 2 === 0 ? 0.9 : -0.75;
+          const angle = t * dirSign + offset;
+          const radius = rad * 0.85 + 0.06 * Math.sin(t * 1.3 + i);
+          const x = 0.5 + Math.cos(angle) * radius;
+          const y = 0.5 + Math.sin(angle) * radius;
+          const dx = -Math.sin(angle) * force;
+          const dy = Math.cos(angle) * force;
+          const hue = (t * 0.09 + i / count) % 1;
+          const color = this.generateColor(hue);
+          this.splatSingle(
+            x,
+            y,
+            dx * dt * 60 * 0.16,
+            dy * dt * 60 * 0.16,
+            [color[0] * 0.24, color[1] * 0.24, color[2] * 0.24],
+            size
+          );
+        }
+      } else if (autoFlowMode === "fountains") {
+        for (let i = 0; i < count; i++) {
+          const phase = t * 0.8 + i / count * Math.PI * 2;
+          const x = 0.5 + Math.sin(phase * 1.3) * rad;
+          const y = 0.5 + Math.cos(phase * 0.9 + i) * (rad * 0.9);
+          const dx = Math.cos(phase * 1.7) * force * 0.85;
+          const dy = Math.sin(phase * 1.4) * force * 0.85;
+          const hue = (t * 0.07 + i / count) % 1;
+          const color = this.generateColor(hue);
+          this.splatSingle(
+            x,
+            y,
+            dx * dt * 60 * 0.15,
+            dy * dt * 60 * 0.15,
+            [color[0] * 0.22, color[1] * 0.22, color[2] * 0.22],
+            size
+          );
+        }
+      } else if (autoFlowMode === "pulse") {
+        this.pulseTimer += dt * autoFlowSpeed;
+        if (this.pulseTimer >= Math.max(0.15, pulseInterval)) {
+          this.pulseTimer = 0;
+          const jets = Math.max(2, count * 2);
+          const baseHue = t * 0.15 % 1;
+          for (let i = 0; i < jets; i++) {
+            const angle = i / jets * Math.PI * 2 + t * 0.5;
+            const x = 0.5 + Math.cos(angle) * (rad * 0.2);
+            const y = 0.5 + Math.sin(angle) * (rad * 0.2);
+            const dx = Math.cos(angle) * force * 1.8;
+            const dy = Math.sin(angle) * force * 1.8;
+            const color = this.generateColor((baseHue + i / jets) % 1);
+            this.splatSingle(
+              x,
+              y,
+              dx,
+              dy,
+              [color[0] * 0.62, color[1] * 0.62, color[2] * 0.62],
+              size * 1.2
+            );
+          }
+        }
+      } else if (autoFlowMode === "convection") {
+        for (let i = 0; i < count; i++) {
+          const span = 0.7 / Math.max(1, count);
+          const x = 0.15 + span * (i + 0.5) + Math.sin(t * 0.8 + i * 1.7) * 0.06;
+          const y = 0.12 + Math.abs(Math.sin(t * 0.45 + i)) * 0.08;
+          const dx = Math.sin(t * 1.9 + i * 2.1) * force * 0.45;
+          const dy = force * 0.85;
+          const hue = (t * 0.05 + i / count) % 1;
+          const color = this.generateColor(hue);
+          this.splatSingle(
+            x,
+            y,
+            dx * dt * 60 * 0.14,
+            dy * dt * 60 * 0.14,
+            [color[0] * 0.22, color[1] * 0.22, color[2] * 0.22],
+            size
+          );
+        }
+      } else if (autoFlowMode === "smokePlume") {
+        const spreadSpan = Math.min(0.75, Math.max(0.08, rad * 1.6));
+        for (let i = 0; i < count; i++) {
+          const offsetNorm = count === 1 ? 0 : i / (count - 1) - 0.5;
+          const x = 0.5 + offsetNorm * spreadSpan + Math.sin(t * 1.15 + i * 2.09) * 0.045;
+          const y = 0.08 + Math.sin(t * 0.65 + i * 1.3) * 0.02;
+          const dx = Math.sin(t * 2.3 + i * 1.73) * force * 0.34;
+          const dy = force * (0.55 + 0.2 * Math.cos(t * 1.4 + i));
+          const hue = (t * 0.04 + i / count) % 1;
+          const color = this.effectiveParams.rainbowBrush ? this.generateColor(hue) : this.generateColor();
+          this.splatSingle(
+            x,
+            y,
+            dx * dt * 60 * 0.12,
+            dy * dt * 60 * 0.12,
+            [color[0] * 0.2, color[1] * 0.2, color[2] * 0.2],
+            size * 1.15
+          );
+        }
+      }
+    }
+    advectField(target, tmpHat, tmpRev, dissipation, sharpness, dt) {
+      const manualBilerp = 0;
+      const velTexel = [this.velocity.texelSizeX, this.velocity.texelSizeY];
+      const tgtTexel = [target.texelSizeX, target.texelSizeY];
+      if (sharpness <= 0.02) {
+        this.draw(
+          "advection",
+          target.write,
+          velTexel,
+          { dyeTexelSize: tgtTexel, dt, dissipation, manualBilerp },
+          [this.velocity.read, target.read]
+        );
+        target.swap();
+        return;
+      }
+      this.draw(
+        "advection",
+        tmpHat,
+        velTexel,
+        { dyeTexelSize: tgtTexel, dt, dissipation: 0, manualBilerp },
+        [this.velocity.read, target.read]
+      );
+      this.draw(
+        "advection",
+        tmpRev,
+        velTexel,
+        { dyeTexelSize: tgtTexel, dt: -dt, dissipation: 0, manualBilerp },
+        [this.velocity.read, tmpHat]
+      );
+      this.draw(
+        "advectionMacCormack",
+        target.write,
+        velTexel,
+        {
+          dyeTexelSize: tgtTexel,
+          dt,
+          dissipation,
+          uSharpness: sharpness,
+          uWrapBorders: this.effectiveParams.wrapBorders ? 1 : 0
+        },
+        [this.velocity.read, target.read, tmpHat, tmpRev]
+      );
+      target.swap();
+    }
+    stepPhysics(dt) {
+      const ep = this.effectiveParams;
+      const scaledDt = dt * ep.timeScale;
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const velTexel = [this.velocity.texelSizeX, this.velocity.texelSizeY];
+      if (Math.abs(ep.gravityX) > 1e-3 || Math.abs(ep.gravityY) > 1e-3 || Math.abs(ep.buoyancy) > 1e-3 || Math.abs(ep.radialForce) > 1e-3 || Math.abs(ep.swirlField) > 1e-3 || ep.turbulence > 1e-3) {
+        this.draw(
+          "externalForces",
+          this.velocity.write,
+          velTexel,
+          {
+            dt: scaledDt,
+            aspectRatio,
+            uTime: this.elapsedTime,
+            uGravity: [ep.gravityX, -ep.gravityY],
+            uBuoyancy: -ep.buoyancy,
+            uRadialForce: ep.radialForce,
+            uRadialCenter: [ep.radialCenterX, 1 - ep.radialCenterY],
+            uSwirlField: ep.swirlField,
+            uTurbulence: ep.turbulence,
+            uTurbulenceScale: ep.turbulenceScale,
+            uTurbulenceSpeed: ep.turbulenceSpeed
+          },
+          [this.velocity.read, this.dye.read]
+        );
+        this.velocity.swap();
+      }
+      if (ep.collisionMomentum > 5e-3) {
+        this.draw(
+          "collisionMomentum",
+          this.velocity.write,
+          velTexel,
+          { uCollisionMomentum: ep.collisionMomentum, dt: scaledDt },
+          [this.velocity.read, this.dye.read]
+        );
+        this.velocity.swap();
+      }
+      this.draw("curl", this.curlRT, velTexel, {}, [this.velocity.read]);
+      this.draw(
+        "vorticity",
+        this.velocity.write,
+        velTexel,
+        { curl: ep.curl, dt: scaledDt },
+        [this.velocity.read, this.curlRT]
+      );
+      this.velocity.swap();
+      this.draw(
+        "divergence",
+        this.divergence,
+        velTexel,
+        { uWrapBorders: ep.wrapBorders ? 1 : 0 },
+        [this.velocity.read, this.obstacles.read]
+      );
+      this.draw(
+        "clear",
+        this.pressure.write,
+        [this.pressure.texelSizeX, this.pressure.texelSizeY],
+        { value: ep.pressure },
+        [this.pressure.read]
+      );
+      this.pressure.swap();
+      const iters = Math.max(4, Math.min(100, Math.round(ep.pressureIterations)));
+      for (let i = 0; i < iters; i++) {
+        this.draw(
+          "pressure",
+          this.pressure.write,
+          velTexel,
+          {},
+          [this.pressure.read, this.divergence, this.obstacles.read]
+        );
+        this.pressure.swap();
+      }
+      this.draw(
+        "gradientSubtract",
+        this.velocity.write,
+        velTexel,
+        {},
+        [this.pressure.read, this.velocity.read, this.obstacles.read]
+      );
+      this.velocity.swap();
+      this.advectField(
+        this.velocity,
+        this.velTmpHat,
+        this.velTmpRev,
+        ep.velocityDissipation,
+        ep.advectionSharpness * 0.85,
+        scaledDt
+      );
+      if (ep.viscosity > 5e-3) {
+        const viscPasses = ep.viscosity > 0.5 ? 2 : 1;
+        for (let i = 0; i < viscPasses; i++) {
+          this.draw(
+            "viscosity",
+            this.velocity.write,
+            velTexel,
+            { uViscosity: ep.viscosity },
+            [this.velocity.read]
+          );
+          this.velocity.swap();
+        }
+      }
+      this.advectField(
+        this.dye,
+        this.dyeTmpHat,
+        this.dyeTmpRev,
+        ep.densityDissipation,
+        ep.advectionSharpness,
+        scaledDt
+      );
+      if (ep.surfaceTension > 5e-3 || ep.mixingDiffusion > 5e-3) {
+        this.draw(
+          "dyeMixTension",
+          this.dye.write,
+          [this.dye.texelSizeX, this.dye.texelSizeY],
+          { uMixing: ep.mixingDiffusion, uSurfaceTension: ep.surfaceTension },
+          [this.dye.read]
+        );
+        this.dye.swap();
+      }
+      this.draw(
+        "obstacleMask",
+        this.dye.write,
+        [this.dye.texelSizeX, this.dye.texelSizeY],
+        {},
+        [this.dye.read, this.obstacles.read]
+      );
+      this.dye.swap();
+      this.draw(
+        "obstacleMask",
+        this.velocity.write,
+        velTexel,
+        {},
+        [this.velocity.read, this.obstacles.read]
+      );
+      this.velocity.swap();
+    }
+    renderBloom() {
+      const ep = this.effectiveParams;
+      if (this.bloomFramebuffers.length < 2 || ep.bloomIntensity <= 1e-3) return;
+      let last = this.bloom;
+      const knee = ep.bloomThreshold * 0.7 + 1e-4;
+      const curve0 = ep.bloomThreshold - knee;
+      const curve1 = knee * 2;
+      const curve2 = 0.25 / knee;
+      this.draw(
+        "bloomPrefilter",
+        last,
+        [last.texelSizeX, last.texelSizeY],
+        { curve: [curve0, curve1, curve2], threshold: ep.bloomThreshold },
+        [this.dye.read]
+      );
+      for (let i = 0; i < this.bloomFramebuffers.length; i++) {
+        const dest = this.bloomFramebuffers[i];
+        this.draw(
+          "bloomBlur",
+          dest,
+          [last.texelSizeX, last.texelSizeY],
+          {},
+          [last]
+        );
+        last = dest;
+      }
+      for (let i = this.bloomFramebuffers.length - 2; i >= 0; i--) {
+        const baseTex = this.bloomFramebuffers[i];
+        this.draw(
+          "bloomBlur",
+          baseTex,
+          [last.texelSizeX, last.texelSizeY],
+          {},
+          [last],
+          true
+        );
+        last = baseTex;
+      }
+      this.draw(
+        "bloomBlur",
+        this.bloom,
+        [last.texelSizeX, last.texelSizeY],
+        {},
+        [last]
+      );
+    }
+    encodeDisplay(view, format) {
+      const p = this.effectiveParams;
+      const aspectRatio = this.canvas.width / Math.max(1, this.canvas.height);
+      const paletteModeFloat = p.paletteMode === "palette" ? 0 : p.paletteMode === "spectral" ? 1 : 2;
+      const toneMappingFloat = p.toneMapping === "agx" ? 2 : p.toneMapping === "aces" ? 1 : 0;
+      const c0 = hexToRgbNormalized2(p.palette[0]);
+      const c1 = hexToRgbNormalized2(p.palette[1]);
+      const c2 = hexToRgbNormalized2(p.palette[2]);
+      const c3 = hexToRgbNormalized2(p.palette[3]);
+      const bg = hexToRgbNormalized2(p.backgroundColor);
+      this.draw(
+        "display",
+        { view, format },
+        [1 / this.canvas.width, 1 / this.canvas.height],
+        {
+          uDyeTexelSize: [this.dye.texelSizeX, this.dye.texelSizeY],
+          uVelTexelSize: [this.velocity.texelSizeX, this.velocity.texelSizeY],
+          aspectRatio,
+          uTime: this.elapsedTime,
+          uDomainWarp: p.domainWarp,
+          uShowObstacles: p.showObstacles ? 1 : 0,
+          uSmokeAmount: p.smokeAmount,
+          uSmokeSelfShadow: p.smokeSelfShadow,
+          uSmokeWispyness: p.smokeWispyness,
+          uSmokeSoftness: p.smokeSoftness,
+          uContourGlow: p.contourGlow,
+          uIridescence: p.iridescence,
+          uIridescenceScale: p.iridescenceScale,
+          uSpecular: p.specular,
+          uSpecularPower: p.specularPower,
+          uRelief: p.relief,
+          uFresnel: p.fresnelIntensity,
+          uSubsurface: p.subsurface,
+          uEdgeCrispness: p.edgeCrispness,
+          uCollisionCrestGlow: p.collisionCrestGlow,
+          uAntiWashout: p.antiWashout,
+          uLightAngle: p.lightAngle * Math.PI / 180,
+          uLightElevation: p.lightElevation,
+          uChromatic: p.chromaticAberration,
+          uBloomIntensity: p.bloomIntensity,
+          uHueShift: this.elapsedTime * p.hueShiftSpeed % 100,
+          uHueOffset: p.hueOffset,
+          uSaturation: p.saturation,
+          uContrast: p.contrast,
+          uExposure: p.exposure,
+          uGamma: p.gamma,
+          uInvert: p.invert ? 1 : 0,
+          uSolarize: p.solarize,
+          uGrain: p.grain,
+          uVignette: p.vignette,
+          uKaleidoscope: p.kaleidoscope,
+          uKaleidoscopeAngle: this.kaleidoscopeAngle,
+          uKaleidoscopeZoom: p.kaleidoscopeZoom,
+          uKaleidoscopeOffset: [p.kaleidoscopeOffsetX, p.kaleidoscopeOffsetY],
+          uRippleAmount: p.rippleAmount,
+          uRippleFreq: p.rippleFreq,
+          uRippleSpeed: p.rippleSpeed,
+          uTunnelWarp: p.tunnelWarp,
+          uPaletteMode: paletteModeFloat,
+          uToneMapping: toneMappingFloat,
+          uPaletteFreq: p.paletteFrequency,
+          uWrapBorders: p.wrapBorders ? 1 : 0,
+          uPalette0: c0,
+          uPalette1: c1,
+          uPalette2: c2,
+          uPalette3: c3,
+          uBgColor: bg
+        },
+        [this.dye.read, this.velocity.read, this.curlRT, this.bloom, this.obstacles.read]
+      );
+    }
+    displayTarget() {
+      if (this.offscreen) {
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+        if (!this.displayRT || this.displayRT.width !== w || this.displayRT.height !== h) {
+          this.displayRT?.destroy();
+          this.displayRT = new RT(this.device, w, h, this.canvasFormat, "linear", "fixed");
+        }
+        return { view: this.displayRT.view, format: this.canvasFormat };
+      }
+      return { view: this.ctx.getCurrentTexture().createView(), format: this.canvasFormat };
+    }
+    renderDisplay() {
+      this.inBatch(() => {
+        this.renderBloom();
+        const t = this.displayTarget();
+        this.encodeDisplay(t.view, t.format);
+      });
+    }
+    tick = (now) => {
+      if (!this.lastTime) this.lastTime = now;
+      const rawDt = (now - this.lastTime) / 1e3;
+      this.lastTime = now;
+      const dt = Math.min(rawDt, 0.025);
+      this.currentAudioBands = this.audioSampler ? this.audioSampler() : { bass: 0, mid: 0, treble: 0, overall: 0, beatDetected: false };
+      this.applyLfoModulation();
+      this.inBatch(() => {
+        this.applyInputs(dt);
+        if (!this.paused) {
+          this.elapsedTime += dt;
+          this.kaleidoscopeAngle += dt * this.effectiveParams.kaleidoscopeRotation;
+          if (this.currentAudioBands.beatDetected && this.effectiveParams.audioConfig?.beatBurst) {
+            const jets = 4;
+            const baseHue = Math.random();
+            const impulse = (750 + this.currentAudioBands.bass * 1200) * (this.effectiveParams.audioConfig?.sensitivity ?? 1.2);
+            for (let i = 0; i < jets; i++) {
+              const angle = i / jets * Math.PI * 2 + this.elapsedTime * 0.9;
+              const x = 0.5 + Math.cos(angle) * 0.24;
+              const y = 0.5 + Math.sin(angle) * 0.24;
+              const color = this.generateColor((baseHue + i / jets) % 1);
+              this.splatSingle(
+                x,
+                y,
+                -Math.cos(angle) * impulse,
+                -Math.sin(angle) * impulse,
+                [color[0] * 0.55, color[1] * 0.55, color[2] * 0.55],
+                this.effectiveParams.autoEmitterSize || 0.16
+              );
+            }
+          }
+          this.applyAutoFlow(dt * this.effectiveParams.timeScale);
+          this.stepPhysics(dt);
+        }
+        this.renderBloom();
+        const t = this.displayTarget();
+        this.encodeDisplay(t.view, t.format);
+      });
+      this.rafId = requestAnimationFrame(this.tick);
+    };
+    start() {
+      if (!this.isReady) {
+        this.wantRunning = true;
+        return;
+      }
+      if (this.rafId !== null) return;
+      this.lastTime = performance.now();
+      this.rafId = requestAnimationFrame(this.tick);
+    }
+    stop() {
+      this.wantRunning = false;
+      if (this.rafId !== null) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    }
+    captureSnapshot() {
+      return this.lastSnapshotDataUrl;
+    }
+    async captureSnapshotBlob() {
+      if (!this.isReady || this.destroyed) return null;
+      this.applyLfoModulation();
+      const w = this.canvas.width;
+      const h = this.canvas.height;
+      const tex = this.device.createTexture({
+        size: [w, h],
+        format: "rgba8unorm",
+        usage: 1 | 16
+        // COPY_SRC | RENDER_ATTACHMENT
+      });
+      const view = tex.createView();
+      this.inBatch(() => {
+        this.renderBloom();
+        this.encodeDisplay(view, "rgba8unorm");
+      });
+      const bytesPerRow = Math.ceil(w * 4 / 256) * 256;
+      const buf = this.device.createBuffer({
+        size: bytesPerRow * h,
+        usage: 1 | 8
+        // MAP_READ | COPY_DST
+      });
+      const enc = this.device.createCommandEncoder();
+      enc.copyTextureToBuffer({ texture: tex }, { buffer: buf, bytesPerRow, rowsPerImage: h }, [w, h]);
+      this.device.queue.submit([enc.finish()]);
+      await buf.mapAsync(1);
+      const mapped = new Uint8Array(buf.getMappedRange());
+      const c2 = document.createElement("canvas");
+      c2.width = w;
+      c2.height = h;
+      const ctx2 = c2.getContext("2d");
+      const imgData = ctx2.createImageData(w, h);
+      for (let y = 0; y < h; y++) {
+        imgData.data.set(mapped.subarray(y * bytesPerRow, y * bytesPerRow + w * 4), y * w * 4);
+      }
+      ctx2.putImageData(imgData, 0, 0);
+      buf.unmap();
+      buf.destroy();
+      tex.destroy();
+      this.lastSnapshotDataUrl = c2.toDataURL("image/png");
+      return new Promise((resolve) => c2.toBlob((b) => resolve(b), "image/png"));
+    }
+    destroy() {
+      this.destroyed = true;
+      this.stop();
+      this.flushBatch();
+      this.dye?.destroy();
+      this.dyeTmpHat?.destroy();
+      this.dyeTmpRev?.destroy();
+      this.velocity?.destroy();
+      this.velTmpHat?.destroy();
+      this.velTmpRev?.destroy();
+      this.divergence?.destroy();
+      this.curlRT?.destroy();
+      this.pressure?.destroy();
+      this.obstacles?.destroy();
+      this.bloom?.destroy();
+      this.bloomFramebuffers.forEach((f) => f.destroy());
+      this.bloomFramebuffers = [];
+      this.arena?.destroy();
+      this.displayRT?.destroy();
+      try {
+        this.device?.destroy();
+      } catch {
+      }
+    }
+  };
+
+  // ts_src_gpu/engine/audioReactive.ts
+  var AudioReactiveEngine = class {
+    ctx = null;
+    analyser = null;
+    dataArray = null;
+    micStream = null;
+    micSource = null;
+    audioEl = null;
+    fileSource = null;
+    objectUrl = null;
+    mode = "off";
+    fileName = "";
+    bassHistory = 0;
+    lastBeatTime = 0;
     ensureContext() {
       if (!this.ctx) {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -5304,10 +7900,9 @@ body:not(.leary2-panel-open) .panel{display:none}
       return this.ctx;
     }
     async startMic() {
-      var _a;
       this.stopSource();
       const ctx = this.ensureContext();
-      if (!((_a = navigator.mediaDevices) == null ? void 0 : _a.getUserMedia)) {
+      if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error("\u304A\u4F7F\u3044\u306E\u30D6\u30E9\u30A6\u30B6\u306F\u30DE\u30A4\u30AF\u5165\u529B\u306B\u5BFE\u5FDC\u3057\u3066\u3044\u307E\u305B\u3093");
       }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -5334,10 +7929,9 @@ body:not(.leary2-panel-open) .panel{display:none}
       await audio.play();
     }
     toggleFilePlay() {
-      var _a;
       if (!this.audioEl) return false;
       if (this.audioEl.paused) {
-        void ((_a = this.ctx) == null ? void 0 : _a.resume());
+        void this.ctx?.resume();
         void this.audioEl.play();
         return true;
       }
@@ -5421,7 +8015,7 @@ body:not(.leary2-panel-open) .panel{display:none}
     }
   };
 
-  // ts_src3/data/presets.ts
+  // ts_src_gpu/data/presets.ts
   var DEFAULT_PARAMS = {
     simResolution: 256,
     dyeResolution: 1440,
@@ -5874,8 +8468,39 @@ body:not(.leary2-panel-open) .panel{display:none}
     }
   ];
 
-  // ts_src3/entry.ts
-  window.__ChromaFlow = { FluidEngine, AudioReactiveEngine, DEFAULT_PARAMS, CURATED_PRESETS };
+  // ts_src_gpu/entry.ts
+  async function webgpuAvailable() {
+    try {
+      const gpu = navigator.gpu;
+      if (!gpu) return false;
+      const adapter = await gpu.requestAdapter();
+      return !!adapter;
+    } catch {
+      return false;
+    }
+  }
+  async function createEngine(canvas, params, callbacks) {
+    if (await webgpuAvailable()) {
+      try {
+        const engine = new FluidEngineGPU(canvas, params, callbacks);
+        await engine.ready;
+        window.__ChromaFlow.backend = "webgpu";
+        return engine;
+      } catch {
+      }
+    }
+    window.__ChromaFlow.backend = "webgl2";
+    return new FluidEngine(canvas, params, callbacks);
+  }
+  window.__ChromaFlow = {
+    FluidEngine,
+    FluidEngineGPU,
+    AudioReactiveEngine,
+    DEFAULT_PARAMS,
+    CURATED_PRESETS,
+    createEngine,
+    backend: "webgl2"
+  };
 })();
 
 </script>
@@ -6343,15 +8968,18 @@ body:not(.leary2-panel-open) .panel{display:none}
   (currentBody || sec).appendChild(imgFile);
   mkBtn('画像ファイルを取り込む', () => imgFile.click());
   mkBtn('障害物を消去', () => { if (engine && active) { engine.clearObstacles(); params.obstaclePreset = 'none'; commit(false); syncUIFromParams(); } else toast('流体モードで使えます'); });
-  mkBtn('流体PNG保存', () => {
+  mkBtn('流体PNG保存', async () => {
     if (!engine || !active) { toast('流体モードで使えます'); return; }
-    try { const a = document.createElement('a'); a.download = 'leary-fluid-seed' + learySeed() + '.png'; a.href = engine.captureSnapshot(); a.click(); toast('流体のPNGを保存しました'); }
+    try { const blob = await snapshotBlob(); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.download = 'leary-fluid-seed' + learySeed() + '.png'; a.href = url; a.click(); setTimeout(() => URL.revokeObjectURL(url), 5000); toast('流体のPNGを保存しました'); }
     catch (e) { toast('PNG保存に失敗しました'); }
   });
   const recBtn = mkBtn('動画録画', () => toggleRecording());
-  const snapshotBlob = () => new Promise((resolve, reject) => {
-    try { const d = engine.captureSnapshot(); fetch(d).then(r => r.blob()).then(resolve, reject); } catch (e) { reject(e); }
-  });
+  const snapshotBlob = () => {
+    if (engine && typeof engine.captureSnapshotBlob === 'function') return engine.captureSnapshotBlob();
+    return new Promise((resolve, reject) => {
+      try { const d = engine.captureSnapshot(); fetch(d).then(r => r.blob()).then(resolve, reject); } catch (e) { reject(e); }
+    });
+  };
   mkBtn('流体PNGコピー', async () => {
     if (!engine || !active) { toast('流体モードで使えます'); return; }
     try { const blob = await snapshotBlob(); await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); toast('流体のPNGをコピーしました'); }
@@ -6642,38 +9270,50 @@ body:not(.leary2-panel-open) .panel{display:none}
         const fps = Math.round(frames * 1000 / (now - lastT));
         frames = 0; lastT = now;
         const ro = $id('cfFpsReadout');
-        if (ro) ro.textContent = '現在 ' + fps + ' fps（描画解像度 ' + params.dyeResolution + ' / 描画スケール ' + Math.round(renderScale * 100) + '%' + (autoQ ? ' / 自動画質ON' : '') + '）';
+        if (ro) ro.textContent = '現在 ' + fps + ' fps（' + ((window.__ChromaFlow && window.__ChromaFlow.backend === 'webgpu') ? 'WebGPU' : 'WebGL2') + ' / 描画解像度 ' + params.dyeResolution + ' / 描画スケール ' + Math.round(renderScale * 100) + '%' + (autoQ ? ' / 自動画質ON' : '') + '）';
         autoQualityTick(fps);
       }
       fpsRaf = requestAnimationFrame(loop);
     };
     fpsRaf = requestAnimationFrame(loop);
   }
+  let enginePromise = null;
   function ensureEngine() {
-    if (engine) return true;
-    try { engine = new CF.FluidEngine(fluidCanvas, params); }
-    catch (e) { engine = null; toast('WebGL流体を初期化できませんでした（ハードウェア加速のあるブラウザでお試しください）'); return false; }
-    if (audioEngine) engine.setAudioSampler(() => audioEngine.getBands());
-    { const sz = fluidSize(); engine.resize(sz[0], sz[1]); }
-    let roTimer = null;
-    ro = new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(applySize, 120); });
-    ro.observe(fluidCanvas);
-    return true;
+    if (engine) return Promise.resolve(true);
+    if (enginePromise) return enginePromise;
+    enginePromise = (async () => {
+      try { engine = await CF.createEngine(fluidCanvas, params); }
+      catch (e) { engine = null; enginePromise = null; toast('流体を初期化できませんでした（ハードウェア加速のあるブラウザでお試しください）'); return false; }
+      if (audioEngine) engine.setAudioSampler(() => audioEngine.getBands());
+      { const sz = fluidSize(); engine.resize(sz[0], sz[1]); }
+      let roTimer = null;
+      ro = new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(applySize, 120); });
+      ro.observe(fluidCanvas);
+      return true;
+    })();
+    return enginePromise;
   }
+  let wantActive = false;
   function setActive(on) {
+    wantActive = on;
     if (on) {
       try { const saved = localStorage.getItem('leary2-texture'); if (saved && saved !== 'none') { const b = document.querySelector('[data-tex="none"]'); if (b) b.click(); } } catch (e) {}
       fluidCanvas.style.display = 'block';
-      if (!ensureEngine()) { fluidCanvas.style.display = 'none'; return; }
-      if (syncChk.checked) applyLearyPalette();
-      engine.updateParams(params);
-      resetAutoCeiling();
-      reseed();
-      const ov = $id('overlay'); if (ov) ov.style.display = 'none';
-      mainCanvas.style.visibility = 'hidden';
-      engine.setPaused(paused); engine.start(); fpsLoopStart();
-      active = true; toggleBtn.textContent = '流体モードを終了';
-      setUiMode('fluid');
+      ensureEngine().then((ok) => {
+        if (!ok) { fluidCanvas.style.display = 'none'; return; }
+        if (!wantActive) { fluidCanvas.style.display = 'none'; return; }
+        if (syncChk.checked) applyLearyPalette();
+        engine.updateParams(params);
+        resetAutoCeiling();
+        reseed();
+        const ov = $id('overlay'); if (ov) ov.style.display = 'none';
+        mainCanvas.style.visibility = 'hidden';
+        engine.setPaused(paused); engine.start(); fpsLoopStart();
+        active = true; toggleBtn.textContent = '流体モードを終了';
+        setUiMode('fluid');
+        try { localStorage.setItem('leary-chromaflow-active', '1'); } catch (e) {}
+        syncUIFromParams();
+      });
     } else {
       if (recording) toggleRecording();
       cancelMorphAnim();
