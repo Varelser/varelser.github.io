@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第14章 意識の未来 ― 『慈愛体系』図版アニメーション</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+.wrap{max-width:1020px;margin:0 auto;padding:14px 12px 26px}
+canvas{width:100%;height:auto;display:block}.controls{text-align:center;margin:8px 0}
+button{border:1px solid #111;background:#111;color:#fff;border-radius:999px;padding:6px 16px;font-size:13.5px;cursor:pointer}
+.foot{font-size:12.5px;color:rgba(0,0,0,.55);text-align:center}
+</style><style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.35s}</style><meta name="theme-color" content="#ffffff"></head><body><div class="wrap">
+<canvas id="cv" width="1600" height="900" aria-label="第14章 意識の未来"></canvas>
+<div class="controls"><button id="btn">一時停止</button></div>
+<p class="foot">図は原典の要約であり、医学的助言ではありません。</p></div>
+<script>
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+let playing=true,t=3.2,last=performance.now();
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){playing=false;document.getElementById('btn').textContent='再生';}
+document.getElementById('btn').onclick=e=>{playing=!playing;e.target.textContent=playing?'一時停止':'再生';last=performance.now();};
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const ss=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
+let seed=111; const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+function dot(x,y,r,o){ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fillStyle='rgba(0,0,0,'+o+')';ctx.fill();}
+function head(){
+ ctx.font='700 34px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';ctx.fillStyle='rgba(17,17,17,.95)';ctx.textAlign='center';ctx.textBaseline='top';
+ ctx.fillText('第14章 意識の未来',800,46);
+ ctx.font='20px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';ctx.fillStyle='rgba(0,0,0,.6)';
+ ctx.fillText('ハード・プロブレムからハイヴ・マインドへ',800,94);
+}
+
+const CL=[];const BASE=[[430,330],[1170,330],[430,610],[1170,610],[800,270]];
+BASE.forEach((b,g)=>{const a=[];for(let i=0;i<11;i++)a.push([(rnd()-0.5)*120,(rnd()-0.5)*100]);CL.push({b,a});});
+function render(t){const ph=t%14,m=ph<5?ss(ph/5):ph<9?1:ss((14-ph)/5);
+ const ctr=CL.map(c=>[c.b[0]+(800-c.b[0])*m*0.82,c.b[1]+(460-c.b[1])*m*0.82]);
+ if(m>0.05){for(let k=0;k<5;k++){const u=ctr[k],v=ctr[(k+1)%5];for(let s=1;s<7;s++)dot(u[0]+(v[0]-u[0])*s/7,u[1]+(v[1]-u[1])*s/7,1.6,0.4*m);}}
+ CL.forEach((c,g)=>c.a.forEach((o,i)=>dot(ctr[g][0]+o[0],ctr[g][1]+o[1],2.3,0.8)));}
+
+function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing)t+=dt;
+ctx.clearRect(0,0,1600,900);head();render(t);requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+</script></body></html>
