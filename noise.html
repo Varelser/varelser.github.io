@@ -518,6 +518,7 @@
       <button id="expandAllBtn" class="secondary" type="button" data-help="左パネルの全セクションを開きます。">全て開く</button>
       <button id="collapseAllBtn" class="secondary" type="button" data-help="左パネルの全セクションを閉じます。見出しだけの状態になります。">全て閉じる</button>
       <button id="cmdkBtn" class="secondary" type="button" data-help="プリセット・ノイズ種・表示・操作を検索します（⌘K / Ctrl+K）。">⌘K 検索</button>
+      <button id="keysBtn" class="secondary" type="button" data-help="キーボードショートカットの一覧を表示します（? キーでも開きます）。">キー一覧</button>
       <button id="focusToggleBtn" class="secondary" type="button" aria-pressed="true" data-help="核のパネル（プリセット／Master／Layer）だけを表示し、Device・スリープ・AI・MIDI・セッション・備考を隠します。もう一度押すと全て表示します。">その他を隠す</button>
     </div>
     <div class="section" id="sec-preset">
@@ -6792,6 +6793,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     const jobs = createExportJobs(params);
     const maxSingleBytes = jobs.reduce((m, job) => Math.max(m, estimateExportBytes(job.params)), 0);
     const totalEstimatedBytes = jobs.reduce((sum, job) => sum + estimateExportBytes(job.params), 0);
+    let totalActualBytes = 0;
 
     if (exportState.running) return;
     if ((format === 'aiff' || format === 'flac') && exportBit === '32f') {
@@ -6859,10 +6861,11 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         if (token.cancelled) throw new Error('__EXPORT_CANCELLED__');
 
         const ext = format === 'opus' ? 'ogg' : (format === 'aiff' ? 'aiff' : (format === 'flac' ? 'flac' : 'wav'));
+        totalActualBytes += blob.size;
         triggerBlobDownload(blob, `noise_${job.suffix}_${exportRate}Hz_os${oversampleFactor}x_${exportBit}_${stamp}.${ext}`);
         await nextFrame();
       }
-      setStatus(`保存完了: ${jobs.length} file / ${exportFormatLabel(format)} / total ${fmtBytes(totalEstimatedBytes)} / ${exportRate} Hz / OS ${oversampleFactor}x / ${bitDepthLabel(exportBit)}`, 'ok');
+      setStatus(`保存完了: ${jobs.length} file / ${exportFormatLabel(format)} / total ${fmtBytes(totalActualBytes || totalEstimatedBytes)} / ${exportRate} Hz / OS ${oversampleFactor}x / ${bitDepthLabel(exportBit)}`, 'ok');
     } catch (err) {
       if (err && err.message === '__EXPORT_CANCELLED__') {
         setStatus('保存を中止しました。', '');
@@ -7851,7 +7854,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     let reduce = false;
     try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) {}
     if (!reduce && typeof document.startViewTransition === 'function') {
-      try { document.startViewTransition(fn); return; } catch (_) {}
+      try { const vt = document.startViewTransition(fn); if (vt) { if (vt.ready && vt.ready.catch) vt.ready.catch(() => {}); if (vt.finished && vt.finished.catch) vt.finished.catch(() => {}); if (vt.updateCallbackDone && vt.updateCallbackDone.catch) vt.updateCallbackDone.catch(() => {}); } return; } catch (_) {}
     }
     fn();
   }
@@ -8202,6 +8205,124 @@ var cb=$('cmdkBtn'); if(cb) cb.addEventListener('click',open);
 document.addEventListener('keydown',function(e){
   if((e.metaKey||e.ctrlKey)&&!e.altKey&&(e.key==='k'||e.key==='K')){ e.preventDefault(); if(overlay.hidden) open(); else close(); }
   else if(e.key==='Escape'&&!overlay.hidden){ close(); }
+});
+})();
+</script>
+
+<style id="noise-c-style">
+/* ==== Noise C: favourites / recent / preset search / shortcuts (2026-11-17) ==== */
+#panel .panel-tools{flex-wrap:wrap}
+#presetSearch{width:100%;box-sizing:border-box;background:var(--control-bg);border:0;border-radius:8px;padding:8px 10px;min-height:36px;margin:2px 0 8px}
+#presetQuick{display:grid;gap:6px;margin-top:10px}
+#presetQuick .q-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
+#presetQuick .q-row{display:flex;flex-wrap:wrap;gap:6px}
+.q-chip{padding:6px 10px;font-size:11px;line-height:1.35;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q-chip:hover{background:var(--control-bg-hover)}
+#favToggleBtn{padding:6px 10px;font-size:11px;border-radius:6px;background:transparent;color:var(--option-inactive-fg);cursor:pointer}
+#favToggleBtn.on{color:#000;background:var(--option-active-bg)}
+#keysOverlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:flex;align-items:flex-start;justify-content:center;padding:10vh 16px 16px}
+#keysOverlay[hidden]{display:none !important}
+#keysBox{width:min(560px,100%);background:#0a0a0a;border:1px solid #333;border-radius:12px;padding:18px 20px;box-shadow:0 25px 50px -12px rgba(0,0,0,.75)}
+#keysBox h2{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#d4d4d4}
+#keysBox table{width:100%;border-collapse:collapse;font-size:12.5px}
+#keysBox td{padding:5px 6px;border-bottom:1px solid #1c1c1c;color:#d4d4d4}
+#keysBox td:first-child{font-family:ui-monospace,Menlo,monospace;color:#fff;white-space:nowrap;width:42%}
+#keysClose{margin-top:12px;padding:8px 14px;border-radius:8px;background:var(--control-bg);color:#fff;cursor:pointer}
+</style>
+
+<div id="keysOverlay" hidden role="dialog" aria-modal="true" aria-label="キーボードショートカット">
+  <div id="keysBox">
+    <h2>キーボードショートカット</h2>
+    <table>
+      <tr><td>Space</td><td>再生 / 停止</td></tr>
+      <tr><td>S</td><td>書き出し（保存）</td></tr>
+      <tr><td>R</td><td>ランダム</td></tr>
+      <tr><td>1 〜 9 / 0</td><td>表示切替（3画面／波形／…／全表示）</td></tr>
+      <tr><td>⌘K / Ctrl+K</td><td>検索（プリセット・ノイズ種・表示・操作）</td></tr>
+      <tr><td>Ctrl+Z</td><td>戻す</td></tr>
+      <tr><td>Ctrl+Shift+Z / Ctrl+Y</td><td>やり直す</td></tr>
+      <tr><td>?</td><td>この一覧を開く</td></tr>
+      <tr><td>Esc</td><td>検索・この一覧を閉じる</td></tr>
+    </table>
+    <button id="keysClose" type="button">閉じる</button>
+  </div>
+</div>
+
+<script id="noise-c-script">
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var sel=$('presetSelect'); if(!sel) return;
+/* ---- preset search input (composes with the category filter) ---- */
+var pillsHost=$('presetPills');
+var search=document.createElement('input');
+search.id='presetSearch'; search.type='text'; search.placeholder='プリセットを検索…'; search.setAttribute('aria-label','プリセット検索');
+if(pillsHost && pillsHost.parentNode) pillsHost.parentNode.insertBefore(search, pillsHost);
+search.addEventListener('input', function(){
+  var q=search.value.trim().toLowerCase();
+  document.querySelectorAll('#presetPills .pill').forEach(function(b){
+    var name=(b.dataset.preset||b.textContent||'').toLowerCase();
+    b.style.display = (!q || name.indexOf(q)>-1) ? '' : 'none';
+  });
+  if(!q){ var act=document.querySelector('#presetFilters .pill.active'); if(act) act.click(); }
+});
+/* ---- favourites + recent ---- */
+var FKEY='noise_fav_presets_v1', RKEY='noise_recent_presets_v1';
+function load(k){ try{ var v=JSON.parse(localStorage.getItem(k)||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+var favs=load(FKEY), recent=load(RKEY);
+var quick=document.createElement('div'); quick.id='presetQuick';
+var secBody=document.querySelector('#sec-preset .body');
+if(secBody) secBody.appendChild(quick);
+function validNames(){ var s={}; for(var i=0;i<sel.options.length;i++) if(sel.options[i].value) s[sel.options[i].value]=1; return s; }
+function applyName(n){ sel.value=n; var b=$('applyPreset'); if(b) b.click(); }
+function render(){
+  var valid=validNames();
+  favs=favs.filter(function(n){return valid[n];}); recent=recent.filter(function(n){return valid[n];});
+  quick.innerHTML='';
+  var head=document.createElement('div');
+  var cur=sel.value;
+  var fb=document.createElement('button'); fb.type='button'; fb.id='favToggleBtn';
+  var isFav=favs.indexOf(cur)>-1;
+  fb.textContent=isFav?'★ お気に入りから外す':'☆ お気に入りに追加';
+  if(isFav) fb.className='on';
+  fb.addEventListener('click', function(){
+    var n=sel.value; if(!n) return;
+    var i=favs.indexOf(n); if(i>-1) favs.splice(i,1); else favs.unshift(n);
+    save(FKEY,favs); render();
+  });
+  head.appendChild(fb); quick.appendChild(head);
+  function row(label, names){
+    if(!names.length) return;
+    var l=document.createElement('div'); l.className='q-label'; l.textContent=label; quick.appendChild(l);
+    var r=document.createElement('div'); r.className='q-row';
+    names.forEach(function(n){ var c=document.createElement('button'); c.type='button'; c.className='q-chip'; c.textContent=n; c.addEventListener('click', function(){ applyName(n); }); r.appendChild(c); });
+    quick.appendChild(r);
+  }
+  row('★ お気に入り', favs);
+  row('最近使った', recent);
+}
+function noteApplied(n){
+  if(!n) return;
+  recent=[n].concat(recent.filter(function(x){return x!==n;})).slice(0,8);
+  save(RKEY,recent); render();
+}
+var ab=$('applyPreset'); if(ab) ab.addEventListener('click', function(){ noteApplied(sel.value); });
+if(pillsHost) pillsHost.addEventListener('click', function(e){ var b=e.target.closest ? e.target.closest('.pill') : null; if(b) noteApplied(b.dataset.preset||sel.value); });
+sel.addEventListener('change', render);
+render();
+/* ---- shortcuts overlay ---- */
+var ov=$('keysOverlay');
+function openKeys(){ if(ov) ov.hidden=false; }
+function closeKeys(){ if(ov) ov.hidden=true; }
+var kb=$('keysBtn'); if(kb) kb.addEventListener('click', openKeys);
+var kc=$('keysClose'); if(kc) kc.addEventListener('click', closeKeys);
+if(ov) ov.addEventListener('click', function(e){ if(e.target===ov) closeKeys(); });
+document.addEventListener('keydown', function(e){
+  var tag=(document.activeElement && document.activeElement.tagName||'').toLowerCase();
+  var typing=(tag==='input'||tag==='select'||tag==='textarea');
+  if(e.key==='?' && !typing){ e.preventDefault(); openKeys(); }
+  else if(e.key==='Escape' && ov && !ov.hidden){ closeKeys(); }
 });
 })();
 </script>
