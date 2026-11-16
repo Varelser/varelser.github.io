@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Punkt v2 (2026-11-11): zero-value sanitize fix, pre-change undo snapshots, true Poisson-disk sampling, unified processing core, export size guards, history mask budget, 20MP input cap. Tests: tests/punkt.test.mjs. v3 (2026-11-11): weighted Voronoi stippling, keyboard mask painting. v4-lien-reskin (2026-11-12): Lien-style frameless UI — 56px header, text-only toolbar, floating control panel initially hidden, artwork shifts when the panel opens. Generation core unchanged. -->
+<!-- Punkt v2 (2026-11-11): zero-value sanitize fix, pre-change undo snapshots, true Poisson-disk sampling, unified processing core, export size guards, history mask budget, 20MP input cap. Tests: tests/punkt.test.mjs. v3 (2026-11-11): weighted Voronoi stippling, keyboard mask painting. v4-lien-reskin (2026-11-12): Lien-style frameless UI — 56px header, text-only toolbar, floating control panel initially hidden, artwork shifts when the panel opens. Generation core unchanged. v5-perfect (2026-11-17): starter presets + sample image, SEO/PWA (og:image, JSON-LD, manifest, scoped SW), numeric value editing, command palette + shortcut dialog, reduced-motion. All additive; generation core, storage keys and share format unchanged. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -9,9 +9,19 @@
   <meta property="og:description" content="Local halftone, stipple and Poisson pointillism from your photos. Offline, single file, with presets, masks, compare and multilayer exports." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://varelser.github.io/punkt.html" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://varelser.github.io/img/emblem.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Punkt — Halftone &amp; Stipple Processor" />
+  <meta name="twitter:description" content="Local halftone, stipple and Poisson pointillism from your photos. Offline, single file, with presets, masks, compare and multilayer exports." />
+  <meta name="twitter:image" content="https://varelser.github.io/img/emblem.png" />
   <meta name="theme-color" content="#000000" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2232%22 fill=%22%23000%22/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='14' cy='14' r='6'/%3E%3Ccircle cx='32' cy='14' r='4'/%3E%3Ccircle cx='50' cy='14' r='2.5'/%3E%3Ccircle cx='14' cy='32' r='4'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3Ccircle cx='50' cy='32' r='4'/%3E%3Ccircle cx='14' cy='50' r='2.5'/%3E%3Ccircle cx='32' cy='50' r='4'/%3E%3Ccircle cx='50' cy='50' r='6'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="canonical" href="https://varelser.github.io/punkt.html" />
+  <link rel="manifest" href="/punkt.webmanifest" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Punkt — Halftone & Stipple Processor","url":"https://varelser.github.io/punkt.html","description":"Local halftone, stipple and Poisson pointillism from your photos. Offline, single file, with presets, masks, compare and multilayer exports.","applicationCategory":"MultimediaApplication","operatingSystem":"Web","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"Varelser"}}
+  </script>
   <title>Punkt</title>
   <style>
     :root {
@@ -989,6 +999,59 @@ body.plus-immersive .preview-toolbar { display: none !important; }
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+  <style id="punkt-perfect-css">
+/* Punkt Perfect (2026-11-17) — additive styles: starter presets, numeric
+   value editing, command palette, shortcut dialog, reduced motion. */
+.num-editable { cursor: text; border-bottom: 1px dotted rgba(255,255,255,0.35); }
+.num-editable:hover { color: #fff; border-bottom-color: rgba(255,255,255,0.8); }
+.num-edit-input {
+  width: 76px; background: #111; color: #fff; border: 1px solid #555;
+  border-radius: 4px; font-size: 12px; padding: 1px 4px;
+}
+.starter-block { margin: 2px 0 10px; }
+.starter-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.perfect-overlay {
+  position: fixed; inset: 0; z-index: 300; display: none;
+  background: rgba(0,0,0,0.62); align-items: flex-start; justify-content: center;
+  padding: 12vh 16px 16px;
+}
+.perfect-overlay.open { display: flex; }
+.perfect-panel {
+  width: min(560px, 100%); background: #101013; color: #f5f5f7;
+  border: 1px solid rgba(255,255,255,0.16); border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6); overflow: hidden;
+}
+.perfect-panel input.cmdk-input {
+  width: 100%; box-sizing: border-box; background: transparent; border: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.12); color: #fff;
+  font-size: 15px; padding: 14px 16px; outline: none;
+}
+.cmdk-list { list-style: none; margin: 0; padding: 6px; max-height: 46vh; overflow: auto; }
+.cmdk-list li {
+  display: flex; justify-content: space-between; gap: 12px; align-items: baseline;
+  padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13px;
+}
+.cmdk-list li .hint { color: #8a8a96; font-size: 11px; white-space: nowrap; }
+.cmdk-list li.active { background: rgba(255,255,255,0.1); }
+.cmdk-empty { padding: 14px 16px; color: #8a8a96; font-size: 13px; }
+.perfect-panel .keys-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px 8px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em;
+}
+.perfect-panel table.keys { border-collapse: collapse; width: calc(100% - 32px); margin: 4px 16px 16px; }
+.perfect-panel table.keys td { padding: 5px 6px; font-size: 12.5px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.perfect-panel table.keys td.k { white-space: nowrap; color: #fff; font-weight: 600; width: 42%; }
+.perfect-close {
+  background: rgba(255,255,255,0.08); color: #ddd; border: 0; border-radius: 999px;
+  padding: 4px 12px; cursor: pointer; font-size: 12px; min-height: 26px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+  }
+}
+  </style>
 </head>
 <body>
   <div class="app">
@@ -4741,5 +4804,433 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 })();
 
 </script>
-</body>
+  <script id="punkt-perfect-js">
+/* Punkt Perfect (2026-11-17) — additive enhancement layer.
+   Everything here is DOM-level and additive, in the same style as Plus:
+   the generation core, saved-data keys and share-link format are untouched.
+   Features: starter presets + sample image, numeric value editing,
+   command palette (Cmd/Ctrl+K), shortcut dialog (?), scoped PWA worker. */
+(function () {
+  'use strict';
+  function $(id) { return document.getElementById(id); }
+  function isEditableTarget(t) {
+    return !!(t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]'));
+  }
+  var toastEl = null, toastTimer = 0;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'plus-toast';
+      toastEl.id = 'perfectToast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
+  }
+  function hasImage() {
+    var b = $('exportPngBtn');
+    return !!(b && !b.disabled);
+  }
+  function applyStarter(cfg) {
+    if (window.__punktPlus && window.__punktPlus.applyConfig) {
+      return window.__punktPlus.applyConfig(JSON.parse(JSON.stringify(cfg)));
+    }
+    return Promise.resolve();
+  }
+
+  /* ---------------- starter presets + sample image ---------------- */
+  var STARTERS = [
+    { name: 'Classic Dots', cfg: { mode: 'HALFTONE', spacing: 6, minDotSize: 1, maxDotSize: 8, threshold: 0.2, contrast: 1, seed: 1 } },
+    { name: 'Newsprint', cfg: { mode: 'HALFTONE', spacing: 4, minDotSize: 0.6, maxDotSize: 6.5, threshold: 0.15, contrast: 1.15, color: '#1a1a1a', backgroundColor: '#f4efe4', accentColor: '#b91c1c', seed: 2 } },
+    { name: 'Bold Poster', cfg: { mode: 'HALFTONE', spacing: 10, minDotSize: 2, maxDotSize: 16, threshold: 0.3, contrast: 1.3, seed: 4 } },
+    { name: 'Fine Stipple', cfg: { mode: 'STIPPLE', spacing: 5, minDotSize: 0.5, maxDotSize: 5, threshold: 0.15, contrast: 1.05, seed: 7 } },
+    { name: 'Pointillism', cfg: { mode: 'POISSON', spacing: 7, minDotSize: 0.8, maxDotSize: 6, threshold: 0.18, seed: 3 } },
+    { name: 'Soft Portrait', cfg: { mode: 'HALFTONE', spacing: 5, minDotSize: 0.8, maxDotSize: 7, threshold: 0.12, contrast: 0.95, shadowBoost: 0.5, highlightBoost: -0.05, curveShadow: 0.1, curveMid: 0.05, seed: 5 } },
+    { name: 'High Contrast Mono', cfg: { mode: 'HALFTONE', spacing: 6, minDotSize: 1, maxDotSize: 9, threshold: 0.35, contrast: 1.6, seed: 6 } },
+    { name: 'Blueprint', cfg: { mode: 'POISSON', spacing: 6, minDotSize: 0.8, maxDotSize: 6, threshold: 0.2, color: '#e0f2fe', backgroundColor: '#082f49', accentColor: '#38bdf8', edgeColor: '#bae6fd', seed: 8 } },
+    { name: 'Accent Pop', cfg: { mode: 'HALFTONE', spacing: 7, minDotSize: 1, maxDotSize: 9, threshold: 0.2, accentColor: '#f43f5e', accentThreshold: 0.72, accentScale: 1.35, seed: 9 } },
+    { name: 'Transparent Cutout', cfg: { mode: 'HALFTONE', spacing: 6, minDotSize: 1, maxDotSize: 8, threshold: 0.22, transparentBackground: true, seed: 10 } }
+  ];
+
+  function buildSampleFile(done) {
+    var c = document.createElement('canvas');
+    c.width = 960; c.height = 720;
+    var x = c.getContext('2d');
+    var sky = x.createLinearGradient(0, 0, 0, 470);
+    sky.addColorStop(0, '#f7f7f7'); sky.addColorStop(0.55, '#a8a8a8'); sky.addColorStop(1, '#5c5c5c');
+    x.fillStyle = sky; x.fillRect(0, 0, 960, 470);
+    var sun = x.createRadialGradient(700, 150, 8, 700, 150, 130);
+    sun.addColorStop(0, 'rgba(255,255,255,1)'); sun.addColorStop(0.35, 'rgba(255,255,255,0.85)'); sun.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = sun; x.beginPath(); x.arc(700, 150, 130, 0, Math.PI * 2); x.fill();
+    x.fillStyle = '#ffffff'; x.beginPath(); x.arc(700, 150, 52, 0, Math.PI * 2); x.fill();
+    x.fillStyle = 'rgba(255,255,255,0.5)';
+    [[180, 120, 90], [260, 132, 60], [430, 92, 70], [520, 104, 46]].forEach(function (cl) {
+      x.beginPath(); x.ellipse(cl[0], cl[1], cl[2], cl[2] * 0.32, 0, 0, Math.PI * 2); x.fill();
+    });
+    x.fillStyle = '#6e6e6e'; x.beginPath();
+    x.moveTo(0, 470); x.lineTo(0, 330); x.lineTo(150, 240); x.lineTo(300, 350); x.lineTo(470, 260); x.lineTo(620, 380); x.lineTo(780, 300); x.lineTo(960, 400); x.lineTo(960, 470); x.closePath(); x.fill();
+    x.fillStyle = '#333333'; x.beginPath();
+    x.moveTo(0, 720); x.lineTo(0, 430); x.lineTo(190, 350); x.lineTo(360, 470); x.lineTo(540, 390); x.lineTo(730, 500); x.lineTo(960, 430); x.lineTo(960, 720); x.closePath(); x.fill();
+    var sea = x.createLinearGradient(0, 540, 0, 720);
+    sea.addColorStop(0, 'rgba(255,255,255,0.20)'); sea.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = sea; x.fillRect(0, 540, 960, 180);
+    x.fillStyle = 'rgba(255,255,255,0.35)';
+    for (var i = 0; i < 26; i++) {
+      var w = 26 + ((i * 53) % 90), sx = (i * 173) % 880, sy = 556 + ((i * 37) % 140);
+      x.fillRect(sx, sy, w, 3);
+    }
+    if (c.toBlob) {
+      c.toBlob(function (blob) { done(blob); }, 'image/png');
+    } else {
+      var bin = atob(c.toDataURL('image/png').split(',')[1]);
+      var arr = new Uint8Array(bin.length);
+      for (var j = 0; j < bin.length; j++) arr[j] = bin.charCodeAt(j);
+      done(new Blob([arr], { type: 'image/png' }));
+    }
+  }
+
+  function loadSample() {
+    buildSampleFile(function (blob) {
+      if (!blob) { toast('Sample could not be created in this browser'); return; }
+      var file = null;
+      try { file = new File([blob], 'punkt-sample.png', { type: 'image/png' }); } catch (e) {}
+      var input = $('fileInput');
+      var ok = false;
+      if (file && input && typeof DataTransfer !== 'undefined') {
+        try {
+          var dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          ok = true;
+        } catch (e) { ok = false; }
+      }
+      if (!ok) {
+        var url = URL.createObjectURL(blob);
+        var urlInput = $('plusUrlInput') || document.querySelector('.plus-url');
+        var urlBtn = $('plusUrlBtn');
+        if (urlInput && urlBtn) {
+          urlInput.value = url;
+          urlBtn.click();
+          ok = true;
+        }
+      }
+      toast(ok ? 'Sample image loaded' : 'Sample load is not supported in this browser');
+    });
+  }
+
+  function renderStarters() {
+    var list = $('presetList');
+    if (!list || $('starterBlock')) return;
+    var block = document.createElement('div');
+    block.className = 'starter-block';
+    block.id = 'starterBlock';
+    var head = document.createElement('div');
+    head.className = 'label-row';
+    head.innerHTML = '<span class="label">Starter Presets</span><span class="value">' + STARTERS.length + '</span>';
+    block.appendChild(head);
+    var chips = document.createElement('div');
+    chips.className = 'plus-chips';
+    STARTERS.forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'plus-chip starter-chip';
+      b.textContent = s.name;
+      b.setAttribute('data-starter', s.name);
+      b.addEventListener('click', function () {
+        applyStarter(s.cfg).then(function () {
+          toast(hasImage() ? ('Starter applied: ' + s.name) : ('Starter applied: ' + s.name + ' — load an image or try the sample'));
+        });
+      });
+      chips.appendChild(b);
+    });
+    block.appendChild(chips);
+    var actions = document.createElement('div');
+    actions.className = 'starter-actions';
+    var sample = document.createElement('button');
+    sample.type = 'button';
+    sample.className = 'pill';
+    sample.id = 'trySampleBtn';
+    sample.textContent = 'Try Sample Image';
+    sample.addEventListener('click', loadSample);
+    actions.appendChild(sample);
+    var pal = document.createElement('button');
+    pal.type = 'button';
+    pal.className = 'pill';
+    pal.id = 'openPaletteBtn';
+    pal.textContent = 'Command Palette (Ctrl+K)';
+    pal.addEventListener('click', function () { openPalette(); });
+    actions.appendChild(pal);
+    var keys = document.createElement('button');
+    keys.type = 'button';
+    keys.className = 'pill';
+    keys.id = 'openKeysBtn';
+    keys.textContent = 'Keyboard Shortcuts (?)';
+    keys.addEventListener('click', function () { openKeys(); });
+    actions.appendChild(keys);
+    block.appendChild(actions);
+    var note = document.createElement('p');
+    note.className = 'plus-note';
+    note.textContent = 'Built-in starters — applied like any preset, never written over your saved presets.';
+    block.appendChild(note);
+    list.parentNode.insertBefore(block, list);
+  }
+
+  /* ---------------- numeric value editing ---------------- */
+  function setupNumericEditing() {
+    var ranges = document.querySelectorAll('input[type="range"]');
+    Array.prototype.forEach.call(ranges, function (r) {
+      var valueEl = $(r.id + 'Value');
+      if (!valueEl) {
+        var wrap = r.closest('label') || r.parentNode;
+        valueEl = wrap ? wrap.querySelector('.value') : null;
+      }
+      if (!valueEl || valueEl.dataset.numEdit) return;
+      valueEl.dataset.numEdit = '1';
+      valueEl.classList.add('num-editable');
+      valueEl.title = 'Click to type a value';
+      valueEl.addEventListener('click', function (ev) {
+        if (valueEl.querySelector('input')) return;
+        ev.preventDefault(); ev.stopPropagation();
+        var original = valueEl.textContent;
+        var input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'num-edit-input';
+        if (r.min !== '') input.min = r.min;
+        if (r.max !== '') input.max = r.max;
+        input.step = r.step || 'any';
+        input.value = r.value;
+        input.setAttribute('aria-label', 'Type a value for ' + (r.getAttribute('aria-label') || r.id));
+        valueEl.textContent = '';
+        valueEl.appendChild(input);
+        input.focus(); input.select();
+        var done = false;
+        function finish(save) {
+          if (done) return; done = true;
+          if (save) {
+            var v = parseFloat(input.value);
+            if (isFinite(v)) {
+              var min = parseFloat(r.min), max = parseFloat(r.max);
+              if (isFinite(min) && v < min) v = min;
+              if (isFinite(max) && v > max) v = max;
+              r.value = String(v);
+              r.dispatchEvent(new Event('input', { bubbles: true }));
+              r.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+          setTimeout(function () {
+            if (input.parentNode === valueEl) valueEl.textContent = save ? String(r.value) : original;
+          }, 40);
+        }
+        input.addEventListener('keydown', function (e) {
+          e.stopPropagation();
+          if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+          else if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+        });
+        input.addEventListener('click', function (e) { e.stopPropagation(); });
+        input.addEventListener('blur', function () { finish(true); });
+      });
+    });
+  }
+
+  /* ---------------- command palette + shortcut dialog ---------------- */
+  var paletteOverlay = null, paletteInput = null, paletteList = null, paletteItems = [], paletteActive = 0;
+  function collectActions() {
+    var actions = [];
+    actions.push({ title: 'Try Sample Image', hint: 'Perfect', run: loadSample });
+    STARTERS.forEach(function (s) {
+      actions.push({ title: 'Starter: ' + s.name, hint: 'Preset', run: function () { applyStarter(s.cfg); } });
+    });
+    var seen = {};
+    Array.prototype.forEach.call(document.querySelectorAll('button'), function (b) {
+      var t = (b.textContent || '').trim().replace(/\s+/g, ' ');
+      if (!t || t.length > 42 || seen[t] || b.closest('.perfect-overlay')) return;
+      if (b.id === 'openPaletteBtn') return;
+      seen[t] = 1;
+      actions.push({
+        title: t, hint: 'Action', run: function () {
+          if (document.body.classList.contains('dock-collapsed')) {
+            var c = $('collapseBtn'); if (c) c.click();
+          }
+          setTimeout(function () {
+            try { b.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+            b.click();
+          }, 60);
+        }
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.section-title'), function (h) {
+      var t = (h.textContent || '').trim();
+      if (!t) return;
+      actions.push({
+        title: 'Go to: ' + t, hint: 'Section', run: function () {
+          if (document.body.classList.contains('dock-collapsed')) {
+            var c = $('collapseBtn'); if (c) c.click();
+          }
+          setTimeout(function () { try { h.scrollIntoView({ block: 'start' }); } catch (e) {} }, 60);
+        }
+      });
+    });
+    return actions;
+  }
+  function buildPalette() {
+    paletteOverlay = document.createElement('div');
+    paletteOverlay.className = 'perfect-overlay';
+    paletteOverlay.id = 'cmdkOverlay';
+    paletteOverlay.innerHTML = '<div class="perfect-panel" role="dialog" aria-modal="true" aria-label="Command palette">'
+      + '<input class="cmdk-input" id="cmdkInput" type="text" placeholder="Type a command, preset or section…" autocomplete="off" />'
+      + '<ul class="cmdk-list" id="cmdkList"></ul></div>';
+    document.body.appendChild(paletteOverlay);
+    paletteInput = paletteOverlay.querySelector('.cmdk-input');
+    paletteList = paletteOverlay.querySelector('.cmdk-list');
+    paletteOverlay.addEventListener('click', function (e) { if (e.target === paletteOverlay) closePalette(); });
+    paletteInput.addEventListener('input', function () { renderPaletteList(); });
+    paletteInput.addEventListener('keydown', function (e) {
+      e.stopPropagation();
+      if (e.key === 'Escape') { e.preventDefault(); closePalette(); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); movePalette(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); movePalette(-1); }
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        var it = paletteItems[paletteActive];
+        if (it) { closePalette(); it.run(); }
+      }
+    });
+  }
+  function renderPaletteList() {
+    var q = (paletteInput.value || '').trim().toLowerCase();
+    var words = q ? q.split(/\s+/) : [];
+    var all = collectActions();
+    paletteItems = all.filter(function (a) {
+      var t = a.title.toLowerCase();
+      return words.every(function (w) { return t.indexOf(w) >= 0; });
+    }).slice(0, 14);
+    if (paletteActive >= paletteItems.length) paletteActive = 0;
+    paletteList.innerHTML = '';
+    if (!paletteItems.length) {
+      var li = document.createElement('li');
+      li.className = 'cmdk-empty';
+      li.textContent = 'No matches';
+      paletteList.appendChild(li);
+      return;
+    }
+    paletteItems.forEach(function (a, i) {
+      var li = document.createElement('li');
+      if (i === paletteActive) li.className = 'active';
+      var left = document.createElement('span'); left.textContent = a.title;
+      var right = document.createElement('span'); right.className = 'hint'; right.textContent = a.hint;
+      li.appendChild(left); li.appendChild(right);
+      li.addEventListener('click', function () { closePalette(); a.run(); });
+      li.addEventListener('mousemove', function () { if (paletteActive !== i) { paletteActive = i; renderPaletteList(); } });
+      paletteList.appendChild(li);
+    });
+  }
+  function movePalette(d) {
+    if (!paletteItems.length) return;
+    paletteActive = (paletteActive + d + paletteItems.length) % paletteItems.length;
+    renderPaletteList();
+  }
+  function openPalette() {
+    if (!paletteOverlay) buildPalette();
+    paletteActive = 0;
+    paletteOverlay.classList.add('open');
+    paletteInput.value = '';
+    renderPaletteList();
+    setTimeout(function () { paletteInput.focus(); }, 20);
+  }
+  function closePalette() { if (paletteOverlay) paletteOverlay.classList.remove('open'); }
+
+  var keysOverlay = null;
+  function buildKeys() {
+    keysOverlay = document.createElement('div');
+    keysOverlay.className = 'perfect-overlay';
+    keysOverlay.id = 'keysOverlay';
+    var rows = [
+      ['Ctrl / Cmd + K', 'Command palette'],
+      ['?', 'This shortcut list'],
+      ['H', 'Immersive preview'], ['O', 'Show original'], ['R', 'Reprocess'], ['E', 'Export PNG'],
+      ['1 / 2 / 3', 'Halftone / Stipple / Poisson'],
+      ['[ and ]', 'Spacing down / up'],
+      ['Ctrl+Z / Ctrl+Y', 'Undo / Redo'],
+      ['Arrows + Space', 'Paint mask from keyboard (canvas focused)'],
+      ['Click a slider value', 'Type the value numerically'],
+      ['Esc', 'Close dialog / exit immersive']
+    ];
+    var html = '<div class="perfect-panel" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">'
+      + '<div class="keys-head"><span>Keyboard Shortcuts</span><button type="button" class="perfect-close" id="keysClose">Close</button></div>'
+      + '<table class="keys">';
+    rows.forEach(function (r) { html += '<tr><td class="k">' + r[0] + '</td><td>' + r[1] + '</td></tr>'; });
+    html += '</table></div>';
+    keysOverlay.innerHTML = html;
+    document.body.appendChild(keysOverlay);
+    keysOverlay.addEventListener('click', function (e) { if (e.target === keysOverlay) closeKeys(); });
+    keysOverlay.querySelector('#keysClose').addEventListener('click', closeKeys);
+  }
+  function openKeys() { if (!keysOverlay) buildKeys(); keysOverlay.classList.add('open'); }
+  function closeKeys() { if (keysOverlay) keysOverlay.classList.remove('open'); }
+
+  window.addEventListener('keydown', function (e) {
+    var mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase() === 'k') {
+      e.preventDefault(); e.stopPropagation();
+      if (paletteOverlay && paletteOverlay.classList.contains('open')) closePalette(); else openPalette();
+      return;
+    }
+    if (e.key === 'Escape') { closePalette(); closeKeys(); return; }
+    if (e.key === '?' && !isEditableTarget(e.target)) {
+      if (paletteOverlay && paletteOverlay.classList.contains('open')) return;
+      e.preventDefault();
+      openKeys();
+    }
+  }, true);
+
+  /* ---------------- extend the Plus keys note ---------------- */
+  function extendKeysNote() {
+    var notes = document.querySelectorAll('.plus-note');
+    Array.prototype.forEach.call(notes, function (n) {
+      if (n.textContent.indexOf('Keys:') === 0 && n.textContent.indexOf('Ctrl+K') < 0) {
+        n.textContent += ' · Ctrl+K palette · ? shortcuts · Click a value to type it';
+      }
+    });
+  }
+
+  /* ---------------- scoped offline worker ---------------- */
+  function registerWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+    try {
+      navigator.serviceWorker.register('/punkt-sw.js', { scope: '/punkt.html' }).catch(function () {});
+    } catch (e) {}
+  }
+
+  function renderTopSample() {
+    /* Always-visible Sample button in the dock bar, next to Load Image:
+       the first-run path must not hide behind the collapsed panel. */
+    var drop = $('uploadDrop');
+    if (!drop || $('trySampleTopBtn')) return;
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn subtle';
+    b.id = 'trySampleTopBtn';
+    b.textContent = 'Sample';
+    b.title = 'Load a built-in sample image';
+    b.addEventListener('click', loadSample);
+    drop.parentNode.insertBefore(b, drop.nextSibling);
+  }
+
+  function init() {
+    renderStarters();
+    renderTopSample();
+    setupNumericEditing();
+    extendKeysNote();
+    registerWorker();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  window.__punktPerfect = { starters: STARTERS, loadSample: loadSample, openPalette: openPalette, openKeys: openKeys, version: '1.0.0' };
+})();
+</script>
+  </body>
 </html>
