@@ -5063,7 +5063,9 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       var box = ensureBatchBox();
       var done = Math.min(b.idx || 0, b.seeds.length);
       var secs = b.started ? Math.max(0, Math.round((Date.now() - b.started) / 1000)) : 0;
-      box.querySelector('.yc-batch-text').textContent = 'バッチ書き出し中 ' + done + ' / ' + b.seeds.length + ' ・ 経過 ' + secs + '秒';
+      var txt = 'バッチ書き出し中 ' + done + ' / ' + b.seeds.length + ' ・ 経過 ' + secs + '秒';
+      var tel = box.querySelector('.yc-batch-text');
+      if (tel.textContent !== txt) tel.textContent = txt;
       box.querySelector('.yc-bar i').style.width = (done / b.seeds.length * 100) + '%';
       box.classList.add('yc-on');
     } else if (batchBox) {
@@ -5160,7 +5162,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
       rec.onstop = function () {
         var bytes = chunks.reduce(function (a, x) { return a + x.size; }, 0);
-        if (!bytes) { v.res.textContent = '録画データ 0 バイト — この環境では映像フレームが生成されませんでした（実ブラウザでは通常動作します）'; return; }
+        if (!bytes) { v.res.textContent = '録画データ 0 バイト — 映像フレームが生成されませんでした。タブが前面で表示されている状態で、もう一度お試しください（自動操作や背面タブではフレームが流れません）'; return; }
         var blob = new Blob(chunks, { type: mime });
         var url = URL.createObjectURL(blob);
         v.res.innerHTML = '';
