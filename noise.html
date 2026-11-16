@@ -8739,7 +8739,7 @@ if(presetBody){
   jbar.innerHTML='<div class="m-label">Journey — 複数のプリセットを旅する</div>'
    + '<div id="journeyChips"></div>'
    + '<div class="m-row"><button id="journeyAdd" type="button">選択中のプリセットを追加</button><button id="journeyClear" type="button">全消去</button></div>'
-   + '<div class="m-row"><span style="font-size:11px;color:var(--muted)">1区間</span><select id="journeyMins" class="mini" aria-label="1区間の時間"><option value="0.5">30秒</option><option value="1">1分</option><option value="3" selected>3分</option><option value="5">5分</option><option value="10">10分</option><option value="20">20分</option></select><label class="check"><input id="journeyLoop" type="checkbox"> ループ</label><button id="journeyStart" type="button">ジャーニー開始</button></div>'
+   + '<div class="m-row" id="journeyMinsRow"><span style="font-size:11px;color:var(--muted)">1区間</span><button type="button" data-jmins="0.5">30秒</button><button type="button" data-jmins="1">1分</button><button type="button" data-jmins="3" class="on">3分</button><button type="button" data-jmins="5">5分</button><button type="button" data-jmins="10">10分</button><button type="button" data-jmins="20">20分</button><label class="check"><input id="journeyLoop" type="checkbox"> ループ</label><button id="journeyStart" type="button">ジャーニー開始</button></div>'
    + '<div class="help" id="journeyStatus">地点を2つ以上追加して開始すると、現在の設定から順に各プリセットへゆっくり移行します。</div>';
   presetBody.appendChild(jbar);
   var jChips=$('journeyChips'), jStatus=$('journeyStatus');
@@ -8758,7 +8758,13 @@ if(presetBody){
   renderChips();
   $('journeyAdd').addEventListener('click', function(){ var n=sel.value; if(!n) return; waypoints.push(n); saveWp(); renderChips(); });
   $('journeyClear').addEventListener('click', function(){ waypoints=[]; saveWp(); renderChips(); });
-  var jTimer=0, jSeq=null, jLeg=0, jProg=0;
+  var jTimer=0, jSeq=null, jLeg=0, jProg=0, jMinsVal=3;
+  document.querySelectorAll('#journeyMinsRow [data-jmins]').forEach(function(b){
+    b.addEventListener('click', function(){
+      jMinsVal=parseFloat(b.getAttribute('data-jmins'));
+      document.querySelectorAll('#journeyMinsRow [data-jmins]').forEach(function(x){ x.classList.toggle('on', x===b); });
+    });
+  });
   function jStop(msg){
     if(jTimer){ clearInterval(jTimer); jTimer=0; }
     var b=$('journeyStart'); if(b){ b.classList.remove('on'); b.textContent='ジャーニー開始'; }
@@ -8781,7 +8787,7 @@ if(presetBody){
     writeVals(orig);
     jSeq=[orig].concat(snaps);
     jLeg=0; jProg=0;
-    var dur=parseFloat($('journeyMins').value)*60*1000, last=Date.now();
+    var dur=jMinsVal*60*1000, last=Date.now();
     var b=$('journeyStart'); b.classList.add('on'); b.textContent='ジャーニー停止';
     jStatus.textContent='ジャーニー中： 1/'+waypoints.length+' 地点目（'+waypoints[0]+'）へ移行中';
     jTimer=setInterval(function(){
@@ -8806,12 +8812,15 @@ if(presetBody){
 if(presetBody){
   var ebar=document.createElement('div'); ebar.id='envBar';
   ebar.innerHTML='<div class="m-label">Environment — 時刻と天気で自動選択</div>'
-   + '<div class="m-row"><select id="envMode" class="mini" aria-label="環境連動モード"><option value="off">オフ</option><option value="time">時刻</option><option value="weather">天気</option><option value="both">時刻＋天気</option></select><button id="envNow" type="button">今すぐ反映</button><button id="envGeo" type="button">現在地の天気を使う</button></div>'
+   + '<div class="m-row" id="envModeRow"><button type="button" data-envmode="off" class="on">オフ</button><button type="button" data-envmode="time">時刻</button><button type="button" data-envmode="weather">天気</button><button type="button" data-envmode="both">時刻＋天気</button><button id="envNow" type="button">今すぐ反映</button><button id="envGeo" type="button">現在地の天気を使う</button></div>'
    + '<div class="help" id="envStatus">オフです。時刻は端末の時計、天気は Open-Meteo（無料・キー不要、既定は東京）から取得します。時間帯や天気が切り替わったときだけプリセットを切り替えるので、手動の変更と競合しません。</div>';
   presetBody.appendChild(ebar);
-  var eMode=$('envMode'), eStatus=$('envStatus');
+  var eStatus=$('envStatus');
+  var envModeVal='off';
+  try{ envModeVal=localStorage.getItem('noise_env_mode_v1')||'off'; }catch(_){}
   var envState={ wxCode:null, wxAt:0, lat:35.68, lon:139.69, lastKey:'' };
-  try{ eMode.value=localStorage.getItem('noise_env_mode_v1')||'off'; }catch(_){}
+  function paintEnvMode(){ document.querySelectorAll('#envModeRow [data-envmode]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-envmode')===envModeVal); }); }
+  paintEnvMode();
   function timePick(){
     var h=new Date().getHours();
     if(h>=5&&h<10) return { name:'Nature: Dawn Chorus', label:'朝', key:'time:morning' };
@@ -8837,7 +8846,7 @@ if(presetBody){
     }).catch(function(){});
   }
   function envApply(force){
-    var mode=eMode.value;
+    var mode=envModeVal;
     if(mode==='off'){ eStatus.textContent='オフです。'; return; }
     var t=timePick(), w=wxPick(envState.wxCode), pick=null, why='';
     if(mode==='time'){ pick=t; why='時刻（'+t.label+'）'; }
@@ -8851,19 +8860,23 @@ if(presetBody){
     eStatus.textContent=why+' に合わせて「'+pick.name+'」を適用しました。';
   }
   function envTick(){
-    if(eMode.value==='off') return;
-    if(eMode.value!=='time' && Date.now()-envState.wxAt>30*60*1000){ fetchWx().then(function(){ envApply(false); }); }
+    if(envModeVal==='off') return;
+    if(envModeVal!=='time' && Date.now()-envState.wxAt>30*60*1000){ fetchWx().then(function(){ envApply(false); }); }
     else envApply(false);
   }
-  eMode.addEventListener('change', function(){
-    try{ localStorage.setItem('noise_env_mode_v1', eMode.value); }catch(_){}
-    envState.lastKey='';
-    if(eMode.value!=='off' && eMode.value!=='time'){ fetchWx().then(function(){ envApply(true); }); }
-    else envApply(true);
+  document.querySelectorAll('#envModeRow [data-envmode]').forEach(function(b){
+    b.addEventListener('click', function(){
+      envModeVal=b.getAttribute('data-envmode');
+      paintEnvMode();
+      try{ localStorage.setItem('noise_env_mode_v1', envModeVal); }catch(_){}
+      envState.lastKey='';
+      if(envModeVal!=='off' && envModeVal!=='time'){ fetchWx().then(function(){ envApply(true); }); }
+      else envApply(true);
+    });
   });
   $('envNow').addEventListener('click', function(){
-    if(eMode.value==='off'){ eStatus.textContent='先にモードを選んでください。'; return; }
-    if(eMode.value!=='time'){ fetchWx().then(function(){ envApply(true); }); } else envApply(true);
+    if(envModeVal==='off'){ eStatus.textContent='先にモードを選んでください。'; return; }
+    if(envModeVal!=='time'){ fetchWx().then(function(){ envApply(true); }); } else envApply(true);
   });
   $('envGeo').addEventListener('click', function(){
     if(!navigator.geolocation){ eStatus.textContent='このブラウザは位置情報に対応していません（既定の東京で取得します）。'; return; }
@@ -8874,7 +8887,7 @@ if(presetBody){
     }, function(){ eStatus.textContent='位置情報を取得できませんでした（既定の東京で取得します）。'; });
   });
   setInterval(envTick, 60000);
-  if(eMode.value!=='off'){ envTick(); }
+  if(envModeVal!=='off'){ envTick(); }
 }
 })();
 </script>
