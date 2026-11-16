@@ -61,7 +61,7 @@
   main .sub { margin-top:20px; font-size:12px; letter-spacing:.3em; text-indent:.3em; color:#8b8b93; text-align:center; }
   footer { flex:0 0 auto; padding:22px 20px calc(22px + env(safe-area-inset-bottom)); border-top:1px solid #232327; display:flex; justify-content:space-between; align-items:center; font-size:11px; letter-spacing:.18em; color:#8b8b93; }
   footer a { color:#9a9aa2; text-decoration:none; }
-  main .links { margin-top:30px; }
+  main .links { margin-top:30px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:880px; }
   main .links a { display:inline-block; padding:12px 30px; border:1px solid #3a3a40; border-radius:999px; color:#e8e8ec; text-decoration:none; font-size:12px; letter-spacing:.34em; text-indent:.34em; transition:background .25s, color .25s, border-color .25s; }
   main .links a:hover { background:#e8e8ec; color:#000; border-color:#e8e8ec; }
 
@@ -91,6 +91,9 @@
   @media print { body { background:#fff; color:#000; } header, footer { border-color:#ccc; } main .icon { animation:none; } main h1 { color:#000; } main .sub { color:#444; } main .links a { border-color:#000; color:#000; } header .logo img { filter:invert(1); } }
 
   @media (max-width:640px) {
+    main .icon { width:min(76vmin, max(180px, calc(100dvh - 520px))); }
+    main .links { gap:8px; }
+    main .links a { padding:10px 16px; font-size:11px; letter-spacing:.22em; text-indent:.22em; }
     header { padding:0 14px; }
     header .hd-title { font-size:11px; letter-spacing:.3em; text-indent:.3em; }
     header .logo img { height:19px; }
@@ -118,7 +121,7 @@
   <h1>MIDNIGHT ESPRESSO</h1>
   <div class="rule"></div>
   <div class="sub">VARELSER</div>
-  <div class="links"><a href="https://linktr.ee/midnightespressoproject?utm_source=linktree_profile_share" target="_blank" rel="noopener noreferrer">LINKTREE</a></div>
+  <div class="links"><a href="https://www.youtube.com/@midnightespressoproject" target="_blank" rel="noopener noreferrer">YOUTUBE</a><a href="https://www.twitch.tv/midnightesp" target="_blank" rel="noopener noreferrer">TWITCH</a><a href="https://x.com/midnighesp" target="_blank" rel="noopener noreferrer">X</a><a href="https://note.com/midnightesp" target="_blank" rel="noopener noreferrer">NOTE</a><a href="https://linktr.ee/midnightespressoproject?utm_source=linktree_profile_share" target="_blank" rel="noopener noreferrer">LINKTREE</a></div>
 </main>
 <footer>
   <span>© VARELSER</span>
