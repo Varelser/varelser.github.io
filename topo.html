@@ -4247,6 +4247,10 @@ async function renderSceneOffscreen(req) {
       const off = Math.max(0.8, fs * 0.09);
       const mx = m.x * req.width;
       const my = m.y * req.height;
+      if (m.vec) {
+        drawVecSymbolCtx(ctx, m.vec, mx, my, 19 * (m.size || 1) * req.scale);
+        continue;
+      }
       const lines = String(m.text).split('\n');
       const lh = fs * 1.18;
       const y0 = my - (lines.length - 1) * lh / 2;
@@ -4535,6 +4539,10 @@ async function buildSvgString(sceneData, opts, onProgress) {
     for (let i = 0; i < options.markers.length; i++) {
       const m = options.markers[i];
       const fs = 13 * (m.size || 1) * strokeScale;
+      if (m.vec) {
+        mtexts.push(buildSvgVecSymbol(m.vec, m.x * width, m.y * height, 19 * (m.size || 1) * strokeScale));
+        continue;
+      }
       const lines = String(m.text).split('\n');
       const lh = fs * 1.18;
       const y0 = m.y * height - (lines.length - 1) * lh / 2;
@@ -4617,9 +4625,9 @@ function getWorkerSourceText() {
   // The render path needs the curve port and the OffscreenCanvas
   // rasterizer in the Worker as well; they are pure (no DOM access
   // at definition time) and join the core functions in the source.
-  const extras = [catmullRomPoint, cubicBezierPoint, curveBezierControls, buildCurveVertexList, curveSegmentStream, strokeCurvePath2D, graticuleTicksFor, renderSceneOffscreen];
+  const extras = [catmullRomPoint, cubicBezierPoint, curveBezierControls, buildCurveVertexList, curveSegmentStream, strokeCurvePath2D, graticuleTicksFor, drawVecSymbolCtx, renderSceneOffscreen];
   return getCoreSourceText()
-    + '\n\n'
+    + '\n\nconst MAP_SYMBOL_DEFS = ' + JSON.stringify(MAP_SYMBOL_DEFS) + ';\n\n'
     + extras.map((f) => f.toString()).join('\n\n')
     + '\n;(' + topoWorkerMain.toString() + ')();\n';
 }
@@ -5119,6 +5127,115 @@ function drawFlowLinesP5(pg, scn, scale) {
   pg.pop();
 }
 
+// Line-drawn map symbols (round 4): authentic topographic symbols
+// as vector parts in a 24x24 box. Parts: {d} stroked path, {f}
+// filled path, {c:[cx,cy,r]} circle (f:1 = filled), optional w =
+// stroke width. Pure data so the Worker copy can embed it as JSON.
+const MAP_SYMBOL_DEFS = {
+  tri: [{ d: 'M12 4 L21 19 L3 19 Z' }, { c: [12, 13.8, 1.7], f: 1 }],
+  bench: [{ d: 'M6 6 H18 V18 H6 Z' }, { f: 'M10.2 10.2 H13.8 V13.8 H10.2 Z' }],
+  gps: [{ c: [12, 13.5, 6] }, { c: [12, 13.5, 1.6], f: 1 }, { d: 'M12 7.5 V3' }, { c: [12, 2.6, 1], f: 1 }],
+  spot: [{ c: [12, 12, 2.1], f: 1 }],
+  torii: [{ d: 'M3 5.2 Q12 3.6 21 5.2' }, { d: 'M5.6 8.6 H18.4' }, { d: 'M8.2 8.6 V20' }, { d: 'M15.8 8.6 V20' }, { d: 'M12 8.6 V13.5' }],
+  church: [{ d: 'M12 3 V20' }, { d: 'M7.6 7.6 H16.4' }, { d: 'M8 20 H16' }],
+  lighthouse: [{ d: 'M10 21 L11.1 9.5 H12.9 L14 21 Z' }, { d: 'M10.2 9.5 H13.8 V6.2 H10.2 Z' }, { d: 'M6.8 7.6 L4.2 6' }, { d: 'M17.2 7.6 L19.8 6' }, { d: 'M12 4.6 V3' }],
+  tower: [{ d: 'M8.2 21 L11 3.5 H13 L15.8 21' }, { d: 'M9.4 15 H14.6' }, { d: 'M10.3 9.8 H13.7' }, { d: 'M6.4 21 H17.6' }],
+  chimney: [{ d: 'M9.6 21 V5.4 H14.4 V21' }, { d: 'M8.4 5.4 H15.6' }, { d: 'M10.6 2.9 Q12 1.5 13.4 2.9' }],
+  windmill: [{ d: 'M12 21 V11' }, { d: 'M12 9 L12 2.6' }, { d: 'M12 9 L17.6 12.6' }, { d: 'M12 9 L6.4 12.6' }, { c: [12, 9, 1.4], f: 1 }],
+  bridge: [{ d: 'M3 10.2 H21' }, { d: 'M5 10.2 Q12 17.5 19 10.2' }, { d: 'M7.2 13.8 V18.5' }, { d: 'M16.8 13.8 V18.5' }, { d: 'M5 10.2 V7.4 H19 V10.2' }],
+  falls: [{ d: 'M4 5 H20' }, { d: 'M8 5 C7.3 8.5 8.7 11.5 8 15.5' }, { d: 'M12 5 C11.3 9 12.7 12 12 17' }, { d: 'M16 5 C15.3 8.5 16.7 11.5 16 15.5' }, { d: 'M5 20 H19' }],
+  onsen: [{ d: 'M4 14.5 A8 6.2 0 0 0 20 14.5' }, { d: 'M4 14.5 H20' }, { d: 'M8.5 10.6 C7.9 8.6 9.1 7.2 8.5 5' }, { d: 'M12 11 C11.4 8.8 12.6 7.4 12 5' }, { d: 'M15.5 10.6 C14.9 8.6 16.1 7.2 15.5 5' }],
+  stele: [{ d: 'M8.2 20 V7.2 Q8.2 4 12 4 Q15.8 4 15.8 7.2 V20' }, { d: 'M5.8 20 H18.2' }, { d: 'M10.4 16.5 V9' }],
+  castle: [{ d: 'M6 20 V13.5 H18 V20' }, { d: 'M9.2 13.5 V8.6 H14.8 V13.5' }, { d: 'M7.8 8.6 L12 5.2 L16.2 8.6' }, { d: 'M4.4 20 H19.6' }],
+  tomb: [{ d: 'M9 20 V9.2 A3 3.2 0 0 1 15 9.2 V20' }, { d: 'M6.4 20 H17.6' }, { d: 'M12 11 V15.4' }, { d: 'M10.1 13.2 H13.9' }],
+  well: [{ c: [12, 12, 7.6] }, { c: [12, 12, 3.8] }],
+  fountain: [{ d: 'M4 18.5 H20' }, { d: 'M6.2 18.5 A5.8 3.4 0 0 0 17.8 18.5' }, { d: 'M12 15 V7.5' }, { d: 'M12 10.5 C9.2 9.6 7.6 10.8 7.2 13' }, { d: 'M12 10.5 C14.8 9.6 16.4 10.8 16.8 13' }, { c: [12, 6.2, 1], f: 1 }],
+  viewpoint: [{ c: [12, 15.5, 1.7], f: 1 }, { d: 'M12 15.5 L4.8 7.2' }, { d: 'M12 15.5 L12 4.6' }, { d: 'M12 15.5 L19.2 7.2' }, { d: 'M4.8 7.2 A9.5 9.5 0 0 1 19.2 7.2' }],
+  ropeway: [{ d: 'M3 5.5 L21 9.5' }, { d: 'M7 20.5 V6.6' }, { d: 'M17 20.5 V8.6' }, { d: 'M10.4 8 H14.8 V12.6 H10.4 Z' }, { d: 'M12.6 8 L12.6 7.2' }],
+  conifer: [{ d: 'M12 3.4 L16.8 9.8 H7.2 Z' }, { d: 'M12 7.6 L18.2 15.4 H5.8 Z' }, { d: 'M12 15.4 V20.5' }],
+  broadleaf: [{ c: [8.8, 10, 3.5] }, { c: [15.2, 10, 3.5] }, { c: [12, 7, 3.7] }, { d: 'M12 20.5 V13.5' }],
+  bamboo: [{ d: 'M9 20.5 V4' }, { d: 'M15 20.5 V4' }, { d: 'M7.4 9 H10.6' }, { d: 'M7.4 14.5 H10.6' }, { d: 'M13.4 9 H16.6' }, { d: 'M13.4 14.5 H16.6' }, { d: 'M9 4 L5.8 2.4' }, { d: 'M15 4 L18.2 2.4' }],
+  paddy: [{ d: 'M4 5 H20 V19 H4 Z' }, { d: 'M12 5 V19' }, { d: 'M4 12 H20' }],
+  field: [{ d: 'M4 5 H20 V19 H4 Z' }, { d: 'M7.5 19 L13.5 5' }, { d: 'M12.5 19 L18.5 5' }, { d: 'M4.8 13.5 L7.8 5' }],
+  orchard: [{ c: [7.5, 8, 1.8] }, { c: [12, 8, 1.8] }, { c: [16.5, 8, 1.8] }, { c: [7.5, 15.5, 1.8] }, { c: [12, 15.5, 1.8] }, { c: [16.5, 15.5, 1.8] }],
+  tea: [{ d: 'M4 7.5 A4 2.7 0 0 1 12 7.5 A4 2.7 0 0 1 20 7.5' }, { d: 'M4 13 A4 2.7 0 0 1 12 13 A4 2.7 0 0 1 20 13' }, { d: 'M4 18.5 A4 2.7 0 0 1 12 18.5 A4 2.7 0 0 1 20 18.5' }],
+  dam: [{ d: 'M4 16.5 A10.5 10.5 0 0 1 20 16.5', w: 3.1 }, { d: 'M7 20.6 H9.8' }, { d: 'M10.6 21.2 H13.4' }, { d: 'M14.2 20.6 H17' }],
+  cave: [{ d: 'M6 20.5 V12.5 A6 6.5 0 0 1 18 12.5 V20.5' }, { f: 'M9.2 20.5 V13.8 A2.8 3.2 0 0 1 14.8 13.8 V20.5 Z' }],
+  heliport: [{ c: [12, 12, 8.6] }, { d: 'M9.4 8.2 V15.8' }, { d: 'M14.6 8.2 V15.8' }, { d: 'M9.4 12 H14.6' }],
+  station: [{ d: 'M6.2 20.5 V10.4 H17.8 V20.5' }, { d: 'M4.4 10.4 L12 5.4 L19.6 10.4' }, { d: 'M10.4 20.5 V14.8 H13.6 V20.5' }, { d: 'M3.8 20.5 H20.2' }],
+  crossing: [{ d: 'M6.2 5.5 L17.8 17' }, { d: 'M17.8 5.5 L6.2 17' }, { c: [6.2, 3.4, 1.1], f: 1 }, { c: [17.8, 3.4, 1.1], f: 1 }],
+  signal: [{ d: 'M12 21 V10.5' }, { d: 'M9.8 2.6 H14.2 V10.5 H9.8 Z' }, { c: [12, 4.5, 0.85], f: 1 }, { c: [12, 6.6, 0.85], f: 1 }, { c: [12, 8.7, 0.85], f: 1 }],
+  route: [{ d: 'M7 4 H17 V11 C17 15.6 14.6 18.2 12 20.2 C9.4 18.2 7 15.6 7 11 Z' }],
+  power: [{ f: 'M13.2 2.8 L7.4 13.2 H11 L9.8 21.2 L16.6 10.6 H12.9 Z' }],
+  factory: [{ d: 'M4 20.5 V11 H10 V20.5' }, { d: 'M10 20.5 V8.2 L15 11.2 V20.5' }, { d: 'M16.6 20.5 V5 H19.2 V20.5' }, { d: 'M3.4 20.5 H20.6' }],
+  airport: [{ d: 'M4.5 16.5 L19.5 8.5', w: 3.4 }, { c: [17.8, 16.8, 2.3] }]
+};
+
+// Draws one line symbol centred at (cx, cy) with pixel size px on
+// any CanvasRenderingContext2D: black halo pass, then white.
+function drawVecSymbolCtx(ctx, id, cx, cy, px) {
+  const def = MAP_SYMBOL_DEFS[id];
+  if (!def || !ctx) return;
+  const s = px / 24;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(s, s);
+  ctx.translate(-12, -12);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  const passes = [['rgb(0, 0, 0)', 1.6], ['rgb(255, 255, 255)', 0]];
+  for (let pi = 0; pi < passes.length; pi++) {
+    const color = passes[pi][0];
+    const extra = passes[pi][1];
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    for (let i = 0; i < def.length; i++) {
+      const part = def[i];
+      ctx.lineWidth = (part.w || 1.7) + extra;
+      if (part.c) {
+        ctx.beginPath();
+        ctx.arc(part.c[0], part.c[1], part.c[2], 0, Math.PI * 2);
+        if (part.f) { ctx.fill(); if (extra) ctx.stroke(); } else ctx.stroke();
+      } else if (part.f) {
+        const p = new Path2D(part.f);
+        ctx.fill(p);
+        if (extra) ctx.stroke(p);
+      } else {
+        ctx.stroke(new Path2D(part.d));
+      }
+    }
+  }
+  ctx.restore();
+}
+
+// Builds the SVG markup for one line symbol (halo + white passes).
+function buildSvgVecSymbol(id, cx, cy, px) {
+  const def = MAP_SYMBOL_DEFS[id];
+  if (!def) return '';
+  const s = px / 24;
+  const groups = [];
+  const passes = [['rgb(0, 0, 0)', 1.6], ['rgb(255, 255, 255)', 0]];
+  for (let pi = 0; pi < passes.length; pi++) {
+    const color = passes[pi][0];
+    const extra = passes[pi][1];
+    const els = [];
+    for (let i = 0; i < def.length; i++) {
+      const part = def[i];
+      const wdt = (part.w || 1.7) + extra;
+      if (part.c) {
+        if (part.f) els.push(`<circle cx="${part.c[0]}" cy="${part.c[1]}" r="${part.c[2]}" fill="${color}" stroke="${color}" stroke-width="${formatSvgNumber(extra)}"/>`);
+        else els.push(`<circle cx="${part.c[0]}" cy="${part.c[1]}" r="${part.c[2]}" fill="none" stroke="${color}" stroke-width="${formatSvgNumber(wdt)}"/>`);
+      } else if (part.f) {
+        els.push(`<path d="${part.f}" fill="${color}" stroke="${color}" stroke-width="${formatSvgNumber(extra)}"/>`);
+      } else {
+        els.push(`<path d="${part.d}" fill="none" stroke="${color}" stroke-width="${formatSvgNumber(wdt)}" stroke-linejoin="round" stroke-linecap="round"/>`);
+      }
+    }
+    groups.push(`<g>${els.join('')}</g>`);
+  }
+  return `<g transform="translate(${formatSvgNumber(cx)} ${formatSvgNumber(cy)}) scale(${formatSvgNumber(s)}) translate(-12 -12)">${groups.join('')}</g>`;
+}
+
 // Annotation markers (expression expansion round 3): user-placed
 // numbers / symbols, stored normalized in window.__topoMarkers by
 // the expr script. White bold text with a black halo, centred on
@@ -5136,6 +5253,17 @@ function drawMarkersP5(pg, w, h, scale) {
     const off = Math.max(0.8, fs * 0.09);
     const x = m.x * w;
     const y = m.y * h;
+    if (m.vec) {
+      const g = pg.drawingContext;
+      if (g) {
+        const dens = (typeof pg.pixelDensity === 'function') ? pg.pixelDensity() : 1;
+        g.save();
+        g.setTransform(1, 0, 0, 1, 0, 0);
+        drawVecSymbolCtx(g, m.vec, x * dens, y * dens, 19 * (m.size || 1) * (scale || 1) * dens);
+        g.restore();
+      }
+      continue;
+    }
     const lines = String(m.text).split('\n');
     const lh = fs * 1.18;
     const y0 = y - (lines.length - 1) * lh / 2;
@@ -7575,12 +7703,16 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
         var arr = JSON.parse(raw);
         if (Array.isArray(arr)) {
           markers = arr.filter(function (m) {
-            return m && typeof m.x === 'number' && typeof m.y === 'number' && typeof m.text === 'string' && m.text.length > 0;
+            if (!m || typeof m.x !== 'number' || typeof m.y !== 'number') return false;
+            if (typeof m.vec === 'string' && typeof MAP_SYMBOL_DEFS !== 'undefined' && MAP_SYMBOL_DEFS[m.vec]) return true;
+            return typeof m.text === 'string' && m.text.length > 0;
           }).map(function (m) {
+            var isVec = typeof m.vec === 'string' && typeof MAP_SYMBOL_DEFS !== 'undefined' && MAP_SYMBOL_DEFS[m.vec];
             return {
               x: Math.min(1, Math.max(0, m.x)),
               y: Math.min(1, Math.max(0, m.y)),
-              text: m.text.slice(0, 40),
+              text: isVec ? '' : String(m.text || '').slice(0, 40),
+              vec: isVec ? m.vec : null,
               size: Math.min(2.5, Math.max(0.5, (typeof m.size === 'number' ? m.size : 1)))
             };
           });
@@ -7668,14 +7800,19 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     return coordChip;
   }
 
+  var currentSymbolGlyph = '▲';
+  var currentVecId = null;
+  function currentMarkerContent(pt) {
+    var kindEl = document.getElementById('exprMarkKind');
+    var kind = kindEl ? kindEl.value : 'seq';
+    if (kind === 'sym' && currentVecId) return { vec: currentVecId };
+    return { text: currentMarkerText(pt) };
+  }
   function currentMarkerText(pt) {
     var kindEl = document.getElementById('exprMarkKind');
     var kind = kindEl ? kindEl.value : 'seq';
     if (kind === 'data') return dataTextAt(pt || { x: 0.5, y: 0.5 });
-    if (kind === 'sym') {
-      var symEl = document.getElementById('exprMarkSym');
-      return symEl ? symEl.value : '▲';
-    }
+    if (kind === 'sym') return currentSymbolGlyph;
     if (kind === 'text') {
       var textEl = document.getElementById('exprMarkText');
       var t = textEl ? textEl.value.trim() : '';
@@ -7711,6 +7848,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       var fs = 13 * (m.size || 1);
       var off = Math.max(0.8, fs * 0.09);
       var x = m.x * cw, y = m.y * ch;
+      if (m.vec) { drawVecSymbolCtx(cx, m.vec, x, y, 19 * (m.size || 1)); continue; }
       var lines = String(m.text).split('\n');
       var lh = fs * 1.18;
       var y0 = y - (lines.length - 1) * lh / 2;
@@ -7765,7 +7903,8 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       if (hit >= 0) {
         markDrag = { idx: hit, dx: markers[hit].x - pt.x, dy: markers[hit].y - pt.y };
       } else {
-        markers.push({ x: pt.x, y: pt.y, text: currentMarkerText(pt), size: currentMarkerSize() });
+        var content = currentMarkerContent(pt);
+        markers.push({ x: pt.x, y: pt.y, text: content.text || '', vec: content.vec || null, size: currentMarkerSize() });
         markDrag = { idx: markers.length - 1, dx: 0, dy: 0 };
         drawMarkPreview();
       }
@@ -8290,10 +8429,14 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     var markText = document.createElement('input');
     markText.type = 'text'; markText.id = 'exprMarkText'; markText.placeholder = '数字・文字'; markText.style.flex = '1'; markText.maxLength = 8;
     rMark2.appendChild(markText);
-    var symSel = document.createElement('select');
-    symSel.id = 'exprMarkSym';
-    ['▲', '●', '■', '★', '＋', '※', '↑', '↗', '◆', '○', '□', '△', '×'].forEach(function (s) { var o = document.createElement('option'); o.value = s; o.textContent = s; symSel.appendChild(o); });
-    rMark2.appendChild(symSel);
+    var symPrev = el('span', null, '▲');
+    symPrev.id = 'exprSymCurrent';
+    symPrev.title = '選択中の記号';
+    symPrev.style.cssText = 'min-width:28px;text-align:center;font-size:15px;border:1px solid #404040;border-radius:4px;padding:1px 4px;';
+    rMark2.appendChild(symPrev);
+    var palBtn = el('button', 'panel-btn', '地図記号パレット');
+    palBtn.type = 'button'; palBtn.id = 'exprSymPaletteBtn'; palBtn.setAttribute('aria-pressed', 'false');
+    rMark2.appendChild(palBtn);
     var markSize = range('exprMarkSize', 0.6, 2.2, 0.1, 1);
     rMark2.appendChild(markSize);
     var rData = row('データ表示:');
@@ -8307,6 +8450,92 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     });
     rData.appendChild(dataChk.wrap);
 
+    // round 4: map-symbol palette (glyphs + line-drawn symbols)
+    var palette = document.createElement('div');
+    palette.id = 'exprSymPalette';
+    palette.style.cssText = 'display:none;margin:4px 0 8px;padding:8px;border:1px solid #333;border-radius:6px;';
+    body.appendChild(palette);
+    var paletteBuilt = false;
+    function vecPreviewSvg(id) {
+      var def = MAP_SYMBOL_DEFS[id];
+      if (!def) return '';
+      var els = [];
+      for (var i = 0; i < def.length; i++) {
+        var p = def[i];
+        if (p.c) {
+          els.push(p.f
+            ? '<circle cx="' + p.c[0] + '" cy="' + p.c[1] + '" r="' + p.c[2] + '" fill="#e8e8e8"/>'
+            : '<circle cx="' + p.c[0] + '" cy="' + p.c[1] + '" r="' + p.c[2] + '" fill="none" stroke="#e8e8e8" stroke-width="' + (p.w || 1.7) + '"/>');
+        } else if (p.f) {
+          els.push('<path d="' + p.f + '" fill="#e8e8e8"/>');
+        } else {
+          els.push('<path d="' + p.d + '" fill="none" stroke="#e8e8e8" stroke-width="' + (p.w || 1.7) + '" stroke-linejoin="round" stroke-linecap="round"/>');
+        }
+      }
+      return '<svg width="22" height="22" viewBox="0 0 24 24">' + els.join('') + '</svg>';
+    }
+    function selectSymbol(glyph, vecId, label) {
+      currentSymbolGlyph = glyph || currentSymbolGlyph;
+      currentVecId = vecId || null;
+      var prev = document.getElementById('exprSymCurrent');
+      if (prev) {
+        if (vecId) { prev.innerHTML = vecPreviewSvg(vecId); prev.title = '選択中: ' + label; }
+        else { prev.textContent = glyph; prev.title = '選択中: ' + glyph; }
+      }
+      var kindEl = document.getElementById('exprMarkKind');
+      if (kindEl) kindEl.value = 'sym';
+      try { setStatus('記号を選択: ' + label + '（種類は「記号」で配置されます）'); } catch (e) {}
+    }
+    function buildPalette() {
+      if (paletteBuilt) return;
+      paletteBuilt = true;
+      var VEC_LABELS = { tri: '三角点', bench: '水準点', gps: '電子基準点', spot: '標高点', torii: '神社', church: '教会', lighthouse: '灯台', tower: '高塔', chimney: '煙突', windmill: '風車', bridge: '橋', falls: '滝', onsen: '温泉', stele: '史跡', castle: '城跡', tomb: '墓地', well: '井戸', fountain: '噴水', viewpoint: '展望台', ropeway: '索道', conifer: '針葉樹', broadleaf: '広葉樹', bamboo: '竹林', paddy: '田', field: '畑', orchard: '果樹園', tea: '茶畑', dam: 'ダム', cave: '洞窟', heliport: 'ヘリポート', station: '駅', crossing: '踏切', signal: '信号機', route: '国道標識', power: '発電所', factory: '工場', airport: '飛行場' };
+      var GLYPH_CATS = [
+        ['地形・自然', ['▲', '△', '▽', '◆', '山', '岳', '峰', '頂', '島', '岬', '浜', '渚', '森', '林', '原', '野', '湖', '沼', '池', '川', '河', '海', '滝', '泉', '雪', '♨', '❄']],
+        ['交通', ['駅', '港', '橋', '⚓', '⛴', '✈', '⛽', '♿', '⚠', '⛔', '⇄', '↑', '↗', '→', '↘', '↓', '↙', '←', '↖']],
+        ['施設', ['文', '卍', '⛩', '†', '城', '〒', '✚', '局', '役', '消', '交', '図', '博', '湯', '宿', '店', '銀', '工', '塔', '灯', '校', '園', '館', '院']],
+        ['土地利用', ['田', '畑', '果', '茶', '桑', '竹', '草', '墓', '公', '牧', '塩', '漁', '鉱', '採']],
+        ['注記・一般', ['●', '○', '■', '□', '◆', '◇', '★', '☆', '※', '‡', '§', '¶', '№', '＋', '×', '±', '◎', '◉', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '♪', 'Ⓟ']]
+      ];
+      function catBlock(title) {
+        var h = el('div', 'muted', title);
+        h.style.cssText = 'margin:6px 0 3px;font-size:11px;';
+        palette.appendChild(h);
+        var grid = document.createElement('div');
+        grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:3px;';
+        palette.appendChild(grid);
+        return grid;
+      }
+      function symButton(content, title, onPick) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'panel-btn';
+        b.title = title;
+        b.style.cssText = 'min-width:30px;padding:2px 3px;font-size:15px;line-height:1.25;';
+        if (typeof content === 'string' && content.charAt(0) === '<') b.innerHTML = content;
+        else b.textContent = content;
+        b.addEventListener('click', onPick);
+        return b;
+      }
+      var vg = catBlock('線画記号（ベクター）');
+      Object.keys(VEC_LABELS).forEach(function (id) {
+        vg.appendChild(symButton(vecPreviewSvg(id), VEC_LABELS[id], function () { selectSymbol(null, id, VEC_LABELS[id]); }));
+      });
+      GLYPH_CATS.forEach(function (cat) {
+        var g = catBlock(cat[0]);
+        cat[1].forEach(function (glyph) {
+          g.appendChild(symButton(glyph, glyph, function () { selectSymbol(glyph, null, glyph); }));
+        });
+      });
+    }
+    palBtn.addEventListener('click', function () {
+      var open = palette.style.display !== 'none';
+      if (!open) buildPalette();
+      palette.style.display = open ? 'none' : 'block';
+      palBtn.setAttribute('aria-pressed', open ? 'false' : 'true');
+      palBtn.textContent = open ? '地図記号パレット' : 'パレットを閉じる';
+    });
+
     // round 2: finishing outputs
     var rFinish = row('仕上げ:');
     var posterBtn = el('button', 'panel-btn', '地図ポスター書き出し');
@@ -8318,7 +8547,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     sheetBtn.addEventListener('click', contactSheet);
     rFinish.appendChild(sheetBtn);
 
-    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。注記マーカーはブラウザ内に保存され、PNG/SVG書き出しにも含まれます。地点データは配置時点の値です。[build r3v2]');
+    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。注記マーカーはブラウザ内に保存され、PNG/SVG書き出しにも含まれます。地点データは配置時点の値です。地図記号パレットには線画記号37種とグリフ約120種があります。[build r4v1]');
     body.appendChild(note);
 
     // drag & drop image onto the window
