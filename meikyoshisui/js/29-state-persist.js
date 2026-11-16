@@ -603,11 +603,32 @@ const StatePersist = (() => {
     if (typeof buildEucPresets === 'function') buildEucPresets();
     if (typeof updateEucDisplay === 'function') updateEucDisplay();
     if (typeof Humanizer !== 'undefined' && typeof Humanizer.buildUI === 'function') Humanizer.buildUI();
-    // ECBトグルをS.enginesに合わせて同期
-    if (typeof ECB_ENGINES !== 'undefined') {
-      ECB_ENGINES.forEach(eng => {
-        const btn = document.querySelector(`.ecb-btn[data-key="${eng.key}"]`);
-        if (btn) btn.classList.toggle('on', !!S.engines[eng.key]);
+    // ECBグリッド + パネル系エンジントグルの表示を S.engines に同期 (D8 修正)。
+    // 旧実装は現行の ECB DOM (.ecb-row > .ecb-tog) に存在しない
+    // .ecb-btn[data-key] を探していたため、復元後に表示が内部状態と食い違っていた。
+    // syncEngine() (21-engine-control) の表示反映と同じ対応表 (ECB_ENGINES) を使う。
+    // mpe / macro は後段で S.mpe / S.macroEnabled から専用に同期するため除外する。
+    if (typeof renderECB === 'function') renderECB();
+    if (typeof ECB_ENGINES !== 'undefined' && S.engines) {
+      ECB_ENGINES.forEach(def => {
+        if (!def.panelTogId || def.key === 'mpe' || def.key === 'macro') return;
+        const on = !!S.engines[def.key];
+        const tog = document.getElementById(def.panelTogId);
+        if (tog) tog.classList.toggle('on', on);
+        if (def.panelCtrlId) {
+          const ctrl = document.getElementById(def.panelCtrlId);
+          if (ctrl) ctrl.style.display = on ? 'block' : 'none';
+        }
+        // パネル内UIが動的構築のエンジンは、トグルON時 (syncEngine) と同じ初期化を行う
+        if (on) {
+          try {
+            if (def.key === 'markov' && typeof MarkovEngine !== 'undefined') { MarkovEngine.buildUI(); MarkovEngine.rebuildMatrix(); }
+            if (def.key === 'lsystem' && typeof LSEngine !== 'undefined') LSEngine.buildUI();
+            if (def.key === 'solfeggio' && typeof SolfeggioEngine !== 'undefined') { SolfeggioEngine.buildUI(); SolfeggioEngine.drawViz(); }
+            if (def.key === 'binaural' && typeof BinauralEngine !== 'undefined') { BinauralEngine.buildUI(); BinauralEngine.initCarrierSlider(); BinauralEngine.initModeButtons(); }
+            if (def.key === 'sieve' && typeof sieveBuildUI === 'function' && typeof sieveBuildPresets === 'function') { sieveBuildPresets(); sieveBuildUI(); }
+          } catch(_) {}
+        }
       });
     }
     // スライダー値と表示値を一括同期

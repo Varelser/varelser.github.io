@@ -51,6 +51,9 @@
       if (!r.ok) throw new Error(j.error || ('bridge HTTP ' + r.status));
       return j.text || '';
     }
+    // 直接接続でキー必須のプロバイダは、未設定ならリクエスト前に案内する (D9)
+    const needsKey = cfg.provider === 'gemini' || cfg.provider === 'anthropic' || cfg.provider === 'openai' || !!COMPAT[cfg.provider];
+    if (needsKey && !apiKey) throw new Error('APIキーが未設定です（直接接続では「APIキー」欄にキーを入力してください）');
     if (cfg.provider === 'gemini') {
       const m = model || 'gemini-2.5-flash';
       const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(m) + ':generateContent', {
@@ -300,6 +303,9 @@
     document.addEventListener('drop', async e => {
       e.preventDefault(); depth = 0; overlay.style.display = 'none';
       for (const file of e.dataTransfer.files || []) {
+        // MIDI ファイルは Create 側ハンドラ (81) が解析・取り込みを担当する (D10)。
+        // ここで「未対応」と出すと成功表示と矛盾するため、AI Bridge 側では扱わない。
+        if (/\.(mid|midi)$/i.test(file.name) || file.type === 'audio/midi' || file.type === 'audio/x-midi') continue;
         try {
           const text = await file.text();
           if (/\.scl$/i.test(file.name)) {
@@ -322,6 +328,22 @@
         } catch (err) { status('取り込み失敗: ' + err.message, false); }
       }
     });
+  }
+
+  /* 失敗理由を利用者向けの日本語に変換する (D9: 生の "Failed to fetch" を出さない) */
+  function describeError(e) {
+    const msg = (e && e.message) || String(e || '');
+    if ((e instanceof TypeError) || /failed to fetch|networkerror|load failed/i.test(msg)) {
+      return cfg.mode === 'bridge'
+        ? 'VMブリッジに接続できませんでした（ブリッジが起動していないか、ブリッジURLを確認してください）'
+        : 'プロバイダに接続できませんでした（ネットワークエラー、または接続先が応答していません）';
+    }
+    const m = msg.match(/HTTP (\d{3})/);
+    if (m) {
+      if (m[1] === '401' || m[1] === '403') return '認証に失敗しました (HTTP ' + m[1] + ') — APIキーが未設定か無効です';
+      return '接続先がエラーを返しました (HTTP ' + m[1] + ')';
+    }
+    return msg;
   }
 
   /* ── パネル構築 ── */
@@ -381,7 +403,7 @@
     $('abKey').value = apiKey;
     $('abKey').addEventListener('change', e => { apiKey = e.target.value; try { localStorage.setItem(KEY_KEY, apiKey); } catch (_) {} });
 
-    const guard = fn => async () => { try { await fn(); } catch (e) { status('失敗: ' + (e && e.message || e), false); } };
+    const guard = fn => async () => { try { await fn(); } catch (e) { status('失敗: ' + describeError(e), false); } };
     $('abBtnProg').addEventListener('click', guard(aiProgression));
     $('abBtnParams').addEventListener('click', guard(aiParams));
     $('abBtnHealth').addEventListener('click', guard(async () => { const h = await bridgeHealth(); status('ブリッジ接続OK — AI: OpenAI ' + (h.ai.openai ? '可' : '不可') + ' / Anthropic ' + (h.ai.anthropic ? '可' : '不可') + ' / 受信先: ' + h.inbox); }));
