@@ -4663,6 +4663,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 (function () {
   'use strict';
   var FOCUS_KEY = 'yayoi_focus_v1';
+  var SLIDER_INDEX = /*YB_INDEX*/[ {  "tab": "Layout",  "label": "Guide Scale",  "occ": 0 }, {  "tab": "Layout",  "label": "Count",  "occ": 0 }, {  "tab": "Style",  "label": "Opacity",  "occ": 0 }, {  "tab": "Size",  "label": "Min Size",  "occ": 0 }, {  "tab": "Size",  "label": "Max Size",  "occ": 0 }, {  "tab": "Space",  "label": "Depth (Z-Axis)",  "occ": 0 }, {  "tab": "Space",  "label": "Spread X",  "occ": 0 }, {  "tab": "Space",  "label": "Spread Y",  "occ": 0 }, {  "tab": "Space",  "label": "Zoom",  "occ": 0 }, {  "tab": "Space",  "label": "Rotation X",  "occ": 0 }, {  "tab": "Space",  "label": "Rotation Y",  "occ": 0 }, {  "tab": "Sync",  "label": "マスター量",  "occ": 0 }, {  "tab": "Sync",  "label": "入力ゲイン",  "occ": 0 }, {  "tab": "Sync",  "label": "アタック",  "occ": 0 }, {  "tab": "Sync",  "label": "リリース",  "occ": 0 }, {  "tab": "Sync",  "label": "明るさ",  "occ": 0 }, {  "tab": "Sync",  "label": "スウィング",  "occ": 0 }, {  "tab": "Sync",  "label": "コントラスト",  "occ": 0 }, {  "tab": "Sync",  "label": "彩度",  "occ": 0 }, {  "tab": "Sync",  "label": "色相",  "occ": 0 }, {  "tab": "Sync",  "label": "色相ドリフト",  "occ": 0 }, {  "tab": "Sync",  "label": "グロー",  "occ": 0 }, {  "tab": "Sync",  "label": "拡縮",  "occ": 0 }, {  "tab": "Sync",  "label": "回転(BPM)",  "occ": 0 }, {  "tab": "Sync",  "label": "回転(drive)",  "occ": 0 }, {  "tab": "Sync",  "label": "FX濃度",  "occ": 0 }, {  "tab": "Sync",  "label": "量",  "occ": 0 }, {  "tab": "Sync",  "label": "量",  "occ": 1 }, {  "tab": "Sync",  "label": "量",  "occ": 2 }, {  "tab": "Sync",  "label": "閾値",  "occ": 0 }, {  "tab": "Sync",  "label": "生成確率",  "occ": 0 }, {  "tab": "Sync",  "label": "フラッシュ",  "occ": 0 }]/*YB_INDEX_END*/;
   var expanded = {}; // section id -> true when individually expanded in focus mode
 
   function focusOn() {
@@ -4680,11 +4681,14 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       var s = row.querySelector('.flex.justify-between span, .flex span');
       if (s && s.textContent.trim()) return s.textContent.trim();
     }
-    // sync sliders: <label class="yayoi-sync-slider">LABEL <input> <span class="yv">VAL</span></label>
+    // sync sliders: <label class="yayoi-sync-slider"><span>LABEL</span><input><span class="yv">VAL</span></label>
     var lab = r.closest('.yayoi-sync-slider');
     if (lab) {
-      var t = '';
-      lab.childNodes.forEach(function (n) { if (n.nodeType === 3) t += n.textContent; });
+      var sp = lab.querySelector('span:not(.yv)');
+      if (sp && sp.textContent.trim()) return sp.textContent.trim();
+      var yv = lab.querySelector('.yv');
+      var t = (lab.textContent || '').replace(/\s+/g, ' ');
+      if (yv) t = t.replace(yv.textContent, '');
       if (t.trim()) return t.trim();
     }
     return r.getAttribute('aria-label') || 'スライダー';
@@ -4837,6 +4841,26 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     }, 60);
   }
 
+  function revealRange(tab, label, occ) {
+    if (tab === 'Sync') {
+      if (!document.querySelector('.yayoi-panel-inner')) openPanelTab('Shapes');
+    } else {
+      openPanelTab(tab);
+    }
+    var tries = 0;
+    var timer = setInterval(function () {
+      tries++;
+      var inner = document.querySelector('.yayoi-panel-inner');
+      if (inner) {
+        if (tab === 'Sync') { expanded['yayoi-plus3'] = true; apply(); }
+        var matches = [...inner.querySelectorAll('input[type="range"]')].filter(function (r) { return labelForRange(r) === label; });
+        var r = matches[occ || 0] || matches[0];
+        if (r) { clearInterval(timer); reveal(r); return; }
+      }
+      if (tries > 20) clearInterval(timer);
+    }, 150);
+  }
+
   function buildItems() {
     var out = [];
     ['Shapes', 'Layout', 'Style', 'Size', 'Space'].forEach(function (t) {
@@ -4846,6 +4870,12 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       out.push({ label: pair[1], kind: '操作', run: function () { clickToolbar(pair[0]); } });
     });
     out.push({ label: '集中モード ON/OFF', kind: '操作', run: function () { setFocus(!focusOn()); } });
+    SLIDER_INDEX.forEach(function (e) {
+      out.push({
+        label: e.label + '（' + e.tab + '）', kind: 'スライダー',
+        run: function () { revealRange(e.tab, e.label, e.occ); }
+      });
+    });
     var inner = document.querySelector('.yayoi-panel-inner');
     if (inner) {
       inner.querySelectorAll('.yayoi-plus').forEach(function (sec) {
