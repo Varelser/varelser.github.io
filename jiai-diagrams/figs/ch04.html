@@ -29,9 +29,9 @@ function head(){
 
 const DOORS=[];for(let i=0;i<6;i++){const cx=270+i*212,cy=580;const arc=[];for(let j=0;j<=12;j++){const a=Math.PI-j/12*Math.PI;arc.push([cx+Math.cos(a)*112,cy-Math.sin(a)*112]);}
  const stream=[];for(let j=0;j<5;j++)stream.push(j);DOORS.push({cx,cy,arc,stream});}
-function render(t){DOORS.forEach((dr,i)=>{const b=0.45+0.55*Math.pow(0.5+0.5*Math.sin(t*1.1-i*0.9),2);
+function render(t){DOORS.forEach((dr,i)=>{const b=0.45+0.55*Math.pow(0.5+0.5*Math.sin(t*1.6-i*0.9),2);
  dr.arc.forEach(q=>dot(q[0],q[1],2.4,0.25+0.7*b));
- dr.stream.forEach(j=>{const p=((t*0.30+j*0.21+i*0.13)%1);dot(dr.cx+Math.sin(p*9+i)*10,dr.cy-14-p*185,2.1,(0.15+0.75*b)*Math.sin(Math.PI*p));});
+ dr.stream.forEach(j=>{const p=((t*0.55+j*0.21+i*0.13)%1);dot(dr.cx+Math.sin(p*9+i)*10,dr.cy-14-p*185,2.1,(0.15+0.75*b)*Math.sin(Math.PI*p));});
  dot(dr.cx,dr.cy,2.6,0.3+0.6*b);});}
 
 function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing)t+=dt;

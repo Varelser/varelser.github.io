@@ -28,7 +28,7 @@ function head(){
 }
 
 const SC=[];for(let i=0;i<26;i++)SC.push({x:180+rnd()*1240,y:200+rnd()*560,r:1.8+rnd()*1.6,p:rnd()*6.28});
-function render(t){for(let k=0;k<3;k++){const p=((t*0.14+k/3)%1),R=40+p*330,o=(1-p)*0.7;
+function render(t){for(let k=0;k<4;k++){const p=((t*0.22+k/4)%1),R=40+p*330,o=(1-p)*0.7;
   for(let i=0;i<44;i++){const a=i/44*6.2832;dot(800+Math.cos(a)*R,480+Math.sin(a)*R,2.3,o);}}
  for(let i=0;i<10;i++){const a=i/10*6.2832;dot(800+Math.cos(a)*26,480+Math.sin(a)*26,2.6,0.75);}
  dot(800,480,4.2,0.9);

@@ -19,7 +19,7 @@ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 function dot(x,y,r,o){ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fillStyle='rgba(0,0,0,'+o+')';ctx.fill();}
 function draw(mult,pulse){
  for(const e of ELS){
-  if(e[0]==='d'){const m=mult(e[1],e[2]);if(m<=0)continue;dot(e[1],e[2],e[3],e[4]*m);}
+  if(e[0]==='d'){const m=mult(e[1],e[2]);if(m<=0)continue;dot(e[1],e[2],e[3]*(0.85+0.4*m),e[4]*m);}
   else{const m=mult(e[1],e[2]);if(m<=0)continue;ctx.font=(e[4]?'700 ':'')+e[3]+'px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';ctx.fillStyle='rgba(17,17,17,'+(e[5]*m)+')';ctx.textAlign=e[6]==='ma'?'center':'left';ctx.textBaseline='top';ctx.fillText(e[7],e[1],e[2]);}
  }
  if(pulse)dot(pulse[0],pulse[1],6.5,.92);
@@ -28,9 +28,9 @@ function draw(mult,pulse){
 const NODES=[[800,250],[1120,570],[800,890],[480,570]];
 const CH=NODES.map((n,k)=>{const m=NODES[(k+1)%4];const dx=m[0]-n[0],dy=m[1]-n[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;
  return [n[0]+ux*92,n[1]+uy*92,m[0]-ux*92,m[1]-uy*92];});
-function render(t){const tt=t%9.6,ch=Math.floor(tt/2.4),fr=(tt-ch*2.4)/2.4,e=fr*fr*(3-2*fr);
+function render(t){const tt=t%6.8,ch=Math.floor(tt/1.7),fr=(tt-ch*1.7)/1.7,e=fr*fr*(3-2*fr);
  const c=CH[ch];const px=c[0]+(c[2]-c[0])*e,py=c[1]+(c[3]-c[1])*e;
- const acts=NODES.map((n,k)=>{let a=0;if(k===(ch+1)%4)a=clamp((fr-0.75)/0.25,0,1);if(k===ch)a=1-clamp(fr/0.3,0,1)*0.6;return a;});
+ const acts=NODES.map((n,k)=>{let a=0;if(k===(ch+1)%4)a=clamp((fr-0.65)/0.2,0,1);if(k===ch)a=1-clamp(fr/0.3,0,1)*0.6;return a;});
  const mult=(x,y)=>{for(let k=0;k<4;k++){if(Math.hypot(x-NODES[k][0],y-NODES[k][1])<100)return .55+.45*acts[k];}return .85;};
  draw(mult,[px,py]);}
 
