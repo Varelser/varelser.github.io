@@ -32,7 +32,7 @@
       margin:0; background:var(--bg); color:var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, "Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI", sans-serif;
     }
-    .page{min-height:100svh; display:flex; flex-direction:column; align-items:center;}
+    .page{min-height:100svh; display:flex; flex-direction:column; align-items:center; position:relative;}
 
     .app-header{
       position:relative; width:100%; height:50px; flex:0 0 50px;
@@ -54,7 +54,7 @@
     .content{
       width:min(680px, calc(100% - 40px));
       padding:36px 0 64px;
-      display:flex; flex-direction:column; gap:48px;
+      display:flex; flex-direction:column; gap:48px; text-align:center;
     }
 
     .block{}
@@ -84,7 +84,7 @@
     }
 
     .tags{
-      display:flex; flex-wrap:wrap; gap:8px;
+      display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
       margin:0;
     }
 
@@ -97,7 +97,7 @@
     }
 
     .links-row{
-      display:flex; gap:20px; flex-wrap:wrap;
+      display:flex; gap:20px; flex-wrap:wrap; justify-content:center;
     }
 
     .text-link{
@@ -110,9 +110,9 @@
 
     .foot{margin-top:auto; padding:18px 0 24px; color:var(--muted); font-size:12px;}
 
-    .langbar{display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-bottom:-24px;}
+    .langbar{position:absolute; top:60px; right:16px; display:flex; align-items:center; margin:0;}
     .seg{display:inline-flex; border:1px solid var(--border); border-radius:999px; padding:3px; gap:2px;}
-    .seg button{appearance:none; border:none; background:transparent; font:inherit; font-size:12.5px; padding:6px 16px; border-radius:999px; cursor:pointer; color:var(--muted); min-height:34px;}
+    .seg button{appearance:none; border:none; background:transparent; font:inherit; font-size:11.5px; padding:4px 12px; border-radius:999px; cursor:pointer; color:var(--muted); min-height:28px;}
     .seg button[aria-pressed="true"]{background:var(--fg); color:#fff;}
     .seg button:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
     [data-lang="ja"] .en, [data-lang="en"] .ja{display:none;}
