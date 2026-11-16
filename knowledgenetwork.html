@@ -427,6 +427,8 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+<meta name="view-transition" content="same-origin">
+<script type="speculationrules">{"prefetch": [{"source": "list", "urls": ["knowledgenetwork-graph.html", "jiai-toc.html"]}]}</script>
 </head>
 <body>
   <div class="wrap">
@@ -2456,5 +2458,433 @@
     }
 
   </script>
+<style>
+/* Knowledge Network Plus — additive styles (light glass, monochrome). */
+.kn-actions { display: inline-flex; gap: 2px; margin-left: 8px; vertical-align: baseline; }
+.kn-star, .kn-linkbtn {
+  appearance: none; background: none; border: none; cursor: pointer;
+  font: inherit; color: rgba(0,0,0,0.45); padding: 0 3px; line-height: 1;
+}
+.kn-star { font-size: 15px; }
+.kn-star.is-on { color: #000; }
+.kn-star:hover, .kn-linkbtn:hover { color: #000; }
+.kn-linkbtn { font-size: 11px; text-decoration: underline dotted; text-underline-offset: 3px; }
+.kn-recent {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 10px 0 0; font-size: 12px;
+}
+.kn-recent-label { color: rgba(0,0,0,0.55); margin-right: 2px; }
+.kn-recent-chip {
+  appearance: none; cursor: pointer; font: inherit; font-size: 12px;
+  background: rgba(255,255,255,0.7); color: #111;
+  border: 1px solid rgba(0,0,0,0.18); border-radius: 999px; padding: 3px 10px;
+}
+.kn-recent-chip:hover { border-color: rgba(0,0,0,0.55); }
+.kn-recent-clear {
+  appearance: none; background: none; border: none; cursor: pointer;
+  font: inherit; font-size: 11px; color: rgba(0,0,0,0.5); text-decoration: underline dotted;
+}
+#knFavToggle.is-active { background: #111; color: #fff; }
+.kn-palette-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(20,20,20,0.28); backdrop-filter: blur(3px);
+  display: flex; align-items: flex-start; justify-content: center;
+}
+.kn-palette-overlay[hidden] { display: none; }
+.kn-palette {
+  margin-top: 10vh; width: min(560px, calc(100vw - 32px));
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(0,0,0,0.16); border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.25); overflow: hidden;
+}
+.kn-palette-input {
+  width: 100%; box-sizing: border-box; border: none; outline: none;
+  background: transparent; padding: 14px 16px; font-size: 15px; color: #111;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.kn-palette-list { max-height: 46vh; overflow-y: auto; padding: 6px; }
+.kn-palette-item {
+  display: flex; justify-content: space-between; gap: 12px; align-items: baseline;
+  width: 100%; text-align: left; appearance: none; background: none; border: none;
+  cursor: pointer; font: inherit; font-size: 13.5px; color: #111;
+  padding: 8px 10px; border-radius: 8px;
+}
+.kn-palette-item.is-active { background: rgba(0,0,0,0.07); }
+.kn-palette-name { font-weight: 560; }
+.kn-palette-chapter { color: rgba(0,0,0,0.5); font-size: 11.5px; white-space: nowrap; }
+.kn-palette-none { padding: 14px; color: rgba(0,0,0,0.55); font-size: 13px; }
+.kn-toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 320;
+  background: rgba(17,17,17,0.92); color: #fff; font-size: 12.5px;
+  padding: 8px 16px; border-radius: 999px; pointer-events: none;
+}
+.kn-progress {
+  position: fixed; top: 0; left: 0; height: 2px; width: 0; z-index: 310;
+  background: #111; transition: width 60ms linear;
+}
+
+</style>
+<script>
+/* Knowledge Network Plus (additive tech pack, 2026-11-16).
+   Everything here is an addition: the index data, the existing search /
+   chapter / tag / timeline logic and all links are untouched. Features:
+   Cmd/Ctrl+K quick-jump palette over all entries, per-entry favourites
+   (star + favourites-only filter), recently viewed chips, Web Share,
+   per-entry deep-link copy (?item=, the page's own scheme), and a
+   reading progress bar. State lives in localStorage. */
+(function () {
+  'use strict';
+  var FAV_KEY = 'kn-favs-v1';
+  var RECENT_KEY = 'kn-recent-v1';
+
+  function lsGet(key, fallback) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+  }
+  function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+  function toast(msg) {
+    var el = document.getElementById('knToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'knToast'; el.className = 'kn-toast'; el.hidden = true;
+      document.body.appendChild(el);
+    }
+    el.textContent = msg; el.hidden = false;
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.hidden = true; }, 1800);
+  }
+  function copyText(text, okMsg) {
+    function done() { toast(okMsg); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { toast('コピーできませんでした'); });
+    } else { toast('コピーできませんでした'); }
+  }
+
+  /* ---------- entry index ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.person-link'));
+  function chapterOf(a) {
+    var sec = a.closest('.section-block');
+    var h = sec ? sec.querySelector('h2') : null;
+    return h ? h.textContent.trim() : '';
+  }
+  var entries = links.map(function (a) {
+    var li = a.closest('li');
+    return {
+      name: a.dataset.person || a.textContent.trim(),
+      href: a.href,
+      article: a.classList.contains('has-article'),
+      tags: a.dataset.tags || '',
+      chapter: chapterOf(a),
+      text: (li ? li.textContent : a.textContent).toLowerCase(),
+      a: a, li: li
+    };
+  });
+  var byName = {};
+  entries.forEach(function (e) { if (!byName[e.name]) byName[e.name] = e; });
+
+  function jumpTo(entry) {
+    if (!entry || !entry.li) return;
+    var li = entry.li;
+    var sec = li.closest('.section-block');
+    var hidden = li.style.display === 'none' || (sec && sec.style.display === 'none');
+    var tl = document.getElementById('timeline');
+    if (tl && !tl.hidden) {
+      var tlBtn = document.getElementById('timeline-btn');
+      if (tlBtn) tlBtn.click();
+    }
+    if (hidden) {
+      var clearBtn = document.getElementById('clear-btn');
+      if (clearBtn) clearBtn.click();
+      if (favOnly) setFavOnly(false);
+    }
+    setTimeout(function () {
+      li.scrollIntoView({ block: 'center' });
+      li.classList.add('flash');
+      setTimeout(function () { li.classList.remove('flash'); }, 1800);
+    }, 30);
+  }
+
+  /* ---------- favourites ---------- */
+  var favs = new Set(lsGet(FAV_KEY, []));
+  var favOnly = false;
+  function isFavLi(li) {
+    var a = li.querySelector('.person-link');
+    return !!(a && favs.has(a.dataset.person || ''));
+  }
+  function saveFavs() { lsSet(FAV_KEY, Array.from(favs)); }
+  function refreshStars() {
+    document.querySelectorAll('.kn-star').forEach(function (b) {
+      var on = favs.has(b.dataset.name);
+      b.textContent = on ? '★' : '☆';
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    var chip = document.getElementById('knFavToggle');
+    if (chip) chip.textContent = '★ お気に入り (' + favs.size + ')';
+  }
+  function favFixup() {
+    if (!favOnly) return;
+    var tl = document.getElementById('timeline');
+    if (tl && !tl.hidden) {
+      document.querySelectorAll('#timeline .tl-row').forEach(function (row) {
+        var link = row.querySelector('.tl-link');
+        if (link && !favs.has(link.dataset.person || '')) row.style.display = 'none';
+      });
+      document.querySelectorAll('#timeline .tl-group').forEach(function (g) {
+        var any = Array.prototype.some.call(g.querySelectorAll('.tl-row'), function (r) { return r.style.display !== 'none'; });
+        g.style.display = any ? '' : 'none';
+      });
+      return;
+    }
+    document.querySelectorAll('.person-list li').forEach(function (li) {
+      if (!isFavLi(li)) li.style.display = 'none';
+    });
+    document.querySelectorAll('.subsection-block').forEach(function (sub) {
+      var any = Array.prototype.some.call(sub.querySelectorAll('.person-list li'), function (li) { return li.style.display !== 'none'; });
+      sub.style.display = any ? '' : 'none';
+    });
+    document.querySelectorAll('.section-block').forEach(function (sec) {
+      var any = Array.prototype.some.call(sec.querySelectorAll('.subsection-block'), function (s) { return s.style.display !== 'none'; });
+      sec.style.display = any ? '' : 'none';
+    });
+  }
+  function refilter() {
+    var q = document.getElementById('q');
+    if (q) q.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  function setFavOnly(on) {
+    favOnly = !!on;
+    var chip = document.getElementById('knFavToggle');
+    if (chip) { chip.classList.toggle('is-active', favOnly); chip.setAttribute('aria-pressed', String(favOnly)); }
+    refilter();
+    favFixup();
+    if (favOnly) toast(favs.size ? 'お気に入り ' + favs.size + ' 件を表示中' : 'お気に入りはまだありません（各項目の ☆ で追加）');
+  }
+  /* Re-apply the favourites filter after the page's own filtering runs
+     (their listeners were registered first, so ours run after theirs). */
+  ['q', 'chapter'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) { el.addEventListener('input', favFixup); el.addEventListener('change', favFixup); }
+  });
+  ['tag-row', 'clear-btn', 'timeline-btn'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', function () { setTimeout(favFixup, 0); });
+  });
+
+  /* Per-entry action buttons (star + deep-link copy), injected at runtime
+     so the shipped markup stays untouched. */
+  document.querySelectorAll('.person-list li').forEach(function (li) {
+    var a = li.querySelector('.person-link');
+    if (!a) return;
+    var name = a.dataset.person || '';
+    var span = document.createElement('span');
+    span.className = 'kn-actions';
+    var star = document.createElement('button');
+    star.type = 'button'; star.className = 'kn-star'; star.dataset.name = name;
+    star.title = 'お気に入り'; star.setAttribute('aria-label', 'お気に入りに追加/解除');
+    star.addEventListener('click', function () {
+      if (favs.has(name)) favs.delete(name); else favs.add(name);
+      saveFavs(); refreshStars();
+      if (favOnly) { refilter(); favFixup(); }
+      toast(favs.has(name) ? 'お気に入りに追加しました' : 'お気に入りから外しました');
+    });
+    var linkBtn = document.createElement('button');
+    linkBtn.type = 'button'; linkBtn.className = 'kn-linkbtn'; linkBtn.textContent = 'リンク';
+    linkBtn.title = 'この項目への直リンクをコピー';
+    linkBtn.addEventListener('click', function () {
+      copyText(location.origin + location.pathname + '?item=' + encodeURIComponent(name), '項目へのリンクをコピーしました');
+    });
+    span.appendChild(star); span.appendChild(linkBtn);
+    li.appendChild(span);
+  });
+
+  /* ---------- toolbar additions ---------- */
+  var toolbar = document.querySelector('.toolbar');
+  if (toolbar) {
+    var favChip = document.createElement('button');
+    favChip.type = 'button'; favChip.id = 'knFavToggle'; favChip.setAttribute('aria-pressed', 'false');
+    favChip.addEventListener('click', function () { setFavOnly(!favOnly); });
+    toolbar.appendChild(favChip);
+    var paletteBtn = document.createElement('button');
+    paletteBtn.type = 'button'; paletteBtn.id = 'knPaletteBtn'; paletteBtn.textContent = '⌘K ジャンプ';
+    paletteBtn.addEventListener('click', function () { openPalette(); });
+    toolbar.appendChild(paletteBtn);
+    var shareBtn = document.createElement('button');
+    shareBtn.type = 'button'; shareBtn.id = 'knShareBtn'; shareBtn.textContent = '共有';
+    shareBtn.addEventListener('click', function () {
+      var data = { title: document.title, url: location.href };
+      if (navigator.share) { navigator.share(data).catch(function () {}); }
+      else copyText(location.href, 'URLをコピーしました');
+    });
+    toolbar.appendChild(shareBtn);
+  }
+  refreshStars();
+
+  /* ---------- recently viewed ---------- */
+  function renderRecent() {
+    var row = document.getElementById('knRecent');
+    var recent = lsGet(RECENT_KEY, []);
+    if (!recent.length) { if (row) row.hidden = true; return; }
+    if (!row) {
+      row = document.createElement('div');
+      row.id = 'knRecent'; row.className = 'kn-recent';
+      var tagRow = document.getElementById('tag-row');
+      if (tagRow && tagRow.parentNode) tagRow.parentNode.insertBefore(row, tagRow.nextSibling);
+      else if (toolbar && toolbar.parentNode) toolbar.parentNode.insertBefore(row, toolbar.nextSibling);
+      else document.body.appendChild(row);
+    }
+    row.hidden = false;
+    row.innerHTML = '';
+    var label = document.createElement('span');
+    label.className = 'kn-recent-label'; label.textContent = '最近見た項目';
+    row.appendChild(label);
+    recent.forEach(function (r) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'kn-recent-chip'; b.textContent = r.name;
+      b.addEventListener('click', function () { var e = byName[r.name]; if (e) jumpTo(e); });
+      row.appendChild(b);
+    });
+    var clear = document.createElement('button');
+    clear.type = 'button'; clear.className = 'kn-recent-clear'; clear.textContent = '消去';
+    clear.addEventListener('click', function () { lsSet(RECENT_KEY, []); renderRecent(); });
+    row.appendChild(clear);
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a.person-link, a.tl-link') : null;
+    if (!a) return;
+    var name = a.dataset.person || a.textContent.trim();
+    var recent = lsGet(RECENT_KEY, []).filter(function (r) { return r.name !== name; });
+    recent.unshift({ name: name, href: a.href });
+    lsSet(RECENT_KEY, recent.slice(0, 10));
+    renderRecent();
+  });
+  renderRecent();
+
+  /* ---------- command palette (quick jump) ---------- */
+  var overlay = document.createElement('div');
+  overlay.className = 'kn-palette-overlay'; overlay.hidden = true;
+  overlay.innerHTML =
+    '<div class="kn-palette" role="dialog" aria-modal="true" aria-label="クイックジャンプ">' +
+    '<input class="kn-palette-input" type="text" placeholder="項目名・タグでジャンプ検索 (Escで閉じる)" aria-label="ジャンプ検索">' +
+    '<div class="kn-palette-list" role="listbox"></div></div>';
+  document.body.appendChild(overlay);
+  var pInput = overlay.querySelector('.kn-palette-input');
+  var pList = overlay.querySelector('.kn-palette-list');
+  var pItems = []; var pActive = 0;
+
+  var ACTIONS = [
+    { label: '関連図を開く', run: function () { location.href = 'knowledgenetwork-graph.html'; } },
+    { label: '年表を開く/閉じる', run: function () { var b = document.getElementById('timeline-btn'); if (b) b.click(); } },
+    { label: '今日の1件', run: function () { var b = document.getElementById('daily-btn'); if (b) b.click(); } },
+    { label: 'ランダムな項目', run: function () { var b = document.getElementById('random-btn'); if (b) b.click(); } },
+    { label: 'お気に入りのみ表示を切替', run: function () { setFavOnly(!favOnly); } },
+    { label: 'トップページへ', run: function () { location.href = 'https://varelser.github.io/'; } }
+  ];
+  function renderPalette() {
+    var q = pInput.value.trim().toLowerCase();
+    pItems = [];
+    pList.innerHTML = '';
+    if (!q) {
+      ACTIONS.forEach(function (act) { pItems.push({ kind: 'action', label: act.label, run: act.run }); });
+      entries.slice(0, 12).forEach(function (e) { pItems.push({ kind: 'entry', entry: e }); });
+    } else {
+      entries.forEach(function (e) {
+        if (pItems.length >= 30) return;
+        if (e.name.toLowerCase().indexOf(q) !== -1 || e.tags.indexOf(q) !== -1 || e.text.indexOf(q) !== -1) {
+          pItems.push({ kind: 'entry', entry: e });
+        }
+      });
+    }
+    if (!pItems.length) {
+      var none = document.createElement('div');
+      none.className = 'kn-palette-none'; none.textContent = '該当する項目がありません';
+      pList.appendChild(none);
+    }
+    pItems.forEach(function (item, idx) {
+      var row = document.createElement('button');
+      row.type = 'button'; row.className = 'kn-palette-item'; row.setAttribute('role', 'option');
+      if (item.kind === 'action') {
+        row.innerHTML = '';
+        var s = document.createElement('span'); s.className = 'kn-palette-name'; s.textContent = item.label;
+        var tag = document.createElement('span'); tag.className = 'kn-palette-chapter'; tag.textContent = 'アクション';
+        row.appendChild(s); row.appendChild(tag);
+      } else {
+        var n = document.createElement('span'); n.className = 'kn-palette-name'; n.textContent = item.entry.name;
+        var c = document.createElement('span'); c.className = 'kn-palette-chapter';
+        c.textContent = item.entry.chapter + (item.entry.article ? ' / 記事あり' : ' / 未記事');
+        row.appendChild(n); row.appendChild(c);
+      }
+      row.addEventListener('click', function () { runPaletteItem(idx); });
+      row.addEventListener('mousemove', function () { setPaletteActive(idx); });
+      pList.appendChild(row);
+    });
+    pActive = 0; setPaletteActive(0);
+  }
+  function setPaletteActive(idx) {
+    pActive = Math.max(0, Math.min(idx, pItems.length - 1));
+    Array.prototype.forEach.call(pList.children, function (child, i) {
+      if (child.classList) child.classList.toggle('is-active', i === pActive);
+    });
+    var el = pList.children[pActive];
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+  }
+  function runPaletteItem(idx) {
+    var item = pItems[idx];
+    if (!item) return;
+    closePalette();
+    if (item.kind === 'action') item.run();
+    else jumpTo(item.entry);
+  }
+  function openPalette() {
+    overlay.hidden = false;
+    pInput.value = '';
+    renderPalette();
+    setTimeout(function () { pInput.focus(); }, 0);
+  }
+  function closePalette() { overlay.hidden = true; }
+  pInput.addEventListener('input', renderPalette);
+  pInput.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setPaletteActive(pActive + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setPaletteActive(pActive - 1); }
+    else if (e.key === 'Enter') { e.preventDefault(); runPaletteItem(pActive); }
+    else if (e.key === 'Escape') { closePalette(); }
+  });
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closePalette(); });
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    var typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable);
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      if (overlay.hidden) openPalette(); else closePalette();
+    } else if (e.key === 'Escape' && !overlay.hidden) { closePalette(); }
+    else if (!typing) { /* leave the page's own shortcuts alone */ }
+  });
+
+  /* ---------- reading progress bar ---------- */
+  var bar = document.createElement('div');
+  bar.id = 'knProgress'; bar.className = 'kn-progress';
+  document.body.appendChild(bar);
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- deep link on load (?item= is the page's own scheme; if the
+     page already handled it this is a no-op safeguard) ---------- */
+  try {
+    var itemParam = new URLSearchParams(location.search).get('item');
+    if (itemParam && byName[itemParam]) {
+      setTimeout(function () {
+        var e = byName[itemParam];
+        if (e.li && e.li.style.display !== 'none') jumpTo(e);
+      }, 350);
+    }
+  } catch (e) {}
+})();
+
+</script>
 </body>
 </html>

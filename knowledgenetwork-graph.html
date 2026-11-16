@@ -212,6 +212,8 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+<meta name="view-transition" content="same-origin">
+<script type="speculationrules">{"prefetch": [{"source": "list", "urls": ["knowledgenetwork.html"]}]}</script>
 </head>
 <body>
   <div class="wrap">
@@ -3926,5 +3928,46 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       if (rc && s) rc.textContent = '全' + s.nodes + '件・' + s.total + '本の辺';
     })();
   </script>
+<script>
+/* Knowledge Network graph — Plus additions (2026-11-16): Web Share and
+   fullscreen buttons in the graph toolbar. Additive only. */
+(function () {
+  'use strict';
+  function toast(msg) {
+    var el = document.getElementById('knToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'knToast'; el.hidden = true;
+      el.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:320;background:rgba(17,17,17,0.92);color:#fff;font-size:12.5px;padding:8px 16px;border-radius:999px;pointer-events:none;';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg; el.hidden = false;
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.hidden = true; }, 1800);
+  }
+  var bar = document.querySelector('.graph-bar');
+  if (!bar) return;
+  var shareBtn = document.createElement('button');
+  shareBtn.type = 'button'; shareBtn.id = 'knShareBtn'; shareBtn.textContent = '共有';
+  shareBtn.addEventListener('click', function () {
+    var data = { title: document.title, url: location.href };
+    if (navigator.share) { navigator.share(data).catch(function () {}); }
+    else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(location.href).then(function () { toast('URLをコピーしました'); }, function () { toast('コピーできませんでした'); });
+    }
+  });
+  bar.appendChild(shareBtn);
+  var fsBtn = document.createElement('button');
+  fsBtn.type = 'button'; fsBtn.id = 'knFsBtn'; fsBtn.textContent = 'フルスクリーン';
+  fsBtn.addEventListener('click', function () {
+    if (document.fullscreenElement) { document.exitFullscreen(); }
+    else if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(function () { toast('フルスクリーンにできませんでした'); });
+    }
+  });
+  bar.appendChild(fsBtn);
+})();
+
+</script>
 </body>
 </html>
