@@ -625,6 +625,39 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 @media (prefers-reduced-motion: reduce) { .yb-flash { transition: none; } }
 /* YAYOI-B-STYLE-END */
 </style>
+<style id="yayoi-c-style">
+/* YAYOI-C-STYLE (additive only) */
+#yc-toast { position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); z-index: 2147483200; background: #111; color: #f5f5f5; border: 1px solid #3f3f46; border-radius: 8px; padding: 8px 14px; font-size: 12.5px; opacity: 0; pointer-events: none; transition: opacity .25s; max-width: 86vw; text-align: center; }
+#yc-toast.yc-show { opacity: 1; }
+#yc-batch { position: fixed; left: 16px; bottom: 84px; z-index: 2147483100; background: #111; color: #f5f5f5; border: 1px solid #3f3f46; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; display: none; min-width: 230px; }
+#yc-batch.yc-on { display: block; }
+#yc-batch .yc-bar { height: 5px; background: #2a2a2a; border-radius: 3px; margin: 7px 0 8px; overflow: hidden; }
+#yc-batch .yc-bar i { display: block; height: 100%; background: #f5f5f5; width: 0%; transition: width .4s; }
+#yc-batch button { background: #1c1c1e; color: #f5f5f5; border: 1px solid #3f3f46; border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+#yc-render { position: fixed; top: 76px; left: 50%; transform: translateX(-50%); z-index: 2147483100; background: rgba(17,17,17,.92); color: #f5f5f5; border: 1px solid #3f3f46; border-radius: 999px; padding: 5px 14px; font-size: 12px; display: none; }
+#yc-render.yc-on { display: block; }
+#yc-render i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f5f5f5; margin-right: 7px; animation: yc-pulse 0.9s ease-in-out infinite alternate; }
+@keyframes yc-pulse { from { opacity: .25; } to { opacity: 1; } }
+.yc-overlay { position: fixed; inset: 0; z-index: 2147483300; background: rgba(0,0,0,.55); display: none; align-items: flex-start; justify-content: center; padding: 7vh 14px 14px; box-sizing: border-box; }
+.yc-overlay.yc-open { display: flex; }
+.yc-card { background: #101012; color: #f5f5f5; border: 1px solid #3f3f46; border-radius: 12px; width: min(560px, 94vw); max-height: 82vh; overflow: auto; padding: 16px 18px; box-sizing: border-box; }
+.yc-card h3 { margin: 0 0 4px; font-size: 15px; letter-spacing: .06em; }
+.yc-card .yc-sub { color: #a1a1aa; font-size: 12px; margin-bottom: 10px; }
+.yc-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid #232326; font-size: 13px; }
+.yc-row .yc-name { flex: 0 0 92px; color: #e4e4e7; }
+.yc-row .yc-res { flex: 1; color: #a1a1aa; font-size: 12px; word-break: break-all; }
+.yc-row button, .yc-card .yc-close { background: #1c1c1e; color: #f5f5f5; border: 1px solid #3f3f46; border-radius: 6px; padding: 4px 12px; font-size: 12px; cursor: pointer; }
+.yc-row button:hover, .yc-card .yc-close:hover { background: #2a2a2e; }
+.yc-row a { color: #f5f5f5; }
+#yc-miclevel { height: 6px; background: #2a2a2a; border-radius: 3px; overflow: hidden; margin-top: 5px; display: none; }
+#yc-miclevel i { display: block; height: 100%; background: #f5f5f5; width: 0%; }
+.yc-keys { font-size: 13px; line-height: 2; }
+.yc-keys b { display: inline-block; min-width: 108px; font-weight: 600; color: #e4e4e7; }
+.yc-fadewrap { transition: opacity .15s ease; }
+.yc-fading { opacity: .3; }
+@media (prefers-reduced-motion: reduce) { .yc-fadewrap { transition: none; } #yc-render i { animation: none; } }
+</style>
+<link rel="manifest" href="/yayoi.webmanifest">
 </head>
 
 <body>
@@ -4984,6 +5017,432 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 })();
 </script>
 <!-- YAYOI-B-SCRIPT-END -->
+
+<script id="yayoi-c-script">
+/* ===== YAYOI-C (additive only): batch progress, render indicator, device
+   self-checks, gamepad, media session, extra exports, shortcut help,
+   storage persistence, tab crossfade. No existing state keys are written;
+   the only storage touched is removing the batch queue key on cancel
+   (that is the batch feature's own control). ===== */
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return [...(r || document).querySelectorAll(s)]; };
+  var canvas = function () { return document.querySelector('canvas'); };
+
+  /* ---------- toast ---------- */
+  var toastTimer = 0;
+  function toast(msg, ms) {
+    var t = $('#yc-toast');
+    if (!t) { t = document.createElement('div'); t.id = 'yc-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add('yc-show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('yc-show'); }, ms || 3200);
+  }
+
+  /* ---------- Phase 1a: batch progress + cancel ---------- */
+  var batchBox = null;
+  function ensureBatchBox() {
+    if (batchBox) return batchBox;
+    batchBox = document.createElement('div');
+    batchBox.id = 'yc-batch';
+    batchBox.innerHTML = '<div class="yc-batch-text">バッチ書き出し</div><div class="yc-bar"><i></i></div><button type="button">キャンセル</button>';
+    batchBox.querySelector('button').addEventListener('click', function () {
+      try { sessionStorage.removeItem('yayoi.batch.v1'); } catch (e) {}
+      batchBox.classList.remove('yc-on');
+      toast('バッチをキャンセルしました（実行中の1枚は保存されます）');
+    });
+    document.body.appendChild(batchBox);
+    return batchBox;
+  }
+  setInterval(function () {
+    var b = null;
+    try { b = JSON.parse(sessionStorage.getItem('yayoi.batch.v1') || 'null'); } catch (e) {}
+    if (b && b.seeds && b.seeds.length) {
+      var box = ensureBatchBox();
+      var done = Math.min(b.idx || 0, b.seeds.length);
+      var secs = b.started ? Math.max(0, Math.round((Date.now() - b.started) / 1000)) : 0;
+      box.querySelector('.yc-batch-text').textContent = 'バッチ書き出し中 ' + done + ' / ' + b.seeds.length + ' ・ 経過 ' + secs + '秒';
+      box.querySelector('.yc-bar i').style.width = (done / b.seeds.length * 100) + '%';
+      box.classList.add('yc-on');
+    } else if (batchBox) {
+      batchBox.classList.remove('yc-on');
+    }
+  }, 500);
+
+  /* ---------- Phase 1b: render indicator ---------- */
+  var chip = null, chipHideTimer = 0, chipWatch = 0;
+  function showRender() {
+    if (!chip) { chip = document.createElement('div'); chip.id = 'yc-render'; chip.innerHTML = '<i></i>描画中…'; document.body.appendChild(chip); }
+    chip.classList.add('yc-on');
+    var mirror = $('#yayoi-mirror');
+    var before = mirror ? mirror.textContent : '';
+    clearInterval(chipWatch); clearTimeout(chipHideTimer);
+    var started = Date.now();
+    chipWatch = setInterval(function () {
+      var m = $('#yayoi-mirror');
+      var now = m ? m.textContent : '';
+      if ((now !== before && Date.now() - started > 350) || Date.now() - started > 4500) {
+        clearInterval(chipWatch);
+        chipHideTimer = setTimeout(function () { chip.classList.remove('yc-on'); }, 350);
+      }
+    }, 200);
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    var label = (b.getAttribute('aria-label') || '') + '|' + b.textContent.trim();
+    if (/Generate|Apply|Random/.test(label) || /^(4K\+|4K|3K|2K|HD|A4|16:9)/.test(b.textContent.trim())) showRender();
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'g' || e.key === 'G') && !e.metaKey && !e.ctrlKey && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) showRender();
+  }, true);
+
+  /* ---------- Phase 1c: preset-name prompt feedback ---------- */
+  if (typeof window.prompt === 'function' && !window.__ycPromptWrapped) {
+    window.__ycPromptWrapped = true;
+    var origPrompt = window.prompt;
+    window.prompt = function (msg, def) {
+      var r = origPrompt.call(window, msg, def);
+      if (typeof msg === 'string' && msg.indexOf('プリセット') >= 0 && r === '') {
+        toast('名前が空のため、プリセットを保存しませんでした');
+      }
+      return r;
+    };
+  }
+
+  /* ---------- shared modal builder ---------- */
+  function makeOverlay(id, title, sub) {
+    var ov = document.createElement('div');
+    ov.className = 'yc-overlay'; ov.id = id;
+    ov.innerHTML = '<div class="yc-card"><h3></h3><div class="yc-sub"></div><div class="yc-body"></div><div style="margin-top:12px;text-align:right"><button type="button" class="yc-close">閉じる</button></div></div>';
+    ov.querySelector('h3').textContent = title;
+    ov.querySelector('.yc-sub').textContent = sub;
+    ov.addEventListener('click', function (e) { if (e.target === ov) ov.classList.remove('yc-open'); });
+    ov.querySelector('.yc-close').addEventListener('click', function () { ov.classList.remove('yc-open'); });
+    document.body.appendChild(ov);
+    return ov;
+  }
+  function openOverlay(ov) {
+    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      try { document.startViewTransition(function () { ov.classList.add('yc-open'); }); return; } catch (e) {}
+    }
+    ov.classList.add('yc-open');
+  }
+
+  /* ---------- Phase 2: device self-checks ---------- */
+  var diag = null;
+  function diagRow(body, name) {
+    var row = document.createElement('div');
+    row.className = 'yc-row';
+    row.innerHTML = '<span class="yc-name"></span><span class="yc-res">未実施</span><button type="button">チェック</button>';
+    row.querySelector('.yc-name').textContent = name;
+    body.appendChild(row);
+    return { btn: row.querySelector('button'), res: row.querySelector('.yc-res'), row: row };
+  }
+  function buildDiag() {
+    diag = makeOverlay('yc-diag', '動作チェック', 'この機械・このブラウザで実際に動くかを、その場で確かめます。作品や設定は変わりません。');
+    var body = diag.querySelector('.yc-body');
+
+    var v = diagRow(body, '動画録画');
+    v.btn.addEventListener('click', function () {
+      var c = canvas();
+      if (!c || typeof c.captureStream !== 'function' || typeof MediaRecorder === 'undefined') { v.res.textContent = 'このブラウザは録画に未対応です'; return; }
+      var mime = '';
+      ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'].forEach(function (m) { if (!mime && MediaRecorder.isTypeSupported(m)) mime = m; });
+      if (!mime) { v.res.textContent = '対応する録画形式がありません'; return; }
+      v.res.textContent = '録画中…（2.5秒）';
+      var chunks = [];
+      var rec;
+      try { rec = new MediaRecorder(c.captureStream(30), { mimeType: mime, videoBitsPerSecond: 8000000 }); }
+      catch (e) { v.res.textContent = '録画を開始できませんでした: ' + e.message; return; }
+      rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+      rec.onstop = function () {
+        var bytes = chunks.reduce(function (a, x) { return a + x.size; }, 0);
+        if (!bytes) { v.res.textContent = '録画データ 0 バイト — この環境では映像フレームが生成されませんでした（実ブラウザでは通常動作します）'; return; }
+        var blob = new Blob(chunks, { type: mime });
+        var url = URL.createObjectURL(blob);
+        v.res.innerHTML = '';
+        var span = document.createElement('span');
+        span.textContent = '成功: ' + mime.split(';')[0] + ' / ' + Math.round(bytes / 1024) + ' KB ';
+        var a = document.createElement('a');
+        a.href = url; a.download = 'yayoi_video_test.' + (mime.includes('mp4') ? 'mp4' : 'webm'); a.textContent = 'ダウンロード';
+        v.res.appendChild(span); v.res.appendChild(a);
+      };
+      rec.start(250);
+      setTimeout(function () { try { rec.stop(); } catch (e) {} }, 2500);
+    });
+
+    var mi = diagRow(body, 'マイク');
+    var level = document.createElement('div'); level.id = 'yc-miclevel'; level.innerHTML = '<i></i>';
+    mi.row.appendChild(level);
+    mi.btn.addEventListener('click', function () {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { mi.res.textContent = 'このブラウザは未対応です'; return; }
+      mi.res.textContent = 'マイクを開始しています…';
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+        var actx = new (window.AudioContext || window.webkitAudioContext)();
+        var src = actx.createMediaStreamSource(stream);
+        var an = actx.createAnalyser(); an.fftSize = 512;
+        src.connect(an);
+        var data = new Uint8Array(an.frequencyBinCount);
+        level.style.display = 'block';
+        var max = 0, t0 = Date.now();
+        (function tick() {
+          an.getByteTimeDomainData(data);
+          var sum = 0;
+          for (var i = 0; i < data.length; i++) { var d = (data[i] - 128) / 128; sum += d * d; }
+          var rms = Math.sqrt(sum / data.length);
+          max = Math.max(max, rms);
+          level.querySelector('i').style.width = Math.min(100, rms * 220) + '%';
+          if (Date.now() - t0 < 5000) requestAnimationFrame(tick);
+          else {
+            stream.getTracks().forEach(function (t) { t.stop(); });
+            actx.close();
+            level.style.display = 'none';
+            mi.res.textContent = '取得できました（5秒間の最大レベル 約 ' + Math.round(max * 100) + '%）。音への反応は Sync / Expression 側の設定で使われます';
+          }
+        })();
+      }).catch(function (e) { mi.res.textContent = '開始できませんでした: ' + e.name; });
+    });
+
+    var md = diagRow(body, 'Web MIDI');
+    md.btn.addEventListener('click', function () {
+      if (!navigator.requestMIDIAccess) { md.res.textContent = 'このブラウザは未対応です'; return; }
+      navigator.requestMIDIAccess().then(function (acc) {
+        var names = [];
+        acc.inputs.forEach(function (i) { names.push(i.name || 'MIDI入力'); });
+        md.res.textContent = names.length ? '入力デバイス: ' + names.join(' / ') : '接続されている入力デバイスはありません';
+      }).catch(function (e) { md.res.textContent = '開始できませんでした: ' + e.name; });
+    });
+
+    var pp = diagRow(body, 'PiP');
+    pp.btn.addEventListener('click', function () {
+      if (!('documentPictureInPicture' in window)) { pp.res.textContent = 'このブラウザは未対応です'; return; }
+      documentPictureInPicture.requestWindow({ width: 420, height: 300 }).then(function (w) {
+        w.document.body.innerHTML = '<div style="font-family:sans-serif;padding:16px">Yayoi 動作チェック — PiP は動作しています</div>';
+        pp.res.textContent = '小さな窓を開けました（1秒後に閉じます）';
+        setTimeout(function () { try { w.close(); } catch (e) {} }, 1000);
+      }).catch(function (e) { pp.res.textContent = '開けませんでした: ' + e.name; });
+    });
+
+    var wk = diagRow(body, 'Wake Lock');
+    wk.btn.addEventListener('click', function () {
+      if (!('wakeLock' in navigator)) { wk.res.textContent = 'このブラウザは未対応です'; return; }
+      navigator.wakeLock.request('screen').then(function (lock) {
+        wk.res.textContent = '取得できました（画面は眠りません。1秒後に解放します）';
+        setTimeout(function () { try { lock.release(); } catch (e) {} }, 1000);
+      }).catch(function (e) { wk.res.textContent = '取得できませんでした: ' + e.name; });
+    });
+
+    var gp = diagRow(body, 'Gamepad');
+    gp.btn.addEventListener('click', function () {
+      var pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [];
+      gp.res.textContent = pads.length ? '接続中: ' + pads.map(function (p) { return p.id.slice(0, 42); }).join(' / ') + ' — A=生成 / B=戻す / X=PNG / Y=次のタブ' : '未接続です（パッドのボタンを押すと認識されます）';
+    });
+
+    var st = diagRow(body, '保存容量');
+    st.btn.addEventListener('click', function () {
+      if (!navigator.storage || !navigator.storage.estimate) { st.res.textContent = 'このブラウザは未対応です'; return; }
+      Promise.all([navigator.storage.estimate(), navigator.storage.persisted ? navigator.storage.persisted() : Promise.resolve(false)]).then(function (r) {
+        var est = r[0];
+        st.res.textContent = '使用中 約 ' + Math.round((est.usage || 0) / 1048576 * 10) / 10 + ' MB / 上限 約 ' + Math.round((est.quota || 0) / 1073741824 * 10) / 10 + ' GB ・ 永続化: ' + (r[1] ? '有効' : '未許可（自動で要求済み）');
+      }).catch(function (e) { st.res.textContent = '取得できませんでした: ' + e.name; });
+    });
+
+    var fm = diagRow(body, '書き出し形式');
+    fm.btn.addEventListener('click', function () {
+      var probe = document.createElement('canvas'); probe.width = 4; probe.height = 4;
+      var out = [];
+      var pending = 2;
+      function done() { if (--pending === 0) fm.res.textContent = out.join(' ・ '); }
+      probe.toBlob(function (b) { out.push('WebP: ' + (b && b.type === 'image/webp' ? '対応' : '未対応')); done(); }, 'image/webp', 0.9);
+      probe.toBlob(function (b) { out.push('AVIF: ' + (b && b.type === 'image/avif' ? '対応' : '未対応')); done(); }, 'image/avif', 0.9);
+    });
+  }
+
+  /* ---------- Phase 3f: extra export row + diag entry (injected into Plus) ---------- */
+  function dlName(ext) {
+    var d = new Date();
+    function p(n) { return String(n).padStart(2, '0'); }
+    return 'yayoi_' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds()) + '.' + ext;
+  }
+  function downloadBlob(blob, name) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+  function exportAs(type) {
+    var c = canvas(); if (!c) return;
+    c.toBlob(function (b) {
+      if (!b || b.type !== type) { toast('このブラウザは ' + type.split('/')[1].toUpperCase() + ' 書き出しに未対応です'); return; }
+      downloadBlob(b, dlName(type.split('/')[1]));
+      toast(type.split('/')[1].toUpperCase() + ' を保存しました');
+    }, type, 0.92);
+  }
+  function shareImage() {
+    var c = canvas(); if (!c) return;
+    c.toBlob(function (b) {
+      if (!b) { toast('画像を作れませんでした'); return; }
+      var file = new File([b], dlName('png'), { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file] }).catch(function () {});
+      } else {
+        toast('このブラウザは画像の直接共有に未対応です（PNG保存をお使いください）');
+      }
+    }, 'image/png');
+  }
+  function plusRow(labelText) {
+    var row = document.createElement('div');
+    row.className = 'yayoi-plus-row';
+    var lab = document.createElement('span');
+    lab.className = 'yayoi-plus-label'; lab.textContent = labelText;
+    row.appendChild(lab);
+    return row;
+  }
+  function plusBtn(row, text, fn) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'yayoi-plus-btn'; b.textContent = text;
+    b.addEventListener('click', fn);
+    row.appendChild(b);
+    return b;
+  }
+  function ensureExtraRows() {
+    var plus = document.getElementById('yayoi-plus');
+    if (plus && !document.getElementById('yc-plus-row')) {
+      var row = plusRow('追加の書き出し・診断');
+      row.id = 'yc-plus-row';
+      plusBtn(row, 'WebP保存', function () { exportAs('image/webp'); });
+      plusBtn(row, 'AVIF保存', function () { exportAs('image/avif'); });
+      plusBtn(row, '画像を共有', shareImage);
+      plusBtn(row, '動作チェック', function () { if (!diag) buildDiag(); openOverlay(diag); });
+      plus.appendChild(row);
+    }
+    var plus2 = document.getElementById('yayoi-plus2');
+    if (plus2 && !document.getElementById('yc-plus2-row')) {
+      var row2 = plusRow('ヘルプ');
+      row2.id = 'yc-plus2-row';
+      plusBtn(row2, 'キーボードショートカット', function () { openOverlay(help); });
+      plusBtn(row2, '動作チェック', function () { if (!diag) buildDiag(); openOverlay(diag); });
+      plus2.appendChild(row2);
+    }
+  }
+
+  /* ---------- Phase 3d: shortcut help ---------- */
+  var help = makeOverlay('yc-help', 'キーボードショートカット', 'Yayoi で使えるキー操作の一覧です。');
+  help.querySelector('.yc-body').innerHTML = '<div class="yc-keys">' +
+    '<div><b>1 〜 5</b>タブ切替（Shapes / Layout / Style / Size / Space）</div>' +
+    '<div><b>G</b>新しい絵を生成</div>' +
+    '<div><b>Ctrl + Z</b>元に戻す</div>' +
+    '<div><b>I</b>没入モード（UIを隠す）</div>' +
+    '<div><b>Esc</b>パネル・パレットを閉じる</div>' +
+    '<div><b>⌘K / Ctrl + K</b>コマンドパレット（全タブ横断検索）</div>' +
+    '<div><b>D</b>動作チェック（動画・マイク・MIDI等）</div>' +
+    '<div><b>?</b>この一覧</div>' +
+    '<div><b>ダブルクリック</b>キャンバス上で生成</div>' +
+    '<div><b>Gamepad</b>A=生成 / B=戻す / X=PNG / Y=次のタブ / Start=⌘K</div></div>';
+
+  document.addEventListener('keydown', function (e) {
+    var tag = document.activeElement && document.activeElement.tagName;
+    if (/INPUT|TEXTAREA|SELECT/.test(tag || '')) return;
+    if (e.key === '?') { e.preventDefault(); openOverlay(help); }
+    if ((e.key === 'd' || e.key === 'D') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      if (!diag) buildDiag();
+      openOverlay(diag);
+    }
+    if (e.key === 'Escape') { $$('.yc-overlay.yc-open').forEach(function (o) { o.classList.remove('yc-open'); }); }
+  });
+
+  /* ---------- Phase 3a: gamepad ---------- */
+  var padState = {};
+  window.addEventListener('gamepadconnected', function () {
+    toast('ゲームパッド接続: A=生成 / B=戻す / X=PNG / Y=次のタブ / Start=⌘K', 4200);
+  });
+  function toolbarClick(match) {
+    var b = $$('.toolbar button').find(match);
+    if (b) b.click();
+    return !!b;
+  }
+  function tabClick(dir) {
+    var tabs = $$('.toolbar-left .tool-btn');
+    if (!tabs.length) return;
+    var idx = tabs.findIndex(function (t) { return t.classList.contains('is-active'); });
+    var next = tabs[(idx + dir + tabs.length) % tabs.length];
+    if (next) next.click();
+  }
+  function padAction(i) {
+    var tag = document.activeElement && document.activeElement.tagName;
+    if (/INPUT|TEXTAREA|SELECT/.test(tag || '')) return;
+    if (i === 0) toolbarClick(function (b) { return (b.getAttribute('aria-label') || '') === 'Generate'; });
+    else if (i === 1) toolbarClick(function (b) { return /元に戻す/.test(b.getAttribute('aria-label') || ''); });
+    else if (i === 2) toolbarClick(function (b) { return b.textContent.trim() === 'PNG'; });
+    else if (i === 3) tabClick(1);
+    else if (i === 4) tabClick(-1);
+    else if (i === 5) tabClick(1);
+    else if (i === 9) { var pb = $$('.toolbar button').find(function (b) { return /⌘K/.test(b.textContent); }); if (pb) pb.click(); }
+  }
+  setInterval(function () {
+    if (document.hidden || !navigator.getGamepads) return;
+    var pads = [...navigator.getGamepads()].filter(Boolean);
+    if (!pads.length) return;
+    var gp = pads[0];
+    gp.buttons.forEach(function (btn, i) {
+      var key = gp.index + ':' + i;
+      var was = !!padState[key];
+      if (btn.pressed && !was) padAction(i);
+      padState[key] = btn.pressed;
+    });
+  }, 120);
+
+  /* ---------- Phase 3b: media session ---------- */
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({ title: 'Yayoi — Generative Shapes', artist: 'Varelser', album: 'varelser.github.io' });
+      var autoRow = function () {
+        var sec = document.getElementById('yayoi-plus');
+        if (!sec) return null;
+        return $$('.yayoi-plus-row', sec).find(function (r) { var l = r.querySelector('.yayoi-plus-label'); return l && /オート生成/.test(l.textContent); });
+      };
+      navigator.mediaSession.setActionHandler('play', function () {
+        var row = autoRow(); if (!row) return;
+        var start = $$('button', row).find(function (b) { return /開始/.test(b.textContent); });
+        if (start) start.click();
+      });
+      navigator.mediaSession.setActionHandler('pause', function () {
+        var row = autoRow(); if (!row) return;
+        var stop = $$('button', row).find(function (b) { return /停止/.test(b.textContent); });
+        if (stop) stop.click();
+      });
+      navigator.mediaSession.setActionHandler('previoustrack', function () { toolbarClick(function (b) { return /元に戻す/.test(b.getAttribute('aria-label') || ''); }); });
+      navigator.mediaSession.setActionHandler('nexttrack', function () { toolbarClick(function (b) { return /やり直し/.test(b.getAttribute('aria-label') || ''); }); });
+    } catch (e) {}
+  }
+
+  /* ---------- Phase 3e: storage persistence request ---------- */
+  try {
+    if (navigator.storage && navigator.storage.persist && navigator.storage.persisted) {
+      navigator.storage.persisted().then(function (p) { if (!p) navigator.storage.persist().catch(function () {}); }).catch(function () {});
+    }
+  } catch (e) {}
+
+  /* ---------- Phase 3g: tab crossfade ---------- */
+  var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.addEventListener('click', function (e) {
+    if (reduceMotion) return;
+    var t = e.target.closest('.toolbar-left .tool-btn');
+    if (!t) return;
+    var c = canvas();
+    if (!c || !c.parentElement) return;
+    var w = c.parentElement;
+    w.classList.add('yc-fadewrap', 'yc-fading');
+    setTimeout(function () { w.classList.remove('yc-fading'); }, 160);
+  }, true);
+
+  /* ---------- row injection loop ---------- */
+  setInterval(ensureExtraRows, 1200);
+  ensureExtraRows();
+})();
+</script>
 
 </body>
 </html>
