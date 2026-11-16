@@ -275,6 +275,57 @@
     return true;
   }
 
+
+  /* ── Studio Console receiver (2026-11-16) ─────────────────────
+     {app:'studio', type:'console', version:2, transport, bpm,
+      targets:{meikyoshisui:{amount, bpm}}} を実パラメータに写像する:
+       transport 'play'  -> MidiPreview.play() (GENERATE 済みで
+                            ロードされている場合のみ鳴る)
+       transport 'stop'  -> MidiPreview.stop()
+       bpm               -> S.bpm + #bpm スライダー + 表示。ロード済み
+                            プレビューは新 BPM で再ロードし、再生中
+                            だった場合は再開する (範囲は本体仕様 18..140)
+       amount (0..1)     -> MidiPreview.setChVol を全 16 チャンネルへ
+                            (プレビュー音量として即時反映) */
+  function getMP() { try { return (typeof MidiPreview !== 'undefined' && MidiPreview) ? MidiPreview : null; } catch (_) { return null; } }
+  function applyStudioBpm(raw) {
+    const s = getS(); if (!s) return;
+    let v = Math.round(Number(raw));
+    if (!Number.isFinite(v)) return;
+    v = Math.max(18, Math.min(140, v));
+    if (v === s.bpm) return;
+    const mp = getMP();
+    const wasPlaying = mp ? isPlaying() : false;
+    s.bpm = v;
+    const slider = document.getElementById('bpm');
+    if (slider) slider.value = v;
+    try { if (typeof refreshBpmDisplay === 'function') refreshBpmDisplay(); } catch (_) {}
+    if (mp && s.midiData) {
+      try { mp.load(s.midiData, v); if (wasPlaying) mp.play(); } catch (_) {}
+    }
+    lastFingerprint = ''; /* force the next poll to broadcast the new state */
+  }
+  function applyStudioConsole(msg) {
+    const mp = getMP();
+    const tgt = (msg.targets && msg.targets.meikyoshisui) || {};
+    const bpm = (typeof tgt.bpm === 'number') ? tgt.bpm : (typeof msg.bpm === 'number' ? msg.bpm : null);
+    if (bpm != null) applyStudioBpm(bpm);
+    if (typeof tgt.amount === 'number' && Number.isFinite(tgt.amount) && mp && typeof mp.setChVol === 'function') {
+      const a = Math.max(0, Math.min(1, tgt.amount));
+      try { for (let ch = 0; ch < 16; ch++) mp.setChVol(ch, a); } catch (_) {}
+    }
+    if (msg.transport === 'play' && mp) {
+      if (mp.getParsed && mp.getParsed()) { try { mp.play(); } catch (_) {} setStatus('Studio Console: ▶ 再生'); }
+      else setStatus('Studio Console: ▶ — 先に GENERATE すると再生できます');
+    } else if (msg.transport === 'stop' && mp) {
+      try { mp.stop(); } catch (_) {}
+      setStatus('Studio Console: ■ 停止');
+    } else if (msg.transport) {
+      setStatus('Studio Console: ' + msg.transport + ' (bpm ' + (bpm != null ? bpm : '—') + ')');
+    }
+    sendState(true);
+  }
+
   function onMessage(ev) {
     const msg = ev && ev.data;
     if (!msg || typeof msg !== 'object') return;
@@ -302,6 +353,7 @@
       } finally { applying = false; }
       return;
     }
+    if (msg.app === 'studio' && msg.type === 'console') { applyStudioConsole(msg); return; }
     if (msg.type === 'state' && (msg.app === 'noise' || msg.app === 'Noise')) {
       renderNoise(msg);
     }
