@@ -29,7 +29,7 @@ function head(){
 
 const CL=[];const BASE=[[430,330],[1170,330],[430,610],[1170,610],[800,270]];
 BASE.forEach((b,g)=>{const a=[];for(let i=0;i<11;i++)a.push([(rnd()-0.5)*120,(rnd()-0.5)*100]);CL.push({b,a});});
-function render(t){const ph=t%10,m=ph<3.6?ss(ph/3.6):ph<6.4?1:ss((10-ph)/3.6);
+function render(t){const ph=t%8,m=ph<2.9?ss(ph/2.9):ph<5.1?1:ss((8-ph)/2.9);
  const ctr=CL.map(c=>[c.b[0]+(800-c.b[0])*m*0.82,c.b[1]+(460-c.b[1])*m*0.82]);
  if(m>0.05){for(let k=0;k<5;k++){const u=ctr[k],v=ctr[(k+1)%5];for(let s=1;s<7;s++)dot(u[0]+(v[0]-u[0])*s/7,u[1]+(v[1]-u[1])*s/7,1.6,0.25+0.45*m);}}
  CL.forEach((c,g)=>c.a.forEach((o,i)=>dot(ctr[g][0]+o[0],ctr[g][1]+o[1],2.3,0.55+0.35*Math.sin(t*2+i*1.3+g))));}

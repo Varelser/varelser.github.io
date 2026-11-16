@@ -21,10 +21,10 @@ function smooth(a,b,x){if(x<=a)return 0;if(x>=b)return 1;const f=(x-a)/(b-a);ret
 function dot(x,y,r,o){ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fillStyle='rgba(0,0,0,'+o+')';ctx.fill();}
 function txt(s,x,y,size,bold,alpha,anchor){ctx.font=(bold?'700 ':'')+size+'px "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';ctx.fillStyle='rgba(17,17,17,'+(alpha===undefined?1:alpha)+')';ctx.textAlign=anchor||'center';ctx.fillText(s,x,y);}
 
-const LAYERS=[{name:'物語層',intro:'物語',desc:'「私」という語り。注意・言語・自己意識。DMNと深く関連',band:300,amp:16,freq:2.6,rate:3.5,off:0},
-{name:'自動層',intro:'自動反応',desc:'考える前に反応している。本能的反応・習慣・手続き記憶',band:460,amp:26,freq:1.7,rate:2.1,off:2.1},
-{name:'からだ層',intro:'からだ',desc:'生体の現在。自律神経・内受容・ホルモン',band:620,amp:38,freq:1.1,rate:1.15,off:4.2}];
-const COM={amp:26,freq:1.9,rate:1.6},N=56;
+const LAYERS=[{name:'物語層',intro:'物語',desc:'「私」という語り。注意・言語・自己意識。DMNと深く関連',band:300,amp:16,freq:2.6,rate:5.2,off:0},
+{name:'自動層',intro:'自動反応',desc:'考える前に反応している。本能的反応・習慣・手続き記憶',band:460,amp:26,freq:1.7,rate:3.1,off:2.1},
+{name:'からだ層',intro:'からだ',desc:'生体の現在。自律神経・内受容・ホルモン',band:620,amp:38,freq:1.1,rate:1.7,off:4.2}];
+const COM={amp:26,freq:1.9,rate:2.4},N=56;
 function divg(tt){tt%=20;if(tt<7)return 1;if(tt<12)return 1-smooth(7,12,tt);if(tt<17)return 0;return smooth(17,20,tt);}
 function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing)t+=dt;
 ctx.clearRect(0,0,1600,900);
@@ -33,10 +33,10 @@ const d=divg(t);
 LAYERS.forEach(L=>{txt(L.name,66,L.band-8,26,true,1,'left');txt(L.intro,66,L.band+24,19,false,.6,'left');
 const amp=L.amp*d+COM.amp*(1-d),fr=L.freq*d+COM.freq*(1-d),ph=t*(L.rate*d+COM.rate*(1-d))+L.off*d;
 for(let i=0;i<N;i++){const x=270+i*(1060/(N-1));
-dot(x,L.band+amp*Math.sin(fr*(x-270)/1060*6.2832+ph),5.5,.88);}
-for(let s=0;s<4;s++){const px=270+((t*300+L.off*160+s*265)%1060);
-for(let k=4;k>=1;k--){const qx=px-13*k;if(qx<270)continue;dot(qx,L.band+amp*Math.sin(fr*(qx-270)/1060*6.2832+ph),8-1.1*k,.4*(1-k/5));}
-dot(px,L.band+amp*Math.sin(fr*(px-270)/1060*6.2832+ph),9.5,.95);}
+dot(x,L.band+amp*(1+0.3*Math.sin((x-270)*0.008-t*3+L.off))*Math.sin(fr*(x-270)/1060*6.2832+ph),5.5,.88);}
+for(let s=0;s<4;s++){const px=270+((t*460+L.off*160+s*265)%1060);
+for(let k=5;k>=1;k--){const qx=px-13*k;if(qx<270)continue;dot(qx,L.band+amp*(1+0.3*Math.sin((qx-270)*0.008-t*3+L.off))*Math.sin(fr*(qx-270)/1060*6.2832+ph),9-1.1*k,.4*(1-k/6));}
+dot(px,L.band+amp*(1+0.3*Math.sin((px-270)*0.008-t*3+L.off))*Math.sin(fr*(px-270)/1060*6.2832+ph),11,.95);}
 txt(L.desc,270,L.band+80,19,false,.66,'left');});
 txt('頭ではわかっても心がついていかない ― 層の乖離',800,818,22,true);
 requestAnimationFrame(frame);}

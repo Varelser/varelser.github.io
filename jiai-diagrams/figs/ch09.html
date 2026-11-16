@@ -30,7 +30,7 @@ function head(){
 const IMG=[];for(let k=0;k<6;k++){const a=[];for(let m=0;m<16;m++)a.push([rnd(),rnd()]);IMG.push(a);}
 function frameDots(x0){const p=[];for(let x=0;x<=300;x+=30){p.push([x0+x,240]);p.push([x0+x,660]);}
  for(let y=270;y<=630;y+=30){p.push([x0,y]);p.push([x0+300,y]);}return p;}
-function render(t){const off=(t*84)%330;
+function render(t){const off=(t*100)%330;
  for(let x=60;x<1600;x+=40){dot(x-(off%40),196,3,0.4);dot(x-(off%40),704,3,0.4);}
  for(let k=0;k<6;k++){const x0=130+k*330-off;if(x0<-320||x0>1620)continue;
   frameDots(x0).forEach(q=>dot(q[0],q[1],1.9,0.55));

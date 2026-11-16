@@ -27,7 +27,7 @@ let base;
 if(local<1.4||step===3)base=PTS.map(p=>p.stages[step]);
 else{const f=(local-1.4)/1.85,e=f*f*(3-2*f);
 base=PTS.map(p=>{const A=p.stages[step],B=p.stages[step+1];return [A[0]+(B[0]-A[0])*e,A[1]+(B[1]-A[1])*e,A[2]+(B[2]-A[2])*e,A[3]+(B[3]-A[3])*e];});}
-return [base.map((d,i)=>[d[0]+7*Math.sin(tt*0.9+i*2.39),d[1]+6*Math.cos(tt*0.77+i*1.71),d[2],d[3]]),step];}
+return [base.map((d,i)=>[d[0]+12*Math.sin(tt*1.3+i*2.39),d[1]+10*Math.cos(tt*1.1+i*1.71),d[2],d[3]]),step];}
 const STEPS=['1 圧倒的な刺激との遭遇','2 予測システムの破綻','3 トップダウン制御の弛緩','4「システム・リセット」としての畏敬発生'];
 function s1(tt){txt('『慈愛体系』畏敬と文化処方箋',800,90,36);txt('畏敬 ― 広大さの知覚＋認知の作り替え',800,126,20,false,.6);
 const [dots,step]=awe(tt);dots.forEach(d=>dot(d[0],d[1],d[2],d[3]));
@@ -38,15 +38,15 @@ const FLOW=[['医療者','紹介'],['リンクワーカー','面談・接続'],[
 function s2(tt){txt('『慈愛体系』畏敬と文化処方箋',800,90,36);txt('文化処方箋の流れ（社会的処方）',800,126,20,false,.6);
 const cxs=[220,560,900,1240];
 FLOW.forEach((fl,k)=>{const act=Math.min(1,Math.max(0,(tt-13.6-k*1.5)/.9)),cx=cxs[k];
-for(let i=0;i<22;i++){const a=i/22*6.2832+tt*0.6*(k%2?-1:1);dot(cx+80*Math.cos(a),400+80*Math.sin(a),4.2,.22+.68*act);}
+for(let i=0;i<22;i++){const a=i/22*6.2832+tt*0.95*(k%2?-1:1);dot(cx+80*Math.cos(a),400+80*Math.sin(a),4.2,.22+.68*act);}
 dot(cx,400,8*(1+0.25*Math.sin(tt*3+k*1.3)),.3+.65*act);
 ctx.globalAlpha=.35+.65*act;txt(fl[0],cx,548,28,true);txt(fl[1],cx,590,20,false,.75);ctx.globalAlpha=1;
 if(k<3)for(let xx=cx+104;xx<cxs[k+1]-100;xx+=16)dot(xx,400,2.6,act*(0.25+0.55*(0.5+0.5*Math.sin(xx*0.05-tt*6))));});
 txt('処方されるのは薬ではなく、「呼ばれる名前と戻る場所」である（第17章）',800,730,20,false,.66);}
 function s3(tt){txt('『慈愛体系』畏敬と文化処方箋',800,90,36);
-const rr3=105+7*Math.sin(tt*0.9);
-for(let i=0;i<36;i++){const a=i/36*6.2832+tt*0.25;dot(800+rr3*Math.cos(a),268+rr3*Math.sin(a),4.4,.5);}
-const f3=(tt%3)/3,R3=20+130*f3;for(let j=0;j<24;j++){const a=j/24*6.2832;dot(800+R3*Math.cos(a),268+R3*Math.sin(a),3,(1-f3)*0.45);}
+const rr3=105+9*Math.sin(tt*1.2);
+for(let i=0;i<36;i++){const a=i/36*6.2832+tt*0.45;dot(800+rr3*Math.cos(a),268+rr3*Math.sin(a),4.4,.5);}
+const f3=(tt%2.2)/2.2,R3=20+130*f3;for(let j=0;j<24;j++){const a=j/24*6.2832;dot(800+R3*Math.cos(a),268+R3*Math.sin(a),3,(1-f3)*0.45);}
 const fd=s=>Math.min(1,Math.max(0,(tt-s)/.8));
 ctx.globalAlpha=fd(21.6);txt('Culture as Care（ケアとしての文化）',800,486,34,true);
 ctx.globalAlpha=fd(23.2)*.8;txt('【ビジョン】',800,548,20);ctx.globalAlpha=fd(23.2);txt('2035年 ― かかりつけ医が「文化処方箋」を渡す社会',800,584,24);

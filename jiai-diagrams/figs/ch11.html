@@ -29,7 +29,7 @@ function head(){
 
 const STEPS=[];for(let s=0;s<5;s++){const a=[];for(let i=0;i<9;i++)a.push([215+s*250+i*26,648-s*78]);STEPS.push(a);}
 const PATH=[[215,648],[465,570],[715,492],[965,414],[1215,336],[1405,262]];
-function render(t){const p=(t%7)/7,seg=Math.min(4.999,p*5.4),si=Math.floor(seg),fr=ss(seg-si);
+function render(t){const p=(t%5.5)/5.5,seg=Math.min(4.999,p*5.4),si=Math.floor(seg),fr=ss(seg-si);
  const px=PATH[si][0]+(PATH[si+1][0]-PATH[si][0])*fr,py=PATH[si][1]+(PATH[si+1][1]-PATH[si][1])*fr;
  STEPS.forEach((a,s)=>{const lit=p*5.4>s?1:0.35;a.forEach(q=>dot(q[0],q[1],2.3,0.3+0.6*lit));});
  for(let k=3;k>=1;k--)dot(px-16*k,py-16+11*k,6.5-1.2*k,0.5*(1-k/4));
