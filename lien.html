@@ -4857,5 +4857,542 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 })();
 </script>
 <!-- lien-b:end -->
+
+<style id="lien-c-style">
+#lienBrushCanvas{position:absolute;pointer-events:none;z-index:5}
+.lien-c-seg{display:inline-flex;gap:4px;margin-left:10px}
+.lien-c-seg button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:6px;padding:2px 9px;font-size:10px;cursor:pointer}
+.lien-c-seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+#lienCToast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:7px 14px;font-size:11px;z-index:400;box-shadow:0 8px 28px rgba(0,0,0,.45)}
+.export-grid .lien-c-wide{grid-column:1 / -1}
+</style>
+
+<script id="lien-c-script">
+(function () {
+  'use strict';
+  /* ===== Verbatim core math (extracted from Lien core at build time) ===== */
+function mulberry32(seed) {
+        const box = { t: seed >>> 0 };
+        const rng = function() {
+          box.t |= 0;
+          box.t = (box.t + 0x6D2B79F5) | 0;
+          let r = Math.imul(box.t ^ (box.t >>> 15), 1 | box.t);
+          r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+          return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+        };
+        // Exposed so an undo snapshot can capture and restore the exact
+        // random state alongside the particles that consume it.
+        rng.getState = function() { return box.t; };
+        rng.setState = function(value) { box.t = value | 0; };
+        return rng;
+      }
+class PerlinNoise {
+        constructor(seed) {
+          this.perm = this.buildPermutation(mulberry32(seed));
+        }
+        buildPermutation(rng) {
+          const PERM_SIZE = 256;
+          const p = new Uint8Array(PERM_SIZE);
+          for (let i = 0; i < PERM_SIZE; i++) p[i] = i;
+          for (let i = PERM_SIZE - 1; i > 0; i--) {
+            const j = (rng() * (i + 1)) | 0;
+            const tmp = p[i];
+            p[i] = p[j];
+            p[j] = tmp;
+          }
+          const perm = new Uint8Array(PERM_SIZE * 2);
+          for (let i = 0; i < PERM_SIZE * 2; i++) perm[i] = p[i & 255];
+          return perm;
+        }
+        fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+        lerp(a, b, t) { return a + t * (b - a); }
+        grad(hash, x, y, z) {
+          const hh = hash & 15;
+          const u = hh < 8 ? x : y;
+          const v = hh < 4 ? y : (hh === 12 || hh === 14 ? x : z);
+          return ((hh & 1) === 0 ? u : -u) + ((hh & 2) === 0 ? v : -v);
+        }
+        noise3(x, y, z) {
+          const X = Math.floor(x) & 255;
+          const Y = Math.floor(y) & 255;
+          const Z = Math.floor(z) & 255;
+          const xf = x - Math.floor(x);
+          const yf = y - Math.floor(y);
+          const zf = z - Math.floor(z);
+          const u = this.fade(xf);
+          const v = this.fade(yf);
+          const w = this.fade(zf);
+          const A = this.perm[X] + Y;
+          const AA = this.perm[A] + Z;
+          const AB = this.perm[A + 1] + Z;
+          const B = this.perm[X + 1] + Y;
+          const BA = this.perm[B] + Z;
+          const BB = this.perm[B + 1] + Z;
+          const g1 = this.grad(this.perm[AA], xf, yf, zf);
+          const g2 = this.grad(this.perm[BA], xf - 1, yf, zf);
+          const g3 = this.grad(this.perm[AB], xf, yf - 1, zf);
+          const g4 = this.grad(this.perm[BB], xf - 1, yf - 1, zf);
+          const g5 = this.grad(this.perm[AA + 1], xf, yf, zf - 1);
+          const g6 = this.grad(this.perm[BA + 1], xf - 1, yf, zf - 1);
+          const g7 = this.grad(this.perm[AB + 1], xf, yf - 1, zf - 1);
+          const g8 = this.grad(this.perm[BB + 1], xf - 1, yf - 1, zf - 1);
+          const x1 = this.lerp(g1, g2, u);
+          const x2 = this.lerp(g3, g4, u);
+          const y1 = this.lerp(x1, x2, v);
+          const x3 = this.lerp(g5, g6, u);
+          const x4 = this.lerp(g7, g8, u);
+          const y2 = this.lerp(x3, x4, v);
+          return (this.lerp(y1, y2, w) + 1) * 0.5;
+        }
+      }
+function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+          ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+          : { r: 255, g: 255, b: 255 };
+      }
+const PRESET_DEFAULTS = {
+        particleCount: 6000,
+        stepsPerLine: 2000,
+        stepLength: 1.0,
+        noiseFreq: 0.0006,
+        curlStrength: 1.5,
+        lineWidthMin: 0.5,
+        lineWidthMax: 1.5,
+        opacity: 12,
+        clustering: 0.0,
+        waveMode: 'perlin',
+        flowDirection: 'omni',
+        seed: 1,
+        zoom: 1.0,
+        colorInvert: false,
+        lineColor: '#ffffff'
+      };
+const CONFIG_RANGES = {
+        seed: [1, 99999, true],
+        stepsPerLine: [100, 10000, true],
+        stepLength: [0.5, 50, false],
+        noiseFreq: [0.0001, 0.02, false],
+        curlStrength: [0.1, 20, false],
+        particleCount: [100, 100000, true],
+        clustering: [0, 0.99, false],
+        opacity: [1, 255, true],
+        lineWidthMin: [0.1, 20, false],
+        lineWidthMax: [0.1, 20, false],
+        zoom: [0.5, 10, false]
+      };
+function sanitizeConfig(raw) {
+        const cfg = { ...PRESET_DEFAULTS };
+        if (!raw || typeof raw !== 'object') return cfg;
+        for (const key in CONFIG_RANGES) {
+          const range = CONFIG_RANGES[key];
+          const value = Number(raw[key]);
+          if (Number.isFinite(value)) {
+            const clamped = clamp(value, range[0], range[1]);
+            cfg[key] = range[2] ? Math.round(clamped) : clamped;
+          }
+        }
+        if (['omni', 'down', 'left', 'diagonal'].indexOf(raw.flowDirection) >= 0) cfg.flowDirection = raw.flowDirection;
+        if (['perlin', 'vortex', 'radial', 'ridge', 'chaos'].indexOf(raw.waveMode) >= 0) cfg.waveMode = raw.waveMode;
+        if (typeof raw.colorInvert === 'boolean') cfg.colorInvert = raw.colorInvert;
+        if (typeof raw.lineColor === 'string' && /^#[0-9a-f]{6}$/i.test(raw.lineColor)) cfg.lineColor = raw.lineColor.toLowerCase();
+        if (cfg.lineWidthMin > cfg.lineWidthMax) cfg.lineWidthMax = cfg.lineWidthMin;
+        return cfg;
+      }
+function computeDirection(noise, x, y, cfg, cx, cy) {
+        const n = noise.noise3(x * cfg.noiseFreq, y * cfg.noiseFreq, 0);
+
+        if (cfg.flowDirection === 'omni') {
+          const dx = x - cx;
+          const dy = y - cy;
+          const baseAngle = Math.atan2(dy, dx);
+
+          switch (cfg.waveMode) {
+            case 'vortex':
+              return (baseAngle + Math.PI / 2) + ((n - 0.5) * Math.PI * cfg.curlStrength);
+            case 'radial':
+              return baseAngle + ((n - 0.5) * 0.5 * Math.PI * Math.abs(cfg.curlStrength));
+            case 'ridge': {
+              const n2 = noise.noise3((x + 100) * cfg.noiseFreq, (y + 100) * cfg.noiseFreq, 0);
+              return ((n - 0.5) * Math.PI * 2 * (1 - 1 / cfg.curlStrength)) + ((n2 - 0.5) * Math.PI * 2 * (1 / cfg.curlStrength));
+            }
+            case 'chaos':
+              return (n * Math.PI * 2) + ((noise.noise3((x + 777) * cfg.noiseFreq, (y - 333) * cfg.noiseFreq, 0) - 0.5) * Math.PI * 2 * (cfg.curlStrength - 1));
+            default:
+              return n * Math.PI * 2 * cfg.curlStrength;
+          }
+        }
+
+        let baseDir = 0;
+        if (cfg.flowDirection === 'down') baseDir = Math.PI / 2;
+        else if (cfg.flowDirection === 'left') baseDir = Math.PI;
+        else if (cfg.flowDirection === 'diagonal') baseDir = Math.PI / 4;
+
+        return baseDir + ((n - 0.5) * Math.PI * cfg.curlStrength * 0.25);
+      }
+class FlowParticle {
+        constructor(w, h, steps, minW, maxW, rng, noise, clustering, freq) {
+          this.rng = rng;
+          this.maxLife = steps;
+          this.remainingLife = steps;
+          this.initPosition(w, h, noise, clustering, freq);
+          this.prevX = this.x;
+          this.prevY = this.y;
+          this.setWidth(minW, maxW);
+        }
+
+        setWidth(minW, maxW) {
+          const rawWidth = minW + this.rng() * (maxW - minW);
+          this.width = Math.round(rawWidth * 10) / 10;
+        }
+
+        initPosition(w, h, noise, clustering, freq) {
+          if (clustering <= 0.01) {
+            this.x = this.rng() * w;
+            this.y = this.rng() * h;
+            return;
+          }
+
+          let found = false;
+          let attempts = 0;
+          while (!found && attempts < 15) {
+            const cx = this.rng() * w;
+            const cy = this.rng() * h;
+            const density = noise.noise3(cx * freq * 0.7, cy * freq * 0.7, 50);
+            const threshold = clustering * 0.5;
+            if (density > threshold) {
+              this.x = cx;
+              this.y = cy;
+              found = true;
+            }
+            attempts += 1;
+          }
+
+          if (!found) {
+            this.x = this.rng() * w;
+            this.y = this.rng() * h;
+          }
+        }
+
+        reset(w, h, minW, maxW, noise, clustering, freq) {
+          this.initPosition(w, h, noise, clustering, freq);
+          this.prevX = this.x;
+          this.prevY = this.y;
+          this.remainingLife = this.maxLife;
+          this.setWidth(minW, maxW);
+        }
+      }
+function createSimulationState(cfg, width, height) {
+        const rng = mulberry32(cfg.seed);
+        const noise = new PerlinNoise(cfg.seed);
+        const steps = Math.min(cfg.stepsPerLine, 10000);
+        const particles = [];
+
+        for (let i = 0; i < cfg.particleCount; i++) {
+          particles.push(new FlowParticle(
+            width,
+            height,
+            steps,
+            cfg.lineWidthMin,
+            cfg.lineWidthMax,
+            rng,
+            noise,
+            cfg.clustering,
+            cfg.noiseFreq
+          ));
+        }
+
+        return { rng, noise, particles, steps };
+      }
+function getBackgroundColor(cfg) {
+        return cfg.colorInvert ? '#ffffff' : '#000000';
+      }
+  /* ===== Phase C: pointer brush + SVG export ===== */
+  function $(id) { return document.getElementById(id); }
+  function readCfg() {
+    var raw = null;
+    try { raw = JSON.parse(localStorage.getItem('lien.config.v1') || 'null'); } catch (e) {}
+    return sanitizeConfig(raw);
+  }
+  var toastTimer = 0;
+  function toast(msg, sticky) {
+    var t = $('lienCToast');
+    if (!t) { t = document.createElement('div'); t.id = 'lienCToast'; document.body.appendChild(t); }
+    t.textContent = msg; t.hidden = false;
+    if (toastTimer) clearTimeout(toastTimer);
+    if (!sticky) toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  }
+  function hideToast() { var t = $('lienCToast'); if (t) t.hidden = true; }
+
+  /* ---------- SVG replay ---------- */
+  var MAX_POINTS = 900000, MAX_STEPS = 30000000;
+  function replayPaths(cfg, W, H, frames, onProgress) {
+    return new Promise(function (resolve) {
+      var sim = createSimulationState(cfg, W, H);
+      var margin = 100, cx = W / 2, cy = H / 2;
+      var cur = sim.particles.map(function (p) { return { w: p.width.toFixed(1), pts: [p.x, p.y] }; });
+      var done = []; var points = 0, steps = 0, f = 0, truncated = false;
+      function flush(i) { if (cur[i].pts.length >= 4) { done.push(cur[i]); } }
+      function chunk() {
+        var chunkSteps = 0;
+        while (f < frames && chunkSteps < 250000) {
+          for (var i = 0; i < sim.particles.length; i++) {
+            var p = sim.particles[i];
+            if (p.remainingLife <= 0) { flush(i); p.reset(W, H, cfg.lineWidthMin, cfg.lineWidthMax, sim.noise, cfg.clustering, cfg.noiseFreq); cur[i] = { w: p.width.toFixed(1), pts: [p.x, p.y] }; }
+            p.prevX = p.x; p.prevY = p.y;
+            var angle = computeDirection(sim.noise, p.x, p.y, cfg, cx, cy);
+            p.x += Math.cos(angle) * cfg.stepLength;
+            p.y += Math.sin(angle) * cfg.stepLength;
+            p.remainingLife -= 1;
+            steps++; chunkSteps++;
+            if (p.x < -margin || p.x > W + margin || p.y < -margin || p.y > H + margin) {
+              flush(i); p.reset(W, H, cfg.lineWidthMin, cfg.lineWidthMax, sim.noise, cfg.clustering, cfg.noiseFreq); cur[i] = { w: p.width.toFixed(1), pts: [p.x, p.y] };
+              continue;
+            }
+            cur[i].pts.push(p.x, p.y); points++;
+            if (cur[i].w !== p.width.toFixed(1)) cur[i].w = p.width.toFixed(1);
+          }
+          f++;
+          if (points > MAX_POINTS || steps > MAX_STEPS) { truncated = true; break; }
+        }
+        if (onProgress) onProgress(f, frames);
+        if (f < frames && !truncated) { setTimeout(chunk, 0); }
+        else {
+          for (var i2 = 0; i2 < cur.length; i2++) flush(i2);
+          resolve({ paths: done, framesDone: f, points: points, truncated: truncated });
+        }
+      }
+      chunk();
+    });
+  }
+  function fmt(n) { return String(Math.round(n * 10) / 10); }
+  function buildSVGString(cfg, W, H, result, transparent) {
+    var alpha = Math.max(1, Math.min(255, cfg.opacity)) / 255;
+    var zoom = Math.max(0.5, Math.min(10, cfg.zoom));
+    var groups = {};
+    result.paths.forEach(function (pa) { (groups[pa.w] = groups[pa.w] || []).push(pa); });
+    var out = [];
+    out.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '">');
+    out.push('<!-- Lien SVG export · seed ' + cfg.seed + ' · ' + result.framesDone + ' frames' + (result.truncated ? ' · TRUNCATED at size budget' : '') + ' -->');
+    if (!transparent) out.push('<rect width="' + W + '" height="' + H + '" fill="' + getBackgroundColor(cfg) + '"/>');
+    out.push('<g transform="translate(' + fmt(W / 2) + ' ' + fmt(H / 2) + ') scale(' + zoom + ') translate(' + fmt(-W / 2) + ' ' + fmt(-H / 2) + ')" fill="none" stroke="' + cfg.lineColor + '" stroke-opacity="' + alpha.toFixed(3) + '" stroke-linecap="round" stroke-linejoin="round">');
+    Object.keys(groups).forEach(function (w) {
+      out.push('<g stroke-width="' + w + '">');
+      groups[w].forEach(function (pa) {
+        var d = 'M' + fmt(pa.pts[0]) + ' ' + fmt(pa.pts[1]);
+        for (var i = 2; i < pa.pts.length; i += 2) d += 'L' + fmt(pa.pts[i]) + ' ' + fmt(pa.pts[i + 1]);
+        out.push('<path d="' + d + '"/>');
+      });
+      out.push('</g>');
+    });
+    out.push('</g></svg>');
+    return out.join('\n');
+  }
+  function framesFromInfo() {
+    var el = $('exportInfo'); if (!el) return -1;
+    var m = /·\s*([\d,]+)\s*frames drawn/.exec(el.textContent || '');
+    if (m) return parseInt(m[1].replace(/,/g, ''), 10);
+    return -1; // not replayable (resize carry-over) or not grown yet
+  }
+  var exporting = false;
+  function exportSVG(transparent) {
+    if (exporting) return;
+    var frames = framesFromInfo();
+    if (frames <= 0) { toast('SVG export needs a replayable artwork: after a window resize, reset (or change the seed) and let it grow again first.'); return; }
+    var cfg = readCfg();
+    var view = $('viewCanvas'); if (!view) return;
+    var W = view.clientWidth, H = view.clientHeight;
+    exporting = true;
+    toast('Replaying ' + frames.toLocaleString('en-US') + ' frames for SVG…', true);
+    replayPaths(cfg, W, H, frames, function (f, total) {
+      if (f % 20 === 0 || f === total) toast('Replaying for SVG… ' + f.toLocaleString('en-US') + ' / ' + total.toLocaleString('en-US') + ' frames', true);
+    }).then(function (result) {
+      var svg = buildSVGString(cfg, W, H, result, transparent);
+      var blob = new Blob([svg], { type: 'image/svg+xml' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'lien-seed' + cfg.seed + '-' + result.framesDone + 'f.svg';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      exporting = false; hideToast();
+      toast('SVG saved: ' + result.paths.length.toLocaleString('en-US') + ' paths, ' + (blob.size / 1048576).toFixed(1) + ' MB' + (result.truncated ? ' (stopped at ' + result.framesDone + ' frames — size budget)' : ''));
+    });
+  }
+  function buildExportUI() {
+    var grid = document.querySelector('#savePanel .export-grid');
+    if (!grid || $('lienSvgBtn')) return;
+    var b1 = document.createElement('button');
+    b1.type = 'button'; b1.className = 'export-btn lien-c-wide'; b1.id = 'lienSvgBtn'; b1.textContent = 'SVG (vector)';
+    b1.addEventListener('click', function () { exportSVG(false); });
+    var b2 = document.createElement('button');
+    b2.type = 'button'; b2.className = 'export-btn lien-c-wide'; b2.id = 'lienSvgTBtn'; b2.textContent = 'SVG transparent';
+    b2.addEventListener('click', function () { exportSVG(true); });
+    grid.appendChild(b1); grid.appendChild(b2);
+    var note = document.createElement('div');
+    note.className = 'meta-note'; note.id = 'lienSvgNote';
+    note.textContent = 'SVG replays the core lines as vector paths (single colour, no textures or FX — same replay as the hi-res PNG).';
+    grid.parentElement.appendChild(note);
+  }
+
+  /* ---------- Pointer brush ---------- */
+  var brush = { on: false, size: 'm', parts: [], noise: null, noiseSeed: null, x: 0, y: 0, inside: false, moved: false };
+  try {
+    brush.on = localStorage.getItem('lien.pointer.v1') === '1';
+    brush.size = localStorage.getItem('lien.pointerSize.v1') || 'm';
+  } catch (e) {}
+  var bCanvas = null, bCtx = null;
+  function brushNoiseFor(cfg) {
+    if (brush.noiseSeed !== cfg.seed) { brush.noise = new PerlinNoise(cfg.seed); brush.noiseSeed = cfg.seed; }
+    return brush.noise;
+  }
+  function sizeBrushCanvas() {
+    var view = $('viewCanvas'); if (!view || !bCanvas) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    bCanvas.style.left = view.offsetLeft + 'px'; bCanvas.style.top = view.offsetTop + 'px';
+    bCanvas.style.width = view.clientWidth + 'px'; bCanvas.style.height = view.clientHeight + 'px';
+    var w = Math.round(view.clientWidth * dpr), h = Math.round(view.clientHeight * dpr);
+    if (bCanvas.width !== w || bCanvas.height !== h) { bCanvas.width = w; bCanvas.height = h; }
+    bCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function buildBrush() {
+    var view = $('viewCanvas'); if (!view || bCanvas) return;
+    bCanvas = document.createElement('canvas');
+    bCanvas.id = 'lienBrushCanvas'; bCanvas.setAttribute('aria-hidden', 'true');
+    view.parentElement.appendChild(bCanvas);
+    bCtx = bCanvas.getContext('2d');
+    sizeBrushCanvas();
+    if (window.ResizeObserver) new ResizeObserver(sizeBrushCanvas).observe(view);
+    window.addEventListener('resize', sizeBrushCanvas);
+    window.addEventListener('pointermove', function (ev) {
+      var r = view.getBoundingClientRect();
+      var x = ev.clientX - r.left, y = ev.clientY - r.top;
+      brush.inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height && document.elementFromPoint(ev.clientX, ev.clientY) === view;
+      if (brush.inside) {
+        var cfg = readCfg();
+        var zoom = Math.max(0.5, Math.min(10, cfg.zoom));
+        brush.x = r.width / 2 + (x - r.width / 2) / zoom;
+        brush.y = r.height / 2 + (y - r.height / 2) / zoom;
+        brush.moved = true;
+      }
+    }, { passive: true });
+    (function loop() {
+      requestAnimationFrame(loop);
+      if (!bCtx) return;
+      var W = view.clientWidth, H = view.clientHeight;
+      bCtx.globalCompositeOperation = 'destination-out';
+      bCtx.fillStyle = 'rgba(0,0,0,0.045)';
+      bCtx.fillRect(0, 0, W, H);
+      bCtx.globalCompositeOperation = 'source-over';
+      if (!brush.parts.length && !(brush.on && brush.inside)) return;
+      var cfg = readCfg();
+      var zoom = Math.max(0.5, Math.min(10, cfg.zoom));
+      if (brush.on && brush.inside && brush.moved) {
+        var per = brush.size === 's' ? 2 : brush.size === 'l' ? 12 : 5;
+        var rad = brush.size === 's' ? 4 : brush.size === 'l' ? 22 : 10;
+        var noise = brushNoiseFor(cfg);
+        for (var s = 0; s < per && brush.parts.length < 420; s++) {
+          brush.parts.push({
+            x: brush.x + (Math.random() * 2 - 1) * rad,
+            y: brush.y + (Math.random() * 2 - 1) * rad,
+            life: Math.min(cfg.stepsPerLine, 500),
+            w: cfg.lineWidthMin + Math.random() * Math.max(0, cfg.lineWidthMax - cfg.lineWidthMin)
+          });
+        }
+        brush.moved = false;
+      }
+      if (!brush.parts.length) return;
+      var noise2 = brushNoiseFor(cfg);
+      var alpha = Math.max(1, Math.min(255, cfg.opacity)) / 255;
+      bCtx.save();
+      bCtx.translate(W / 2, H / 2); bCtx.scale(zoom, zoom); bCtx.translate(-W / 2, -H / 2);
+      bCtx.strokeStyle = cfg.lineColor; bCtx.globalAlpha = alpha;
+      bCtx.lineCap = 'round'; bCtx.lineJoin = 'round';
+      var cx = W / 2, cy = H / 2;
+      brush.parts = brush.parts.filter(function (p) {
+        var px = p.x, py = p.y;
+        var angle = computeDirection(noise2, p.x, p.y, cfg, cx, cy);
+        p.x += Math.cos(angle) * cfg.stepLength;
+        p.y += Math.sin(angle) * cfg.stepLength;
+        p.life--;
+        bCtx.beginPath(); bCtx.lineWidth = p.w; bCtx.moveTo(px, py); bCtx.lineTo(p.x, p.y); bCtx.stroke();
+        return p.life > 0 && p.x > -100 && p.x < W + 100 && p.y > -100 && p.y < H + 100;
+      });
+      bCtx.restore();
+      bCtx.globalAlpha = 1;
+    })();
+  }
+  function buildBrushUI() {
+    var sec = $('lienPlusSection'); if (!sec || $('lienPointer')) return;
+    var sub = document.createElement('div');
+    sub.className = 'lp-sub';
+    sub.innerHTML = '<div class="small-label">Pointer brush — flow lines from your pointer</div>';
+    var row = document.createElement('label');
+    row.className = 'checkbox-row'; row.setAttribute('for', 'lienPointer');
+    row.innerHTML = '<span>Pointer brush</span>';
+    var box = document.createElement('input');
+    box.id = 'lienPointer'; box.type = 'checkbox'; box.className = 'checkbox-input';
+    box.checked = brush.on;
+    box.addEventListener('change', function () {
+      brush.on = box.checked;
+      try { localStorage.setItem('lien.pointer.v1', box.checked ? '1' : '0'); } catch (e) {}
+      toast(box.checked ? 'Pointer brush on — move over the artwork' : 'Pointer brush off');
+    });
+    row.appendChild(box); sub.appendChild(row);
+    var seg = document.createElement('span');
+    seg.className = 'lien-c-seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Brush size');
+    [['s', 'S'], ['m', 'M'], ['l', 'L']].forEach(function (pair) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = pair[1];
+      b.setAttribute('aria-pressed', brush.size === pair[0] ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        brush.size = pair[0];
+        try { localStorage.setItem('lien.pointerSize.v1', pair[0]); } catch (e) {}
+        seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      });
+      seg.appendChild(b);
+    });
+    var sizeRow = document.createElement('div');
+    sizeRow.className = 'checkbox-row'; sizeRow.innerHTML = '<span>Brush size</span>';
+    sizeRow.appendChild(seg); sub.appendChild(sizeRow);
+    sec.appendChild(sub);
+  }
+
+  function init() {
+    buildExportUI(); buildBrush(); buildBrushUI();
+  }
+  window.__lienC = {
+    replayPaths: replayPaths, buildSVGString: buildSVGString, readCfg: readCfg,
+    framesFromInfo: framesFromInfo, brush: brush,
+    replayToCanvas: function (frames) {
+      var cfg = readCfg(); var view = $('viewCanvas');
+      var W = view.clientWidth, H = view.clientHeight;
+      return replayPaths(cfg, W, H, frames, null).then(function (result) {
+        var c = document.createElement('canvas'); c.width = W; c.height = H;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = getBackgroundColor(cfg); ctx.fillRect(0, 0, W, H);
+        var alpha = Math.max(1, Math.min(255, cfg.opacity)) / 255;
+        var rgb = hexToRgb(cfg.lineColor);
+        ctx.strokeStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + alpha + ')';
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        var zoom = Math.max(0.5, Math.min(10, cfg.zoom));
+        ctx.translate(W / 2, H / 2); ctx.scale(zoom, zoom); ctx.translate(-W / 2, -H / 2);
+        result.paths.forEach(function (pa) {
+          ctx.beginPath(); ctx.lineWidth = parseFloat(pa.w);
+          ctx.moveTo(pa.pts[0], pa.pts[1]);
+          for (var i = 2; i < pa.pts.length; i += 2) ctx.lineTo(pa.pts[i], pa.pts[i + 1]);
+          ctx.stroke();
+        });
+        return c;
+      });
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
 </body>
 </html>
