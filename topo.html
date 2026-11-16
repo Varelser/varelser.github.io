@@ -5519,5 +5519,79 @@ function downloadTextFile(text, filename) {
   else init();
 })();
 </script>
+
+<!-- Studio Console transport receiver (additive) -->
+<script>
+/* topo */(function(){
+'use strict';
+/* ═══ Studio Console transport receiver (2026-11-16, additive) ═══
+   Varelser Studio の console v2 {app:'studio', type:'console', transport}
+   を受けて、このアプリの描画を一時停止／再開する。
+   前提は本体の Varelser Link と同じ流儀: このアプリ側の Link が ON
+   (localStorage 'topo.varelserLink.v1' === '1') の間だけチャンネルを開く。
+   停止方式: requestAnimationFrame ゲート (停止中はコールバックを保留し、
+   再開時に流す)。p5 グローバルモード (noLoop/loop) があれば併用する。
+   BPM は映像アプリに概念がないため対象外。 */
+var LS_KEY='topo.varelserLink.v1';
+var paused=false, seen=0, fakeId=1000000000;
+var held=new Map();
+var origRAF=window.requestAnimationFrame.bind(window);
+var origCAF=window.cancelAnimationFrame.bind(window);
+window.requestAnimationFrame=function(cb){
+  seen++;
+  if(paused){ var id=++fakeId; held.set(id,cb); return id; }
+  return origRAF(cb);
+};
+window.cancelAnimationFrame=function(id){
+  if(held.has(id)){ held.delete(id); return; }
+  return origCAF(id);
+};
+var badge=null, badgeTimer=null;
+function showBadge(text, sticky){
+  if(!badge){
+    badge=document.createElement('div');
+    badge.id='studioTransportBadge';
+    badge.style.cssText='position:fixed;left:10px;bottom:10px;z-index:99999;pointer-events:none;background:rgba(10,10,10,.8);color:#eee;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:4px 12px;font-size:11px;letter-spacing:.08em;backdrop-filter:blur(6px)';
+    document.body.appendChild(badge);
+  }
+  badge.textContent=text;
+  badge.style.display='block';
+  if(badgeTimer)clearTimeout(badgeTimer);
+  if(!sticky)badgeTimer=setTimeout(function(){ badge.style.display='none'; },1400);
+}
+function setPaused(p){
+  p=!!p; if(p===paused)return; paused=p;
+  try{
+    if(paused){ if(typeof window.noLoop==='function')window.noLoop(); }
+    else{ if(typeof window.loop==='function')window.loop(); }
+  }catch(e){}
+  if(paused){ showBadge('STUDIO ■ 一時停止中', true); }
+  else{
+    var h=Array.from(held.values()); held.clear();
+    for(var i=0;i<h.length;i++)origRAF(h[i]);
+    showBadge('STUDIO ▶ 再開', false);
+  }
+}
+window.__studioTransport={version:1,paused:function(){return paused;},held:function(){return held.size;},seen:function(){return seen;}};
+var ch=null;
+function wantOn(){ try{ return localStorage.getItem(LS_KEY)==='1'; }catch(e){ return false; } }
+function onMsg(ev){
+  var m=ev&&ev.data; if(!m||typeof m!=='object')return;
+  if(m.app!=='studio'||m.type!=='console')return;
+  if(m.transport==='stop')setPaused(true);
+  else if(m.transport==='play')setPaused(false);
+}
+function start(){
+  if(ch||typeof BroadcastChannel==='undefined')return;
+  try{ ch=new BroadcastChannel('varelser-link-v1'); ch.onmessage=onMsg; }catch(e){ ch=null; }
+}
+function stopCh(){ if(ch){ try{ ch.close(); }catch(e){} ch=null; } }
+function sync(){ if(wantOn())start(); else stopCh(); }
+sync();
+setInterval(sync,2000);
+window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
+})();
+
+</script>
 </body>
 </html>
