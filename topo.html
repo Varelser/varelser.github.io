@@ -1686,7 +1686,13 @@ function isInteractiveElement(el) {
   if (!el) return false;
   if (el.isContentEditable) return true;
   const tag = el.tagName;
-  return tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'BUTTON';
+  // Buttons are deliberately NOT interactive for this guard: a clicked
+  // button keeps focus (and a canvas click does not blur it), so treating
+  // BUTTON as interactive silently disabled every single-key shortcut
+  // (R/S/V/H/[ ]/arrows/Delete and even Ctrl+Z, which sits behind this
+  // guard) after any toolbar click. Buttons only consume Space/Enter,
+  // which this key handler never maps.
+  return tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA';
 }
 
 // Minimum separation (normalised coordinates) for the
@@ -4621,6 +4627,7 @@ async function runExport(scale, transparent, exportW, exportH) {
     if (blob) {
       onExportProgress(1);
       triggerDownload(URL.createObjectURL(blob), filename, true);
+      setStatus(`PNGを保存しました（${filename}）`);
       finish();
       return;
     }
@@ -4664,6 +4671,7 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
 
   downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
     pg.remove();
+    setStatus(`PNGを保存しました（${filename}）`);
     finish();
   });
 }
@@ -4826,6 +4834,7 @@ async function buildAndDownloadSvg(exportScene, scale, transparent, exportW, exp
     const ts = Date.now();
     const filename = `TOPO_multihole_refined_${transparent ? 'transparent_' : ''}seed${seedVal}_x${scale}_${ts}.svg`;
     downloadBlobFile(new Blob([svgText], { type: 'image/svg+xml' }), filename);
+    setStatus(`SVGを保存しました（${filename}）`);
   } catch (err) {
     console.error(err);
   } finally {
@@ -4877,7 +4886,7 @@ function triggerDownload(url, filename, revokeObjectURL) {
 }
 
 function mousePressed(event) {
-  if (mouseButton !== LEFT) return true;
+  if (mouseButton !== LEFT && mouseButton !== 0) return true;
   if (event && event.target && event.target.tagName && event.target.tagName !== 'CANVAS') return true;
   const canvasRect = (event && event.target && typeof event.target.getBoundingClientRect === 'function')
     ? event.target.getBoundingClientRect() : null;
@@ -6467,7 +6476,106 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     sync();
   }
 
-  function init() { groupPanel(); hintChip(); dialogTitleHygiene(); }
+
+  // --- spacing-risk warning chip (audit 2026-11-17) ---
+  // The one proven exception to the spacing guarantee: all five hole
+  // types mixed with MIN_SPACING 3 lets a saddle approach to ~1.26px
+  // (no crossings). Poll the live settings and warn non-blockingly.
+  function spacingWarnChip() {
+    if (document.getElementById('uiuxWarnChip')) return;
+    var chip = document.createElement('div');
+    chip.id = 'uiuxWarnChip';
+    chip.setAttribute('role', 'status');
+    chip.textContent = '注意: 全型混在 × 間隔3 では、鞍部で線が近づく場合があります（交差はしません）';
+    chip.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:72px;z-index:46;display:none;max-width:92vw;background:#171717;color:#f5f5f5;border:1px solid #525252;border-radius:999px;padding:7px 14px;font-size:12px;line-height:1.5;box-shadow:0 6px 24px rgba(0,0,0,.45);';
+    document.body.appendChild(chip);
+    function check() {
+      try {
+        if (typeof serializeSettings !== 'function') return;
+        var s = JSON.parse(serializeSettings());
+        var types = {};
+        (s.holes || []).forEach(function (h) { types[h.type] = true; });
+        var sp = s.params && s.params.MIN_SPACING;
+        var risky = Object.keys(types).length >= 5 && typeof sp === 'number' && sp <= 3;
+        chip.style.display = risky ? 'block' : 'none';
+      } catch (e) { chip.style.display = 'none'; }
+    }
+    setInterval(check, 900);
+    check();
+  }
+
+  // --- toolbar shortcut hints (title attributes) ---
+  function toolbarTitles() {
+    var map = { regen: '再生成（R）', export: 'PNG保存（S）', exportSvg: 'SVG保存（V）', undoBtn: '元に戻す（Ctrl+Z）', panelToggle: '設定パネル（H）', settingsBtn: '設定JSON', resetBtn: '初期化' };
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && !el.getAttribute('title')) el.setAttribute('title', map[id]);
+    });
+  }
+
+  // --- "?" opens the shortcut list ---
+  function questionShortcut() {
+    window.addEventListener('keydown', function (e) {
+      if (e.key !== '?' || e.ctrlKey || e.metaKey || e.altKey) return;
+      var ae = document.activeElement;
+      var tag = ae && ae.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (ae && ae.isContentEditable)) return;
+      var panel = document.getElementById('controls');
+      if (panel && panel.getAttribute('aria-hidden') === 'true') {
+        var t = document.getElementById('panelToggle');
+        if (t) t.click();
+      }
+      var tab = document.getElementById('uiuxTab-out');
+      if (tab) tab.click();
+      var list = document.getElementById('plusShortcuts');
+      var btn = document.getElementById('plusShortcutsBtn');
+      if (list && btn && getComputedStyle(list).display === 'none') btn.click();
+    });
+  }
+
+  // --- gamepad control (left stick moves the selected hole) ---
+  function gamepadControl() {
+    if (!navigator.getGamepads) return;
+    var prevBtns = [];
+    var lastStep = 0;
+    var announced = false;
+    function fireArrow(key) {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true }));
+      setTimeout(function () { window.dispatchEvent(new KeyboardEvent('keyup', { key: key, bubbles: true })); }, 40);
+    }
+    function clickId(id) { var el = document.getElementById(id); if (el) el.click(); }
+    function frame() {
+      try {
+        var gps = navigator.getGamepads();
+        var gp = null;
+        for (var i = 0; i < gps.length; i++) if (gps[i]) { gp = gps[i]; break; }
+        if (gp) {
+          if (!announced) {
+            announced = true;
+            try { setStatus('Gamepad を検出しました（左スティック: 穴移動 / A: 穴追加 / B: 穴削除 / X: 元に戻す / Start: 再生成）'); } catch (e) {}
+          }
+          var now = performance.now();
+          var ax = gp.axes[0] || 0, ay = gp.axes[1] || 0;
+          if (now - lastStep > 150 && (Math.abs(ax) > 0.55 || Math.abs(ay) > 0.55)) {
+            lastStep = now;
+            if (Math.abs(ax) >= Math.abs(ay)) fireArrow(ax > 0 ? 'ArrowRight' : 'ArrowLeft');
+            else fireArrow(ay > 0 ? 'ArrowDown' : 'ArrowUp');
+          }
+          var map = { 0: 'addHole', 1: 'deleteHole', 2: 'undoBtn', 9: 'regen' };
+          Object.keys(map).forEach(function (bi) {
+            var idx = Number(bi);
+            var pressed = !!(gp.buttons[idx] && gp.buttons[idx].pressed);
+            if (pressed && !prevBtns[idx]) clickId(map[bi]);
+            prevBtns[idx] = pressed;
+          });
+        }
+      } catch (e) {}
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function init() { groupPanel(); hintChip(); dialogTitleHygiene(); spacingWarnChip(); toolbarTitles(); questionShortcut(); gamepadControl(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
