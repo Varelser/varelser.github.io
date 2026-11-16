@@ -5,6 +5,24 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Leary</title>
 <meta name="description" content="Leary — 流れ場に沿って無数の線を描くジェネラティブ・ビジュアライザー。プリセットやシードで再現でき、PNG／SVGで保存できる。" />
+<!-- leary-perfect-2026-11-17:head -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Varelser">
+<meta property="og:title" content="Leary — Generative Flow Lines">
+<meta property="og:description" content="Leary — 流れ場に沿って無数の線を描くジェネラティブ・ビジュアライザー。プリセットやシードで再現でき、PNG／SVGで保存できる。">
+<meta property="og:url" content="https://varelser.github.io/leary.html">
+<meta property="og:image" content="https://varelser.github.io/apple-touch-icon.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leary — Generative Flow Lines">
+<meta name="twitter:description" content="Leary — 流れ場に沿って無数の線を描くジェネラティブ・ビジュアライザー。プリセットやシードで再現でき、PNG／SVGで保存できる。">
+<meta name="twitter:image" content="https://varelser.github.io/apple-touch-icon.png">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://varelser.github.io/leary.html">
+<link rel="manifest" href="/leary.webmanifest">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Leary","url":"https://varelser.github.io/leary.html","applicationCategory":"DesignApplication","operatingSystem":"Web","author":{"@type":"Person","name":"Varelser"},"description":"Seed-based generative flow-line visualizer with a ChromaFlow fluid mode."}</script>
+<script type="speculationrules">{"prefetch":[{"source":"list","urls":["index.html","noise.html","yayoi.html","lien.html","punkt.html","topo.html"],"eagerness":"moderate"}]}</script>
+<!-- /leary-perfect-2026-11-17:head -->
+
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2212%22%20fill%3D%22%23000%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M3%207C7%204.5%2010%209.5%2014%207S20%205.5%2021%207%22%2F%3E%3Cpath%20d%3D%22M3%2012C7%209.5%2010%2014.5%2014%2012S20%2010.5%2021%2012%22%2F%3E%3Cpath%20d%3D%22M3%2017C7%2014.5%2010%2019.5%2014%2017S20%2015.5%2021%2017%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <style>
   :root{
@@ -10064,5 +10082,344 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 })();
 
 </script>
+<!-- leary-perfect-2026-11-17:body -->
+<style id="leary-perfect-style">
+/* Leary perfect-2026-11-17 (additive): palette / help / badge / mobile toolbar / a11y */
+#lpPalette, #lpHelp { position: fixed; inset: 0; z-index: 100001; display: none; align-items: flex-start; justify-content: center; background: rgba(0,0,0,.55); padding: 12vh 16px 16px; box-sizing: border-box; }
+.lp-k-box, .lp-h-box { width: min(560px, 94vw); max-height: 76vh; overflow: auto; background: #111; border: 1px solid rgba(255,255,255,.22); border-radius: 12px; padding: 14px; box-sizing: border-box; color: #eee; }
+#lpKInput { width: 100%; box-sizing: border-box; background: #1d1d1d; color: #fff; border: 0; border-radius: 8px; padding: 11px 12px; font-size: 14px; margin-bottom: 8px; }
+.lp-k-item { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.lp-k-item.sel, .lp-k-item:hover { background: rgba(255,255,255,.10); }
+.lp-k-hint { color: rgba(255,255,255,.45); font-size: 11px; flex: 0 0 auto; }
+.lp-h-head { display: flex; justify-content: space-between; align-items: center; font-size: 14px; letter-spacing: .06em; margin-bottom: 8px; }
+.lp-h-box h4 { margin: 16px 0 6px; font-size: 12px; letter-spacing: .1em; color: rgba(255,255,255,.75); }
+.lp-t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.lp-t td { border-bottom: 1px solid rgba(255,255,255,.08); padding: 5px 4px; vertical-align: top; }
+.lp-t td:first-child { white-space: nowrap; color: #fff; width: 38%; }
+.lp-dim { color: rgba(255,255,255,.55); font-size: 12px; }
+.leary2-toolbar .btn:focus-visible, #lpKInput:focus-visible, .lp-k-item:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (max-width: 760px) {
+  #app { grid-template-rows: 64px minmax(0, 1fr) auto !important; }
+  .leary2-toolbar { flex-wrap: wrap; white-space: normal; overflow-x: visible; overflow-y: visible; row-gap: 2px; padding-top: 6px; padding-bottom: 6px; }
+  .leary2-toolbar .btn { padding: 6px 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #lpPalette *, #lpHelp *, #lpToast { transition: none !important; animation: none !important; }
+}
+
+</style>
+<script id="leary-perfect-script">
+/* ═══ Leary perfect-2026-11-17 (additive) ═══
+   Adds only: ⌘K palette, ? help + capability diagnostics, fluid FPS/backend
+   badge in the bottom toolbar, WebP canvas export, Gamepad buttons,
+   storage.persist(). Generation core, fluid engine, settings keys and
+   saved data are untouched. New DOM ids are lp-*; no localStorage keys
+   are written by this block. */
+(function () {
+  'use strict';
+  if (window.__learyPerfect) return;
+  var $id = function (i) { return document.getElementById(i); };
+  var toastEl = null, toastTimer = null;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.id = 'lpToast';
+      toastEl.style.cssText = 'position:fixed;left:50%;top:76px;transform:translateX(-50%);background:rgba(10,10,10,.92);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 14px;font-size:12px;z-index:100000;pointer-events:none;opacity:0;transition:opacity .25s';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    toastEl.style.opacity = '1';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.style.opacity = '0'; }, 2400);
+  }
+  function panelEl() { return document.querySelector('.panel'); }
+  function panelOpen() { var p = panelEl(); return !!(p && p.offsetWidth > 0 && getComputedStyle(p).display !== 'none'); }
+  function settingsBtn() {
+    var bs = document.querySelectorAll('.leary2-toolbar .btn');
+    for (var i = 0; i < bs.length; i++) if (bs[i].textContent.trim() === '設定') return bs[i];
+    return null;
+  }
+  function ensurePanel() { if (!panelOpen()) { var b = settingsBtn(); if (b) b.click(); } }
+  function toolbarBtn(label) {
+    var bs = document.querySelectorAll('.leary2-toolbar .btn');
+    for (var i = 0; i < bs.length; i++) if (bs[i].textContent.trim() === label) return bs[i];
+    return null;
+  }
+  function clickById(id) { var el = $id(id); if (el) { el.click(); return true; } return false; }
+  function switchTab(label) {
+    ensurePanel();
+    var tabs = document.querySelectorAll('#cfUiTabs button, .cf-ui-tabs button');
+    for (var i = 0; i < tabs.length; i++) if (tabs[i].textContent.indexOf(label) !== -1) { tabs[i].click(); return true; }
+    // fallback: any button whose text starts with the label inside the panel
+    var bs = panelEl() ? panelEl().querySelectorAll('button') : [];
+    for (var j = 0; j < bs.length; j++) if (bs[j].textContent.trim() === label) { bs[j].click(); return true; }
+    return false;
+  }
+
+  /* ---------- WebP export (main canvas bitmap; same scope as PNGコピー) ---------- */
+  function exportWebP() {
+    var c = $id('canvas');
+    if (!c) { toast('キャンバスが見つかりません'); return; }
+    if (c.toBlob) {
+      c.toBlob(function (blob) {
+        if (!blob) { toast('WebPに未対応のブラウザです'); return; }
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'leary_seed' + (($id('seedInput') || {}).value || '') + '.webp';
+        a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        toast('WebPを保存しました（キャンバス画像）');
+      }, 'image/webp', 0.92);
+    } else {
+      var d = c.toDataURL('image/webp', 0.92);
+      if (d.indexOf('data:image/webp') !== 0) { toast('WebPに未対応のブラウザです'); return; }
+      var a2 = document.createElement('a'); a2.href = d; a2.download = 'leary.webp'; a2.click();
+    }
+  }
+  // Place a WebP button right after PNGコピー in the power-up section.
+  function placeWebPBtn() {
+    if ($id('lpWebpBtn')) return true;
+    var bs = panelEl() ? panelEl().querySelectorAll('button') : [];
+    for (var i = 0; i < bs.length; i++) {
+      if (bs[i].textContent.trim() === 'PNGコピー') {
+        var b = document.createElement('button');
+        b.type = 'button'; b.id = 'lpWebpBtn'; b.className = bs[i].className; b.textContent = 'WebP保存';
+        b.title = '現在のキャンバスを WebP で保存（質感などの表示効果は含まれません）';
+        b.addEventListener('click', exportWebP);
+        bs[i].parentNode.insertBefore(b, bs[i].nextSibling);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /* ---------- Fluid FPS / backend badge in the bottom toolbar ---------- */
+  var badge = null;
+  function placeBadge() {
+    if (badge) return true;
+    var bar = document.querySelector('.leary2-toolbar');
+    if (!bar) return false;
+    badge = document.createElement('span');
+    badge.id = 'lpFluidBadge';
+    badge.style.cssText = 'display:none;font-size:11px;color:rgba(255,255,255,.75);font-family:ui-monospace,Menlo,monospace;flex:0 0 auto;padding:4px 10px;border:1px solid rgba(255,255,255,.25);border-radius:999px';
+    bar.appendChild(badge);
+    return true;
+  }
+  setInterval(function () {
+    placeBadge(); placeWebPBtn();
+    if (!badge) return;
+    var ro = $id('cfFpsReadout');
+    var tog = null;
+    var bs = panelEl() ? panelEl().querySelectorAll('button') : [];
+    for (var i = 0; i < bs.length; i++) if (/流体モードを(にする|終了)/.test(bs[i].textContent)) { tog = bs[i]; break; }
+    var active = !!(tog && tog.textContent.indexOf('終了') !== -1);
+    if (active) {
+      badge.style.display = '';
+      badge.textContent = '流体 ' + (ro && /fps/.test(ro.textContent) ? ro.textContent.replace(/^現在\s*/, '') : '初期化中…');
+    } else badge.style.display = 'none';
+  }, 600);
+
+  /* ---------- ⌘K palette ---------- */
+  var overlay = null, kInput = null, kList = null, kItems = [], kSel = 0;
+  function buildItems() {
+    var items = [];
+    function add(label, hint, run) { items.push({ label: label, hint: hint || '', run: run }); }
+    add('設定パネルを開閉', 'パネル', function () { var b = settingsBtn(); if (b) b.click(); });
+    add('Seed変更（ランダム）', '操作 · R', function () { clickById('btnRandomize'); });
+    add('表示リセット', '操作', function () { clickById('btnResetView'); });
+    add('PNG保存（全体）', '書出 · S', function () { clickById('btnExportPng'); });
+    add('PNG保存（表示中そのまま）', '書出', function () { clickById('btnExportViewPng'); });
+    add('SVG保存', '書出', function () { clickById('btnExportSvg'); });
+    add('WebP保存（キャンバス）', '書出', exportWebP);
+    add('設定JSON保存', '書出', function () { clickById('btnExportSettings'); });
+    add('設定JSON読込', '書出', function () { clickById('btnImportSettings'); });
+    add('共有リンクをコピー', '共有', function () { var b = toolbarBtn('共有リンク'); if (b) b.click(); });
+    add('ヘルプ／動作チェック', '? キー', openHelp);
+    add('流体 ChromaFlow タブへ', '流体', function () { switchTab('流体'); });
+    add('Leary設定タブへ', 'パネル', function () { switchTab('Leary設定'); });
+    // presets (core)
+    var ps = document.querySelectorAll('[data-preset]');
+    for (var i = 0; i < ps.length; i++) (function (el) {
+      add('プリセット: ' + el.textContent.trim(), 'プリセット', function () { ensurePanel(); el.click(); });
+    })(ps[i]);
+    // textures
+    var texNames = ['通常', 'リキッド', 'ゆらぎ', 'グロー', '反転', 'サイケ', '万華鏡', '残像', '流れ', '滴り', '渦'];
+    var allBtns = panelEl() ? panelEl().querySelectorAll('button') : [];
+    for (var j = 0; j < allBtns.length; j++) (function (el) {
+      var t = el.textContent.trim();
+      if (texNames.indexOf(t) !== -1) add('質感: ' + t, '質感', function () { ensurePanel(); el.click(); });
+    })(allBtns[j]);
+    // numeric inputs across the panel (Leary + fluid)
+    var inputs = panelEl() ? panelEl().querySelectorAll('input[type="number"], input[type="range"]') : [];
+    var seen = {};
+    for (var k = 0; k < inputs.length; k++) (function (inp) {
+      var row = inp.closest('.row') || inp.parentElement;
+      var lab = row ? (row.querySelector('label,span,div') || {}).textContent : '';
+      lab = (lab || inp.id || '').trim().slice(0, 40);
+      if (!lab || seen[lab]) return; seen[lab] = 1;
+      add('設定: ' + lab, '数値 · ' + (inp.id || ''), function () {
+        ensurePanel();
+        var sec = inp.closest('.section, section, div');
+        inp.scrollIntoView({ block: 'center' });
+        setTimeout(function () { inp.focus(); if (inp.select) inp.select(); }, 60);
+      });
+    })(inputs[k]);
+    return items;
+  }
+  function renderList(filter) {
+    var words = (filter || '').toLowerCase().split(/\s+/).filter(Boolean);
+    var matched = kItems.filter(function (it) {
+      var s = (it.label + ' ' + it.hint).toLowerCase();
+      return words.every(function (w) { return s.indexOf(w) !== -1; });
+    }).slice(0, 30);
+    kSel = Math.min(kSel, Math.max(0, matched.length - 1));
+    kList.innerHTML = '';
+    matched.forEach(function (it, idx) {
+      var d = document.createElement('div');
+      d.className = 'lp-k-item' + (idx === kSel ? ' sel' : '');
+      d.innerHTML = '';
+      var a = document.createElement('span'); a.textContent = it.label;
+      var b = document.createElement('span'); b.className = 'lp-k-hint'; b.textContent = it.hint;
+      d.appendChild(a); d.appendChild(b);
+      d.addEventListener('click', function () { closePalette(); it.run(); });
+      kList.appendChild(d);
+    });
+    kList._matched = matched;
+    if (!matched.length) kList.innerHTML = '<div class="lp-k-item">該当なし</div>';
+  }
+  function openPalette() {
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'lpPalette';
+      overlay.innerHTML = '<div class="lp-k-box"><input id="lpKInput" type="text" placeholder="操作・プリセット・設定を検索（⌘K）" autocomplete="off"><div id="lpKList"></div></div>';
+      document.body.appendChild(overlay);
+      kInput = overlay.querySelector('#lpKInput');
+      kList = overlay.querySelector('#lpKList');
+      overlay.addEventListener('click', function (e) { if (e.target === overlay) closePalette(); });
+      kInput.addEventListener('input', function () { kSel = 0; renderList(kInput.value); });
+      kInput.addEventListener('keydown', function (e) {
+        var m = kList._matched || [];
+        if (e.key === 'ArrowDown') { e.preventDefault(); kSel = Math.min(kSel + 1, m.length - 1); renderList(kInput.value); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); kSel = Math.max(kSel - 1, 0); renderList(kInput.value); }
+        else if (e.key === 'Enter') { var it = m[kSel]; closePalette(); if (it) it.run(); }
+        else if (e.key === 'Escape') closePalette();
+      });
+    }
+    kItems = buildItems();
+    kSel = 0;
+    overlay.style.display = 'flex';
+    kInput.value = '';
+    renderList('');
+    setTimeout(function () { kInput.focus(); }, 30);
+  }
+  function closePalette() { if (overlay) overlay.style.display = 'none'; }
+
+  /* ---------- ? help + diagnostics ---------- */
+  var helpEl = null;
+  function cap(label, ok, note) { return '<tr><td>' + label + '</td><td>' + (ok ? '対応' : '未対応') + (note ? ' <span class="lp-dim">' + note + '</span>' : '') + '</td></tr>'; }
+  function openHelp() {
+    if (!helpEl) {
+      helpEl = document.createElement('div');
+      helpEl.id = 'lpHelp';
+      helpEl.innerHTML = '<div class="lp-h-box"><div class="lp-h-head"><span>Leary ヘルプ／動作チェック</span><button type="button" id="lpHelpClose" class="btn">閉じる</button></div><div id="lpHelpBody"></div></div>';
+      document.body.appendChild(helpEl);
+      helpEl.addEventListener('click', function (e) { if (e.target === helpEl) helpEl.style.display = 'none'; });
+      helpEl.querySelector('#lpHelpClose').addEventListener('click', function () { helpEl.style.display = 'none'; });
+    }
+    var webp = false, avif = false;
+    try { var tc = document.createElement('canvas'); webp = tc.toDataURL('image/webp').indexOf('data:image/webp') === 0; avif = tc.toDataURL('image/avif').indexOf('data:image/avif') === 0; } catch (e) {}
+    var gl2 = false; try { gl2 = !!document.createElement('canvas').getContext('webgl2'); } catch (e) {}
+    var bench = (window.__ChromaFlow && window.__ChromaFlow.benchInfo) ? '（流体バックエンド実測済み）' : '';
+    var rows = '';
+    rows += cap('WebGPU（流体）', !!navigator.gpu, bench);
+    rows += cap('WebGL2（流体フォールバック）', gl2);
+    rows += cap('WebP 書出', webp);
+    rows += cap('AVIF 書出', avif);
+    rows += cap('Document PiP', !!window.documentPictureInPicture);
+    rows += cap('Wake Lock', !!navigator.wakeLock, 'PNG保存時に2分間自動取得');
+    rows += cap('保存先ピッカー（FS Access）', !!window.showSaveFilePicker);
+    rows += cap('Web Share', !!navigator.share);
+    rows += cap('スポイト（EyeDropper）', !!window.EyeDropper);
+    rows += cap('Gamepad', !!navigator.getGamepads, 'A=Seed変更 / B=表示リセット / X=PNG（表示中） / Y=設定');
+    var body = helpEl.querySelector('#lpHelpBody');
+    body.innerHTML =
+      '<h4>ショートカット</h4><table class="lp-t">' +
+      '<tr><td>⌘K / Ctrl+K</td><td>コマンドパレット（操作・プリセット・設定を検索）</td></tr>' +
+      '<tr><td>?</td><td>このヘルプ</td></tr>' +
+      '<tr><td>H</td><td>設定パネルの開閉</td></tr>' +
+      '<tr><td>S</td><td>PNG保存（全体）</td></tr>' +
+      '<tr><td>R</td><td>Seed変更</td></tr>' +
+      '<tr><td>1〜8</td><td>プリセット</td></tr>' +
+      '<tr><td>⌘Z / ⌘⇧Z</td><td>元に戻す／やり直す</td></tr>' +
+      '<tr><td>矢印 / + / − / 0</td><td>キャンバスのパン／ズーム／表示リセット（キャンバスにフォーカス時）</td></tr>' +
+      '<tr><td>Esc</td><td>パネル・ダイアログを閉じる</td></tr></table>' +
+      '<h4>Seed について</h4><p class="lp-dim">初期 Seed は 123。URL の ?seed= ／ #seed=、共有リンク #s=、Varelser Link の seed-sync、状態セクションの Seed 履歴チップから外部の Seed が入ることがあります。</p>' +
+      '<h4>動作チェック（このブラウザ）</h4><table class="lp-t">' + rows + '</table>' +
+      '<p class="lp-dim" id="lpStorageLine">保存容量を確認中…</p>';
+    helpEl.style.display = 'flex';
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(function (est) {
+        var el = $id('lpStorageLine');
+        if (el) el.textContent = '保存容量: 使用 ' + Math.round((est.usage || 0) / 1024) + ' KB / 上限約 ' + Math.round((est.quota || 0) / 1073741824 * 10) / 10 + ' GB';
+      }).catch(function () {});
+    }
+  }
+
+  /* ---------- toolbar buttons: ⌘K / ? ---------- */
+  function placeToolbarBtns() {
+    var bar = document.querySelector('.leary2-toolbar');
+    if (!bar || $id('lpKBtn')) return;
+    var k = document.createElement('button');
+    k.type = 'button'; k.id = 'lpKBtn'; k.className = 'btn'; k.textContent = '⌘K 検索';
+    k.setAttribute('aria-label', 'コマンドパレットを開く');
+    k.addEventListener('click', openPalette);
+    var h = document.createElement('button');
+    h.type = 'button'; h.id = 'lpHelpBtn'; h.className = 'btn'; h.textContent = '?';
+    h.setAttribute('aria-label', 'ヘルプと動作チェック');
+    h.addEventListener('click', openHelp);
+    bar.appendChild(k); bar.appendChild(h);
+  }
+  placeToolbarBtns();
+  setTimeout(placeToolbarBtns, 1200);
+
+  /* ---------- keys ---------- */
+  document.addEventListener('keydown', function (e) {
+    var t = e.target;
+    var typing = !!(t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || t.isContentEditable));
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); if (overlay && overlay.style.display === 'flex') closePalette(); else openPalette(); return; }
+    if (typing) return;
+    if (e.key === '?') { e.preventDefault(); openHelp(); }
+    if (e.key === 'Escape' && helpEl) helpEl.style.display = 'none';
+  }, true);
+
+  /* ---------- Gamepad (buttons only, edge-triggered) ---------- */
+  var prevBtns = [];
+  var padMap = [
+    function () { clickById('btnRandomize'); toast('Gamepad: Seed変更'); },
+    function () { clickById('btnResetView'); },
+    function () { clickById('btnExportViewPng'); },
+    function () { var b = settingsBtn(); if (b) b.click(); }
+  ];
+  setInterval(function () {
+    if (!navigator.getGamepads) return;
+    var pads = navigator.getGamepads();
+    var pad = null;
+    for (var i = 0; i < pads.length; i++) if (pads[i]) { pad = pads[i]; break; }
+    if (!pad) { prevBtns = []; return; }
+    for (var b = 0; b < padMap.length; b++) {
+      var pressed = !!(pad.buttons[b] && pad.buttons[b].pressed);
+      if (pressed && !prevBtns[b]) padMap[b]();
+      prevBtns[b] = pressed;
+    }
+  }, 120);
+
+  /* ---------- storage.persist (best effort) ---------- */
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) {}
+
+  window.__learyPerfect = { version: 1, openPalette: openPalette, openHelp: openHelp, exportWebP: exportWebP };
+})();
+
+</script>
+<!-- /leary-perfect-2026-11-17:body -->
 </body>
 </html>
