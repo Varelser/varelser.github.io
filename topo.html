@@ -280,7 +280,7 @@
       max-height: 60vh;
       overflow-y: auto;
     }
-    .group-title, #controls h4 {
+    .group-title, #controls h3 {
       margin: 18px 0 10px;
       font-size: 10px;
       line-height: 0.875rem;
@@ -288,7 +288,7 @@
       font-weight: 500;
       color: var(--muted);
     }
-    .panel-body > .group-title:first-child, .panel-body > h4:first-child { margin-top: 0; }
+    .panel-body > .group-title:first-child, .panel-body > h3:first-child { margin-top: 0; }
     .row { margin-bottom: 12px; font-size: 12px; }
     .row:last-child { margin-bottom: 0; }
     label {
@@ -467,7 +467,16 @@
       cursor: pointer;
     }
     .dialog-buttons button:hover { border-color: #525252; color: var(--fg); }
-  </style>
+  
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+</style>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
 <script type="text/javascript">
@@ -516,7 +525,7 @@
     </div>
     <div class="panel-body">
 
-    <h4 style="margin-top:0;">形</h4>
+    <h3 style="margin-top:0;">形</h3>
     <div class="row">
       <label for="mtnWidth">広がり (MOUNTAIN_WIDTH) <span id="mtnWidthVal" class="val"></span></label>
       <input id="mtnWidth" type="range" min="0.30" max="3.00" step="0.01" value="1.00">
@@ -537,7 +546,7 @@
       <input id="outer" type="range" min="0.05" max="1.20" step="0.01" value="0.46">
     </div>
 
-    <h4>うねり</h4>
+    <h3>うねり</h3>
     <div class="row">
       <label for="amp">うねりの強さ (NOISE_AMPLITUDE) <span id="ampVal" class="val"></span></label>
       <input id="amp" type="range" min="0.0" max="0.50" step="0.01" value="0.14">
@@ -553,7 +562,7 @@
       <input id="warp" type="range" min="0.0" max="4.00" step="0.01" value="1.00">
     </div>
 
-    <h4>線</h4>
+    <h3>線</h3>
     <div class="row">
       <label for="r">線の本数上限 (NUM_RINGS) <span id="rVal" class="val"></span></label>
       <input id="r" type="range" min="8" max="2000" step="1" value="70">
@@ -585,7 +594,7 @@
       <input id="a" type="range" min="128" max="2000" step="1" value="900">
     </div>
 
-    <h4>表示 / 効果</h4>
+    <h3>表示 / 効果</h3>
     <div class="row">
       <label for="red">赤影の透明度 (RED_SHADOW_ALPHA) <span id="redVal" class="val"></span></label>
       <input id="red" type="range" min="0" max="200" step="1" value="42">
@@ -597,7 +606,7 @@
       <label><input id="exportTransparent" type="checkbox" checked>透過で書き出し</label>
     </div>
 
-    <h4>プリセット</h4>
+    <h3>プリセット</h3>
     <div class="row" style="display:flex;gap:8px;">
       <button id="preset1" class="small">窪み</button>
       <button id="preset2" class="small">尾根</button>
@@ -613,7 +622,7 @@
       <button id="preset6" class="small">斜面</button>
     </div>
 
-    <h4>シード / 設定</h4>
+    <h3>シード / 設定</h3>
     <div class="row">現在のシード: <span id="seedVal" class="val" style="float:none;">-</span></div>
 
     <div class="row">
@@ -625,7 +634,7 @@
       <button id="applySeed" class="small">シード適用</button>
     </div>
 
-    <h4>Varelser Link</h4>
+    <h3>Varelser Link</h3>
     <div class="row">
       <label><input id="varelserLinkToggle" type="checkbox">Varelser Link 送受信</label>
     </div>
@@ -644,7 +653,7 @@
       </select>
     </div>
 
-    <h4>Plus（便利技術）</h4>
+    <h3>Plus（便利技術）</h3>
     <div class="row" style="display:flex;gap:8px;">
       <button id="plusShareLink" class="small" type="button">共有リンクを作成</button>
       <button id="plusShare" class="small" type="button">共有</button>
@@ -732,7 +741,7 @@
 
     <div id="plusStatus" class="row plus-note" role="status"></div>
 
-    <h4>穴</h4>
+    <h3>穴</h3>
     <div id="holeInfo" class="row">選択穴: - / 総数: 0</div>
 
     <div class="row" style="display:flex;gap:8px;">
