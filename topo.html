@@ -7396,7 +7396,9 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     return (1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * Math.pow(2, z) * 256;
   }
   async function loadFuji() {
-    try { setStatus('富士山の標高データを取得中…'); } catch (e) {}
+    function fujiStatus(msg) { try { setStatus(msg); } catch (e) {} }
+    fujiStatus('富士山の標高データを取得中…');
+    try {
     var z = 11;
     var lonMin = 138.55, lonMax = 138.95, latMin = 35.20, latMax = 35.52;
     var x0 = lonToTileX(lonMin, z), x1 = lonToTileX(lonMax, z);
@@ -7405,19 +7407,33 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     var stitch = document.createElement('canvas');
     stitch.width = tilesW * 256; stitch.height = tilesH * 256;
     var sx = stitch.getContext('2d');
-    try {
-      for (var ty = y0; ty <= y1; ty++) {
-        for (var tx = x0; tx <= x1; tx++) {
-          var url = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + z + '/' + tx + '/' + ty + '.png';
-          var res = await fetch(url);
+    var tileTotal = tilesW * tilesH;
+    var tileDone = 0;
+    for (var ty = y0; ty <= y1; ty++) {
+      for (var tx = x0; tx <= x1; tx++) {
+        var url = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + z + '/' + tx + '/' + ty + '.png';
+        var bmp = null;
+        try {
+          var ctl = new AbortController();
+          var timer = setTimeout(function () { ctl.abort(); }, 10000);
+          var res = await fetch(url, { signal: ctl.signal });
+          clearTimeout(timer);
           if (!res.ok) throw new Error('tile ' + res.status);
-          var bmp = await createImageBitmap(await res.blob());
-          sx.drawImage(bmp, (tx - x0) * 256, (ty - y0) * 256);
+          bmp = await createImageBitmap(await res.blob());
+        } catch (fetchErr) {
+          bmp = await new Promise(function (resolve) {
+            var im = new Image();
+            im.crossOrigin = 'anonymous';
+            im.onload = function () { resolve(im); };
+            im.onerror = function () { resolve(null); };
+            im.src = url;
+          });
+          if (!bmp) throw fetchErr;
         }
+        sx.drawImage(bmp, (tx - x0) * 256, (ty - y0) * 256);
+        tileDone++;
+        fujiStatus('富士山の標高データを取得中… ' + tileDone + '/' + tileTotal);
       }
-    } catch (err) {
-      try { setStatus('標高データの取得に失敗しました（ネットワーク/CORS）'); } catch (e) {}
-      return;
     }
     var px0 = Math.round(lonToPx(lonMin, z) - x0 * 256), px1 = Math.round(lonToPx(lonMax, z) - x0 * 256);
     var py0 = Math.round(latToPx(latMax, z) - y0 * 256), py1 = Math.round(latToPx(latMin, z) - y0 * 256);
@@ -7430,7 +7446,10 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     demData = { data: elev, w: cw, h: ch };
     bakeDem();
     applyAuxAndRegen();
-    try { setStatus('富士山（実地形）を適用しました'); } catch (e) {}
+    fujiStatus('富士山（実地形）を適用しました');
+    } catch (err) {
+      fujiStatus('標高データの取得に失敗しました: ' + ((err && err.name) || 'Error'));
+    }
   }
 
   // ---------- poster export ----------
