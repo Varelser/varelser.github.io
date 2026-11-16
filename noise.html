@@ -1126,6 +1126,7 @@
     master_humHz: 50,
     master_normalize: true,
     master_exportLoudness: '0',
+    master_exportLufs: '0',
     master_binauralEnabled: false,
     master_binauralMode: 'binaural',
     master_binauralCarrier: 200,
@@ -1956,6 +1957,7 @@
     { id:'master_humHz', type:'select', label:'Hum', options:[['50','50 Hz'],['60','60 Hz']] },
     { id:'master_normalize', type:'checkbox', label:'Normalize Export' },
     { id:'master_exportLoudness', type:'select', label:'Loudness (RMS)', options:[['0','Off'],['-23','-23 dB'],['-18','-18 dB'],['-16','-16 dB'],['-14','-14 dB']] },
+    { id:'master_exportLufs', type:'select', label:'Loudness (LUFS)', options:[['0','Off'],['-23','-23 LUFS'],['-18','-18 LUFS'],['-16','-16 LUFS'],['-14','-14 LUFS']] },
     { id:'master_loopFade', type:'select', label:'Loop Crossfade (sec)', options:[['0','Off'],['1','1'],['2','2'],['3','3'],['5','5'],['10','10']] },
     { id:'master_binauralEnabled', type:'checkbox', label:'Binaural' },
     { id:'master_binauralMode', type:'select', label:'Binaural Mode', options:[['binaural','Binaural (L/R)'],['isochronic','Isochronic'],['monaural','Monaural Beat']] },
@@ -2043,6 +2045,7 @@
     master_humHz: '電源ハムの周波数(50Hz=東日本/60Hz=西日本)。VinylやPower Humの種類で使われます。',
     master_normalize: '書き出し時にピークを0dB付近へ自動調整します。音量を揃えたい時に。',
     master_exportLoudness: '書き出し全体の平均音量(RMS)を目標値に揃えます。動画や配信のラウドネス目安に。ピークが上限を超える場合は上限優先で抑えます。',
+    master_exportLufs: '書き出し全体のラウドネスを BS.1770 の K-weighted LUFS（ゲーティングなし統合値）で目標値に揃えます。YouTube等の -14 LUFS、放送の -23 LUFS といった配信基準に。RMS版と併用した場合は小さい方のゲインを採用します。',
     master_loopFade: '書き出しの頭を末尾の続き素材とクロスフェードし、途切れないループにします。WAVにはループ情報も付きます。',
     master_binauralEnabled: 'バイノーラル/アイソクロニック/モノラルのビート音を重ねます。睡眠や集中のプリセットで使用。',
     master_binauralMode: 'Binaural=左右で違う周波数(ヘッドホン必須)、Isochronic=断続音、Monaural=スピーカーでも聞こえる振幅ビート。',
@@ -2910,26 +2913,30 @@
       case 'sample': {
         const smp = NOISE_SAMPLES.user;
         if (!smp || !smp.l || !smp.l.length) return 0;
-        const sLen = smp.l.length;
-        if (s.smpPos === undefined) s.smpPos = 0;
+        const sFrom = smp.start || 0;
+        const sTo = smp.end && smp.end > sFrom ? smp.end : smp.l.length;
+        const sLen = sTo - sFrom;
+        if (sLen < 16) return 0;
+        if (s.smpPos === undefined || s.smpPos < sFrom || s.smpPos >= sTo) s.smpPos = sFrom;
         const chData = s.smpCh === 1 && smp.r ? smp.r : smp.l;
         const posNow = s.smpPos;
-        const baseIdx = Math.floor(posNow);
-        const i0 = baseIdx % sLen;
-        const i1 = i0 + 1 >= sLen ? 0 : i0 + 1;
-        const fr = posNow - baseIdx;
+        const rel = posNow - sFrom;
+        const baseIdx = Math.floor(rel);
+        const i0 = sFrom + (baseIdx % sLen);
+        const i1 = i0 + 1 >= sTo ? sFrom : i0 + 1;
+        const fr = rel - baseIdx;
         let sv = chData[i0] * (1 - fr) + chData[i1] * fr;
         const fadeN = Math.min(4096, sLen >> 2);
         if (fadeN > 16) {
-          const pli = posNow % sLen;
+          const pli = rel % sLen;
           if (pli > sLen - fadeN) {
             const k = (pli - (sLen - fadeN)) / fadeN;
-            const j = Math.floor(pli - (sLen - fadeN)) % sLen;
+            const j = sFrom + (Math.floor(pli - (sLen - fadeN)) % sLen);
             sv = sv * (1 - k) + chData[j] * k;
           }
         }
         s.smpPos = posNow + smp.sr / sr;
-        if (s.smpPos >= sLen * 2) s.smpPos -= sLen;
+        if (s.smpPos >= sTo) s.smpPos = sFrom + (s.smpPos - sTo);
         return sv * 0.9;
       }
       case 'white': return rawWhite(s);
@@ -3878,6 +3885,7 @@
       enumOk('master_exportBitDepth', ['16', '24', '32f']);
       enumOk('master_loopFade', ['0', '1', '2', '3', '5', '10']);
       enumOk('master_exportLoudness', ['0', '-23', '-18', '-16', '-14']);
+      enumOk('master_exportLufs', ['0', '-23', '-18', '-16', '-14']);
       enumOk('master_exportNoiseShaping', ['off', 'gentle', 'strong']);
       enumOk('master_previewQuality', ['eco', 'normal', 'high']);
       enumOk('master_exportMode', ['mix', 'stems', 'mixstems']);
@@ -4281,6 +4289,13 @@
           l += Math.sin(masterState.binPhaseL) * lvl;
           r += Math.sin(masterState.binPhaseR) * lvl;
         }
+      }
+
+      if (renderer.xfLive && renderer.xf !== 1) {
+        if (renderer.xf === undefined) renderer.xf = 0;
+        renderer.xf = Math.min(1, renderer.xf + 1 / (sr * 0.25));
+        const xg = renderer.xf * renderer.xf;
+        l *= xg; r *= xg;
       }
 
       if (outL) outL[i] = l;
@@ -4694,6 +4709,17 @@
     return peak;
   }
 
+  function kWeightCoeffs(sr) {
+    const f1 = 1681.974450955533, G = 3.999843853973347, Q1 = 0.7071752369554196;
+    const K1 = Math.tan(Math.PI * f1 / sr), Vh = Math.pow(10, G / 20), Vb = Math.pow(Vh, 0.4996667741545416);
+    const a0s = 1 + K1 / Q1 + K1 * K1;
+    const shelf = [(Vh + Vb * K1 / Q1 + K1 * K1) / a0s, 2 * (K1 * K1 - Vh) / a0s, (Vh - Vb * K1 / Q1 + K1 * K1) / a0s, 2 * (K1 * K1 - 1) / a0s, (1 - K1 / Q1 + K1 * K1) / a0s];
+    const f2 = 38.13547087602444, Q2 = 0.5003270373238773;
+    const K2 = Math.tan(Math.PI * f2 / sr), a0h = 1 + K2 / Q2 + K2 * K2;
+    const hp = [1 / a0h, -2 / a0h, 1 / a0h, 2 * (K2 * K2 - 1) / a0h, (1 - K2 / Q2 + K2 * K2) / a0h];
+    return { shelf, hp };
+  }
+
   async function scanLoudnessStreamed(params, token, onProgress) {
     const sampleRate = getExportSampleRate(params);
     const oversampleFactor = getExportOversampleFactor(params);
@@ -4708,10 +4734,27 @@
     let done = 0;
     let peak = 0;
     let sumSq = 0;
+    let sumSqK = 0;
+    const kc = kWeightCoeffs(sampleRate);
+    const kSt = [0, 1].map(() => ({ s1: 0, s2: 0, t1: 0, t2: 0, x1: 0, x2: 0, u1: 0, u2: 0 }));
+    const kRun = (st, v) => {
+      const y = kc.shelf[0] * v + kc.shelf[1] * st.s1 + kc.shelf[2] * st.s2 - kc.shelf[3] * st.t1 - kc.shelf[4] * st.t2;
+      st.s2 = st.s1; st.s1 = v; st.t2 = st.t1; st.t1 = y;
+      const z = kc.hp[0] * y + kc.hp[1] * st.x1 + kc.hp[2] * st.x2 - kc.hp[3] * st.u1 - kc.hp[4] * st.u2;
+      st.x2 = st.x1; st.x1 = y; st.u2 = st.u1; st.u1 = z;
+      return z;
+    };
     const accumulate = (left, right, frames) => {
       let acc = 0;
-      for (let i = 0; i < frames; i++) acc += left[i] * left[i] + right[i] * right[i];
+      let accK = 0;
+      for (let i = 0; i < frames; i++) {
+        acc += left[i] * left[i] + right[i] * right[i];
+        const lk = kRun(kSt[0], left[i]);
+        const rk = kRun(kSt[1], right[i]);
+        accK += lk * lk + rk * rk;
+      }
       sumSq += acc * 0.5;
+      sumSqK += accK;
     };
     while (done < totalFrames) {
       if (token.cancelled) throw new Error('__EXPORT_CANCELLED__');
@@ -4743,7 +4786,8 @@
       await nextFrame();
     }
     const meanSq = sumSq / totalFrames;
-    return { peak, rmsDb: meanSq > 0 ? 10 * Math.log10(meanSq) : -Infinity };
+    const meanSqK = sumSqK / totalFrames;
+    return { peak, rmsDb: meanSq > 0 ? 10 * Math.log10(meanSq) : -Infinity, lufsDb: meanSqK > 0 ? -0.691 + 10 * Math.log10(meanSqK) : -Infinity };
   }
 
 
@@ -5149,6 +5193,7 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     const processorOptions = options.processorOptions || {};
     this.params = processorOptions.params ? { ...processorOptions.params } : { ...DEFAULTS };
     this.renderer = createStereoRenderer(this.params, sampleRate);
+    this.renderer.xfLive = true;
     this.playing = false;
     this.port.onmessage = (event) => this.onMessage(event.data || {});
   }
@@ -5210,6 +5255,7 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
   rebuildRenderer(params) {
     const frame = this.renderer ? this.renderer.frame : 0;
     this.renderer = createStereoRenderer(params, sampleRate);
+    this.renderer.xfLive = true;
     this.renderer.frame = frame;
   }
 
@@ -5226,6 +5272,10 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     }
     if (msg.type === 'sample') {
       NOISE_SAMPLES.user = msg.data || null;
+      return;
+    }
+    if (msg.type === 'sampleMeta') {
+      if (NOISE_SAMPLES.user) { NOISE_SAMPLES.user.start = msg.start; NOISE_SAMPLES.user.end = msg.end; }
       return;
     }
     if (msg.type === 'reset') {
@@ -5470,6 +5520,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       if (mustRebuild) {
         const renderer = createStereoRenderer(p, this.ctx ? this.ctx.sampleRate : p.master_sampleRate);
         renderer.frame = (force || HARD_REBUILD_KEYS.has(changedId)) ? 0 : (this.frame || 0);
+        this.__xf = 0;
         this.sA = renderer.sA;
         this.sAR = renderer.sAR;
         this.sB = renderer.sB;
@@ -5728,10 +5779,13 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         sBR: this.sBR,
         sC: this.sC,
         sCR: this.sCR,
-        masterState: this.masterState
+        masterState: this.masterState,
+        xfLive: true,
+        xf: this.__xf
       };
       renderBlock(pseudo, outL.length, outL, outR);
       this.frame = pseudo.frame;
+      this.__xf = pseudo.xf;
     }
   };
 
@@ -6008,6 +6062,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       master_exportBitDepth: ['16', '24', '32f'],
       master_loopFade: ['0', '1', '2', '3', '5', '10'],
       master_exportLoudness: ['0', '-23', '-18', '-16', '-14'],
+      master_exportLufs: ['0', '-23', '-18', '-16', '-14'],
       master_exportNoiseShaping: ['off', 'gentle', 'strong'],
       master_previewQuality: ['eco', 'normal', 'high'],
       master_exportMode: ['mix', 'stems', 'mixstems']
@@ -7015,7 +7070,8 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         const safeInfo = `file ${jobIndex + 1}/${jobs.length} / ${job.label} / ${exportFormatLabel(format)} / frames ${totalFrames.toLocaleString()} / ${exportRate} Hz / OS ${oversampleFactor}x / internal ${internalRate.toLocaleString()} Hz / ${bitDepthLabel(exportBit)} / file ${fmtBytes(jobBytes)} / total ${fmtBytes(totalEstimatedBytes)} / lim ${job.params.master_exportLimiter ? 'on' : 'off'} / tp ${job.params.master_truePeakProtect ? 'on' : 'off'} / shape ${exportBit === '32f' ? 'off' : getExportNoiseShaping(job.params)}`;
         let normalizeGain = 1;
         const loudTarget = Number(job.params.master_exportLoudness) || 0;
-        if (job.params.master_normalize || loudTarget) {
+        const lufsTarget = Number(job.params.master_exportLufs) || 0;
+        if (job.params.master_normalize || loudTarget || lufsTarget) {
           setStatus(`解析中 1/2: ${safeInfo}`);
           const scan = await scanLoudnessStreamed(job.params, token, (done, total, pass, value) => {
             const pct = Math.floor(done / total * 100);
@@ -7029,6 +7085,12 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
             gLoud = Math.pow(10, (loudTarget - scan.rmsDb) / 20);
             if (scan.peak > 0.000001) gLoud = Math.min(gLoud, targetPeak / scan.peak);
             gLoud = Math.min(gLoud, 8);
+          }
+          if (lufsTarget && Number.isFinite(scan.lufsDb)) {
+            let gLufs = Math.pow(10, (lufsTarget - scan.lufsDb) / 20);
+            if (scan.peak > 0.000001) gLufs = Math.min(gLufs, targetPeak / scan.peak);
+            gLufs = Math.min(gLufs, 8);
+            gLoud = gLoud === null ? gLufs : Math.min(gLoud, gLufs);
           }
           if (gPeak !== null && gLoud !== null) normalizeGain = Math.min(gPeak, gLoud);
           else if (gPeak !== null) normalizeGain = gPeak;
@@ -7757,7 +7819,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         const maxLen = Math.min(audio.length, 44100 * 180);
         const l = audio.getChannelData(0).slice(0, maxLen);
         const r = audio.numberOfChannels > 1 ? audio.getChannelData(1).slice(0, maxLen) : l;
-        NOISE_SAMPLES.user = { l, r, sr: audio.sampleRate };
+        NOISE_SAMPLES.user = { l, r, sr: audio.sampleRate, start: 0, end: l.length };
         NOISE_SAMPLE_VERSION++;
         if (engine.node) {
           try {
@@ -7769,6 +7831,17 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       } catch (_e) {
         return null;
       }
+    };
+    window.__noiseSetSampleRange = (fromFrac, toFrac) => {
+      const u = NOISE_SAMPLES.user;
+      if (!u || !u.l) return false;
+      const len = u.l.length;
+      let a = Math.floor(clamp(Number(fromFrac) || 0, 0, 1) * len);
+      let b2 = Math.floor(clamp(Number(toFrac) || 0, 0, 1) * len);
+      if (b2 - a < 2048) { if (a + 2048 <= len) b2 = a + 2048; else { a = Math.max(0, len - 2048); b2 = len; } }
+      u.start = a; u.end = b2;
+      if (engine.node) { try { engine.node.port.postMessage({ type: 'sampleMeta', start: a, end: b2 }); } catch (_e) {} }
+      return { from: a / len, to: b2 / len };
     };
     window.__noiseClearSample = () => {
       NOISE_SAMPLES.user = null;
@@ -8888,6 +8961,163 @@ if(presetBody){
   });
   setInterval(envTick, 60000);
   if(envModeVal!=='off'){ envTick(); }
+}
+})();
+</script>
+<style>
+#smpRangeRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px}
+#smpRangeRow input[type=range]{width:110px}
+.ghi-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ghi-label{font-size:11px;opacity:.75;letter-spacing:.06em}
+.ghi-status{font-size:11px;opacity:.8}
+#schedBar input[type=time]{background:#161616;color:#eee;border:1px solid #444;border-radius:6px;padding:2px 6px;font-size:12px;color-scheme:dark}
+</style>
+<script id="noise-ghi-script">
+(function(){
+'use strict';
+function $(id){ return document.getElementById(id); }
+function setField(id, v){ var el=$(id); if(!el) return; el.value=String(v); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); }
+function fieldNum(id, dflt){ var el=$(id); var n=el?parseFloat(el.value):NaN; return isFinite(n)?n:dflt; }
+
+/* ---- play state tracking (app state broadcast + button clicks) ---- */
+var playing=false;
+try{ var bc=new BroadcastChannel('varelser-link-v1'); bc.onmessage=function(ev){ var m=ev&&ev.data; if(m&&m.app==='noise'&&m.type==='state') playing=!!m.playing; }; }catch(e){}
+document.addEventListener('click',function(e){ if(!e.target||!e.target.id) return; if(e.target.id==='playBtn') playing=true; if(e.target.id==='stopBtn') playing=false; },true);
+
+/* ---- G1: sample loop range ---- */
+var sBar=$('sampleBar');
+if(sBar){
+  var row=document.createElement('div'); row.id='smpRangeRow';
+  row.innerHTML='<span class="ghi-label">ループ区間</span><span style="font-size:11px">開始</span><input type="range" id="smpFrom" min="0" max="1000" value="0"><span id="smpFromVal" style="font-size:11px">0%</span><span style="font-size:11px">終了</span><input type="range" id="smpTo" min="0" max="1000" value="1000"><span id="smpToVal" style="font-size:11px">100%</span>';
+  sBar.appendChild(row);
+  var updRange=function(){
+    var f=parseInt($('smpFrom').value,10)/1000, t=parseInt($('smpTo').value,10)/1000;
+    $('smpFromVal').textContent=Math.round(f*100)+'%'; $('smpToVal').textContent=Math.round(t*100)+'%';
+    if(typeof window.__noiseSetSampleRange==='function') window.__noiseSetSampleRange(f,t);
+  };
+  $('smpFrom').addEventListener('input',updRange); $('smpTo').addEventListener('input',updRange);
+  var nm=$('sampleName');
+  if(nm){ new MutationObserver(function(){ if($('smpFrom').value!=='0'||$('smpTo').value!=='1000'){ $('smpFrom').value='0'; $('smpTo').value='1000'; $('smpFromVal').textContent='0%'; $('smpToVal').textContent='100%'; } }).observe(nm,{childList:true,characterData:true,subtree:true}); }
+}
+
+/* ---- H: schedule (wake fade-in / timed stop) ---- */
+var sched={on1:false,t1:'07:00',fade:5,on2:false,t2:'23:30'};
+try{ var savedS=JSON.parse(localStorage.getItem('noise_schedule_v1')||'null'); if(savedS) sched=Object.assign(sched,savedS); }catch(e){}
+var fired={}, gainTween=null;
+function saveSched(){ try{ localStorage.setItem('noise_schedule_v1',JSON.stringify(sched)); }catch(e){} }
+function tweenGain(target, minutes, done){
+  if(gainTween){ clearInterval(gainTween); gainTween=null; }
+  if(!$( 'master_gain')) return;
+  var from=fieldNum('master_gain',0.8), start=Date.now(), dur=Math.max(0.05,minutes)*60000;
+  gainTween=setInterval(function(){
+    var k=Math.min(1,(Date.now()-start)/dur); var e2=k*k*(3-2*k);
+    setField('master_gain', (from+(target-from)*e2).toFixed(3));
+    if(k>=1){ clearInterval(gainTween); gainTween=null; if(done) done(); }
+  },500);
+}
+function schedStart(){
+  var target=fieldNum('master_gain',0.8);
+  var st=$('schedStatus');
+  if(!playing){ setField('master_gain',0); var pb=$('playBtn'); if(pb) pb.click(); playing=true; tweenGain(target, sched.fade); if(st) st.textContent='スケジュール開始： '+sched.fade+'分かけてフェードイン中'; }
+  else if(st) st.textContent='スケジュール開始時刻です（再生中）';
+}
+function schedStop(){
+  var target=fieldNum('master_gain',0.8);
+  var st=$('schedStatus');
+  if(playing){ tweenGain(0, 1, function(){ var sb=$('stopBtn'); if(sb) sb.click(); playing=false; setField('master_gain', target); }); if(st) st.textContent='スケジュール終了： フェードアウト中'; }
+}
+var sleepBody=document.querySelector('#sec-sleep .body');
+if(sleepBody){
+  var bar=document.createElement('div'); bar.className='ghi-row'; bar.id='schedBar';
+  bar.innerHTML='<span class="ghi-label">スケジュール</span>'+
+   '<label style="font-size:11px"><input type="checkbox" id="schedOn1"> 開始</label><input type="time" id="schedT1">'+
+   '<span style="font-size:11px">フェード</span><span id="schedFadeBtns"></span>'+
+   '<label style="font-size:11px"><input type="checkbox" id="schedOn2"> 終了</label><input type="time" id="schedT2">'+
+   '<span class="ghi-status" id="schedStatus"></span>';
+  sleepBody.appendChild(bar);
+  var fadeWrap=$('schedFadeBtns');
+  [1,5,10,20].forEach(function(m){ var b=document.createElement('button'); b.type='button'; b.className='mini-btn'; b.textContent=m+'分'; if(sched.fade===m) b.style.borderColor='#fff'; b.addEventListener('click',function(){ sched.fade=m; saveSched(); Array.prototype.forEach.call(fadeWrap.children,function(x){ x.style.borderColor=''; }); b.style.borderColor='#fff'; }); fadeWrap.appendChild(b); });
+  $('schedOn1').checked=!!sched.on1; $('schedT1').value=sched.t1; $('schedOn2').checked=!!sched.on2; $('schedT2').value=sched.t2;
+  $('schedOn1').addEventListener('change',function(){ sched.on1=this.checked; saveSched(); });
+  $('schedT1').addEventListener('change',function(){ sched.t1=this.value||'07:00'; saveSched(); });
+  $('schedOn2').addEventListener('change',function(){ sched.on2=this.checked; saveSched(); });
+  $('schedT2').addEventListener('change',function(){ sched.t2=this.value||'23:30'; saveSched(); });
+  setInterval(function(){
+    if(!sched.on1 && !sched.on2) return;
+    var now=new Date(); var hh=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    var day=now.getFullYear()+'-'+now.getMonth()+'-'+now.getDate();
+    if(sched.on1 && hh===sched.t1 && fired['1']!==day+hh){ fired['1']=day+hh; schedStart(); }
+    if(sched.on2 && hh===sched.t2 && fired['2']!==day+hh){ fired['2']=day+hh; schedStop(); }
+  },15000);
+}
+
+/* ---- I1: MIDI OUT ---- */
+var midiBody=document.querySelector('#sec-midi .body');
+var midiOut=null, midiTimer=null, lastCc={};
+function ccSend(cc, v01){
+  if(!midiOut) return;
+  var v=Math.max(0,Math.min(127,Math.round(v01*127)));
+  if(lastCc[cc]===v) return; lastCc[cc]=v;
+  try{ midiOut.send([0xB0, cc, v]); }catch(e){}
+}
+if(midiBody){
+  var mrow=document.createElement('div'); mrow.className='ghi-row'; mrow.id='midiOutBar';
+  mrow.innerHTML='<span class="ghi-label">MIDI出力</span><button type="button" class="mini-btn" id="midiOutBtn">出力を開始</button><span class="ghi-status" id="midiOutStatus">停止中（CC7=Master / 12,13,14=A,B,C Gain / 15=Space / 17,20,21=A,B,C Tone）</span>';
+  midiBody.appendChild(mrow);
+  $('midiOutBtn').addEventListener('click',function(){
+    var btn=this;
+    if(midiTimer){ clearInterval(midiTimer); midiTimer=null; if(midiOut){ try{ midiOut.send([0x80,60,0]); }catch(e){} } midiOut=null; btn.textContent='出力を開始'; $('midiOutStatus').textContent='停止中'; return; }
+    if(!navigator.requestMIDIAccess){ $('midiOutStatus').textContent='このブラウザは Web MIDI 非対応です'; return; }
+    navigator.requestMIDIAccess({sysex:false}).then(function(acc){
+      var outs=Array.from(acc.outputs.values());
+      if(!outs.length){ $('midiOutStatus').textContent='MIDI出力デバイスが見つかりません'; return; }
+      midiOut=outs[0]; lastCc={};
+      try{ midiOut.send([0x90,60,100]); }catch(e){}
+      btn.textContent='出力を停止';
+      $('midiOutStatus').textContent='送信中： '+((midiOut.name||'device')).slice(0,40);
+      midiTimer=setInterval(function(){
+        if(!midiOut) return;
+        ccSend(7, fieldNum('master_gain',0.8)/1.2);
+        ccSend(12, fieldNum('A_gain',0.9)/1.5); ccSend(13, fieldNum('B_gain',0.7)/1.5); ccSend(14, fieldNum('C_gain',0.6)/1.5);
+        ccSend(15, fieldNum('master_space',0)/1.5);
+        ccSend(17, (fieldNum('A_tone',0)+1)/2); ccSend(20, (fieldNum('B_tone',0)+1)/2); ccSend(21, (fieldNum('C_tone',0)+1)/2);
+      },120);
+    }).catch(function(){ $('midiOutStatus').textContent='MIDIアクセスが許可されませんでした'; });
+  });
+}
+
+/* ---- I2: Gamepad ---- */
+var devBody=document.querySelector('#sec-device .body');
+if(devBody){
+  var grow=document.createElement('div'); grow.className='ghi-row'; grow.id='padBar';
+  grow.innerHTML='<span class="ghi-label">Gamepad</span><span class="ghi-status" id="padStatus">未接続（A=再生 / B=停止 / X=ランダム / Y=書き出し / 十字上下=音量 / 左右=表示切替 / Start=集中モード）</span>';
+  devBody.appendChild(grow);
+  var prevBtns=[], repAt={}, vizIdx=0;
+  setInterval(function(){
+    var pads=navigator.getGamepads?navigator.getGamepads():[];
+    var gp=null; for(var i=0;i<pads.length;i++){ if(pads[i]){ gp=pads[i]; break; } }
+    var st=$('padStatus');
+    if(!gp){ if(st&&st.dataset.on){ st.dataset.on=''; st.textContent='未接続'; } prevBtns=[]; return; }
+    if(st&&!st.dataset.on){ st.dataset.on='1'; st.textContent='接続中： '+((gp.id||'gamepad')).slice(0,40); }
+    var now=Date.now();
+    function press(idx){ return !!(gp.buttons[idx]&&gp.buttons[idx].pressed); }
+    function edge(idx){ return press(idx)&&!prevBtns[idx]; }
+    function click(id){ var b=$(id); if(b) b.click(); }
+    if(edge(0)){ click('playBtn'); playing=true; }
+    if(edge(1)){ click('stopBtn'); playing=false; }
+    if(edge(2)) click('randomizeAll');
+    if(edge(3)) click('exportBtn');
+    if(edge(9)) click('focusToggleBtn');
+    if(edge(14)||edge(15)){
+      var bs=document.querySelectorAll('#vizbar button');
+      if(bs.length){ vizIdx=Math.max(0,Math.min(bs.length-1, vizIdx+(edge(15)?1:-1))); bs[vizIdx].click(); }
+    }
+    [12,13].forEach(function(idx){
+      if(press(idx)&&(!repAt[idx]||now-repAt[idx]>150)){ repAt[idx]=now; var g=fieldNum('master_gain',0.8)+(idx===12?0.05:-0.05); setField('master_gain', Math.max(0,Math.min(1.2,g)).toFixed(2)); }
+      if(!press(idx)) repAt[idx]=0;
+    });
+    prevBtns=gp.buttons.map(function(b){ return !!b.pressed; });
+  },80);
 }
 })();
 </script>
