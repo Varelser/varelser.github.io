@@ -5133,15 +5133,27 @@ function getBackgroundColor(cfg) {
     return new Promise(function (resolve) {
       var sim = createSimulationState(cfg, W, H);
       var margin = 100, cx = W / 2, cy = H / 2;
-      var cur = sim.particles.map(function (p) { return { w: p.width.toFixed(1), pts: [p.x, p.y] }; });
+      // Light path simplification: a raw point is recorded only when the line
+      // has travelled far enough or turned enough since the last kept point.
+      // Kept points are always exact raw points, the endpoint is always kept,
+      // and deviation stays sub-pixel — so the same point budget covers
+      // several times more frames than recording every step.
+      var minStep = Math.max(1.2, cfg.stepLength * 0.75);
+      var maxStep = Math.max(6, cfg.stepLength * 3);
+      function newPath(p) { return { w: p.width.toFixed(1), pts: [p.x, p.y], kx: p.x, ky: p.y, rx: p.x, ry: p.y, dx: 0, dy: 0 }; }
+      var cur = sim.particles.map(newPath);
       var done = []; var points = 0, steps = 0, f = 0, truncated = false;
-      function flush(i) { if (cur[i].pts.length >= 4) { done.push(cur[i]); } }
+      function flush(i) {
+        var c = cur[i], n = c.pts.length;
+        if (Math.abs(c.rx - c.pts[n - 2]) > 0.01 || Math.abs(c.ry - c.pts[n - 1]) > 0.01) { c.pts.push(c.rx, c.ry); points++; }
+        if (c.pts.length >= 4) done.push({ w: c.w, pts: c.pts });
+      }
       function chunk() {
         var chunkSteps = 0;
         while (f < frames && chunkSteps < 250000) {
           for (var i = 0; i < sim.particles.length; i++) {
             var p = sim.particles[i];
-            if (p.remainingLife <= 0) { flush(i); p.reset(W, H, cfg.lineWidthMin, cfg.lineWidthMax, sim.noise, cfg.clustering, cfg.noiseFreq); cur[i] = { w: p.width.toFixed(1), pts: [p.x, p.y] }; }
+            if (p.remainingLife <= 0) { flush(i); p.reset(W, H, cfg.lineWidthMin, cfg.lineWidthMax, sim.noise, cfg.clustering, cfg.noiseFreq); cur[i] = newPath(p); }
             p.prevX = p.x; p.prevY = p.y;
             var angle = computeDirection(sim.noise, p.x, p.y, cfg, cx, cy);
             p.x += Math.cos(angle) * cfg.stepLength;
@@ -5149,11 +5161,25 @@ function getBackgroundColor(cfg) {
             p.remainingLife -= 1;
             steps++; chunkSteps++;
             if (p.x < -margin || p.x > W + margin || p.y < -margin || p.y > H + margin) {
-              flush(i); p.reset(W, H, cfg.lineWidthMin, cfg.lineWidthMax, sim.noise, cfg.clustering, cfg.noiseFreq); cur[i] = { w: p.width.toFixed(1), pts: [p.x, p.y] };
+              flush(i); p.reset(W, H, cfg.lineWidthMin, cfg.lineWidthMax, sim.noise, cfg.clustering, cfg.noiseFreq); cur[i] = newPath(p);
               continue;
             }
-            cur[i].pts.push(p.x, p.y); points++;
-            if (cur[i].w !== p.width.toFixed(1)) cur[i].w = p.width.toFixed(1);
+            var c = cur[i];
+            c.rx = p.x; c.ry = p.y;
+            var ddx = p.x - c.kx, ddy = p.y - c.ky;
+            var d = Math.sqrt(ddx * ddx + ddy * ddy);
+            if (d >= minStep) {
+              var keep = d >= maxStep || c.pts.length < 4;
+              if (!keep && (c.dx !== 0 || c.dy !== 0)) {
+                if (1 - ((ddx / d) * c.dx + (ddy / d) * c.dy) > 0.0015) keep = true;
+              }
+              if (keep) {
+                c.pts.push(p.x, p.y); points++;
+                c.dx = ddx / d; c.dy = ddy / d;
+                c.kx = p.x; c.ky = p.y;
+              }
+            }
+            if (c.w !== p.width.toFixed(1)) c.w = p.width.toFixed(1);
           }
           f++;
           if (points > MAX_POINTS || steps > MAX_STEPS) { truncated = true; break; }
@@ -5233,7 +5259,7 @@ function getBackgroundColor(cfg) {
     grid.appendChild(b1); grid.appendChild(b2);
     var note = document.createElement('div');
     note.className = 'meta-note'; note.id = 'lienSvgNote';
-    note.textContent = 'SVG replays the core lines as vector paths (single colour, no textures or FX — same replay as the hi-res PNG).';
+    note.textContent = 'SVG replays the core lines as vector paths (single colour, no textures or FX — same replay as the hi-res PNG). Paths are lightly simplified (sub-pixel) so more frames fit the size budget.';
     grid.parentElement.appendChild(note);
   }
 
