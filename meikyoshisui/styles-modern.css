@@ -1594,3 +1594,71 @@ select.chain-sel,
   .fam-flyout { animation: none; }
   .lien-nav button.fam-chip { transition: none; }
 }
+
+/* ── 2026-11-16 Focus B (js/97): ⌘K パレット / 集中モード / ECB サマリー / 動線圧縮 ──
+   モノクロのみ。集中 ON (body.focus-on) のときだけ効く規則と、パレットの
+   規則だけを足す。集中 OFF では v36 と同じ表示に戻る。 */
+.focus-row { align-items: center; }
+.focus-row #focusToggleBtn.on { color: #fff !important; border-color: #525252 !important; background: rgba(255,255,255,.08) !important; }
+body.focus-on #lienNav .lien-steps,
+body.focus-on #lienNav .lien-jumps { display: none !important; }
+.ecb-summary {
+  display: none; align-items: center; gap: 10px;
+  padding: 6px 2px 10px; margin-bottom: 4px;
+}
+body.focus-on .ecb-summary { display: flex; }
+.ecb-summary-text { font-size: 12px; font-weight: 600; letter-spacing: .12em; color: rgba(255,255,255,.85); }
+.ecb-summary-btn {
+  margin-left: auto; background: transparent; color: #d4d4d4;
+  border: 1px solid #333; border-radius: 8px; padding: 6px 12px;
+  font-size: 11px; font-weight: 500; letter-spacing: .08em; cursor: pointer; min-height: 32px;
+}
+.ecb-summary-btn:hover { background: rgba(255,255,255,.08); color: #fff; border-color: #525252; }
+#engineControlBar.ecb-collapsed .ecb-header,
+#engineControlBar.ecb-collapsed #ecbGrid,
+#engineControlBar.ecb-collapsed #ecbStatus { display: none !important; }
+.cmdk-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.62);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 11vh 12px 12px;
+}
+.cmdk-overlay[hidden] { display: none !important; }
+.cmdk-box {
+  width: min(640px, 94vw); max-height: 72vh; display: flex; flex-direction: column;
+  background: #0a0a0a; border: 1px solid #333; border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.65); overflow: hidden;
+}
+#cmdkInput {
+  width: 100%; background: transparent; border: 0; outline: none;
+  color: #fff; font-size: 15px; padding: 14px 16px;
+  border-bottom: 1px solid #1c1c1c; font-family: inherit;
+}
+#cmdkInput::placeholder { color: #737373; }
+#cmdkList { overflow-y: auto; padding: 6px; min-height: 0; }
+.cmdk-section {
+  font-size: 10px; font-weight: 600; letter-spacing: .16em; color: #737373;
+  padding: 10px 10px 4px;
+}
+.cmdk-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px; cursor: pointer;
+}
+.cmdk-row.active { background: rgba(255,255,255,.08); }
+.cmdk-row-main { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.cmdk-row-title { font-size: 13px; color: #e5e5e5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmdk-row-sub { font-size: 11px; color: #8a8a8a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmdk-star {
+  flex: none; background: transparent; border: 0; cursor: pointer;
+  color: #737373; font-size: 15px; width: 30px; height: 30px; border-radius: 8px;
+}
+.cmdk-star.on { color: #fff; }
+.cmdk-star:hover { background: rgba(255,255,255,.08); }
+.cmdk-empty { padding: 18px 12px; color: #8a8a8a; font-size: 13px; }
+.cmdk-foot {
+  padding: 8px 14px; border-top: 1px solid #1c1c1c;
+  font-size: 11px; color: #737373; flex: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmdk-box { animation: none; }
+}
