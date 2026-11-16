@@ -599,6 +599,9 @@ const TAGS = {
           matchStrs.push({ str: a, idx: [...set][0], alias: true });
         }
       }
+      // フル表記のゆれ（マーカス・レイクル）は境界判定なしで照合する
+      const raichleNode = nodes.find((n) => n.name === 'マーカス・ライヒル');
+      if (raichleNode) matchStrs.push({ str: 'マーカス・レイクル', idx: raichleNode.i, alias: false });
       matchStrs.sort((x, y) => [...y.str].length - [...x.str].length);
       // 別名の一致はカタカナ語の途中に埋もれたものを数えない
       // （例：「セス」は「プロセス」の一部、「グレイ」は「グレイソン」の一部）。
@@ -2848,7 +2851,7 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
       const degW = G.degWeak[idx] || 0;
       const infoW = document.createElement('div');
       infoW.className = 'gd-meta';
-      infoW.textContent = '弱い辺：' + degW + '件（タグ2つ共通の上位3件）';
+      infoW.textContent = '弱い辺：' + degW + '件（タグ2つ共通の上位4件・同章優先）';
       d.appendChild(infoW);
       // 交流：相手名（type）の一覧。クリックでその項目を中心にした周辺表示へ。
       const rels = G.edges.filter((e) => e.rel && (e.a === idx || e.b === idx));
@@ -3505,7 +3508,7 @@ const treeSlotH = () => 40 + 6 * (G.force.rest || 1);
         const wSw = document.createElement('span');
         wSw.className = 'edge-sample weak';
         w.appendChild(wSw);
-        w.appendChild(document.createTextNode('弱い辺（タグ2つ共通・各項目の上位3件）'));
+        w.appendChild(document.createTextNode('弱い辺（タグ2つ共通・各項目の上位4件・同章優先）'));
         legend.appendChild(w);
         const s = document.createElement('span');
         const sSw = document.createElement('span');
