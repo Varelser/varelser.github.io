@@ -118,7 +118,10 @@ function refreshEcbSummary() {
   els.ecbSummaryText.textContent = total
     ? `Engine Control — 有効 ${on} / ${total}`
     : 'Engine Control';
-  if (els.ecbToggleBtn) els.ecbToggleBtn.textContent = ecbCollapsed ? '展開' : '畳む';
+  if (els.ecbToggleBtn) {
+    els.ecbToggleBtn.textContent = ecbCollapsed ? '▾' : '▴';
+    els.ecbToggleBtn.setAttribute('aria-label', ecbCollapsed ? 'Engine Controlを開く' : 'Engine Controlを畳む');
+  }
 }
 function setEcbCollapsed(collapsed) {
   ecbCollapsed = !!collapsed;
@@ -352,11 +355,21 @@ function buildChrome() {
     const txt = document.createElement('span');
     txt.className = 'ecb-summary-text'; txt.id = 'ecbSummaryText';
     const btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'ecb-summary-btn'; btn.id = 'ecbSummaryBtn'; btn.textContent = '展開';
+    btn.type = 'button'; btn.className = 'ecb-summary-btn'; btn.id = 'ecbSummaryBtn'; btn.textContent = '▾';
+    btn.setAttribute('aria-label', 'Engine Controlを開く');
     btn.addEventListener('click', () => setEcbCollapsed(!ecbCollapsed));
     bar.appendChild(txt); bar.appendChild(btn);
     ecb.insertBefore(bar, ecb.firstChild);
     els.ecbSummaryText = txt; els.ecbToggleBtn = btn;
+    /* ホバーで開く (user 2026-11-16): 畳んだ ECB にカーソルが来たら展開する。
+       120ms の意図判定つき。開いた後は自動では畳まない (操作中に閉じないため)。 */
+    let ecbHoverTimer = null;
+    ecb.addEventListener('mouseenter', () => {
+      if (!focusOn || !ecbCollapsed) return;
+      clearTimeout(ecbHoverTimer);
+      ecbHoverTimer = setTimeout(() => { if (focusOn && ecbCollapsed) setEcbCollapsed(false); }, 120);
+    });
+    ecb.addEventListener('mouseleave', () => clearTimeout(ecbHoverTimer));
   }
   const seedRow = document.getElementById('seedRow');
   if (seedRow && !document.getElementById('seedShareBtn')) {
