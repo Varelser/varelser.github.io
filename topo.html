@@ -4209,6 +4209,28 @@ async function renderSceneOffscreen(req) {
     }
   }
 
+  if (req.markers && req.markers.length) {
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < req.markers.length; i++) {
+      const m = req.markers[i];
+      const fs = 13 * (m.size || 1) * req.scale;
+      const off = Math.max(0.8, fs * 0.09);
+      const mx = m.x * req.width;
+      const my = m.y * req.height;
+      ctx.font = '700 ' + fs + 'px sans-serif';
+      ctx.fillStyle = 'rgb(0, 0, 0)';
+      ctx.fillText(m.text, mx + off, my);
+      ctx.fillText(m.text, mx - off, my);
+      ctx.fillText(m.text, mx, my + off);
+      ctx.fillText(m.text, mx, my - off);
+      ctx.fillStyle = 'rgb(255, 255, 255)';
+      ctx.fillText(m.text, mx, my);
+    }
+    ctx.restore();
+  }
+
   return canvas.convertToBlob({ type: 'image/png' });
 }
 
@@ -4236,6 +4258,12 @@ function formatSvgNumber(value) {
 function formatSvgAlpha(value) {
   if (!Number.isFinite(value)) return '0';
   return String(Math.round(value * 10000) / 10000);
+}
+
+// Marker texts are user-controlled (round 3 annotations), unlike
+// every other SVG string here, so they must be XML-escaped.
+function escapeSvgText(value) {
+  return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // Path data for one contour from the shared segment stream, with
@@ -4444,6 +4472,16 @@ async function buildSvgString(sceneData, opts, onProgress) {
       texts.push(`<text x="${formatSvgNumber(p.x * coordScale)}" y="${formatSvgNumber(p.y * coordScale)}" transform="rotate(${formatSvgNumber(ang)} ${formatSvgNumber(p.x * coordScale)} ${formatSvgNumber(p.y * coordScale)})" fill="rgb(255, 255, 255)" font-size="${formatSvgNumber(10 * strokeScale)}" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" style="paint-order:stroke;stroke:rgb(0, 0, 0);stroke-width:${formatSvgNumber(3 * strokeScale)}">${txt}</text>`);
     }
     if (texts.length) parts.push(`<g>${texts.join('')}</g>`);
+  }
+
+  if (options.markers && options.markers.length) {
+    const mtexts = [];
+    for (let i = 0; i < options.markers.length; i++) {
+      const m = options.markers[i];
+      const fs = 13 * (m.size || 1) * strokeScale;
+      mtexts.push(`<text x="${formatSvgNumber(m.x * width)}" y="${formatSvgNumber(m.y * height)}" fill="rgb(255, 255, 255)" font-size="${formatSvgNumber(fs)}" font-weight="700" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" style="paint-order:stroke;stroke:rgb(0, 0, 0);stroke-width:${formatSvgNumber(Math.max(2, fs * 0.22))}">${escapeSvgText(m.text)}</text>`);
+    }
+    if (mtexts.length) parts.push(`<g>${mtexts.join('')}</g>`);
   }
 
   parts.push('</svg>');
@@ -4857,7 +4895,8 @@ async function renderSceneViaWorker(scene, renderOpts, onProgress) {
     flowCoords: flat.flowCoords,
     flowCounts: flat.flowCounts,
     dashEvery: params.DASH_EVERY,
-    flowMode: params.FLOW_MODE
+    flowMode: params.FLOW_MODE,
+    markers: (typeof window !== 'undefined' && window.__topoMarkers) || []
   }, onProgress, 'render', [flat.coords.buffer, flat.counts.buffer, flat.closed.buffer, flat.dots.buffer, flat.levelIdx.buffer, flat.levelVal.buffer, flat.slopes.buffer, flat.flowCoords.buffer, flat.flowCounts.buffer].concat(flat.bandGrey ? [flat.bandGrey.buffer] : []).concat(flat.shadeGrey ? [flat.shadeGrey.buffer] : []));
   return blob || null;
 }
@@ -5018,6 +5057,35 @@ function drawFlowLinesP5(pg, scn, scale) {
   pg.pop();
 }
 
+// Annotation markers (expression expansion round 3): user-placed
+// numbers / symbols, stored normalized in window.__topoMarkers by
+// the expr script. White bold text with a black halo, centred on
+// the point. No-op when the list is empty.
+function drawMarkersP5(pg, w, h, scale) {
+  const list = (typeof window !== 'undefined' && window.__topoMarkers) || [];
+  if (!list.length) return;
+  pg.push();
+  pg.textAlign(pg.CENTER, pg.CENTER);
+  pg.textStyle(pg.BOLD);
+  pg.noStroke();
+  for (let i = 0; i < list.length; i++) {
+    const m = list[i];
+    const fs = 13 * (m.size || 1) * (scale || 1);
+    const off = Math.max(0.8, fs * 0.09);
+    const x = m.x * w;
+    const y = m.y * h;
+    pg.textSize(fs);
+    pg.fill(0);
+    pg.text(m.text, x + off, y);
+    pg.text(m.text, x - off, y);
+    pg.text(m.text, x, y + off);
+    pg.text(m.text, x, y - off);
+    pg.fill(255);
+    pg.text(m.text, x, y);
+  }
+  pg.pop();
+}
+
 function renderArtworkCache() {
   if (typeof createGraphics !== 'function') {
     artworkCache = null;
@@ -5054,6 +5122,8 @@ function renderArtworkCache() {
   if (params.FLOW_MODE > 0) drawFlowLinesP5(pg, scene, 1);
 
   if (params.LABELS && params.FLOW_MODE !== 2) drawContourLabelsP5(pg, scene, 1);
+
+  drawMarkersP5(pg, width, height, 1);
 
   if (artworkCache && artworkCache.remove) artworkCache.remove();
   artworkCache = pg;
@@ -5371,6 +5441,8 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
 
   if (params.LABELS && params.FLOW_MODE !== 2) drawContourLabelsP5(pg, exportScene, scale);
 
+  drawMarkersP5(pg, exportW, exportH, scale);
+
   downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
     pg.remove();
     setStatus(`PNGを保存しました（${filename}）`);
@@ -5537,6 +5609,7 @@ async function buildAndDownloadSvg(exportScene, scale, transparent, exportW, exp
       dashEvery: params.DASH_EVERY,
       flowMode: params.FLOW_MODE,
       sceneFlowPaths: exportScene.flowPaths || null,
+      markers: (typeof window !== 'undefined' && window.__topoMarkers) || [],
       sceneMin: exportScene.minField,
       sceneMax: exportScene.maxField
     }, (ratio) => {
@@ -7328,6 +7401,8 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 
   // ---------- controls ----------
   // ---------- text heightfield ----------
+  var textPosIdx = 4;
+  var textScaleVal = 1;
   function applyTextTerrain(text) {
     text = (text || '').trim();
     if (!text) { textPart = new Float32Array(AUX_COLS * AUX_ROWS); applyAuxAndRegen(); return; }
@@ -7343,12 +7418,16 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     var size = 150;
     cx.font = '700 ' + size + 'px sans-serif';
     var tw = cx.measureText(text).width;
-    if (tw > W * 0.92) { size = Math.floor(size * (W * 0.92) / tw); cx.font = '700 ' + size + 'px sans-serif'; }
+    if (tw > W * 0.92) { size = Math.floor(size * (W * 0.92) / tw); }
+    size = Math.max(10, Math.floor(size * textScaleVal));
+    cx.font = '700 ' + size + 'px sans-serif';
+    var anchorX = [0.25, 0.5, 0.75][textPosIdx % 3] * W;
+    var anchorY = [0.27, 0.5, 0.73][Math.floor(textPosIdx / 3)] * H;
     cx.shadowColor = 'rgba(255,255,255,0.9)';
     cx.shadowBlur = 10;
-    cx.fillText(text, W / 2, H / 2);
+    cx.fillText(text, anchorX, anchorY);
     cx.shadowBlur = 0;
-    cx.fillText(text, W / 2, H / 2);
+    cx.fillText(text, anchorX, anchorY);
     var small = document.createElement('canvas');
     small.width = AUX_COLS; small.height = AUX_ROWS;
     var sx = small.getContext('2d');
@@ -7360,6 +7439,168 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     }
     applyAuxAndRegen();
     try { setStatus('文字地形を適用しました: ' + text); } catch (e) {}
+  }
+
+  // ---------- annotation markers (round 3) ----------
+  var markers = [];
+  var markersOn = false;
+  var markOverlay = null;
+  var markCanvas = null;
+  var markDrag = null;
+  function syncMarkersGlobal() { window.__topoMarkers = markers; }
+  function saveMarkers() {
+    try { localStorage.setItem('topo.markers.v1', JSON.stringify(markers)); } catch (e) {}
+  }
+  function loadMarkers() {
+    try {
+      var raw = localStorage.getItem('topo.markers.v1');
+      if (raw) {
+        var arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          markers = arr.filter(function (m) {
+            return m && typeof m.x === 'number' && typeof m.y === 'number' && typeof m.text === 'string' && m.text.length > 0;
+          }).map(function (m) {
+            return {
+              x: Math.min(1, Math.max(0, m.x)),
+              y: Math.min(1, Math.max(0, m.y)),
+              text: m.text.slice(0, 8),
+              size: Math.min(2.5, Math.max(0.5, (typeof m.size === 'number' ? m.size : 1)))
+            };
+          });
+        }
+      }
+    } catch (e) {}
+    syncMarkersGlobal();
+  }
+  function refreshMarkersArtwork() {
+    try { invalidateArtworkCache(); redraw(); } catch (e) {}
+  }
+  function afterMarkersChanged() {
+    saveMarkers();
+    syncMarkersGlobal();
+    refreshMarkersArtwork();
+    drawMarkPreview();
+  }
+  function currentMarkerText() {
+    var kindEl = document.getElementById('exprMarkKind');
+    var kind = kindEl ? kindEl.value : 'seq';
+    if (kind === 'sym') {
+      var symEl = document.getElementById('exprMarkSym');
+      return symEl ? symEl.value : '▲';
+    }
+    if (kind === 'text') {
+      var textEl = document.getElementById('exprMarkText');
+      var t = textEl ? textEl.value.trim() : '';
+      return t ? t.slice(0, 8) : '●';
+    }
+    var mx = 0;
+    for (var i = 0; i < markers.length; i++) {
+      var n = parseInt(markers[i].text, 10);
+      if (!isNaN(n) && String(n) === markers[i].text.trim()) mx = Math.max(mx, n);
+    }
+    return String(mx + 1);
+  }
+  function currentMarkerSize() {
+    var sizeEl = document.getElementById('exprMarkSize');
+    return sizeEl ? parseFloat(sizeEl.value) : 1;
+  }
+  function drawMarkPreview() {
+    if (!markCanvas || !markOverlay || markOverlay.style.display === 'none') return;
+    var r = markOverlay.getBoundingClientRect();
+    var cw = Math.max(2, Math.round(r.width)), ch = Math.max(2, Math.round(r.height));
+    var dpr = window.devicePixelRatio || 1;
+    if (markCanvas.width !== Math.round(cw * dpr) || markCanvas.height !== Math.round(ch * dpr)) {
+      markCanvas.width = Math.round(cw * dpr);
+      markCanvas.height = Math.round(ch * dpr);
+    }
+    var cx = markCanvas.getContext('2d');
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx.clearRect(0, 0, cw, ch);
+    cx.textAlign = 'center';
+    cx.textBaseline = 'middle';
+    for (var i = 0; i < markers.length; i++) {
+      var m = markers[i];
+      var fs = 13 * (m.size || 1);
+      var off = Math.max(0.8, fs * 0.09);
+      var x = m.x * cw, y = m.y * ch;
+      cx.font = '700 ' + fs + 'px sans-serif';
+      cx.fillStyle = '#000';
+      cx.fillText(m.text, x + off, y);
+      cx.fillText(m.text, x - off, y);
+      cx.fillText(m.text, x, y + off);
+      cx.fillText(m.text, x, y - off);
+      cx.fillStyle = '#fff';
+      cx.fillText(m.text, x, y);
+    }
+  }
+  function ensureMarkOverlay() {
+    if (markOverlay) return markOverlay;
+    var wrap = document.getElementById('canvasWrap');
+    if (!wrap) return null;
+    markOverlay = document.createElement('div');
+    markOverlay.id = 'exprMarkOverlay';
+    markOverlay.style.cssText = 'position:absolute;inset:0;z-index:31;display:none;cursor:crosshair;touch-action:none;';
+    markCanvas = document.createElement('canvas');
+    markCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;';
+    markOverlay.appendChild(markCanvas);
+    wrap.appendChild(markOverlay);
+    function toNormM(ev) {
+      var r = markOverlay.getBoundingClientRect();
+      return { x: (ev.clientX - r.left) / Math.max(1, r.width), y: (ev.clientY - r.top) / Math.max(1, r.height) };
+    }
+    function hitMarker(pt) {
+      var r = markOverlay.getBoundingClientRect();
+      var px = pt.x * r.width, py = pt.y * r.height;
+      var best = -1, bestD = 20;
+      for (var i = markers.length - 1; i >= 0; i--) {
+        var d = Math.hypot(markers[i].x * r.width - px, markers[i].y * r.height - py);
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      return best;
+    }
+    markOverlay.addEventListener('pointerdown', function (ev) {
+      var pt = toNormM(ev);
+      var hit = hitMarker(pt);
+      if (ev.altKey && hit >= 0) {
+        markers.splice(hit, 1);
+        afterMarkersChanged();
+        try { setStatus('注記を削除しました（残り ' + markers.length + ' 件）'); } catch (e) {}
+        ev.preventDefault();
+        return;
+      }
+      if (hit >= 0) {
+        markDrag = { idx: hit, dx: markers[hit].x - pt.x, dy: markers[hit].y - pt.y };
+      } else {
+        markers.push({ x: pt.x, y: pt.y, text: currentMarkerText(), size: currentMarkerSize() });
+        markDrag = { idx: markers.length - 1, dx: 0, dy: 0 };
+        drawMarkPreview();
+      }
+      try { markOverlay.setPointerCapture(ev.pointerId); } catch (e) {}
+      ev.preventDefault();
+    });
+    markOverlay.addEventListener('pointermove', function (ev) {
+      if (!markDrag) return;
+      var pt = toNormM(ev);
+      var m = markers[markDrag.idx];
+      if (!m) { markDrag = null; return; }
+      m.x = Math.min(1, Math.max(0, pt.x + markDrag.dx));
+      m.y = Math.min(1, Math.max(0, pt.y + markDrag.dy));
+      drawMarkPreview();
+    });
+    function endMarkDrag() { if (markDrag) { markDrag = null; afterMarkersChanged(); } }
+    markOverlay.addEventListener('pointerup', endMarkDrag);
+    markOverlay.addEventListener('pointercancel', endMarkDrag);
+    return markOverlay;
+  }
+  function setMarkers(on) {
+    markersOn = on;
+    if (on && sculptOn) setSculpt(false);
+    var ov = ensureMarkOverlay();
+    if (ov) ov.style.display = on ? 'block' : 'none';
+    var btn = document.getElementById('exprMarkMode');
+    if (btn) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); btn.textContent = on ? '注記中（クリックで配置）' : '注記モード'; }
+    if (on) drawMarkPreview();
+    try { setStatus(on ? '注記モード: クリックで配置、ドラッグで移動、Alt+クリックで削除' : '注記モードを終了しました'); } catch (e) {}
   }
 
   // ---------- real terrain (Mt. Fuji DEM via terrarium tiles) ----------
@@ -7804,6 +8045,18 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     textClear.type = 'button';
     textClear.addEventListener('click', function () { textInput.value = ''; applyTextTerrain(''); });
     rText.appendChild(textClear);
+    var rTextPos = row('文字の配置:');
+    var posSel = document.createElement('select');
+    posSel.id = 'exprTextPos';
+    var posNames = ['左上', '上', '右上', '左', '中央', '右', '左下', '下', '右下'];
+    for (var pi = 0; pi < 9; pi++) { var po = document.createElement('option'); po.value = String(pi); po.textContent = posNames[pi]; posSel.appendChild(po); }
+    posSel.value = '4';
+    posSel.addEventListener('change', function () { textPosIdx = parseInt(posSel.value, 10); if (textInput.value.trim()) applyTextTerrain(textInput.value); });
+    rTextPos.appendChild(posSel);
+    var tScale = range('exprTextScale', 0.5, 1.6, 0.05, 1);
+    tScale.addEventListener('input', function () { textScaleVal = parseFloat(tScale.value); });
+    tScale.addEventListener('change', function () { if (textInput.value.trim()) applyTextTerrain(textInput.value); });
+    rTextPos.appendChild(tScale);
     var rDem = row('実地形:');
     var fujiBtn = el('button', 'panel-btn', '富士山（実標高）');
     fujiBtn.type = 'button'; fujiBtn.id = 'exprFuji';
@@ -7819,6 +8072,33 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     });
     rDem.appendChild(demClear);
 
+    // round 3: annotation markers
+    var rMark = row('注記マーカー:');
+    var markBtn = el('button', 'panel-btn', '注記モード');
+    markBtn.type = 'button'; markBtn.id = 'exprMarkMode'; markBtn.setAttribute('aria-pressed', 'false');
+    markBtn.addEventListener('click', function () { setMarkers(!markersOn); });
+    rMark.appendChild(markBtn);
+    var kindSel = document.createElement('select');
+    kindSel.id = 'exprMarkKind';
+    [['seq', '連番'], ['text', '任意テキスト'], ['sym', '記号']].forEach(function (kv) { var o = document.createElement('option'); o.value = kv[0]; o.textContent = kv[1]; kindSel.appendChild(o); });
+    rMark.appendChild(kindSel);
+    var markClear = el('button', 'panel-btn', '全消去');
+    markClear.type = 'button'; markClear.id = 'exprMarkClear';
+    markClear.addEventListener('click', function () {
+      if (markers.length) { markers = []; afterMarkersChanged(); try { setStatus('注記を全て消去しました'); } catch (e) {} }
+    });
+    rMark.appendChild(markClear);
+    var rMark2 = row('注記の内容:');
+    var markText = document.createElement('input');
+    markText.type = 'text'; markText.id = 'exprMarkText'; markText.placeholder = '数字・文字'; markText.style.flex = '1'; markText.maxLength = 8;
+    rMark2.appendChild(markText);
+    var symSel = document.createElement('select');
+    symSel.id = 'exprMarkSym';
+    ['▲', '●', '■', '★', '＋', '※', '↑', '↗', '◆', '○', '□', '△', '×'].forEach(function (s) { var o = document.createElement('option'); o.value = s; o.textContent = s; symSel.appendChild(o); });
+    rMark2.appendChild(symSel);
+    var markSize = range('exprMarkSize', 0.6, 2.2, 0.1, 1);
+    rMark2.appendChild(markSize);
+
     // round 2: finishing outputs
     var rFinish = row('仕上げ:');
     var posterBtn = el('button', 'panel-btn', '地図ポスター書き出し');
@@ -7830,7 +8110,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     sheetBtn.addEventListener('click', contactSheet);
     rFinish.appendChild(sheetBtn);
 
-    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。[build r2v4]');
+    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。注記マーカーはブラウザ内に保存され、PNG/SVG書き出しにも含まれます。[build r3v1]');
     body.appendChild(note);
 
     // drag & drop image onto the window
@@ -7865,6 +8145,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 
   function init() {
     loadPaint();
+    loadMarkers();
     if (paintPart.some(function (v) { return v !== 0; })) bakeAux();
     buildUI();
   }
