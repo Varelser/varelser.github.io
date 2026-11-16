@@ -223,7 +223,15 @@ const MidiInputEngine = (() => {
       updateStatus('WEB MIDI: UNSUPPORTED', 'This browser does not expose navigator.requestMIDIAccess()');
       return false;
     }
-    STATE.access = await navigator.requestMIDIAccess();
+    try {
+      STATE.access = await navigator.requestMIDIAccess();
+    } catch (e) {
+      /* D3 (audit 2026-11-17): permission denial used to escape as an
+         unhandled rejection (pageerror). Report it in the status line
+         and stay disabled instead. */
+      updateStatus('WEB MIDI: 許可されませんでした', 'ブラウザで MIDI アクセスが許可されなかったため、MIDI IN を有効化できませんでした');
+      return false;
+    }
     STATE.enabled = true;
     STATE.access.onstatechange = () => {
       refreshInputSelect();
@@ -322,9 +330,9 @@ const MidiInputEngine = (() => {
 
     refreshBtn.addEventListener('click', async () => {
       if (!STATE.enabled) {
-        await enable();
-        tog.classList.add('on');
-        controls.style.display = 'block';
+        const ok = await enable();
+        tog.classList.toggle('on', !!ok);
+        controls.style.display = ok ? 'block' : 'none';
       } else {
         refreshInputSelect();
         bindSelectedInput();

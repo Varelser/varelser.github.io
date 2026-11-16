@@ -1,4 +1,30 @@
-function parseChord(str){if(!str||!str.trim())return null;str=str.trim().replace(/\u266d/g,'b').replace(/\u266f/g,'#').replace(/\u2206/g,'\u0394').replace(/[()]/g,'');let i=0;let rs=str[0].toUpperCase();i=1;if(i<str.length&&(str[i]==='#'||str[i]==='b')){rs+=str[i];i++;}const rn=ALIASES[rs]||rs;const ri=NN.indexOf(rn);if(ri<0)return null;let qual=str.substring(i).trim();const si=qual.lastIndexOf('/');if(si>=0&&/[A-Ga-g]/.test(qual[si+1]||''))qual=qual.substring(0,si);if(qual==='+')qual='aug';else if(qual==='+7')qual='aug7';const keys=Object.keys(CHORDS).sort((a,b)=>b.length-a.length);for(const k of keys){if(qual===k)return{root:ri,rootName:rs,quality:k,iv:CHORDS[k].iv,name:CHORDS[k].name};}for(const k of keys){if(k!==''&&qual.startsWith(k))return{root:ri,rootName:rs,quality:k,iv:CHORDS[k].iv,name:CHORDS[k].name};}return null;}
+function parseChord(str){if(!str||!str.trim())return null;str=str.trim().replace(/\u266d/g,'b').replace(/\u266f/g,'#').replace(/\u2206/g,'\u0394').replace(/[()]/g,'');let i=0;let rs=str[0].toUpperCase();i=1;if(i<str.length&&(str[i]==='#'||str[i]==='b')){rs+=str[i];i++;}const rn=ALIASES[rs]||rs;const ri=NN.indexOf(rn);if(ri<0)return null;let qual=str.substring(i).trim();const si=qual.lastIndexOf('/');if(si>=0&&/[A-Ga-g]/.test(qual[si+1]||''))qual=qual.substring(0,si);if(qual==='+')qual='aug';else if(qual==='+7')qual='aug7';const keys=Object.keys(CHORDS).sort((a,b)=>b.length-a.length);
+const exact=q=>{for(const k of keys){if(q===k)return{quality:k,iv:CHORDS[k].iv,name:CHORDS[k].name};}return null;};
+/* D2 (audit 2026-11-17): the prefix fallback used to drop alterations silently
+   (C7b5 displayed as plain "Dominant 7th"). Keep the matched tones untouched,
+   but carry a pure-alteration remainder (b5 / #5 / b9 / alt ...) into the
+   display name so the UI no longer hides it. */
+const prefix=q=>{for(const k of keys){if(k!==''&&q.startsWith(k)){const rem=q.slice(k.length);const nm=(/^((?:b|#)\d+)+$/.test(rem)||rem==='alt')?CHORDS[k].name+' '+rem.replace(/b/g,'♭').replace(/#/g,'♯'):CHORDS[k].name;return{quality:k,iv:CHORDS[k].iv,name:nm};}}return null;};
+const e=exact(qual);if(e)return{root:ri,rootName:rs,quality:e.quality,iv:e.iv,name:e.name};
+/* D1 (audit 2026-11-17): omit3 / omit5 as composable modifiers. Strip them,
+   resolve the base quality as usual, then remove the 3rd / 5th degree tones
+   (simple intervals only; compound extensions are kept). A bare 'omit5'
+   still resolves through the dictionary entry (Maj7 omit5) above. */
+const omits=[];let base=qual;
+for(const om of['omit3','omit5']){if(base.includes(om)){omits.push(om);base=base.split(om).join('');}}
+if(omits.length){
+  const m=exact(base)||prefix(base);
+  if(m){
+    let iv=m.iv.slice();
+    for(const om of omits){
+      if(om==='omit3')iv=iv.filter(v=>!(v<12&&(v===3||v===4)));
+      else iv=iv.filter(v=>!(v<12&&(v===6||v===7||v===8)));
+    }
+    return{root:ri,rootName:rs,quality:m.quality+omits.join(''),iv:iv,name:m.name+' '+omits.join(' ')};
+  }
+}
+const p=prefix(qual);if(p)return{root:ri,rootName:rs,quality:p.quality,iv:p.iv,name:p.name};
+return null;}
 function nn(n){return NN[((n%12)+12)%12];}
 function chordNotes(root,iv){return iv.map(i=>((root+i)%12+12)%12);}
 function scaleNotes(root,iv){return iv.map(i=>((root+i)%12+12)%12);}
