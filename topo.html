@@ -867,6 +867,13 @@ let params = {
   LABELS: false,
   TILE_MODE: false,
   PLOTTER_SVG: false,
+  HILLSHADE: false,
+  SHADE_ANGLE: 315,
+  RIDGE: 0,
+  VORTEX: 0,
+  WOBBLE: 0,
+  DASH_EVERY: 0,
+  FLOW_MODE: 0,
   SHOW_TEXTURE: true,
   SHOW_RED_SHADOW: false,
   SHOW_HOLE_GUIDES: true
@@ -928,9 +935,15 @@ const PARAM_RANGES = {
   TERRACE: [0, 40],
   BAND_LEVELS: [4, 32],
   SLOPE_WEIGHT: [0, 1],
-  INDEX_EVERY: [0, 10]
+  INDEX_EVERY: [0, 10],
+  SHADE_ANGLE: [0, 360],
+  RIDGE: [0, 1],
+  VORTEX: [-3, 3],
+  WOBBLE: [0, 1],
+  DASH_EVERY: [0, 10],
+  FLOW_MODE: [0, 2]
 };
-const PARAM_BOOLEANS = ['ENABLE_INTERFERENCE', 'ENABLE_CIRCULARIZE', 'SHOW_TEXTURE', 'SHOW_RED_SHADOW', 'SHOW_HOLE_GUIDES', 'EXPORT_TRANSPARENT', 'BAND_FILL', 'LABELS', 'TILE_MODE', 'PLOTTER_SVG'];
+const PARAM_BOOLEANS = ['ENABLE_INTERFERENCE', 'ENABLE_CIRCULARIZE', 'SHOW_TEXTURE', 'SHOW_RED_SHADOW', 'SHOW_HOLE_GUIDES', 'EXPORT_TRANSPARENT', 'BAND_FILL', 'LABELS', 'TILE_MODE', 'PLOTTER_SVG', 'HILLSHADE'];
 const SETTINGS_PARAM_KEYS = Object.keys(PARAM_RANGES).concat(PARAM_BOOLEANS, ['EXPORT_SCALE']);
 
 let scene = {
@@ -1876,6 +1889,13 @@ function coreParamsSnapshot() {
     LABELS: params.LABELS,
     TILE_MODE: params.TILE_MODE,
     PLOTTER_SVG: params.PLOTTER_SVG,
+    HILLSHADE: params.HILLSHADE,
+    SHADE_ANGLE: params.SHADE_ANGLE,
+    RIDGE: params.RIDGE,
+    VORTEX: params.VORTEX,
+    WOBBLE: params.WOBBLE,
+    DASH_EVERY: params.DASH_EVERY,
+    FLOW_MODE: params.FLOW_MODE,
     WHITE_STROKE_WEIGHT: params.WHITE_STROKE_WEIGHT,
     TEXTURE_POINTS: params.TEXTURE_POINTS
   };
@@ -2366,6 +2386,8 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
     // the auxiliary elevation grid. All default to legacy behaviour.
     symmetry: (cp.SYMMETRY == null || !isFinite(cp.SYMMETRY)) ? 0 : Math.min(4, Math.max(0, Math.round(cp.SYMMETRY))),
     tileMode: !!cp.TILE_MODE,
+    ridgeAmt: (cp.RIDGE == null || !isFinite(cp.RIDGE)) ? 0 : Math.min(1, Math.max(0, cp.RIDGE)),
+    vortex: (cp.VORTEX == null || !isFinite(cp.VORTEX)) ? 0 : Math.min(3, Math.max(-3, cp.VORTEX)),
     aux: null,
     warpLatticeStep: 30,
     warpXLattice: null,
@@ -2563,6 +2585,19 @@ function coreSampleFieldAt(core, prep, x, y, cull) {
       }
     }
   }
+  if (prep.vortex) {
+    const vcx = prep.fieldWidth / 2;
+    const vcy = prep.fieldHeight / 2;
+    const vdx = x - vcx;
+    const vdy = y - vcy;
+    const vr = Math.hypot(vdx, vdy);
+    const vrmax = Math.max(1, Math.hypot(vcx, vcy));
+    const vang = prep.vortex * Math.PI * Math.max(0, 1 - vr / vrmax);
+    const vcos = Math.cos(vang);
+    const vsin = Math.sin(vang);
+    x = vcx + vdx * vcos - vdy * vsin;
+    y = vcy + vdx * vsin + vdy * vcos;
+  }
   // Mountain-final elevation:
   //   height(x, y) = swell(x, y) + peaks(x, y),
   //   peaks = sum_i h_i  +  PEAK_BLEND * 0.35 * ((sum_i h_i)^2 - sum_i h_i^2)
@@ -2692,6 +2727,11 @@ function coreSampleFieldAt(core, prep, x, y, cull) {
   value += blend > 0
     ? sumH + blend * 0.35 * ((sumPos * sumPos - sumSqPos) + (sumNeg * sumNeg - sumSqNeg))
     : sumH;
+  if (prep.ridgeAmt > 0) {
+    const rn = coreFbm(core, x * prep.warpFreq * 1.7 + 13.7, y * prep.warpFreq * 1.7 + 91.3, 4);
+    const rr = 1 - Math.abs(rn * 2 - 1);
+    value += prep.ridgeAmt * (rr * rr - 0.55) * 0.9;
+  }
   if (prep.aux && prep.aux.data) {
     const aux = prep.aux;
     const au = Math.min(1, Math.max(0, x / Math.max(1, prep.fieldWidth))) * (aux.cols - 1);
@@ -3482,6 +3522,8 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
   // post-processing (which preserves contour order and count), by
   // the per-level counts recorded during extraction.
   let bandGrey = null;
+  let shadeGrey = null;
+  let flowPaths = null;
   let bandCols = 0;
   let bandRows = 0;
   if (!flatMode) {
@@ -3529,12 +3571,99 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
         }
       }
     }
+    if (cp.HILLSHADE) {
+      bandCols = cols;
+      bandRows = rows;
+      const shadeDots = new Float32Array(cols * rows);
+      let shadeMax = 1e-9;
+      const shadeAz = (cp.SHADE_ANGLE == null || !isFinite(cp.SHADE_ANGLE) ? 315 : cp.SHADE_ANGLE) * Math.PI / 180;
+      const shadeLx = Math.cos(shadeAz);
+      const shadeLy = Math.sin(shadeAz);
+      for (let syy = 0; syy < rows; syy++) {
+        for (let sxx = 0; sxx < cols; sxx++) {
+          const si = syy * cols + sxx;
+          const sxm = sxx > 0 ? field[si - 1] : field[si];
+          const sxp = sxx < cols - 1 ? field[si + 1] : field[si];
+          const sym = syy > 0 ? field[si - cols] : field[si];
+          const syp = syy < rows - 1 ? field[si + cols] : field[si];
+          const sd = (sxp - sxm) * shadeLx + (syp - sym) * shadeLy;
+          shadeDots[si] = sd;
+          if (Math.abs(sd) > shadeMax) shadeMax = Math.abs(sd);
+        }
+      }
+      shadeGrey = new Uint8Array(cols * rows);
+      for (let si2 = 0; si2 < shadeDots.length; si2++) {
+        const ss = 0.5 + (shadeDots[si2] / shadeMax) * 0.5;
+        shadeGrey[si2] = Math.round(6 + Math.min(1, Math.max(0, ss)) * 104);
+      }
+    }
+    if (cp.FLOW_MODE > 0 && !(range && rangeStart > 0)) {
+      flowPaths = [];
+      let flowRngState = (seed ^ 0x51ab) >>> 0;
+      const flowRand = () => { flowRngState = (flowRngState * 1664525 + 1013904223) >>> 0; return flowRngState / 4294967296; };
+      const flowSpacing = Math.max(18, gridStep * 4.5);
+      let flowTotalPts = 0;
+      for (let fsy = flowSpacing * 0.5; fsy < targetHeight && flowTotalPts < 150000; fsy += flowSpacing) {
+        for (let fsx = flowSpacing * 0.5; fsx < targetWidth && flowTotalPts < 150000; fsx += flowSpacing) {
+          let fpx = fsx + (flowRand() - 0.5) * flowSpacing * 0.7;
+          let fpy = fsy + (flowRand() - 0.5) * flowSpacing * 0.7;
+          const fpts = [{ x: fpx, y: fpy }];
+          let fTravel = 0;
+          for (let fs = 0; fs < 420; fs++) {
+            const fgx = Math.min(cols - 2, Math.max(0, fpx / gridStep));
+            const fgy = Math.min(rows - 2, Math.max(0, fpy / gridStep));
+            const fx0 = Math.floor(fgx);
+            const fy0 = Math.floor(fgy);
+            const ftx = fgx - fx0;
+            const fty = fgy - fy0;
+            const fi00 = fy0 * cols + fx0;
+            const fv00 = field[fi00];
+            const fv10 = field[fi00 + 1];
+            const fv01 = field[fi00 + cols];
+            const fv11 = field[fi00 + cols + 1];
+            const fgvx = ((fv10 - fv00) * (1 - fty) + (fv11 - fv01) * fty) / gridStep;
+            const fgvy = ((fv01 - fv00) * (1 - ftx) + (fv11 - fv10) * ftx) / gridStep;
+            const fgl = Math.hypot(fgvx, fgvy);
+            if (fgl < 1e-7) break;
+            const fStepLen = gridStep * 0.9;
+            fpx -= (fgvx / fgl) * fStepLen;
+            fpy -= (fgvy / fgl) * fStepLen;
+            fTravel += fStepLen;
+            if (fpx < 0 || fpy < 0 || fpx > targetWidth || fpy > targetHeight) break;
+            if (fs % 2 === 0) fpts.push({ x: fpx, y: fpy });
+            if (fTravel > targetWidth * 1.2) break;
+          }
+          if (fpts.length >= 6) { flowPaths.push({ points: fpts, closed: false }); flowTotalPts += fpts.length; }
+        }
+      }
+    }
+    if (cp.WOBBLE > 0) {
+      const wobAmp = cp.WOBBLE * 2.6;
+      for (let wci = 0; wci < contours.length; wci++) {
+        const wpts = contours[wci].points;
+        const wli = contours[wci].levelIndex || 0;
+        for (let wj = 0; wj < wpts.length; wj++) {
+          const wp = wpts[wj];
+          const wpa = wpts[Math.max(0, wj - 1)];
+          const wpb = wpts[Math.min(wpts.length - 1, wj + 1)];
+          let wnx = -(wpb.y - wpa.y);
+          let wny = wpb.x - wpa.x;
+          const wnl = Math.hypot(wnx, wny);
+          if (wnl < 1e-6) continue;
+          wnx /= wnl;
+          wny /= wnl;
+          const wn = Math.sin(wp.x * 0.11 + wp.y * 0.073 + wli * 1.7) * Math.cos(wp.x * 0.043 - wp.y * 0.091);
+          wp.x += wnx * wn * wobAmp;
+          wp.y += wny * wn * wobAmp;
+        }
+      }
+    }
   }
 
   const textureDots = range && rangeStart > 0
     ? []
     : coreBuildTextureDots(core, targetWidth, targetHeight, cp.TEXTURE_POINTS, seed + 987654321);
-  return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep, thresholdInfo: thresholdInfo, thresholds: finalThresholds, minField: minField, maxField: maxField, bandGrey: bandGrey, bandCols: bandCols, bandRows: bandRows };
+  return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep, thresholdInfo: thresholdInfo, thresholds: finalThresholds, minField: minField, maxField: maxField, bandGrey: bandGrey, bandCols: bandCols, bandRows: bandRows, shadeGrey: shadeGrey, flowPaths: flowPaths };
 }
 
 function coreBuildScene(core, cp, holes, seed, targetWidth, targetHeight, buildOpts) {
@@ -3576,6 +3705,19 @@ function flattenScene(scene) {
     dots[i * 3 + 1] = scene.textureDots[i].y;
     dots[i * 3 + 2] = scene.textureDots[i].s;
   }
+  const flowList = scene.flowPaths || [];
+  let flowTotal = 0;
+  for (let i = 0; i < flowList.length; i++) flowTotal += flowList[i].points.length;
+  const flowCoords = new Float64Array(flowTotal * 2);
+  const flowCounts = new Uint32Array(flowList.length);
+  let flowOff = 0;
+  for (let i = 0; i < flowList.length; i++) {
+    flowCounts[i] = flowList[i].points.length;
+    for (let j = 0; j < flowList[i].points.length; j++) {
+      flowCoords[flowOff++] = flowList[i].points[j].x;
+      flowCoords[flowOff++] = flowList[i].points[j].y;
+    }
+  }
   return {
     coords: coords,
     counts: counts,
@@ -3589,6 +3731,9 @@ function flattenScene(scene) {
     bandGrey: scene.bandGrey || null,
     bandCols: scene.bandCols || 0,
     bandRows: scene.bandRows || 0,
+    shadeGrey: scene.shadeGrey || null,
+    flowCoords: flowCoords,
+    flowCounts: flowCounts,
     thresholds: scene.thresholds || null,
     minField: scene.minField,
     maxField: scene.maxField
@@ -3615,7 +3760,18 @@ function unflattenScene(flat) {
   for (let i = 0; i < flat.dots.length / 3; i++) {
     textureDots.push({ x: flat.dots[i * 3], y: flat.dots[i * 3 + 1], s: flat.dots[i * 3 + 2] });
   }
-  return { contours: contours, textureDots: textureDots, holesPx: flat.holesPx, gridStep: flat.gridStep, bandGrey: flat.bandGrey || null, bandCols: flat.bandCols || 0, bandRows: flat.bandRows || 0, thresholds: flat.thresholds || null, minField: flat.minField, maxField: flat.maxField };
+  const flowPaths = [];
+  if (flat.flowCounts && flat.flowCoords) {
+    let fo = 0;
+    for (let i = 0; i < flat.flowCounts.length; i++) {
+      const fpts = [];
+      for (let j = 0; j < flat.flowCounts[i]; j++) {
+        fpts.push({ x: flat.flowCoords[fo++], y: flat.flowCoords[fo++] });
+      }
+      flowPaths.push({ points: fpts, closed: false });
+    }
+  }
+  return { contours: contours, textureDots: textureDots, holesPx: flat.holesPx, gridStep: flat.gridStep, bandGrey: flat.bandGrey || null, bandCols: flat.bandCols || 0, bandRows: flat.bandRows || 0, shadeGrey: flat.shadeGrey || null, flowPaths: flowPaths.length ? flowPaths : null, thresholds: flat.thresholds || null, minField: flat.minField, maxField: flat.maxField };
 }
 
 
@@ -3939,12 +4095,13 @@ async function renderSceneOffscreen(req) {
     ctx.fillRect(0, 0, req.width, req.height);
   }
 
-  if (req.bandGrey && req.bandCols > 0 && req.bandRows > 0) {
+  const workerGreySrc = req.shadeGrey || req.bandGrey;
+  if (workerGreySrc && req.bandCols > 0 && req.bandRows > 0) {
     const bcv = new OffscreenCanvas(req.bandCols, req.bandRows);
     const bctx = bcv.getContext('2d');
     const bimg = bctx.createImageData(req.bandCols, req.bandRows);
-    for (let i = 0; i < req.bandGrey.length; i++) {
-      const g = req.bandGrey[i];
+    for (let i = 0; i < workerGreySrc.length; i++) {
+      const g = workerGreySrc[i];
       bimg.data[i * 4] = g;
       bimg.data[i * 4 + 1] = g;
       bimg.data[i * 4 + 2] = g;
@@ -3977,7 +4134,7 @@ async function renderSceneOffscreen(req) {
     req._slopeRef = sarr.length ? sarr[Math.floor(sarr.length * 0.9)] : 0;
   }
   ctx.lineCap = 'round';
-  for (let i = 0; i < scene.contours.length; i++) {
+  for (let i = 0; i < (req.flowMode === 2 ? 0 : scene.contours.length); i++) {
     const contour = scene.contours[i];
     if (req.showRedShadow) {
       ctx.strokeStyle = 'rgba(200, 40, 60, ' + (req.redShadowAlpha / 255) + ')';
@@ -3992,10 +4149,25 @@ async function renderSceneOffscreen(req) {
       wf *= 0.65 + req.slopeWeight * Math.min(1.6, contour.slope / req._slopeRef) * 0.9;
     }
     ctx.lineWidth = req.whiteStrokeWeight * req.scale * wf;
+    if (req.dashEvery > 0 && typeof contour.levelIndex === 'number' && contour.levelIndex >= 0
+      && contour.levelIndex % Math.round(req.dashEvery) === Math.round(req.dashEvery) - 1) {
+      ctx.setLineDash([7 * req.scale, 5 * req.scale]);
+    } else if (ctx.setLineDash) {
+      ctx.setLineDash([]);
+    }
     strokeCurvePath2D(ctx, contour.points, contour.closed);
+    if (ctx.setLineDash) ctx.setLineDash([]);
   }
 
-  if (req.labels) {
+  if (req.flowMode > 0 && scene.flowPaths && scene.flowPaths.length) {
+    ctx.strokeStyle = 'rgba(205, 205, 205, 0.69)';
+    ctx.lineWidth = Math.max(0.6, 0.8 * req.scale);
+    for (let i = 0; i < scene.flowPaths.length; i++) {
+      strokeCurvePath2D(ctx, scene.flowPaths[i].points, false);
+    }
+  }
+
+  if (req.labels && req.flowMode !== 2) {
     const step = req.indexEvery > 0 ? Math.round(req.indexEvery) : 5;
     const cand = [];
     for (let i = 0; i < scene.contours.length; i++) {
@@ -4198,7 +4370,7 @@ async function buildSvgString(sceneData, opts, onProgress) {
   })();
   const totalUnits = Math.max(1, contours.length * passes.length);
   let doneUnits = 0;
-  for (let p = 0; p < passes.length; p++) {
+  for (let p = 0; p < (options.flowMode === 2 ? 0 : passes.length); p++) {
     const pass = passes[p];
     parts.push(`<g fill="none" stroke="${pass.stroke}"${pass.opacity !== null ? ` stroke-opacity="${pass.opacity}"` : ''} stroke-width="${formatSvgNumber(pass.width)}" stroke-linecap="round" stroke-linejoin="round">`);
     for (let i = 0; i < contours.length; i++) {
@@ -4213,8 +4385,11 @@ async function buildSvgString(sceneData, opts, onProgress) {
             wf *= 0.65 + options.slopeWeight * Math.min(1.6, c.slope / svgSlopeRef) * 0.9;
           }
         }
-        parts.push(wf !== 1
-          ? `<path d="${d}" stroke-width="${formatSvgNumber(pass.width * wf)}"/>`
+        const isDashed = p === passes.length - 1 && options.dashEvery > 0 && typeof contours[i].levelIndex === 'number' && contours[i].levelIndex >= 0
+          && contours[i].levelIndex % Math.round(options.dashEvery) === Math.round(options.dashEvery) - 1;
+        const dashAttr = isDashed ? ` stroke-dasharray="${formatSvgNumber(7 * strokeScale)} ${formatSvgNumber(5 * strokeScale)}"` : '';
+        parts.push(wf !== 1 || isDashed
+          ? `<path d="${d}"${wf !== 1 ? ` stroke-width="${formatSvgNumber(pass.width * wf)}"` : ''}${dashAttr}/>`
           : `<path d="${d}"/>`);
       }
       doneUnits++;
@@ -4227,7 +4402,18 @@ async function buildSvgString(sceneData, opts, onProgress) {
     if (typeof onProgress === 'function') onProgress(doneUnits / totalUnits);
   }
 
-  if (options.labels) {
+  if (options.flowMode > 0 && options.sceneFlowPaths && options.sceneFlowPaths.length) {
+    const flowParts = [];
+    for (let i = 0; i < options.sceneFlowPaths.length; i++) {
+      const fd = svgContourPathData(options.sceneFlowPaths[i].points, false, coordScale);
+      if (fd) flowParts.push(`<path d="${fd}"/>`);
+    }
+    if (flowParts.length) {
+      parts.push(`<g fill="none" stroke="rgb(205, 205, 205)" stroke-opacity="0.69" stroke-width="${formatSvgNumber(0.8 * strokeScale)}" stroke-linecap="round" stroke-linejoin="round">${flowParts.join('')}</g>`);
+    }
+  }
+
+  if (options.labels && options.flowMode !== 2) {
     const step = options.indexEvery > 0 ? Math.round(options.indexEvery) : 5;
     const cand = [];
     for (let i = 0; i < contours.length; i++) {
@@ -4394,7 +4580,7 @@ function topoWorkerMain() {
       const payload = flattenScene(result.value);
       self.postMessage(
         { type: 'result', id: id, payload: payload },
-        [payload.coords.buffer, payload.counts.buffer, payload.closed.buffer, payload.dots.buffer, payload.levelIdx.buffer, payload.levelVal.buffer, payload.slopes.buffer].concat(payload.bandGrey ? [payload.bandGrey.buffer] : [])
+        [payload.coords.buffer, payload.counts.buffer, payload.closed.buffer, payload.dots.buffer, payload.levelIdx.buffer, payload.levelVal.buffer, payload.slopes.buffer, payload.flowCoords.buffer, payload.flowCounts.buffer].concat(payload.bandGrey ? [payload.bandGrey.buffer] : []).concat(payload.shadeGrey ? [payload.shadeGrey.buffer] : [])
       );
     } catch (err) {
       self.postMessage({ type: 'error', id: id, message: String((err && err.message) || err) });
@@ -4573,6 +4759,8 @@ function mergeSceneChunks(chunks) {
     bandGrey: chunks[0].bandGrey || null,
     bandCols: chunks[0].bandCols || 0,
     bandRows: chunks[0].bandRows || 0,
+    shadeGrey: chunks[0].shadeGrey || null,
+    flowPaths: chunks[0].flowPaths || null,
     thresholds: chunks[0].thresholds || null,
     minField: chunks[0].minField,
     maxField: chunks[0].maxField
@@ -4664,8 +4852,13 @@ async function renderSceneViaWorker(scene, renderOpts, onProgress) {
     maxField: flat.maxField,
     indexEvery: params.INDEX_EVERY,
     slopeWeight: params.SLOPE_WEIGHT,
-    labels: params.LABELS
-  }, onProgress, 'render', [flat.coords.buffer, flat.counts.buffer, flat.closed.buffer, flat.dots.buffer, flat.levelIdx.buffer, flat.levelVal.buffer, flat.slopes.buffer].concat(flat.bandGrey ? [flat.bandGrey.buffer] : []));
+    labels: params.LABELS,
+    shadeGrey: flat.shadeGrey,
+    flowCoords: flat.flowCoords,
+    flowCounts: flat.flowCounts,
+    dashEvery: params.DASH_EVERY,
+    flowMode: params.FLOW_MODE
+  }, onProgress, 'render', [flat.coords.buffer, flat.counts.buffer, flat.closed.buffer, flat.dots.buffer, flat.levelIdx.buffer, flat.levelVal.buffer, flat.slopes.buffer, flat.flowCoords.buffer, flat.flowCounts.buffer].concat(flat.bandGrey ? [flat.bandGrey.buffer] : []).concat(flat.shadeGrey ? [flat.shadeGrey.buffer] : []));
   return blob || null;
 }
 
@@ -4786,15 +4979,16 @@ function drawContourLabelsP5(pg, scn, scale) {
   pg.pop();
 }
 function drawBandLayerP5(pg, scn, w, h) {
-  if (!scn.bandGrey || !scn.bandCols || !scn.bandRows) return;
-  if (!scn._bandCanvas) {
+  const greySrc = scn.shadeGrey || scn.bandGrey;
+  if (!greySrc || !scn.bandCols || !scn.bandRows) return;
+  if (!scn._bandCanvas || scn._bandSrc !== greySrc) {
     const cv = document.createElement('canvas');
     cv.width = scn.bandCols;
     cv.height = scn.bandRows;
     const cx = cv.getContext('2d');
     const img = cx.createImageData(scn.bandCols, scn.bandRows);
-    for (let i = 0; i < scn.bandGrey.length; i++) {
-      const g = scn.bandGrey[i];
+    for (let i = 0; i < greySrc.length; i++) {
+      const g = greySrc[i];
       img.data[i * 4] = g;
       img.data[i * 4 + 1] = g;
       img.data[i * 4 + 2] = g;
@@ -4802,6 +4996,7 @@ function drawBandLayerP5(pg, scn, w, h) {
     }
     cx.putImageData(img, 0, 0);
     scn._bandCanvas = cv;
+    scn._bandSrc = greySrc;
   }
   const ctx = pg.drawingContext;
   if (ctx) {
@@ -4810,6 +5005,17 @@ function drawBandLayerP5(pg, scn, w, h) {
     ctx.drawImage(scn._bandCanvas, 0, 0, w, h);
     ctx.restore();
   }
+}
+function drawFlowLinesP5(pg, scn, scale) {
+  if (!scn.flowPaths || !scn.flowPaths.length) return;
+  pg.push();
+  pg.noFill();
+  pg.stroke(205, 205, 205, 175);
+  pg.strokeWeight(Math.max(0.6, 0.8 * (scale || 1)));
+  for (let i = 0; i < scn.flowPaths.length; i++) {
+    drawSmoothPath(pg, scn.flowPaths[i].points, false);
+  }
+  pg.pop();
 }
 
 function renderArtworkCache() {
@@ -4827,7 +5033,7 @@ function renderArtworkCache() {
     drawFaintTexture(pg, scene.textureDots);
   }
 
-  for (let i = 0; i < scene.contours.length; i++) {
+  for (let i = 0; i < (params.FLOW_MODE === 2 ? 0 : scene.contours.length); i++) {
     const contour = scene.contours[i];
     if (params.SHOW_RED_SHADOW) {
       pg.stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
@@ -4839,10 +5045,15 @@ function renderArtworkCache() {
     pg.stroke(255);
     pg.strokeWeight(params.WHITE_STROKE_WEIGHT * contourWeightFactor(contour, scene));
     pg.noFill();
+    const dashCtxD = pg.drawingContext;
+    if (dashCtxD) dashCtxD.setLineDash(params.DASH_EVERY > 0 && contour.levelIndex >= 0 && contour.levelIndex % params.DASH_EVERY === params.DASH_EVERY - 1 ? [7, 5] : []);
     drawSmoothPath(pg, contour.points, contour.closed);
+    if (dashCtxD) dashCtxD.setLineDash([]);
   }
 
-  if (params.LABELS) drawContourLabelsP5(pg, scene, 1);
+  if (params.FLOW_MODE > 0) drawFlowLinesP5(pg, scene, 1);
+
+  if (params.LABELS && params.FLOW_MODE !== 2) drawContourLabelsP5(pg, scene, 1);
 
   if (artworkCache && artworkCache.remove) artworkCache.remove();
   artworkCache = pg;
@@ -5138,7 +5349,7 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
     drawFaintTexture(pg, exportScene.textureDots);
   }
 
-  for (let i = 0; i < exportScene.contours.length; i++) {
+  for (let i = 0; i < (params.FLOW_MODE === 2 ? 0 : exportScene.contours.length); i++) {
     const contour = exportScene.contours[i];
     if (params.SHOW_RED_SHADOW) {
       pg.stroke(200, 40, 60, params.RED_SHADOW_ALPHA);
@@ -5150,10 +5361,15 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
     pg.stroke(255);
     pg.strokeWeight(params.WHITE_STROKE_WEIGHT * scale * contourWeightFactor(contour, exportScene));
     pg.noFill();
+    const dashCtxE = pg.drawingContext;
+    if (dashCtxE) dashCtxE.setLineDash(params.DASH_EVERY > 0 && contour.levelIndex >= 0 && contour.levelIndex % params.DASH_EVERY === params.DASH_EVERY - 1 ? [7 * scale, 5 * scale] : []);
     drawSmoothPath(pg, contour.points, contour.closed);
+    if (dashCtxE) dashCtxE.setLineDash([]);
   }
 
-  if (params.LABELS) drawContourLabelsP5(pg, exportScene, scale);
+  if (params.FLOW_MODE > 0) drawFlowLinesP5(pg, exportScene, scale);
+
+  if (params.LABELS && params.FLOW_MODE !== 2) drawContourLabelsP5(pg, exportScene, scale);
 
   downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
     pg.remove();
@@ -5318,6 +5534,9 @@ async function buildAndDownloadSvg(exportScene, scale, transparent, exportW, exp
       slopeWeight: params.SLOPE_WEIGHT,
       labels: params.LABELS,
       plotter: params.PLOTTER_SVG,
+      dashEvery: params.DASH_EVERY,
+      flowMode: params.FLOW_MODE,
+      sceneFlowPaths: exportScene.flowPaths || null,
       sceneMin: exportScene.minField,
       sceneMax: exportScene.maxField
     }, (ratio) => {
@@ -6875,6 +7094,9 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
   var AUX_COLS = 320, AUX_ROWS = 180;
   var imgPart = new Float32Array(AUX_COLS * AUX_ROWS);
   var paintPart = new Float32Array(AUX_COLS * AUX_ROWS);
+  var textPart = new Float32Array(AUX_COLS * AUX_ROWS);
+  var demPart = new Float32Array(AUX_COLS * AUX_ROWS);
+  var demData = null;
   var imgLoaded = false;
   var imgGain = 1.0;
   var imgInvert = false;
@@ -6895,7 +7117,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     var out = new Float32Array(AUX_COLS * AUX_ROWS);
     var any = false;
     for (var i = 0; i < out.length; i++) {
-      out[i] = imgPart[i] + paintPart[i];
+      out[i] = imgPart[i] + paintPart[i] + textPart[i] + demPart[i];
       if (out[i] !== 0) any = true;
     }
     try { topoSetAuxField(any ? out : null, AUX_COLS, AUX_ROWS); } catch (e) {}
@@ -7105,6 +7327,241 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
   }
 
   // ---------- controls ----------
+  // ---------- text heightfield ----------
+  function applyTextTerrain(text) {
+    text = (text || '').trim();
+    if (!text) { textPart = new Float32Array(AUX_COLS * AUX_ROWS); applyAuxAndRegen(); return; }
+    var W = 640, H = 360;
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var cx = cv.getContext('2d');
+    cx.fillStyle = '#000';
+    cx.fillRect(0, 0, W, H);
+    cx.fillStyle = '#fff';
+    cx.textAlign = 'center';
+    cx.textBaseline = 'middle';
+    var size = 150;
+    cx.font = '700 ' + size + 'px sans-serif';
+    var tw = cx.measureText(text).width;
+    if (tw > W * 0.92) { size = Math.floor(size * (W * 0.92) / tw); cx.font = '700 ' + size + 'px sans-serif'; }
+    cx.shadowColor = 'rgba(255,255,255,0.9)';
+    cx.shadowBlur = 10;
+    cx.fillText(text, W / 2, H / 2);
+    cx.shadowBlur = 0;
+    cx.fillText(text, W / 2, H / 2);
+    var small = document.createElement('canvas');
+    small.width = AUX_COLS; small.height = AUX_ROWS;
+    var sx = small.getContext('2d');
+    sx.drawImage(cv, 0, 0, AUX_COLS, AUX_ROWS);
+    var data = sx.getImageData(0, 0, AUX_COLS, AUX_ROWS).data;
+    for (var i = 0; i < AUX_COLS * AUX_ROWS; i++) {
+      var lum = data[i * 4] / 255;
+      textPart[i] = Math.max(-0.8, Math.min(1.2, (lum - 0.30) * 1.7));
+    }
+    applyAuxAndRegen();
+    try { setStatus('文字地形を適用しました: ' + text); } catch (e) {}
+  }
+
+  // ---------- real terrain (Mt. Fuji DEM via terrarium tiles) ----------
+  function bakeDem() {
+    if (!demData) return;
+    var emin = Infinity, emax = -Infinity;
+    for (var i = 0; i < demData.data.length; i++) {
+      if (demData.data[i] < emin) emin = demData.data[i];
+      if (demData.data[i] > emax) emax = demData.data[i];
+    }
+    var span = Math.max(1, emax - emin);
+    for (var y = 0; y < AUX_ROWS; y++) {
+      for (var x = 0; x < AUX_COLS; x++) {
+        var fx = (x / (AUX_COLS - 1)) * (demData.w - 1);
+        var fy = (y / (AUX_ROWS - 1)) * (demData.h - 1);
+        var x0 = Math.floor(fx), y0 = Math.floor(fy);
+        var x1 = Math.min(demData.w - 1, x0 + 1), y1 = Math.min(demData.h - 1, y0 + 1);
+        var tx = fx - x0, ty = fy - y0;
+        var v00 = demData.data[y0 * demData.w + x0], v10 = demData.data[y0 * demData.w + x1];
+        var v01 = demData.data[y1 * demData.w + x0], v11 = demData.data[y1 * demData.w + x1];
+        var e = (v00 * (1 - tx) + v10 * tx) * (1 - ty) + (v01 * (1 - tx) + v11 * tx) * ty;
+        demPart[y * AUX_COLS + x] = ((e - emin) / span - 0.28) * 1.9;
+      }
+    }
+  }
+  function lonToTileX(lon, z) { return Math.floor((lon + 180) / 360 * Math.pow(2, z)); }
+  function latToTileY(lat, z) {
+    var rad = lat * Math.PI / 180;
+    return Math.floor((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * Math.pow(2, z));
+  }
+  function lonToPx(lon, z) { return (lon + 180) / 360 * Math.pow(2, z) * 256; }
+  function latToPx(lat, z) {
+    var rad = lat * Math.PI / 180;
+    return (1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * Math.pow(2, z) * 256;
+  }
+  async function loadFuji() {
+    try { setStatus('富士山の標高データを取得中…'); } catch (e) {}
+    var z = 11;
+    var lonMin = 138.55, lonMax = 138.95, latMin = 35.20, latMax = 35.52;
+    var x0 = lonToTileX(lonMin, z), x1 = lonToTileX(lonMax, z);
+    var y0 = latToTileY(latMax, z), y1 = latToTileY(latMin, z);
+    var tilesW = x1 - x0 + 1, tilesH = y1 - y0 + 1;
+    var stitch = document.createElement('canvas');
+    stitch.width = tilesW * 256; stitch.height = tilesH * 256;
+    var sx = stitch.getContext('2d');
+    try {
+      for (var ty = y0; ty <= y1; ty++) {
+        for (var tx = x0; tx <= x1; tx++) {
+          var url = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + z + '/' + tx + '/' + ty + '.png';
+          var res = await fetch(url);
+          if (!res.ok) throw new Error('tile ' + res.status);
+          var bmp = await createImageBitmap(await res.blob());
+          sx.drawImage(bmp, (tx - x0) * 256, (ty - y0) * 256);
+        }
+      }
+    } catch (err) {
+      try { setStatus('標高データの取得に失敗しました（ネットワーク/CORS）'); } catch (e) {}
+      return;
+    }
+    var px0 = Math.round(lonToPx(lonMin, z) - x0 * 256), px1 = Math.round(lonToPx(lonMax, z) - x0 * 256);
+    var py0 = Math.round(latToPx(latMax, z) - y0 * 256), py1 = Math.round(latToPx(latMin, z) - y0 * 256);
+    var cw = px1 - px0, ch = py1 - py0;
+    var img = sx.getImageData(px0, py0, cw, ch).data;
+    var elev = new Float32Array(cw * ch);
+    for (var i = 0; i < cw * ch; i++) {
+      elev[i] = img[i * 4] * 256 + img[i * 4 + 1] + img[i * 4 + 2] / 256 - 32768;
+    }
+    demData = { data: elev, w: cw, h: ch };
+    bakeDem();
+    applyAuxAndRegen();
+    try { setStatus('富士山（実地形）を適用しました'); } catch (e) {}
+  }
+
+  // ---------- poster export ----------
+  function currentSeedText() {
+    var s = document.getElementById('seedVal');
+    return s ? s.textContent.trim() : '0';
+  }
+  function downloadCanvasPng(cv, name) {
+    cv.toBlob(function (blob) {
+      if (!blob) return;
+      var url = URL.createObjectURL(blob);
+      try { triggerDownload(url, name, true); } catch (e) {
+        var a = document.createElement('a');
+        a.href = url; a.download = name; a.click();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      }
+    }, 'image/png');
+  }
+  function posterExport() {
+    if (!artworkCache || !artworkCache.elt) { try { setStatus('まず地形を生成してください'); } catch (e) {} return; }
+    var art = artworkCache.elt;
+    var W = 1600, margin = 84;
+    var artW = W - margin * 2;
+    var artH = Math.round(artW * art.height / art.width);
+    var H = margin + artH + 196 + 56;
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var cx = cv.getContext('2d');
+    cx.fillStyle = '#050505';
+    cx.fillRect(0, 0, W, H);
+    cx.strokeStyle = 'rgba(255,255,255,0.55)';
+    cx.lineWidth = 1.5;
+    cx.strokeRect(margin - 18, margin - 18, artW + 36, artH + 36);
+    cx.drawImage(art, margin, margin, artW, artH);
+    // north arrow
+    var nx = W - margin - 34, ny = margin + 34;
+    cx.strokeStyle = 'rgba(255,255,255,0.8)';
+    cx.beginPath(); cx.arc(nx, ny, 24, 0, Math.PI * 2); cx.stroke();
+    cx.fillStyle = '#fff';
+    cx.beginPath(); cx.moveTo(nx, ny - 15); cx.lineTo(nx - 6, ny + 6); cx.lineTo(nx + 6, ny + 6); cx.closePath(); cx.fill();
+    cx.font = '600 15px sans-serif'; cx.textAlign = 'center';
+    cx.fillText('N', nx, ny + 40);
+    // title block
+    var ty = margin + artH + 66;
+    cx.textAlign = 'left';
+    cx.fillStyle = '#fff';
+    cx.font = '300 64px sans-serif';
+    cx.fillText('TOPO', margin, ty + 44);
+    cx.font = '400 19px sans-serif';
+    cx.fillStyle = 'rgba(255,255,255,0.75)';
+    cx.fillText('CONTOUR STUDY', margin + 2, ty + 82);
+    cx.font = '400 16px sans-serif';
+    cx.fillText('SEED ' + currentSeedText(), margin + 2, ty + 110);
+    // legend gradient
+    var lx = W - margin - 300, ly = ty + 22;
+    var grad = cx.createLinearGradient(lx, 0, lx + 300, 0);
+    grad.addColorStop(0, '#101010'); grad.addColorStop(1, '#8a8a8a');
+    cx.fillStyle = grad;
+    cx.fillRect(lx, ly, 300, 12);
+    cx.fillStyle = 'rgba(255,255,255,0.75)';
+    cx.font = '400 13px sans-serif';
+    cx.fillText('0', lx, ly + 32);
+    cx.textAlign = 'center'; cx.fillText('500', lx + 150, ly + 32);
+    cx.textAlign = 'right'; cx.fillText('1000', lx + 300, ly + 32);
+    cx.textAlign = 'left';
+    cx.fillText('ELEVATION (RELATIVE)', lx, ly - 10);
+    // scale bar (stylistic)
+    var sx0 = lx, sy0 = ly + 58;
+    for (var sgi = 0; sgi < 5; sgi++) {
+      cx.fillStyle = sgi % 2 ? '#050505' : '#d8d8d8';
+      cx.fillRect(sx0 + sgi * 60, sy0, 60, 8);
+    }
+    cx.strokeStyle = 'rgba(255,255,255,0.6)';
+    cx.strokeRect(sx0, sy0, 300, 8);
+    cx.fillStyle = 'rgba(255,255,255,0.75)';
+    cx.fillText('SCALE', sx0, sy0 - 8);
+    var d = new Date();
+    cx.textAlign = 'right';
+    cx.font = '400 14px sans-serif';
+    cx.fillText(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'), W - margin, ty + 110);
+    downloadCanvasPng(cv, 'topo-poster-' + currentSeedText() + '.png');
+    try { setStatus('ポスターを書き出しました'); } catch (e) {}
+  }
+
+  // ---------- contact sheet ----------
+  async function contactSheet() {
+    if (contactSheet.running) return;
+    contactSheet.running = true;
+    try { setStatus('コンタクトシートを生成中…'); } catch (e) {}
+    var baseSeed = parseInt(currentSeedText(), 10) || 1;
+    var cellW = 500, cellH = 318, labelH = 26, gap = 10;
+    var sheet = document.createElement('canvas');
+    sheet.width = cellW * 3 + gap * 4;
+    sheet.height = (cellH + labelH) * 3 + gap * 4;
+    var sx = sheet.getContext('2d');
+    sx.fillStyle = '#050505';
+    sx.fillRect(0, 0, sheet.width, sheet.height);
+    var savedScene = scene;
+    var savedCache = artworkCache;
+    var savedW = width, savedH = height;
+    try {
+      for (var i = 0; i < 9; i++) {
+        var sd = (baseSeed + i * 7919) >>> 0;
+        var built = buildSceneData(cellW, cellH, sd, {});
+        scene = built;
+        width = cellW; height = cellH;
+        artworkCache = null;
+        renderArtworkCache();
+        var cellArt = artworkCache;
+        var cxp = gap + (i % 3) * (cellW + gap);
+        var cyp = gap + Math.floor(i / 3) * (cellH + labelH + gap);
+        if (cellArt && cellArt.elt) sx.drawImage(cellArt.elt, cxp, cyp, cellW, cellH);
+        if (cellArt && cellArt.remove) cellArt.remove();
+        sx.fillStyle = 'rgba(255,255,255,0.8)';
+        sx.font = '400 14px sans-serif';
+        sx.textAlign = 'left';
+        sx.fillText('SEED ' + sd, cxp + 2, cyp + cellH + 18);
+      }
+    } catch (err) {
+      try { setStatus('コンタクトシート生成に失敗しました'); } catch (e) {}
+    } finally {
+      scene = savedScene;
+      width = savedW; height = savedH;
+      artworkCache = null;
+      renderArtworkCache();
+      contactSheet.running = false;
+    }
+    downloadCanvasPng(sheet, 'topo-contact-' + baseSeed + '.png');
+    try { setStatus('コンタクトシートを書き出しました'); } catch (e) {}
+  }
+
   function buildUI() {
     var body = document.querySelector('#controls .panel-body');
     if (!body || document.getElementById('exprSection')) return;
@@ -7254,7 +7711,84 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     animBtn.addEventListener('click', animExport);
     rAnim.appendChild(animBtn);
 
-    var note = el('p', 'plus-note', '画像地形と彫刻は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。');
+    // round 2: hillshade
+    var rShade = row('陰影（ヒルシェード）:');
+    var shade = check('exprHillshade', '斜面の陰影を描く', params.HILLSHADE);
+    shade.input.addEventListener('change', function () { params.HILLSHADE = shade.input.checked; saveSoon(); regen(); });
+    rShade.appendChild(shade.wrap);
+    var rShadeA = row('光の方位:');
+    var shadeAng = range('exprShadeAngle', 0, 360, 5, params.SHADE_ANGLE == null ? 315 : params.SHADE_ANGLE);
+    bindParam(shadeAng, 'SHADE_ANGLE', false);
+    rShadeA.appendChild(shadeAng);
+
+    // round 2: ridge + vortex + wobble
+    var rRidge = row('稜線ノイズ:');
+    var ridge = range('exprRidge', 0, 1, 0.05, params.RIDGE || 0);
+    bindParam(ridge, 'RIDGE', true);
+    rRidge.appendChild(ridge);
+    var rVortex = row('渦ワープ:');
+    var vortex = range('exprVortex', -3, 3, 0.1, params.VORTEX || 0);
+    bindParam(vortex, 'VORTEX', true);
+    rVortex.appendChild(vortex);
+    var rWobble = row('線の揺らぎ:');
+    var wobble = range('exprWobble', 0, 1, 0.05, params.WOBBLE || 0);
+    bindParam(wobble, 'WOBBLE', true);
+    rWobble.appendChild(wobble);
+
+    // round 2: dash + flow
+    var rDash = row('破線の間隔:');
+    var dash = range('exprDash', 0, 10, 1, params.DASH_EVERY || 0);
+    bindParam(dash, 'DASH_EVERY', false);
+    rDash.appendChild(dash);
+    var rFlow = row('流線:');
+    var selFlow = document.createElement('select');
+    selFlow.id = 'exprFlow';
+    [['0', 'なし'], ['1', '等高線に重ねる'], ['2', '流線のみ']].forEach(function (o) {
+      var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; selFlow.appendChild(op);
+    });
+    selFlow.value = String(params.FLOW_MODE || 0);
+    selFlow.addEventListener('change', function () { params.FLOW_MODE = parseInt(selFlow.value, 10); saveSoon(); regen(); });
+    rFlow.appendChild(selFlow);
+
+    // round 2: text terrain + real terrain
+    var rText = row('文字地形:');
+    var textInput = document.createElement('input');
+    textInput.type = 'text'; textInput.id = 'exprText'; textInput.placeholder = '言葉を山にする'; textInput.style.flex = '1';
+    rText.appendChild(textInput);
+    var textBtn = el('button', 'panel-btn', '適用');
+    textBtn.type = 'button'; textBtn.id = 'exprTextApply';
+    textBtn.addEventListener('click', function () { applyTextTerrain(textInput.value); });
+    rText.appendChild(textBtn);
+    var textClear = el('button', 'panel-btn', '消す');
+    textClear.type = 'button';
+    textClear.addEventListener('click', function () { textInput.value = ''; applyTextTerrain(''); });
+    rText.appendChild(textClear);
+    var rDem = row('実地形:');
+    var fujiBtn = el('button', 'panel-btn', '富士山（実標高）');
+    fujiBtn.type = 'button'; fujiBtn.id = 'exprFuji';
+    fujiBtn.addEventListener('click', loadFuji);
+    rDem.appendChild(fujiBtn);
+    var demClear = el('button', 'panel-btn', '実地形を消す');
+    demClear.type = 'button';
+    demClear.addEventListener('click', function () {
+      demData = null;
+      demPart = new Float32Array(AUX_COLS * AUX_ROWS);
+      applyAuxAndRegen();
+    });
+    rDem.appendChild(demClear);
+
+    // round 2: finishing outputs
+    var rFinish = row('仕上げ:');
+    var posterBtn = el('button', 'panel-btn', '地図ポスター書き出し');
+    posterBtn.type = 'button'; posterBtn.id = 'exprPoster';
+    posterBtn.addEventListener('click', posterExport);
+    rFinish.appendChild(posterBtn);
+    var sheetBtn = el('button', 'panel-btn', 'コンタクトシート (3×3)');
+    sheetBtn.type = 'button'; sheetBtn.id = 'exprContact';
+    sheetBtn.addEventListener('click', contactSheet);
+    rFinish.appendChild(sheetBtn);
+
+    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。');
     body.appendChild(note);
 
     // drag & drop image onto the window
@@ -7277,6 +7811,13 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       slope.value = params.SLOPE_WEIGHT || 0;
       tile.input.checked = !!params.TILE_MODE;
       plot.input.checked = !!params.PLOTTER_SVG;
+      shade.input.checked = !!params.HILLSHADE;
+      shadeAng.value = params.SHADE_ANGLE == null ? 315 : params.SHADE_ANGLE;
+      ridge.value = params.RIDGE || 0;
+      vortex.value = params.VORTEX || 0;
+      wobble.value = params.WOBBLE || 0;
+      dash.value = params.DASH_EVERY || 0;
+      selFlow.value = String(params.FLOW_MODE || 0);
     }, 1500);
   }
 
