@@ -10,6 +10,12 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://varelser.github.io/lien.html" />
   <meta property="og:description" content="Generative flow-field artwork that grows from a single seed." />
+<link rel="canonical" href="https://varelser.github.io/lien.html" />
+<meta property="og:image" content="https://varelser.github.io/img/emblem.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Lien" />
+<meta name="twitter:description" content="Lien — generative flow-field artwork that grows from a single seed." />
+<!-- lien-a:start -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2212%22%20fill%3D%22%23000%22%2F%3E%3Cg%20transform%3D%22translate%2812%2012%29%20scale%280.9%29%20translate%28-12%20-12%29%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M4.6%204.6V19.4%22%2F%3E%3Cpath%20d%3D%22M7.56%204.6V19.4%22%2F%3E%3Cpath%20d%3D%22M10.52%204.6V19.4%22%2F%3E%3Cpath%20d%3D%22M13.48%204.6V19.4%22%2F%3E%3Cpath%20d%3D%22M16.44%204.6V19.4%22%2F%3E%3Cpath%20d%3D%22M19.4%204.6V19.4%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" />
   <style>
     :root {
@@ -4418,5 +4424,136 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 })();
 
 </script>
+<style id="lien-a-style">
+/* ===== Lien A (focus): family tabs, presets surface, pause state, contrast, focus ===== */
+#lienTabBar{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 14px}
+#lienTabBar button{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+  padding:6px 9px;border-radius:9999px;color:color-mix(in srgb,var(--fg) 72%,transparent);
+  background:transparent;border:0;cursor:pointer}
+#lienTabBar button:hover{background:color-mix(in srgb,var(--fg) 8%,transparent)}
+#lienTabBar button[aria-selected="true"]{background:var(--fg);color:var(--bg)}
+#lienStatus{color:color-mix(in srgb,var(--fg) 82%,transparent)!important}
+#configPanel .group-title{color:color-mix(in srgb,var(--fg) 68%,transparent)}
+#lienPauseState{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+  color:color-mix(in srgb,var(--fg) 82%,transparent);white-space:nowrap;align-self:center;margin-right:2px}
+#lienPauseState[data-paused="true"]{color:var(--fg)}
+#lienPresetsBtn{margin-left:2px}
+#app :focus-visible, #configPanel :focus-visible, #savePanel :focus-visible{
+  outline:2px solid var(--fg);outline-offset:2px;border-radius:4px}
+@media (max-width:760px){#lienPauseState{display:none}}
+</style>
+<!-- lien-a:end-style -->
+<script id="lien-a-script">
+/* ===== Lien A (focus type) =====
+   - Configuration sections grouped into family tabs; one family visible at a time.
+     Sections are only shown/hidden (display), never moved, cloned or re-created,
+     so every core/Plus/Expression listener and saved key keeps working as before.
+   - Presets surfaced on the toolbar (opens Configuration on the Presets tab).
+   - Pause state made visible: text label + aria-pressed on the existing button.
+     Paused detection reuses the Plus add-on's own method (play-icon path marker). */
+(function () {
+  'use strict';
+  var FAMILIES = [
+    { id: 'presets',    label: 'Presets',    titles: ['Presets'] },
+    { id: 'flow',       label: 'Flow',       titles: ['Flow Dynamics'] },
+    { id: 'visuals',    label: 'Visuals',    titles: ['Visuals'] },
+    { id: 'plus',       label: 'Plus',       titles: ['Plus'] },
+    { id: 'expression', label: 'Expression', titles: ['Expression'] },
+    { id: 'link',       label: 'Link',       titles: ['Varelser Link'] },
+    { id: 'help',       label: 'Help',       titles: ['Shortcuts'] }
+  ];
+  function familyOf(title) {
+    for (var i = 0; i < FAMILIES.length; i++)
+      if (FAMILIES[i].titles.indexOf(title) >= 0) return FAMILIES[i].id;
+    return 'help';
+  }
+  var active = 'presets';
+  var bar = null;
+  function sections() {
+    var body = document.querySelector('#configPanel .panel-body');
+    if (!body) return [];
+    return Array.prototype.slice.call(body.querySelectorAll(':scope > section.group'));
+  }
+  function applyTabs() {
+    sections().forEach(function (sec) {
+      var h = sec.querySelector('.group-title');
+      var fam = h ? familyOf(h.textContent.trim()) : 'help';
+      sec.style.display = (fam === active) ? '' : 'none';
+      sec.setAttribute('data-lien-family', fam);
+    });
+    if (bar) Array.prototype.forEach.call(bar.querySelectorAll('button'), function (b) {
+      b.setAttribute('aria-selected', b.getAttribute('data-lien-tab') === active ? 'true' : 'false');
+    });
+    var body = document.querySelector('#configPanel .panel-body');
+    if (body) body.scrollTop = 0;
+  }
+  function buildBar() {
+    var body = document.querySelector('#configPanel .panel-body');
+    if (!body || document.getElementById('lienTabBar')) return;
+    bar = document.createElement('div');
+    bar.id = 'lienTabBar';
+    bar.setAttribute('role', 'tablist');
+    bar.setAttribute('aria-label', 'Configuration sections');
+    FAMILIES.forEach(function (f) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = f.label;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('data-lien-tab', f.id);
+      b.setAttribute('data-disable-during-export', '1');
+      b.addEventListener('click', function () { active = f.id; applyTabs(); });
+      bar.appendChild(b);
+    });
+    body.insertBefore(bar, body.firstChild);
+  }
+  function openPresets() {
+    active = 'presets';
+    var panel = document.getElementById('configPanel');
+    var btn = document.getElementById('customizeBtn');
+    if (panel && panel.hidden && btn) btn.click();
+    buildBar(); applyTabs();
+  }
+  function init() {
+    buildBar(); applyTabs();
+    /* Toolbar: Presets surface button, next to Customize */
+    var left = document.querySelector('.toolbar-left');
+    var cust = document.getElementById('customizeBtn');
+    if (left && cust && !document.getElementById('lienPresetsBtn')) {
+      var pb = document.createElement('button');
+      pb.id = 'lienPresetsBtn';
+      pb.className = 'toolbar-label-btn';
+      pb.type = 'button';
+      pb.setAttribute('data-disable-during-export', '1');
+      pb.innerHTML = '<span>Presets</span>';
+      pb.addEventListener('click', openPresets);
+      left.appendChild(pb);
+    }
+    if (cust) cust.addEventListener('click', function () { window.setTimeout(function () { buildBar(); applyTabs(); }, 0); });
+    /* Pause state label + aria-pressed */
+    var pauseBtn = document.getElementById('pauseBtn');
+    if (pauseBtn && !document.getElementById('lienPauseState')) {
+      var lab = document.createElement('span');
+      lab.id = 'lienPauseState';
+      lab.setAttribute('aria-live', 'polite');
+      lab.textContent = 'Playing';
+      lab.setAttribute('data-paused', 'false');
+      pauseBtn.parentNode.insertBefore(lab, pauseBtn);
+      var sync = function () {
+        var paused = pauseBtn.innerHTML.indexOf('5.653') >= 0; /* play icon shown = paused (Plus add-on's own marker) */
+        lab.textContent = paused ? 'Paused' : 'Playing';
+        lab.setAttribute('data-paused', paused ? 'true' : 'false');
+        pauseBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+        pauseBtn.setAttribute('aria-label', paused ? 'Play' : 'Pause');
+      };
+      new MutationObserver(sync).observe(pauseBtn, { childList: true });
+      sync();
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+  window.__lienA = { version: 1, active: function () { return active; }, applyTabs: applyTabs };
+})();
+</script>
+<!-- lien-a:end -->
 </body>
 </html>
