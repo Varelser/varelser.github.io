@@ -878,7 +878,7 @@ function r5Commands(){
 var r5PalSel=0,r5PalItems=[];
 function r5PalRender(q){
   var list=el('r5PalList');list.textContent='';
-  var cmds=r5Commands().filter(function(c){return !q||c.label.toLowerCase().indexOf(q.toLowerCase())>=0;});
+  var cmds=r5Commands().filter(function(c){ if(!q)return true; var hay=(c.label+' '+c.kind).toLowerCase(); return q.toLowerCase().split(/\s+/).every(function(t){return !t||hay.indexOf(t)>=0;}); });
   r5PalItems=cmds;if(r5PalSel>=cmds.length)r5PalSel=0;
   cmds.forEach(function(c,i){
     var li=document.createElement('li');if(i===r5PalSel)li.className='sel';
@@ -926,7 +926,7 @@ function r5WakeAcquire(){
     r5Wake=wl;r5WakeOn=true;
     wl.addEventListener('release',function(){r5Wake=null;if(r5WakeOn){/* OS側解放。次回 visibility で再取得 */}});
     r5WakeUpdate();return true;
-  }).catch(function(){r5WakeOn=false;r5WakeUpdate();return false;});
+  }).catch(function(){r5WakeOn=false;r5WakeUpdate();if(typeof toast==='function')toast('Wake Lock を取得できませんでした（ブラウザが拒否）');return false;});
 }
 function r5WakeToggle(){
   if(!('wakeLock' in navigator)){if(typeof toast==='function')toast('Wake Lock 非対応のブラウザ');return Promise.resolve(false);}
@@ -972,9 +972,9 @@ function r5Share(){
   var url=r5ShareUrl();
   function copied(){if(typeof toast==='function')toast('共有リンクをコピー: '+url);}
   if(navigator.share){
-    return navigator.share({title:'Varelser Studio Console',url:url}).then(function(){return 'share';}).catch(function(){return r5Copy(url).then(function(ok){if(ok)copied();return 'copy';});});
+    return navigator.share({title:'Varelser Studio Console',url:url}).then(function(){return 'share';}).catch(function(){return r5Copy(url).then(function(ok){if(ok){copied();return 'copy';} if(window.__cShareFb)window.__cShareFb(url); return 'fail';});});
   }
-  return r5Copy(url).then(function(ok){if(ok)copied();return ok?'copy':'fail';});
+  return r5Copy(url).then(function(ok){if(ok){copied();return 'copy';} if(window.__cShareFb)window.__cShareFb(url); return 'fail';});
 }
 function r5Copy(text){
   if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(text).then(function(){return true;}).catch(function(){return false;});
@@ -1389,5 +1389,89 @@ window.addEventListener('message',function(e){
   if(window.MutationObserver){ new MutationObserver(function(ms){ for(var i=0;i<ms.length;i++){ if(ms[i].attributeName==='src') pend(); } }).observe(fr,{attributes:true,attributeFilter:['src']}); }
  }
 })();
+</script>
+
+<style id="c-style">
+#cRecvLog{font-size:11px;color:#9a9a9a;line-height:1.7;margin-top:4px;white-space:pre-line}
+#cShareFb{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:9999}
+#cShareFb.open{display:flex}
+#cShareFb .box{background:#141414;border:1px solid #3a3a3a;border-radius:12px;padding:18px;max-width:min(92vw,560px);width:560px}
+#cShareFb input{width:100%;box-sizing:border-box;background:#0a0a0a;color:#eee;border:1px solid #444;border-radius:8px;padding:9px;font-size:12px}
+#cShareFb .row{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+.c-bpm-nudge{min-width:30px;padding:0 6px}
+#cDetailBtn{display:none;width:100%;margin-top:10px}
+@media (max-width:640px){
+  #sec-console:not(.c-open) .c-sub{display:none!important}
+  #cDetailBtn{display:block}
+}
+</style>
+
+<script id="c-script">
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+/* ── 1a share fallback panel ── */
+var fb=document.createElement('div'); fb.id='cShareFb';
+fb.innerHTML='<div class="box"><p style="margin:0 0 10px">共有リンク（自動コピーできなかったため、手動でコピーしてください）</p><input id="cShareUrl" readonly value=""><div class="row"><button type="button" id="cShareCopy">コピー</button><button type="button" id="cShareClose">閉じる</button></div></div>';
+document.body.appendChild(fb);
+window.__cShareFb=function(url){ var i=$('cShareUrl'); i.value=url; fb.classList.add('open'); setTimeout(function(){ i.focus(); i.select(); },30); };
+$('cShareClose').addEventListener('click',function(){ fb.classList.remove('open'); });
+fb.addEventListener('click',function(e){ if(e.target===fb) fb.classList.remove('open'); });
+$('cShareCopy').addEventListener('click',function(){ var i=$('cShareUrl'); i.focus(); i.select();
+  var done=function(){ if(typeof toast==='function')toast('共有リンクをコピーしました'); fb.classList.remove('open'); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(i.value).then(done).catch(function(){ try{document.execCommand('copy');}catch(e){} done(); }); }
+  else { try{document.execCommand('copy');}catch(e){} done(); } });
+/* ── 1c receive log (own listener; mirrors r4 always-on meter policy) ── */
+try{
+  var logBox=document.createElement('div'); logBox.id='cRecvLog';
+  var ls=$('linkState'); if(ls&&ls.parentNode) ls.parentNode.insertBefore(logBox, ls.nextSibling);
+  var entries=[];
+  function render(){ if(document.hidden) return; logBox.textContent=entries.length?('受信ログ（最新8件）\n'+entries.join('\n')):''; }
+  document.addEventListener('visibilitychange',render);
+  function push(s){ var t=new Date(); var hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0'),ss=String(t.getSeconds()).padStart(2,'0');
+    entries.unshift(hh+':'+mm+':'+ss+' '+s); if(entries.length>8)entries.length=8; render(); }
+  var bc2=new BroadcastChannel('varelser-link-v1');
+  bc2.onmessage=function(ev){ var m=ev.data||{};
+    if(m.type==='state'&&m.app==='noise') push('Noise state — playing '+m.playing+' / RMS '+(m.levelRms==null?'—':Math.round(m.levelRms*100)/100)+' Peak '+(m.levelPeak==null?'—':Math.round(m.levelPeak*100)/100));
+    else if(m.type==='state'&&m.app==='meikyoshisui') push('Meikyoshisui state — '+m.bpm+' BPM / playing '+m.playing);
+    else if(m.type==='seed-sync'&&m.app&&m.app!=='studio') push('seed-sync 受信: '+m.app+' → master '+m.master);
+  };
+}catch(e){}
+/* ── 2b digit keys 1-8: stage switch (DOM order of stage buttons) ── */
+document.addEventListener('keydown',function(e){
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  if(!/^[1-8]$/.test(e.key)) return;
+  var t=e.target; if(t&&(t.closest&&t.closest('input,textarea,select,[contenteditable]'))) return;
+  var btns=document.querySelectorAll('[data-t="stage"]'); var b=btns[Number(e.key)-1];
+  if(b){ e.preventDefault(); b.click();
+    setTimeout(function(){ var f=$('stageFrame'); if(f&&document.activeElement===f) f.blur(); },700); }
+});
+/* ── 2d BPM nudge ── */
+var bpm=$('r4Bpm');
+if(bpm&&bpm.parentNode){
+  function nudge(d){ return function(e){ var step=(e.shiftKey?10:1)*d; var v=(parseInt(bpm.value,10)||120)+step;
+    var min=parseInt(bpm.min,10)||40, max=parseInt(bpm.max,10)||240; v=Math.max(min,Math.min(max,v));
+    bpm.value=v; bpm.dispatchEvent(new Event('input',{bubbles:true})); bpm.dispatchEvent(new Event('change',{bubbles:true})); }; }
+  var bm=document.createElement('button'); bm.type='button'; bm.className='c-bpm-nudge'; bm.textContent='−'; bm.title='BPM -1 (Shift: -10)'; bm.addEventListener('click',nudge(-1));
+  var bp=document.createElement('button'); bp.type='button'; bp.className='c-bpm-nudge'; bp.textContent='＋'; bp.title='BPM +1 (Shift: +10)'; bp.addEventListener('click',nudge(1));
+  bpm.parentNode.insertBefore(bm,bpm); bpm.parentNode.insertBefore(bp,bpm.nextSibling);
+}
+/* ── help table: digit row ── */
+var help=$('r5Help'); if(help){ var tb=help.querySelector('table'); if(tb){ var tr=document.createElement('tr');
+  tr.innerHTML='<td>1–8</td><td>ステージ切替（タイルの並び順）</td>'; tb.appendChild(tr); } }
+/* ── Phase 3: mobile console detail toggle ── */
+var sec=$('sec-console');
+if(sec){
+  function tag(el){ if(!el)return; var row=el.closest('.row')||el.closest('div')||el; row.classList.add('c-sub'); }
+  ['r5FsBtn','r5RecBtn','r5SleepSel','r5StoreState','r4MonoOpen','r4SceneExport'].forEach(function(id){ tag($(id)); });
+  var pre=$('r4Payload'); if(pre){ pre.classList.add('c-sub'); var p=pre.previousElementSibling; if(p&&p.tagName==='P')p.classList.add('c-sub'); }
+  var btn=document.createElement('button'); btn.type='button'; btn.id='cDetailBtn'; btn.textContent='詳細（技術・診断）を表示';
+  btn.addEventListener('click',function(){ var open=sec.classList.toggle('c-open'); btn.textContent=open?'詳細（技術・診断）を隠す':'詳細（技術・診断）を表示'; });
+  sec.appendChild(btn);
+}
+})();
+</script>
+<script type="speculationrules">
+{"prefetch":[{"source":"list","urls":["lien.html","leary.html","topo.html","yayoi.html","punkt.html","noise.html","meikyoshisui/"],"eagerness":"moderate"}]}
 </script>
 </body></html>
