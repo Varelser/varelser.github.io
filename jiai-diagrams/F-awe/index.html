@@ -58,4 +58,7 @@ ctx.clearRect(0,0,1600,900);const [w1,w2,w3]=weights(t);
 if(w1>.01){ctx.globalAlpha=w1;s1(t);}if(w2>.01){ctx.globalAlpha=w2;s2(t);}if(w3>.01){ctx.globalAlpha=w3;s3(t);}
 ctx.globalAlpha=1;requestAnimationFrame(frame);}
 requestAnimationFrame(frame);
-</script></body></html>
+</script><script>/* jiai-fig-gate */
+(function(){var orig=window.requestAnimationFrame.bind(window),pend=[],fDoc=!document.hidden,fIo=true,fPar=true,running=true;function eff(){return fDoc&&fIo&&fPar;}function upd(){var r=eff();if(r===running)return;running=r;if(running){var p=pend;pend=[];for(var i=0;i<p.length;i++)orig(p[i]);}}window.requestAnimationFrame=function(cb){if(eff())return orig(cb);pend.push(cb);return 0;};window.addEventListener('message',function(e){if(e.origin!==window.location.origin)return;var d=e.data;if(d&&d.type==='jiai-vis'){fPar=!!d.visible;upd();}});if('IntersectionObserver' in window){try{new IntersectionObserver(function(es){if(es[0]){fIo=es[0].isIntersecting;upd();}}).observe(document.documentElement);}catch(_){}}document.addEventListener('visibilitychange',function(){fDoc=!document.hidden;upd();});})();
+</script>
+</body></html>

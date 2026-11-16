@@ -37,4 +37,7 @@ function render(t){const tt=t%6.8,ch=Math.floor(tt/1.7),fr=(tt-ch*1.7)/1.7,e=fr*
 function frame(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;if(playing)t+=dt;
 ctx.clearRect(0,0,1600,1150);render(t);requestAnimationFrame(frame);}
 requestAnimationFrame(frame);
-</script></body></html>
+</script><script>/* jiai-fig-gate */
+(function(){var orig=window.requestAnimationFrame.bind(window),pend=[],fDoc=!document.hidden,fIo=true,fPar=true,running=true;function eff(){return fDoc&&fIo&&fPar;}function upd(){var r=eff();if(r===running)return;running=r;if(running){var p=pend;pend=[];for(var i=0;i<p.length;i++)orig(p[i]);}}window.requestAnimationFrame=function(cb){if(eff())return orig(cb);pend.push(cb);return 0;};window.addEventListener('message',function(e){if(e.origin!==window.location.origin)return;var d=e.data;if(d&&d.type==='jiai-vis'){fPar=!!d.visible;upd();}});if('IntersectionObserver' in window){try{new IntersectionObserver(function(es){if(es[0]){fIo=es[0].isIntersecting;upd();}}).observe(document.documentElement);}catch(_){}}document.addEventListener('visibilitychange',function(){fDoc=!document.hidden;upd();});})();
+</script>
+</body></html>

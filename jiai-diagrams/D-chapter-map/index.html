@@ -123,4 +123,7 @@ const start = performance.now();
 (function tick(now){ const t = (now - start) / 1000; clusters.forEach(cl => apply(cl, t)); requestAnimationFrame(tick); })(start);
 })();
 </script>
+<script>/* jiai-fig-gate */
+(function(){var orig=window.requestAnimationFrame.bind(window),pend=[],fDoc=!document.hidden,fIo=true,fPar=true,running=true;function eff(){return fDoc&&fIo&&fPar;}function upd(){var r=eff();if(r===running)return;running=r;if(running){var p=pend;pend=[];for(var i=0;i<p.length;i++)orig(p[i]);}}window.requestAnimationFrame=function(cb){if(eff())return orig(cb);pend.push(cb);return 0;};window.addEventListener('message',function(e){if(e.origin!==window.location.origin)return;var d=e.data;if(d&&d.type==='jiai-vis'){fPar=!!d.visible;upd();}});if('IntersectionObserver' in window){try{new IntersectionObserver(function(es){if(es[0]){fIo=es[0].isIntersecting;upd();}}).observe(document.documentElement);}catch(_){}}document.addEventListener('visibilitychange',function(){fDoc=!document.hidden;upd();});})();
+</script>
 </body></html>
