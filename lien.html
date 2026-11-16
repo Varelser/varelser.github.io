@@ -5269,7 +5269,9 @@ function getBackgroundColor(cfg) {
     window.addEventListener('pointermove', function (ev) {
       var r = view.getBoundingClientRect();
       var x = ev.clientX - r.left, y = ev.clientY - r.top;
-      brush.inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height && document.elementFromPoint(ev.clientX, ev.clientY) === view;
+      var elAt = document.elementFromPoint(ev.clientX, ev.clientY);
+      var overUI = elAt && elAt.closest && elAt.closest('#configPanel, #savePanel, header, footer, .floating-panel, #lienPalette');
+      brush.inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height && !overUI;
       if (brush.inside) {
         var cfg = readCfg();
         var zoom = Math.max(0.5, Math.min(10, cfg.zoom));
