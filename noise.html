@@ -12,10 +12,10 @@
 <link rel="apple-touch-icon" href="https://noise-assets.pages.dev/apple-touch-icon.png">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2212%22%20fill%3D%22%23000%22%2F%3E%3Cpath%20d%3D%22M2.5%2012L5%205.8L7.2%2018.2L9.6%203.4L12.1%2020.6L14.6%207.8L17%2016.4L19.2%208.8L21.5%2012%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <title>Noise</title>
-<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。76種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta name="description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。83種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="Noise — Noise Generator">
-<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。76種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
+<meta property="og:description" content="ブラウザで動く単一ファイルのノイズ・ジェネレーター。83種のノイズを3レイヤーで合成し、WAV/AIFFへ安全に書き出せます。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://varelser.github.io/noise.html">
 <style>
@@ -711,7 +711,7 @@
       <div class="body">
         <div class="help">
           色付きノイズの一部（Grey / Green / Black など）は用途により定義が揺れるため、本作では実用向けの近似実装です。<br>
-          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を76種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。<br>全82種のうち従来の76種の詳しい解説は、note の完全解説記事にまとめています：<a href="https://note.com/varelser/n/n170e0fb04ba3" target="_blank" rel="noopener">Noise 完全解説――全76種・114プリセット</a>。各レイヤーのタイプ説明からも、対応する節へ直接飛べます。
+          Export は安全性優先の分割レンダリング / 分割書き出しに変更しています。長尺時も一括大容量メモリを避けます。<br>WAV に加えて AIFF に対応し、保存時のみ HQ Oversampling（1x / 2x / 4x）を使えます。さらに Export Limiter / True-Peak寄り保護 / Noise Shaping を追加しています。保存中は進捗表示・中止に対応し、再生は自動停止します。Vintage処理は実機エミュレーションではなく、太さ・揺れ・胴鳴りを与える実用寄りの近似実装です。今回さらに Preview Quality / Spectrogram / Session JSON / Autosave / Stems Export / Batch Seed Export を追加しています。今回の版では可視化を最上段へ移し、さらに Diffuse Space / Air Exciter を追加して破綻しにくいまま音の幅を広げています。今回さらにレイヤーを3層化し、各レイヤーに独立したL/R生成（Stereo）を持てるようにし、ノイズ種を76種へ拡張し、バイノーラル（δ/θ/α/γ帯のビート）、スリープタイマー、Loop Crossfade＋WAV smplチャンク、AI生成（ルール/BYOK LLM）、Web MIDI入力、URLセッション共有を追加しています。バイノーラルは体験補助であり、医療効果を謳うものではありません。<br>全83種のうち従来の76種の詳しい解説は、note の完全解説記事にまとめています：<a href="https://note.com/varelser/n/n170e0fb04ba3" target="_blank" rel="noopener">Noise 完全解説――全76種・114プリセット</a>。各レイヤーのタイプ説明からも、対応する節へ直接飛べます。
         </div>
       </div>
     </div>
@@ -912,7 +912,8 @@
     ['bees', 'Bee Swarm'],
     ['geyser', 'Geyser / Onsen'],
     ['glacier', 'Glacier'],
-    ['aurora', 'Aurora']
+    ['aurora', 'Aurora'],
+    ['sample', 'User Sample']
   ];
 
   const NOISE_TYPE_INFO = {
@@ -974,6 +975,7 @@
     geyser: '間欠泉・温泉。静かな泡立ちから周期的に噴出するサイクルを繰り返します。時間で表情が変わる生成タイプです。',
     glacier: '氷河のきしみ。低域のゴリゴリした軋み、氷の割れる音、時折響く高い残響を含みます。',
     aurora: 'オーロラ（抽象）。共鳴帯域がゆっくり移ろう薄いベールのような音。瞑想・環境生成向けです。',
+    sample: '読み込んだ音源ファイル（フィールドレコーディング等）をループ再生する種。デバイス欄の「サンプル読込」から取り込みます。レイヤーのトーン/EQやマスター処理で加工でき、書き出しにも入ります。',
     tinnitus: '耳鳴りのような高い持続音と、かすかなヒス。マスキングや参照用の音です。Densityで音程、Motionで揺らぎ、Grainで倍音とヒスの量が変わります。長時間・大音量での使用は避けてください。',
     hail: '雹（ひょう）の音。雨より硬く速い打撃が、低い唸りの上に降り注ぎます。Densityで降りの密度、Motionで嵐のうねり、Grainで氷の大きさが変わります。',
     desert: '砂漠の風。低い唸りに、砂の粒が流れる高いざらつきが重なります。Densityで砂の量、Motionで突風の強さが変わります。',
@@ -2895,6 +2897,9 @@
     return y;
   }
 
+  const NOISE_SAMPLES = { user: null };
+  let NOISE_SAMPLE_VERSION = 0;
+
   function nextNoiseRaw(s, p, t) {
     const sr = s.sr;
     const density = clamp(p.density, 0, 1.5);
@@ -2902,6 +2907,31 @@
     const grain = clamp(p.grain, 0, 1.5);
 
     switch (p.type) {
+      case 'sample': {
+        const smp = NOISE_SAMPLES.user;
+        if (!smp || !smp.l || !smp.l.length) return 0;
+        const sLen = smp.l.length;
+        if (s.smpPos === undefined) s.smpPos = 0;
+        const chData = s.smpCh === 1 && smp.r ? smp.r : smp.l;
+        const posNow = s.smpPos;
+        const baseIdx = Math.floor(posNow);
+        const i0 = baseIdx % sLen;
+        const i1 = i0 + 1 >= sLen ? 0 : i0 + 1;
+        const fr = posNow - baseIdx;
+        let sv = chData[i0] * (1 - fr) + chData[i1] * fr;
+        const fadeN = Math.min(4096, sLen >> 2);
+        if (fadeN > 16) {
+          const pli = posNow % sLen;
+          if (pli > sLen - fadeN) {
+            const k = (pli - (sLen - fadeN)) / fadeN;
+            const j = Math.floor(pli - (sLen - fadeN)) % sLen;
+            sv = sv * (1 - k) + chData[j] * k;
+          }
+        }
+        s.smpPos = posNow + smp.sr / sr;
+        if (s.smpPos >= sLen * 2) s.smpPos -= sLen;
+        return sv * 0.9;
+      }
       case 'white': return rawWhite(s);
       case 'gaussian': return rawGaussian(s);
       case 'pink': return rawPink(s);
@@ -3913,11 +3943,11 @@
       sampleRate: p.master_sampleRate,
       frame: 0,
       sA: initLayerRuntime('A', pA, p.master_sampleRate, p.master_seed >>> 0, p.master_humHz),
-      sAR: initLayerRuntime('A', pA, p.master_sampleRate, (p.master_seed >>> 0) + 20125, p.master_humHz),
+      sAR: Object.assign(initLayerRuntime('A', pA, p.master_sampleRate, (p.master_seed >>> 0) + 20125, p.master_humHz), { smpCh: 1 }),
       sB: initLayerRuntime('B', pB, p.master_sampleRate, p.master_seed >>> 0, p.master_humHz),
-      sBR: initLayerRuntime('B', pB, p.master_sampleRate, (p.master_seed >>> 0) + 40503, p.master_humHz),
+      sBR: Object.assign(initLayerRuntime('B', pB, p.master_sampleRate, (p.master_seed >>> 0) + 40503, p.master_humHz), { smpCh: 1 }),
       sC: initLayerRuntime('C', pC, p.master_sampleRate, p.master_seed >>> 0, p.master_humHz),
-      sCR: initLayerRuntime('C', pC, p.master_sampleRate, (p.master_seed >>> 0) + 60709, p.master_humHz),
+      sCR: Object.assign(initLayerRuntime('C', pC, p.master_sampleRate, (p.master_seed >>> 0) + 60709, p.master_humHz), { smpCh: 1 }),
       masterState: initMasterRuntime(p.master_sampleRate, p)
     };
   }
@@ -5112,6 +5142,7 @@
   ].join('\n');
 
   const NOISE_PROCESSOR_SOURCE = `
+const NOISE_SAMPLES = { user: null };
 class NoiseAtlasProcessor extends AudioWorkletProcessor {
   constructor(options = {}) {
     super();
@@ -5191,6 +5222,10 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
     }
     if (msg.type === 'stop') {
       this.playing = false;
+      return;
+    }
+    if (msg.type === 'sample') {
+      NOISE_SAMPLES.user = msg.data || null;
       return;
     }
     if (msg.type === 'reset') {
@@ -5514,6 +5549,12 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       applySpaceFx();
 
       if (this.node) {
+        try {
+          if (NOISE_SAMPLES.user && this.node.__smpV !== NOISE_SAMPLE_VERSION) {
+            this.node.__smpV = NOISE_SAMPLE_VERSION;
+            this.node.port.postMessage({ type: 'sample', data: NOISE_SAMPLES.user });
+          }
+        } catch (_e) {}
         this.node.port.postMessage({ type: 'params', params: normalizeParams(this.params), forceRebuild: !!force });
       } else if (this.fallbackProcessor) {
         this.rebuildFallbackState(!!force);
@@ -5545,6 +5586,12 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
       }
 
       if (this.node) {
+        try {
+          if (NOISE_SAMPLES.user && this.node.__smpV !== NOISE_SAMPLE_VERSION) {
+            this.node.__smpV = NOISE_SAMPLE_VERSION;
+            this.node.port.postMessage({ type: 'sample', data: NOISE_SAMPLES.user });
+          }
+        } catch (_e) {}
         this.node.port.postMessage({ type: 'params', params: normalizeParams(p), changedId });
       } else if (this.fallbackProcessor) {
         this.rebuildFallbackState(false, changedId);
@@ -5608,6 +5655,12 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         if (stale()) return;
         applySpaceFx();
         if (this.node) {
+          try {
+            if (NOISE_SAMPLES.user && this.node.__smpV !== NOISE_SAMPLE_VERSION) {
+              this.node.__smpV = NOISE_SAMPLE_VERSION;
+              this.node.port.postMessage({ type: 'sample', data: NOISE_SAMPLES.user });
+            }
+          } catch (_e) {}
           this.node.port.postMessage({ type: 'play' });
         }
         this.playing = true;
@@ -7690,6 +7743,40 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
         setStatus('マイク入力を開始しました。音量は Master の Mic Level で調整できます。', 'ok');
       } catch (_) { setStatus('マイク入力を開始できませんでした（権限を確認してください）。', 'err'); }
     });
+    window.__noiseLoadSample = async (file) => {
+      try {
+        const buf = await file.arrayBuffer();
+        let audio = null;
+        try {
+          const AC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+          audio = await new AC(2, 1, 44100).decodeAudioData(buf);
+        } catch (_e) {
+          const AC2 = window.AudioContext || window.webkitAudioContext;
+          audio = await new AC2().decodeAudioData(buf);
+        }
+        const maxLen = Math.min(audio.length, 44100 * 180);
+        const l = audio.getChannelData(0).slice(0, maxLen);
+        const r = audio.numberOfChannels > 1 ? audio.getChannelData(1).slice(0, maxLen) : l;
+        NOISE_SAMPLES.user = { l, r, sr: audio.sampleRate };
+        NOISE_SAMPLE_VERSION++;
+        if (engine.node) {
+          try {
+            engine.node.__smpV = NOISE_SAMPLE_VERSION;
+            engine.node.port.postMessage({ type: 'sample', data: NOISE_SAMPLES.user });
+          } catch (_e) {}
+        }
+        return { name: file.name, seconds: maxLen / audio.sampleRate, truncated: audio.length > maxLen };
+      } catch (_e) {
+        return null;
+      }
+    };
+    window.__noiseClearSample = () => {
+      NOISE_SAMPLES.user = null;
+      NOISE_SAMPLE_VERSION++;
+      if (engine.node) {
+        try { engine.node.port.postMessage({ type: 'sample', data: null }); engine.node.__smpV = NOISE_SAMPLE_VERSION; } catch (_e) {}
+      }
+    };
     const wakeToggle = $('wakeLockToggle');
     if (wakeToggle) wakeToggle.addEventListener('change', () => { techState.wakeWanted = !!wakeToggle.checked; applyWakeLock(); });
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') applyWakeLock(); });
@@ -8586,6 +8673,209 @@ $('driftToggle').addEventListener('click', function(){
     });
   }, 140);
 });
+})();
+</script>
+<script id="noise-e-script">
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var sel=$('presetSelect'); if(!sel) return;
+function fields(){ return document.querySelectorAll('#masterFields input, #masterFields select, #layerAFields input, #layerAFields select, #layerBFields input, #layerBFields select, #layerCFields input, #layerCFields select'); }
+function readVals(){ var o={}; fields().forEach(function(el){ if(el.id) o[el.id]= (el.type==='checkbox') ? el.checked : el.value; }); return o; }
+function setVal(el, v){ if(el.type==='checkbox'){ el.checked=!!v; } else { el.value=v; } el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); }
+function writeVals(o){ fields().forEach(function(el){ if(el.id && Object.prototype.hasOwnProperty.call(o, el.id)) setVal(el, o[el.id]); }); }
+function isNumeric(el){ return el.type==='range' || el.type==='number'; }
+function applyPresetByName(n){ sel.value=n; var b=$('applyPreset'); if(b) b.click(); }
+var style=document.createElement('style');
+style.textContent='#sampleBar,#journeyBar,#envBar{display:grid;gap:8px;margin-top:12px;border-top:1px solid var(--line-soft);padding-top:10px}'
++'#sampleBar .m-label,#journeyBar .m-label,#envBar .m-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}'
++'#sampleBar .m-row,#journeyBar .m-row,#envBar .m-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}'
++'#sampleBar button,#journeyBar button,#envBar button{padding:7px 12px;font-size:11px;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer;border:0}'
++'#sampleBar button.on,#journeyBar button.on,#envBar button.on{color:#000;background:var(--option-active-bg)}'
++'#journeyBar select.mini,#envBar select.mini{background:var(--control-bg);border:0;border-radius:6px;padding:6px 8px;min-height:32px;color:var(--fg)}'
++'#journeyBar label.check,#envBar label.check{font-size:11px;color:var(--muted)}'
++'#journeyChips{display:flex;gap:6px;flex-wrap:wrap}'
++'#journeyChips .jchip{display:inline-flex;gap:6px;align-items:center;font-size:11px;padding:5px 8px;border-radius:999px;background:var(--control-bg);color:var(--fg)}'
++'#journeyChips .jchip button{padding:0 4px;font-size:11px;background:transparent;color:var(--muted)}'
++'#sampleBar .help,#journeyBar .help,#envBar .help{font-size:11px;color:var(--muted);line-height:1.6}'
++'#panel.sample-drag{outline:2px dashed var(--muted-2);outline-offset:-6px}';
+document.head.appendChild(style);
+/* ---- D: Sample load UI ---- */
+var deviceBody=document.querySelector('#sec-device .body');
+if(deviceBody && typeof window.__noiseLoadSample==='function'){
+  var sbar=document.createElement('div'); sbar.id='sampleBar';
+  sbar.innerHTML='<div class="m-label">Sample — 自分の音源を種にする</div>'
+   + '<div class="m-row"><button id="sampleBtn" type="button">サンプル読込</button><input id="sampleFile" type="file" accept="audio/*" style="display:none"><span id="sampleName" style="font-size:11px;color:var(--muted)">未読込</span><button id="sampleClear" type="button" style="display:none">クリア</button></div>'
+   + '<div class="help">音源ファイル（録音・フィールドレコーディング等）を読み込むと、レイヤーの種類「User Sample」でループ再生できます。パネルへのドラッグ＆ドロップでも読み込めます。最大3分まで。読み込むと Layer A が User Sample に切り替わります。トーン/EQやマスター処理で加工でき、書き出しにも入ります。</div>';
+  deviceBody.appendChild(sbar);
+  var sFile=$('sampleFile'), sName=$('sampleName'), sClear=$('sampleClear');
+  function doLoad(file){
+    if(!file) return;
+    sName.textContent='読込中…';
+    window.__noiseLoadSample(file).then(function(res){
+      if(!res){ sName.textContent='読み込めませんでした（対応形式の音源ファイルを選んでください）'; return; }
+      sName.textContent=res.name+'（'+res.seconds.toFixed(1)+'秒'+(res.truncated?'、先頭3分まで':'')+'）';
+      sClear.style.display='';
+      var at=$('A_type'); if(at){ at.value='sample'; at.dispatchEvent(new Event('input',{bubbles:true})); at.dispatchEvent(new Event('change',{bubbles:true})); }
+      var ae=$('A_enabled'); if(ae && !ae.checked){ ae.checked=true; ae.dispatchEvent(new Event('input',{bubbles:true})); ae.dispatchEvent(new Event('change',{bubbles:true})); }
+    });
+  }
+  $('sampleBtn').addEventListener('click', function(){ sFile.click(); });
+  sFile.addEventListener('change', function(){ doLoad(sFile.files && sFile.files[0]); sFile.value=''; });
+  sClear.addEventListener('click', function(){ window.__noiseClearSample(); sName.textContent='未読込'; sClear.style.display='none'; });
+  var panel=$('panel');
+  if(panel){
+    panel.addEventListener('dragover', function(e){ e.preventDefault(); panel.classList.add('sample-drag'); });
+    panel.addEventListener('dragleave', function(){ panel.classList.remove('sample-drag'); });
+    panel.addEventListener('drop', function(e){ e.preventDefault(); panel.classList.remove('sample-drag'); var f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) doLoad(f); });
+  }
+}
+/* ---- E: Journey ---- */
+var presetBody=document.querySelector('#sec-preset .body');
+var waypoints=[];
+try{ waypoints=JSON.parse(localStorage.getItem('noise_journey_v1')||'[]'); if(!Array.isArray(waypoints)) waypoints=[]; }catch(_){ waypoints=[]; }
+if(presetBody){
+  var jbar=document.createElement('div'); jbar.id='journeyBar';
+  jbar.innerHTML='<div class="m-label">Journey — 複数のプリセットを旅する</div>'
+   + '<div id="journeyChips"></div>'
+   + '<div class="m-row"><button id="journeyAdd" type="button">選択中のプリセットを追加</button><button id="journeyClear" type="button">全消去</button></div>'
+   + '<div class="m-row"><span style="font-size:11px;color:var(--muted)">1区間</span><select id="journeyMins" class="mini" aria-label="1区間の時間"><option value="0.5">30秒</option><option value="1">1分</option><option value="3" selected>3分</option><option value="5">5分</option><option value="10">10分</option><option value="20">20分</option></select><label class="check"><input id="journeyLoop" type="checkbox"> ループ</label><button id="journeyStart" type="button">ジャーニー開始</button></div>'
+   + '<div class="help" id="journeyStatus">地点を2つ以上追加して開始すると、現在の設定から順に各プリセットへゆっくり移行します。</div>';
+  presetBody.appendChild(jbar);
+  var jChips=$('journeyChips'), jStatus=$('journeyStatus');
+  function saveWp(){ try{ localStorage.setItem('noise_journey_v1', JSON.stringify(waypoints)); }catch(_){} }
+  function renderChips(){
+    jChips.innerHTML='';
+    waypoints.forEach(function(n, i){
+      var c=document.createElement('span'); c.className='jchip';
+      var t=document.createElement('span'); t.textContent=(i+1)+'. '+n; c.appendChild(t);
+      var x=document.createElement('button'); x.type='button'; x.textContent='×'; x.setAttribute('aria-label', n+' を削除');
+      x.addEventListener('click', function(){ waypoints.splice(i,1); saveWp(); renderChips(); });
+      c.appendChild(x); jChips.appendChild(c);
+    });
+    if(!waypoints.length){ var e=document.createElement('span'); e.style.cssText='font-size:11px;color:var(--muted)'; e.textContent='地点はまだありません'; jChips.appendChild(e); }
+  }
+  renderChips();
+  $('journeyAdd').addEventListener('click', function(){ var n=sel.value; if(!n) return; waypoints.push(n); saveWp(); renderChips(); });
+  $('journeyClear').addEventListener('click', function(){ waypoints=[]; saveWp(); renderChips(); });
+  var jTimer=0, jSeq=null, jLeg=0, jProg=0;
+  function jStop(msg){
+    if(jTimer){ clearInterval(jTimer); jTimer=0; }
+    var b=$('journeyStart'); if(b){ b.classList.remove('on'); b.textContent='ジャーニー開始'; }
+    if(msg) jStatus.textContent=msg;
+  }
+  function jApply(a, d, m){
+    fields().forEach(function(el){
+      if(!el.id) return;
+      var av=a[el.id], dv=d[el.id];
+      if(av===undefined || dv===undefined) return;
+      if(isNumeric(el)){ var x=parseFloat(av), y=parseFloat(dv); if(isFinite(x)&&isFinite(y)) setVal(el, x+(y-x)*m); }
+      else setVal(el, m>=0.5 ? dv : av);
+    });
+  }
+  $('journeyStart').addEventListener('click', function(){
+    if(jTimer){ jStop('ジャーニーを停止しました（現在の設定のままです）。'); return; }
+    if(waypoints.length<2){ jStatus.textContent='地点を2つ以上追加してください。'; return; }
+    var orig=readVals(), snaps=[];
+    waypoints.forEach(function(n){ applyPresetByName(n); snaps.push(readVals()); });
+    writeVals(orig);
+    jSeq=[orig].concat(snaps);
+    jLeg=0; jProg=0;
+    var dur=parseFloat($('journeyMins').value)*60*1000, last=Date.now();
+    var b=$('journeyStart'); b.classList.add('on'); b.textContent='ジャーニー停止';
+    jStatus.textContent='ジャーニー中： 1/'+waypoints.length+' 地点目（'+waypoints[0]+'）へ移行中';
+    jTimer=setInterval(function(){
+      var now=Date.now(), dt=now-last; last=now;
+      jProg += dt/dur;
+      if(jProg>=1){
+        jApply(jSeq[jLeg], jSeq[jLeg+1], 1);
+        jLeg++; jProg=0;
+        if(jLeg>=jSeq.length-1){
+          if($('journeyLoop').checked){ jSeq=[jSeq[jSeq.length-1]].concat(snaps); jLeg=0; }
+          else { jStop('ジャーニーが完了しました（最終地点：'+waypoints[waypoints.length-1]+'）。'); return; }
+        }
+        jStatus.textContent='ジャーニー中： '+(Math.min(jLeg+1, waypoints.length))+'/'+waypoints.length+' 地点目（'+waypoints[Math.min(jLeg, waypoints.length-1)]+'）へ移行中';
+        return;
+      }
+      var e=jProg<0.5 ? 2*jProg*jProg : 1-Math.pow(-2*jProg+2,2)/2;
+      jApply(jSeq[jLeg], jSeq[jLeg+1], e);
+    }, 120);
+  });
+}
+/* ---- F: Environment link ---- */
+if(presetBody){
+  var ebar=document.createElement('div'); ebar.id='envBar';
+  ebar.innerHTML='<div class="m-label">Environment — 時刻と天気で自動選択</div>'
+   + '<div class="m-row"><select id="envMode" class="mini" aria-label="環境連動モード"><option value="off">オフ</option><option value="time">時刻</option><option value="weather">天気</option><option value="both">時刻＋天気</option></select><button id="envNow" type="button">今すぐ反映</button><button id="envGeo" type="button">現在地の天気を使う</button></div>'
+   + '<div class="help" id="envStatus">オフです。時刻は端末の時計、天気は Open-Meteo（無料・キー不要、既定は東京）から取得します。時間帯や天気が切り替わったときだけプリセットを切り替えるので、手動の変更と競合しません。</div>';
+  presetBody.appendChild(ebar);
+  var eMode=$('envMode'), eStatus=$('envStatus');
+  var envState={ wxCode:null, wxAt:0, lat:35.68, lon:139.69, lastKey:'' };
+  try{ eMode.value=localStorage.getItem('noise_env_mode_v1')||'off'; }catch(_){}
+  function timePick(){
+    var h=new Date().getHours();
+    if(h>=5&&h<10) return { name:'Nature: Dawn Chorus', label:'朝', key:'time:morning' };
+    if(h>=10&&h<17) return { name:'Mountain Stream', label:'昼', key:'time:day' };
+    if(h>=17&&h<21) return { name:'Cicada Evening', label:'夕方', key:'time:evening' };
+    if(h>=21) return { name:'City Night Traffic', label:'夜', key:'time:night' };
+    return { name:'Sleep: Deep Brown', label:'深夜', key:'time:late' };
+  }
+  function wxPick(code){
+    if(code===null||code===undefined) return null;
+    if(code===0||code===1) return { name:'Forest Wind', label:'晴れ', strong:false };
+    if(code===2||code===3) return { name:'Focus: Grey Study', label:'曇り', strong:false };
+    if(code===45||code===48) return { name:'Nature: Deep Cave', label:'霧', strong:true };
+    if((code>=71&&code<=77)||code===85||code===86) return { name:'Nature: Snowfield', label:'雪', strong:true };
+    if(code>=95) return { name:'Thunderstorm Far', label:'雷雨', strong:true };
+    if(code>=51) return { name:'Sleep: Rain Window', label:'雨', strong:true };
+    return null;
+  }
+  function fetchWx(){
+    var url='https://api.open-meteo.com/v1/forecast?latitude='+envState.lat+'&longitude='+envState.lon+'&current=weather_code';
+    return fetch(url).then(function(r){ return r.json(); }).then(function(j){
+      if(j && j.current && typeof j.current.weather_code==='number'){ envState.wxCode=j.current.weather_code; envState.wxAt=Date.now(); }
+    }).catch(function(){});
+  }
+  function envApply(force){
+    var mode=eMode.value;
+    if(mode==='off'){ eStatus.textContent='オフです。'; return; }
+    var t=timePick(), w=wxPick(envState.wxCode), pick=null, why='';
+    if(mode==='time'){ pick=t; why='時刻（'+t.label+'）'; }
+    else if(mode==='weather'){ pick=w; why=w?('天気（'+w.label+'）'):''; }
+    else { if(w && w.strong){ pick=w; why='天気（'+w.label+'）を優先'; } else { pick=t; why='時刻（'+t.label+'）'; } }
+    if(!pick){ eStatus.textContent='天気を取得中です…'; return; }
+    var key=mode+':'+pick.name;
+    if(!force && key===envState.lastKey) return;
+    envState.lastKey=key;
+    applyPresetByName(pick.name);
+    eStatus.textContent=why+' に合わせて「'+pick.name+'」を適用しました。';
+  }
+  function envTick(){
+    if(eMode.value==='off') return;
+    if(eMode.value!=='time' && Date.now()-envState.wxAt>30*60*1000){ fetchWx().then(function(){ envApply(false); }); }
+    else envApply(false);
+  }
+  eMode.addEventListener('change', function(){
+    try{ localStorage.setItem('noise_env_mode_v1', eMode.value); }catch(_){}
+    envState.lastKey='';
+    if(eMode.value!=='off' && eMode.value!=='time'){ fetchWx().then(function(){ envApply(true); }); }
+    else envApply(true);
+  });
+  $('envNow').addEventListener('click', function(){
+    if(eMode.value==='off'){ eStatus.textContent='先にモードを選んでください。'; return; }
+    if(eMode.value!=='time'){ fetchWx().then(function(){ envApply(true); }); } else envApply(true);
+  });
+  $('envGeo').addEventListener('click', function(){
+    if(!navigator.geolocation){ eStatus.textContent='このブラウザは位置情報に対応していません（既定の東京で取得します）。'; return; }
+    navigator.geolocation.getCurrentPosition(function(pos){
+      envState.lat=Math.round(pos.coords.latitude*100)/100; envState.lon=Math.round(pos.coords.longitude*100)/100; envState.wxAt=0;
+      eStatus.textContent='現在地の天気を取得します。';
+      fetchWx().then(function(){ envApply(true); });
+    }, function(){ eStatus.textContent='位置情報を取得できませんでした（既定の東京で取得します）。'; });
+  });
+  setInterval(envTick, 60000);
+  if(eMode.value!=='off'){ envTick(); }
+}
 })();
 </script>
 </body>
