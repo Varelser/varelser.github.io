@@ -60,27 +60,39 @@
   header .logo img { height:24px; width:auto; display:block; }
   header .hd-title { position:absolute; left:50%; transform:translateX(-50%); white-space:nowrap; }
   header .hd-title img { height:16px; width:auto; display:block; filter:invert(1); }
-  header .emblem img { width:40px; height:40px; border-radius:50%; display:block; }
-  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 20px 28px; }
-  main .icon { width:min(620px, 76vmin, max(160px, calc(100dvh - 606px))); height:auto; display:block; }
-  main h1 { margin-top:26px; text-align:center; }
-  main h1 img.logo-main { width:min(400px, 82vw); height:auto; display:block; margin:0 auto; filter:invert(1); }
-  main .logo-jp { margin-top:12px; text-align:center; }
-  main .logo-jp img { width:min(240px, 62vw); height:auto; display:block; margin:0 auto; filter:invert(1); opacity:.92; }
-  main .rule { width:56px; height:1px; background:#3a3a40; margin:26px auto 0; }
-  main .desc { margin:18px auto 0; max-width:560px; padding:0 20px; font-size:12.5px; line-height:2.0; letter-spacing:.08em; color:#8b8b93; text-align:center; }
+  header .emblem img { width:28px; height:28px; border-radius:50%; display:block; }
+  main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 20px 32px; }
+  main .icon { width:clamp(160px, 30vmin, 340px); height:auto; display:block; }
+  main h1 { margin-top:24px; text-align:center; }
+  main h1 img.logo-main { width:min(360px, 82vw); height:auto; display:block; margin:0 auto; filter:invert(1); }
+  main .logo-jp { margin-top:8px; text-align:center; }
+  main .logo-jp img { width:min(176px, 48vw); height:auto; display:block; margin:0 auto; filter:invert(1); opacity:.78; }
+  main .rule { width:56px; height:1px; background:#3a3a40; margin:24px auto 0; }
+  main .desc { margin:16px auto 0; max-width:560px; padding:0 16px; font-size:13.5px; line-height:1.9; letter-spacing:.06em; color:#a8a8b0; text-align:center; }
   footer { flex:0 0 auto; padding:22px 20px calc(22px + env(safe-area-inset-bottom)); border-top:1px solid #232327; display:flex; justify-content:space-between; align-items:center; font-size:11px; letter-spacing:.18em; color:#8b8b93; }
   footer a { color:#9a9aa2; text-decoration:none; }
   main .links { margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:880px; }
   main .links a { display:inline-block; padding:12px 30px; border:1px solid #3a3a40; border-radius:999px; color:#e8e8ec; text-decoration:none; font-size:12px; letter-spacing:.34em; text-indent:.34em; transition:background .25s, color .25s, border-color .25s; }
   main .links a:hover { background:#e8e8ec; color:#000; border-color:#e8e8ec; }
-  main .members { margin-top:26px; text-align:center; }
+  main .links { margin-top:16px; }
+  main .links-primary { margin-top:24px; }
+  main .links a.primary { background:#e8e8ec; color:#000; border-color:#e8e8ec; font-weight:700; padding:14px 40px; }
+  main .links a.primary:hover { background:#fff; border-color:#fff; }
+  main .links a.ghost { border-color:#232327; color:#9a9aa2; }
+  main .links a.ghost:hover { background:transparent; color:#e8e8ec; border-color:#3a3a40; }
+  main .members { margin-top:24px; text-align:center; }
   main .members .m-label { font-size:10px; letter-spacing:.34em; text-indent:.34em; color:#8b8b93; }
   main .members .m-list { margin-top:8px; font-size:12px; letter-spacing:.12em; color:#8b8b93; line-height:2.4; }
   main .members .m-list a { color:#c9c9cf; text-decoration:underline; text-decoration-color:#3a3a40; text-underline-offset:5px; padding:12px 5px; }
   main .members .m-list a:hover { color:#fff; text-decoration-color:#e8e8ec; }
-  main .members .sep { margin:0 5px; color:#55555c; }
+  main .members .sep { margin:0 5px; color:#6e6e76; }
 
+  main .latest { margin-top:24px; width:min(560px, 92vw); border:1px solid #2c2c31; border-radius:12px; padding:16px; display:flex; gap:16px; align-items:center; text-align:left; text-decoration:none; color:#e8e8ec; transition:border-color .25s, background .25s; }
+  main .latest:hover { border-color:#e8e8ec; background:#0a0a0c; }
+  main .latest img { width:144px; aspect-ratio:16/9; object-fit:cover; border-radius:8px; display:block; background:#17171a; flex:0 0 auto; }
+  main .latest .l-meta { font-size:10px; letter-spacing:.28em; text-indent:0; color:#9a9aa2; }
+  main .latest .l-title { margin-top:8px; font-size:13.5px; line-height:1.7; letter-spacing:.04em; color:#e8e8ec; }
+  main .latest .l-date { margin-top:4px; font-size:11px; letter-spacing:.08em; color:#8b8b93; }
   main .icon { animation:pg-breathe 8s ease-in-out infinite; }
   @keyframes pg-breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.018)} }
   .svg-me2 .pg-ring { animation:pg-ring 7s ease-in-out infinite; }
@@ -104,16 +116,19 @@
   @view-transition { navigation:auto; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration:.18s; }
   @media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation:none; } }
-  @media print { body { background:#fff; color:#000; } header, footer { border-color:#ccc; } main .icon { animation:none; } main h1 { color:#000; } main .desc { color:#444; } main .links a { border-color:#000; color:#000; } header .logo img { filter:invert(1); } main h1 img.logo-main, main .logo-jp img, header .hd-title img { filter:none; } }
+  @media print { body { background:#fff; color:#000; } header, footer { border-color:#ccc; } main .icon { animation:none; } main h1 { color:#000; } main .desc { color:#444; } main .links a { border-color:#000; color:#000; } main .latest { border-color:#000; color:#000; } main .latest .l-title { color:#000; } header .logo img { filter:invert(1); } main h1 img.logo-main, main .logo-jp img, header .hd-title img { filter:none; } }
 
   @media (max-width:640px) {
-    main .icon { width:min(76vmin, max(120px, calc(100dvh - 621px))); }
-    main { padding-top:8px; }
-    main h1 { margin-top:12px; }
-    main .logo-jp { margin-top:10px; }
-    main .members { margin-top:8px; }
+    main .icon { width:clamp(144px, 42vmin, 200px); }
+    main { padding:24px 16px 24px; }
+    main h1 { margin-top:16px; }
+    main .logo-jp { margin-top:8px; }
+    main .members { margin-top:16px; }
     main .members .m-list { font-size:11px; line-height:1.7; }
-    main .desc { margin-top:10px; font-size:11px; line-height:1.8; }
+    main .desc { margin-top:16px; font-size:12.5px; line-height:1.9; }
+    main .latest { margin-top:16px; padding:12px; gap:12px; }
+    main .latest img { width:112px; }
+    main .latest .l-title { font-size:12px; line-height:1.6; }
     main .desc br { display:none; }
     main .links { margin-top:16px; }
     main .members .sep { margin:0 3px; }
@@ -122,8 +137,8 @@
     main .members .m-list a { padding:10px 4px; }
     header { padding:0 14px; }
     header .hd-title { font-size:11px; letter-spacing:.3em; text-indent:.3em; }
-    header .logo img { height:19px; }
-    header .emblem img { width:34px; height:34px; }
+    header .logo img { height:20px; }
+    header .emblem img { width:24px; height:24px; }
   }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
@@ -148,7 +163,7 @@
   <div class="logo-jp"><img src="logo-jp.png" alt="ミッドナイトエスプレッソ"></div>
   <div class="rule"></div>
   <p class="desc">配信番組『ミッドナイトエスプレッソ(仮)』の公式ページ。<br>出演：はろたろ、ポコアニモ、yoga、桃田朗、コパン。</p>
-  <div class="links"><a href="https://www.youtube.com/@midnightespressoproject" target="_blank" rel="noopener noreferrer">YOUTUBE</a><a href="https://www.twitch.tv/midnightesp" target="_blank" rel="noopener noreferrer">TWITCH</a><a href="https://x.com/midnighesp" target="_blank" rel="noopener noreferrer">X</a><a href="https://note.com/midnightesp" target="_blank" rel="noopener noreferrer">NOTE</a><a href="https://open.spotify.com/show/2oG57kJohDg172qoT0Bp3e" target="_blank" rel="noopener noreferrer">SPOTIFY</a><a href="https://linktr.ee/midnightespressoproject?utm_source=linktree_profile_share" target="_blank" rel="noopener noreferrer">LINKTREE</a></div>
+  <a class="latest" href="https://www.youtube.com/watch?v=EGIOJji9YBo" target="_blank" rel="noopener noreferrer" aria-label="最新の配信: 〖深夜雑談〗ミッドナイトエスプレッソ(仮) 第５夜〖強いのはどっち？〗を YouTube で見る"><img src="https://i.ytimg.com/vi/EGIOJji9YBo/mqdefault.jpg" alt="" width="144" height="81" loading="lazy"><span><span class="l-meta">LATEST — 最新の配信</span><span class="l-title" style="display:block">〖深夜雑談〗ミッドナイトエスプレッソ(仮)　第５夜〖強いのはどっち？〗</span><span class="l-date" style="display:block">2026.11.15 — YouTube</span></span></a><div class="links links-primary"><a class="primary" href="https://www.youtube.com/@midnightespressoproject" target="_blank" rel="noopener noreferrer">▶ YOUTUBE</a></div><div class="links"><a href="https://www.twitch.tv/midnightesp" target="_blank" rel="noopener noreferrer">TWITCH</a><a href="https://x.com/midnighesp" target="_blank" rel="noopener noreferrer">X</a><a href="https://note.com/midnightesp" target="_blank" rel="noopener noreferrer">NOTE</a><a href="https://open.spotify.com/show/2oG57kJohDg172qoT0Bp3e" target="_blank" rel="noopener noreferrer">SPOTIFY</a><a class="ghost" href="https://linktr.ee/midnightespressoproject?utm_source=linktree_profile_share" target="_blank" rel="noopener noreferrer">LINKTREE</a></div>
   <div class="members"><div class="m-label">MEMBERS</div><div class="m-list"><a href="https://x.com/hellotaro888" target="_blank" rel="noopener noreferrer" title="はろたろ – X">はろたろ</a><span class="sep">·</span><a href="https://x.com/pocoanimo_ap" target="_blank" rel="noopener noreferrer" title="ポコアニモ – X">ポコアニモ</a><span class="sep">·</span><a href="https://soundcloud.com/yoga-802481162" target="_blank" rel="noopener noreferrer" title="yoga – SoundCloud">yoga</a><span class="sep">·</span><a href="https://x.com/momota60mep" target="_blank" rel="noopener noreferrer" title="桃田朗 – X">桃田朗</a><span class="sep">·</span><a href="https://x.com/haganenokopan" target="_blank" rel="noopener noreferrer" title="コパン – X">コパン</a></div></div>
 </main>
 <footer>
