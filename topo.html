@@ -4209,6 +4209,34 @@ async function renderSceneOffscreen(req) {
     }
   }
 
+  const gridTicks = (typeof graticuleTicksFor === 'function') ? graticuleTicksFor(req.dataState) : null;
+  if (gridTicks) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.165)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < gridTicks.v.length; i++) {
+      const gx = gridTicks.v[i].t * req.width;
+      ctx.moveTo(gx, 0);
+      ctx.lineTo(gx, req.height);
+    }
+    for (let i = 0; i < gridTicks.hz.length; i++) {
+      const gy = gridTicks.hz[i].t * req.height;
+      ctx.moveTo(0, gy);
+      ctx.lineTo(req.width, gy);
+    }
+    ctx.stroke();
+    ctx.fillStyle = 'rgb(215, 215, 215)';
+    ctx.font = (9 * req.scale) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    for (let i = 0; i < gridTicks.v.length; i++) ctx.fillText(gridTicks.v[i].label, gridTicks.v[i].t * req.width, 3 * req.scale);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < gridTicks.hz.length; i++) ctx.fillText(gridTicks.hz[i].label, 3 * req.scale, gridTicks.hz[i].t * req.height);
+    ctx.restore();
+  }
+
   if (req.markers && req.markers.length) {
     ctx.save();
     ctx.textAlign = 'center';
@@ -4219,14 +4247,20 @@ async function renderSceneOffscreen(req) {
       const off = Math.max(0.8, fs * 0.09);
       const mx = m.x * req.width;
       const my = m.y * req.height;
+      const lines = String(m.text).split('\n');
+      const lh = fs * 1.18;
+      const y0 = my - (lines.length - 1) * lh / 2;
       ctx.font = '700 ' + fs + 'px sans-serif';
-      ctx.fillStyle = 'rgb(0, 0, 0)';
-      ctx.fillText(m.text, mx + off, my);
-      ctx.fillText(m.text, mx - off, my);
-      ctx.fillText(m.text, mx, my + off);
-      ctx.fillText(m.text, mx, my - off);
-      ctx.fillStyle = 'rgb(255, 255, 255)';
-      ctx.fillText(m.text, mx, my);
+      for (let li = 0; li < lines.length; li++) {
+        const ly = y0 + li * lh;
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.fillText(lines[li], mx + off, ly);
+        ctx.fillText(lines[li], mx - off, ly);
+        ctx.fillText(lines[li], mx, ly + off);
+        ctx.fillText(lines[li], mx, ly - off);
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.fillText(lines[li], mx, ly);
+      }
     }
     ctx.restore();
   }
@@ -4474,12 +4508,39 @@ async function buildSvgString(sceneData, opts, onProgress) {
     if (texts.length) parts.push(`<g>${texts.join('')}</g>`);
   }
 
+  const svgGrid = (typeof graticuleTicksFor === 'function') ? graticuleTicksFor(options.dataState) : null;
+  if (svgGrid) {
+    const glines = [];
+    for (let i = 0; i < svgGrid.v.length; i++) {
+      const gx = formatSvgNumber(svgGrid.v[i].t * width);
+      glines.push(`<line x1="${gx}" y1="0" x2="${gx}" y2="${formatSvgNumber(height)}"/>`);
+    }
+    for (let i = 0; i < svgGrid.hz.length; i++) {
+      const gy = formatSvgNumber(svgGrid.hz[i].t * height);
+      glines.push(`<line x1="0" y1="${gy}" x2="${formatSvgNumber(width)}" y2="${gy}"/>`);
+    }
+    parts.push(`<g stroke="rgb(255, 255, 255)" stroke-opacity="0.165" stroke-width="1">${glines.join('')}</g>`);
+    const gtexts = [];
+    for (let i = 0; i < svgGrid.v.length; i++) {
+      gtexts.push(`<text x="${formatSvgNumber(svgGrid.v[i].t * width)}" y="${formatSvgNumber(3 * strokeScale)}" fill="rgb(215, 215, 215)" font-size="${formatSvgNumber(9 * strokeScale)}" font-family="sans-serif" text-anchor="middle" dominant-baseline="hanging">${escapeSvgText(svgGrid.v[i].label)}</text>`);
+    }
+    for (let i = 0; i < svgGrid.hz.length; i++) {
+      gtexts.push(`<text x="${formatSvgNumber(3 * strokeScale)}" y="${formatSvgNumber(svgGrid.hz[i].t * height)}" fill="rgb(215, 215, 215)" font-size="${formatSvgNumber(9 * strokeScale)}" font-family="sans-serif" text-anchor="start" dominant-baseline="middle">${escapeSvgText(svgGrid.hz[i].label)}</text>`);
+    }
+    if (gtexts.length) parts.push(`<g>${gtexts.join('')}</g>`);
+  }
+
   if (options.markers && options.markers.length) {
     const mtexts = [];
     for (let i = 0; i < options.markers.length; i++) {
       const m = options.markers[i];
       const fs = 13 * (m.size || 1) * strokeScale;
-      mtexts.push(`<text x="${formatSvgNumber(m.x * width)}" y="${formatSvgNumber(m.y * height)}" fill="rgb(255, 255, 255)" font-size="${formatSvgNumber(fs)}" font-weight="700" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" style="paint-order:stroke;stroke:rgb(0, 0, 0);stroke-width:${formatSvgNumber(Math.max(2, fs * 0.22))}">${escapeSvgText(m.text)}</text>`);
+      const lines = String(m.text).split('\n');
+      const lh = fs * 1.18;
+      const y0 = m.y * height - (lines.length - 1) * lh / 2;
+      for (let li = 0; li < lines.length; li++) {
+        mtexts.push(`<text x="${formatSvgNumber(m.x * width)}" y="${formatSvgNumber(y0 + li * lh)}" fill="rgb(255, 255, 255)" font-size="${formatSvgNumber(fs)}" font-weight="700" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" style="paint-order:stroke;stroke:rgb(0, 0, 0);stroke-width:${formatSvgNumber(Math.max(2, fs * 0.22))}">${escapeSvgText(lines[li])}</text>`);
+      }
     }
     if (mtexts.length) parts.push(`<g>${mtexts.join('')}</g>`);
   }
@@ -4556,7 +4617,7 @@ function getWorkerSourceText() {
   // The render path needs the curve port and the OffscreenCanvas
   // rasterizer in the Worker as well; they are pure (no DOM access
   // at definition time) and join the core functions in the source.
-  const extras = [catmullRomPoint, cubicBezierPoint, curveBezierControls, buildCurveVertexList, curveSegmentStream, strokeCurvePath2D, renderSceneOffscreen];
+  const extras = [catmullRomPoint, cubicBezierPoint, curveBezierControls, buildCurveVertexList, curveSegmentStream, strokeCurvePath2D, graticuleTicksFor, renderSceneOffscreen];
   return getCoreSourceText()
     + '\n\n'
     + extras.map((f) => f.toString()).join('\n\n')
@@ -4896,7 +4957,8 @@ async function renderSceneViaWorker(scene, renderOpts, onProgress) {
     flowCounts: flat.flowCounts,
     dashEvery: params.DASH_EVERY,
     flowMode: params.FLOW_MODE,
-    markers: (typeof window !== 'undefined' && window.__topoMarkers) || []
+    markers: (typeof window !== 'undefined' && window.__topoMarkers) || [],
+    dataState: (typeof window !== 'undefined' && window.__topoDataState) || null
   }, onProgress, 'render', [flat.coords.buffer, flat.counts.buffer, flat.closed.buffer, flat.dots.buffer, flat.levelIdx.buffer, flat.levelVal.buffer, flat.slopes.buffer, flat.flowCoords.buffer, flat.flowCounts.buffer].concat(flat.bandGrey ? [flat.bandGrey.buffer] : []).concat(flat.shadeGrey ? [flat.shadeGrey.buffer] : []));
   return blob || null;
 }
@@ -5074,15 +5136,65 @@ function drawMarkersP5(pg, w, h, scale) {
     const off = Math.max(0.8, fs * 0.09);
     const x = m.x * w;
     const y = m.y * h;
+    const lines = String(m.text).split('\n');
+    const lh = fs * 1.18;
+    const y0 = y - (lines.length - 1) * lh / 2;
     pg.textSize(fs);
-    pg.fill(0);
-    pg.text(m.text, x + off, y);
-    pg.text(m.text, x - off, y);
-    pg.text(m.text, x, y + off);
-    pg.text(m.text, x, y - off);
-    pg.fill(255);
-    pg.text(m.text, x, y);
+    for (let li = 0; li < lines.length; li++) {
+      const ly = y0 + li * lh;
+      pg.fill(0);
+      pg.text(lines[li], x + off, ly);
+      pg.text(lines[li], x - off, ly);
+      pg.text(lines[li], x, ly + off);
+      pg.text(lines[li], x, ly - off);
+      pg.fill(255);
+      pg.text(lines[li], x, ly);
+    }
   }
+  pg.pop();
+}
+
+// Graticule / coordinate grid (round 3). Pure: takes the data
+// state ({grid, dem}) explicitly so the Worker copy can use it.
+function graticuleTicksFor(state) {
+  if (!state || !state.grid) return null;
+  const v = [];
+  const hz = [];
+  if (state.dem) {
+    const b = state.dem;
+    for (let lon = Math.ceil(b.lonMin / 0.05) * 0.05; lon < b.lonMax - 1e-9; lon += 0.05) {
+      v.push({ t: (lon - b.lonMin) / (b.lonMax - b.lonMin), label: lon.toFixed(2) + '°E' });
+    }
+    for (let lat = Math.ceil(b.latMin / 0.05) * 0.05; lat < b.latMax - 1e-9; lat += 0.05) {
+      hz.push({ t: (b.latMax - lat) / (b.latMax - b.latMin), label: lat.toFixed(2) + '°N' });
+    }
+  } else {
+    for (let i = 1; i < 10; i++) {
+      v.push({ t: i / 10, label: 'X ' + (i / 10).toFixed(1) });
+      hz.push({ t: i / 10, label: 'Y ' + (i / 10).toFixed(1) });
+    }
+  }
+  return { v: v, hz: hz };
+}
+
+function drawDataGridP5(pg, w, h, scale) {
+  const g = graticuleTicksFor((typeof window !== 'undefined' && window.__topoDataState) || null);
+  if (!g) return;
+  const s = scale || 1;
+  pg.push();
+  pg.stroke(255, 255, 255, 42);
+  pg.strokeWeight(1);
+  pg.noFill();
+  for (let i = 0; i < g.v.length; i++) pg.line(g.v[i].t * w, 0, g.v[i].t * w, h);
+  for (let i = 0; i < g.hz.length; i++) pg.line(0, g.hz[i].t * h, w, g.hz[i].t * h);
+  pg.noStroke();
+  pg.fill(215);
+  pg.textSize(9 * s);
+  pg.textStyle(pg.NORMAL);
+  pg.textAlign(pg.CENTER, pg.TOP);
+  for (let i = 0; i < g.v.length; i++) pg.text(g.v[i].label, g.v[i].t * w, 3 * s);
+  pg.textAlign(pg.LEFT, pg.CENTER);
+  for (let i = 0; i < g.hz.length; i++) pg.text(g.hz[i].label, 3 * s, g.hz[i].t * h);
   pg.pop();
 }
 
@@ -5122,6 +5234,8 @@ function renderArtworkCache() {
   if (params.FLOW_MODE > 0) drawFlowLinesP5(pg, scene, 1);
 
   if (params.LABELS && params.FLOW_MODE !== 2) drawContourLabelsP5(pg, scene, 1);
+
+  drawDataGridP5(pg, width, height, 1);
 
   drawMarkersP5(pg, width, height, 1);
 
@@ -5441,6 +5555,8 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
 
   if (params.LABELS && params.FLOW_MODE !== 2) drawContourLabelsP5(pg, exportScene, scale);
 
+  drawDataGridP5(pg, exportW, exportH, scale);
+
   drawMarkersP5(pg, exportW, exportH, scale);
 
   downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
@@ -5610,6 +5726,7 @@ async function buildAndDownloadSvg(exportScene, scale, transparent, exportW, exp
       flowMode: params.FLOW_MODE,
       sceneFlowPaths: exportScene.flowPaths || null,
       markers: (typeof window !== 'undefined' && window.__topoMarkers) || [],
+      dataState: (typeof window !== 'undefined' && window.__topoDataState) || null,
       sceneMin: exportScene.minField,
       sceneMax: exportScene.maxField
     }, (ratio) => {
@@ -7463,7 +7580,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
             return {
               x: Math.min(1, Math.max(0, m.x)),
               y: Math.min(1, Math.max(0, m.y)),
-              text: m.text.slice(0, 8),
+              text: m.text.slice(0, 40),
               size: Math.min(2.5, Math.max(0.5, (typeof m.size === 'number' ? m.size : 1)))
             };
           });
@@ -7481,9 +7598,80 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     refreshMarkersArtwork();
     drawMarkPreview();
   }
-  function currentMarkerText() {
+  // ---------- geographic data (round 3): coordinates / elevation ----------
+  var dataGridOn = false;
+  function refreshDataState() {
+    window.__topoDataState = { grid: dataGridOn, dem: window.__topoDemBounds || null };
+  }
+  function sampleDemAt(nx, ny) {
+    if (!demData) return null;
+    var fx = nx * (demData.w - 1), fy = ny * (demData.h - 1);
+    var x0 = Math.floor(fx), y0 = Math.floor(fy);
+    var x1 = Math.min(demData.w - 1, x0 + 1), y1 = Math.min(demData.h - 1, y0 + 1);
+    var tx = fx - x0, ty = fy - y0;
+    var d = demData.data, w = demData.w;
+    return (d[y0 * w + x0] * (1 - tx) + d[y0 * w + x1] * tx) * (1 - ty)
+      + (d[y1 * w + x0] * (1 - tx) + d[y1 * w + x1] * tx) * ty;
+  }
+  function nearestContourElev(nx, ny) {
+    if (typeof scene === 'undefined' || !scene || !scene.contours || !scene.contours.length) return null;
+    var px = nx * width, py = ny * height;
+    var best = Infinity, bestLv = null;
+    for (var i = 0; i < scene.contours.length; i++) {
+      var c = scene.contours[i];
+      if (typeof c.levelValue !== 'number') continue;
+      for (var j = 0; j < c.points.length; j++) {
+        var dx = c.points[j].x - px, dy = c.points[j].y - py;
+        var dd = dx * dx + dy * dy;
+        if (dd < best) { best = dd; bestLv = c.levelValue; }
+      }
+    }
+    if (bestLv === null) return null;
+    var lo = (scene.minField != null) ? scene.minField : 0;
+    var span = ((scene.maxField != null) ? scene.maxField : 1) - lo;
+    return Math.round(1000 * ((bestLv - lo) / (span || 1)));
+  }
+  function dataTextAt(pt) {
+    if (window.__topoDemBounds && demData) {
+      var b = window.__topoDemBounds;
+      var lat = b.latMax - pt.y * (b.latMax - b.latMin);
+      var lon = b.lonMin + pt.x * (b.lonMax - b.lonMin);
+      var e = sampleDemAt(pt.x, pt.y);
+      return lat.toFixed(4) + ', ' + lon.toFixed(4) + '\n標高 ' + (e !== null ? String(Math.round(e)).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'm' : '—');
+    }
+    var rel = nearestContourElev(pt.x, pt.y);
+    return 'X ' + pt.x.toFixed(3) + '  Y ' + pt.y.toFixed(3) + '\n相対標高 ' + (rel !== null ? rel : '—');
+  }
+  var coordChip = null;
+  var chipLast = { x: -1, y: -1, t: 0 };
+  function ensureCoordChip() {
+    if (coordChip) return coordChip;
+    var wrap = document.getElementById('canvasWrap');
+    if (!wrap) return null;
+    coordChip = document.createElement('div');
+    coordChip.id = 'exprCoordChip';
+    coordChip.style.cssText = 'position:absolute;left:10px;top:10px;z-index:29;display:none;pointer-events:none;background:rgba(10,10,10,0.72);border:1px solid #3a3a3a;border-radius:6px;padding:4px 8px;font:11px/1.5 ui-monospace,Menlo,monospace;color:#e8e8e8;white-space:pre;';
+    wrap.appendChild(coordChip);
+    wrap.addEventListener('pointermove', function (ev) {
+      if (!dataGridOn) { coordChip.style.display = 'none'; return; }
+      var r = wrap.getBoundingClientRect();
+      var nx = (ev.clientX - r.left) / Math.max(1, r.width);
+      var ny = (ev.clientY - r.top) / Math.max(1, r.height);
+      if (nx < 0 || nx > 1 || ny < 0 || ny > 1) { coordChip.style.display = 'none'; return; }
+      var now = Date.now();
+      if (Math.abs(nx - chipLast.x) < 0.002 && Math.abs(ny - chipLast.y) < 0.002 && now - chipLast.t < 400) return;
+      chipLast = { x: nx, y: ny, t: now };
+      coordChip.textContent = dataTextAt({ x: nx, y: ny });
+      coordChip.style.display = 'block';
+    });
+    wrap.addEventListener('pointerleave', function () { coordChip.style.display = 'none'; });
+    return coordChip;
+  }
+
+  function currentMarkerText(pt) {
     var kindEl = document.getElementById('exprMarkKind');
     var kind = kindEl ? kindEl.value : 'seq';
+    if (kind === 'data') return dataTextAt(pt || { x: 0.5, y: 0.5 });
     if (kind === 'sym') {
       var symEl = document.getElementById('exprMarkSym');
       return symEl ? symEl.value : '▲';
@@ -7523,14 +7711,20 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       var fs = 13 * (m.size || 1);
       var off = Math.max(0.8, fs * 0.09);
       var x = m.x * cw, y = m.y * ch;
+      var lines = String(m.text).split('\n');
+      var lh = fs * 1.18;
+      var y0 = y - (lines.length - 1) * lh / 2;
       cx.font = '700 ' + fs + 'px sans-serif';
-      cx.fillStyle = '#000';
-      cx.fillText(m.text, x + off, y);
-      cx.fillText(m.text, x - off, y);
-      cx.fillText(m.text, x, y + off);
-      cx.fillText(m.text, x, y - off);
-      cx.fillStyle = '#fff';
-      cx.fillText(m.text, x, y);
+      for (var li = 0; li < lines.length; li++) {
+        var ly = y0 + li * lh;
+        cx.fillStyle = '#000';
+        cx.fillText(lines[li], x + off, ly);
+        cx.fillText(lines[li], x - off, ly);
+        cx.fillText(lines[li], x, ly + off);
+        cx.fillText(lines[li], x, ly - off);
+        cx.fillStyle = '#fff';
+        cx.fillText(lines[li], x, ly);
+      }
     }
   }
   function ensureMarkOverlay() {
@@ -7571,7 +7765,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       if (hit >= 0) {
         markDrag = { idx: hit, dx: markers[hit].x - pt.x, dy: markers[hit].y - pt.y };
       } else {
-        markers.push({ x: pt.x, y: pt.y, text: currentMarkerText(), size: currentMarkerSize() });
+        markers.push({ x: pt.x, y: pt.y, text: currentMarkerText(pt), size: currentMarkerSize() });
         markDrag = { idx: markers.length - 1, dx: 0, dy: 0 };
         drawMarkPreview();
       }
@@ -7703,6 +7897,8 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       elev[i] = img[i * 4] * 256 + img[i * 4 + 1] + img[i * 4 + 2] / 256 - 32768;
     }
     demData = { data: elev, w: cw, h: ch };
+    window.__topoDemBounds = { lonMin: lonMin, lonMax: lonMax, latMin: latMin, latMax: latMax };
+    refreshDataState();
     bakeDem();
     applyAuxAndRegen();
     fujiStatus('富士山（実地形）を適用しました');
@@ -8067,6 +8263,8 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     demClear.type = 'button';
     demClear.addEventListener('click', function () {
       demData = null;
+      window.__topoDemBounds = null;
+      refreshDataState();
       demPart = new Float32Array(AUX_COLS * AUX_ROWS);
       applyAuxAndRegen();
     });
@@ -8080,7 +8278,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     rMark.appendChild(markBtn);
     var kindSel = document.createElement('select');
     kindSel.id = 'exprMarkKind';
-    [['seq', '連番'], ['text', '任意テキスト'], ['sym', '記号']].forEach(function (kv) { var o = document.createElement('option'); o.value = kv[0]; o.textContent = kv[1]; kindSel.appendChild(o); });
+    [['seq', '連番'], ['text', '任意テキスト'], ['sym', '記号'], ['data', '地点データ']].forEach(function (kv) { var o = document.createElement('option'); o.value = kv[0]; o.textContent = kv[1]; kindSel.appendChild(o); });
     rMark.appendChild(kindSel);
     var markClear = el('button', 'panel-btn', '全消去');
     markClear.type = 'button'; markClear.id = 'exprMarkClear';
@@ -8098,6 +8296,16 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     rMark2.appendChild(symSel);
     var markSize = range('exprMarkSize', 0.6, 2.2, 0.1, 1);
     rMark2.appendChild(markSize);
+    var rData = row('データ表示:');
+    var dataChk = check('exprDataGrid', '座標グリッド＋カーソル座標', false);
+    dataChk.input.addEventListener('change', function () {
+      dataGridOn = dataChk.input.checked;
+      refreshDataState();
+      ensureCoordChip();
+      if (!dataGridOn && coordChip) coordChip.style.display = 'none';
+      refreshMarkersArtwork();
+    });
+    rData.appendChild(dataChk.wrap);
 
     // round 2: finishing outputs
     var rFinish = row('仕上げ:');
@@ -8110,7 +8318,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     sheetBtn.addEventListener('click', contactSheet);
     rFinish.appendChild(sheetBtn);
 
-    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。注記マーカーはブラウザ内に保存され、PNG/SVG書き出しにも含まれます。[build r3v1]');
+    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。注記マーカーはブラウザ内に保存され、PNG/SVG書き出しにも含まれます。地点データは配置時点の値です。[build r3v2]');
     body.appendChild(note);
 
     // drag & drop image onto the window
@@ -8146,6 +8354,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
   function init() {
     loadPaint();
     loadMarkers();
+    refreshDataState();
     if (paintPart.some(function (v) { return v !== 0; })) bakeAux();
     buildUI();
   }
