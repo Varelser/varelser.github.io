@@ -4563,7 +4563,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 #lienExprTabs button[aria-selected="true"]{background:var(--fg);color:var(--bg)}
 #lienFps{font-size:11px;letter-spacing:.08em;font-weight:600;color:color-mix(in srgb,var(--fg) 82%,transparent);white-space:nowrap;align-self:center;font-variant-numeric:tabular-nums}
 #lienFps[data-low="true"]{color:var(--fg);text-decoration:underline}
-.lien-num{width:64px;margin-left:8px;background:var(--control-bg,transparent);color:var(--fg);border:0;border-radius:4px;font-size:11px;padding:2px 4px;font-variant-numeric:tabular-nums}
+.lien-num{width:54px;margin-left:8px;background:var(--control-bg,transparent);color:var(--fg);border:0;border-radius:4px;font-size:11px;padding:2px 4px;font-variant-numeric:tabular-nums}
 #lienPalette{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 16px;background:rgba(0,0,0,.45)}
 #lienPalette[hidden]{display:none}
 #lienPalette .lp-card{width:min(520px,100%);background:var(--panel-bg,#111);color:var(--fg);border-radius:12px;box-shadow:var(--shadow,0 18px 50px rgba(0,0,0,.5));overflow:hidden}
@@ -4575,6 +4575,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 #lienPalette .lp-empty{padding:12px;font-size:12px;color:color-mix(in srgb,var(--fg) 60%,transparent)}
 @media (max-width:760px){#lienFps{display:none}}
 .lien-b-note{font-size:10px;line-height:1.5;color:var(--muted);margin-top:8px}
+#configPanel .slider-head{flex-wrap:wrap}
 #configPanel :focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 <!-- lien-b:end-style -->
@@ -4700,7 +4701,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
   }
 
   /* ---------- 4) Numeric inputs for core sliders ---------- */
-  var SLIDERS = ['seedInput','stepsPerLineInput','stepLengthInput','noiseFreqInput','curlStrengthInput','particleCountInput','clusteringInput','opacityInput','lineWidthMinInput','lineWidthMaxInput','zoomInput'];
+  var SLIDERS = ['stepsPerLineInput','stepLengthInput','noiseFreqInput','curlStrengthInput','particleCountInput','clusteringInput','opacityInput','lineWidthMinInput','lineWidthMaxInput','zoomInput'];
   function buildNumeric() {
     SLIDERS.forEach(function (id) {
       var s = $(id); if (!s || s.getAttribute('data-lien-num')) return;
@@ -4720,6 +4721,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
         num.value = s.value;
       });
       s.addEventListener('input', function () { num.value = s.value; });
+      window.setInterval(function () { if (document.activeElement !== num && num.value !== s.value) num.value = s.value; }, 600);
       head.appendChild(num);
     });
   }
@@ -4754,7 +4756,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
   function actions() {
     var A = [];
     Array.prototype.forEach.call(document.querySelectorAll('#presetButtons button[data-preset]'), function (b) {
-      A.push({ cat: 'Preset', label: b.textContent.trim(), run: function () { openPanelTab('presets'); b.click(); } });
+      A.push({ cat: 'Preset', label: b.textContent.trim(), run: function () { b.click(); } });
     });
     [['presets','Open: Presets'],['flow','Open: Flow Dynamics'],['visuals','Open: Visuals'],['plus','Open: Plus'],['link','Open: Varelser Link'],['help','Open: Shortcuts']]
       .forEach(function (t) { A.push({ cat: 'Panel', label: t[1], run: function () { openPanelTab(t[0]); } }); });
