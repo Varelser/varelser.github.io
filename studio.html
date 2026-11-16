@@ -172,7 +172,7 @@ body.r4-clean #r4CleanExit{display:block;position:fixed;top:10px;right:10px;z-in
 
   <section id="sec-about" class="closed"><h2>ABOUT — 制約と未確認<span class="st">正直な留保</span></h2><div class="bd">
     <p class="note">・絵と音は<b>実アプリそのもの</b>（iframe）。モック版の模写とは違う。<br>
-    ・BroadcastChannel は<b>同一オリジン</b>でのみ届く。このページは varelser.github.io に置かれているので、同じオリジンの7アプリ（Lien／Leary／TOPO／Yayoi／Punkt／Noise／Meikyoshisui）へ seed-sync／実状態が届く。<b>Kalokagathia だけは monosphere.pages.dev の別オリジン</b>のため BC 対象外（表示とステージ切替のみ）。transport（PLAY ALL／STOP ALL）だけは postMessage 橋渡しで届ける（橋渡しコードは Monosphere 側ソースに組み込み済みで、次回 Monosphere ビルドから有効）。ローカルファイルとして開いた場合は iframe 表示と Leary／TOPO の <code>?seed=</code> のみ有効で、BC連動は届かない。<br>
+    ・BroadcastChannel は<b>同一オリジン</b>でのみ届く。このページは varelser.github.io に置かれているので、同じオリジンの7アプリ（Lien／Leary／TOPO／Yayoi／Punkt／Noise／Meikyoshisui）へ seed-sync／実状態が届く。<b>Kalokagathia だけは monosphere.pages.dev の別オリジン</b>のため BC 対象外（表示とステージ切替のみ）。transport（PLAY ALL／STOP ALL）だけは postMessage 橋渡しで届ける（橋渡しは Monosphere v1.9.0 から有効）。ローカルファイルとして開いた場合は iframe 表示と Leary／TOPO の <code>?seed=</code> のみ有効で、BC連動は届かない。<br>
     ・iframe 埋め込みは 2026-11-15 に実Chromeで 8アプリ全て確認済み（ステージ／タイル描画、BroadcastChannel 連動も end-to-end PASS）。読み込めない場合は「開く ↗」で別タブ利用になる。<br>
     ・R4 で CONSOLE（ミキシング卓）と技術パック（⌘K／MIDI／Gamepad／Wake Lock／IndexedDBシーン保存／共有リンク等）を追加。MIDI／Gamepad の実機連動と画面録画の実録画は未検証（要 iMac 実機確認）。<br>
     ・8アプリ同時読込は重い。タイルは個別読込が既定。</p>
@@ -183,7 +183,7 @@ body.r4-clean #r4CleanExit{display:block;position:fixed;top:10px;right:10px;z-in
   <div class="row"><button id="r4PlayAll" type="button">▶ PLAY ALL</button><button id="r4StopAll" type="button">■ STOP ALL</button>
     <label>BPM</label><input type="number" id="r4Bpm" min="40" max="240" step="1" value="120" style="width:76px">
     <button id="r4Tap" type="button">TAP</button><span class="note" id="r4TransportState">トランスポート: 停止中</span></div>
-  <p class="note">PLAY ALL / STOP ALL は v2 <code>console</code> メッセージの送信＋Studio側のステージ制御（全タイル読込など）。<b>現行アプリは transport の受信を実装していない</b>ため、実際の再生／停止は各アプリ側の操作が正。v2 は未知 type として無視されるので送信しても壊れない。</p>
+  <p class="note">PLAY ALL / STOP ALL は v2 <code>console</code> メッセージの送信＋Studio側のステージ制御（全タイル読込など）。<b>transport の受信は全アプリに実装済み</b>（2026-11-16）で、各アプリ側の Link が ON のときに実際の再生／停止が効く。Monosphere へは postMessage 橋渡しで届く。</p>
   <div class="row"><label>Master Seed</label><input type="text" id="r4SeedIn" style="width:170px"><button id="r4SeedApply" type="button">シード適用</button><span class="note">導出は上の MASTER 節の SeedWorks をそのまま使う（再実装しない）。適用＝既存 GENERATE と同じ処理で、Link ON 時は seed-sync も送る。</span></div>
   <div class="row"><label>Amount（全体）</label><input type="range" id="r4Amount" min="0" max="100" value="60"><span class="val" id="r4AmountV">60</span>
     <label>Attack</label><input type="range" id="r4Attack" min="0" max="100" value="25"><span class="val" id="r4AttackV">25</span>
@@ -230,7 +230,7 @@ body.r4-clean #r4CleanExit{display:block;position:fixed;top:10px;right:10px;z-in
   </div>
   <p class="note">技術パック（R5）: 全機能とも対応ブラウザでのみ有効化し、非対応では静かに無効（フォールバックあり）。画面録画はステージ iframe を直接録れないため <code>getDisplayMedia</code> で画面全体を選んで録る方式（実験的）。読み込み時に <code>?seed=</code> / <code>?scene=</code> があれば自動で適用する。</p>
   <div class="row"><label>MONOSPHERE</label><span class="note">導出シード（gpgpu）: <b id="r4MonoSeed">—</b></span><button id="r4MonoOpen" type="button">シード付きで開く ↗</button><button id="r4MonoPost" type="button">ステージへ postMessage を試みる</button></div>
-  <p class="note">Monosphere / Kalokagathia は <b>monosphere.pages.dev の別オリジン</b>のため BroadcastChannel は届かない（上の ABOUT 節の留保どおり）。ここでできるのはステージ表示と、URLパラメータ／postMessage でのシード受け渡しの試行まで。<b>postMessage 橋渡しは Monosphere 側ソースに組み込み済み（次回ビルドで有効）</b>で、届くのは transport のみ。シードの完全連動とは言わない。</p>
+  <p class="note">Monosphere / Kalokagathia は <b>monosphere.pages.dev の別オリジン</b>のため BroadcastChannel は届かない（上の ABOUT 節の留保どおり）。ここでできるのはステージ表示と、URLパラメータ／postMessage でのシード受け渡しの試行まで。<b>postMessage 橋渡しは Monosphere v1.9.0 から有効</b>で、届くのは transport のみ。シードの完全連動とは言わない。</p>
 </div></section>
 <!-- R4-SECTION-END -->
 <div id="r5Help" class="r5-pop" popover="auto" hidden>
@@ -489,7 +489,7 @@ if('requestIdleCallback' in window){requestIdleCallback(function(){setStage(APPS
 /* ═══ Studio Console R4 試作（A案 Mixing Console）— 加算ブロック ═══
    既存の SeedWorks / applySeed / bc / toast をそのまま使う。再実装しない。
    v1.1 sync-config は現行受信実装（R3・5アプリ）が読む形式と完全一致。
-   v2 console は並行送信のみ（未知 type は無視されるため無害）。 */
+   v2 console は transport 受信を実装した各アプリ（2026-11-16）へ並行送信される。 */
 (function(){
 'use strict';
 var R4_APPS5=['yayoi','punkt','lien','leary','topo'];
@@ -602,7 +602,7 @@ if(seedInEl)seedInEl.addEventListener('change',function(){el('r4SeedIn').value=c
 var transportState='stop';
 el('r4PlayAll').addEventListener('click',function(){
   transportState='play';
-  el('r4TransportState').textContent='トランスポート: 再生中（Studio側表示＋v2送信。実再生は各アプリ側）';
+  el('r4TransportState').textContent='トランスポート: 再生中（v2送信済み）';
   el('r4PlayAll').classList.add('r4-on');el('r4StopAll').classList.remove('r4-on');
   if(typeof APPS!=='undefined'&&typeof loadTile==='function'){APPS.forEach(function(a){loadTile(a);});}
   sendAll('play');
@@ -796,7 +796,7 @@ el('r4MonoPost').addEventListener('click',function(){
   var v=monoSeed();
   try{
     if(fr&&fr.contentWindow)fr.contentWindow.postMessage({app:'studio',type:'seed-sync',ts:Date.now(),master:curSeed(),seed:v},'https://monosphere.pages.dev');
-    if(typeof toast==='function')toast('postMessage を試行（橋渡しは次回 Monosphere ビルドで有効）');
+    if(typeof toast==='function')toast('Monosphere へ postMessage を送信');
   }catch(e){if(typeof toast==='function')toast('postMessage に失敗');}
 });
 
