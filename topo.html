@@ -5,8 +5,20 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <title>TOPO</title>
+  <title>TOPO — 等高線ジェネレーター</title>
 <meta name="description" content="TOPO — 滑らかな場と穴の配置から等高線を生成するWebアプリ。パラメータやシードを調整し、PNG／SVGで書き出せる。" />
+<link rel="canonical" href="https://varelser.github.io/topo.html" />
+<meta name="theme-color" content="#000000" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="TOPO — 等高線ジェネレーター" />
+<meta property="og:description" content="TOPO — 滑らかな場と穴の配置から等高線を生成するWebアプリ。パラメータやシードを調整し、PNG／SVGで書き出せる。" />
+<meta property="og:url" content="https://varelser.github.io/topo.html" />
+<meta property="og:image" content="https://varelser.github.io/img/emblem.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="TOPO — 等高線ジェネレーター" />
+<meta name="twitter:description" content="TOPO — 滑らかな場と穴の配置から等高線を生成するWebアプリ。パラメータやシードを調整し、PNG／SVGで書き出せる。" />
+<link rel="apple-touch-icon" href="https://varelser.github.io/apple-touch-icon.png" />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"TOPO","url":"https://varelser.github.io/topo.html","description":"TOPO — 滑らかな場と穴の配置から等高線を生成するWebアプリ。パラメータやシードを調整し、PNG／SVGで書き出せる。","inLanguage":"ja","applicationCategory":"MultimediaApplication","operatingSystem":"Web","isAccessibleForFree":true,"author":{"@type":"Organization","name":"VARELSER","url":"https://varelser.github.io/"}}</script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%0A%20%20%3C%21--%20TOPO%20icon%3A%20four%20clean%20concentric%20circles%2C%20evenly%20spaced%2C%20no%20centre%20dot%0A%20%20%20%20%20%20%20%28the%20innermost%20circle%20is%20the%20centre%29.%20Same%20artwork%20as%20the%20favicon%0A%20%20%20%20%20%20%20embedded%20in%20topo.html%20and%20the%20header%27s%20current-page%20marker%20%28there%20it%0A%20%20%20%20%20%20%20is%20drawn%20stroke-only%20in%20currentColor%2C%20without%20the%20black%20plate%29.%20--%3E%0A%20%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2212%22%20fill%3D%22%23000%22%2F%3E%0A%20%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.5%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229.6%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%227.2%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224.8%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%222.4%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js" integrity="sha512-3RlxD1bW34eFKPwj9gUXEWtdSMC59QqIqHnD8O/NoTwSJhgxRizdcFVQhUMFyTp5RwLTDL0Lbcqtl8b7bFAzog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
@@ -231,7 +243,8 @@
     @media (max-width: 767px) {
       #controls { left: 16px; right: 16px; width: auto; }
       #statusLine { left: 16px; bottom: 76px; }
-      .toolbar { padding: 12px 16px; }
+      .toolbar { padding: 8px 12px; flex-wrap: wrap; overflow-x: visible; row-gap: 6px; }
+      .toolbar-right { flex-wrap: wrap; row-gap: 2px; }
     }
     .panel-header {
       display: flex;
@@ -479,6 +492,10 @@
 #plusCmdkList li .hint { color: #737373; font-size: 11px; }
 #plusCmdkList li.active { background: #262626; color: #fff; }
 .plus-note { font-size: 11px; color: #a3a3a3; line-height: 1.5; }
+#plusShortcuts table { width: 100%; border-collapse: collapse; font-size: 12px; }
+#plusShortcuts td { padding: 4px 6px; border-bottom: 1px solid #1c1c1c; color: #d4d4d4; }
+#plusShortcuts td.k { white-space: nowrap; width: 42%; }
+#plusShortcuts kbd { background: #171717; border: 1px solid #333; border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font-family: inherit; font-size: 11px; color: #fff; }
 </style>
 </head>
 <body>
@@ -632,6 +649,21 @@
       <button id="plusShareLink" class="small" type="button">共有リンクを作成</button>
       <button id="plusShare" class="small" type="button">共有</button>
       <button id="plusCmdkBtn" class="small" type="button">⌘K</button>
+      <button id="plusShortcutsBtn" class="small" type="button" aria-expanded="false">キーボードショートカット</button>
+    </div>
+
+    <div id="plusShortcuts" class="row" hidden>
+      <table>
+        <tr><td class="k"><kbd>R</kbd></td><td>再生成（新しいシード）</td></tr>
+        <tr><td class="k"><kbd>S</kbd> / <kbd>V</kbd></td><td>PNG保存 / SVG保存</td></tr>
+        <tr><td class="k"><kbd>H</kbd></td><td>設定パネルの開閉</td></tr>
+        <tr><td class="k"><kbd>⌘K</kbd>（<kbd>Ctrl</kbd>+<kbd>K</kbd>）</td><td>コマンドパレット</td></tr>
+        <tr><td class="k"><kbd>Ctrl</kbd>+<kbd>Z</kbd>（<kbd>⌘</kbd>+<kbd>Z</kbd>）</td><td>元に戻す</td></tr>
+        <tr><td class="k"><kbd>[</kbd> / <kbd>]</kbd></td><td>前／次の穴を選択</td></tr>
+        <tr><td class="k"><kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd></td><td>選択中の穴を移動（<kbd>Shift</kbd>で大きく）</td></tr>
+        <tr><td class="k"><kbd>Delete</kbd></td><td>選択中の穴を削除</td></tr>
+        <tr><td class="k"><kbd>Esc</kbd></td><td>コマンドパレットを閉じる</td></tr>
+      </table>
     </div>
 
     <div class="row" style="display:flex;gap:8px;">
@@ -6140,6 +6172,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       { label: '設定パネル開閉', hint: 'H', run: function () { setPanelVisible(!panelVisible); } },
       { label: '設定JSONダイアログ', hint: '', run: function () { var b = $('settingsBtn'); if (b) b.click(); } },
       { label: '元に戻す', hint: 'Ctrl+Z', run: function () { var b = $('undoBtn'); if (b) b.click(); } },
+      { label: 'キーボードショートカット一覧', hint: 'Plus', run: toggleShortcuts },
       { label: '初期化', hint: '', run: function () { var b = $('resetBtn'); if (b) b.click(); } }
     ];
     var names = ['窪み', '尾根', '混合', '流れ', '環', '斜面'];
@@ -6194,6 +6227,20 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     }
   }, true);
 
+  function toggleShortcuts() {
+    var box = $('plusShortcuts'); if (!box) return;
+    var btn = $('plusShortcutsBtn');
+    if (box.hidden) {
+      var panel = $('controls');
+      if (panel && panel.hidden) { var t = $('panelToggle'); if (t) t.click(); }
+      box.hidden = false;
+      if (btn) btn.setAttribute('aria-expanded', 'true');
+    } else {
+      box.hidden = true;
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
   /* ---------- wiring ---------- */
   function wire() {
     var map = [
@@ -6213,7 +6260,8 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       ['plusSceneDel', 'click', sceneDel],
       ['plusJsonSave', 'click', function () { jsonSave(); }],
       ['plusJsonLoad', 'click', jsonLoad],
-      ['plusMidi', 'click', toggleMidi]
+      ['plusMidi', 'click', toggleMidi],
+      ['plusShortcutsBtn', 'click', toggleShortcuts]
     ];
     map.forEach(function (row) {
       var el = $(row[0]);
