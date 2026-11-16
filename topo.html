@@ -858,6 +858,15 @@ let params = {
   MIN_SPACING: 8,
   SMOOTH: 0.5,
   FIELD_BLUR: 1.0,
+  SYMMETRY: 0,
+  TERRACE: 0,
+  BAND_LEVELS: 18,
+  SLOPE_WEIGHT: 0,
+  INDEX_EVERY: 0,
+  BAND_FILL: false,
+  LABELS: false,
+  TILE_MODE: false,
+  PLOTTER_SVG: false,
   SHOW_TEXTURE: true,
   SHOW_RED_SHADOW: false,
   SHOW_HOLE_GUIDES: true
@@ -914,9 +923,14 @@ const PARAM_RANGES = {
   PEAK_BLEND: [0, 1],
   MIN_SPACING: [3, 24],
   SMOOTH: [0, 1],
-  FIELD_BLUR: [0, 3]
+  FIELD_BLUR: [0, 3],
+  SYMMETRY: [0, 4],
+  TERRACE: [0, 40],
+  BAND_LEVELS: [4, 32],
+  SLOPE_WEIGHT: [0, 1],
+  INDEX_EVERY: [0, 10]
 };
-const PARAM_BOOLEANS = ['ENABLE_INTERFERENCE', 'ENABLE_CIRCULARIZE', 'SHOW_TEXTURE', 'SHOW_RED_SHADOW', 'SHOW_HOLE_GUIDES', 'EXPORT_TRANSPARENT'];
+const PARAM_BOOLEANS = ['ENABLE_INTERFERENCE', 'ENABLE_CIRCULARIZE', 'SHOW_TEXTURE', 'SHOW_RED_SHADOW', 'SHOW_HOLE_GUIDES', 'EXPORT_TRANSPARENT', 'BAND_FILL', 'LABELS', 'TILE_MODE', 'PLOTTER_SVG'];
 const SETTINGS_PARAM_KEYS = Object.keys(PARAM_RANGES).concat(PARAM_BOOLEANS, ['EXPORT_SCALE']);
 
 let scene = {
@@ -925,6 +939,14 @@ let scene = {
   holesPx: [],
   gridStep: 6
 };
+// Auxiliary elevation grid (image heightfield + paint sculpting),
+// set by the expression-expansion UI. {data: Float32Array, cols,
+// rows} in normalized canvas coordinates, or null. Not part of the
+// saved settings: scenes and share links never carry it.
+let TOPO_AUX = null;
+function topoSetAuxField(data, cols, rows) {
+  TOPO_AUX = (data && cols > 1 && rows > 1) ? { data: data, cols: cols, rows: rows } : null;
+}
 let holes = [];
 let seedVal = 0;
 let regenDebounceTimer = null;
@@ -1845,6 +1867,15 @@ function coreParamsSnapshot() {
     MIN_SPACING: params.MIN_SPACING,
     SMOOTH: params.SMOOTH,
     FIELD_BLUR: params.FIELD_BLUR,
+    SYMMETRY: params.SYMMETRY,
+    TERRACE: params.TERRACE,
+    BAND_LEVELS: params.BAND_LEVELS,
+    SLOPE_WEIGHT: params.SLOPE_WEIGHT,
+    INDEX_EVERY: params.INDEX_EVERY,
+    BAND_FILL: params.BAND_FILL,
+    LABELS: params.LABELS,
+    TILE_MODE: params.TILE_MODE,
+    PLOTTER_SVG: params.PLOTTER_SVG,
     WHITE_STROKE_WEIGHT: params.WHITE_STROKE_WEIGHT,
     TEXTURE_POINTS: params.TEXTURE_POINTS
   };
@@ -1909,7 +1940,8 @@ function regenerateScene(options = {}) {
     height: targetHeight,
     baseW: width,
     baseH: height,
-    gridStep: eff.gridStep
+    gridStep: eff.gridStep,
+    aux: TOPO_AUX
   }, eff.estimate, (ratio) => {
     if (reqId !== sceneRequestSeq) return;
     clearStatusTimer();
@@ -2329,6 +2361,12 @@ function corePrepareField(cp, holes, targetWidth, targetHeight, seed) {
     // chase sub-spacing ripples.
     fieldWidth: targetWidth,
     fieldHeight: targetHeight,
+    // Expression expansion: symmetry fold (0 = off, 1 = mirror X,
+    // 2 = mirror Y, 3 = quad, 4 = radial 6), tile periodicity and
+    // the auxiliary elevation grid. All default to legacy behaviour.
+    symmetry: (cp.SYMMETRY == null || !isFinite(cp.SYMMETRY)) ? 0 : Math.min(4, Math.max(0, Math.round(cp.SYMMETRY))),
+    tileMode: !!cp.TILE_MODE,
+    aux: null,
     warpLatticeStep: 30,
     warpXLattice: null,
     warpYLattice: null,
@@ -2504,6 +2542,27 @@ function coreBilinearLattice3(arrA, arrB, arrC, cols, rows, step, x, y, out) {
 }
 
 function coreSampleFieldAt(core, prep, x, y, cull) {
+  if (prep.symmetry) {
+    const fw = prep.fieldWidth;
+    const fh = prep.fieldHeight;
+    if (prep.symmetry === 1 || prep.symmetry === 3) { const hw = fw / 2; if (x > hw) x = fw - x; }
+    if (prep.symmetry === 2 || prep.symmetry === 3) { const hh = fh / 2; if (y > hh) y = fh - y; }
+    if (prep.symmetry === 4) {
+      const dx = x - fw / 2;
+      const dy = y - fh / 2;
+      const r = Math.hypot(dx, dy);
+      if (r > 1e-9) {
+        const sector = Math.PI / 3;
+        let a = Math.atan2(dy, dx);
+        let m = a % sector;
+        if (m < 0) m += sector;
+        const idx = Math.floor(a / sector);
+        if (((idx % 2) + 2) % 2 === 1) m = sector - m;
+        x = fw / 2 + r * Math.cos(m);
+        y = fh / 2 + r * Math.sin(m);
+      }
+    }
+  }
   // Mountain-final elevation:
   //   height(x, y) = swell(x, y) + peaks(x, y),
   //   peaks = sum_i h_i  +  PEAK_BLEND * 0.35 * ((sum_i h_i)^2 - sum_i h_i^2)
@@ -2633,6 +2692,22 @@ function coreSampleFieldAt(core, prep, x, y, cull) {
   value += blend > 0
     ? sumH + blend * 0.35 * ((sumPos * sumPos - sumSqPos) + (sumNeg * sumNeg - sumSqNeg))
     : sumH;
+  if (prep.aux && prep.aux.data) {
+    const aux = prep.aux;
+    const au = Math.min(1, Math.max(0, x / Math.max(1, prep.fieldWidth))) * (aux.cols - 1);
+    const av = Math.min(1, Math.max(0, y / Math.max(1, prep.fieldHeight))) * (aux.rows - 1);
+    const ax0 = Math.floor(au);
+    const ay0 = Math.floor(av);
+    const ax1 = Math.min(aux.cols - 1, ax0 + 1);
+    const ay1 = Math.min(aux.rows - 1, ay0 + 1);
+    const afx = au - ax0;
+    const afy = av - ay0;
+    const ad = aux.data;
+    const ac = aux.cols;
+    const atop = ad[ay0 * ac + ax0] * (1 - afx) + ad[ay0 * ac + ax1] * afx;
+    const abot = ad[ay1 * ac + ax0] * (1 - afx) + ad[ay1 * ac + ax1] * afx;
+    value += atop * (1 - afy) + abot * afy;
+  }
   return value;
 }
 
@@ -3229,6 +3304,7 @@ function coreBuildTextureDots(core, w, h, count, seed) {
 function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, buildOpts) {
   const opts = buildOpts || {};
   const prep = corePrepareField(cp, holes, targetWidth, targetHeight, seed);
+  if (opts.aux) prep.aux = opts.aux;
   const holesPx = prep.holesPx.map((h) => ({
     x: h.x,
     y: h.y,
@@ -3260,9 +3336,26 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
     const y = gy * gridStep;
     for (let gx = 0; gx < cols; gx++) {
       const x = gx * gridStep;
-      const value = flatMode
-        ? coreSampleFlatFieldAt(prep, x, y)
-        : coreSampleFieldAt(core, prep, x, y, cull);
+      let value;
+      if (flatMode) {
+        value = coreSampleFlatFieldAt(prep, x, y);
+      } else if (prep.tileMode) {
+        // Periodicity by the standard 4-shift blend: the blended
+        // field repeats exactly with period (targetWidth,
+        // targetHeight), so exports tile seamlessly.
+        const tu = Math.min(1, Math.max(0, targetWidth > 0 ? x / targetWidth : 0));
+        const tv = Math.min(1, Math.max(0, targetHeight > 0 ? y / targetHeight : 0));
+        value = (1 - tu) * (1 - tv) * coreSampleFieldAt(core, prep, x, y, cull)
+          + tu * (1 - tv) * coreSampleFieldAt(core, prep, x - targetWidth, y, cull)
+          + (1 - tu) * tv * coreSampleFieldAt(core, prep, x, y - targetHeight, cull)
+          + tu * tv * coreSampleFieldAt(core, prep, x - targetWidth, y - targetHeight, cull);
+      } else {
+        value = coreSampleFieldAt(core, prep, x, y, cull);
+      }
+      if (!flatMode && opts.animMix > 0) {
+        const shifted = coreSampleFieldAt(core, prep, x + (opts.animShiftX || 0), y + (opts.animShiftY || 0), cull);
+        value = value * (1 - opts.animMix) + shifted * opts.animMix;
+      }
       const idx = gy * cols + gx;
       field[idx] = value;
       if (value < minField) minField = value;
@@ -3298,15 +3391,27 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
   const thresholds = flatMode
     ? coreBuildFlatThresholds(cp, targetWidth, targetHeight, gridStep)
     : mountainThresholds.thresholds;
+  // Terrace mode: keep only an evenly spaced subset of the
+  // guaranteed thresholds (a subset keeps the pairwise spacing
+  // guarantee), which reads as terraced fields with band fill.
+  let finalThresholds = thresholds;
+  if (!flatMode && cp.TERRACE > 0 && thresholds.length > 4) {
+    const want = Math.max(4, Math.min(Math.round(cp.TERRACE), thresholds.length));
+    if (want < thresholds.length) {
+      const sub = [];
+      for (let k = 0; k < want; k++) sub.push(thresholds[Math.round(k * (thresholds.length - 1) / (want - 1))]);
+      finalThresholds = sub;
+    }
+  }
   // Optional threshold range for parallel Worker chunks: the field and
   // the full threshold list are computed identically in every chunk,
   // only the contour extraction is limited to [rangeStart, rangeEnd).
   // Per-contour post-processing below applies to the chunk's subset.
   const range = opts.thresholdRange || null;
-  const rangeStart = range ? Math.max(0, Math.min(thresholds.length, Math.floor(range.start) || 0)) : 0;
+  const rangeStart = range ? Math.max(0, Math.min(finalThresholds.length, Math.floor(range.start) || 0)) : 0;
   const rangeEnd = range
-    ? Math.max(rangeStart, Math.min(thresholds.length, typeof range.end === 'number' ? Math.floor(range.end) : thresholds.length))
-    : thresholds.length;
+    ? Math.max(rangeStart, Math.min(finalThresholds.length, typeof range.end === 'number' ? Math.floor(range.end) : finalThresholds.length))
+    : finalThresholds.length;
   // Per-field-row value bands for the marching-squares row skip
   // (see coreMarchingSquaresPaths): computed once over the final
   // field. A row containing a NaN gets infinite bands so it is
@@ -3328,10 +3433,11 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
     rowMax[gy] = mx;
   }
   let contours = [];
+  const levelCounts = new Array(finalThresholds.length).fill(0);
   for (let i = rangeStart; i < rangeEnd; i++) {
-    const paths = coreMarchingSquaresPaths(field, cols, rows, gridStep, thresholds[i], rowMin, rowMax);
+    const paths = coreMarchingSquaresPaths(field, cols, rows, gridStep, finalThresholds[i], rowMin, rowMax);
     for (let j = 0; j < paths.length; j++) {
-      if (paths[j].points.length >= 4) contours.push(paths[j]);
+      if (paths[j].points.length >= 4) { contours.push(paths[j]); levelCounts[i]++; }
     }
     if (i % 4 === 3) yield { phase: 'contours', ratio: (i - rangeStart + 1) / Math.max(1, rangeEnd - rangeStart) };
   }
@@ -3370,10 +3476,65 @@ function* coreBuildSceneSteps(core, cp, holes, seed, targetWidth, targetHeight, 
   // Texture dots are produced only by the chunk that starts at
   // threshold 0 (or by an un-ranged build) so pooled merges keep
   // exactly one dot set, identical to the single-worker result.
+  // Expression expansion: per-contour level tags and mean slope,
+  // plus the band-fill grey grid. Mountain mode only; flat mode
+  // keeps its legacy scene shape. Tagging happens after all
+  // post-processing (which preserves contour order and count), by
+  // the per-level counts recorded during extraction.
+  let bandGrey = null;
+  let bandCols = 0;
+  let bandRows = 0;
+  if (!flatMode) {
+    let tagOffset = 0;
+    for (let i = 0; i < finalThresholds.length; i++) {
+      const cnt = levelCounts[i] || 0;
+      for (let j = 0; j < cnt && tagOffset + j < contours.length; j++) {
+        contours[tagOffset + j].levelIndex = i;
+        contours[tagOffset + j].levelValue = finalThresholds[i];
+      }
+      tagOffset += cnt;
+    }
+    for (let ci = 0; ci < contours.length; ci++) {
+      const pts = contours[ci].points;
+      let acc = 0;
+      let n = 0;
+      for (let j = 0; j < pts.length; j += 3) {
+        const gx = Math.min(cols - 2, Math.max(1, Math.round(pts[j].x / gridStep)));
+        const gy = Math.min(rows - 2, Math.max(1, Math.round(pts[j].y / gridStep)));
+        const fidx = gy * cols + gx;
+        const ddx = (field[fidx + 1] - field[fidx - 1]) / (2 * gridStep);
+        const ddy = (field[fidx + cols] - field[fidx - cols]) / (2 * gridStep);
+        acc += Math.hypot(ddx, ddy);
+        n++;
+      }
+      contours[ci].slope = n ? acc / n : 0;
+    }
+    if (cp.BAND_FILL || cp.TERRACE > 0) {
+      bandCols = cols;
+      bandRows = rows;
+      bandGrey = new Uint8Array(cols * rows);
+      const terrace = cp.TERRACE > 0;
+      const levels = Math.max(4, Math.min(32, Math.round(cp.BAND_LEVELS || 18)));
+      const span = Math.max(1e-9, maxField - minField);
+      for (let i = 0; i < field.length; i++) {
+        const v = field[i];
+        if (terrace) {
+          let bidx = 0;
+          while (bidx < finalThresholds.length && v >= finalThresholds[bidx]) bidx++;
+          bandGrey[i] = Math.round(14 + (finalThresholds.length > 1 ? bidx / finalThresholds.length : 0) * 118);
+        } else {
+          const t = Math.min(1, Math.max(0, (v - minField) / span));
+          const q = Math.floor(t * levels) / levels;
+          bandGrey[i] = Math.round(12 + q * 56);
+        }
+      }
+    }
+  }
+
   const textureDots = range && rangeStart > 0
     ? []
     : coreBuildTextureDots(core, targetWidth, targetHeight, cp.TEXTURE_POINTS, seed + 987654321);
-  return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep, thresholdInfo: thresholdInfo };
+  return { contours: contours, textureDots: textureDots, holesPx: holesPx, gridStep: gridStep, thresholdInfo: thresholdInfo, thresholds: finalThresholds, minField: minField, maxField: maxField, bandGrey: bandGrey, bandCols: bandCols, bandRows: bandRows };
 }
 
 function coreBuildScene(core, cp, holes, seed, targetWidth, targetHeight, buildOpts) {
@@ -3400,6 +3561,15 @@ function flattenScene(scene) {
       coords[o++] = contour.points[j].y;
     }
   }
+  const levelIdx = new Int32Array(scene.contours.length);
+  const levelVal = new Float64Array(scene.contours.length);
+  const slopes = new Float32Array(scene.contours.length);
+  for (let i = 0; i < scene.contours.length; i++) {
+    const c = scene.contours[i];
+    levelIdx[i] = (typeof c.levelIndex === 'number') ? c.levelIndex : -1;
+    levelVal[i] = (typeof c.levelValue === 'number') ? c.levelValue : 0;
+    slopes[i] = (typeof c.slope === 'number') ? c.slope : 0;
+  }
   const dots = new Float64Array(scene.textureDots.length * 3);
   for (let i = 0; i < scene.textureDots.length; i++) {
     dots[i * 3] = scene.textureDots[i].x;
@@ -3412,7 +3582,16 @@ function flattenScene(scene) {
     closed: closed,
     dots: dots,
     holesPx: scene.holesPx,
-    gridStep: scene.gridStep
+    gridStep: scene.gridStep,
+    levelIdx: levelIdx,
+    levelVal: levelVal,
+    slopes: slopes,
+    bandGrey: scene.bandGrey || null,
+    bandCols: scene.bandCols || 0,
+    bandRows: scene.bandRows || 0,
+    thresholds: scene.thresholds || null,
+    minField: scene.minField,
+    maxField: scene.maxField
   };
 }
 
@@ -3424,13 +3603,19 @@ function unflattenScene(flat) {
     for (let j = 0; j < flat.counts[i]; j++) {
       points.push({ x: flat.coords[o++], y: flat.coords[o++] });
     }
-    contours.push({ points: points, closed: !!flat.closed[i] });
+    const contour = { points: points, closed: !!flat.closed[i] };
+    if (flat.levelIdx) {
+      contour.levelIndex = flat.levelIdx[i];
+      contour.levelValue = flat.levelVal ? flat.levelVal[i] : 0;
+      contour.slope = flat.slopes ? flat.slopes[i] : 0;
+    }
+    contours.push(contour);
   }
   const textureDots = [];
   for (let i = 0; i < flat.dots.length / 3; i++) {
     textureDots.push({ x: flat.dots[i * 3], y: flat.dots[i * 3 + 1], s: flat.dots[i * 3 + 2] });
   }
-  return { contours: contours, textureDots: textureDots, holesPx: flat.holesPx, gridStep: flat.gridStep };
+  return { contours: contours, textureDots: textureDots, holesPx: flat.holesPx, gridStep: flat.gridStep, bandGrey: flat.bandGrey || null, bandCols: flat.bandCols || 0, bandRows: flat.bandRows || 0, thresholds: flat.thresholds || null, minField: flat.minField, maxField: flat.maxField };
 }
 
 
@@ -3468,7 +3653,11 @@ function* buildSceneSteps(targetWidth, targetHeight, seed, buildOpts = {}) {
     baseH: height,
     gridStep: plan.gridStep,
     cull: buildOpts.cull !== false,
-    thresholdRange: buildOpts.thresholdRange || null
+    thresholdRange: buildOpts.thresholdRange || null,
+    aux: TOPO_AUX,
+    animMix: buildOpts.animMix || 0,
+    animShiftX: buildOpts.animShiftX || 0,
+    animShiftY: buildOpts.animShiftY || 0
   });
   built.adapted = plan.adapted;
   built.estimate = plan.estimate;
@@ -3734,12 +3923,38 @@ async function renderSceneOffscreen(req) {
     closed: req.closed,
     dots: req.dots,
     holesPx: [],
-    gridStep: 0
+    gridStep: 0,
+    levelIdx: req.levelIdx,
+    levelVal: req.levelVal,
+    slopes: req.slopes,
+    bandGrey: req.bandGrey,
+    bandCols: req.bandCols,
+    bandRows: req.bandRows,
+    minField: req.minField,
+    maxField: req.maxField
   });
 
   if (!req.transparent) {
     ctx.fillStyle = 'rgb(0, 0, 0)';
     ctx.fillRect(0, 0, req.width, req.height);
+  }
+
+  if (req.bandGrey && req.bandCols > 0 && req.bandRows > 0) {
+    const bcv = new OffscreenCanvas(req.bandCols, req.bandRows);
+    const bctx = bcv.getContext('2d');
+    const bimg = bctx.createImageData(req.bandCols, req.bandRows);
+    for (let i = 0; i < req.bandGrey.length; i++) {
+      const g = req.bandGrey[i];
+      bimg.data[i * 4] = g;
+      bimg.data[i * 4 + 1] = g;
+      bimg.data[i * 4 + 2] = g;
+      bimg.data[i * 4 + 3] = 255;
+    }
+    bctx.putImageData(bimg, 0, 0);
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(bcv, 0, 0, req.width, req.height);
+    ctx.restore();
   }
 
   if (req.showTexture) {
@@ -3753,6 +3968,14 @@ async function renderSceneOffscreen(req) {
     }
   }
 
+  if (req.slopeWeight > 0) {
+    const sarr = [];
+    for (let i = 0; i < scene.contours.length; i++) {
+      if (typeof scene.contours[i].slope === 'number') sarr.push(scene.contours[i].slope);
+    }
+    sarr.sort((a, b) => a - b);
+    req._slopeRef = sarr.length ? sarr[Math.floor(sarr.length * 0.9)] : 0;
+  }
   ctx.lineCap = 'round';
   for (let i = 0; i < scene.contours.length; i++) {
     const contour = scene.contours[i];
@@ -3762,8 +3985,56 @@ async function renderSceneOffscreen(req) {
       strokeCurvePath2D(ctx, contour.points, contour.closed);
     }
     ctx.strokeStyle = 'rgb(255, 255, 255)';
-    ctx.lineWidth = req.whiteStrokeWeight * req.scale;
+    let wf = 1;
+    if (req.indexEvery > 0 && typeof contour.levelIndex === 'number' && contour.levelIndex >= 0
+      && contour.levelIndex % Math.round(req.indexEvery) === 0) wf *= 1.8;
+    if (req.slopeWeight > 0 && typeof contour.slope === 'number' && req._slopeRef > 0) {
+      wf *= 0.65 + req.slopeWeight * Math.min(1.6, contour.slope / req._slopeRef) * 0.9;
+    }
+    ctx.lineWidth = req.whiteStrokeWeight * req.scale * wf;
     strokeCurvePath2D(ctx, contour.points, contour.closed);
+  }
+
+  if (req.labels) {
+    const step = req.indexEvery > 0 ? Math.round(req.indexEvery) : 5;
+    const cand = [];
+    for (let i = 0; i < scene.contours.length; i++) {
+      const c = scene.contours[i];
+      if (typeof c.levelIndex !== 'number' || c.levelIndex < 0 || c.levelIndex % step !== 0) continue;
+      let len = 0;
+      for (let j = 1; j < c.points.length; j++) len += Math.hypot(c.points[j].x - c.points[j - 1].x, c.points[j].y - c.points[j - 1].y);
+      if (len < 170 * req.scale) continue;
+      cand.push({ c: c, len: len });
+    }
+    cand.sort((a, b) => b.len - a.len);
+    const span = ((req.maxField != null) ? req.maxField : 1) - ((req.minField != null) ? req.minField : 0);
+    ctx.font = (10 * req.scale) + 'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < Math.min(14, cand.length); i++) {
+      const pts = cand[i].c.points;
+      let total = 0;
+      const cum = [0];
+      for (let j = 1; j < pts.length; j++) { total += Math.hypot(pts[j].x - pts[j - 1].x, pts[j].y - pts[j - 1].y); cum.push(total); }
+      let k = 1;
+      while (k < cum.length - 1 && cum[k] < total / 2) k++;
+      const p = pts[k];
+      const q = pts[Math.max(0, k - 2)];
+      const r2 = pts[Math.min(pts.length - 1, k + 2)];
+      let ang = Math.atan2(r2.y - q.y, r2.x - q.x);
+      if (ang > Math.PI / 2) ang -= Math.PI;
+      if (ang < -Math.PI / 2) ang += Math.PI;
+      const txt = String(Math.round(1000 * (((cand[i].c.levelValue || 0) - ((req.minField != null) ? req.minField : 0)) / (span || 1))));
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(ang);
+      const tw = ctx.measureText(txt).width;
+      ctx.fillStyle = 'rgb(0, 0, 0)';
+      ctx.fillRect(-tw / 2 - 3.5 * req.scale, -6.5 * req.scale, tw + 7 * req.scale, 13 * req.scale);
+      ctx.fillStyle = 'rgb(255, 255, 255)';
+      ctx.fillText(txt, 0, 0);
+      ctx.restore();
+    }
   }
 
   return canvas.convertToBlob({ type: 'image/png' });
@@ -3891,7 +4162,40 @@ async function buildSvgString(sceneData, opts, onProgress) {
   }
   passes.push({ stroke: 'rgb(255, 255, 255)', opacity: null, width: baseWeight * strokeScale });
 
-  const contours = sceneData.contours || [];
+  let contours = sceneData.contours || [];
+  if (options.plotter) {
+    // Plotter order: by level, then top-to-bottom, left-to-right,
+    // with collinear points decimated for shorter pen travel.
+    contours = contours.slice().sort((a, b) => {
+      const la = (typeof a.levelIndex === 'number') ? a.levelIndex : 0;
+      const lb = (typeof b.levelIndex === 'number') ? b.levelIndex : 0;
+      if (la !== lb) return la - lb;
+      const ay = a.points.length ? a.points[0].y : 0;
+      const by = b.points.length ? b.points[0].y : 0;
+      if (ay !== by) return ay - by;
+      const ax = a.points.length ? a.points[0].x : 0;
+      const bx = b.points.length ? b.points[0].x : 0;
+      return ax - bx;
+    });
+    contours = contours.map((c) => {
+      const pts = c.points;
+      if (pts.length < 4) return c;
+      const kept = [pts[0]];
+      for (let i = 1; i < pts.length - 1; i++) {
+        const last = kept[kept.length - 1];
+        if (Math.hypot(pts[i].x - last.x, pts[i].y - last.y) >= 0.75) kept.push(pts[i]);
+      }
+      kept.push(pts[pts.length - 1]);
+      return { points: kept, closed: c.closed, levelIndex: c.levelIndex, levelValue: c.levelValue, slope: c.slope };
+    });
+  }
+  const svgSlopeRef = (() => {
+    if (!(options.slopeWeight > 0)) return 0;
+    const arr = [];
+    for (let i = 0; i < contours.length; i++) if (typeof contours[i].slope === 'number') arr.push(contours[i].slope);
+    arr.sort((a, b) => a - b);
+    return arr.length ? arr[Math.floor(arr.length * 0.9)] : 0;
+  })();
   const totalUnits = Math.max(1, contours.length * passes.length);
   let doneUnits = 0;
   for (let p = 0; p < passes.length; p++) {
@@ -3899,7 +4203,20 @@ async function buildSvgString(sceneData, opts, onProgress) {
     parts.push(`<g fill="none" stroke="${pass.stroke}"${pass.opacity !== null ? ` stroke-opacity="${pass.opacity}"` : ''} stroke-width="${formatSvgNumber(pass.width)}" stroke-linecap="round" stroke-linejoin="round">`);
     for (let i = 0; i < contours.length; i++) {
       const d = svgContourPathData(contours[i].points, contours[i].closed, coordScale);
-      if (d) parts.push(`<path d="${d}"/>`);
+      if (d) {
+        let wf = 1;
+        if (p === passes.length - 1) {
+          const c = contours[i];
+          if (options.indexEvery > 0 && typeof c.levelIndex === 'number' && c.levelIndex >= 0
+            && c.levelIndex % Math.round(options.indexEvery) === 0) wf *= 1.8;
+          if (options.slopeWeight > 0 && typeof c.slope === 'number' && svgSlopeRef > 0) {
+            wf *= 0.65 + options.slopeWeight * Math.min(1.6, c.slope / svgSlopeRef) * 0.9;
+          }
+        }
+        parts.push(wf !== 1
+          ? `<path d="${d}" stroke-width="${formatSvgNumber(pass.width * wf)}"/>`
+          : `<path d="${d}"/>`);
+      }
       doneUnits++;
       if (i % 150 === 149) {
         if (typeof onProgress === 'function') onProgress(doneUnits / totalUnits);
@@ -3908,6 +4225,39 @@ async function buildSvgString(sceneData, opts, onProgress) {
     }
     parts.push('</g>');
     if (typeof onProgress === 'function') onProgress(doneUnits / totalUnits);
+  }
+
+  if (options.labels) {
+    const step = options.indexEvery > 0 ? Math.round(options.indexEvery) : 5;
+    const cand = [];
+    for (let i = 0; i < contours.length; i++) {
+      const c = contours[i];
+      if (typeof c.levelIndex !== 'number' || c.levelIndex < 0 || c.levelIndex % step !== 0) continue;
+      let len = 0;
+      for (let j = 1; j < c.points.length; j++) len += Math.hypot(c.points[j].x - c.points[j - 1].x, c.points[j].y - c.points[j - 1].y);
+      if (len < 170) continue;
+      cand.push({ c: c, len: len });
+    }
+    cand.sort((a, b) => b.len - a.len);
+    const span = ((options.sceneMax != null) ? options.sceneMax : 1) - ((options.sceneMin != null) ? options.sceneMin : 0);
+    const texts = [];
+    for (let i = 0; i < Math.min(14, cand.length); i++) {
+      const pts = cand[i].c.points;
+      let total = 0;
+      const cum = [0];
+      for (let j = 1; j < pts.length; j++) { total += Math.hypot(pts[j].x - pts[j - 1].x, pts[j].y - pts[j - 1].y); cum.push(total); }
+      let k = 1;
+      while (k < cum.length - 1 && cum[k] < total / 2) k++;
+      const p = pts[k];
+      const q = pts[Math.max(0, k - 2)];
+      const r2 = pts[Math.min(pts.length - 1, k + 2)];
+      let ang = Math.atan2(r2.y - q.y, r2.x - q.x) * 180 / Math.PI;
+      if (ang > 90) ang -= 180;
+      if (ang < -90) ang += 180;
+      const txt = String(Math.round(1000 * (((cand[i].c.levelValue || 0) - ((options.sceneMin != null) ? options.sceneMin : 0)) / (span || 1))));
+      texts.push(`<text x="${formatSvgNumber(p.x * coordScale)}" y="${formatSvgNumber(p.y * coordScale)}" transform="rotate(${formatSvgNumber(ang)} ${formatSvgNumber(p.x * coordScale)} ${formatSvgNumber(p.y * coordScale)})" fill="rgb(255, 255, 255)" font-size="${formatSvgNumber(10 * strokeScale)}" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" style="paint-order:stroke;stroke:rgb(0, 0, 0);stroke-width:${formatSvgNumber(3 * strokeScale)}">${txt}</text>`);
+    }
+    if (texts.length) parts.push(`<g>${texts.join('')}</g>`);
   }
 
   parts.push('</svg>');
@@ -4027,7 +4377,8 @@ function topoWorkerMain() {
         baseH: req.baseH,
         gridStep: req.gridStep,
         cull: true,
-        thresholdRange: req.thresholdRange || null
+        thresholdRange: req.thresholdRange || null,
+        aux: req.aux || null
       });
       let lastPct = -1;
       let result = gen.next();
@@ -4043,7 +4394,7 @@ function topoWorkerMain() {
       const payload = flattenScene(result.value);
       self.postMessage(
         { type: 'result', id: id, payload: payload },
-        [payload.coords.buffer, payload.counts.buffer, payload.closed.buffer, payload.dots.buffer]
+        [payload.coords.buffer, payload.counts.buffer, payload.closed.buffer, payload.dots.buffer, payload.levelIdx.buffer, payload.levelVal.buffer, payload.slopes.buffer].concat(payload.bandGrey ? [payload.bandGrey.buffer] : [])
       );
     } catch (err) {
       self.postMessage({ type: 'error', id: id, message: String((err && err.message) || err) });
@@ -4175,7 +4526,8 @@ function computeMessageFor(req, thresholdRange) {
     baseW: req.baseW,
     baseH: req.baseH,
     gridStep: req.gridStep,
-    thresholdRange: thresholdRange || null
+    thresholdRange: thresholdRange || null,
+    aux: req.aux || null
   };
 }
 
@@ -4217,7 +4569,13 @@ function mergeSceneChunks(chunks) {
     contours: contours,
     textureDots: chunks[0].textureDots || [],
     holesPx: chunks[0].holesPx,
-    gridStep: chunks[0].gridStep
+    gridStep: chunks[0].gridStep,
+    bandGrey: chunks[0].bandGrey || null,
+    bandCols: chunks[0].bandCols || 0,
+    bandRows: chunks[0].bandRows || 0,
+    thresholds: chunks[0].thresholds || null,
+    minField: chunks[0].minField,
+    maxField: chunks[0].maxField
   };
 }
 
@@ -4295,8 +4653,19 @@ async function renderSceneViaWorker(scene, renderOpts, onProgress) {
     redShadowScale: renderOpts.redShadowScale,
     whiteStrokeWeight: renderOpts.whiteStrokeWeight,
     scale: renderOpts.scale,
-    transparent: !!renderOpts.transparent
-  }, onProgress, 'render', [flat.coords.buffer, flat.counts.buffer, flat.closed.buffer, flat.dots.buffer]);
+    transparent: !!renderOpts.transparent,
+    levelIdx: flat.levelIdx,
+    levelVal: flat.levelVal,
+    slopes: flat.slopes,
+    bandGrey: flat.bandGrey,
+    bandCols: flat.bandCols,
+    bandRows: flat.bandRows,
+    minField: flat.minField,
+    maxField: flat.maxField,
+    indexEvery: params.INDEX_EVERY,
+    slopeWeight: params.SLOPE_WEIGHT,
+    labels: params.LABELS
+  }, onProgress, 'render', [flat.coords.buffer, flat.counts.buffer, flat.closed.buffer, flat.dots.buffer, flat.levelIdx.buffer, flat.levelVal.buffer, flat.slopes.buffer].concat(flat.bandGrey ? [flat.bandGrey.buffer] : []));
   return blob || null;
 }
 
@@ -4335,6 +4704,114 @@ function draw() {
 // Render the artwork (texture + red shadow + white contours) once
 // per scene into an offscreen buffer. Selection changes and other
 // redraw() calls then only blit this image and draw hole handles.
+// Expression expansion: per-contour stroke factor from index
+// contours (every INDEX_EVERY-th level thicker) and slope-based
+// weight. 1 when both features are off.
+function sceneSlopeRef(scn) {
+  if (scn._slopeRef !== undefined) return scn._slopeRef;
+  const arr = [];
+  for (let i = 0; i < scn.contours.length; i++) {
+    if (typeof scn.contours[i].slope === 'number') arr.push(scn.contours[i].slope);
+  }
+  arr.sort((a, b) => a - b);
+  scn._slopeRef = arr.length ? arr[Math.floor(arr.length * 0.9)] : 0;
+  return scn._slopeRef;
+}
+function contourWeightFactor(contour, scn) {
+  let f = 1;
+  if (params.INDEX_EVERY > 0 && typeof contour.levelIndex === 'number' && contour.levelIndex >= 0
+    && contour.levelIndex % Math.round(params.INDEX_EVERY) === 0) f *= 1.8;
+  if (params.SLOPE_WEIGHT > 0 && typeof contour.slope === 'number') {
+    const ref = sceneSlopeRef(scn);
+    if (ref > 0) f *= 0.65 + params.SLOPE_WEIGHT * Math.min(1.6, contour.slope / ref) * 0.9;
+  }
+  return f;
+}
+function pickLabelContours(scn) {
+  const step = params.INDEX_EVERY > 0 ? Math.round(params.INDEX_EVERY) : 5;
+  const cand = [];
+  for (let i = 0; i < scn.contours.length; i++) {
+    const c = scn.contours[i];
+    if (typeof c.levelIndex !== 'number' || c.levelIndex < 0 || c.levelIndex % step !== 0) continue;
+    const len = pathLength(c.points);
+    if (len < 170) continue;
+    cand.push({ c: c, len: len });
+  }
+  cand.sort((a, b) => b.len - a.len);
+  return cand.slice(0, 14);
+}
+function contourLabelSpot(points) {
+  let total = 0;
+  const cum = [0];
+  for (let i = 1; i < points.length; i++) {
+    total += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
+    cum.push(total);
+  }
+  const half = total / 2;
+  let k = 1;
+  while (k < cum.length - 1 && cum[k] < half) k++;
+  const p = points[k];
+  const q = points[Math.max(0, k - 2)];
+  const r = points[Math.min(points.length - 1, k + 2)];
+  let ang = Math.atan2(r.y - q.y, r.x - q.x);
+  if (ang > Math.PI / 2) ang -= Math.PI;
+  if (ang < -Math.PI / 2) ang += Math.PI;
+  return { x: p.x, y: p.y, ang: ang };
+}
+function elevationLabelText(scn, value) {
+  const span = ((scn.maxField != null) ? scn.maxField : 1) - ((scn.minField != null) ? scn.minField : 0);
+  return String(Math.round(1000 * ((value - ((scn.minField != null) ? scn.minField : 0)) / (span || 1))));
+}
+function drawContourLabelsP5(pg, scn, scale) {
+  const items = pickLabelContours(scn);
+  if (!items.length) return;
+  pg.push();
+  pg.textAlign(CENTER, CENTER);
+  pg.textSize(10 * scale);
+  for (let i = 0; i < items.length; i++) {
+    const spot = contourLabelSpot(items[i].c.points);
+    const txt = elevationLabelText(scn, items[i].c.levelValue || 0);
+    pg.push();
+    pg.translate(spot.x, spot.y);
+    pg.rotate(spot.ang);
+    const tw = pg.textWidth(txt);
+    pg.noStroke();
+    pg.fill(0);
+    pg.rectMode(CENTER);
+    pg.rect(0, 0, tw + 7 * scale, 13 * scale);
+    pg.fill(255);
+    pg.text(txt, 0, 0);
+    pg.pop();
+  }
+  pg.pop();
+}
+function drawBandLayerP5(pg, scn, w, h) {
+  if (!scn.bandGrey || !scn.bandCols || !scn.bandRows) return;
+  if (!scn._bandCanvas) {
+    const cv = document.createElement('canvas');
+    cv.width = scn.bandCols;
+    cv.height = scn.bandRows;
+    const cx = cv.getContext('2d');
+    const img = cx.createImageData(scn.bandCols, scn.bandRows);
+    for (let i = 0; i < scn.bandGrey.length; i++) {
+      const g = scn.bandGrey[i];
+      img.data[i * 4] = g;
+      img.data[i * 4 + 1] = g;
+      img.data[i * 4 + 2] = g;
+      img.data[i * 4 + 3] = 255;
+    }
+    cx.putImageData(img, 0, 0);
+    scn._bandCanvas = cv;
+  }
+  const ctx = pg.drawingContext;
+  if (ctx) {
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(scn._bandCanvas, 0, 0, w, h);
+    ctx.restore();
+  }
+}
+
 function renderArtworkCache() {
   if (typeof createGraphics !== 'function') {
     artworkCache = null;
@@ -4343,6 +4820,8 @@ function renderArtworkCache() {
   const pg = createGraphics(width, height);
   pg.pixelDensity(pixelDensity());
   pg.background(0);
+
+  drawBandLayerP5(pg, scene, width, height);
 
   if (params.SHOW_TEXTURE) {
     drawFaintTexture(pg, scene.textureDots);
@@ -4358,10 +4837,12 @@ function renderArtworkCache() {
     }
 
     pg.stroke(255);
-    pg.strokeWeight(params.WHITE_STROKE_WEIGHT);
+    pg.strokeWeight(params.WHITE_STROKE_WEIGHT * contourWeightFactor(contour, scene));
     pg.noFill();
     drawSmoothPath(pg, contour.points, contour.closed);
   }
+
+  if (params.LABELS) drawContourLabelsP5(pg, scene, 1);
 
   if (artworkCache && artworkCache.remove) artworkCache.remove();
   artworkCache = pg;
@@ -4595,7 +5076,8 @@ async function runExport(scale, transparent, exportW, exportH) {
       height: exportH,
       baseW: width,
       baseH: height,
-      gridStep: step
+      gridStep: step,
+    aux: TOPO_AUX
     }, est, onComputeProgress);
     if (!exportScene) {
       setStatus('Workerを利用できないためメインスレッドで計算しました');
@@ -4650,6 +5132,8 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
     pg.background(0);
   }
 
+  drawBandLayerP5(pg, exportScene, exportW, exportH);
+
   if (params.SHOW_TEXTURE) {
     drawFaintTexture(pg, exportScene.textureDots);
   }
@@ -4664,10 +5148,12 @@ function renderExportOnMainThread(exportScene, scale, transparent, exportW, expo
     }
 
     pg.stroke(255);
-    pg.strokeWeight(params.WHITE_STROKE_WEIGHT * scale);
+    pg.strokeWeight(params.WHITE_STROKE_WEIGHT * scale * contourWeightFactor(contour, exportScene));
     pg.noFill();
     drawSmoothPath(pg, contour.points, contour.closed);
   }
+
+  if (params.LABELS) drawContourLabelsP5(pg, exportScene, scale);
 
   downloadCanvasPNG(pg.elt || pg.canvas, filename, () => {
     pg.remove();
@@ -4754,7 +5240,8 @@ async function runSvgExport(scale, transparent, exportW, exportH) {
       height: exportH,
       baseW: width,
       baseH: height,
-      gridStep: step
+      gridStep: step,
+    aux: TOPO_AUX
     }, est, onComputeProgress);
     if (!exportScene) {
       setStatus('Workerを利用できないためメインスレッドで計算しました');
@@ -4826,7 +5313,13 @@ async function buildAndDownloadSvg(exportScene, scale, transparent, exportW, exp
       transparent: transparent,
       redShadowAlpha: params.RED_SHADOW_ALPHA,
       redShadowScale: params.RED_SHADOW_SCALE,
-      whiteStrokeWeight: params.WHITE_STROKE_WEIGHT
+      whiteStrokeWeight: params.WHITE_STROKE_WEIGHT,
+      indexEvery: params.INDEX_EVERY,
+      slopeWeight: params.SLOPE_WEIGHT,
+      labels: params.LABELS,
+      plotter: params.PLOTTER_SVG,
+      sceneMin: exportScene.minField,
+      sceneMax: exportScene.maxField
     }, (ratio) => {
       if (svgButton) svgButton.textContent = `書き出し中… ${Math.round(ratio * 100)}%`;
     });
@@ -6370,6 +6863,432 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     background:none; color:var(--fg); cursor:pointer; font-size:14px; line-height:1; }
   @media (max-width:767px) { #uiuxHint { top:72px; font-size:11.5px; } }
 </style>
+<script id="topo-expr-script">
+(function () {
+  'use strict';
+  // Expression expansion UI (2026-11-17): symmetry / terrace / band
+  // fill / index contours / elevation labels / slope weight / tile
+  // mode / plotter SVG, image heightfield, paint sculpting and
+  // animation export. Core support lives in the main script (all
+  // features default off and identity-preserving). This script only
+  // builds controls and wires them to params / TOPO_AUX.
+  var AUX_COLS = 320, AUX_ROWS = 180;
+  var imgPart = new Float32Array(AUX_COLS * AUX_ROWS);
+  var paintPart = new Float32Array(AUX_COLS * AUX_ROWS);
+  var imgLoaded = false;
+  var imgGain = 1.0;
+  var imgInvert = false;
+  var imgSource = null;
+  var sculptOn = false;
+  var sculptDir = 1;
+  var animRunning = false;
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function regen() { try { regenerateScene({ newSeed: false }); } catch (e) {} }
+  function saveSoon() { try { scheduleSaveSettings(); } catch (e) {} }
+  function bakeAux() {
+    var out = new Float32Array(AUX_COLS * AUX_ROWS);
+    var any = false;
+    for (var i = 0; i < out.length; i++) {
+      out[i] = imgPart[i] + paintPart[i];
+      if (out[i] !== 0) any = true;
+    }
+    try { topoSetAuxField(any ? out : null, AUX_COLS, AUX_ROWS); } catch (e) {}
+    return any;
+  }
+  function applyAuxAndRegen() { bakeAux(); regen(); }
+
+  // ---------- paint persistence ----------
+  function savePaint() {
+    try {
+      var q = new Int16Array(paintPart.length);
+      var any = false;
+      for (var i = 0; i < q.length; i++) { q[i] = Math.max(-32768, Math.min(32767, Math.round(paintPart[i] * 400))); if (q[i] !== 0) any = true; }
+      if (!any) { localStorage.removeItem('topo.paint.v1'); return; }
+      var bin = '';
+      var bytes = new Uint8Array(q.buffer);
+      for (var i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+      localStorage.setItem('topo.paint.v1', JSON.stringify({ cols: AUX_COLS, rows: AUX_ROWS, b64: btoa(bin) }));
+    } catch (e) {}
+  }
+  function loadPaint() {
+    try {
+      var raw = localStorage.getItem('topo.paint.v1');
+      if (!raw) return;
+      var obj = JSON.parse(raw);
+      if (!obj || obj.cols !== AUX_COLS || obj.rows !== AUX_ROWS || !obj.b64) return;
+      var bin = atob(obj.b64);
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      var q = new Int16Array(bytes.buffer);
+      for (var i = 0; i < paintPart.length && i < q.length; i++) paintPart[i] = q[i] / 400;
+    } catch (e) {}
+  }
+
+  // ---------- image heightfield ----------
+  function bakeImage() {
+    if (!imgSource) return;
+    var cv = document.createElement('canvas');
+    cv.width = AUX_COLS; cv.height = AUX_ROWS;
+    var cx = cv.getContext('2d');
+    cx.drawImage(imgSource, 0, 0, AUX_COLS, AUX_ROWS);
+    var data;
+    try { data = cx.getImageData(0, 0, AUX_COLS, AUX_ROWS).data; } catch (e) { return; }
+    var sign = imgInvert ? -1 : 1;
+    for (var i = 0; i < AUX_COLS * AUX_ROWS; i++) {
+      var lum = (data[i * 4] * 0.2126 + data[i * 4 + 1] * 0.7152 + data[i * 4 + 2] * 0.0722) / 255;
+      imgPart[i] = (lum - 0.5) * 2 * imgGain * 1.1 * sign;
+    }
+    imgLoaded = true;
+    applyAuxAndRegen();
+  }
+  function loadImageFile(file) {
+    if (!file) return;
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      imgSource = img;
+      bakeImage();
+      try { setStatus('画像を地形として読み込みました'); } catch (e) {}
+    };
+    img.onerror = function () { try { setStatus('画像の読み込みに失敗しました'); } catch (e) {} };
+    img.src = url;
+  }
+
+  // ---------- sculpt overlay ----------
+  var overlay = null;
+  function ensureOverlay() {
+    if (overlay) return overlay;
+    var wrap = document.getElementById('canvasWrap');
+    if (!wrap) return null;
+    overlay = document.createElement('div');
+    overlay.id = 'exprSculptOverlay';
+    overlay.style.cssText = 'position:absolute;inset:0;z-index:30;display:none;cursor:crosshair;touch-action:none;';
+    wrap.appendChild(overlay);
+    var painting = false;
+    var lastPt = null;
+    var regenTimer = null;
+    function toNorm(ev) {
+      var r = overlay.getBoundingClientRect();
+      return { x: (ev.clientX - r.left) / Math.max(1, r.width), y: (ev.clientY - r.top) / Math.max(1, r.height) };
+    }
+    function dab(a, b) {
+      var radiusEl = document.getElementById('exprBrushSize');
+      var radius = radiusEl ? parseFloat(radiusEl.value) : 0.05;
+      var steps = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 0.008));
+      for (var s = 0; s <= steps; s++) {
+        var px = a.x + (b.x - a.x) * (s / steps);
+        var py = a.y + (b.y - a.y) * (s / steps);
+        var gx = px * (AUX_COLS - 1), gy = py * (AUX_ROWS - 1);
+        var rad = radius * AUX_COLS;
+        var x0 = Math.max(0, Math.floor(gx - rad)), x1 = Math.min(AUX_COLS - 1, Math.ceil(gx + rad));
+        var y0 = Math.max(0, Math.floor(gy - rad * AUX_ROWS / AUX_COLS)), y1 = Math.min(AUX_ROWS - 1, Math.ceil(gy + rad * AUX_ROWS / AUX_COLS));
+        for (var y = y0; y <= y1; y++) {
+          for (var x = x0; x <= x1; x++) {
+            var dx = (x - gx) / rad, dy = (y - gy) / (rad * AUX_ROWS / AUX_COLS);
+            var d2 = dx * dx + dy * dy;
+            if (d2 > 1) continue;
+            var idx = y * AUX_COLS + x;
+            paintPart[idx] = Math.max(-1.5, Math.min(1.5, paintPart[idx] + sculptDir * 0.09 * Math.exp(-d2 * 2.2)));
+          }
+        }
+      }
+    }
+    function scheduleRegen() {
+      if (regenTimer) return;
+      regenTimer = setTimeout(function () { regenTimer = null; bakeAux(); regen(); }, 200);
+    }
+    overlay.addEventListener('pointerdown', function (ev) {
+      painting = true;
+      lastPt = toNorm(ev);
+      dab(lastPt, lastPt);
+      scheduleRegen();
+      try { overlay.setPointerCapture(ev.pointerId); } catch (e) {}
+      ev.preventDefault();
+    });
+    overlay.addEventListener('pointermove', function (ev) {
+      if (!painting) return;
+      var pt = toNorm(ev);
+      dab(lastPt, pt);
+      lastPt = pt;
+      scheduleRegen();
+    });
+    function endStroke() { if (painting) { painting = false; savePaint(); bakeAux(); regen(); } }
+    overlay.addEventListener('pointerup', endStroke);
+    overlay.addEventListener('pointercancel', endStroke);
+    return overlay;
+  }
+  function setSculpt(on) {
+    sculptOn = on;
+    var ov = ensureOverlay();
+    if (ov) ov.style.display = on ? 'block' : 'none';
+    var btn = document.getElementById('exprSculpt');
+    if (btn) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); btn.textContent = on ? '彫刻中（ドラッグで描く）' : '彫刻モード'; }
+    try { setStatus(on ? '彫刻モード: キャンバスをドラッグして地形を盛る/削る' : '彫刻モードを終了しました'); } catch (e) {}
+  }
+
+  // ---------- tile preview ----------
+  function toggleTilePreview() {
+    var prev = document.getElementById('exprTilePreview');
+    if (prev) { prev.remove(); return; }
+    var canvas = document.querySelector('#canvasWrap canvas');
+    if (!canvas) return;
+    var box = document.createElement('div');
+    box.id = 'exprTilePreview';
+    box.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:900;width:min(72vmin,560px);height:min(72vmin,560px);border:1px solid #525252;background-color:#000;cursor:pointer;';
+    try { box.style.backgroundImage = 'url(' + canvas.toDataURL('image/png') + ')'; } catch (e) { return; }
+    box.style.backgroundSize = '50% 50%';
+    box.title = 'タイルプレビュー（クリックで閉じる）';
+    box.addEventListener('click', function () { box.remove(); });
+    document.body.appendChild(box);
+  }
+
+  // ---------- animation export ----------
+  async function animExport() {
+    if (animRunning) return;
+    if (typeof MediaRecorder === 'undefined') { try { setStatus('このブラウザは MediaRecorder 非対応です'); } catch (e) {} return; }
+    var canvas = document.querySelector('#canvasWrap canvas');
+    if (!canvas) return;
+    animRunning = true;
+    var rec = document.createElement('canvas');
+    rec.width = canvas.width; rec.height = canvas.height;
+    var rctx = rec.getContext('2d');
+    rctx.fillStyle = '#000'; rctx.fillRect(0, 0, rec.width, rec.height);
+    var stream = rec.captureStream(0);
+    var mime = 'video/webm';
+    try { if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) mime = 'video/webm;codecs=vp9'; } catch (e) {}
+    var mr;
+    try { mr = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8000000 }); }
+    catch (e) { animRunning = false; try { setStatus('アニメ書き出しを開始できませんでした'); } catch (e2) {} return; }
+    var chunks = [];
+    mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+    var stopped = new Promise(function (r) { mr.onstop = r; });
+    mr.start(200);
+    var savedScene = scene;
+    var savedCache = artworkCache;
+    var FRAMES = 36;
+    try {
+      for (var f = 0; f < FRAMES; f++) {
+        var t = f / FRAMES;
+        var mix = (1 - Math.cos(2 * Math.PI * t)) / 2;
+        try { setStatus('アニメ生成中… ' + (f + 1) + '/' + FRAMES); } catch (e) {}
+        var fs = await buildSceneDataAsync(width, height, seedVal, null, { animMix: mix, animShiftX: width * 0.13, animShiftY: -height * 0.09 });
+        scene = fs;
+        artworkCache = null;
+        renderArtworkCache();
+        if (artworkCache) {
+          var elt = artworkCache.elt || artworkCache.canvas;
+          if (elt) rctx.drawImage(elt, 0, 0, rec.width, rec.height);
+        }
+        var track = stream.getVideoTracks()[0];
+        if (track && track.requestFrame) track.requestFrame();
+        await new Promise(function (r) { setTimeout(r, 40); });
+      }
+    } catch (e) {
+      try { setStatus('アニメ生成でエラーがありました'); } catch (e2) {}
+    } finally {
+      scene = savedScene;
+      artworkCache = savedCache;
+      try { redraw(); } catch (e) {}
+      animRunning = false;
+    }
+    mr.stop();
+    await stopped;
+    var blob = new Blob(chunks, { type: 'video/webm' });
+    triggerDownload(URL.createObjectURL(blob), 'TOPO_anim_seed' + seedVal + '.webm', true);
+    try { setStatus('アニメを保存しました（WebM）'); } catch (e) {}
+  }
+
+  // ---------- controls ----------
+  function buildUI() {
+    var body = document.querySelector('#controls .panel-body');
+    if (!body || document.getElementById('exprSection')) return;
+    var h3 = el('h3', null, '表現拡張');
+    h3.id = 'exprSection';
+    body.appendChild(h3);
+
+    function row(labelText) {
+      var r = el('div', 'row');
+      var lab = el('span', 'muted', labelText);
+      r.appendChild(lab);
+      body.appendChild(r);
+      return r;
+    }
+    function range(id, min, max, step, val) {
+      var i = document.createElement('input');
+      i.type = 'range'; i.id = id; i.min = min; i.max = max; i.step = step; i.value = val;
+      return i;
+    }
+    function check(id, labelText, val) {
+      var wrapLab = el('label', 'small');
+      var i = document.createElement('input');
+      i.type = 'checkbox'; i.id = id; i.checked = !!val;
+      wrapLab.appendChild(i);
+      wrapLab.appendChild(document.createTextNode(' ' + labelText));
+      return { wrap: wrapLab, input: i };
+    }
+    function bindParam(input, key, isFloat, after) {
+      input.addEventListener('input', function () {
+        params[key] = isFloat ? parseFloat(input.value) : parseInt(input.value, 10);
+        saveSoon();
+        if (after) after();
+        regen();
+      });
+    }
+
+    // symmetry
+    var rSym = row('対称:');
+    var selSym = document.createElement('select');
+    selSym.id = 'exprSymmetry';
+    [['0', 'なし'], ['1', '左右鏡像'], ['2', '上下鏡像'], ['3', '四分割'], ['4', '放射6分割']].forEach(function (o) {
+      var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; selSym.appendChild(op);
+    });
+    selSym.value = String(params.SYMMETRY || 0);
+    selSym.addEventListener('change', function () { params.SYMMETRY = parseInt(selSym.value, 10); saveSoon(); regen(); });
+    rSym.appendChild(selSym);
+
+    // terrace
+    var rTer = row('テラス段数:');
+    var ter = range('exprTerrace', 0, 40, 1, params.TERRACE || 0);
+    var terVal = el('span', 'small', String(params.TERRACE || 0));
+    ter.addEventListener('input', function () { terVal.textContent = ter.value; });
+    bindParam(ter, 'TERRACE', false);
+    rTer.appendChild(ter); rTer.appendChild(terVal);
+
+    // band fill
+    var rBand = row('帯塗り:');
+    var band = check('exprBandFill', '標高帯をグレーで塗る', params.BAND_FILL);
+    band.input.addEventListener('change', function () { params.BAND_FILL = band.input.checked; saveSoon(); regen(); });
+    rBand.appendChild(band.wrap);
+    var rBandLv = row('帯の段数:');
+    var bandLv = range('exprBandLevels', 4, 32, 1, params.BAND_LEVELS || 18);
+    bindParam(bandLv, 'BAND_LEVELS', false);
+    rBandLv.appendChild(bandLv);
+
+    // index + labels + slope
+    var rIdx = row('主曲線の間隔:');
+    var idx = range('exprIndexEvery', 0, 10, 1, params.INDEX_EVERY || 0);
+    bindParam(idx, 'INDEX_EVERY', false);
+    rIdx.appendChild(idx);
+    var rLab = row('標高ラベル:');
+    var lab = check('exprLabels', '主曲線に標高数字を入れる', params.LABELS);
+    lab.input.addEventListener('change', function () { params.LABELS = lab.input.checked; saveSoon(); regen(); });
+    rLab.appendChild(lab.wrap);
+    var rSlope = row('傾斜で線幅:');
+    var slope = range('exprSlopeWeight', 0, 1, 0.05, params.SLOPE_WEIGHT || 0);
+    bindParam(slope, 'SLOPE_WEIGHT', true);
+    rSlope.appendChild(slope);
+
+    // tile + plotter
+    var rTile = row('タイル:');
+    var tile = check('exprTile', '継ぎ目なし（周期化）', params.TILE_MODE);
+    tile.input.addEventListener('change', function () { params.TILE_MODE = tile.input.checked; saveSoon(); regen(); });
+    rTile.appendChild(tile.wrap);
+    var tileBtn = el('button', 'panel-btn', '2×2プレビュー');
+    tileBtn.type = 'button';
+    tileBtn.addEventListener('click', toggleTilePreview);
+    rTile.appendChild(tileBtn);
+    var rPlot = row('SVG最適化:');
+    var plot = check('exprPlotter', 'プロッタ向け（並び替え＋簡略化）', params.PLOTTER_SVG);
+    plot.input.addEventListener('change', function () { params.PLOTTER_SVG = plot.input.checked; saveSoon(); });
+    rPlot.appendChild(plot.wrap);
+
+    // image heightfield
+    var rImg = row('画像地形:');
+    var fileBtn = el('button', 'panel-btn', '画像を読み込む');
+    fileBtn.type = 'button';
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
+    fileInput.id = 'exprImageFile';
+    fileInput.addEventListener('change', function () { if (fileInput.files[0]) loadImageFile(fileInput.files[0]); });
+    fileBtn.addEventListener('click', function () { fileInput.click(); });
+    rImg.appendChild(fileBtn); rImg.appendChild(fileInput);
+    var imgClear = el('button', 'panel-btn', '画像を消す');
+    imgClear.type = 'button';
+    imgClear.addEventListener('click', function () {
+      imgSource = null; imgLoaded = false; imgPart = new Float32Array(AUX_COLS * AUX_ROWS);
+      applyAuxAndRegen();
+    });
+    rImg.appendChild(imgClear);
+    var rGain = row('画像の強さ:');
+    var gain = range('exprImgGain', 0, 2, 0.05, 1);
+    gain.addEventListener('input', function () { imgGain = parseFloat(gain.value); if (imgSource) bakeImage(); });
+    rGain.appendChild(gain);
+    var inv = check('exprImgInvert', '画像を反転', false);
+    inv.input.addEventListener('change', function () { imgInvert = inv.input.checked; if (imgSource) bakeImage(); });
+    rGain.appendChild(inv.wrap);
+
+    // sculpt
+    var rSc = row('彫刻:');
+    var scBtn = el('button', 'panel-btn', '彫刻モード');
+    scBtn.type = 'button'; scBtn.id = 'exprSculpt'; scBtn.setAttribute('aria-pressed', 'false');
+    scBtn.addEventListener('click', function () { setSculpt(!sculptOn); });
+    rSc.appendChild(scBtn);
+    var dirBtn = el('button', 'panel-btn', '盛る');
+    dirBtn.type = 'button'; dirBtn.id = 'exprSculptDir';
+    dirBtn.addEventListener('click', function () {
+      sculptDir = sculptDir > 0 ? -1 : 1;
+      dirBtn.textContent = sculptDir > 0 ? '盛る' : '削る';
+    });
+    rSc.appendChild(dirBtn);
+    var paintClear = el('button', 'panel-btn', '描画を消す');
+    paintClear.type = 'button';
+    paintClear.addEventListener('click', function () {
+      paintPart = new Float32Array(AUX_COLS * AUX_ROWS);
+      savePaint(); applyAuxAndRegen();
+    });
+    rSc.appendChild(paintClear);
+    var rBrush = row('ブラシ半径:');
+    var brush = range('exprBrushSize', 0.02, 0.12, 0.005, 0.05);
+    rBrush.appendChild(brush);
+
+    // animation
+    var rAnim = row('アニメ:');
+    var animBtn = el('button', 'panel-btn', 'アニメ書き出し (WebM)');
+    animBtn.type = 'button'; animBtn.id = 'exprAnim';
+    animBtn.addEventListener('click', animExport);
+    rAnim.appendChild(animBtn);
+
+    var note = el('p', 'plus-note', '画像地形と彫刻は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。');
+    body.appendChild(note);
+
+    // drag & drop image onto the window
+    window.addEventListener('dragover', function (e) { e.preventDefault(); });
+    window.addEventListener('drop', function (e) {
+      e.preventDefault();
+      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f && /^image\//.test(f.type)) loadImageFile(f);
+    });
+
+    // keep controls in sync with params (settings load / scenes)
+    setInterval(function () {
+      if (document.activeElement && document.activeElement.id && document.activeElement.id.indexOf('expr') === 0) return;
+      selSym.value = String(params.SYMMETRY || 0);
+      ter.value = params.TERRACE || 0; terVal.textContent = String(params.TERRACE || 0);
+      band.input.checked = !!params.BAND_FILL;
+      bandLv.value = params.BAND_LEVELS || 18;
+      idx.value = params.INDEX_EVERY || 0;
+      lab.input.checked = !!params.LABELS;
+      slope.value = params.SLOPE_WEIGHT || 0;
+      tile.input.checked = !!params.TILE_MODE;
+      plot.input.checked = !!params.PLOTTER_SVG;
+    }, 1500);
+  }
+
+  function init() {
+    loadPaint();
+    if (paintPart.some(function (v) { return v !== 0; })) bakeAux();
+    buildUI();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 <script id="topo-uiux-b-script">
 (function () {
   'use strict';
