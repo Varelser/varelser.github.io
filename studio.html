@@ -1474,4 +1474,20 @@ if(sec){
 <script type="speculationrules">
 {"prefetch":[{"source":"list","urls":["lien.html","leary.html","topo.html","yayoi.html","punkt.html","noise.html","meikyoshisui/"],"eagerness":"moderate"}]}
 </script>
+
+<script id="d-script">
+(function(){
+'use strict';
+var btn=document.getElementById('r5HelpBtn'), h=document.getElementById('r5Help');
+if(!btn||!h||typeof h.showPopover!=='function') return;
+btn.addEventListener('click',function(e){
+  e.preventDefault(); e.stopPropagation();
+  if(h.matches(':popover-open')){ try{h.hidePopover();}catch(err){} h.hidden=true; btn.setAttribute('aria-expanded','false'); }
+  else { h.hidden=false; try{h.showPopover();}catch(err){} btn.setAttribute('aria-expanded','true'); }
+},true);
+h.addEventListener('toggle',function(e){
+  if(e.newState==='closed'){ h.hidden=true; btn.setAttribute('aria-expanded','false'); }
+});
+})();
+</script>
 </body></html>
