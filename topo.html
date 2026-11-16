@@ -7395,9 +7395,36 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     var rad = lat * Math.PI / 180;
     return (1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2 * Math.pow(2, z) * 256;
   }
+  var fujiBtnEl = null;
+  function loadTileImage(url) {
+    return new Promise(function (resolve) {
+      var settled = false;
+      var fetchFailed = false, imgFailed = false;
+      var timer = setTimeout(function () { finish(null); }, 12000);
+      function finish(v) { if (!settled) { settled = true; clearTimeout(timer); resolve(v); } }
+      function maybeFail() { if (fetchFailed && imgFailed) finish(null); }
+      (async function () {
+        try {
+          var ctl = new AbortController();
+          var t2 = setTimeout(function () { ctl.abort(); }, 11000);
+          var res = await fetch(url, { signal: ctl.signal });
+          clearTimeout(t2);
+          if (!res.ok) throw new Error('tile ' + res.status);
+          finish(await createImageBitmap(await res.blob()));
+        } catch (e) { fetchFailed = true; maybeFail(); }
+      })();
+      var im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = function () { finish(im); };
+      im.onerror = function () { imgFailed = true; maybeFail(); };
+      im.src = url;
+    });
+  }
   async function loadFuji() {
     function fujiStatus(msg) { try { setStatus(msg); } catch (e) {} }
+    function fujiLabel(msg) { if (fujiBtnEl) fujiBtnEl.textContent = msg; }
     fujiStatus('富士山の標高データを取得中…');
+    fujiLabel('取得中…');
     try {
     var z = 11;
     var lonMin = 138.55, lonMax = 138.95, latMin = 35.20, latMax = 35.52;
@@ -7407,33 +7434,24 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     var stitch = document.createElement('canvas');
     stitch.width = tilesW * 256; stitch.height = tilesH * 256;
     var sx = stitch.getContext('2d');
-    var tileTotal = tilesW * tilesH;
-    var tileDone = 0;
+    var jobs = [];
     for (var ty = y0; ty <= y1; ty++) {
       for (var tx = x0; tx <= x1; tx++) {
-        var url = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + z + '/' + tx + '/' + ty + '.png';
-        var bmp = null;
-        try {
-          var ctl = new AbortController();
-          var timer = setTimeout(function () { ctl.abort(); }, 10000);
-          var res = await fetch(url, { signal: ctl.signal });
-          clearTimeout(timer);
-          if (!res.ok) throw new Error('tile ' + res.status);
-          bmp = await createImageBitmap(await res.blob());
-        } catch (fetchErr) {
-          bmp = await new Promise(function (resolve) {
-            var im = new Image();
-            im.crossOrigin = 'anonymous';
-            im.onload = function () { resolve(im); };
-            im.onerror = function () { resolve(null); };
-            im.src = url;
-          });
-          if (!bmp) throw fetchErr;
-        }
-        sx.drawImage(bmp, (tx - x0) * 256, (ty - y0) * 256);
-        tileDone++;
-        fujiStatus('富士山の標高データを取得中… ' + tileDone + '/' + tileTotal);
+        jobs.push({ tx: tx, ty: ty, url: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/' + z + '/' + tx + '/' + ty + '.png' });
       }
+    }
+    var tileDone = 0;
+    var bmps = await Promise.all(jobs.map(function (job) {
+      return loadTileImage(job.url).then(function (bmp) {
+        tileDone++;
+        fujiStatus('富士山の標高データを取得中… ' + tileDone + '/' + jobs.length);
+        fujiLabel('取得中… ' + tileDone + '/' + jobs.length);
+        return bmp;
+      });
+    }));
+    for (var ji = 0; ji < jobs.length; ji++) {
+      if (!bmps[ji]) throw new Error('tile load failed');
+      sx.drawImage(bmps[ji], (jobs[ji].tx - x0) * 256, (jobs[ji].ty - y0) * 256);
     }
     var px0 = Math.round(lonToPx(lonMin, z) - x0 * 256), px1 = Math.round(lonToPx(lonMax, z) - x0 * 256);
     var py0 = Math.round(latToPx(latMax, z) - y0 * 256), py1 = Math.round(latToPx(latMin, z) - y0 * 256);
@@ -7447,8 +7465,12 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     bakeDem();
     applyAuxAndRegen();
     fujiStatus('富士山（実地形）を適用しました');
+    fujiLabel('富士山（実標高）✓');
+    setTimeout(function () { fujiLabel('富士山（実標高）'); }, 6000);
     } catch (err) {
       fujiStatus('標高データの取得に失敗しました: ' + ((err && err.name) || 'Error'));
+      fujiLabel('取得失敗（再試行可）');
+      setTimeout(function () { fujiLabel('富士山（実標高）'); }, 6000);
     }
   }
 
@@ -7785,6 +7807,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     var rDem = row('実地形:');
     var fujiBtn = el('button', 'panel-btn', '富士山（実標高）');
     fujiBtn.type = 'button'; fujiBtn.id = 'exprFuji';
+    fujiBtnEl = fujiBtn;
     fujiBtn.addEventListener('click', loadFuji);
     rDem.appendChild(fujiBtn);
     var demClear = el('button', 'panel-btn', '実地形を消す');
