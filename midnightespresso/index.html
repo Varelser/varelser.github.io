@@ -61,13 +61,14 @@
   header .hd-title { position:absolute; left:50%; transform:translateX(-50%); font-size:13px; letter-spacing:.42em; text-indent:.42em; color:#cfcfd4; white-space:nowrap; }
   header .emblem img { width:40px; height:40px; border-radius:50%; display:block; }
   main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 20px 28px; }
-  main .icon { width:min(620px, 76vmin, max(200px, calc(100dvh - 490px))); height:auto; display:block; }
+  main .icon { width:min(620px, 76vmin, max(180px, calc(100dvh - 580px))); height:auto; display:block; }
   main h1 { margin-top:34px; font-size:clamp(20px, 4.6vw, 34px); font-weight:600; letter-spacing:.38em; text-indent:.38em; text-align:center; color:#f2f2f5; }
   main .rule { width:56px; height:1px; background:#3a3a40; margin:26px auto 0; }
   main .sub { margin-top:20px; font-size:12px; letter-spacing:.3em; text-indent:.3em; color:#8b8b93; text-align:center; }
+  main .desc { margin:24px auto 0; max-width:560px; padding:0 20px; font-size:12.5px; line-height:2.0; letter-spacing:.08em; color:#8b8b93; text-align:center; }
   footer { flex:0 0 auto; padding:22px 20px calc(22px + env(safe-area-inset-bottom)); border-top:1px solid #232327; display:flex; justify-content:space-between; align-items:center; font-size:11px; letter-spacing:.18em; color:#8b8b93; }
   footer a { color:#9a9aa2; text-decoration:none; }
-  main .links { margin-top:30px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:880px; }
+  main .links { margin-top:26px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:880px; }
   main .links a { display:inline-block; padding:12px 30px; border:1px solid #3a3a40; border-radius:999px; color:#e8e8ec; text-decoration:none; font-size:12px; letter-spacing:.34em; text-indent:.34em; transition:background .25s, color .25s, border-color .25s; }
   main .links a:hover { background:#e8e8ec; color:#000; border-color:#e8e8ec; }
   main .members { margin-top:26px; text-align:center; }
@@ -100,16 +101,20 @@
   @view-transition { navigation:auto; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration:.18s; }
   @media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation:none; } }
-  @media print { body { background:#fff; color:#000; } header, footer { border-color:#ccc; } main .icon { animation:none; } main h1 { color:#000; } main .sub { color:#444; } main .links a { border-color:#000; color:#000; } header .logo img { filter:invert(1); } }
+  @media print { body { background:#fff; color:#000; } header, footer { border-color:#ccc; } main .icon { animation:none; } main h1 { color:#000; } main .sub { color:#444; } main .desc { color:#444; } main .links a { border-color:#000; color:#000; } header .logo img { filter:invert(1); } }
 
   @media (max-width:640px) {
-    main .icon { width:min(76vmin, max(150px, calc(100dvh - 578px))); }
-    main { padding-top:20px; }
-    main h1 { margin-top:26px; }
-    main .members { margin-top:18px; }
+    main .icon { width:min(76vmin, max(120px, calc(100dvh - 648px))); }
+    main { padding-top:12px; }
+    main h1 { margin-top:18px; }
+    main .members { margin-top:12px; }
     main .members .m-list { font-size:11px; line-height:1.7; }
+    main .desc { margin-top:12px; font-size:11px; line-height:1.8; }
+    main .desc br { display:none; }
+    main .sub { margin-top:14px; }
+    main .links { margin-top:20px; }
     main .members .sep { margin:0 3px; }
-    main .links { gap:8px; }
+    main .links { gap:6px; }
     main .links a { padding:15px 16px; font-size:11px; letter-spacing:.22em; text-indent:.22em; }
     main .members .m-list a { padding:10px 4px; }
     header { padding:0 14px; }
@@ -139,6 +144,7 @@
   <h1>MIDNIGHT ESPRESSO</h1>
   <div class="rule"></div>
   <div class="sub">VARELSER</div>
+  <p class="desc">配信番組『ミッドナイトエスプレッソ(仮)』の公式ページ。<br>出演：はろたろ、ポコアニモ、yoga、桃田朗、コパン。</p>
   <div class="links"><a href="https://www.youtube.com/@midnightespressoproject" target="_blank" rel="noopener noreferrer">YOUTUBE</a><a href="https://www.twitch.tv/midnightesp" target="_blank" rel="noopener noreferrer">TWITCH</a><a href="https://x.com/midnighesp" target="_blank" rel="noopener noreferrer">X</a><a href="https://note.com/midnightesp" target="_blank" rel="noopener noreferrer">NOTE</a><a href="https://open.spotify.com/show/2oG57kJohDg172qoT0Bp3e" target="_blank" rel="noopener noreferrer">SPOTIFY</a><a href="https://linktr.ee/midnightespressoproject?utm_source=linktree_profile_share" target="_blank" rel="noopener noreferrer">LINKTREE</a></div>
   <div class="members"><div class="m-label">MEMBERS</div><div class="m-list"><a href="https://x.com/hellotaro888" target="_blank" rel="noopener noreferrer" title="はろたろ – X">はろたろ</a><span class="sep">·</span><a href="https://x.com/pocoanimo_ap" target="_blank" rel="noopener noreferrer" title="ポコアニモ – X">ポコアニモ</a><span class="sep">·</span><a href="https://soundcloud.com/yoga-802481162" target="_blank" rel="noopener noreferrer" title="yoga – SoundCloud">yoga</a><span class="sep">·</span><a href="https://x.com/momota60mep" target="_blank" rel="noopener noreferrer" title="桃田朗 – X">桃田朗</a><span class="sep">·</span><a href="https://x.com/haganenokopan" target="_blank" rel="noopener noreferrer" title="コパン – X">コパン</a></div></div>
 </main>
