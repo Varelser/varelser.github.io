@@ -7381,7 +7381,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
         var v00 = demData.data[y0 * demData.w + x0], v10 = demData.data[y0 * demData.w + x1];
         var v01 = demData.data[y1 * demData.w + x0], v11 = demData.data[y1 * demData.w + x1];
         var e = (v00 * (1 - tx) + v10 * tx) * (1 - ty) + (v01 * (1 - tx) + v11 * tx) * ty;
-        demPart[y * AUX_COLS + x] = ((e - emin) / span - 0.28) * 1.9;
+        demPart[y * AUX_COLS + x] = ((e - emin) / span - 0.28) * 3.2;
       }
     }
   }
@@ -7830,7 +7830,7 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
     sheetBtn.addEventListener('click', contactSheet);
     rFinish.appendChild(sheetBtn);
 
-    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。[build r2v3]');
+    var note = el('p', 'plus-note', '画像地形・彫刻・文字地形・実地形は保存データ（シーン/共有リンク）には含まれません。このブラウザでのみ有効で、彫刻は自動保存されます。陰影は帯塗りより優先されます。[build r2v4]');
     body.appendChild(note);
 
     // drag & drop image onto the window
