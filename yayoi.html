@@ -582,6 +582,49 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+<style id="yayoi-b-style">
+/* YAYOI-B-STYLE-START (candidate B: focus + cmdk + a11y, additive only) */
+@media (min-width: 768px) {
+  /* align with the canvas top edge; 80px would collide with the Varelser Link box */
+  .yayoi-panel { top: 136px; bottom: auto; }
+}
+/* small text floor + muted contrast inside the panel */
+.yayoi-panel [class*="text-[10px]"] { font-size: 11px; }
+.yayoi-panel [class*="text-neutral-500"] { color: #a3a3a3; }
+.yayoi-plus-title { font-size: 11px; color: #c9c9c9; }
+.yayoi-plus-label { font-size: 11px; color: #9a9a9a; }
+.yayoi-plus-note, .yayoi-sync-status, .yayoi-plus2-status { font-size: 11.5px; color: #9a9a9a; }
+.yayoi-sync-slider { font-size: 11.5px; color: #c9c9c9; }
+.yayoi-sync-slider .yv { font-size: 11px; }
+/* folded plus sections in focus mode */
+.yayoi-plus.yb-folded > *:not(.yayoi-plus-title) { display: none !important; }
+.yayoi-plus .yayoi-plus-title { cursor: pointer; }
+.yb-fold-btn { margin-left: auto; background: none; border: 1px solid #3a3a3a !important; border-radius: 999px; color: #d4d4d4; font-size: 10.5px; letter-spacing: .04em; padding: 2px 9px; cursor: pointer; flex: none; }
+.yb-fold-btn:hover { color: #fff; border-color: #666 !important; }
+.yb-summary { font-size: 11px; color: #9a9a9a; letter-spacing: .02em; text-transform: none; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* numeric inputs next to slider values */
+.yb-num { width: 54px; background: #171717; color: #fff; border: 1px solid #3a3a3a !important; border-radius: 4px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; padding: 1px 4px; margin-left: 6px; }
+.yb-num:focus-visible { outline: 2px solid #f5f5f5; outline-offset: 1px; }
+.yb-flash { outline: 2px solid #fff !important; outline-offset: 3px; transition: outline-color .3s; }
+/* toolbar additions */
+#yb-focus-btn[aria-pressed="true"] { background: #fff; color: #000; }
+#yb-cmdk-btn .yb-kbd { border: 1px solid #555; border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; font-size: 10px; margin-right: 4px; }
+/* cmdk palette */
+#yb-palette { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.55); display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; }
+#yb-palette[hidden] { display: none; }
+.yb-pal-box { width: min(560px, calc(100vw - 32px)); background: #0a0a0a; border: 1px solid #333; border-radius: 12px; box-shadow: 0 24px 60px rgba(0,0,0,.6); overflow: hidden; }
+.yb-pal-input { width: 100%; background: #0a0a0a; color: #fff; border: 0; border-bottom: 1px solid #262626; font-size: 15px; padding: 14px 16px; outline: none; }
+.yb-pal-list { max-height: 46vh; overflow-y: auto; padding: 6px; margin: 0; list-style: none; }
+.yb-pal-item { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; border-radius: 8px; color: #d4d4d4; font-size: 13px; cursor: pointer; }
+.yb-pal-item .yb-kind { color: #8a8a8a; font-size: 11px; flex: none; }
+.yb-pal-item.yb-active { background: #fff; color: #000; }
+.yb-pal-item.yb-active .yb-kind { color: #555; }
+.yb-pal-empty { padding: 14px; color: #8a8a8a; font-size: 13px; }
+.yb-pal-foot { border-top: 1px solid #262626; padding: 7px 12px; color: #8a8a8a; font-size: 11px; }
+@media (max-width: 767px) { .yb-cmdk-label { display: none; } }
+@media (prefers-reduced-motion: reduce) { .yb-flash { transition: none; } }
+/* YAYOI-B-STYLE-END */
+</style>
 </head>
 
 <body>
@@ -4615,5 +4658,302 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 })();
 
 </script>
+<!-- YAYOI-B-SCRIPT-START (candidate B: focus mode + cmdk + slider names/numbers, additive only; remove this block and the YAYOI-B style block to restore the previous build byte-for-byte) -->
+<script>
+(function () {
+  'use strict';
+  var FOCUS_KEY = 'yayoi_focus_v1';
+  var expanded = {}; // section id -> true when individually expanded in focus mode
+
+  function focusOn() {
+    try { return localStorage.getItem(FOCUS_KEY) !== '0'; } catch (e) { return true; }
+  }
+  function setFocus(on) {
+    try { localStorage.setItem(FOCUS_KEY, on ? '1' : '0'); } catch (e) {}
+    apply();
+  }
+
+  function labelForRange(r) {
+    // main React rows: <div class="space-y-1"><div class="flex justify-between"><span>LABEL</span><span>VAL</span></div><input></div>
+    var row = r.closest('.space-y-1');
+    if (row) {
+      var s = row.querySelector('.flex.justify-between span, .flex span');
+      if (s && s.textContent.trim()) return s.textContent.trim();
+    }
+    // sync sliders: <label class="yayoi-sync-slider">LABEL <input> <span class="yv">VAL</span></label>
+    var lab = r.closest('.yayoi-sync-slider');
+    if (lab) {
+      var t = '';
+      lab.childNodes.forEach(function (n) { if (n.nodeType === 3) t += n.textContent; });
+      if (t.trim()) return t.trim();
+    }
+    return r.getAttribute('aria-label') || 'スライダー';
+  }
+
+  function setRangeValue(r, v) {
+    var setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+    setter.call(r, String(v));
+    r.dispatchEvent(new Event('input', { bubbles: true }));
+    r.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function enhanceRanges(root) {
+    root.querySelectorAll('input[type="range"]').forEach(function (r) {
+      var label = labelForRange(r);
+      if (r.getAttribute('aria-label') !== label) r.setAttribute('aria-label', label);
+      // numeric companion input
+      var host = null;
+      var row = r.closest('.space-y-1');
+      if (row) host = row.querySelector('.flex.justify-between');
+      if (!host) { var lab = r.closest('.yayoi-sync-slider'); if (lab) host = lab; }
+      if (!host) return;
+      var num = host.querySelector('.yb-num');
+      if (!num) {
+        num = document.createElement('input');
+        num.type = 'number';
+        num.className = 'yb-num';
+        num.min = r.min; num.max = r.max; num.step = r.step || '1';
+        num.setAttribute('aria-label', label + ' 数値入力');
+        num.addEventListener('change', function () {
+          var v = parseFloat(num.value);
+          if (isNaN(v)) { num.value = r.value; return; }
+          v = Math.min(parseFloat(r.max), Math.max(parseFloat(r.min), v));
+          setRangeValue(r, v);
+        });
+        num.addEventListener('keydown', function (e) { e.stopPropagation(); });
+        host.appendChild(num);
+      }
+      if (document.activeElement !== num && num.value !== r.value) num.value = r.value;
+      if (num.min !== r.min) num.min = r.min;
+      if (num.max !== r.max) num.max = r.max;
+    });
+  }
+
+  function sectionSummary(sec) {
+    var id = sec.id || '';
+    if (id === 'yayoi-plus3') {
+      var btns = sec.querySelectorAll('.yayoi-sync-row .yayoi-plus-btn');
+      var master = '';
+      btns.forEach(function (b) { if (/ON|OFF/.test(b.textContent)) master = b.textContent.trim(); });
+      var m = sec.querySelector('.yayoi-sync-slider input[type="range"]');
+      return '連動 ' + (master || '—') + (m ? ' ・ マスター量 ' + m.value + '%' : '');
+    }
+    if (id === 'yayoi-plus2') {
+      var act = sec.querySelector('.yayoi-plus-btn.is-active');
+      return 'FX: ' + (act ? act.textContent.trim() : 'オフ');
+    }
+    var act2 = sec.querySelector('.yayoi-plus-btn.is-active');
+    return act2 ? '質感: ' + act2.textContent.trim() : '';
+  }
+
+  function enhanceSections() {
+    document.querySelectorAll('.yayoi-panel-inner .yayoi-plus').forEach(function (sec) {
+      var title = sec.querySelector('.yayoi-plus-title');
+      if (!title) return;
+      var btn = title.querySelector('.yb-fold-btn');
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'yb-fold-btn';
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          expanded[sec.id] = !expanded[sec.id];
+          apply();
+        });
+        title.appendChild(btn);
+      }
+      var sum = title.querySelector('.yb-summary');
+      if (!sum) {
+        sum = document.createElement('span');
+        sum.className = 'yb-summary';
+        title.insertBefore(sum, btn);
+      }
+      var folded = focusOn() && !expanded[sec.id];
+      if (sec.classList.contains('yb-folded') !== folded) sec.classList.toggle('yb-folded', folded);
+      var bt = folded ? '開く' : '畳む';
+      if (btn.textContent !== bt) btn.textContent = bt;
+      btn.setAttribute('aria-expanded', folded ? 'false' : 'true');
+      var s = folded ? sectionSummary(sec) : '';
+      if (sum.textContent !== s) sum.textContent = s;
+    });
+  }
+
+  function ensureToolbarBtns() {
+    var right = document.querySelector('.toolbar .toolbar-right');
+    if (!right) return;
+    if (!document.getElementById('yb-focus-btn')) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.id = 'yb-focus-btn'; b.className = 'tool-btn';
+      b.setAttribute('aria-label', '集中モード切替');
+      b.addEventListener('click', function () { setFocus(!focusOn()); });
+      right.appendChild(b);
+    }
+    var fb = document.getElementById('yb-focus-btn');
+    var on = focusOn();
+    var ft = on ? '集中 ON' : '集中 OFF';
+    if (fb.textContent !== ft) fb.textContent = ft;
+    fb.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (!document.getElementById('yb-cmdk-btn')) {
+      var k = document.createElement('button');
+      k.type = 'button'; k.id = 'yb-cmdk-btn'; k.className = 'tool-btn';
+      k.setAttribute('aria-label', 'コマンドパレットを開く (⌘K)');
+      k.innerHTML = '<span class="yb-kbd">⌘K</span><span class="yb-cmdk-label">検索</span>';
+      k.addEventListener('click', openPalette);
+      right.appendChild(k);
+    }
+  }
+
+  function apply() {
+    ensureToolbarBtns();
+    var inner = document.querySelector('.yayoi-panel-inner');
+    if (inner) { enhanceSections(); enhanceRanges(inner); }
+    document.body.classList.toggle('yayoi-focus-on', focusOn());
+  }
+
+  /* ---------- cmdk palette ---------- */
+  var pal = null, palInput = null, palList = null, items = [], activeIdx = 0;
+
+  function clickToolbar(label) {
+    var b = [...document.querySelectorAll('.toolbar button')].find(function (x) {
+      return (x.getAttribute('aria-label') || x.textContent.trim()) === label || x.textContent.trim() === label;
+    });
+    if (b) b.click();
+    return !!b;
+  }
+  function openPanelTab(label) {
+    var active = document.querySelector('.toolbar-left .tool-btn.is-active');
+    if (active && active.textContent.trim() === label && document.querySelector('.yayoi-panel-inner')) return;
+    clickToolbar(label);
+  }
+  function reveal(el) {
+    if (!el) return;
+    var sec = el.closest('.yayoi-plus');
+    if (sec && focusOn()) { expanded[sec.id] = true; apply(); }
+    setTimeout(function () {
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      el.classList.add('yb-flash');
+      setTimeout(function () { el.classList.remove('yb-flash'); }, 1200);
+      if (el.focus) el.focus({ preventScroll: true });
+    }, 60);
+  }
+
+  function buildItems() {
+    var out = [];
+    ['Shapes', 'Layout', 'Style', 'Size', 'Space'].forEach(function (t) {
+      out.push({ label: t + ' タブを開く', kind: 'タブ', run: function () { openPanelTab(t); } });
+    });
+    [['Generate', '生成する'], ['元に戻す (Undo)', 'Undo'], ['やり直し (Redo)', 'Redo'], ['動画を録画', 'Video 録画'], ['PNG', 'PNG 保存'], ['TPNG', '透過PNG 保存'], ['SVG', 'SVG 保存']].forEach(function (pair) {
+      out.push({ label: pair[1], kind: '操作', run: function () { clickToolbar(pair[0]); } });
+    });
+    out.push({ label: '集中モード ON/OFF', kind: '操作', run: function () { setFocus(!focusOn()); } });
+    var inner = document.querySelector('.yayoi-panel-inner');
+    if (inner) {
+      inner.querySelectorAll('.yayoi-plus').forEach(function (sec) {
+        var title = sec.querySelector('.yayoi-plus-title');
+        var name = title ? title.textContent.replace(/開く|畳む/g, '').trim().slice(0, 40) : sec.id;
+        out.push({ label: name + ' を開く', kind: '節', run: function () { expanded[sec.id] = true; apply(); reveal(sec); } });
+      });
+      inner.querySelectorAll('input[type="range"]').forEach(function (r) {
+        var label = labelForRange(r);
+        out.push({ label: label + '（現在 ' + r.value + '）', kind: 'スライダー', run: function () { reveal(r); } });
+      });
+      inner.querySelectorAll('button').forEach(function (b) {
+        var t = b.textContent.replace(/\s+/g, ' ').trim();
+        if (!t || t.length > 24 || b.classList.contains('yb-fold-btn') || b.classList.contains('yayoi-panel-close')) return;
+        out.push({ label: t, kind: '選択', run: function () { reveal(b); setTimeout(function () { b.click(); }, 250); } });
+      });
+    }
+    return out.slice(0, 220);
+  }
+
+  function renderList() {
+    var q = palInput.value.trim().toLowerCase();
+    var shown = items.filter(function (it) { return !q || it.label.toLowerCase().includes(q); }).slice(0, 40);
+    palList.innerHTML = '';
+    if (!shown.length) {
+      var li = document.createElement('li'); li.className = 'yb-pal-empty'; li.textContent = '見つかりません';
+      palList.appendChild(li); return;
+    }
+    if (activeIdx >= shown.length) activeIdx = shown.length - 1;
+    shown.forEach(function (it, i) {
+      var li = document.createElement('li');
+      li.className = 'yb-pal-item' + (i === activeIdx ? ' yb-active' : '');
+      li.setAttribute('role', 'option');
+      var a = document.createElement('span'); a.textContent = it.label;
+      var k = document.createElement('span'); k.className = 'yb-kind'; k.textContent = it.kind;
+      li.appendChild(a); li.appendChild(k);
+      li.addEventListener('click', function () { closePalette(); it.run(); });
+      li.addEventListener('mousemove', function () { if (activeIdx !== i) { activeIdx = i; renderList(); } });
+      palList.appendChild(li);
+    });
+    palList._shown = shown;
+  }
+
+  function openPalette() {
+    if (!pal) {
+      pal = document.createElement('div');
+      pal.id = 'yb-palette';
+      pal.setAttribute('role', 'dialog');
+      pal.setAttribute('aria-label', 'コマンドパレット');
+      pal.innerHTML = '<div class="yb-pal-box"><input class="yb-pal-input" type="text" placeholder="タブ・スライダー・操作を検索…" aria-label="検索"><ul class="yb-pal-list" role="listbox"></ul><div class="yb-pal-foot">↑↓ 選択 ・ Enter 実行 ・ Esc 閉じる</div></div>';
+      document.body.appendChild(pal);
+      palInput = pal.querySelector('.yb-pal-input');
+      palList = pal.querySelector('.yb-pal-list');
+      palInput.addEventListener('input', function () { activeIdx = 0; renderList(); });
+      palInput.addEventListener('keydown', function (e) {
+        var shown = palList._shown || [];
+        if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx + 1, shown.length - 1); renderList(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx - 1, 0); renderList(); }
+        else if (e.key === 'Enter') { e.preventDefault(); var it = shown[activeIdx]; if (it) { closePalette(); it.run(); } }
+        else if (e.key === 'Escape') { e.preventDefault(); closePalette(); }
+        e.stopPropagation();
+      });
+      pal.addEventListener('click', function (e) { if (e.target === pal) closePalette(); });
+    }
+    items = buildItems();
+    activeIdx = 0;
+    pal.hidden = false;
+    palInput.value = '';
+    renderList();
+    palInput.focus();
+  }
+  function closePalette() { if (pal) pal.hidden = true; }
+
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      if (pal && !pal.hidden) closePalette(); else openPalette();
+    }
+  }, true);
+
+  // keep numeric companions in sync when a slider moves by hand
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.type === 'range') {
+      var inner = document.querySelector('.yayoi-panel-inner');
+      if (inner && inner.contains(e.target)) {
+        var row = e.target.closest('.space-y-1');
+        var host = row ? row.querySelector('.flex.justify-between') : e.target.closest('.yayoi-sync-slider');
+        var num = host ? host.querySelector('.yb-num') : null;
+        if (num && document.activeElement !== num) num.value = e.target.value;
+      }
+    }
+  }, true);
+
+  var queued = false;
+  var mo = new MutationObserver(function () {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; apply(); });
+  });
+  function start() {
+    apply();
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
+<!-- YAYOI-B-SCRIPT-END -->
+
 </body>
 </html>
