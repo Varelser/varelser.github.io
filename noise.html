@@ -588,6 +588,11 @@
             <button id="sinkBtn" class="secondary" type="button" data-help="音の出力先（スピーカー／イヤホンなど）を選びます。再生は止まりません。対応ブラウザでのみ表示されます。">出力先を選ぶ</button>
             <div class="help" id="sinkLabel">現在の出力先: 既定</div>
           </div>
+          <div class="field" id="micField">
+            <label><span>マイク入力</span></label>
+            <button id="micBtn" class="secondary" type="button" data-help="マイクやライン入力の音を、ノイズと同じマスター処理（Space等）を通して重ねます。再生中のみ使えます。書き出しには入りません。">マイク入力を開始</button>
+            <div class="help">環境音を取り込んで重ねられます（再生中のみ・書き出し対象外）。音量は Master の Mic Level で調整します。</div>
+          </div>
           <div class="field" id="wakeField">
             <label><span>画面</span></label>
             <label class="check" data-help="再生中、画面が自動で暗くならないようにします（Wake Lock）。対応ブラウザでのみ表示されます。"><input id="wakeLockToggle" type="checkbox"><span>再生中は画面を維持</span></label>
@@ -901,7 +906,13 @@
     ['dryer', 'Hair Dryer'],
     ['vacuum', 'Vacuum Cleaner'],
     ['clock', 'Clock Tick'],
-    ['typing', 'Typing']
+    ['typing', 'Typing'],
+    ['blizzard', 'Blizzard'],
+    ['leaves', 'Dry Leaves'],
+    ['bees', 'Bee Swarm'],
+    ['geyser', 'Geyser / Onsen'],
+    ['glacier', 'Glacier'],
+    ['aurora', 'Aurora']
   ];
 
   const NOISE_TYPE_INFO = {
@@ -957,6 +968,12 @@
     dryer: 'ドライヤーの送風音。強い中高域の持続で周囲をマスクします。',
     clock: '時計のチクタク。一定間隔の小さなクリック。',
     typing: 'キーボードのタイピング音。不規則な打鍵の連なりで、作業の疑似環境音に。',
+    blizzard: '吹雪。低い唸りに高域の粉雪がまとわりつき、突風でうねります。Windより荒く、Hailより重い冬の嵐です。',
+    leaves: '乾いた落ち葉と木枯らし。カサカサした短いざわめきが波のように寄せては引きます。',
+    bees: '蜂の群れの羽音。200Hz前後の唸りがゆっくり近づいたり遠のいたりします。',
+    geyser: '間欠泉・温泉。静かな泡立ちから周期的に噴出するサイクルを繰り返します。時間で表情が変わる生成タイプです。',
+    glacier: '氷河のきしみ。低域のゴリゴリした軋み、氷の割れる音、時折響く高い残響を含みます。',
+    aurora: 'オーロラ（抽象）。共鳴帯域がゆっくり移ろう薄いベールのような音。瞑想・環境生成向けです。',
     tinnitus: '耳鳴りのような高い持続音と、かすかなヒス。マスキングや参照用の音です。Densityで音程、Motionで揺らぎ、Grainで倍音とヒスの量が変わります。長時間・大音量での使用は避けてください。',
     hail: '雹（ひょう）の音。雨より硬く速い打撃が、低い唸りの上に降り注ぎます。Densityで降りの密度、Motionで嵐のうねり、Grainで氷の大きさが変わります。',
     desert: '砂漠の風。低い唸りに、砂の粒が流れる高いざらつきが重なります。Densityで砂の量、Motionで突風の強さが変わります。',
@@ -1113,6 +1130,12 @@
     master_binauralBeat: 6,
     master_binauralLevel: 0.25,
     master_loopFade: 0,
+    master_duck: 0,
+    master_xmod: 0,
+    master_bandLow: 1,
+    master_bandMid: 1,
+    master_bandHigh: 1,
+    master_micLevel: 0.8,
     A_enabled: true,
     A_type: 'pink',
     A_gain: 0.9,
@@ -1922,6 +1945,12 @@
     { id:'master_lfoRate', type:'range', label:'LFO Rate (Hz)', min:0.01, max:40, step:0.01 },
     { id:'master_lfoDepth', type:'range', label:'LFO Depth', min:0, max:1.8, step:0.01 },
     { id:'master_lfoGain', type:'range', label:'LFO→Gain (Tremolo)', min:0, max:1, step:0.01 },
+    { id:'master_duck', type:'range', label:'Duck B/C by A', min:0, max:1, step:0.01 },
+    { id:'master_xmod', type:'range', label:'Cross AM (A to B/C)', min:0, max:1, step:0.01 },
+    { id:'master_bandLow', type:'range', label:'Band Low (<200 Hz)', min:0, max:2, step:0.01 },
+    { id:'master_bandMid', type:'range', label:'Band Mid', min:0, max:2, step:0.01 },
+    { id:'master_bandHigh', type:'range', label:'Band High (>4 kHz)', min:0, max:2, step:0.01 },
+    { id:'master_micLevel', type:'range', label:'Mic Level', min:0, max:1.5, step:0.01 },
     { id:'master_humHz', type:'select', label:'Hum', options:[['50','50 Hz'],['60','60 Hz']] },
     { id:'master_normalize', type:'checkbox', label:'Normalize Export' },
     { id:'master_exportLoudness', type:'select', label:'Loudness (RMS)', options:[['0','Off'],['-23','-23 dB'],['-18','-18 dB'],['-16','-16 dB'],['-14','-14 dB']] },
@@ -2018,6 +2047,12 @@
     master_binauralCarrier: 'ビートの土台になる音の高さ。低め(150〜250Hz)が標準的です。',
     master_binauralBeat: 'ビートの速さ。目安: 0.5〜4Hz=深い睡眠δ、4〜8Hz=瞑想θ、8〜13Hz=リラックスα、13〜30Hz=集中β、40Hz=γ。',
     master_binauralLevel: 'ビート音の音量。ノイズに埋もれるくらい控えめが基本です。',
+    master_duck: 'Layer Aの音量に合わせて Layer B/C を自動で引っ込めます（ダッキング）。Aを主役にしたい時に。書き出しにも効きます。',
+    master_xmod: 'Layer Aの信号そのもので Layer B/C の音量を揺らします（クロスAM）。Aの波形がB/Cに刻まれる実験的な効果です。',
+    master_bandLow: 'マスターの3バンド調整の低域（200Hz以下）。1が原音です。',
+    master_bandMid: 'マスターの3バンド調整の中域。1が原音です。',
+    master_bandHigh: 'マスターの3バンド調整の高域（4kHz以上）。1が原音です。',
+    master_micLevel: 'マイク入力の音量。デバイス欄の「マイク入力を開始」で取り込んだ音が、ノイズと同じマスター処理を通ります。',
     master_lfoGain: 'LFOで音量を周期的に揺らすトレモロ。LFO Rateが速さです。ゆっくり上げると呼吸のようなうねり、速くすると古典的なトレモロになります。'
   };
 
@@ -3649,6 +3684,63 @@
         const air = hp(s, 'br2', rawWhite(s), 2500, sr) * grain * 0.10 * env;
         return body * 1.6 + air;
       }
+      case 'blizzard': {
+        const target = density * 0.9 + s.rng.float() * 0.5;
+        s.bzGust = (s.bzGust || 0) + (target - (s.bzGust || 0)) * (0.00006 + motion * 0.0012);
+        const roar = lp(s, 'bz1', rawBrown(s, motion), 300 + density * 300, sr) * 1.2;
+        const whine = bp(s, 'bz2', 'bz3', rawWhite(s), 900 + motion * 1400, 3400 + motion * 2600, sr) * 0.9;
+        const powder = hp(s, 'bz4', rawWhite(s), 5200, sr) * (0.10 + grain * 0.30);
+        return (roar + whine + powder) * (0.15 + clamp(s.bzGust, 0, 1.15));
+      }
+      case 'leaves': {
+        s.lfSwell = (s.lfSwell || 0) + ((0.5 + 0.5 * Math.sin(TAU * (0.05 + motion * 0.12) * t + 1.3)) - (s.lfSwell || 0)) * 0.0006;
+        if (s.rng.float() < 0.006 + density * 0.05) s.lfEnv = 0.5 + s.rng.float() * 0.7;
+        s.lfEnv = (s.lfEnv || 0) * (0.90 - grain * 0.05);
+        const rustle = bp(s, 'lf1', 'lf2', rawWhite(s), 1800 + grain * 1600, 5200 + grain * 2400, sr);
+        const bed = lp(s, 'lf3', rawPink(s), 420, sr) * 0.16;
+        return rustle * (s.lfEnv || 0) * (0.35 + (s.lfSwell || 0) * 0.8) + bed;
+      }
+      case 'bees': {
+        const wob = 0.5 + 0.5 * Math.sin(TAU * (0.07 + motion * 0.20) * t + Math.sin(TAU * 0.013 * t) * 2.0);
+        s.bePhase = (s.bePhase || 0) + TAU * (185 + density * 60 + Math.sin(TAU * 0.9 * t) * 12) / sr;
+        const wing = Math.sin(s.bePhase) * 0.5 + Math.sin(s.bePhase * 2.01) * 0.28 + Math.sin(s.bePhase * 3.02) * 0.14;
+        const buzz = bp(s, 'be1', 'be2', wing + rawWhite(s) * 0.12, 300, 2600, sr) * 1.4;
+        const air = lp(s, 'be3', rawPink(s), 300, sr) * 0.10;
+        return buzz * (0.35 + wob * 0.55) * (0.5 + grain * 0.5) + air;
+      }
+      case 'geyser': {
+        const period = Math.max(8, 26 - motion * 10);
+        const ph = (t % period) / period;
+        const erupt = Math.pow(Math.max(0, Math.sin(Math.PI * clamp((ph - 0.55) / 0.30, 0, 1))), 2);
+        const simmer = 0.25 + 0.20 * Math.sin(TAU * 0.23 * t);
+        if (s.rng.float() < 0.002 + density * 0.03) { s.gyClick = 0.6; s.gyTone = 400 + s.rng.float() * 800; }
+        s.gyClick = (s.gyClick || 0) * 0.90;
+        const bubble = bp(s, 'gy1', 'gy2', rawWhite(s), (s.gyTone || 600) * 0.5, (s.gyTone || 600), sr) * (s.gyClick || 0) * 0.7;
+        const gbase = bp(s, 'gy3', 'gy4', rawWhite(s), 300, 1500, sr) * simmer * (0.3 + density * 0.4);
+        const blast = lp(s, 'gy5', rawWhite(s), 900 + density * 1400, sr) * erupt * 1.15 + hp(s, 'gy6', rawWhite(s), 3000, sr) * erupt * 0.2;
+        return gbase + bubble + blast;
+      }
+      case 'glacier': {
+        s.glCreak = (s.glCreak || 0) + (s.rng.signed() * 0.02 - (s.glCreak || 0) * 0.004);
+        const creak = Math.tanh((s.glCreak || 0) * 6) * lp(s, 'gl1', rawBrown(s, motion), 140, sr) * 2.2;
+        if (s.rng.float() < 0.0004 + density * 0.004) { s.glPing = 0.5 + s.rng.float() * 0.4; s.glPingHz = 1700 + s.rng.float() * 1800; }
+        s.glPing = (s.glPing || 0) * Math.exp(-1 / (sr * 0.35));
+        s.glPhase = (s.glPhase || 0) + TAU * (s.glPingHz || 2400) / sr;
+        const ping = Math.sin(s.glPhase || 0) * (s.glPing || 0) * (0.2 + grain * 0.4);
+        if (s.rng.float() < 0.0006 + density * 0.006) s.glCrack = 0.9;
+        s.glCrack = (s.glCrack || 0) * 0.80;
+        const crack = (s.glCrack || 0) * lp(s, 'gl2', s.rng.signed(), 2400, sr) * 0.8;
+        return creak + ping + crack;
+      }
+      case 'aurora': {
+        const f1 = 320 + 260 * Math.sin(TAU * 0.021 * t + Math.sin(TAU * 0.007 * t) * 1.8);
+        const f2 = f1 * 1.5 + 120 * Math.sin(TAU * 0.013 * t + 2.1);
+        const veil1 = bp(s, 'au1', 'au2', rawWhite(s), Math.max(60, f1 * 0.7), f1 * 1.5, sr) * 1.5;
+        const veil2 = bp(s, 'au3', 'au4', rawWhite(s), Math.max(80, f2 * 0.7), f2 * 1.5, sr) * 1.1;
+        const bed = lp(s, 'au5', rawPink(s), 240, sr) * 0.22;
+        const swell = 0.55 + 0.45 * Math.sin(TAU * (0.03 + motion * 0.05) * t + 0.6);
+        return (veil1 + veil2) * swell * (0.4 + density * 0.5) + bed;
+      }
       default: return rawWhite(s);
     }
   }
@@ -3688,6 +3780,12 @@
     p.master_duration = clamp(Number(p.master_duration) || 10, 5, 1800);
     p.master_gain = clamp(Number(p.master_gain) || 0, 0, 2.2);
     p.master_width = clamp(Number(p.master_width) || 0, 0, 5.5);
+    p.master_duck = clamp(Number(p.master_duck) || 0, 0, 1);
+    p.master_xmod = clamp(Number(p.master_xmod) || 0, 0, 1);
+    p.master_bandLow = clamp(Number(p.master_bandLow ?? 1) || 0, 0, 2);
+    p.master_bandMid = clamp(Number(p.master_bandMid ?? 1) || 0, 0, 2);
+    p.master_bandHigh = clamp(Number(p.master_bandHigh ?? 1) || 0, 0, 2);
+    p.master_micLevel = clamp(Number(p.master_micLevel) || 0, 0, 1.5);
     p.master_space = clamp(Number(p.master_space) || 0, 0, 1.8);
     p.master_spaceMode = p.master_spaceMode === 'convolution' ? 'convolution' : 'diffuse';
     p.master_spaceType = ['hall', 'cave', 'studio', 'plate'].includes(p.master_spaceType) ? p.master_spaceType : 'hall';
@@ -3993,7 +4091,7 @@
     return y * g + hp(s, 'mvHi', y, 5200, sr) * dy * depth * 0.35;
   }
 
-  function renderBlock(renderer, frames, outL = null, outR = null, pcm = null, pcmGain = 1) {
+  function renderBlock(renderer, frames, outL = null, outR = null, pcm = null, pcmGain = 1, micL = null, micR = null) {
     const p = renderer.params;
     const sA = renderer.sA;
     const sB = renderer.sB;
@@ -4007,6 +4105,7 @@
       const t = renderer.frame / sr;
       let l = 0;
       let r = 0;
+      let aL = 0, aR = 0, bL = 0, bR = 0, cL = 0, cR = 0;
 
       if (sA.p.enabled) {
         const raw = nextNoiseRaw(sA, sA.p, t);
@@ -4037,6 +4136,7 @@
           r += yR * Math.sqrt((1 + pan) * 0.5);
         }
       }
+      aL = l; aR = r; l = 0; r = 0;
       if (sB.p.enabled) {
         const raw = nextNoiseRaw(sB, sB.p, t);
         let y = shapeLayerSample(sB, raw, sB.p);
@@ -4067,6 +4167,7 @@
         }
       }
 
+      bL = l; bR = r; l = 0; r = 0;
       if (sC && sC.p.enabled) {
         const raw = nextNoiseRaw(sC, sC.p, t);
         let y = shapeLayerSample(sC, raw, sC.p);
@@ -4097,9 +4198,36 @@
         }
       }
 
+      cL = l; cR = r;
+      {
+        const duckAmt = p.master_duck || 0, xmodAmt = p.master_xmod || 0;
+        if (duckAmt > 0 || xmodAmt > 0) {
+          if (masterState.duckEnv === undefined) masterState.duckEnv = 0;
+          const aMag = Math.max(Math.abs(aL), Math.abs(aR));
+          const kA = 1 - Math.exp(-1 / (0.004 * sr)), kR = 1 - Math.exp(-1 / (0.16 * sr));
+          masterState.duckEnv += (aMag - masterState.duckEnv) * (aMag > masterState.duckEnv ? kA : kR);
+          let g = 1 - duckAmt * 0.85 * Math.min(1, masterState.duckEnv * 1.7);
+          if (xmodAmt > 0) { const am = clamp((aL + aR) * 0.5, -1, 1); g *= (1 - xmodAmt) + xmodAmt * (0.5 + 0.5 * am); }
+          l = aL + (bL + cL) * g; r = aR + (bR + cR) * g;
+        } else { l = aL + bL + cL; r = aR + bR + cR; }
+      }
+      if (micL && p.master_micLevel > 0) { const ml = p.master_micLevel; l += micL[i] * ml; r += (micR ? micR[i] : micL[i]) * ml; }
+
       applyMasterFx(masterState, l, r, t);
       l = masterState.outL;
       r = masterState.outR;
+      if ((p.master_bandLow ?? 1) !== 1 || (p.master_bandMid ?? 1) !== 1 || (p.master_bandHigh ?? 1) !== 1) {
+        if (masterState.mbLpL === undefined) { masterState.mbLpL = 0; masterState.mbLpR = 0; masterState.mbHpL = 0; masterState.mbHpR = 0; }
+        const kLo = 1 - Math.exp(-TAU * 200 / sr), kHi = 1 - Math.exp(-TAU * 4000 / sr);
+        masterState.mbLpL += (l - masterState.mbLpL) * kLo; masterState.mbLpR += (r - masterState.mbLpR) * kLo;
+        const lowL = masterState.mbLpL, lowR = masterState.mbLpR;
+        const restL = l - lowL, restR = r - lowR;
+        masterState.mbHpL += (restL - masterState.mbHpL) * kHi; masterState.mbHpR += (restR - masterState.mbHpR) * kHi;
+        const highL = restL - masterState.mbHpL, highR = restR - masterState.mbHpR;
+        const midL = restL - highL, midR = restR - highR;
+        l = lowL * (p.master_bandLow ?? 1) + midL * (p.master_bandMid ?? 1) + highL * (p.master_bandHigh ?? 1);
+        r = lowR * (p.master_bandLow ?? 1) + midR * (p.master_bandMid ?? 1) + highR * (p.master_bandHigh ?? 1);
+      }
 
       if (p.master_binauralEnabled && p.master_binauralLevel > 0) {
         const lvl = p.master_binauralLevel;
@@ -5092,7 +5220,10 @@ class NoiseAtlasProcessor extends AudioWorkletProcessor {
       outR.fill(0);
       return true;
     }
-    renderBlock(this.renderer, outL.length, outL, outR);
+    const inp = inputs && inputs[0];
+    const inL = inp && inp[0] ? inp[0] : null;
+    const inR = inp && inp[1] ? inp[1] : inL;
+    renderBlock(this.renderer, outL.length, outL, outR, null, 1, inL, inR);
     return true;
   }
 }
@@ -5273,7 +5404,7 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
           const modLoaded = await settleWithin(this.ctx.audioWorklet.addModule(getAudioWorkletModuleURL()), 2500);
           if (!modLoaded) throw new Error('AudioWorklet module load timed out');
           this.node = new AudioWorkletNode(this.ctx, 'noise-processor', {
-            numberOfInputs: 0,
+            numberOfInputs: 1,
             numberOfOutputs: 1,
             outputChannelCount: [2],
             channelCount: 2,
@@ -7538,6 +7669,27 @@ registerProcessor('noise-processor', NoiseAtlasProcessor);
     const sinkBtn = $('sinkBtn'); if (sinkBtn) sinkBtn.addEventListener('click', chooseAudioOutput);
     const wakeField = $('wakeField');
     if (wakeField && !('wakeLock' in navigator)) wakeField.style.display = 'none';
+    const micBtn = $('micBtn');
+    if (micBtn) micBtn.addEventListener('click', async () => {
+      try {
+        if (window.__noiseMicStream) {
+          window.__noiseMicStream.getTracks().forEach(tr => tr.stop());
+          if (window.__noiseMicSrc) { try { window.__noiseMicSrc.disconnect(); } catch (_) {} }
+          window.__noiseMicStream = null; window.__noiseMicSrc = null;
+          micBtn.textContent = 'マイク入力を開始';
+          setStatus('マイク入力を停止しました。');
+          return;
+        }
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus('このブラウザはマイク入力に対応していません。', 'err'); return; }
+        if (!engine.ctx) { setStatus('先に再生を開始してください。マイクは再生中のみ使えます。', 'err'); return; }
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        const src = engine.ctx.createMediaStreamSource(stream);
+        if (engine.node) src.connect(engine.node); else if (engine.masterGain) src.connect(engine.masterGain);
+        window.__noiseMicStream = stream; window.__noiseMicSrc = src;
+        micBtn.textContent = 'マイク入力を停止';
+        setStatus('マイク入力を開始しました。音量は Master の Mic Level で調整できます。', 'ok');
+      } catch (_) { setStatus('マイク入力を開始できませんでした（権限を確認してください）。', 'err'); }
+    });
     const wakeToggle = $('wakeLockToggle');
     if (wakeToggle) wakeToggle.addEventListener('change', () => { techState.wakeWanted = !!wakeToggle.checked; applyWakeLock(); });
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') applyWakeLock(); });
@@ -8323,6 +8475,116 @@ document.addEventListener('keydown', function(e){
   var typing=(tag==='input'||tag==='select'||tag==='textarea');
   if(e.key==='?' && !typing){ e.preventDefault(); openKeys(); }
   else if(e.key==='Escape' && ov && !ov.hidden){ closeKeys(); }
+});
+})();
+</script>
+
+<style id="noise-d-style">
+/* ==== Noise D: morph + drift (2026-11-17) ==== */
+#morphBar{display:grid;gap:8px;margin-top:12px;border-top:1px solid var(--line-soft);padding-top:10px}
+#morphBar .m-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
+#morphBar .m-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#morphTarget{flex:1 1 140px;background:var(--control-bg);border:0;border-radius:8px;padding:8px 10px;min-height:36px}
+#morphMix{flex:1 1 120px}
+#morphBar button{padding:7px 12px;font-size:11px;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer}
+#morphBar button.on{color:#000;background:var(--option-active-bg)}
+#morphBar select.mini{background:var(--control-bg);border:0;border-radius:6px;padding:6px 8px;min-height:32px}
+#morphBar label.check{font-size:11px;color:var(--muted)}
+#driftBar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;border-top:1px solid var(--line-soft);padding-top:10px}
+#driftBar button{padding:7px 12px;font-size:11px;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer}
+#driftBar button.on{color:#000;background:var(--option-active-bg)}
+#driftBar .m-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
+#driftAmt{width:110px}
+</style>
+
+<script id="noise-d-script">
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var sel=$('presetSelect'); if(!sel) return;
+function fields(){ return document.querySelectorAll('#masterFields input, #masterFields select, #layerAFields input, #layerAFields select, #layerBFields input, #layerBFields select, #layerCFields input, #layerCFields select'); }
+function readVals(){ var o={}; fields().forEach(function(el){ if(el.id) o[el.id]= (el.type==='checkbox') ? el.checked : el.value; }); return o; }
+function setVal(el, v){ if(el.type==='checkbox'){ el.checked=!!v; } else { el.value=v; } el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); }
+function writeVals(o){ fields().forEach(function(el){ if(el.id && Object.prototype.hasOwnProperty.call(o, el.id)) setVal(el, o[el.id]); }); }
+function isNumeric(el){ return el.type==='range' || el.type==='number'; }
+/* ---- Morph ---- */
+var bar=document.createElement('div'); bar.id='morphBar';
+bar.innerHTML='<div class="m-label">Morph — プリセット間をなめらかに移行</div>'
+ + '<div class="m-row"><select id="morphTarget" aria-label="モーフ先プリセット"></select></div>'
+ + '<div class="m-row"><span style="font-size:11px;color:var(--muted)">現在</span><input id="morphMix" type="range" min="0" max="100" value="0" aria-label="モーフ量"><span style="font-size:11px;color:var(--muted)">目標</span></div>'
+ + '<div class="m-row"><button id="morphApply" type="button">この位置で適用</button><button id="morphAuto" type="button">自動モーフ</button><select id="morphMins" class="mini" aria-label="モーフ時間"><option value="1">1分</option><option value="3" selected>3分</option><option value="5">5分</option><option value="10">10分</option><option value="20">20分</option></select><label class="check"><input id="morphPingpong" type="checkbox"> 往復</label></div>'
+ + '<div class="help">モーフ先を選んで「この位置で適用」か、スライダーを動かすと、現在の設定から目標プリセットへ数値が補間されます（種類などの離散項目は中点で切替）。自動モーフは指定時間でゆっくり移行します。書き出しは適用後の設定で出ます。</div>';
+var secBody=document.querySelector('#sec-preset .body'); if(secBody) secBody.appendChild(bar);
+var mTarget=$('morphTarget'), mMix=$('morphMix');
+function fillTargets(){ var cur=mTarget.value; mTarget.innerHTML=''; for(var i=0;i<sel.options.length;i++){ if(!sel.options[i].value) continue; var o=document.createElement('option'); o.value=sel.options[i].value; o.textContent=sel.options[i].textContent; mTarget.appendChild(o); } if(cur) mTarget.value=cur; }
+fillTargets();
+var mStart=null, mDest=null, mTimer=0, mProg=0, mDir=1;
+function captureDest(){
+  var start=readVals();
+  sel.value=mTarget.value; var b=$('applyPreset'); if(b) b.click();
+  var dest=readVals();
+  writeVals(start);
+  return { start:start, dest:dest };
+}
+function applyMix(m){
+  if(!mStart || !mDest) return;
+  fields().forEach(function(el){
+    if(!el.id) return;
+    var a=mStart[el.id], d=mDest[el.id];
+    if(a===undefined || d===undefined) return;
+    if(isNumeric(el)){ var av=parseFloat(a), dv=parseFloat(d); if(isFinite(av)&&isFinite(dv)) setVal(el, av+(dv-av)*m); }
+    else setVal(el, m>=0.5 ? d : a);
+  });
+}
+function stopAuto(){ if(mTimer){ clearInterval(mTimer); mTimer=0; } var ab=$('morphAuto'); if(ab) ab.classList.remove('on'); }
+mMix.addEventListener('input', function(){
+  stopAuto();
+  if(!mStart){ var c=captureDest(); mStart=c.start; mDest=c.dest; }
+  applyMix(mMix.value/100);
+});
+$('morphApply').addEventListener('click', function(){
+  stopAuto();
+  var c=captureDest(); mStart=c.start; mDest=c.dest;
+  applyMix(mMix.value/100);
+});
+mTarget.addEventListener('change', function(){ mStart=null; mDest=null; mMix.value=0; stopAuto(); });
+$('morphAuto').addEventListener('click', function(){
+  if(mTimer){ stopAuto(); return; }
+  var c=captureDest(); mStart=c.start; mDest=c.dest;
+  var dur=parseFloat($('morphMins').value)*60*1000, last=Date.now();
+  mProg=mMix.value/100; mDir=1;
+  $('morphAuto').classList.add('on');
+  mTimer=setInterval(function(){
+    var now=Date.now(), dt=now-last; last=now;
+    mProg += mDir * dt/dur;
+    if(mProg>=1){ mProg=1; if($('morphPingpong').checked){ mDir=-1; } else { applyMix(1); mMix.value=100; stopAuto(); return; } }
+    if(mProg<=0){ mProg=0; if($('morphPingpong').checked){ mDir=1; } else { stopAuto(); return; } }
+    var e=mProg<0.5 ? 2*mProg*mProg : 1-Math.pow(-2*mProg+2,2)/2;
+    applyMix(e); mMix.value=Math.round(mProg*100);
+  }, 120);
+});
+/* ---- Drift ---- */
+var DRIFT_KEYS=['A_gain','B_gain','C_gain','A_tone','B_tone','C_tone','A_pan','B_pan','C_pan','master_space','master_width','master_air'];
+var dbar=document.createElement('div'); dbar.id='driftBar';
+dbar.innerHTML='<span class="m-label">Drift — ゆっくり自動でさまよう</span><button id="driftToggle" type="button">ドリフト開始</button><input id="driftAmt" type="range" min="10" max="100" value="40" aria-label="ドリフト量"><span style="font-size:11px;color:var(--muted)">量</span>';
+var masterBody=document.querySelector('#sec-master .body'); if(masterBody) masterBody.appendChild(dbar);
+var dTimer=0, dAnchors=null;
+$('driftToggle').addEventListener('click', function(){
+  if(dTimer){ clearInterval(dTimer); dTimer=0; this.classList.remove('on'); this.textContent='ドリフト開始'; if(dAnchors) writeVals(dAnchors); dAnchors=null; return; }
+  dAnchors=readVals();
+  this.classList.add('on'); this.textContent='ドリフト停止（元に戻す）';
+  dTimer=setInterval(function(){
+    var amt=parseFloat($('driftAmt').value)/100;
+    DRIFT_KEYS.forEach(function(id){
+      var el=$(id); if(!el) return;
+      var anchor=parseFloat(dAnchors[id]); if(!isFinite(anchor)) return;
+      var cur=parseFloat(el.value); if(!isFinite(cur)) cur=anchor;
+      var range=(parseFloat(el.max)-parseFloat(el.min))||1;
+      var next=cur + (Math.random()-0.5)*0.012*amt*range + (anchor-cur)*0.01;
+      next=Math.max(parseFloat(el.min), Math.min(parseFloat(el.max), next));
+      el.value=next; el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+  }, 140);
 });
 })();
 </script>
