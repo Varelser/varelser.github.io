@@ -217,7 +217,7 @@
       font-size: 12px;
       letter-spacing: 0.04em;
       background: var(--overlay-bg);
-      color: #ffd97a;
+      color: #f5f5f5;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
@@ -4423,9 +4423,16 @@ function drawHoleHandlesMain(holesPx, exportMode) {
     const isSelected = i === selectedHoleIndex;
 
     noFill();
-    stroke(isSelected ? 120 : 80, isSelected ? 210 : 150, 255, isSelected ? 190 : 90);
-    strokeWeight(isSelected ? 1.6 : 1.0);
+    stroke(isSelected ? 255 : 170, isSelected ? 235 : 110);
+    strokeWeight(isSelected ? 1.8 : 1.0);
     ellipse(hole.x, hole.y, radiusPx * 2, radiusPx * 2);
+
+    if (isSelected) {
+      // Selected emphasis in monochrome: a second, outer ring
+      // (overlay only — this function never runs for exports).
+      strokeWeight(1.0);
+      ellipse(hole.x, hole.y, (radiusPx + 4) * 2, (radiusPx + 4) * 2);
+    }
 
     if (hole.type === 'ring' && hole.ringR) {
       // Ring crest guide: the circle the rim actually follows.
@@ -4459,7 +4466,7 @@ function drawHoleHandlesMain(holesPx, exportMode) {
       // Just-added flash: a warm ring just outside the handle.
       // Overlay only — this function never runs for exports.
       noFill();
-      stroke(255, 214, 90, 235);
+      stroke(255, 255, 255, 235);
       strokeWeight(2.4);
       const flashR = radiusPx + 7;
       ellipse(hole.x, hole.y, flashR * 2, flashR * 2);
@@ -6306,6 +6313,163 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
       if (mainCanvas()) applyHashScene();
     }
   }, 300);
+})();
+</script>
+
+<!-- TOPO UI/UX B (2026-11-16, additive focus-type refinement): panel family tabs,
+     toolbar grading, first-visit hint chip, minimum font sizes, label wrap fix,
+     canvas focus ring, dialog title aria hygiene. Compute core untouched. -->
+<style id="topo-uiux-b-style">
+  /* toolbar grading: primary = regen (filled), exports = outline, reset = quiet */
+  .toolbar #regen { background:#f5f5f5; color:#000; font-weight:700; border-radius:6px; padding:6px 14px; }
+  .toolbar #regen:hover { background:#d4d4d4; color:#000; }
+  .toolbar #export, .toolbar #exportSvg { border:1px solid #404040; border-radius:6px; color:var(--fg); padding:5px 10px; }
+  .toolbar #export:hover, .toolbar #exportSvg:hover { border-color:#737373; }
+  .toolbar #resetBtn { opacity:.72; }
+  .toolbar #resetBtn:hover { opacity:1; }
+  /* minimum readable sizes (was: tool-btn 11px, panel h3 10px, .muted 10px, .small 11px) */
+  .toolbar .tool-btn { font-size:12px; }
+  #controls h3 { font-size:12px; }
+  #controls .small, #controls .panel-btn { font-size:12px; }
+  #controls .muted { font-size:12px; }
+  #plusSeedHist .plus-thumb { font-size:11px; }
+  .plus-note { font-size:12px; }
+  #plusCmdkList li .hint { font-size:12px; }
+  /* hole-type row: keep the label on one line, let the buttons wrap */
+  #controls .row:has(#holeTypeBump) { flex-wrap:wrap; }
+  #controls .row:has(#holeTypeBump) .muted { flex:none; white-space:nowrap; margin-top:0; }
+  /* canvas keyboard focus must be visible */
+  #canvasWrap canvas:focus { outline:2px solid rgba(255,255,255,.55); outline-offset:-2px; }
+  #canvasWrap canvas:focus:not(:focus-visible) { outline:none; }
+  /* panel family tabs */
+  #uiuxTabs { position:sticky; top:0; z-index:3; display:flex; gap:4px; flex-wrap:wrap;
+    background:rgba(0,0,0,.94); padding:8px 0 6px; margin:0 0 4px; border-bottom:1px solid var(--panel-border); }
+  #uiuxTabs [role="tab"] { flex:1 1 auto; padding:6px 4px; font-size:12px; letter-spacing:.06em;
+    background:none; border:1px solid var(--panel-border); border-radius:6px; color:var(--muted); cursor:pointer; white-space:nowrap; }
+  #uiuxTabs [role="tab"]:hover { color:var(--fg); border-color:#525252; }
+  #uiuxTabs [role="tab"][aria-selected="true"] { background:#f5f5f5; color:#000; border-color:#f5f5f5; font-weight:700; }
+  #uiuxTabs [role="tab"]:focus-visible { outline:2px solid rgba(255,255,255,.6); outline-offset:2px; }
+  .uiux-tabpage[hidden] { display:none; }
+  /* first-visit hint chip */
+  #uiuxHint { position:fixed; top:76px; left:50%; transform:translateX(-50%); z-index:800;
+    display:flex; align-items:center; gap:10px; max-width:min(92vw,560px);
+    background:rgba(10,10,10,.88); border:1px solid #404040; border-radius:999px;
+    padding:7px 8px 7px 16px; font-size:12px; color:var(--fg); letter-spacing:.03em;
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  #uiuxHint[hidden] { display:none; }
+  #uiuxHint button { flex:none; width:24px; height:24px; border-radius:50%; border:1px solid #525252;
+    background:none; color:var(--fg); cursor:pointer; font-size:14px; line-height:1; }
+  @media (max-width:767px) { #uiuxHint { top:72px; font-size:11.5px; } }
+</style>
+<script id="topo-uiux-b-script">
+(function () {
+  'use strict';
+  var TABKEY = 'topo.uiuxB.tab';
+  var HINTKEY = 'topo.uiuxB.hintDismissed';
+
+  function groupPanel() {
+    var body = document.querySelector('#controls .panel-body');
+    if (!body || document.getElementById('uiuxTabs')) return;
+    // Split the flat child list into sections at each h3.
+    var sections = []; // {title, nodes:[Element]}
+    var cur = null;
+    Array.prototype.slice.call(body.children).forEach(function (el) {
+      if (el.tagName === 'H3') { cur = { title: el.textContent.trim(), nodes: [el] }; sections.push(cur); }
+      else if (cur) { cur.nodes.push(el); }
+    });
+    if (!sections.length) return;
+    var byTitle = {};
+    sections.forEach(function (s) { byTitle[s.title] = s; });
+    var tabs = [
+      { id: 'gen', label: '生成', titles: ['プリセット', '形', 'うねり', '線', '表示 / 効果'] },
+      { id: 'hole', label: '穴', titles: ['穴'] },
+      { id: 'out', label: '出力', titles: ['シード / 設定', 'Plus（便利技術）'] },
+      { id: 'link', label: '連携', titles: ['Varelser Link'] }
+    ];
+    var bar = document.createElement('div');
+    bar.id = 'uiuxTabs'; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', '設定の分類');
+    var pages = [];
+    tabs.forEach(function (t, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.setAttribute('role', 'tab'); btn.id = 'uiuxTab-' + t.id;
+      btn.textContent = t.label; btn.setAttribute('aria-selected', 'false');
+      btn.setAttribute('aria-controls', 'uiuxPage-' + t.id); btn.tabIndex = -1;
+      bar.appendChild(btn);
+      var page = document.createElement('div');
+      page.className = 'uiux-tabpage'; page.id = 'uiuxPage-' + t.id;
+      page.setAttribute('role', 'tabpanel'); page.setAttribute('aria-labelledby', btn.id);
+      t.titles.forEach(function (title) {
+        var s = byTitle[title]; if (!s) return;
+        s.nodes.forEach(function (n) { page.appendChild(n); });
+      });
+      pages.push({ tab: t, btn: btn, page: page });
+    });
+    // Anything not claimed (should not happen) goes to the first page.
+    sections.forEach(function (s) {
+      s.nodes.forEach(function (n) { if (n.parentNode === body) pages[0].page.appendChild(n); });
+    });
+    body.insertBefore(bar, body.firstChild);
+    pages.forEach(function (p) { body.appendChild(p.page); });
+
+    var current = 0;
+    function select(idx, focus) {
+      current = (idx + pages.length) % pages.length;
+      pages.forEach(function (p, i) {
+        var on = i === current;
+        p.btn.setAttribute('aria-selected', on ? 'true' : 'false');
+        p.btn.tabIndex = on ? 0 : -1;
+        p.page.hidden = !on;
+      });
+      try { localStorage.setItem(TABKEY, pages[current].tab.id); } catch (e) {}
+      if (focus) pages[current].btn.focus();
+    }
+    pages.forEach(function (p, i) {
+      p.btn.addEventListener('click', function () { select(i, false); });
+      p.btn.addEventListener('keydown', function (ev) {
+        if (ev.key === 'ArrowRight') { ev.preventDefault(); select(i + 1, true); }
+        else if (ev.key === 'ArrowLeft') { ev.preventDefault(); select(i - 1, true); }
+      });
+    });
+    var saved = null;
+    try { saved = localStorage.getItem(TABKEY); } catch (e) {}
+    var start = 0;
+    pages.forEach(function (p, i) { if (p.tab.id === saved) start = i; });
+    select(start, false);
+  }
+
+  function hintChip() {
+    var dismissed = false;
+    try { dismissed = !!localStorage.getItem(HINTKEY); } catch (e) {}
+    if (dismissed) return;
+    var chip = document.createElement('div');
+    chip.id = 'uiuxHint'; chip.setAttribute('role', 'note');
+    var span = document.createElement('span');
+    span.textContent = '穴はドラッグで移動 ／ [ ] で穴を選択 ／ ⌘K でコマンド';
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.setAttribute('aria-label', 'ヒントを閉じる'); btn.textContent = '×';
+    btn.addEventListener('click', function () {
+      chip.hidden = true;
+      try { localStorage.setItem(HINTKEY, '1'); } catch (e) {}
+    });
+    chip.appendChild(span); chip.appendChild(btn);
+    document.body.appendChild(chip);
+  }
+
+  function dialogTitleHygiene() {
+    var title = document.getElementById('dialogTitle');
+    var overlay = document.getElementById('dialogOverlay');
+    if (!title || !overlay) return;
+    function sync() {
+      if (overlay.hidden) title.setAttribute('aria-hidden', 'true');
+      else title.removeAttribute('aria-hidden');
+    }
+    new MutationObserver(sync).observe(overlay, { attributes: true, attributeFilter: ['hidden'] });
+    sync();
+  }
+
+  function init() { groupPanel(); hintChip(); dialogTitleHygiene(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 </script>
 </body>
