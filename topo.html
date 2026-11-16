@@ -1,6 +1,7 @@
 <!doctype html>
 <!-- TOPO merged edition (2026-11-15, candidate — not yet shipped; base: the shipped mountain build incl. audit fixes, commit 35477927): the "mountain" was only ever an example — the real requirement is contour discipline (lines never touch / cross / white-out) over ANY smooth field. Each hole carries a shape type: 'bump' (the original positive generalised-Gaussian source), 'basin' (negative sign: contours wrap a depression), 'ridge' (anisotropic Gaussian, 2.3x along / 0.60x across the hole's angle: contours run in long lines), 'ring' (generalised Gaussian of the distance to a circle of radius coreRadius x 3.2, rim width 0.40 x sigma: a crater / donut crest) and 'slope' (a linear ramp along the hole's angle, normalised to +/- strength/2 over the canvas: parallel stripes the swell and warp bend into a flow; its angle is a true 0-359 deg heading, the others use 0-179). Holes without a type (all previously saved settings) behave as 'bump', bit-identically. PEAK_BLEND accumulates its pairwise product per sign group, so opposite-sign pairs never blend (a bump + basin at the same spot would otherwise dig a phantom depression); same-sign pairs blend exactly as before. The gradient-based spacing guarantee is shape-agnostic — thresholds still come from the sampled field's own gradients — and is re-verified for all five shapes by the merged sweep (108 cases; one documented exception: a five-type mix at MIN_SPACING 3 with FIELD_BLUR >= 1 can pinch to ~1.3px centre distance at a basin/slope saddle — no crossings, no touching; it passes at spacing >= 4, with blur 0, or without the slope). Slider ranges are the widened candidate-B set (limits/steps, PARAM_RANGES, sanitize and core clamps moved together; defaults and preset values unchanged), and NUM_RINGS now caps at 2000: in smooth mode the chosen line count self-limits to ~500 by geometry (field extent / guaranteed spacing, measured max 487 at FHD), while flat mode can really draw 2000 lines (~2 s build, SVG estimate ~27 MB so the confirm guard engages as designed). Panel wording is shape-neutral (「形」 section) and the presets are form studies: 窪み / 尾根 / 混合 / 流れ / 環 / 斜面. -->
 <!-- TOPO v7 (2026-11-12): Lien-style UI reskin — app header + bottom toolbar chrome, floating configuration panel (hidden by default, opened from the toolbar), Lien slider/option styling and zinc palette via CSS variables; layout is header / canvas-wrap / footer so the canvas fills the space between the bars; computation core, IDs and behaviour are unchanged from v6 except panelToggle now toggles and mousePressed converts to viewport coordinates for the controls hit-test. v6: audit fixes — hole phase is persisted in settings JSON and undo snapshots, so seed reproducibility survives hole deletion + reload (previously phases were recomputed by index on load while live holes kept their creation-time phase); ANGLE_STEPS slider step 8 -> 1 (default 900 was off-step: browsers snapped the display to 904 while params stayed 900); hole position clamp unified to 0.02-0.98 (drag/arrows were 0.02-0.98 but create/sanitize were 0.03-0.97, so edge holes shifted on reload); EXPORT_TRANSPARENT gained a UI checkbox (was reachable only by hand-editing settings JSON). v5: SVG export — bezier segment stream shared with the canvas port (curveSegmentStream), chunked async string build, size-estimate guards (~20MB confirm / ~150MB refuse), same compute request and paint parameters as the PNG export. v4: parallel worker pool (threshold-range split, bit-identical merge), worker-side export rasterization via OffscreenCanvas (faithful port of p5 1.6.0 curve rendering, main-thread fallback), ALL screen regenerations routed through workers. v3: unified pure core (p5-exact Perlin/LCG ports), field culling + flat marching squares, offscreen artwork cache. v2 guards/settings/UI unchanged. Tests: tests/topo.test.mjs -->
+<!-- TOPO Plus (2026-11-16, additive tech pack): Plus section in the settings panel (share link #t= / Web Share, snapshot+clipboard PNG, batch PNG 1x+2x+4x, Document PiP, fullscreen, Wake Lock, EyeDropper, IndexedDB scenes, File System Access + drop/paste settings JSON, command palette Cmd/Ctrl+K, Surprise/Mutate, auto-generate, seed history thumbnails, Web MIDI). Compute core, defaults and golden output untouched. -->
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -463,6 +464,22 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+<style id="topo-plus-style">
+/* TOPO Plus (2026-11-16, additive): tech-pack styles, monochrome zinc only. */
+#plusSeedHist { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+#plusSeedHist .plus-thumb { background: none; border: 1px solid #262626; padding: 2px; cursor: pointer; color: #a3a3a3; font-size: 10px; line-height: 1.3; }
+#plusSeedHist .plus-thumb:hover { border-color: #525252; color: #fff; }
+#plusSeedHist .plus-thumb img { display: block; width: 88px; height: auto; }
+#plusCmdk { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.72); display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; }
+#plusCmdk[hidden] { display: none; }
+#plusCmdkBox { width: min(520px, 92vw); background: #0a0a0a; border: 1px solid #262626; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.75); }
+#plusCmdkInput { width: 100%; box-sizing: border-box; background: #171717; color: #fff; border: none; border-bottom: 1px solid #262626; padding: 12px 14px; font-size: 14px; outline: none; }
+#plusCmdkList { list-style: none; margin: 0; padding: 6px; max-height: 46vh; overflow-y: auto; }
+#plusCmdkList li { padding: 8px 10px; font-size: 13px; color: #d4d4d4; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; }
+#plusCmdkList li .hint { color: #737373; font-size: 11px; }
+#plusCmdkList li.active { background: #262626; color: #fff; }
+.plus-note { font-size: 11px; color: #a3a3a3; line-height: 1.5; }
+</style>
 </head>
 <body>
   <header class="app-header">
@@ -609,6 +626,79 @@
         <option value="4" selected>4x</option>
       </select>
     </div>
+
+    <h4>Plus（便利技術）</h4>
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="plusShareLink" class="small" type="button">共有リンクを作成</button>
+      <button id="plusShare" class="small" type="button">共有</button>
+      <button id="plusCmdkBtn" class="small" type="button">⌘K</button>
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="plusSnap" class="small" type="button">スナップショットPNG</button>
+      <button id="plusCopyPng" class="small" type="button">PNGコピー</button>
+      <button id="plusBatch" class="small" type="button">バッチPNG 1x+2x+4x</button>
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="plusPip" class="small" type="button">PiPで切り離す</button>
+      <button id="plusFull" class="small" type="button">フルスクリーン</button>
+      <button id="plusEye" class="small" type="button">スポイト</button>
+      <span id="plusEyeVal" class="val" style="float:none;"></span>
+    </div>
+
+    <div class="row">
+      <label><input id="plusWake" type="checkbox">画面スリープ防止 (Wake Lock)</label>
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="plusSurprise" class="small" type="button">サプライズ</button>
+      <button id="plusMutate" class="small" type="button">変化 (Mutate)</button>
+    </div>
+
+    <div class="row">
+      <label for="plusAuto">オート生成</label>
+      <select id="plusAuto">
+        <option value="0" selected>OFF</option>
+        <option value="10">10秒ごと</option>
+        <option value="30">30秒ごと</option>
+        <option value="60">60秒ごと</option>
+      </select>
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="plusSceneSave" class="small" type="button">現在のシーンを保存</button>
+    </div>
+
+    <div class="row">
+      <label for="plusSceneList">保存シーン (IndexedDB)</label>
+      <select id="plusSceneList"></select>
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="plusSceneLoad" class="small" type="button">シーン読込</button>
+      <button id="plusSceneDel" class="small" type="button">シーン削除</button>
+    </div>
+
+    <div class="row" style="display:flex;gap:8px;">
+      <button id="plusJsonSave" class="small" type="button">設定JSONをファイル保存</button>
+      <button id="plusJsonLoad" class="small" type="button">設定JSONファイル読込</button>
+      <input id="plusFileInput" type="file" accept=".json,application/json" hidden>
+    </div>
+
+    <div class="row plus-note">設定JSONはドラッグ＆ドロップ、または貼り付けでも読み込めます。</div>
+
+    <div class="row" style="display:flex;gap:8px;align-items:center;">
+      <button id="plusMidi" class="small" type="button">Web MIDI 開始</button>
+      <span id="plusMidiStatus" class="plus-note">ノート→再生成 / CC1→線の本数</span>
+    </div>
+
+    <div class="row">
+      <span class="muted">シード履歴</span>
+      <div id="plusSeedHist"></div>
+    </div>
+
+    <div id="plusStatus" class="row plus-note" role="status"></div>
 
     <h4>穴</h4>
     <div id="holeInfo" class="row">選択穴: - / 総数: 0</div>
@@ -5592,6 +5682,574 @@ setInterval(sync,2000);
 window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 })();
 
+</script>
+<div id="plusCmdk" hidden><div id="plusCmdkBox"><input id="plusCmdkInput" type="text" placeholder="コマンドを検索 (Escで閉じる)" aria-label="コマンドパレット"><ul id="plusCmdkList"></ul></div></div>
+<script>
+/* TOPO Plus (2026-11-16, additive tech pack).
+   Everything here is additive: the compute core, params defaults and the
+   golden output are untouched. It builds on the app's own globals
+   (serializeSettings / parseSettingsJSON / applySettingsData / applySeed /
+   exportPNG / setStatus ...) and adds the platform conveniences the other
+   Varelser apps already have: share links (#t=), Web Share, snapshot /
+   clipboard PNG, batch export, Document PiP, fullscreen, Wake Lock,
+   EyeDropper, IndexedDB scenes, File System Access + drop/paste JSON,
+   a command palette (Cmd/Ctrl+K), Surprise/Mutate, auto-generate,
+   seed history with thumbnails, and Web MIDI. */
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var clampN = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+  function note(msg) {
+    var el = $('plusStatus');
+    if (el) el.textContent = msg || '';
+    try { setStatus(msg); } catch (e) { /* status line is best-effort */ }
+  }
+  function mainCanvas() { return document.querySelector('#canvasWrap canvas'); }
+
+  /* ---------- shared settings apply ---------- */
+  function applyData(data) {
+    pushUndo();
+    applySettingsData(data);
+    syncAllControlValues();
+    syncSelectedHoleControls();
+    updateSeedDisplay();
+    debouncedRegenerate(false);
+    scheduleSaveSettings();
+  }
+  function applyJsonText(text, sourceLabel) {
+    var r = parseSettingsJSON(text);
+    if (!r.ok) { note('読み込めませんでした: ' + r.error); return false; }
+    applyData(r.data);
+    note((sourceLabel || '設定') + 'を読み込みました (seed ' + seedVal + ')');
+    return true;
+  }
+
+  /* ---------- share link (#t=) + Web Share ---------- */
+  function buildShareUrl() {
+    var b64 = btoa(unescape(encodeURIComponent(serializeSettings())))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return location.origin + location.pathname + '#t=' + b64;
+  }
+  function copyText(text, okMsg) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { note(okMsg); },
+        function () { note('コピーできませんでした'); });
+    } else { note('このブラウザではクリップボードにコピーできません'); }
+  }
+  function shareLink() { copyText(buildShareUrl(), '共有リンクをコピーしました'); }
+  function webShare() {
+    var url = buildShareUrl();
+    if (navigator.share) {
+      navigator.share({ title: 'TOPO', text: 'TOPO seed ' + seedVal, url: url })
+        .catch(function () { /* user cancelled */ });
+    } else { copyText(url, '共有リンクをコピーしました'); }
+  }
+  function applyHashScene() {
+    var m = /#t=([A-Za-z0-9\-_]+)/.exec(location.hash || '');
+    if (!m) return;
+    try {
+      var b64 = m[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      var text = decodeURIComponent(escape(atob(b64)));
+      if (applyJsonText(text, '共有リンクのシーン')) {
+        try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+      }
+    } catch (e) { note('共有リンクのシーンを読み込めませんでした'); }
+  }
+
+  /* ---------- snapshot / copy / batch PNG ---------- */
+  function snapshotPng() {
+    var c = mainCanvas();
+    if (!c) { note('キャンバスがまだ準備できていません'); return; }
+    if (c.toBlob) {
+      c.toBlob(function (blob) {
+        if (blob) { downloadBlobFile(blob, 'topo-snapshot-seed' + seedVal + '.png'); note('スナップショットを保存しました'); }
+      }, 'image/png');
+    } else { note('このブラウザではスナップショットに未対応です'); }
+  }
+  function copyPng() {
+    var c = mainCanvas();
+    if (!c || !c.toBlob || typeof ClipboardItem === 'undefined' || !navigator.clipboard || !navigator.clipboard.write) {
+      note('このブラウザではPNGコピーに未対応です'); return;
+    }
+    c.toBlob(function (blob) {
+      if (!blob) return;
+      var item = {};
+      item['image/png'] = blob;
+      navigator.clipboard.write([new ClipboardItem(item)]).then(
+        function () { note('PNGをクリップボードにコピーしました'); },
+        function () { note('PNGコピーに失敗しました'); });
+    }, 'image/png');
+  }
+  function dialogOpen() {
+    var o = $('dialogOverlay');
+    return !!(o && !o.hidden);
+  }
+  function waitExportIdle(started, timeoutMs) {
+    return new Promise(function (resolve) {
+      var t0 = Date.now();
+      (function poll() {
+        var running = false;
+        try { running = !!isExporting; } catch (e) { running = false; }
+        if (running) started.yes = true;
+        if (started.yes && !running && !dialogOpen()) { resolve(true); return; }
+        /* A load-guard confirmation dialog pauses the batch: keep
+           waiting for the user's decision instead of aborting. */
+        if (Date.now() - t0 > timeoutMs) { resolve(started.yes); return; }
+        setTimeout(poll, 250);
+      })();
+    });
+  }
+  async function batchPng() {
+    var scales = [1, 2, 4];
+    note('バッチPNGを開始します (1x → 2x → 4x)');
+    for (var i = 0; i < scales.length; i++) {
+      var started = { yes: false };
+      try { exportPNG(scales[i], !!params.EXPORT_TRANSPARENT); } catch (e) { note('バッチPNGに失敗しました'); return; }
+      var ok = await waitExportIdle(started, 180000);
+      if (!ok) { note('書き出しが始まらなかったためバッチを中断しました（確認ダイアログが未承認の可能性があります）'); return; }
+    }
+    note('バッチPNGが完了しました (1x / 2x / 4x)');
+  }
+
+  /* ---------- PiP / fullscreen / wake lock / eyedropper ---------- */
+  var pipWin = null, pipRaf = 0;
+  async function togglePip() {
+    if (pipWin) { try { pipWin.close(); } catch (e) {} pipWin = null; return; }
+    if (!window.documentPictureInPicture || !documentPictureInPicture.requestWindow) {
+      note('このブラウザは Document Picture-in-Picture に未対応です'); return;
+    }
+    var src = mainCanvas();
+    if (!src) { note('キャンバスがまだ準備できていません'); return; }
+    try {
+      pipWin = await documentPictureInPicture.requestWindow({ width: 480, height: 320 });
+      var c = pipWin.document.createElement('canvas');
+      c.style.cssText = 'width:100%;height:100%;display:block;background:#000;';
+      pipWin.document.body.style.margin = '0';
+      pipWin.document.body.appendChild(c);
+      var ctx = c.getContext('2d');
+      var draw = function () {
+        if (!pipWin) return;
+        var s = mainCanvas();
+        if (s && s.width) {
+          if (c.width !== s.width) { c.width = s.width; c.height = s.height; }
+          try { ctx.drawImage(s, 0, 0); } catch (e) {}
+        }
+        pipRaf = requestAnimationFrame(draw);
+      };
+      draw();
+      pipWin.addEventListener('pagehide', function () { cancelAnimationFrame(pipRaf); pipWin = null; });
+      note('PiPウィンドウを開きました');
+    } catch (e) { pipWin = null; note('PiPを開けませんでした'); }
+  }
+  function toggleFull() {
+    if (document.fullscreenElement) { document.exitFullscreen().catch(function () {}); }
+    else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch(function () { note('フルスクリーンにできませんでした'); }); }
+  }
+  var wakeSentinel = null;
+  function setWake(on) {
+    if (on) {
+      if (!navigator.wakeLock) { note('このブラウザは Wake Lock に未対応です'); var w = $('plusWake'); if (w) w.checked = false; return; }
+      navigator.wakeLock.request('screen').then(function (s) {
+        wakeSentinel = s;
+        s.addEventListener('release', function () { wakeSentinel = null; var w2 = $('plusWake'); if (w2) w2.checked = false; });
+        note('画面スリープ防止をONにしました');
+      }).catch(function () { var w3 = $('plusWake'); if (w3) w3.checked = false; note('Wake Lockを取得できませんでした'); });
+    } else if (wakeSentinel) { wakeSentinel.release().catch(function () {}); wakeSentinel = null; }
+  }
+  document.addEventListener('visibilitychange', function () {
+    var w = $('plusWake');
+    if (document.visibilityState === 'visible' && w && w.checked && !wakeSentinel) setWake(true);
+  });
+  function eyedropper() {
+    if (!window.EyeDropper) { note('このブラウザは EyeDropper に未対応です'); return; }
+    new EyeDropper().open().then(function (res) {
+      var el = $('plusEyeVal');
+      if (el) el.textContent = res.sRGBHex;
+      copyText(res.sRGBHex, '色 ' + res.sRGBHex + ' をコピーしました');
+    }).catch(function () { /* cancelled */ });
+  }
+
+  /* ---------- surprise / mutate / auto ---------- */
+  function surprise() {
+    var ids = ['preset1', 'preset2', 'preset3', 'preset4', 'preset5', 'preset6'];
+    var btn = $(ids[Math.floor(Math.random() * ids.length)]);
+    if (btn) btn.click();
+    applySeed(1 + Math.floor(Math.random() * 999999999));
+    note('サプライズ生成しました (seed ' + seedVal + ')');
+  }
+  function mutate() {
+    if (!holes || !holes.length) { note('穴がありません'); return; }
+    pushUndo();
+    for (var i = 0; i < holes.length; i++) {
+      var h = holes[i];
+      h.x = clampN(h.x + (Math.random() - 0.5) * 0.1, 0.02, 0.98);
+      h.y = clampN(h.y + (Math.random() - 0.5) * 0.1, 0.02, 0.98);
+      h.radius = clampN(h.radius * (0.8 + Math.random() * 0.45), 0.05, 6);
+      h.strength = clampN(h.strength * (0.85 + Math.random() * 0.33), 0.35, 5);
+    }
+    syncSelectedHoleControls();
+    debouncedRegenerate(false);
+    scheduleSaveSettings();
+    note('穴の配置と強さを少し変化させました');
+  }
+  var autoTimer = null;
+  function setAuto(sec) {
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    if (sec > 0) {
+      autoTimer = setInterval(function () {
+        try { regenerateScene({ newSeed: true }); if (typeof redraw === 'function') redraw(); } catch (e) {}
+      }, sec * 1000);
+      note('オート生成を開始しました (' + sec + '秒ごと)');
+    }
+  }
+
+  /* ---------- scenes in IndexedDB ---------- */
+  var SCENE_CAP = 24;
+  function idbOpen() {
+    return new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('no idb')); return; }
+      var req = indexedDB.open('topo-plus-v1', 1);
+      req.onupgradeneeded = function () { req.result.createObjectStore('scenes', { keyPath: 'id', autoIncrement: true }); };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+  }
+  function idbTx(db, mode, fn) {
+    return new Promise(function (resolve, reject) {
+      var tx = db.transaction('scenes', mode);
+      var store = tx.objectStore('scenes');
+      var out = fn(store);
+      tx.oncomplete = function () { resolve(out && out._v); };
+      tx.onerror = function () { reject(tx.error); };
+    });
+  }
+  function sceneAll() {
+    return idbOpen().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var items = [];
+        var req = db.transaction('scenes', 'readonly').objectStore('scenes').openCursor();
+        req.onsuccess = function () {
+          var cur = req.result;
+          if (cur) { items.push(cur.value); cur.continue(); } else resolve(items);
+        };
+        req.onerror = function () { reject(req.error); };
+      });
+    });
+  }
+  function refreshSceneList() {
+    var sel = $('plusSceneList');
+    if (!sel) return;
+    sceneAll().then(function (items) {
+      items.sort(function (a, b) { return b.id - a.id; });
+      sel.innerHTML = '';
+      if (!items.length) {
+        var o = document.createElement('option');
+        o.textContent = '（保存シーンなし）'; o.value = '';
+        sel.appendChild(o); return;
+      }
+      items.forEach(function (it) {
+        var o = document.createElement('option');
+        o.value = String(it.id); o.textContent = it.label;
+        sel.appendChild(o);
+      });
+    }).catch(function () {
+      sel.innerHTML = '';
+      var o = document.createElement('option');
+      o.textContent = 'IndexedDBを利用できません'; o.value = '';
+      sel.appendChild(o);
+    });
+  }
+  function sceneSave() {
+    var label = 'seed ' + seedVal + ' / ' + new Date().toLocaleString('ja-JP');
+    idbOpen().then(function (db) {
+      return idbTx(db, 'readwrite', function (store) { store.add({ label: label, data: serializeSettings(), ts: Date.now() }); });
+    }).then(function () { return sceneAll(); }).then(function (items) {
+      if (items.length > SCENE_CAP) {
+        items.sort(function (a, b) { return a.id - b.id; });
+        var extra = items.slice(0, items.length - SCENE_CAP);
+        return idbOpen().then(function (db) {
+          return idbTx(db, 'readwrite', function (store) { extra.forEach(function (it) { store.delete(it.id); }); });
+        });
+      }
+    }).then(function () { refreshSceneList(); note('シーンを保存しました (' + label + ')'); })
+      .catch(function () { note('シーン保存に失敗しました (IndexedDB)'); });
+  }
+  function sceneLoad() {
+    var sel = $('plusSceneList');
+    var id = sel && sel.value ? Number(sel.value) : NaN;
+    if (!Number.isFinite(id)) { note('読み込むシーンがありません'); return; }
+    sceneAll().then(function (items) {
+      var it = items.find(function (x) { return x.id === id; });
+      if (it) applyJsonText(it.data, '保存シーン');
+      else note('シーンが見つかりません');
+    }).catch(function () { note('シーン読込に失敗しました'); });
+  }
+  function sceneDel() {
+    var sel = $('plusSceneList');
+    var id = sel && sel.value ? Number(sel.value) : NaN;
+    if (!Number.isFinite(id)) { note('削除するシーンがありません'); return; }
+    idbOpen().then(function (db) {
+      return idbTx(db, 'readwrite', function (store) { store.delete(id); });
+    }).then(function () { refreshSceneList(); note('シーンを削除しました'); })
+      .catch(function () { note('シーン削除に失敗しました'); });
+  }
+
+  /* ---------- settings JSON via files / drop / paste ---------- */
+  async function jsonSave() {
+    var text = serializeSettings();
+    var name = 'topo-settings-seed' + seedVal + '.json';
+    if (window.showSaveFilePicker) {
+      try {
+        var handle = await showSaveFilePicker({ suggestedName: name, types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }] });
+        var w = await handle.createWritable();
+        await w.write(text); await w.close();
+        note('設定JSONをファイルに保存しました'); return;
+      } catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    downloadTextFile(text, name);
+    note('設定JSONをダウンロードしました');
+  }
+  function jsonLoad() {
+    if (window.showOpenFilePicker) {
+      showOpenFilePicker({ types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }] })
+        .then(function (handles) { return handles[0].getFile(); })
+        .then(function (f) { return f.text(); })
+        .then(function (t) { applyJsonText(t, '設定JSONファイル'); })
+        .catch(function () { /* cancelled */ });
+    } else { var fi = $('plusFileInput'); if (fi) fi.click(); }
+  }
+  window.addEventListener('dragover', function (e) { e.preventDefault(); });
+  window.addEventListener('drop', function (e) {
+    e.preventDefault();
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) { f.text().then(function (t) { applyJsonText(t, 'ドロップした設定JSON'); }); return; }
+    var t = e.dataTransfer && e.dataTransfer.getData('text/plain');
+    if (t && t.trim().charAt(0) === '{') applyJsonText(t, 'ドロップした設定JSON');
+  });
+  document.addEventListener('paste', function (e) {
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    var text = e.clipboardData && e.clipboardData.getData('text');
+    if (text && text.trim().charAt(0) === '{' && text.indexOf('"seed"') !== -1) {
+      e.preventDefault();
+      applyJsonText(text, '貼り付けた設定JSON');
+    }
+  });
+
+  /* ---------- Web MIDI ---------- */
+  var midiAccess = null, midiOn = false;
+  function onMidiMessage(ev) {
+    if (!midiOn) return;
+    var st = ev.data[0] & 0xf0, d1 = ev.data[1], d2 = ev.data[2];
+    if (st === 0x90 && d2 > 0) {
+      try { regenerateScene({ newSeed: true }); if (typeof redraw === 'function') redraw(); } catch (e) {}
+      var ms = $('plusMidiStatus'); if (ms) ms.textContent = 'ノート ' + d1 + ' → 再生成 (seed ' + seedVal + ')';
+    } else if (st === 0xb0 && d1 === 1) {
+      params.NUM_RINGS = Math.round(8 + (d2 / 127) * (2000 - 8));
+      syncAllControlValues();
+      debouncedRegenerate(false);
+      scheduleSaveSettings();
+      var ms2 = $('plusMidiStatus'); if (ms2) ms2.textContent = 'CC1 → 線の本数 ' + params.NUM_RINGS;
+    }
+  }
+  function toggleMidi() {
+    var btn = $('plusMidi');
+    if (midiOn) {
+      midiOn = false;
+      if (midiAccess) midiAccess.inputs.forEach(function (inp) { inp.onmidimessage = null; });
+      if (btn) btn.textContent = 'Web MIDI 開始';
+      var ms = $('plusMidiStatus'); if (ms) ms.textContent = 'ノート→再生成 / CC1→線の本数';
+      return;
+    }
+    if (!navigator.requestMIDIAccess) { note('このブラウザは Web MIDI に未対応です'); return; }
+    navigator.requestMIDIAccess().then(function (acc) {
+      midiAccess = acc; midiOn = true;
+      acc.inputs.forEach(function (inp) { inp.onmidimessage = onMidiMessage; });
+      if (btn) btn.textContent = 'Web MIDI 停止';
+      note('Web MIDIを開始しました（実機コントローラーでの動作は未確認）');
+    }).catch(function () { note('Web MIDIを開始できませんでした'); });
+  }
+
+  /* ---------- seed history with thumbnails ---------- */
+  var HIST_KEY = 'topo-seed-history-v1';
+  function histLoad() { try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { return []; } }
+  function histRender() {
+    var box = $('plusSeedHist');
+    if (!box) return;
+    var items = histLoad();
+    box.innerHTML = '';
+    items.forEach(function (it) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'plus-thumb';
+      var img = document.createElement('img');
+      img.src = it.thumb; img.alt = 'seed ' + it.seed;
+      b.appendChild(img);
+      b.appendChild(document.createTextNode(String(it.seed)));
+      b.addEventListener('click', function () { applySeed(it.seed); });
+      box.appendChild(b);
+    });
+  }
+  var histLastSeed = null, histPending = null;
+  function histRecord() {
+    var c = mainCanvas();
+    if (!c || !c.width) return;
+    try {
+      var tw = 96, th = Math.max(24, Math.round(tw * c.height / c.width));
+      var t = document.createElement('canvas');
+      t.width = tw; t.height = th;
+      t.getContext('2d').drawImage(c, 0, 0, tw, th);
+      var items = histLoad().filter(function (x) { return x.seed !== seedVal; });
+      items.unshift({ seed: seedVal, thumb: t.toDataURL('image/jpeg', 0.72) });
+      localStorage.setItem(HIST_KEY, JSON.stringify(items.slice(0, 8)));
+      histRender();
+    } catch (e) { /* thumbnails are best-effort */ }
+  }
+  setInterval(function () {
+    var s = null;
+    try { s = seedVal; } catch (e) { return; }
+    if (!s || s === histLastSeed) return;
+    histLastSeed = s;
+    if (histPending) clearTimeout(histPending);
+    histPending = setTimeout(function () {
+      var st = $('statusLine');
+      if (st && /計算中/.test(st.textContent || '')) { histLastSeed = null; return; }
+      histRecord();
+    }, 1500);
+  }, 2000);
+
+  /* ---------- command palette ---------- */
+  var cmdkActions = [];
+  function buildActions() {
+    var acts = [
+      { label: '再生成（新しいシード）', hint: 'R', run: function () { regenerateScene({ newSeed: true }); if (typeof redraw === 'function') redraw(); } },
+      { label: 'サプライズ生成', hint: 'Plus', run: surprise },
+      { label: '変化 (Mutate)', hint: 'Plus', run: mutate },
+      { label: 'PNG保存（高解像度）', hint: 'S', run: function () { startExportFromUI(); } },
+      { label: 'SVG保存', hint: 'V', run: function () { startSvgExportFromUI(); } },
+      { label: 'スナップショットPNG', hint: 'Plus', run: snapshotPng },
+      { label: 'PNGコピー', hint: 'Plus', run: copyPng },
+      { label: 'バッチPNG 1x+2x+4x', hint: 'Plus', run: function () { batchPng(); } },
+      { label: '共有リンクを作成', hint: 'Plus', run: shareLink },
+      { label: '共有', hint: 'Plus', run: webShare },
+      { label: '現在のシーンを保存 (IndexedDB)', hint: 'Plus', run: sceneSave },
+      { label: '設定JSONをファイル保存', hint: 'Plus', run: function () { jsonSave(); } },
+      { label: '設定JSONファイル読込', hint: 'Plus', run: jsonLoad },
+      { label: 'PiPで切り離す', hint: 'Plus', run: function () { togglePip(); } },
+      { label: 'フルスクリーン切替', hint: 'Plus', run: toggleFull },
+      { label: '設定パネル開閉', hint: 'H', run: function () { setPanelVisible(!panelVisible); } },
+      { label: '設定JSONダイアログ', hint: '', run: function () { var b = $('settingsBtn'); if (b) b.click(); } },
+      { label: '元に戻す', hint: 'Ctrl+Z', run: function () { var b = $('undoBtn'); if (b) b.click(); } },
+      { label: '初期化', hint: '', run: function () { var b = $('resetBtn'); if (b) b.click(); } }
+    ];
+    var names = ['窪み', '尾根', '混合', '流れ', '環', '斜面'];
+    names.forEach(function (n, i) {
+      acts.push({ label: 'プリセット: ' + n, hint: '形', run: function () { var b = $('preset' + (i + 1)); if (b) b.click(); } });
+    });
+    return acts;
+  }
+  var cmdkIndex = 0, cmdkFiltered = [];
+  function cmdkRender() {
+    var list = $('plusCmdkList');
+    var q = ($('plusCmdkInput').value || '').toLowerCase();
+    cmdkFiltered = cmdkActions.filter(function (a) { return a.label.toLowerCase().indexOf(q) !== -1; });
+    if (cmdkIndex >= cmdkFiltered.length) cmdkIndex = Math.max(0, cmdkFiltered.length - 1);
+    list.innerHTML = '';
+    cmdkFiltered.forEach(function (a, i) {
+      var li = document.createElement('li');
+      if (i === cmdkIndex) li.className = 'active';
+      var s1 = document.createElement('span'); s1.textContent = a.label;
+      var s2 = document.createElement('span'); s2.className = 'hint'; s2.textContent = a.hint || '';
+      li.appendChild(s1); li.appendChild(s2);
+      li.addEventListener('click', function () { cmdkClose(); a.run(); });
+      list.appendChild(li);
+    });
+  }
+  function cmdkOpen() {
+    var o = $('plusCmdk');
+    if (!o) return;
+    cmdkActions = buildActions();
+    cmdkIndex = 0;
+    o.hidden = false;
+    $('plusCmdkInput').value = '';
+    cmdkRender();
+    $('plusCmdkInput').focus();
+  }
+  function cmdkClose() { var o = $('plusCmdk'); if (o) o.hidden = true; }
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      var o = $('plusCmdk');
+      if (o && o.hidden) cmdkOpen(); else cmdkClose();
+      return;
+    }
+    var o2 = $('plusCmdk');
+    if (!o2 || o2.hidden) return;
+    if (e.key === 'Escape') { cmdkClose(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); cmdkIndex = Math.min(cmdkFiltered.length - 1, cmdkIndex + 1); cmdkRender(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); cmdkIndex = Math.max(0, cmdkIndex - 1); cmdkRender(); }
+    else if (e.key === 'Enter') {
+      var a = cmdkFiltered[cmdkIndex];
+      if (a) { cmdkClose(); a.run(); }
+    }
+  }, true);
+
+  /* ---------- wiring ---------- */
+  function wire() {
+    var map = [
+      ['plusShareLink', 'click', shareLink],
+      ['plusShare', 'click', webShare],
+      ['plusCmdkBtn', 'click', cmdkOpen],
+      ['plusSnap', 'click', snapshotPng],
+      ['plusCopyPng', 'click', copyPng],
+      ['plusBatch', 'click', function () { batchPng(); }],
+      ['plusPip', 'click', function () { togglePip(); }],
+      ['plusFull', 'click', toggleFull],
+      ['plusEye', 'click', eyedropper],
+      ['plusSurprise', 'click', surprise],
+      ['plusMutate', 'click', mutate],
+      ['plusSceneSave', 'click', sceneSave],
+      ['plusSceneLoad', 'click', sceneLoad],
+      ['plusSceneDel', 'click', sceneDel],
+      ['plusJsonSave', 'click', function () { jsonSave(); }],
+      ['plusJsonLoad', 'click', jsonLoad],
+      ['plusMidi', 'click', toggleMidi]
+    ];
+    map.forEach(function (row) {
+      var el = $(row[0]);
+      if (el) el.addEventListener(row[1], row[2]);
+    });
+    var wake = $('plusWake');
+    if (wake) wake.addEventListener('change', function () { setWake(wake.checked); });
+    var auto = $('plusAuto');
+    if (auto) auto.addEventListener('change', function () { setAuto(Number(auto.value) || 0); });
+    var fi = $('plusFileInput');
+    if (fi) fi.addEventListener('change', function () {
+      var f = fi.files && fi.files[0];
+      if (f) f.text().then(function (t) { applyJsonText(t, '設定JSONファイル'); });
+      fi.value = '';
+    });
+    var ci = $('plusCmdkInput');
+    if (ci) ci.addEventListener('input', function () { cmdkIndex = 0; cmdkRender(); });
+    var co = $('plusCmdk');
+    if (co) co.addEventListener('click', function (e) { if (e.target === co) cmdkClose(); });
+    refreshSceneList();
+    histRender();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+
+  /* Apply a #t= shared scene once the app has finished setup. */
+  var tries = 0;
+  var iv = setInterval(function () {
+    tries++;
+    var seedEl = $('seedVal');
+    if ((mainCanvas() && seedEl && seedEl.textContent !== '-') || tries > 40) {
+      clearInterval(iv);
+      if (mainCanvas()) applyHashScene();
+    }
+  }, 300);
+})();
 </script>
 </body>
 </html>
