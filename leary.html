@@ -537,6 +537,15 @@ body:not(.leary2-panel-open) .panel{display:none}
   .leary2-status{display:none}
 }
 </style>
+<style>/* share-icon 2026-11-17 (B) */
+.share-icon-btn{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}
+.share-icon-btn svg{width:20px;height:20px;display:block}
+.share-icon-btn .ic-check{display:none}
+.share-icon-btn.copied .ic-share{display:none}
+.share-icon-btn.copied .ic-check{display:block}
+.share-icon-btn:hover{background:rgba(255,255,255,.12)!important;transform:translateY(-1px)}
+.share-icon-btn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
 </head>
 <body>
 <div id="app">
@@ -2173,15 +2182,17 @@ body:not(.leary2-panel-open) .panel{display:none}
 
   /* ---- toolbar: share link + fullscreen ---- */
   const mkBtn = (label, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = label; b.addEventListener('click', fn); return b; };
-  bar.appendChild(mkBtn('共有リンク', async () => {
+  var learyShareBtn = bar.appendChild(mkBtn('共有リンク', async () => {
     try {
       const json = JSON.stringify(snapshotSettings());
       const enc = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
       const url = location.origin + location.pathname + '#s=' + enc;
       await navigator.clipboard.writeText(url);
+      learyShareBtn.classList.add('copied'); setTimeout(() => learyShareBtn.classList.remove('copied'), 1600);
       toast('共有リンクをコピーしました（開くと設定が復元されます）');
     } catch (e) { toast('共有リンクの作成に失敗しました'); }
   }));
+  learyShareBtn.innerHTML = '<svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14.5a4.2 4.2 0 0 0 6 .4l3-3a4.24 4.24 0 1 0-6-6l-1.5 1.5"/><path d="M14 9.5a4.2 4.2 0 0 0-6-.4l-3 3a4.24 4.24 0 1 0 6 6L12.5 16.5"/></svg><svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5 10 18 19.5 6.5"/></svg>'; learyShareBtn.classList.add('share-icon-btn'); learyShareBtn.setAttribute('aria-label', '共有リンク'); learyShareBtn.title = '共有リンク';
   if (location.hash.indexOf('#s=') === 0) {
     try {
       let b64 = location.hash.slice(3).replace(/-/g, '+').replace(/_/g, '/'); while (b64.length % 4) b64 += '='; const json = decodeURIComponent(escape(atob(b64)));

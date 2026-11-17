@@ -76,6 +76,15 @@ a{text-decoration:none}
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+<style>/* share-icon 2026-11-17 (A) */
+.share-btn{width:36px!important;height:36px!important;padding:0!important;border-radius:50%!important;border:1px solid var(--border)!important;background:var(--bg)!important;color:inherit;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;transition:background .18s,color .18s}
+.share-btn svg{width:18px;height:18px;display:block}
+.share-btn .ic-check{display:none}
+.share-btn.copied .ic-share{display:none}
+.share-btn.copied .ic-check{display:block}
+.share-btn:hover{background:var(--fg)!important;color:var(--bg)!important}
+.share-btn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
 </head>
 <body>
 <div class="page">
@@ -120,7 +129,7 @@ a{text-decoration:none}
 </section>
 
 
-<div class="share-row"><button class="share-btn" id="shareBtn" type="button">このページを共有</button></div>
+<div class="share-row"><button class="share-btn" id="shareBtn" type="button" aria-label="このページを共有" title="このページを共有"><svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="2.6"/><circle cx="17.5" cy="5.5" r="2.6"/><circle cx="17.5" cy="18.5" r="2.6"/><path d="M8.3 10.8 15.2 6.7M8.3 13.2l6.9 4.1"/></svg><svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5 10 18 19.5 6.5"/></svg></button></div>
 </main>
 <footer class="foot">
 <span>© VARELSER</span>
@@ -184,7 +193,7 @@ a{text-decoration:none}
 </script>
 <script>
 var b=document.getElementById('shareBtn');
-if(b){b.addEventListener('click',async function(){if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(e){}}else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);b.textContent='URLをコピーしました';setTimeout(function(){b.textContent='このページを共有';},2000);}catch(e){}}});}
+if(b){b.addEventListener('click',async function(){if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(e){}}else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);b.classList.add('copied');setTimeout(function(){b.classList.remove('copied');},2000);}catch(e){}}});}
 </script>
 </body>
 </html>

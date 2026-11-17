@@ -50,6 +50,11 @@ let entries = [];                      // パレットの索引
 let activeIdx = 0;
 let lastFocused = null;
 let shareFeedbackTimer = null;
+const SHARE_LINK_SVG = '<svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14.5a4.2 4.2 0 0 0 6 .4l3-3a4.24 4.24 0 1 0-6-6l-1.5 1.5"/><path d="M14 9.5a4.2 4.2 0 0 0-6-.4l-3 3a4.24 4.24 0 1 0 6 6L12.5 16.5"/></svg>';
+const SHARE_CHECK_SVG = '<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5 10 18 19.5 6.5"/></svg>';
+const shareIconHtml = new Map();
+function ensureShareIconStyle() { if (document.getElementById('shareIconStyle')) return; const st = document.createElement('style'); st.id = 'shareIconStyle'; st.textContent = '.share-icon-btn{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}.share-icon-btn svg{width:20px;height:20px;display:block}.share-icon-btn .ic-check{display:none}.share-icon-btn.copied .ic-share{display:none}.share-icon-btn.copied .ic-check{display:block}.share-icon-btn:hover{background:rgba(255,255,255,.12)!important;transform:translateY(-1px)}'; document.head.appendChild(st); }
+function shareIconInit(b, label) { ensureShareIconStyle(); b.innerHTML = SHARE_LINK_SVG + SHARE_CHECK_SVG; b.classList.add('share-icon-btn'); b.setAttribute('aria-label', label); shareIconHtml.set(b, b.innerHTML); }
 
 function recordRecent(id) {
   if (!id) return;
@@ -93,12 +98,15 @@ async function copyShareURL(btn) {
   }
   const targets = [btn, els.shareBtn, els.seedShareBtn].filter(Boolean);
   for (const b of targets) {
-    if (!b.dataset.label) b.dataset.label = b.textContent;
-    b.textContent = ok ? 'コピーしました' : url;
+    if (ok) b.classList.add('copied');
+    else if (shareIconHtml.has(b)) b.textContent = url;
   }
   clearTimeout(shareFeedbackTimer);
   shareFeedbackTimer = setTimeout(() => {
-    for (const b of targets) if (b.dataset.label) b.textContent = b.dataset.label;
+    for (const b of targets) {
+      b.classList.remove('copied');
+      if (shareIconHtml.has(b) && !b.querySelector('svg')) b.innerHTML = shareIconHtml.get(b);
+    }
   }, 1600);
   return url;
 }
@@ -342,7 +350,7 @@ function buildChrome() {
     cmdkBtn.type = 'button'; cmdkBtn.id = 'cmdkOpenBtn'; cmdkBtn.textContent = '⌘K 検索';
     cmdkBtn.addEventListener('click', openPalette);
     const shareBtn = document.createElement('button');
-    shareBtn.type = 'button'; shareBtn.id = 'shareUrlBtn'; shareBtn.textContent = '共有URLをコピー';
+    shareBtn.type = 'button'; shareBtn.id = 'shareUrlBtn'; shareIconInit(shareBtn, '共有URLをコピー'); shareBtn.title = '共有URLをコピー';
     shareBtn.addEventListener('click', () => copyShareURL(shareBtn));
     row.appendChild(label); row.appendChild(focusBtn); row.appendChild(cmdkBtn); row.appendChild(shareBtn);
     nav.appendChild(row);
@@ -374,7 +382,7 @@ function buildChrome() {
   const seedRow = document.getElementById('seedRow');
   if (seedRow && !document.getElementById('seedShareBtn')) {
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'seed-btn'; b.id = 'seedShareBtn'; b.textContent = '共有URL';
+    b.type = 'button'; b.className = 'seed-btn'; b.id = 'seedShareBtn'; shareIconInit(b, '共有URL');
     b.title = 'シード+ビュー+集中状態を含むURLをコピー';
     b.addEventListener('click', () => copyShareURL(b));
     seedRow.appendChild(b);

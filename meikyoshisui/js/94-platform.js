@@ -140,8 +140,10 @@ function initMidShareButton(){
   const dl = document.getElementById('btnDl');
   if (!dl || document.getElementById('btnMidSave')) return;
   const btn = document.createElement('button');
-  btn.id = 'btnMidSave'; btn.className = 'btn-dl'; btn.textContent = '⇪ SAVE / SHARE';
-  btn.style.cssText = 'font-size:10px;padding:14px 16px;letter-spacing:2px;margin-left:8px';
+  btn.id = 'btnMidSave'; btn.className = 'btn-dl share-icon-btn'; btn.innerHTML = '<svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M5 13v6.2A1.8 1.8 0 0 0 6.8 21h10.4a1.8 1.8 0 0 0 1.8-1.8V13"/></svg>';
+  btn.setAttribute('aria-label', 'MIDIを保存 / 共有（SAVE / SHARE）');
+  btn.style.cssText = 'width:32px;height:32px;min-width:32px;padding:0;margin-left:8px;border:0;border-radius:50%;background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:inherit;vertical-align:middle;transition:background .18s,transform .18s';
+  if (!document.getElementById('shareIconStyle94')) { const st = document.createElement('style'); st.id = 'shareIconStyle94'; st.textContent = '#btnMidSave svg{width:20px;height:20px;display:block}#btnMidSave:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}'; document.head.appendChild(st); }
   btn.title = '生成済み MIDI を保存先を選んで保存、または OS の共有で送る';
   btn.addEventListener('click', async () => {
     if (typeof S === 'undefined' || !S.midiData) return;

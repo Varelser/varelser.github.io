@@ -803,6 +803,15 @@ body.lien-hide-ui .floating-panel { opacity: 0; pointer-events: none; }
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+<style>/* share-icon 2026-11-17 (B) */
+#lpShare,#shareLinkBtn{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}
+#lpShare svg,#shareLinkBtn svg{width:20px;height:20px;display:block}
+#lpShare .ic-check,#shareLinkBtn .ic-check{display:none}
+#lpShare.copied .ic-share,#shareLinkBtn.copied .ic-share{display:none}
+#lpShare.copied .ic-check,#shareLinkBtn.copied .ic-check{display:block}
+#lpShare:hover,#shareLinkBtn:hover{background:rgba(128,128,128,.25)!important;transform:translateY(-1px)}
+#lpShare:focus-visible,#shareLinkBtn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
 </head>
 <body data-invert="false">
   <div id="app" class="app">
@@ -889,7 +898,7 @@ body.lien-hide-ui .floating-panel { opacity: 0; pointer-events: none; }
               Export re-renders the artwork from the active seed and frame count at the selected scale, applying the current visual settings to every frame. After a window resize, it exports the current view scaled up instead.
             </div>
             <div>
-              <button id="shareLinkBtn" class="export-btn" data-disable-during-export="1" type="button" style="width:100%;">Copy Share Link</button>
+              <button id="shareLinkBtn" class="export-btn" data-disable-during-export="1" type="button" aria-label="Copy Share Link" title="Copy Share Link"><svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14.5a4.2 4.2 0 0 0 6 .4l3-3a4.24 4.24 0 1 0-6-6l-1.5 1.5"/><path d="M14 9.5a4.2 4.2 0 0 0-6-.4l-3 3a4.24 4.24 0 1 0 6 6L12.5 16.5"/></svg><svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5 10 18 19.5 6.5"/></svg></button>
               <input id="shareLinkField" class="share-field" type="text" readonly hidden aria-label="Share link" />
               <div class="small-label" style="margin:4px 0 0;color:var(--muted);">The link encodes the full configuration. Anyone opening it sees the same artwork grow from the same seed.</div>
             </div>
@@ -2228,10 +2237,9 @@ body.lien-hide-ui .floating-panel { opacity: 0; pointer-events: none; }
           shareLinkField.value = url;
           shareLinkField.hidden = false;
           shareLinkField.select();
-          const originalLabel = shareLinkBtn.textContent;
           const markCopied = function() {
-            shareLinkBtn.textContent = 'Copied';
-            window.setTimeout(function() { shareLinkBtn.textContent = originalLabel; }, 1200);
+            shareLinkBtn.classList.add('copied');
+            window.setTimeout(function() { shareLinkBtn.classList.remove('copied'); }, 1200);
           };
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(url).then(markCopied, function() { /* link stays visible in the field for manual copying */ });
@@ -2885,7 +2893,7 @@ body.lien-hide-ui .floating-panel { opacity: 0; pointer-events: none; }
     '<div class="lp-sub"><div class="small-label">Config File</div><div class="lp-row">' +
     '<button class="mini-btn" id="lpExportJson" type="button">Export JSON</button>' +
     '<button class="mini-btn" id="lpImportJson" type="button">Import JSON</button>' +
-    '<button class="mini-btn" id="lpShare" type="button">Share</button>' +
+    '<button class="mini-btn" id="lpShare" type="button" aria-label="Share" title="Share"><svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M5 13v6.2A1.8 1.8 0 0 0 6.8 21h10.4a1.8 1.8 0 0 0 1.8-1.8V13"/></svg></button>' +
     '</div><div class="small-label lp-note">JSON can also be dropped onto the artwork.</div></div>' +
     '<div class="lp-sub"><div class="small-label">Live</div>' +
     '<div class="lp-row"><button class="mini-btn" id="lpPip" type="button">PiP Preview</button></div>' +

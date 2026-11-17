@@ -329,6 +329,15 @@
   .pagenav a[aria-current="page"]{background:var(--option-active-bg);border-color:var(--option-active-border);color:var(--option-active-fg)}
   @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
+<style>/* share-icon 2026-11-17 (B) */
+#btnExport{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}
+#btnExport svg{width:20px;height:20px;display:block}
+#btnExport .ic-check{display:none}
+#btnExport.copied .ic-share{display:none}
+#btnExport.copied .ic-check{display:block}
+#btnExport:hover{background:rgba(255,255,255,.12)!important;transform:translateY(-1px)}
+#btnExport:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -435,7 +444,7 @@
 
       <h3 class="subh">書き出し <span>— ログと履歴はこの端末の中だけにあります</span></h3>
       <div class="profctl">
-        <button class="btn" id="btnExport">記録を共有／書き出し</button>
+        <button class="btn" id="btnExport" aria-label="記録を共有／書き出し" title="記録を共有／書き出し"><svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M5 13v6.2A1.8 1.8 0 0 0 6.8 21h10.4a1.8 1.8 0 0 0 1.8-1.8V13"/></svg></button>
         <button class="btn" id="btnClearHist">端末内の記録を消す</button>
       </div>
     </div>

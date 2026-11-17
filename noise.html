@@ -510,6 +510,15 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "zce7ueghhb");
 </script>
+<style>/* share-icon 2026-11-17 (B) */
+#shareBtn{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}
+#shareBtn svg{width:20px;height:20px;display:block}
+#shareBtn .ic-check{display:none}
+#shareBtn.copied .ic-share{display:none}
+#shareBtn.copied .ic-check{display:block}
+#shareBtn:hover{background:rgba(255,255,255,.12)!important;transform:translateY(-1px)}
+#shareBtn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
 </head>
 <body>
 <div id="app">
@@ -564,7 +573,7 @@
           <button id="loadSessionBtn" class="secondary" type="button" data-help="保存したセッションJSONを読み込みます。">JSON読込</button>
           <button id="copySessionBtn" class="secondary" type="button" data-help="現在の設定JSONをクリップボードへコピーします。AIへ渡す時にも使えます。">JSONコピー</button>
           <button id="copyUrlBtn" class="secondary" type="button" data-help="現在の設定を埋め込んだURLをコピーします。開くと設定が再現されます。">URLコピー</button>
-          <button id="shareBtn" class="secondary" type="button" data-help="現在の設定を埋め込んだURLを、OSの共有シートで共有します（対応ブラウザのみ）。未対応の場合はURLをコピーします。">共有</button>
+          <button id="shareBtn" class="secondary" type="button" aria-label="共有" title="共有" data-help="現在の設定を埋め込んだURLを、OSの共有シートで共有します（対応ブラウザのみ）。未対応の場合はURLをコピーします。"><svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M5 13v6.2A1.8 1.8 0 0 0 6.8 21h10.4a1.8 1.8 0 0 0 1.8-1.8V13"/></svg></button>
           <button id="swapLayersBtn" class="secondary" type="button" data-help="Layer AとBの設定を入れ替えます。">A↔B 入替</button>
           <button id="copyAtoBBtn" class="secondary" type="button" data-help="Layer Aの設定をBへコピーします。似た音を重ねたい時に。">A→B コピー</button>
           <button id="clearAutosaveBtn" class="secondary" type="button" data-help="ブラウザに自動保存された前回設定を消します。次回は初期状態で開きます。">自動保存削除</button>

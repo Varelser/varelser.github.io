@@ -465,6 +465,15 @@ body{background:#f7f7f5}
 .tag-chip:hover{background:none;border-color:#111;color:#111}
 .tag-chip.is-active{background:#111;border-color:#111;color:#fff;box-shadow:none}
 </style>
+<style>/* share-icon 2026-11-17 (B) */
+#knShareBtn{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}
+#knShareBtn svg{width:20px;height:20px;display:block}
+#knShareBtn .ic-check{display:none}
+#knShareBtn.copied .ic-share{display:none}
+#knShareBtn.copied .ic-check{display:block}
+#knShareBtn:hover{background:rgba(0,0,0,.07)!important;transform:translateY(-1px)}
+#knShareBtn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
 </head>
 <body>
 <header class="kn-sitebar">
@@ -2758,7 +2767,7 @@ body{background:#f7f7f5}
     paletteBtn.addEventListener('click', function () { openPalette(); });
     toolbar.appendChild(paletteBtn);
     var shareBtn = document.createElement('button');
-    shareBtn.type = 'button'; shareBtn.id = 'knShareBtn'; shareBtn.textContent = '共有';
+    shareBtn.type = 'button'; shareBtn.id = 'knShareBtn'; shareBtn.innerHTML = '<svg class="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M5 13v6.2A1.8 1.8 0 0 0 6.8 21h10.4a1.8 1.8 0 0 0 1.8-1.8V13"/></svg>'; shareBtn.setAttribute('aria-label', '共有'); shareBtn.title = '共有';
     shareBtn.addEventListener('click', function () {
       var data = { title: document.title, url: location.href };
       if (navigator.share) { navigator.share(data).catch(function () {}); }
