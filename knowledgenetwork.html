@@ -464,6 +464,7 @@ body{background:#f7f7f5}
 .tag-chip{background:none;border:1px solid rgba(0,0,0,.35);border-radius:999px;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;color:#222}
 .tag-chip:hover{background:none;border-color:#111;color:#111}
 .tag-chip.is-active{background:#111;border-color:#111;color:#fff;box-shadow:none}
+.kn-sym{font-family:"Segoe UI Symbol","Noto Sans Symbols 2","Noto Sans Symbols","Apple Symbols",sans-serif;font-size:16px;line-height:1;display:inline-block;padding:2px 0}
 </style>
 <style>/* share-icon 2026-11-17 (B) */
 #knShareBtn{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}
@@ -496,13 +497,13 @@ body{background:#f7f7f5}
     <div class="toolbar" role="search">
       <input id="q" type="search" placeholder="人物・理論・作品で検索（ / でフォーカス）" aria-label="検索">
       <select id="chapter" aria-label="章で絞り込み"><option value="">全章</option><option value="c2-脳のネットワーク">第2章 脳のネットワーク</option><option value="c3-エントロピック・ブレイン">第3章 エントロピック・ブレイン</option><option value="c4-誘発法">第4章 誘発法</option><option value="c5-畏敬">第5章 畏敬（Awe）という入口</option><option value="c6-神話と儀礼">第6章 神話と儀礼</option><option value="c7-原始性の復権">第7章 原始性の復権</option><option value="c8-シュルレアリスムと無意識">第8章 シュルレアリスムと無意識</option><option value="c9-映画における変性意識">第9章 映画における変性意識</option><option value="c10-統合-実践-生化学-安全">第10〜13章 統合／実践／生化学／安全</option><option value="c14-意識の未来">第14章 意識の未来</option></select>
-      <button id="random-btn" type="button">ランダム</button>
-      <button id="clear-btn" type="button">クリア</button>
-      <button id="timeline-btn" type="button" aria-pressed="false">年表</button>
-      <button id="daily-btn" type="button">今日の1件</button>
-      <a href="knowledgenetwork-graph.html" id="graph-link">関連図</a>
-      <a class="toolbar-home" href="https://varelser.github.io/">ホームへ</a>
-      <button type="button" id="toolbar-to-list">一覧トップへ</button>
+      <button id="random-btn" type="button" title="ランダム" aria-label="ランダムな項目へ"><span class="kn-sym">⤨</span></button>
+      <button id="clear-btn" type="button" title="クリア" aria-label="検索と絞り込みをクリア"><span class="kn-sym">✕</span></button>
+      <button id="timeline-btn" type="button" aria-pressed="false" title="年表" aria-label="年表を開く/閉じる"><span class="kn-sym">⋮≡</span></button>
+      <button id="daily-btn" type="button" title="今日の1件" aria-label="今日の1件"><span class="kn-sym">☀</span></button>
+      <a href="knowledgenetwork-graph.html" id="graph-link" title="関連図" aria-label="関連図を開く"><span class="kn-sym">⑃</span></a>
+      <a class="toolbar-home" href="https://varelser.github.io/" title="ホームへ" aria-label="ホームへ"><span class="kn-sym">⌂</span></a>
+      <button type="button" id="toolbar-to-list" title="一覧トップへ" aria-label="一覧のトップへ"><span class="kn-sym">⇑</span></button>
       <span id="result-count" aria-live="polite"></span>
     </div>
     <div class="tag-row" id="tag-row" role="group" aria-label="タグで絞り込み"></div>
@@ -2677,7 +2678,7 @@ body{background:#f7f7f5}
       b.setAttribute('aria-pressed', String(on));
     });
     var chip = document.getElementById('knFavToggle');
-    if (chip) chip.textContent = '★ お気に入り (' + favs.size + ')';
+    if (chip) chip.textContent = '★ (' + favs.size + ')';
   }
   function favFixup() {
     if (!favOnly) return;
@@ -2760,10 +2761,12 @@ body{background:#f7f7f5}
   if (toolbar) {
     var favChip = document.createElement('button');
     favChip.type = 'button'; favChip.id = 'knFavToggle'; favChip.setAttribute('aria-pressed', 'false');
+    favChip.title = 'お気に入り'; favChip.setAttribute('aria-label', 'お気に入りのみ表示を切替');
     favChip.addEventListener('click', function () { setFavOnly(!favOnly); });
     toolbar.appendChild(favChip);
     var paletteBtn = document.createElement('button');
-    paletteBtn.type = 'button'; paletteBtn.id = 'knPaletteBtn'; paletteBtn.textContent = '⌘K ジャンプ';
+    paletteBtn.type = 'button'; paletteBtn.id = 'knPaletteBtn'; paletteBtn.textContent = '⌘K';
+    paletteBtn.title = 'ジャンプ'; paletteBtn.setAttribute('aria-label', 'クイックジャンプを開く');
     paletteBtn.addEventListener('click', function () { openPalette(); });
     toolbar.appendChild(paletteBtn);
     var shareBtn = document.createElement('button');
