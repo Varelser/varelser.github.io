@@ -574,7 +574,7 @@ header.vl-top h1 { position: absolute; left: 50%; transform: translateX(-50%); w
 
 
 </main>
-<footer>DESIGN v6.1 — 計算はすべてこのファイル内で行う。自動保存（ローカルストレージ）と設定JSON・設定コードでの保存に対応する。PSD読み書きに ag-psd（MIT License）を使用。PCでの利用を推奨。</footer>
+<footer>DESIGN v6.2 — 計算はすべてこのファイル内で行う。自動保存（ローカルストレージ）と設定JSON・設定コードでの保存に対応する。PSD読み書きに ag-psd（MIT License）を使用。PCでの利用を推奨。</footer>
 <dialog id="exportDialog" aria-labelledby="exportDialogTitle">
 <h3 id="exportDialogTitle" style="margin:0 0 8px;font-size:15px;text-transform:none;letter-spacing:0;color:#fff">書き出しサイズの確認</h3>
 <p id="exportDialogText" style="margin:0 0 14px"></p>
@@ -3747,5 +3747,170 @@ const xt=window.__b64.fromByteArray,dr=window.__b64.toByteArray,ma=window.__pako
 })();
 </script>
 
+<!-- design-scenes v6.2: finished-form template scenes (pure addition) -->
+<style>
+#dkScenes{margin:0 0 14px}
+#dkScenes .dk-scene-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.dk-scene{border:1px solid #262626;border-radius:10px;padding:10px;cursor:pointer;background:transparent;text-align:left;color:#e5e5e5}
+.dk-scene:hover{background:#171717}
+.dk-scene canvas{width:100%;height:auto;display:block;border-radius:6px;border:1px solid #262626}
+.dk-scene b{display:block;margin-top:8px;color:#fff;font-size:13.5px}
+.dk-scene .dk-meta{font-size:11px;color:#a3a3a3;margin-top:2px}
+.dk-scene .dk-why{font-size:12px;color:#a3a3a3;margin-top:4px;line-height:1.6}
+#dkSceneNote{font-size:12px;color:#a3a3a3;margin-top:10px}
+</style>
+<script>
+(function () {
+  var SCENES = [
+    { id: 'note-golden', name: 'note アイキャッチ', meta: '1200×630 ／ 理論：黄金比・左上交点',
+      theory: '黄金比・左上交点', board: { w: 1200, h: 630 }, fit: 'cover',
+      text: { headline: '見出しをここに入れる', sizeRatio: 0.085, pos: 'bottom', font: 'serif', weight: 700, align: 'left' },
+      why: '黄金比の交点に主役を置く、記事の顔として最も安定する構図。' },
+    { id: 'insta-ukiyoe', name: 'Instagram 正方形（浮世絵）', meta: '1080×1080 ／ 様式：浮世絵',
+      style: '浮世絵', board: { w: 1080, h: 1080 }, fit: 'cover',
+      text: { headline: 'タイトルをここに', sizeRatio: 0.07, pos: 'bottom', font: 'serif', weight: 700, align: 'center' },
+      why: '余白と色面で写真を引き立てる、浮世絵の「間」の構図。' },
+    { id: 'insta-45', name: 'Instagram 縦 4:5（三分割）', meta: '1080×1350 ／ 理論：三分割・左上交点',
+      theory: '三分割・左上交点', board: { w: 1080, h: 1350 }, fit: 'cover',
+      text: { headline: 'タイトルをここに', sizeRatio: 0.07, pos: 'bottom', font: 'sans', weight: 700, align: 'left' },
+      why: '三分割の交点に主役を置く縦構図。フィードで指を止める。' },
+    { id: 'x-russia', name: 'X ポスト（ロシア構成主義）', meta: '1600×900 ／ 様式：ロシア構成主義',
+      style: 'ロシア構成主義', board: { w: 1600, h: 900 }, fit: 'cover',
+      text: { headline: 'お知らせをここに', sizeRatio: 0.075, pos: 'bottom', font: 'sans', weight: 700, align: 'left' },
+      why: '斜めの力と赤で、タイムラインに埋もれない告知の形。' },
+    { id: 'yt-thirds', name: 'YouTube サムネイル（三分割）', meta: '1280×720 ／ 理論：三分割・右上交点',
+      theory: '三分割・右上交点', board: { w: 1280, h: 720 }, fit: 'cover',
+      text: { headline: '見出しをここに', sizeRatio: 0.11, pos: 'bottom', font: 'sans', weight: 700, align: 'left' },
+      why: '主役を右上に逃がし、左下に大きな見出し。読める文字が主役の実用形。' },
+    { id: 'poster-swiss', name: 'ポスター A3（スイス・スタイル）', meta: '3508×4961 ／ 様式：スイス・スタイル',
+      style: 'スイス・スタイル（国際タイポグラフィ様式）', board: { w: 3508, h: 4961 }, fit: 'cover',
+      text: { headline: 'タイトルをここに', sizeRatio: 0.06, pos: 'top', font: 'sans', weight: 700, align: 'left' },
+      why: 'グリッドと余白の教科書形。左上の見出しから読ませる。' },
+    { id: 'meishi-bauhaus', name: '名刺（バウハウス）', meta: '1075×650 ／ 様式：バウハウス',
+      style: 'バウハウス', board: { w: 1075, h: 650 }, fit: 'contain',
+      text: { headline: '名前をここに', sizeRatio: 0.09, pos: 'bottom', font: 'sans', weight: 700, align: 'left' },
+      why: '幾何と原色。様式の色と構図をそのまま小さな判面に落とす。' },
+    { id: 'cd-destijl', name: 'CD ジャケット（デ・ステイル）', meta: '1400×1400 ／ 様式：デ・ステイル',
+      style: 'デ・ステイル', board: { w: 1400, h: 1400 }, fit: 'cover',
+      text: { headline: 'タイトルをここに', sizeRatio: 0.07, pos: 'bottom', font: 'sans', weight: 700, align: 'left' },
+      why: '原色の面と直線の構成。正方形の盤面にそのまま映える。' },
+    { id: 'presen-tanaka', name: 'プレゼン表紙 16:9（田中一光）', meta: '1920×1080 ／ 様式：田中一光のモダニズム',
+      style: '田中一光のモダニズム', board: { w: 1920, h: 1080 }, fit: 'contain',
+      text: { headline: 'タイトルをここに', sizeRatio: 0.055, pos: 'center', font: 'serif', weight: 700, align: 'center' },
+      why: '静かで強い表紙。中央の主役と余白で語る。' },
+    { id: 'event-deco', name: 'イベント告知 縦長（アール・デコ）', meta: '1080×1920 ／ 様式：アール・デコ',
+      style: 'アール・デコ', board: { w: 1080, h: 1920 }, fit: 'cover',
+      text: { headline: 'イベント名をここに', sizeRatio: 0.08, pos: 'top', font: 'serif', weight: 700, align: 'center' },
+      why: '黒地に金の対称。夜のイベント告知の形。' }
+  ];
+  var GDMAP = { thirds: 'gdThirds', golden: 'gdGolden', spiral: 'gdSpiral', diag: 'gdDiag', center: 'gdCenter', safe: 'gdSafe', grid: 'gdGrid', quarter: 'gdQuarter', silver: 'gdSilver', grect: 'gdGRect', diagm: 'gdDiagM', radial: 'gdRadial', circle: 'gdCircle', fifths: 'gdFifths', harmonic: 'gdHarmonic', root: 'gdRoot' };
+  function $(id) { return document.getElementById(id); }
+  function setGuides(g0) {
+    var g = Object.assign({ thirds: 0, golden: 0, spiral: 0, diag: 0, center: 0, safe: 0, grid: 0 }, g0 || {});
+    Object.keys(GDMAP).forEach(function (k) { var el = $(GDMAP[k]); if (el) el.checked = !!g[k]; });
+  }
+  function setText(t, bw) {
+    LText.text = t.headline;
+    LText.size = Math.max(10, Math.round(bw * t.sizeRatio));
+    LText.pos = t.pos; LText.font = t.font; LText.weight = t.weight; LText.align = t.align;
+    LText.x = null; LText.y = null;
+    try {
+      $('txtInput').value = t.headline;
+      $('txtSize').value = LText.size;
+      if ([...$('txtPos').options].some(function (o) { return o.value === t.pos; })) $('txtPos').value = t.pos;
+      if ([...$('txtFont').options].some(function (o) { return o.value === t.font; })) $('txtFont').value = t.font;
+      if ([...$('txtWeight').options].some(function (o) { return String(o.value) === String(t.weight); })) $('txtWeight').value = t.weight;
+      if ([...$('txtAlign').options].some(function (o) { return o.value === t.align; })) $('txtAlign').value = t.align;
+    } catch (e) {}
+  }
+  function waitImage(cb) {
+    var n = 0;
+    (function poll() { if (LImg || ++n > 40) cb(); else setTimeout(poll, 120); })();
+  }
+  function applyScene(sc) {
+    var note = $('dkSceneNote');
+    var begin = function () {
+      L.tw = sc.board.w; L.th = sc.board.h;
+      $('imgTW').value = sc.board.w; $('imgTH').value = sc.board.h;
+      L.fit = sc.fit; try { $('imgFit').value = sc.fit; } catch (e) {}
+      if (sc.style) {
+        var si = STYLES.findIndex(function (s) { return s.name === sc.style; });
+        if (si >= 0) applyStyle(si);
+      } else if (sc.theory) {
+        var tp = THEORY.find(function (t) { return t.name === sc.theory; });
+        if (tp) {
+          setGuides(tp.guides);
+          if (LImg && !(layers[activeLayer] && layers[activeLayer].lock)) {
+            layoutFit(); L.scale *= tp.f;
+            var iw = LNat.w * L.scale, ih = LNat.h * L.scale;
+            var pt = THEORY_PLACE[tp.place]({ tw: L.tw, th: L.th, PHI: PHI });
+            L.x = pt[0] - iw / 2; L.y = pt[1] - ih / 2;
+            $('imgScale').value = Math.round(L.scale * 100);
+            $('imgScaleVal').textContent = Math.round(L.scale * 100) + '%';
+            $('imgX').value = Math.round(L.x); $('imgY').value = Math.round(L.y);
+          }
+          layoutRefresh(); pushHistory(); autosave();
+        }
+      }
+      setText(sc.text, sc.board.w);
+      layoutRefresh(); autosave();
+      if (note) note.textContent = 'シーン適用：' + sc.name + ' — ' + sc.why + '（写真は再配置のみ・元データ不変。合わなければ ⌘Z で戻せる）';
+      var cv = $('layoutCanvas'); if (cv) setTimeout(function () { cv.scrollIntoView({ block: 'center' }); }, 80);
+    };
+    if (!LImg) { var b = $('imgSample'); if (b) { b.click(); waitImage(begin); return; } }
+    begin();
+  }
+  function drawPreview(cv, sc) {
+    var ctx = cv.getContext('2d');
+    var W = cv.width, H = cv.height;
+    var bg = '#f5f5f5', fg = '#111111', ac = '#888888', place = 'center', guides = null;
+    var st = sc.style ? STYLES.find(function (s) { return s.name === sc.style; }) : null;
+    var tp = sc.theory ? THEORY.find(function (t) { return t.name === sc.theory; }) : null;
+    if (st) { bg = st.bg; fg = st.fg; ac = st.accent; place = st.place; guides = st.guides; }
+    if (tp) { place = tp.place; guides = tp.guides; bg = '#ffffff'; fg = '#111111'; ac = '#111111'; }
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    var pt = THEORY_PLACE[place] ? THEORY_PLACE[place]({ tw: W, th: H, PHI: PHI }) : [W / 2, H / 2];
+    var hw = W * 0.52, hh = H * 0.52;
+    ctx.fillStyle = '#c9c9c9'; ctx.fillRect(pt[0] - hw / 2, pt[1] - hh / 2, hw, hh);
+    ctx.strokeStyle = ac; ctx.lineWidth = 3; ctx.strokeRect(pt[0] - hw / 2, pt[1] - hh / 2, hw, hh);
+    ctx.strokeStyle = 'rgba(128,128,128,.55)'; ctx.lineWidth = 1;
+    if (guides && guides.thirds) { [W / 3, 2 * W / 3].forEach(function (x) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }); [H / 3, 2 * H / 3].forEach(function (y) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }); }
+    if (guides && guides.golden) { [W / PHI, W - W / PHI].forEach(function (x) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }); [H / PHI, H - H / PHI].forEach(function (y) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }); }
+    ctx.fillStyle = fg;
+    var barH = Math.max(8, H * 0.11);
+    var bx = sc.text.align === 'center' ? W * 0.2 : W * 0.07;
+    var bw2 = sc.text.align === 'center' ? W * 0.6 : W * 0.55;
+    var by = sc.text.pos === 'top' ? H * 0.08 : H - H * 0.08 - barH;
+    ctx.fillRect(bx, by, bw2, barH);
+    ctx.fillStyle = ac; ctx.fillRect(W * 0.07, H * 0.07, W * 0.16, Math.max(4, H * 0.045));
+  }
+  var host = $('tplList');
+  if (!host) return;
+  var anchor = host.closest('.fold') || host.parentElement;
+  var wrap = document.createElement('div');
+  wrap.id = 'dkScenes';
+  wrap.className = 'fold';
+  wrap.innerHTML = '<h3 style="margin-top:0">完成形テンプレート（シーン）</h3>' +
+    '<p class="lead">選ぶと、版面・色・ガイド・写真の配置・見出しまで入った完成形を一括で適用する。写真は再配置のみで、元データは変わらない。</p>' +
+    '<div class="dk-scene-grid"></div><p id="dkSceneNote"></p>';
+  anchor.parentElement.insertBefore(wrap, anchor);
+  var grid = wrap.querySelector('.dk-scene-grid');
+  SCENES.forEach(function (sc) {
+    var card = document.createElement('div');
+    card.className = 'dk-scene'; card.setAttribute('role', 'button'); card.tabIndex = 0;
+    var ratio = sc.board.h / sc.board.w;
+    var cw = 264, ch = Math.round(264 * Math.min(1, ratio));
+    if (ratio > 1) { ch = 264; cw = Math.round(264 / ratio); }
+    card.innerHTML = '<canvas width="' + cw + '" height="' + ch + '"></canvas><b></b><div class="dk-meta"></div><div class="dk-why"></div>';
+    card.querySelector('b').textContent = sc.name;
+    card.querySelector('.dk-meta').textContent = sc.meta;
+    card.querySelector('.dk-why').textContent = sc.why;
+    drawPreview(card.querySelector('canvas'), sc);
+    card.addEventListener('click', function () { applyScene(sc); });
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyScene(sc); } });
+    grid.appendChild(card);
+  });
+})();
+</script>
 </body>
 </html>
