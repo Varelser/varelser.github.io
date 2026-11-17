@@ -1,7 +1,99 @@
+/* ═══ v7.1: ボイシングスタイル変換 (js/31 VLEngine と共有する単一実装) ═══
+   入力はソート済みボイシング (MIDI ノート昇順)。ピッチクラスの多重集合を
+   保存し、オクターブ配置だけを変える。範囲チェックは呼び出し側が行う。
+   close : 最低音を錨に、各声部を直上の同 PC へ詰めた密位配置
+   open  : 密位から上から2番目 (5声以上では4番目も) の声部を +12 した開位配置
+   drop2 : 上から2番目の声部を -12 (3声以上で成立)
+   drop3 : 上から3番目の声部を -12 (4声以上で成立)
+   drop24: 上から2番目と4番目の声部を -12 (4声以上で成立)
+   声部不足で成立しないスタイルは入力をそのまま返す (音の欠落・重複なし) */
+function voicingCloseForm(v){
+  const out=[v[0]];
+  for(let i=1;i<v.length;i++){
+    const pc=((v[i]%12)+12)%12;
+    let d=(pc-(((out[i-1]%12)+12)%12)+12)%12; if(d===0)d=12;
+    out.push(out[i-1]+d);
+  }
+  return out;
+}
+function applyVoicingStyle(v,style){
+  if(!v||!v.length)return v;
+  const s=[...v].sort((a,b)=>a-b);
+  if(s.length<2)return s;
+  if(style==='close')return voicingCloseForm(s);
+  if(style==='open'){
+    const c=voicingCloseForm(s);
+    if(c.length<3)return c;
+    const o=[...c];
+    o[o.length-2]+=12;
+    if(o.length>=5)o[o.length-4]+=12;
+    o.sort((a,b)=>a-b);
+    return o;
+  }
+  if(style==='drop2'||style==='drop3'||style==='drop24'){
+    const need=style==='drop2'?3:4;
+    if(s.length<need)return s;
+    const o=[...s];
+    if(style==='drop2'||style==='drop24')o[o.length-2]-=12;
+    if(style==='drop3')o[o.length-3]-=12;
+    if(style==='drop24')o[o.length-4]-=12;
+    o.sort((a,b)=>a-b);
+    return o;
+  }
+  return s;
+}
+/* 転回指定 → 最低声部に来るべき PC。pcs は ivs と平行な絶対 PC 列。
+   該当するコードトーンが存在しない場合は null (= フィルタなし) */
+function voicingInversionPc(pcs,ivs,inv){
+  if(!pcs||!pcs.length)return null;
+  const pc=i=>(((pcs[i]%12)+12)%12);
+  if(inv==='root')return pc(0);
+  if(!ivs||ivs.length!==pcs.length){
+    if(inv==='inv1')return pcs.length>1?pc(1):null;
+    if(inv==='inv2')return pcs.length>2?pc(2):null;
+    if(inv==='inv3')return pcs.length>3?pc(3):null;
+    return null;
+  }
+  const find=pred=>{for(let j=0;j<ivs.length;j++)if(pred(ivs[j]))return pc(j);return null;};
+  if(inv==='inv1')return find(x=>x===3||x===4);
+  if(inv==='inv2'){const a=find(x=>x===7);return a!=null?a:find(x=>x===6||x===8);}
+  if(inv==='inv3')return find(x=>x===10||x===11);
+  return null;
+}
+/* 候補列へスタイル変換 + 転回フィルタを適用 (空集合化する場合は元の列を返す) */
+function voicingShapeCandidates(cands,vc,pcs,ivs){
+  let list=cands;
+  if(vc.style&&vc.style!=='auto'){
+    const seen=new Set(),out=[];
+    for(const v of cands){
+      const t=applyVoicingStyle(v,vc.style);
+      if(!t||t.some(n=>n<12||n>115))continue;
+      const k=t.join(',');if(seen.has(k))continue;seen.add(k);out.push(t);
+    }
+    if(out.length)list=out;
+  }
+  if(vc.inversion&&vc.inversion!=='auto'){
+    const tp=voicingInversionPc(pcs,ivs,vc.inversion);
+    if(tp!=null){
+      const f=list.filter(v=>v.length&&(((v[0]%12)+12)%12)===tp);
+      if(f.length)list=f;
+    }
+  }
+  return list;
+}
 function generateVoicings(pcs,cm,ms){ms=ms||22;const u=[...new Set(pcs.map(p=>((p%12)+12)%12))];if(!u.length)return[];const out=[],seen=new Set();const add=v=>{const sv=[...v].sort((a,b)=>a-b);if(sv.some(n=>n<12||n>115)||sv[sv.length-1]-sv[0]>ms)return;const k=sv.join(',');if(seen.has(k))return;seen.add(k);out.push(sv);};for(let inv=0;inv<u.length;inv++){const rot=[...u.slice(inv),...u.slice(0,inv)];let bass=Math.round((cm-Math.floor(ms/2)-rot[0])/12)*12+rot[0];while(bass<12)bass+=12;while(bass>100)bass-=12;const v=[bass];for(let i=1;i<rot.length;i++){let n=Math.floor(v[v.length-1]/12)*12+rot[i];if(n<=v[v.length-1])n+=12;v.push(n);}add(v);if(v.length>=3){const d2=[...v];d2[d2.length-2]-=12;add(d2);}if(v.length>=4){const d3=[...v];d3[d3.length-3]-=12;add(d3);}}return out;}
 function vlCost(a,b){if(!a.length||!b.length)return 999;const sa=[...a].sort((x,y)=>x-y),sb=[...b].sort((x,y)=>x-y);while(sa.length<sb.length)sa.push(clampNote(sa[sa.length-1]+12));while(sb.length<sa.length)sb.push(clampNote(sb[sb.length-1]+12));return sa.reduce((s,n,i)=>s+Math.abs(n-sb[i]),0);}
 function parallelPenalty(a,b){if(a.length<2||b.length<2)return 0;const n=Math.min(a.length,b.length);let p=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const iA=a[j]-a[i],iB=b[j]-b[i],mI=b[i]-a[i],mJ=b[j]-a[j];if((mI!==0||mJ!==0)&&((mI>0&&mJ>0)||(mI<0&&mJ<0))){if(iA%12===7&&iB%12===7)p+=8;if(iA%12===0&&iA!==0&&iB%12===0)p+=12;}}return p;}
-function bestVoicing(prev,pcs,cm,ms,fd){ms=ms||22;fd=!!fd;const c=generateVoicings(pcs,cm,ms);if(!c.length)return prev.length?prev:[];if(!prev.length)return c.reduce((b,v)=>(v[v.length-1]-v[0])<(b[b.length-1]-b[0])?v:b);const pk=prev.join(',');const pl=fd?c.filter(v=>v.join(',')!==pk):c;if(!pl.length)return prev;let best=Infinity,bv=pl[0];
+function bestVoicing(prev,pcs,cm,ms,fd,ivs){ms=ms||22;fd=!!fd;
+/* v7.1: ボイシング拡張 (S.voicing)。全て auto のときは従来経路と完全一致。
+   spread 手動値は generateVoicings の最大スパンを上書きし、スタイル変換と
+   転回フィルタは候補生成後・声部連結の選択前に適用する */
+let _vc=null;try{if(typeof S!=='undefined'&&S.voicing)_vc=S.voicing;}catch(e){}
+const _vOn=!!(_vc&&(_vc.style!=='auto'||_vc.inversion!=='auto'||_vc.spread!=='auto'));
+const _ms=(_vOn&&typeof _vc.spread==='number')?_vc.spread:ms;
+let c=generateVoicings(pcs,cm,_ms);
+if(_vOn)c=voicingShapeCandidates(c,_vc,pcs,ivs);
+if(!c.length)return prev.length?prev:[];if(!prev.length)return c.reduce((b,v)=>(v[v.length-1]-v[0])<(b[b.length-1]-b[0])?v:b);const pk=prev.join(',');const pl=fd?c.filter(v=>v.join(',')!==pk):c;if(!pl.length)return prev;let best=Infinity,bv=pl[0];
 /* v7.0: 声部連結スムーズネス (S.vlSmooth 0-100, 既定50)。
    t=0.5 で従来スコアと完全一致。t>0.5 は最大跳躍にペナルティを加えて
    なめらかに、t<0.5 は移動量を割り引いて大胆なボイシングを許す */
@@ -115,7 +207,7 @@ for(let i=0;i<dn.length;i++){ae.push({pos:c,v:[0x90,dn[i].n,Math.max(1,Math.min(
 function makePad(rm,ci,si,p,prg){const{ppq,bars,genre,octLayers,octBias,humanize,dissonance,velocity,tensionCurve,gateBase,gateHumanize,resolveThreshold,resolveSteps,attractor,attractorMap,lorenz,ca,pcAnalysis,chordAnalysis,rootPc,boidsResult,vlVoicing,rcTracks}=p;
 /* v25.6: RC ゲート — 声部1 を Pad に割り当て */
 const _rcPadGates=rcTracks&&rcTracks[1]?rcTracks[1].gates:null;
-const _bPad=boidsResult?.pad||null;const _bPadVB=_bPad?_bPad.velocityScale:1.0;const bt=ppq*4,total=bt*bars,vB=Math.round(velocity*(genre==='dark_ambient'?.87:.72)*_bPadVB),hum=humanize/100;const cPCs=ci.map(i=>((rm%12)+i)%12),tens=si.filter(s=>!ci.map(c=>c%12).includes(s%12)&&s!==0);const sL=[...octLayers].sort((a,b)=>a-b),mL=sL[Math.floor(sL.length/2)]||3,cM=clampNote(mL*12+(rm%12)+Math.round(octBias*6)),sMax=Math.min(28,Math.max(14,(sL[sL.length-1]-sL[0])*12+12));const seg=ppq*(genre==='ambient'||genre==='space'?4:genre==='drone'?8:2),pL=Math.max(2,Math.round(bt*4/seg));const scalePool=buildNotePool(rm,si,octLayers);DissonanceResolver.reset();const ae=[];let c=0,si2=0,cv=vlVoicing&&vlVoicing.length?[...vlVoicing]:[];while(c<total){cv=bestVoicing(cv,cPCs,cM,sMax,(si2>0)&&(si2%pL===0));const t=getTension(c,ppq,tensionCurve);
+const _bPad=boidsResult?.pad||null;const _bPadVB=_bPad?_bPad.velocityScale:1.0;const bt=ppq*4,total=bt*bars,vB=Math.round(velocity*(genre==='dark_ambient'?.87:.72)*_bPadVB),hum=humanize/100;const cPCs=ci.map(i=>((rm%12)+i)%12),tens=si.filter(s=>!ci.map(c=>c%12).includes(s%12)&&s!==0);const sL=[...octLayers].sort((a,b)=>a-b),mL=sL[Math.floor(sL.length/2)]||3,cM=clampNote(mL*12+(rm%12)+Math.round(octBias*6)),sMax=Math.min(28,Math.max(14,(sL[sL.length-1]-sL[0])*12+12));const seg=ppq*(genre==='ambient'||genre==='space'?4:genre==='drone'?8:2),pL=Math.max(2,Math.round(bt*4/seg));const scalePool=buildNotePool(rm,si,octLayers);DissonanceResolver.reset();const ae=[];let c=0,si2=0,cv=vlVoicing&&vlVoicing.length?[...vlVoicing]:[];while(c<total){cv=bestVoicing(cv,cPCs,cM,sMax,(si2>0)&&(si2%pL===0),ci);const t=getTension(c,ppq,tensionCurve);
 /* Attractor: mapX/Y/Z設定に従いvel等を変調 */
 const _atP=resolveAttractorMap(attractor||lorenz,attractorMap,12,2);
 const lVelShift=_atP.velShift;

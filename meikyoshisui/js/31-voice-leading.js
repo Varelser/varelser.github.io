@@ -162,10 +162,39 @@ const VLEngine = (() => {
   function voiceLead(prevVoicing, pcs, opts) {
     opts = opts || {};
     const center = opts.center || 60;
-    const span   = opts.span   || SPAN_MAX;
+    let span   = opts.span   || SPAN_MAX;
     const force  = !!opts.force;
 
-    const candidates = _generateVoicings(pcs, center, span);
+    /* v7.1: ボイシング拡張 (S.voicing) — js/16 と同一の変換 (applyVoicingStyle)
+       と転回フィルタを候補生成後・選択前に適用する。spread 手動値は span を
+       上書き。全て auto のときは従来経路と完全一致 */
+    let _vc = null;
+    try { if (typeof S !== 'undefined' && S && S.voicing) _vc = S.voicing; } catch (e) {}
+    const _vOn = !!(_vc && (_vc.style !== 'auto' || _vc.inversion !== 'auto' || _vc.spread !== 'auto'));
+    if (_vOn && typeof _vc.spread === 'number') span = _vc.spread;
+
+    let candidates = _generateVoicings(pcs, center, span);
+    if (_vOn && candidates.length) {
+      let list = candidates;
+      if (_vc.style !== 'auto' && typeof applyVoicingStyle === 'function') {
+        const seen = new Set(), out = [];
+        for (const v of candidates) {
+          const t = applyVoicingStyle(v, _vc.style);
+          if (!t || t.some(n => n < NOTE_MIN || n > NOTE_MAX)) continue;
+          const k = t.join(','); if (seen.has(k)) continue; seen.add(k); out.push(t);
+        }
+        if (out.length) list = out;
+      }
+      if (_vc.inversion !== 'auto') {
+        let tp = (opts.invPc != null) ? opts.invPc : null;
+        if (tp == null && typeof voicingInversionPc === 'function') tp = voicingInversionPc(pcs, opts.ivs || null, _vc.inversion);
+        if (tp != null) {
+          const f = list.filter(v => v.length && (((v[0] % 12) + 12) % 12) === tp);
+          if (f.length) list = f;
+        }
+      }
+      candidates = list;
+    }
     if (!candidates.length) return prevVoicing.length ? prevVoicing : [];
 
     // 前ボイシングがない場合は音域が最も狭いものを選ぶ
@@ -225,7 +254,15 @@ const VLEngine = (() => {
       const c = entry.chord;
       if (!c || !c.iv) { result.push(prev); continue; }
       const pcs = c.iv.map(i => ((c.root + i) % 12 + 12) % 12);
-      const v = voiceLead(prev, pcs, { center, span, force: result.length > 0 });
+      /* v7.1: 転回指定時は最低声部の PC を事前計算して voiceLead へ渡す */
+      let invPc = null;
+      try {
+        if (typeof S !== 'undefined' && S && S.voicing && S.voicing.inversion !== 'auto'
+            && typeof voicingInversionPc === 'function') {
+          invPc = voicingInversionPc(pcs, c.iv, S.voicing.inversion);
+        }
+      } catch (e) {}
+      const v = voiceLead(prev, pcs, { center, span, force: result.length > 0, invPc, ivs: c.iv });
       result.push(v);
       prev = v;
     }

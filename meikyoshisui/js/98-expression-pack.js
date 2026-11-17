@@ -146,7 +146,50 @@ function buildLayerFx() {
   });
   wrap.appendChild(paramRow('Smoothness', sS, sV));
   wrap.appendChild(noteLine('50 = 従来の声部連結。上げると滑らかに、下げると跳躍を許す (Pad / 進行ボイシング)'));
+  buildVoicing(wrap);
   panel.appendChild(wrap);
+}
+
+/* ── v7.1: ボイシング拡張 (スタイル / 転回 / スプレッド) — Layers パネル ── */
+function mkSelect(id, options) {
+  const s = document.createElement('select');
+  s.id = id; s.className = 'chain-sel'; s.style.cssText = 'flex:1;';
+  options.forEach(([v, l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l; s.appendChild(o); });
+  return s;
+}
+function selRow(label, sel) {
+  const r = document.createElement('div'); r.className = 'param-row';
+  const l = document.createElement('span'); l.className = 'param-label'; l.textContent = label;
+  r.appendChild(l); r.appendChild(sel);
+  return r;
+}
+function vcInvalidate() {
+  if (typeof VLEngine !== 'undefined' && VLEngine.invalidateCache) VLEngine.invalidateCache();
+}
+function buildVoicing(wrap) {
+  if ($('v71VcStyle')) return;
+  wrap.appendChild(secLabel('VOICING — v7.1'));
+  const st = mkSelect('v71VcStyle', [
+    ['auto', 'Auto (従来)'], ['close', 'Close — 密位'], ['open', 'Open — 開位'],
+    ['drop2', 'Drop 2'], ['drop3', 'Drop 3'], ['drop24', 'Drop 2 & 4'],
+  ]);
+  st.addEventListener('change', () => { S.voicing.style = st.value; vcInvalidate(); });
+  wrap.appendChild(selRow('Style', st));
+  const iv = mkSelect('v71VcInv', [
+    ['auto', 'Auto (指定なし)'], ['root', '基本形 (Root)'], ['inv1', '第1転回 (3rd)'],
+    ['inv2', '第2転回 (5th)'], ['inv3', '第3転回 (7th)'],
+  ]);
+  iv.addEventListener('change', () => { S.voicing.inversion = iv.value; vcInvalidate(); });
+  wrap.appendChild(selRow('Inversion', iv));
+  const sp = mkSlider('v71VcSpread', 11, 36, 1), spV = mkVal('v71VcSpreadV');
+  sp.addEventListener('input', () => {
+    const v = parseInt(sp.value);
+    S.voicing.spread = (v <= 11) ? 'auto' : v;
+    spV.textContent = (v <= 11) ? 'Auto' : v + ' st';
+    vcInvalidate();
+  });
+  wrap.appendChild(paramRow('Spread', sp, spV));
+  wrap.appendChild(noteLine('Pad / 進行ボイシングの配置。Drop は声部不足のとき素通り。Spread は左端が Auto (従来の内部計算)。全て Auto で従来と同一'));
 }
 function markLayerBtns() {
   const lg = $('v7LfxLayers'); if (!lg || typeof S === 'undefined' || !S.layerFx) return;
@@ -226,6 +269,18 @@ function sync() {
   if (av) { av.value = S.avoidWeight; const e = $('v7AvoidV'); if (e) e.textContent = S.avoidWeight + '%'; }
   const ft = $('v7FillTog');
   if (ft) ft.classList.toggle('on', !!S.sectionFill);
+  /* v7.1: ボイシング拡張の表示同期 (復元時もここで揃う) */
+  if (S.voicing) {
+    const st = $('v71VcStyle'); if (st) st.value = S.voicing.style;
+    const iv = $('v71VcInv'); if (iv) iv.value = S.voicing.inversion;
+    const sp = $('v71VcSpread');
+    if (sp) {
+      const isNum = typeof S.voicing.spread === 'number';
+      sp.value = isNum ? S.voicing.spread : 11;
+      const e = $('v71VcSpreadV'); if (e) e.textContent = isNum ? S.voicing.spread + ' st' : 'Auto';
+    }
+    vcInvalidate();
+  }
 }
 
 function init() {
