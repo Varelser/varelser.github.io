@@ -83,19 +83,565 @@
       <div class="filter-grid">
         <div class="filter-item"><label for="searchInput">検索</label><input id="searchInput" type="search" placeholder="タイトル・要約・タグで検索" /></div>
         <div class="filter-item"><label for="monthFilter">月</label><select id="monthFilter"><option value="">すべて</option><option value="2026-11">2026-11</option><option value="2026-10">2026-10</option></select></div>
-        <div class="filter-item"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="その他">その他</option><option value="アートマーケット">アートマーケット</option><option value="パフォーマンス">パフォーマンス</option><option value="メディアアート">メディアアート</option><option value="保存修復・文化財">保存修復・文化財</option><option value="写真">写真</option><option value="展覧会・イベント">展覧会・イベント</option><option value="工芸・デザイン">工芸・デザイン</option><option value="建築・空間">建築・空間</option><option value="彫刻・立体">彫刻・立体</option><option value="現代アート">現代アート</option><option value="絵画">絵画</option><option value="美術史・古典">美術史・古典</option><option value="美術館・博物館">美術館・博物館</option></select></div>
-        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="AAM (American Alliance of Museums)">AAM (American Alliance of Museums)</option><option value="ART iT">ART iT</option><option value="ARTnews">ARTnews</option><option value="Aperture">Aperture</option><option value="Ars Electronica Blog">Ars Electronica Blog</option><option value="Art Plugged">Art Plugged</option><option value="ArtAsiaPacific">ArtAsiaPacific</option><option value="Artforum">Artforum</option><option value="Artnet News">Artnet News</option><option value="Artsy">Artsy</option><option value="Blooloop">Blooloop</option><option value="Casa BRUTUS">Casa BRUTUS</option><option value="Colossal">Colossal</option><option value="DailyArt Magazine">DailyArt Magazine</option><option value="Designboom Art">Designboom Art</option><option value="Dezeen Art">Dezeen Art</option><option value="Elephant Magazine">Elephant Magazine</option><option value="FAD Magazine">FAD Magazine</option><option value="Guggenheim">Guggenheim</option><option value="Hypebeast Art">Hypebeast Art</option><option value="Hyperallergic">Hyperallergic</option><option value="LACMA Unframed">LACMA Unframed</option><option value="Momus">Momus</option><option value="MutualArt">MutualArt</option><option value="My Modern Met">My Modern Met</option><option value="NYT Art and Design">NYT Art and Design</option><option value="Ocula Magazine">Ocula Magazine</option><option value="Spoon &amp; Tamago">Spoon &amp; Tamago</option><option value="The Art Newspaper">The Art Newspaper</option><option value="The Flux Review">The Flux Review</option><option value="The Guardian Art and Design">The Guardian Art and Design</option><option value="Two Coats of Paint">Two Coats of Paint</option><option value="V&amp;A Blog">V&amp;A Blog</option><option value="artscape">artscape</option></select></div>
+        <div class="filter-item"><label for="categoryFilter">カテゴリ</label><select id="categoryFilter"><option value="">すべて</option><option value="その他">その他</option><option value="アートマーケット">アートマーケット</option><option value="パフォーマンス">パフォーマンス</option><option value="メディアアート">メディアアート</option><option value="保存修復・文化財">保存修復・文化財</option><option value="写真">写真</option><option value="展覧会・イベント">展覧会・イベント</option><option value="工芸・デザイン">工芸・デザイン</option><option value="建築・空間">建築・空間</option><option value="彫刻・立体">彫刻・立体</option><option value="版画・グラフィック">版画・グラフィック</option><option value="現代アート">現代アート</option><option value="絵画">絵画</option><option value="美術史・古典">美術史・古典</option><option value="美術館・博物館">美術館・博物館</option></select></div>
+        <div class="filter-item"><label for="sourceFilter">配信元</label><select id="sourceFilter"><option value="">すべて</option><option value="AAM (American Alliance of Museums)">AAM (American Alliance of Museums)</option><option value="ART iT">ART iT</option><option value="ARTnews">ARTnews</option><option value="Aperture">Aperture</option><option value="Ars Electronica Blog">Ars Electronica Blog</option><option value="Art Plugged">Art Plugged</option><option value="ArtAsiaPacific">ArtAsiaPacific</option><option value="Artforum">Artforum</option><option value="Artnet News">Artnet News</option><option value="Artsy">Artsy</option><option value="Berlin Art Link">Berlin Art Link</option><option value="Blooloop">Blooloop</option><option value="Casa BRUTUS">Casa BRUTUS</option><option value="Colossal">Colossal</option><option value="DailyArt Magazine">DailyArt Magazine</option><option value="Designboom Art">Designboom Art</option><option value="Dezeen Art">Dezeen Art</option><option value="Elephant Magazine">Elephant Magazine</option><option value="FAD Magazine">FAD Magazine</option><option value="Guggenheim">Guggenheim</option><option value="Hypebeast Art">Hypebeast Art</option><option value="Hyperallergic">Hyperallergic</option><option value="LACMA Unframed">LACMA Unframed</option><option value="Momus">Momus</option><option value="MutualArt">MutualArt</option><option value="My Modern Met">My Modern Met</option><option value="NYT Art and Design">NYT Art and Design</option><option value="Ocula Magazine">Ocula Magazine</option><option value="Spoon &amp; Tamago">Spoon &amp; Tamago</option><option value="The Art Newspaper">The Art Newspaper</option><option value="The Flux Review">The Flux Review</option><option value="The Guardian Art and Design">The Guardian Art and Design</option><option value="Two Coats of Paint">Two Coats of Paint</option><option value="V&amp;A Blog">V&amp;A Blog</option><option value="artscape">artscape</option></select></div>
         <div class="filter-item"><label for="kindFilter">種別</label><select id="kindFilter"><option value="">すべて</option><option value="インタビュー">インタビュー</option><option value="ニュース">ニュース</option><option value="レビュー・批評">レビュー・批評</option><option value="受賞・訃報">受賞・訃報</option><option value="展覧会・イベント">展覧会・イベント</option><option value="展覧会案内">展覧会案内</option><option value="市場レポート">市場レポート</option><option value="特集">特集</option><option value="研究・解説">研究・解説</option></select></div>
         <div class="filter-item"><label for="regionFilter">地域</label><select id="regionFilter"><option value="">すべて</option><option value="国内">国内</option><option value="海外">海外</option></select></div>
       </div>
       <div class="toolbar">
-        <div class="count"><span id="visibleCount">0</span>件表示 / 全138件</div>
+        <div class="count"><span id="visibleCount">0</span>件表示 / 全177件</div>
         <button type="button" class="reset-btn" id="resetFilters">絞り込みを解除</button>
       </div>
     </section>
     <div id="emptyState" class="empty">該当する記事がありません。</div>
     <section class="articles" id="articlesList">
 <!-- ARTICLES_START -->
+<article
+  data-id="ddbbdadd5759211700331025dc4699b9"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="美術館・博物館"
+  data-region="海外"
+  data-source="ARTnews"
+  data-kind="ニュース"
+  data-search="フィラデルフィア美術館の元幹部、会社カードに3万ドル請求で有罪認める Former Philadelphia Museum of Art Executive Charged $30K to Company Cards フィラデルフィア美術館の元幹部が、会社のカードに3万ドルを請求したとして訴えられた。元チーフ・ピープル・アンド・ダイバーシティ・オフィサーのラターシャ・ハーリングは、盗品の受け取りについて有罪を認めた。 この有罪答弁により、金曜日に予定されていた裁判は回避された。美術館の幹部による金銭をめぐる問題が、司法の場で決着をみたかたちだ。 ARTnews 美術館・博物館 海外 ニュース">
+  <p class="meta">ARTnews　2026-11-14 07:35</p>
+  <h2 class="article-title">フィラデルフィア美術館の元幹部、会社カードに3万ドル請求で有罪認める</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術館・博物館</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">フィラデルフィア美術館の元幹部が、会社のカードに3万ドルを請求したとして訴えられた。元チーフ・ピープル・アンド・ダイバーシティ・オフィサーのラターシャ・ハーリングは、盗品の受け取りについて有罪を認めた。<span class="summary-rest" hidden><br><br>この有罪答弁により、金曜日に予定されていた裁判は回避された。美術館の幹部による金銭をめぐる問題が、司法の場で決着をみたかたちだ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ARTnews<br>
+    原題：Former Philadelphia Museum of Art Executive Charged $30K to Company Cards<br>
+    原文URL：<a href="https://www.artnews.com/art-news/news/former-philadelphia-museum-executive-credit-card-charges-1234805960/" target="_blank" rel="noopener">https://www.artnews.com/art-news/news/former-philadelphia-museum-executive-credit-card-charges-1234805960/</a>
+  </div>
+</article>
+<article
+  data-id="be44d0a8719601be7710e17c811e57aa"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="アートマーケット||展覧会・イベント"
+  data-region="海外"
+  data-source="Artnet News"
+  data-kind="特集"
+  data-search="衝撃を求めた画商イレアナ・ソナベンド、そのコレクションの内側 She Wanted to Be Shocked. Inside Storied Art Dealer Ileana Sonnabend’s Collection 伝説の画商イレアナ・ソナベンドのコレクションをめぐり、相続人たちがローマで大規模な展覧会を開くとともに、ニューヨークで作品の売却を進めている。「衝撃を受けたがっていた」という彼女の姿勢が、コレクションの性格を物語っている。 ローマでの展示とニューヨークでの売却という二つの動きを通して、現代美術の歴史を形作った画商の遺産があらためて注目を集めている。 Artnet News アートマーケット 展覧会・イベント 海外 特集">
+  <p class="meta">Artnet News　2026-11-14 07:23</p>
+  <h2 class="article-title">衝撃を求めた画商イレアナ・ソナベンド、そのコレクションの内側</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: アートマーケット</span><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">伝説の画商イレアナ・ソナベンドのコレクションをめぐり、相続人たちがローマで大規模な展覧会を開くとともに、ニューヨークで作品の売却を進めている。「衝撃を受けたがっていた」という彼女の姿勢が、コレクションの性格を物語っている。<span class="summary-rest" hidden><br><br>ローマでの展示とニューヨークでの売却という二つの動きを通して、現代美術の歴史を形作った画商の遺産があらためて注目を集めている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Artnet News<br>
+    原題：She Wanted to Be Shocked. Inside Storied Art Dealer Ileana Sonnabend’s Collection<br>
+    原文URL：<a href="https://news.artnet.com/market/ileana-sonnabend-christies-auction-rome-exhibition-2834995" target="_blank" rel="noopener">https://news.artnet.com/market/ileana-sonnabend-christies-auction-rome-exhibition-2834995</a>
+  </div>
+</article>
+<article
+  data-id="daa6daf6eccb3a294cbe0245b77c07c7"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="展覧会・イベント||アートマーケット"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="展覧会案内"
+  data-search="1年の休止を経て「ADAAフェア」として復活するニューヨークのアートフェア After a year off, the ADAA&#x27;s New York fair returns with a new name and revamped layout 全米美術商協会（ADAA）のフェアが、1年の休止を経てニューヨークに戻ってきた。従来の「アート・ショー」を刷新した「ADAAフェア」として、新しい名称と見直された構成で再出発する。 出展者数を絞ったコンパクトな編成となり、ホイットニー美術館との提携も組まれている。装いを新たにしたフェアが、どのような姿で来場者を迎えるかが注目される。 The Art Newspaper 展覧会・イベント アートマーケット 海外 展覧会案内">
+  <p class="meta">The Art Newspaper　2026-11-14 07:15</p>
+  <h2 class="article-title">1年の休止を経て「ADAAフェア」として復活するニューヨークのアートフェア</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">カテゴリ: アートマーケット</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">全米美術商協会（ADAA）のフェアが、1年の休止を経てニューヨークに戻ってきた。従来の「アート・ショー」を刷新した「ADAAフェア」として、新しい名称と見直された構成で再出発する。<span class="summary-rest" hidden><br><br>出展者数を絞ったコンパクトな編成となり、ホイットニー美術館との提携も組まれている。装いを新たにしたフェアが、どのような姿で来場者を迎えるかが注目される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：After a year off, the ADAA&#x27;s New York fair returns with a new name and revamped layout<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/13/adaa-art-fair-returns-one-year-hiatus-new-york" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/13/adaa-art-fair-returns-one-year-hiatus-new-york</a>
+  </div>
+</article>
+<article
+  data-id="86328e946b85ba315397d303d8a55fb2"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="美術館・博物館"
+  data-region="海外"
+  data-source="ARTnews"
+  data-kind="ニュース"
+  data-search="ユーロポールが警告する美術館窃盗の凶悪化——手口と標的の変化 Europol Warns of More Aggressive Museum Heists as Thieves Change Tactics and Targets 欧州刑事警察機構（ユーロポール）が、美術館を狙った窃盗がより大胆かつ攻撃的になっていると警告した。かつてのような隠密な手口ではなく、目立つやり方で実行されるケースが増えているという。 犯行は、その場しのぎで選ばれた下層の実行犯によって行われることが多いとされる。手口と標的の変化に、美術館側の防犯体制がどう対応していくかが問われている。 ARTnews 美術館・博物館 海外 ニュース">
+  <p class="meta">ARTnews　2026-11-14 07:06</p>
+  <h2 class="article-title">ユーロポールが警告する美術館窃盗の凶悪化——手口と標的の変化</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術館・博物館</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">欧州刑事警察機構（ユーロポール）が、美術館を狙った窃盗がより大胆かつ攻撃的になっていると警告した。かつてのような隠密な手口ではなく、目立つやり方で実行されるケースが増えているという。<span class="summary-rest" hidden><br><br>犯行は、その場しのぎで選ばれた下層の実行犯によって行われることが多いとされる。手口と標的の変化に、美術館側の防犯体制がどう対応していくかが問われている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ARTnews<br>
+    原題：Europol Warns of More Aggressive Museum Heists as Thieves Change Tactics and Targets<br>
+    原文URL：<a href="https://www.artnews.com/art-news/news/europol-warns-of-more-aggressive-museum-heists-thieves-change-tactics-targets-1234805942/" target="_blank" rel="noopener">https://www.artnews.com/art-news/news/europol-warns-of-more-aggressive-museum-heists-thieves-change-tactics-targets-1234805942/</a>
+  </div>
+</article>
+<article
+  data-id="1dba7d0d4b01c62fa575942402fa76a0"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="美術史・古典||絵画"
+  data-region="国内"
+  data-source="Casa BRUTUS"
+  data-kind="特集"
+  data-search="村上隆が読む「名所江戸百景」——左右対称の構図に描かれた悲劇の美女 左右対称の構図で描かれた、悲劇の美女の物語。 村上隆が歌川広重の「名所江戸百景」をオマージュしたシリーズを毎週末に紹介する連載。今回は左右対称の構図で描かれた、悲劇の美女の物語が取り上げられている。 西洋の画家たちに「認知革命」を引き起こした日本美術の衝撃を、村上隆が読み解く連載だ。 Casa BRUTUS 美術史・古典 絵画 国内 特集">
+  <p class="meta">Casa BRUTUS　2026-11-14 07:00</p>
+  <h2 class="article-title">村上隆が読む「名所江戸百景」——左右対称の構図に描かれた悲劇の美女</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術史・古典</span><span class="chip">カテゴリ: 絵画</span><span class="chip">地域: 国内</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">村上隆が歌川広重の「名所江戸百景」をオマージュしたシリーズを毎週末に紹介する連載。今回は左右対称の構図で描かれた、悲劇の美女の物語が取り上げられている。<span class="summary-rest" hidden><br><br>西洋の画家たちに「認知革命」を引き起こした日本美術の衝撃を、村上隆が読み解く連載だ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Casa BRUTUS<br>
+    原題：左右対称の構図で描かれた、悲劇の美女の物語。<br>
+    原文URL：<a href="https://casabrutus.com/categories/art/491342" target="_blank" rel="noopener">https://casabrutus.com/categories/art/491342</a>
+  </div>
+</article>
+<article
+  data-id="d7acb46c4331fc43f642fccea06e3caf"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="絵画"
+  data-region="海外"
+  data-source="Two Coats of Paint"
+  data-kind="特集"
+  data-search="故郷の「1平方マイル」と向き合う画家、コゼット・ラッセルがレジデンスに Two Coats Resident Artist Cozette Russell, November 29–December 4, 2026 Two Coats of Paintのレジデンシー・プログラムが今月、ニューハンプシャー州リー出身のコゼット・ラッセルを迎える。ラッセルはハーバード大学で映画・視覚研究とクリティカル・メディア・プラクティスの大学院コーディネーターを務めている。 ラッセルは、自分が育った土地の近くにある納屋のスタジオで制作している。生まれた場所との近さが、彼女の制作にとって大切な意味を持っているという。 生まれた場所がその人を形作るという考えを、彼女はウェールズ語の「y filltir sgwâr（1平方マイル）」という言葉に託す。作品の多くは、その特定の土地とのあいだで続く対話だという。 Two Coats of Paint 絵画 海外 特集">
+  <p class="meta">Two Coats of Paint　2026-11-14 06:54</p>
+  <h2 class="article-title">故郷の「1平方マイル」と向き合う画家、コゼット・ラッセルがレジデンスに</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 絵画</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">Two Coats of Paintのレジデンシー・プログラムが今月、ニューハンプシャー州リー出身のコゼット・ラッセルを迎える。ラッセルはハーバード大学で映画・視覚研究とクリティカル・メディア・プラクティスの大学院コーディネーターを務めている。<span class="summary-rest" hidden><br><br>ラッセルは、自分が育った土地の近くにある納屋のスタジオで制作している。生まれた場所との近さが、彼女の制作にとって大切な意味を持っているという。<br><br>生まれた場所がその人を形作るという考えを、彼女はウェールズ語の「y filltir sgwâr（1平方マイル）」という言葉に託す。作品の多くは、その特定の土地とのあいだで続く対話だという。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Two Coats of Paint<br>
+    原題：Two Coats Resident Artist Cozette Russell, November 29–December 4, 2026<br>
+    原文URL：<a href="https://twocoatsofpaint.com/2026/11/two-coats-resident-artist-cozette-russell-november-15-20-2026.html?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=two-coats-resident-artist-cozette-russell-november-15-20-2026" target="_blank" rel="noopener">https://twocoatsofpaint.com/2026/11/two-coats-resident-artist-cozette-russell-november-15-20-2026.html?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=two-coats-resident-artist-cozette-russell-november-15-20-2026</a>
+  </div>
+</article>
+<article
+  data-id="628319f8db632fbcb1a8c1003a321c72"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="現代アート||美術館・博物館"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="受賞・訃報"
+  data-search="ゲッティ・センターで送られたベティ・サールの追悼——アーティストを育てた芸術家 The late Los Angeles artist Betye Saar receives heartfelt send-off at the Getty Center ロサンゼルスのアーティスト、ベティ・サールの追悼行事がゲッティ・センターで開かれた。集まった人々が心からの別れを告げた。 追悼の場では、サールが作品だけでなく、アーティストそのものを育ててきたことが強調された。作品と人、その両方を通じて後進に影響を与えた芸術家の足跡がしのばれた。 The Art Newspaper 現代アート 美術館・博物館 海外 受賞・訃報">
+  <p class="meta">The Art Newspaper　2026-11-14 06:47</p>
+  <h2 class="article-title">ゲッティ・センターで送られたベティ・サールの追悼——アーティストを育てた芸術家</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 現代アート</span><span class="chip">カテゴリ: 美術館・博物館</span><span class="chip">地域: 海外</span><span class="chip">種別: 受賞・訃報</span></div>
+  <div class="summary">ロサンゼルスのアーティスト、ベティ・サールの追悼行事がゲッティ・センターで開かれた。集まった人々が心からの別れを告げた。<span class="summary-rest" hidden><br><br>追悼の場では、サールが作品だけでなく、アーティストそのものを育ててきたことが強調された。作品と人、その両方を通じて後進に影響を与えた芸術家の足跡がしのばれた。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：The late Los Angeles artist Betye Saar receives heartfelt send-off at the Getty Center<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/13/betye-saar-memorial-event-getty-center" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/13/betye-saar-memorial-event-getty-center</a>
+  </div>
+</article>
+<article
+  data-id="5bb476ce0136d5b3e20036c134ccc2e8"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="その他"
+  data-region="海外"
+  data-source="Artnet News"
+  data-kind="ニュース"
+  data-search="ケヒンデ・ワイリー、NYのアパート家賃滞納で訴えられる Kehinde Wiley Owes Rent on New York Apartment, Suit Alleges 肖像画家のケヒンデ・ワイリーが、ニューヨークのアパートの家賃を滞納しているとして家主から訴えられた。訴えによれば、家主は少なくとも3万6000ドルを求めている。 著名な画家をめぐる家賃トラブルが訴訟に発展した、というアート界のニュースだ。 Artnet News その他 海外 ニュース">
+  <p class="meta">Artnet News　2026-11-14 06:40</p>
+  <h2 class="article-title">ケヒンデ・ワイリー、NYのアパート家賃滞納で訴えられる</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: その他</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">肖像画家のケヒンデ・ワイリーが、ニューヨークのアパートの家賃を滞納しているとして家主から訴えられた。訴えによれば、家主は少なくとも3万6000ドルを求めている。<span class="summary-rest" hidden><br><br>著名な画家をめぐる家賃トラブルが訴訟に発展した、というアート界のニュースだ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Artnet News<br>
+    原題：Kehinde Wiley Owes Rent on New York Apartment, Suit Alleges<br>
+    原文URL：<a href="https://news.artnet.com/art-world/kehinde-wiley-rent-lawsuit-2834710" target="_blank" rel="noopener">https://news.artnet.com/art-world/kehinde-wiley-rent-lawsuit-2834710</a>
+  </div>
+</article>
+<article
+  data-id="d78210e0e3e3efb08db93d75a0fd0ea0"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="アートマーケット||美術館・博物館"
+  data-region="海外"
+  data-source="ARTnews"
+  data-kind="ニュース"
+  data-search="ヘドリーン・コレクション売却益は大学美術館ではなく借金返済へ Sotheby’s Hedreen Auction Proceeds Will Repay Loan, Not Fund University Museum: Report サザビーズで競売にかけられるヘドリーン・コレクションの売却益は、大学美術館の資金ではなく、コレクションを担保とした借入金の返済に充てられる見通しだと報じられた。 報道によれば、これらの作品は借金を返済するために売却されるという。ヘドリーン氏は、この借金がシアトル大学への寄贈の約束を果たす妨げになっていると述べている。 ARTnews アートマーケット 美術館・博物館 海外 ニュース">
+  <p class="meta">ARTnews　2026-11-14 06:36</p>
+  <h2 class="article-title">ヘドリーン・コレクション売却益は大学美術館ではなく借金返済へ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: アートマーケット</span><span class="chip">カテゴリ: 美術館・博物館</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">サザビーズで競売にかけられるヘドリーン・コレクションの売却益は、大学美術館の資金ではなく、コレクションを担保とした借入金の返済に充てられる見通しだと報じられた。<span class="summary-rest" hidden><br><br>報道によれば、これらの作品は借金を返済するために売却されるという。ヘドリーン氏は、この借金がシアトル大学への寄贈の約束を果たす妨げになっていると述べている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ARTnews<br>
+    原題：Sotheby’s Hedreen Auction Proceeds Will Repay Loan, Not Fund University Museum: Report<br>
+    原文URL：<a href="https://www.artnews.com/art-news/news/sothebys-hedreen-auction-proceeds-will-repay-loan-not-fund-university-museum-report-1234805958/" target="_blank" rel="noopener">https://www.artnews.com/art-news/news/sothebys-hedreen-auction-proceeds-will-repay-loan-not-fund-university-museum-report-1234805958/</a>
+  </div>
+</article>
+<article
+  data-id="9805708ca5f90cfd2d7f6942b473d018"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="写真"
+  data-region="海外"
+  data-source="Hypebeast Art"
+  data-kind="インタビュー"
+  data-search="ジェイミー・パールが語る、名声を撮る技術——合間の瞬間に宿る個性 Jamie Pearl on the Art of Photographing Fame ニューヨークを拠点とする写真家ジェイミー・パールが、名声を撮ることについて語った。ドーチーやデニス・ロッドマン、ニーナ・ドブレフら著名人の率直な瞬間をとらえてきた経験を振り返っている。 最も記憶に残るセレブリティ写真は、誰もカメラを意識していないときに生まれるという。ファッション・ウィークのディナーの外でのタバコ休憩、車の後部座席での束の間のひととき、レッドカーペット直前の仕上げの瞬間——そうした「合間の瞬間」こそ、入念に演出されたポートレートよりもその人の個性を映し出すとパールは語る。 高校時代に白黒フィルム写真に出会ったパールは、やがてニューヨークのファッションとエンターテインメントの世界で活躍するようになり、ケケ・パーマーらも撮影してきた。セレブリティの現場で培った予期せぬ瞬間への直感と、エディトリアル写真への関心の高まりが、新たな実験の可能性を開いているという。 Hypebeast Art 写真 海外 インタビュー">
+  <p class="meta">Hypebeast Art　2026-11-14 06:32</p>
+  <h2 class="article-title">ジェイミー・パールが語る、名声を撮る技術——合間の瞬間に宿る個性</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 写真</span><span class="chip">地域: 海外</span><span class="chip">種別: インタビュー</span></div>
+  <div class="summary">ニューヨークを拠点とする写真家ジェイミー・パールが、名声を撮ることについて語った。ドーチーやデニス・ロッドマン、ニーナ・ドブレフら著名人の率直な瞬間をとらえてきた経験を振り返っている。<span class="summary-rest" hidden><br><br>最も記憶に残るセレブリティ写真は、誰もカメラを意識していないときに生まれるという。ファッション・ウィークのディナーの外でのタバコ休憩、車の後部座席での束の間のひととき、レッドカーペット直前の仕上げの瞬間——そうした「合間の瞬間」こそ、入念に演出されたポートレートよりもその人の個性を映し出すとパールは語る。<br><br>高校時代に白黒フィルム写真に出会ったパールは、やがてニューヨークのファッションとエンターテインメントの世界で活躍するようになり、ケケ・パーマーらも撮影してきた。セレブリティの現場で培った予期せぬ瞬間への直感と、エディトリアル写真への関心の高まりが、新たな実験の可能性を開いているという。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hypebeast Art<br>
+    原題：Jamie Pearl on the Art of Photographing Fame<br>
+    原文URL：<a href="https://hypebeast.com/2026/11/jamie-pearl-celebrity-portraits-spotlight" target="_blank" rel="noopener">https://hypebeast.com/2026/11/jamie-pearl-celebrity-portraits-spotlight</a>
+  </div>
+</article>
+<article
+  data-id="b802f0fe1e38186901ca7114d8ea7cad"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="アートマーケット"
+  data-region="海外"
+  data-source="Artnet News"
+  data-kind="市場レポート"
+  data-search="ドロテウム、ウィーンにモダニズムの巨匠と戦後の重鎮を集結 Dorotheum Brings Together Modernist Masters and Postwar Heavyweights in Vienna ウィーンのドロテウムが今月、モダンアートとコンテンポラリーアートIのセールを開催する。モダニズムの巨匠から戦後の重鎮までが一堂に会する内容だ。 記事はパライス・ドロテウムでのセールから注目のロットを詳しく紹介している。 Artnet News アートマーケット 海外 市場レポート">
+  <p class="meta">Artnet News　2026-11-14 06:20</p>
+  <h2 class="article-title">ドロテウム、ウィーンにモダニズムの巨匠と戦後の重鎮を集結</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: アートマーケット</span><span class="chip">地域: 海外</span><span class="chip">種別: 市場レポート</span></div>
+  <div class="summary">ウィーンのドロテウムが今月、モダンアートとコンテンポラリーアートIのセールを開催する。モダニズムの巨匠から戦後の重鎮までが一堂に会する内容だ。<span class="summary-rest" hidden><br><br>記事はパライス・ドロテウムでのセールから注目のロットを詳しく紹介している。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Artnet News<br>
+    原題：Dorotheum Brings Together Modernist Masters and Postwar Heavyweights in Vienna<br>
+    原文URL：<a href="https://news.artnet.com/art-world/dorotheum-modern-art-contemporary-art-2834913" target="_blank" rel="noopener">https://news.artnet.com/art-world/dorotheum-modern-art-contemporary-art-2834913</a>
+  </div>
+</article>
+<article
+  data-id="c760e8aabec0c4799dc7262b1fc63cb2"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="展覧会・イベント"
+  data-region="海外"
+  data-source="Hyperallergic"
+  data-kind="ニュース"
+  data-search="ADAAアートフェアが復活、昨秋の中止を経てアッパー・イースト・サイドへ At NYC’s ADAA Art Fair, Unlimited Shrimp and $2K Diebenkorns 全米美術商協会（ADAA）のアートフェアが、ニューヨークのアッパー・イースト・サイドに戻ってきた。5日間にわたる会期で開催される、親密な雰囲気のフェアだ。 前年秋の開催は静かに中止されており、今回が復帰の場となる。 Hyperallergic 展覧会・イベント 海外 ニュース">
+  <p class="meta">Hyperallergic　2026-11-14 06:20</p>
+  <h2 class="article-title">ADAAアートフェアが復活、昨秋の中止を経てアッパー・イースト・サイドへ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">全米美術商協会（ADAA）のアートフェアが、ニューヨークのアッパー・イースト・サイドに戻ってきた。5日間にわたる会期で開催される、親密な雰囲気のフェアだ。<span class="summary-rest" hidden><br><br>前年秋の開催は静かに中止されており、今回が復帰の場となる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hyperallergic<br>
+    原題：At NYC’s ADAA Art Fair, Unlimited Shrimp and $2K Diebenkorns<br>
+    原文URL：<a href="https://hyperallergic.com/at-nycs-adaa-art-fair-unlimited-shrimp-and-2k-diebenkorns/" target="_blank" rel="noopener">https://hyperallergic.com/at-nycs-adaa-art-fair-unlimited-shrimp-and-2k-diebenkorns/</a>
+  </div>
+</article>
+<article
+  data-id="0d01934da3bb5e8190d94dbf066d108b"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="その他"
+  data-region="海外"
+  data-source="Hyperallergic"
+  data-kind="研究・解説"
+  data-search="米国の独立系アート出版物の45％が存続の危機に、調査で判明 45% of US Independent Arts Publications Face Existential Crisis, Report Finds 調査の結果、米国の独立系アート出版物の45％が存続の危機に直面していることが分かった。資金の減少が続くなか、多くの出版物が経営の瀬戸際に立たされている。 調査ではさらに、検閲への懸念と財政的な不安定さのあいだに、気がかりな相関関係があることも明らかになった。資金繰りの厳しさと、表現をめぐる圧力とが結びついているという。 Hyperallergic その他 海外 研究・解説">
+  <p class="meta">Hyperallergic　2026-11-14 06:17</p>
+  <h2 class="article-title">米国の独立系アート出版物の45％が存続の危機に、調査で判明</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: その他</span><span class="chip">地域: 海外</span><span class="chip">種別: 研究・解説</span></div>
+  <div class="summary">調査の結果、米国の独立系アート出版物の45％が存続の危機に直面していることが分かった。資金の減少が続くなか、多くの出版物が経営の瀬戸際に立たされている。<span class="summary-rest" hidden><br><br>調査ではさらに、検閲への懸念と財政的な不安定さのあいだに、気がかりな相関関係があることも明らかになった。資金繰りの厳しさと、表現をめぐる圧力とが結びついているという。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hyperallergic<br>
+    原題：45% of US Independent Arts Publications Face Existential Crisis, Report Finds<br>
+    原文URL：<a href="https://hyperallergic.com/45-of-us-independent-arts-publications-face-existential-crisis-report-finds/" target="_blank" rel="noopener">https://hyperallergic.com/45-of-us-independent-arts-publications-face-existential-crisis-report-finds/</a>
+  </div>
+</article>
+<article
+  data-id="a24f0f5cef7971e2b62d6d9219faaade"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="絵画||展覧会・イベント"
+  data-region="海外"
+  data-source="Two Coats of Paint"
+  data-kind="展覧会案内"
+  data-search="カレン・バーバー：少し謎めいて、満ち足りた絵画の世界 Karen Barbour: Slightly mysterious, yet content カリフォルニアを拠点とする画家カレン・バーバー。その個展「コーネリアのためのダイヤモンド・ガーデン」がハーカウィック・ギャラリーで開かれている。作品に囲まれて描き、キャンバスからキャンバスへと移動しながら、小花や蝶、鳥といった繰り返されるモチーフを織り込み、色彩や質感、線を磨き上げていく。 1980年代に描き始め、今年完成した《ランタンのある風景の中の男と鳥》をはじめ、緻密な模様や形、身体を重ねた格子状の画面が、忍耐強い制作の過程を映している。抽象印象派から多くを受けつつ、大胆で遊び心のあるイメージの選択が光る。 トーテムや蔓、小さな人物が喜びに満ちて踊る《十分な豊かさに花開く／身体構造》は、モダニズムのエネルギーを放ちながら、しっかりと今の時代に根ざした作品となっている。 Two Coats of Paint 絵画 展覧会・イベント 海外 展覧会案内">
+  <p class="meta">Two Coats of Paint　2026-11-14 06:13</p>
+  <h2 class="article-title">カレン・バーバー：少し謎めいて、満ち足りた絵画の世界</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 絵画</span><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">カリフォルニアを拠点とする画家カレン・バーバー。その個展「コーネリアのためのダイヤモンド・ガーデン」がハーカウィック・ギャラリーで開かれている。作品に囲まれて描き、キャンバスからキャンバスへと移動しながら、小花や蝶、鳥といった繰り返されるモチーフを織り込み、色彩や質感、線を磨き上げていく。<span class="summary-rest" hidden><br><br>1980年代に描き始め、今年完成した《ランタンのある風景の中の男と鳥》をはじめ、緻密な模様や形、身体を重ねた格子状の画面が、忍耐強い制作の過程を映している。抽象印象派から多くを受けつつ、大胆で遊び心のあるイメージの選択が光る。<br><br>トーテムや蔓、小さな人物が喜びに満ちて踊る《十分な豊かさに花開く／身体構造》は、モダニズムのエネルギーを放ちながら、しっかりと今の時代に根ざした作品となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Two Coats of Paint<br>
+    原題：Karen Barbour: Slightly mysterious, yet content<br>
+    原文URL：<a href="https://twocoatsofpaint.com/2026/11/karen-barbour-slightly-mysterious-yet-content.html" target="_blank" rel="noopener">https://twocoatsofpaint.com/2026/11/karen-barbour-slightly-mysterious-yet-content.html</a>
+  </div>
+</article>
+<article
+  data-id="29b4a6628f0b18809c79c8b5d8be9e5d"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="美術史・古典||絵画"
+  data-region="海外"
+  data-source="Hyperallergic"
+  data-kind="特集"
+  data-search="ホックニーの描いたビバリーヒルズの主婦、その知られざる生涯 The Secret Life of Hockney&#x27;s Beverly Hills Housewife デイヴィッド・ホックニーが描いた美術パトロン、ベティ・フリーマンの肖像を手がかりに、ジェイムズ・ケイヒルが二人の友人の物語をたどる。 1960年代のロサンゼルスの文化的な風景を形作った二人の友情。その知られざる側面を描き出す内容となっている。 Hyperallergic 美術史・古典 絵画 海外 特集">
+  <p class="meta">Hyperallergic　2026-11-14 05:51</p>
+  <h2 class="article-title">ホックニーの描いたビバリーヒルズの主婦、その知られざる生涯</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術史・古典</span><span class="chip">カテゴリ: 絵画</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">デイヴィッド・ホックニーが描いた美術パトロン、ベティ・フリーマンの肖像を手がかりに、ジェイムズ・ケイヒルが二人の友人の物語をたどる。<span class="summary-rest" hidden><br><br>1960年代のロサンゼルスの文化的な風景を形作った二人の友情。その知られざる側面を描き出す内容となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hyperallergic<br>
+    原題：The Secret Life of Hockney&#x27;s Beverly Hills Housewife<br>
+    原文URL：<a href="https://hyperallergic.com/the-secret-life-of-hockneys-beverly-hills-housewife/" target="_blank" rel="noopener">https://hyperallergic.com/the-secret-life-of-hockneys-beverly-hills-housewife/</a>
+  </div>
+</article>
+<article
+  data-id="5a36967a733cba9339a15c3849da8f10"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="保存修復・文化財"
+  data-region="海外"
+  data-source="Hyperallergic"
+  data-kind="ニュース"
+  data-search="先住民族団体、聖地を脅かす法案の阻止を議会に要請 Tribal Groups Urge Congress to Halt Bill That Threatens Sacred Sites 先住民族の諸団体が、連邦議会に対し、法案の成立阻止を求めている。対象は「超党派アメリカ手頃価格・雇用創出法」で、大規模プロジェクトの許認可手続きを迅速化する内容だ。 団体側は、この法案が文化的に重要な土地をめぐる先住民族の主権に影響を及ぼすおそれがあると訴えている。開発の加速と、聖地や文化的景観の保護をめぐる対立が、議会の場で改めて問われている。 Hyperallergic 保存修復・文化財 海外 ニュース">
+  <p class="meta">Hyperallergic　2026-11-14 05:44</p>
+  <h2 class="article-title">先住民族団体、聖地を脅かす法案の阻止を議会に要請</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 保存修復・文化財</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">先住民族の諸団体が、連邦議会に対し、法案の成立阻止を求めている。対象は「超党派アメリカ手頃価格・雇用創出法」で、大規模プロジェクトの許認可手続きを迅速化する内容だ。<span class="summary-rest" hidden><br><br>団体側は、この法案が文化的に重要な土地をめぐる先住民族の主権に影響を及ぼすおそれがあると訴えている。開発の加速と、聖地や文化的景観の保護をめぐる対立が、議会の場で改めて問われている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hyperallergic<br>
+    原題：Tribal Groups Urge Congress to Halt Bill That Threatens Sacred Sites<br>
+    原文URL：<a href="https://hyperallergic.com/tribal-groups-urge-congress-to-halt-bill-that-threatens-sacred-sites/" target="_blank" rel="noopener">https://hyperallergic.com/tribal-groups-urge-congress-to-halt-bill-that-threatens-sacred-sites/</a>
+  </div>
+</article>
+<article
+  data-id="f1d8f8632c27e3a07fa2bcf6467d22fb"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="美術史・古典||保存修復・文化財"
+  data-region="海外"
+  data-source="ARTnews"
+  data-kind="ニュース"
+  data-search="1945年以来行方不明だったシャルル・ル・ブランの絵画、ポツダム新宮殿へ帰還 Long-Lost Charles Le Brun Painting Returns to the New Palace in Potsdam 1945年以来行方不明になっていたシャルル・ル・ブランの絵画が、ポツダムの新宮殿に戻ってきた。17世紀の作品で、眠る幼子キリストと聖家族を描いたものだという。 80年以上にわたり所在が分からなかった作品の帰還は、戦時中に失われた美術品の行方をめぐる長い物語に一つの区切りをつける出来事となった。 ARTnews 美術史・古典 保存修復・文化財 海外 ニュース">
+  <p class="meta">ARTnews　2026-11-14 05:39</p>
+  <h2 class="article-title">1945年以来行方不明だったシャルル・ル・ブランの絵画、ポツダム新宮殿へ帰還</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術史・古典</span><span class="chip">カテゴリ: 保存修復・文化財</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">1945年以来行方不明になっていたシャルル・ル・ブランの絵画が、ポツダムの新宮殿に戻ってきた。17世紀の作品で、眠る幼子キリストと聖家族を描いたものだという。<span class="summary-rest" hidden><br><br>80年以上にわたり所在が分からなかった作品の帰還は、戦時中に失われた美術品の行方をめぐる長い物語に一つの区切りをつける出来事となった。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ARTnews<br>
+    原題：Long-Lost Charles Le Brun Painting Returns to the New Palace in Potsdam<br>
+    原文URL：<a href="https://www.artnews.com/art-news/news/lost-charles-le-brun-painting-returned-new-palace-potsdam-1234805935/" target="_blank" rel="noopener">https://www.artnews.com/art-news/news/lost-charles-le-brun-painting-returned-new-palace-potsdam-1234805935/</a>
+  </div>
+</article>
+<article
+  data-id="c4cfa0fcd2551c94290e153f1338bfec"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="現代アート||展覧会・イベント"
+  data-region="海外"
+  data-source="Hyperallergic"
+  data-kind="展覧会案内"
+  data-search="パポ・コロの展覧会「Octopus and Others」、40年ぶりに再演 The Alchemical Possibilities of an Artist-Poet Collaboration 40年の時を経て、エル・ムセオ・デル・バリオがパポ・コロのテキストとイメージによる展覧会「Octopus and Others」を再演する。 記事の見出しが掲げるのは、アーティストと詩人の協働がもたらす「錬金術的な可能性」。言葉とイメージを組み合わせた展示が、40年ぶりに見直される。 Hyperallergic 現代アート 展覧会・イベント 海外 展覧会案内">
+  <p class="meta">Hyperallergic　2026-11-14 05:33</p>
+  <h2 class="article-title">パポ・コロの展覧会「Octopus and Others」、40年ぶりに再演</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 現代アート</span><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">40年の時を経て、エル・ムセオ・デル・バリオがパポ・コロのテキストとイメージによる展覧会「Octopus and Others」を再演する。<span class="summary-rest" hidden><br><br>記事の見出しが掲げるのは、アーティストと詩人の協働がもたらす「錬金術的な可能性」。言葉とイメージを組み合わせた展示が、40年ぶりに見直される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hyperallergic<br>
+    原題：The Alchemical Possibilities of an Artist-Poet Collaboration<br>
+    原文URL：<a href="https://hyperallergic.com/the-alchemical-possibilities-of-an-artist-poet-collaboration/" target="_blank" rel="noopener">https://hyperallergic.com/the-alchemical-possibilities-of-an-artist-poet-collaboration/</a>
+  </div>
+</article>
+<article
+  data-id="32d7c2cdea3059a0263240f849c73be8"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="建築・空間||展覧会・イベント"
+  data-region="海外"
+  data-source="Blooloop"
+  data-kind="展覧会案内"
+  data-search="ガウディの「創造のコード」を解き明かす没入型展覧会「Gaudí Code」 Gaudí Code: The Untold Experience ガウディの全作品を貫く隠れた「創造のコード」を明らかにする70分の没入型の旅「Gaudí Code」。完成した建築だけでなく未完の構想も含め、ガウディの主要作品を一つの物語にまとめた初の展覧会だ。 中心となる考えは、ガウディの建築は混沌や即興、直感だけの産物ではなく、幾何学、実験、工学、素材、自然の観察に根ざした厳密で高度に構造化された創造プロセスの結果だということ。その一貫性が世界中の建築家に影響を与え続け、ガウディの作品の研究や解釈、発展のあり方を今も形作っている。 サグラダ・ファミリアをはじめとするガウディの建築群の主要機関と協働し、カタルーニャ工科大学のガウディ講座のガルドリック・サンタナ学長が監修。冒頭のマニフェスト、ガウディが生きた時代の背景、道具と技法をたどる複数の環境で構成される。 Blooloop 建築・空間 展覧会・イベント 海外 展覧会案内">
+  <p class="meta">Blooloop　2026-11-14 05:29</p>
+  <h2 class="article-title">ガウディの「創造のコード」を解き明かす没入型展覧会「Gaudí Code」</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 建築・空間</span><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">ガウディの全作品を貫く隠れた「創造のコード」を明らかにする70分の没入型の旅「Gaudí Code」。完成した建築だけでなく未完の構想も含め、ガウディの主要作品を一つの物語にまとめた初の展覧会だ。<span class="summary-rest" hidden><br><br>中心となる考えは、ガウディの建築は混沌や即興、直感だけの産物ではなく、幾何学、実験、工学、素材、自然の観察に根ざした厳密で高度に構造化された創造プロセスの結果だということ。その一貫性が世界中の建築家に影響を与え続け、ガウディの作品の研究や解釈、発展のあり方を今も形作っている。<br><br>サグラダ・ファミリアをはじめとするガウディの建築群の主要機関と協働し、カタルーニャ工科大学のガウディ講座のガルドリック・サンタナ学長が監修。冒頭のマニフェスト、ガウディが生きた時代の背景、道具と技法をたどる複数の環境で構成される。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Blooloop<br>
+    原題：Gaudí Code: The Untold Experience<br>
+    原文URL：<a href="https://blooloop.com/news/gaudi-code-the-untold-experience" target="_blank" rel="noopener">https://blooloop.com/news/gaudi-code-the-untold-experience</a>
+  </div>
+</article>
+<article
+  data-id="78ffcbf1e379242ca2dfb01abf420726"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="展覧会・イベント||アートマーケット"
+  data-region="海外"
+  data-source="ARTnews"
+  data-kind="レビュー・批評"
+  data-search="ADAAフェアが復活、小規模だからこそ際立つ良さ The ADAA Fair Is Back, and Sometimes Smaller Really Is Better 物議を醸した1年間の休止を経て、ADAAフェアがパークアベニュー・アーモリーに戻ってきた。規模は小さくなったものの、初日から好調な売れ行きを見せているという。 フェアでは、実際にアートをじっくり見ることへの歓迎すべき重点が置かれている。大きさよりも、作品と向き合う体験を大切にする姿勢が、復活したフェアの特徴となっている。 ARTnews 展覧会・イベント アートマーケット 海外 レビュー・批評">
+  <p class="meta">ARTnews　2026-11-14 05:27</p>
+  <h2 class="article-title">ADAAフェアが復活、小規模だからこそ際立つ良さ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">カテゴリ: アートマーケット</span><span class="chip">地域: 海外</span><span class="chip">種別: レビュー・批評</span></div>
+  <div class="summary">物議を醸した1年間の休止を経て、ADAAフェアがパークアベニュー・アーモリーに戻ってきた。規模は小さくなったものの、初日から好調な売れ行きを見せているという。<span class="summary-rest" hidden><br><br>フェアでは、実際にアートをじっくり見ることへの歓迎すべき重点が置かれている。大きさよりも、作品と向き合う体験を大切にする姿勢が、復活したフェアの特徴となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ARTnews<br>
+    原題：The ADAA Fair Is Back, and Sometimes Smaller Really Is Better<br>
+    原文URL：<a href="https://www.artnews.com/art-news/market/adaa-fair-2026-best-booths-sales-new-york-1234805934/" target="_blank" rel="noopener">https://www.artnews.com/art-news/market/adaa-fair-2026-best-booths-sales-new-york-1234805934/</a>
+  </div>
+</article>
+<article
+  data-id="00391c90aaf95bf41173425789daab45"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="写真||展覧会・イベント"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="ニュース"
+  data-search="パリ・フォトのデジタル部門、「ソフト・フォトグラフィー」と美術史的な文脈を提示 Paris Photo’s digital sector offers ‘soft photography’ and vital context パリ・フォトのデジタル部門が、グラン・パレを舞台に今年も展開されている。中心となるのはデジタル作品のプレゼンテーションだ。 今年の傾向として、デジタルアートを美術史の系譜の中に位置づける試みが続いている。「ソフト・フォトグラフィー」という切り口と、作品に欠かせない文脈が示されている。 The Art Newspaper 写真 展覧会・イベント 海外 ニュース">
+  <p class="meta">The Art Newspaper　2026-11-14 05:23</p>
+  <h2 class="article-title">パリ・フォトのデジタル部門、「ソフト・フォトグラフィー」と美術史的な文脈を提示</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 写真</span><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">パリ・フォトのデジタル部門が、グラン・パレを舞台に今年も展開されている。中心となるのはデジタル作品のプレゼンテーションだ。<span class="summary-rest" hidden><br><br>今年の傾向として、デジタルアートを美術史の系譜の中に位置づける試みが続いている。「ソフト・フォトグラフィー」という切り口と、作品に欠かせない文脈が示されている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：Paris Photo’s digital sector offers ‘soft photography’ and vital context<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/13/paris-photo-art-fair-digital-art-sector" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/13/paris-photo-art-fair-digital-art-sector</a>
+  </div>
+</article>
+<article
+  data-id="62f10f72e8a726fb5cce2a132aca5aa2"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="現代アート||彫刻・立体"
+  data-region="海外"
+  data-source="My Modern Met"
+  data-kind="インタビュー"
+  data-search="VHILS、錆びた金属に都市の肖像を刻む——サンパウロ初の個展インタビュー VHILS Transforms Corroded Metal Into Portraits That Reveal the Changing Identity of Cities [Interview] ポルトガルのアーティスト、アレシャンドレ・ファルトことVHILSが、腐食した金属に都市の肖像を刻む新作展「Atrito: Arqueologia do Presente」について語った。ギャレリア・コンティヌア・サンパウロでの初の個展で、人とその周囲の環境との関係を探る展示だ。 世界各地の都市から集められた肖像や街頭標識、広告の断片をあしらった金属構造物14点が並ぶ。アナ・カロリーナ・ラルストンのキュレーションによる本展は、移り変わる都市のアイデンティティを浮かび上がらせる。 My Modern Met 現代アート 彫刻・立体 海外 インタビュー">
+  <p class="meta">My Modern Met　2026-11-14 05:20</p>
+  <h2 class="article-title">VHILS、錆びた金属に都市の肖像を刻む——サンパウロ初の個展インタビュー</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 現代アート</span><span class="chip">カテゴリ: 彫刻・立体</span><span class="chip">地域: 海外</span><span class="chip">種別: インタビュー</span></div>
+  <div class="summary">ポルトガルのアーティスト、アレシャンドレ・ファルトことVHILSが、腐食した金属に都市の肖像を刻む新作展「Atrito: Arqueologia do Presente」について語った。ギャレリア・コンティヌア・サンパウロでの初の個展で、人とその周囲の環境との関係を探る展示だ。<span class="summary-rest" hidden><br><br>世界各地の都市から集められた肖像や街頭標識、広告の断片をあしらった金属構造物14点が並ぶ。アナ・カロリーナ・ラルストンのキュレーションによる本展は、移り変わる都市のアイデンティティを浮かび上がらせる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：My Modern Met<br>
+    原題：VHILS Transforms Corroded Metal Into Portraits That Reveal the Changing Identity of Cities [Interview]<br>
+    原文URL：<a href="https://mymodernmet.com/vhils-atrito-sao-paulo-exhibition/" target="_blank" rel="noopener">https://mymodernmet.com/vhils-atrito-sao-paulo-exhibition/</a>
+  </div>
+</article>
+<article
+  data-id="b0ca3d934c280ec622a2d39468d7473c"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="建築・空間||メディアアート"
+  data-region="海外"
+  data-source="Blooloop"
+  data-kind="展覧会案内"
+  data-search="ガウディの創作手法を体験するミックスドリアリティ・ワークショップ誕生 Gaudí’s Mixed Reality Workshop Mediapro Xperiencesが開発した新しい体験型テクノロジー「Gaudí’s Mixed Reality Workshop」は、複雑な文化・建築の知識を、大規模でインタラクティブなミックスドリアリティ体験へと変えるものだ。「Gaudí Code: The Untold Experience」の技術的な中心として作られ、最大40人の来場者が同時に同じ物理とデジタルの環境に入り、約200平方メートルの空間を自由に動き回り、8つのインタラクティブなXRインスタレーションを通じてアントニ・ガウディの創作手法を探る。 ねらいは、文章や受動的な解説でガウディの手法を説明することではなく、来場者自身が発見することだ。来場者はガウディの工房に入ったような感覚で、実験し、遊び、試し、触れ、行動を通じて理解していく。幾何学を操作し、構造を試し、物理的なプロトタイプや表面、家具、模型と関わりながら、ガウディが工学や数学、素材、自然の観察をどう使って建築を構想し、検証し、創造したかを発見する。インタラクティビティが設計の中心的な原則になっている。 Blooloop 建築・空間 メディアアート 海外 展覧会案内">
+  <p class="meta">Blooloop　2026-11-14 05:04</p>
+  <h2 class="article-title">ガウディの創作手法を体験するミックスドリアリティ・ワークショップ誕生</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 建築・空間</span><span class="chip">カテゴリ: メディアアート</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">Mediapro Xperiencesが開発した新しい体験型テクノロジー「Gaudí’s Mixed Reality Workshop」は、複雑な文化・建築の知識を、大規模でインタラクティブなミックスドリアリティ体験へと変えるものだ。「Gaudí Code: The Untold Experience」の技術的な中心として作られ、最大40人の来場者が同時に同じ物理とデジタルの環境に入り、約200平方メートルの空間を自由に動き回り、8つのインタラクティブなXRインスタレーションを通じてアントニ・ガウディの創作手法を探る。<span class="summary-rest" hidden><br><br>ねらいは、文章や受動的な解説でガウディの手法を説明することではなく、来場者自身が発見することだ。来場者はガウディの工房に入ったような感覚で、実験し、遊び、試し、触れ、行動を通じて理解していく。幾何学を操作し、構造を試し、物理的なプロトタイプや表面、家具、模型と関わりながら、ガウディが工学や数学、素材、自然の観察をどう使って建築を構想し、検証し、創造したかを発見する。インタラクティビティが設計の中心的な原則になっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Blooloop<br>
+    原題：Gaudí’s Mixed Reality Workshop<br>
+    原文URL：<a href="https://blooloop.com/news/gaudis-mixed-reality-workshop" target="_blank" rel="noopener">https://blooloop.com/news/gaudis-mixed-reality-workshop</a>
+  </div>
+</article>
+<article
+  data-id="e125d24b0dd6b18e9e3d9be9359dde7c"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="絵画||展覧会・イベント"
+  data-region="海外"
+  data-source="Hyperallergic"
+  data-kind="展覧会案内"
+  data-search="植物画が示す、失われゆくもの——米国植物画家協会の年次展 Botanical Artists Show Us What We Stand to Lose 米国植物画家協会（American Society of Botanical Artists）の年次展では、植物を描いた作品が威厳に満ちた輝きを放っている。緻密で豊かな描写が際立つという。 その精緻さは美しい一方で、私たちが失いかけているものを突きつけ、「苦しいほど」の感動を呼ぶ。植物画の細やかな描写が、失われゆく自然へのまなざしを映し出している。 Hyperallergic 絵画 展覧会・イベント 海外 展覧会案内">
+  <p class="meta">Hyperallergic　2026-11-14 04:52</p>
+  <h2 class="article-title">植物画が示す、失われゆくもの——米国植物画家協会の年次展</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 絵画</span><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">米国植物画家協会（American Society of Botanical Artists）の年次展では、植物を描いた作品が威厳に満ちた輝きを放っている。緻密で豊かな描写が際立つという。<span class="summary-rest" hidden><br><br>その精緻さは美しい一方で、私たちが失いかけているものを突きつけ、「苦しいほど」の感動を呼ぶ。植物画の細やかな描写が、失われゆく自然へのまなざしを映し出している。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hyperallergic<br>
+    原題：Botanical Artists Show Us What We Stand to Lose<br>
+    原文URL：<a href="https://hyperallergic.com/botanical-artists-show-us-what-we-stand-to-lose/" target="_blank" rel="noopener">https://hyperallergic.com/botanical-artists-show-us-what-we-stand-to-lose/</a>
+  </div>
+</article>
+<article
+  data-id="f14085e5e59359ed78fb3e8bae1c73aa"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="現代アート"
+  data-region="海外"
+  data-source="Hypebeast Art"
+  data-kind="展覧会案内"
+  data-search="バリー・マッギー、ジェフリー・ダイッチで20年ぶりの個展「Another Round」開催 Barry McGee Is Back for ‘Another Round’ with Jeffrey Deitch アーティストのバリー・マッギーが、ジェフリー・ダイッチのロサンゼルス拠点で「Another Round」と題した新たな「個展」を発表した。2027年1月30日まで開催される本展では、マッギーの絵画、彫刻、写真200点以上に加え、友人やコラボレーターによる数百点の作品が並ぶ。なかには、今年初めに話題を呼んだ反アートフェア的プレゼンテーション「99CENTS」のミニチュア再現も含まれる。 2月に「99CENT」を開いたマッギーがロサンゼルスに戻り、サンタモニカ大通りにあるダイッチのスペースで開催する本展は、同ギャラリーでは20年ぶりの展示となる。グラフィティ出身で現代アートのスターとなったマッギーは、200点を超える絵画、彫刻、写真で空間を埋め尽くす。「個展」と銘打たれながらも、実際にはマッギー自身のアートワールドにおける位置づけを映すスナップショットに近い展示で、本人は「今の時代に『個展』なんてばかげている」「アーティストのエゴは厄介なものだ」とロサンゼルス・タイムズに語っている。 Hypebeast Art 現代アート 海外 展覧会案内">
+  <p class="meta">Hypebeast Art　2026-11-14 04:52</p>
+  <h2 class="article-title">バリー・マッギー、ジェフリー・ダイッチで20年ぶりの個展「Another Round」開催</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 現代アート</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">アーティストのバリー・マッギーが、ジェフリー・ダイッチのロサンゼルス拠点で「Another Round」と題した新たな「個展」を発表した。2027年1月30日まで開催される本展では、マッギーの絵画、彫刻、写真200点以上に加え、友人やコラボレーターによる数百点の作品が並ぶ。なかには、今年初めに話題を呼んだ反アートフェア的プレゼンテーション「99CENTS」のミニチュア再現も含まれる。<span class="summary-rest" hidden><br><br>2月に「99CENT」を開いたマッギーがロサンゼルスに戻り、サンタモニカ大通りにあるダイッチのスペースで開催する本展は、同ギャラリーでは20年ぶりの展示となる。グラフィティ出身で現代アートのスターとなったマッギーは、200点を超える絵画、彫刻、写真で空間を埋め尽くす。「個展」と銘打たれながらも、実際にはマッギー自身のアートワールドにおける位置づけを映すスナップショットに近い展示で、本人は「今の時代に『個展』なんてばかげている」「アーティストのエゴは厄介なものだ」とロサンゼルス・タイムズに語っている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Hypebeast Art<br>
+    原題：Barry McGee Is Back for ‘Another Round’ with Jeffrey Deitch<br>
+    原文URL：<a href="https://hypebeast.com/2026/11/barry-mcgee-jeffrey-deitch-another-round-exhibition-los-angeles" target="_blank" rel="noopener">https://hypebeast.com/2026/11/barry-mcgee-jeffrey-deitch-another-round-exhibition-los-angeles</a>
+  </div>
+</article>
+<article
+  data-id="c432ff80f547daaa4961a15914cc95a6"
+  data-date="2026-11-13"
+  data-month="2026-11"
+  data-categories="美術館・博物館"
+  data-region="海外"
+  data-source="Artforum"
+  data-kind="ニュース"
+  data-search="クラーク美術館、キャロライン・シールズを新チーフ・キュレーターに任命 Caroline Shields Named Chief Curator of Clark Art Institute マサチューセッツ州ウィリアムズタウンのクラーク美術館（Clark Art Institute）が、キャロライン・シールズをチーフ・キュレーターに任命した。シールズは19世紀フランス美術の専門家だ。 これまでカナダ・トロントのアート・ギャラリー・オブ・オンタリオ（AGO）でキュレーターおよびヨーロッパ美術部門長を務め、2019年からその職にあった。クラーク美術館での新たな役職に就くことになる。 Artforum 美術館・博物館 海外 ニュース">
+  <p class="meta">Artforum　2026-11-14 04:15</p>
+  <h2 class="article-title">クラーク美術館、キャロライン・シールズを新チーフ・キュレーターに任命</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術館・博物館</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">マサチューセッツ州ウィリアムズタウンのクラーク美術館（Clark Art Institute）が、キャロライン・シールズをチーフ・キュレーターに任命した。シールズは19世紀フランス美術の専門家だ。<span class="summary-rest" hidden><br><br>これまでカナダ・トロントのアート・ギャラリー・オブ・オンタリオ（AGO）でキュレーターおよびヨーロッパ美術部門長を務め、2019年からその職にあった。クラーク美術館での新たな役職に就くことになる。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Artforum<br>
+    原題：Caroline Shields Named Chief Curator of Clark Art Institute<br>
+    原文URL：<a href="https://www.artforum.com/news/caroline-shields-new-chief-curator-of-clark-art-institute-1234763610/" target="_blank" rel="noopener">https://www.artforum.com/news/caroline-shields-new-chief-curator-of-clark-art-institute-1234763610/</a>
+  </div>
+</article>
 <article
   data-id="86f915a4298230d246d19d130b84c65d"
   data-date="2026-11-13"
@@ -1903,6 +2449,48 @@
   </div>
 </article>
 <article
+  data-id="b3e620192d49b2bb7f4ec9eea16e6ff9"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="建築・空間"
+  data-region="海外"
+  data-source="Colossal"
+  data-kind="ニュース"
+  data-search="パステルピンクの「クラウド・ハウス」、ロンドン北西部に完成——10年かけた建築 Peter Morris Architects’ Pastel Pink ‘Cloud House’ Billows in Northwest London ロンドン北西部に、ピーター・モリス・アーキテクツによるパステルピンクの住宅「クラウド・ハウス」が完成した。構想から完成まで10年をかけた建築だ。 雲のようにふくらむその姿は、折衷的な周辺建築へのユーモラスな応答として設計されている。 Colossal 建築・空間 海外 ニュース">
+  <p class="meta">Colossal　2026-11-13 03:08</p>
+  <h2 class="article-title">パステルピンクの「クラウド・ハウス」、ロンドン北西部に完成——10年かけた建築</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 建築・空間</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ロンドン北西部に、ピーター・モリス・アーキテクツによるパステルピンクの住宅「クラウド・ハウス」が完成した。構想から完成まで10年をかけた建築だ。<span class="summary-rest" hidden><br><br>雲のようにふくらむその姿は、折衷的な周辺建築へのユーモラスな応答として設計されている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Colossal<br>
+    原題：Peter Morris Architects’ Pastel Pink ‘Cloud House’ Billows in Northwest London<br>
+    原文URL：<a href="https://www.thisiscolossal.com/2026/11/peter-morris-architects-the-cloud-house-london/" target="_blank" rel="noopener">https://www.thisiscolossal.com/2026/11/peter-morris-architects-the-cloud-house-london/</a>
+  </div>
+</article>
+<article
+  data-id="0ca9e2bb92bb898ac0e25e29729668ab"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="現代アート"
+  data-region="海外"
+  data-source="Ocula Magazine"
+  data-kind="特集"
+  data-search="アーティストは今、どう生きればいいのか――英国の型破りな生き方をたどる展覧会 How Is an Artist Supposed to Live Now? 英国でアーティストたちが型破りな方法で生活を営んできた歴史をたどる、新しい展覧会が開かれている。 アーティストは今、どのように生きるべきなのか。その問いを軸に、慣習にとらわれない生き方の来歴をたどる内容だ。 Ocula Magazine 現代アート 海外 特集">
+  <p class="meta">Ocula Magazine　2026-11-13 03:00</p>
+  <h2 class="article-title">アーティストは今、どう生きればいいのか――英国の型破りな生き方をたどる展覧会</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 現代アート</span><span class="chip">地域: 海外</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">英国でアーティストたちが型破りな方法で生活を営んできた歴史をたどる、新しい展覧会が開かれている。<span class="summary-rest" hidden><br><br>アーティストは今、どのように生きるべきなのか。その問いを軸に、慣習にとらわれない生き方の来歴をたどる内容だ。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Ocula Magazine<br>
+    原題：How Is an Artist Supposed to Live Now?<br>
+    原文URL：<a href="https://ocula.com/magazine/opinion/earthly-paradise-william-morris-gallery-2026/" target="_blank" rel="noopener">https://ocula.com/magazine/opinion/earthly-paradise-william-morris-gallery-2026/</a>
+  </div>
+</article>
+<article
   data-id="610cf1761d5525239d4776195893a1df"
   data-date="2026-11-12"
   data-month="2026-11"
@@ -2068,6 +2656,27 @@
     配信元：Artsy<br>
     原題：Netflix releases Richard Avedon documentary directed by Ron Howard.<br>
     原文URL：<a href="https://www.artsy.net/article/artsy-editorial-netflix-releases-richard-avedon-documentary-directed-ron-howard" target="_blank" rel="noopener">https://www.artsy.net/article/artsy-editorial-netflix-releases-richard-avedon-documentary-directed-ron-howard</a>
+  </div>
+</article>
+<article
+  data-id="02007143f492995f8d1c94ddba279f05"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="アートマーケット"
+  data-region="海外"
+  data-source="NYT Art and Design"
+  data-kind="市場レポート"
+  data-search="休止を経て再開、米美術商フェアは軽やかで陶酔的な作品へ After Hiatus, American Art Dealers Look to the Heady and Light 休止期間を経て開催されたADAAフェアでは、モダンからコンテンポラリーまで幅広い作品が並ぶ。大胆な色彩の抽象画から、物悲しく静かな絵画まで、その振れ幅がフェアの特徴となっている。 米国の美術商たちが集うこのフェアでは、重厚なものよりも、軽やかで陶酔感のある作品に目が向けられているという。 NYT Art and Design アートマーケット 海外 市場レポート">
+  <p class="meta">NYT Art and Design　2026-11-13 02:02</p>
+  <h2 class="article-title">休止を経て再開、米美術商フェアは軽やかで陶酔的な作品へ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: アートマーケット</span><span class="chip">地域: 海外</span><span class="chip">種別: 市場レポート</span></div>
+  <div class="summary">休止期間を経て開催されたADAAフェアでは、モダンからコンテンポラリーまで幅広い作品が並ぶ。大胆な色彩の抽象画から、物悲しく静かな絵画まで、その振れ幅がフェアの特徴となっている。<span class="summary-rest" hidden><br><br>米国の美術商たちが集うこのフェアでは、重厚なものよりも、軽やかで陶酔感のある作品に目が向けられているという。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：NYT Art and Design<br>
+    原題：After Hiatus, American Art Dealers Look to the Heady and Light<br>
+    原文URL：<a href="https://www.nytimes.com/2026/11/12/arts/design/adaa-fair-american-art-dealers-armory-hopper.html" target="_blank" rel="noopener">https://www.nytimes.com/2026/11/12/arts/design/adaa-fair-american-art-dealers-armory-hopper.html</a>
   </div>
 </article>
 <article
@@ -2449,6 +3058,27 @@
   </div>
 </article>
 <article
+  data-id="724de9d3053fa4218d1ececa145cc345"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="美術館・博物館"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="ニュース"
+  data-search="シドニー大学美術館の再編計画に職員が反対請願、収蔵品に危機感 Staff petition against major restructuring plans at Sydney&#x27;s Chau Chak Wing Museum シドニーのチャウ・チャク・ウィング美術館で進められている大規模な組織再編計画に対し、職員らが請願を起こしている。 計画では8つの職位の削減が提案されており、学芸員らは収蔵品が危機にさらされると訴えている。 美術館の運営体制の見直しをめぐり、現場からの反対の声が上がっていることを伝える記事。 The Art Newspaper 美術館・博物館 海外 ニュース">
+  <p class="meta">The Art Newspaper　2026-11-12 21:19</p>
+  <h2 class="article-title">シドニー大学美術館の再編計画に職員が反対請願、収蔵品に危機感</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術館・博物館</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">シドニーのチャウ・チャク・ウィング美術館で進められている大規模な組織再編計画に対し、職員らが請願を起こしている。<span class="summary-rest" hidden><br><br>計画では8つの職位の削減が提案されており、学芸員らは収蔵品が危機にさらされると訴えている。<br><br>美術館の運営体制の見直しをめぐり、現場からの反対の声が上がっていることを伝える記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：Staff petition against major restructuring plans at Sydney&#x27;s Chau Chak Wing Museum<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/12/staff-petition-against-major-restructuring-plans-at-sydneys-chau-chak-wing-museum" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/12/staff-petition-against-major-restructuring-plans-at-sydneys-chau-chak-wing-museum</a>
+  </div>
+</article>
+<article
   data-id="81c042e9f86090a63c1332facd031a74"
   data-date="2026-11-12"
   data-month="2026-11"
@@ -2470,6 +3100,27 @@
   </div>
 </article>
 <article
+  data-id="349942a8955f734bff3c7479eeded645"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="絵画||展覧会・イベント"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="展覧会案内"
+  data-search="フィレンツェ・ライ初の英国個展、香港作家の世界的な評価に変化の兆し Could Firenze Lai’s first UK solo show signal a shift in global market recognition for Hong Kong artists? 香港の作家フィレンツェ・ライの初の英国個展が、香港のアーティストの世界的な市場評価の変化を示すものになるのではないかと注目されている。 香港出身の作家たちは長らく、地元以外での露出を得るのに苦労してきた。しかし今、その状況が変わりつつあるという。 個展をきっかけに、香港のアートシーンへの関心の高まりを伝える記事。 The Art Newspaper 絵画 展覧会・イベント 海外 展覧会案内">
+  <p class="meta">The Art Newspaper　2026-11-12 21:02</p>
+  <h2 class="article-title">フィレンツェ・ライ初の英国個展、香港作家の世界的な評価に変化の兆し</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 絵画</span><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">香港の作家フィレンツェ・ライの初の英国個展が、香港のアーティストの世界的な市場評価の変化を示すものになるのではないかと注目されている。<span class="summary-rest" hidden><br><br>香港出身の作家たちは長らく、地元以外での露出を得るのに苦労してきた。しかし今、その状況が変わりつつあるという。<br><br>個展をきっかけに、香港のアートシーンへの関心の高まりを伝える記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：Could Firenze Lai’s first UK solo show signal a shift in global market recognition for Hong Kong artists?<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/12/could-firenze-lais-first-uk-solo-show-signal-a-shift-in-global-market-recognition-for-hong-kong-artists" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/12/could-firenze-lais-first-uk-solo-show-signal-a-shift-in-global-market-recognition-for-hong-kong-artists</a>
+  </div>
+</article>
+<article
   data-id="ee71767742fcf94ea4ec12154413a35b"
   data-date="2026-11-12"
   data-month="2026-11"
@@ -2488,6 +3139,27 @@
     配信元：Art Plugged<br>
     原題：Hauser &amp; Wirth to Represent rafa esparza Worldwide<br>
     原文URL：<a href="https://artplugged.co.uk/hauser-wirth-represent-rafa-esparza-worldwide/" target="_blank" rel="noopener">https://artplugged.co.uk/hauser-wirth-represent-rafa-esparza-worldwide/</a>
+  </div>
+</article>
+<article
+  data-id="f9c2aa32446451726406177cdc429fad"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="メディアアート"
+  data-region="海外"
+  data-source="Designboom Art"
+  data-kind="インタビュー"
+  data-search="量子論は映画や現代アートをどう旅してきたか、ビルンバウムらが語る what’s a primate to quantum mechanics? in conversation with daniel birnbaum and jacqui davies トリノのOGRで開催される企画「ザ・クアンタム・エフェクト」をめぐり、ダニエル・ビルンバウムとジャッキー・デイヴィスが対談した。 量子論が映画や大衆文化、現代アートの中をどのように旅してきたかを、キューブリックからシュレーディンガーの猫までをたどりながら考える企画だ。 科学と芸術の交差点を探る対談を紹介する記事。 Designboom Art メディアアート 海外 インタビュー">
+  <p class="meta">Designboom Art　2026-11-12 20:50</p>
+  <h2 class="article-title">量子論は映画や現代アートをどう旅してきたか、ビルンバウムらが語る</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: メディアアート</span><span class="chip">地域: 海外</span><span class="chip">種別: インタビュー</span></div>
+  <div class="summary">トリノのOGRで開催される企画「ザ・クアンタム・エフェクト」をめぐり、ダニエル・ビルンバウムとジャッキー・デイヴィスが対談した。<span class="summary-rest" hidden><br><br>量子論が映画や大衆文化、現代アートの中をどのように旅してきたかを、キューブリックからシュレーディンガーの猫までをたどりながら考える企画だ。<br><br>科学と芸術の交差点を探る対談を紹介する記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Designboom Art<br>
+    原題：what’s a primate to quantum mechanics? in conversation with daniel birnbaum and jacqui davies<br>
+    原文URL：<a href="https://www.designboom.com/art/primate-quantum-mechanics-conversation-daniel-birnbaum-jacqui-davies/" target="_blank" rel="noopener">https://www.designboom.com/art/primate-quantum-mechanics-conversation-daniel-birnbaum-jacqui-davies/</a>
   </div>
 </article>
 <article
@@ -2596,6 +3268,27 @@
   </div>
 </article>
 <article
+  data-id="c263c1af1ff131acd12a2250ddcb8505"
+  data-date="2026-11-12"
+  data-month="2026-11"
+  data-categories="展覧会・イベント"
+  data-region="海外"
+  data-source="Ocula Magazine"
+  data-kind="ニュース"
+  data-search="キーウのピンチュク・アートセンター、若手作家賞の最終候補を発表 ‘Art Gives Us the Ability to Breathe’: Kyiv’s PinchukArtCentre Announces Future Generation Prize Shortlist ウクライナ・キーウのピンチュク・アートセンターが、若手作家のみを対象とする賞金10万ドルの「フューチャー・ジェネレーション賞」の最終候補を発表した。 最終候補には「ガザ初のロックバンド」も含まれている。 若手作家の支援に特化したこの賞の最終候補を伝える記事。 Ocula Magazine 展覧会・イベント 海外 ニュース">
+  <p class="meta">Ocula Magazine　2026-11-12 14:09</p>
+  <h2 class="article-title">キーウのピンチュク・アートセンター、若手作家賞の最終候補を発表</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">ウクライナ・キーウのピンチュク・アートセンターが、若手作家のみを対象とする賞金10万ドルの「フューチャー・ジェネレーション賞」の最終候補を発表した。<span class="summary-rest" hidden><br><br>最終候補には「ガザ初のロックバンド」も含まれている。<br><br>若手作家の支援に特化したこの賞の最終候補を伝える記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：Ocula Magazine<br>
+    原題：‘Art Gives Us the Ability to Breathe’: Kyiv’s PinchukArtCentre Announces Future Generation Prize Shortlist<br>
+    原文URL：<a href="https://ocula.com/magazine/art-news/kyiv-pinchukartcentre-future-generation-prize/" target="_blank" rel="noopener">https://ocula.com/magazine/art-news/kyiv-pinchukartcentre-future-generation-prize/</a>
+  </div>
+</article>
+<article
   data-id="82ee8ec877f62149236dd6f2834eccc4"
   data-date="2026-11-12"
   data-month="2026-11"
@@ -2659,6 +3352,48 @@
   </div>
 </article>
 <article
+  data-id="5479eafdfd9160c5f1bdb314f444f35c"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="アートマーケット"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="ニュース"
+  data-search="アート・バーゼル、パリのフェア早期閉鎖で出展者に補償へ Art Basel offers compensation to dealers after early closure of Paris fair アート・バーゼルは、パリのフェアが早期に閉鎖されたことを受け、出展者に補償を行う。 出展者はブース料金の20%割引を受ける。フランスのギャラリー協会からアート・バーゼル宛てに強い文言の書簡が送られたことが背景にある。 フェアの早期閉鎖をめぐる出展者への対応を伝える記事。 The Art Newspaper アートマーケット 海外 ニュース">
+  <p class="meta">The Art Newspaper　2026-11-11 23:15</p>
+  <h2 class="article-title">アート・バーゼル、パリのフェア早期閉鎖で出展者に補償へ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: アートマーケット</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">アート・バーゼルは、パリのフェアが早期に閉鎖されたことを受け、出展者に補償を行う。<span class="summary-rest" hidden><br><br>出展者はブース料金の20%割引を受ける。フランスのギャラリー協会からアート・バーゼル宛てに強い文言の書簡が送られたことが背景にある。<br><br>フェアの早期閉鎖をめぐる出展者への対応を伝える記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：Art Basel offers compensation to dealers after early closure of Paris fair<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/11/art-basel-offers-compensation-to-dealers-after-early-closure-of-paris-fair" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/11/art-basel-offers-compensation-to-dealers-after-early-closure-of-paris-fair</a>
+  </div>
+</article>
+<article
+  data-id="741addf583b6655ce0a28973cbd8f874"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="展覧会・イベント"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="展覧会案内"
+  data-search="ヴェネツィアで語られるムラーノ・ガラスの仕掛け人、エジディオ・コスタンティーニ Venice exhibition tells the story of the man who brought together contemporary artists and Murano’s master glassblowers ペギー・グッゲンハイム・コレクションで開かれている展覧会は、エジディオ・コスタンティーニがマックス・エルンストやルチオ・フォンタナら現代美術家とムラーノの名工ガラス吹き職人を結びつけ、彼らの彫刻をガラス作品へと変えた物語をたどる。 展覧会は、コスタンティーニという人物を軸に、現代アートとムラーノのガラス工芸が出会った歴史を伝えている。芸術家と職人の協働によって生まれたガラス彫刻の世界に光を当てる内容となっている。 The Art Newspaper 展覧会・イベント 海外 展覧会案内">
+  <p class="meta">The Art Newspaper　2026-11-11 22:06</p>
+  <h2 class="article-title">ヴェネツィアで語られるムラーノ・ガラスの仕掛け人、エジディオ・コスタンティーニ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 展覧会・イベント</span><span class="chip">地域: 海外</span><span class="chip">種別: 展覧会案内</span></div>
+  <div class="summary">ペギー・グッゲンハイム・コレクションで開かれている展覧会は、エジディオ・コスタンティーニがマックス・エルンストやルチオ・フォンタナら現代美術家とムラーノの名工ガラス吹き職人を結びつけ、彼らの彫刻をガラス作品へと変えた物語をたどる。<span class="summary-rest" hidden><br><br>展覧会は、コスタンティーニという人物を軸に、現代アートとムラーノのガラス工芸が出会った歴史を伝えている。芸術家と職人の協働によって生まれたガラス彫刻の世界に光を当てる内容となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：Venice exhibition tells the story of the man who brought together contemporary artists and Murano’s master glassblowers<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/11/venice-exhibition-spotlights-the-man-who-brought-together-contemporary-artists-and-muranos-master-glassblowers" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/11/venice-exhibition-spotlights-the-man-who-brought-together-contemporary-artists-and-muranos-master-glassblowers</a>
+  </div>
+</article>
+<article
   data-id="10b57496c7c8b34b001b1120fa5511c7"
   data-date="2026-11-11"
   data-month="2026-11"
@@ -2680,6 +3415,48 @@
   </div>
 </article>
 <article
+  data-id="ac150191c8c674ae9b0ddb2527c42027"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="現代アート"
+  data-region="海外"
+  data-source="The Art Newspaper"
+  data-kind="受賞・訃報"
+  data-search="アフリカ女性作家の賞がセネガルへ拡大、2026年の受賞者を発表 Prize dedicated to African women artists expands to Senegal and announces 2026 winners アフリカの女性アーティストを対象とするヤー・アサンテワ・アート賞がセネガルへ拡大し、2026年の受賞者が発表された。 ギャラリー1957が創設したこの賞の今年の審査員には、1-54コンテンポラリー・アフリカン・アート・フェアの創設者トゥーリア・エル・グラウィや、ガーナのアーティスト、サージ・アトゥクウェイ・クロッティが名を連ねた。 アフリカの女性作家を支援する賞の広がりを伝える記事。 The Art Newspaper 現代アート 海外 受賞・訃報">
+  <p class="meta">The Art Newspaper　2026-11-11 20:07</p>
+  <h2 class="article-title">アフリカ女性作家の賞がセネガルへ拡大、2026年の受賞者を発表</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 現代アート</span><span class="chip">地域: 海外</span><span class="chip">種別: 受賞・訃報</span></div>
+  <div class="summary">アフリカの女性アーティストを対象とするヤー・アサンテワ・アート賞がセネガルへ拡大し、2026年の受賞者が発表された。<span class="summary-rest" hidden><br><br>ギャラリー1957が創設したこの賞の今年の審査員には、1-54コンテンポラリー・アフリカン・アート・フェアの創設者トゥーリア・エル・グラウィや、ガーナのアーティスト、サージ・アトゥクウェイ・クロッティが名を連ねた。<br><br>アフリカの女性作家を支援する賞の広がりを伝える記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：The Art Newspaper<br>
+    原題：Prize dedicated to African women artists expands to Senegal and announces 2026 winners<br>
+    原文URL：<a href="https://www.theartnewspaper.com/2026/11/11/prize-dedicated-to-african-women-artists-expands-to-senegal-announces-2026-winners" target="_blank" rel="noopener">https://www.theartnewspaper.com/2026/11/11/prize-dedicated-to-african-women-artists-expands-to-senegal-announces-2026-winners</a>
+  </div>
+</article>
+<article
+  data-id="ba2b5690b258205f9c3c80a82ea7e802"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="保存修復・文化財"
+  data-region="海外"
+  data-source="NYT Art and Design"
+  data-kind="ニュース"
+  data-search="美術館の「指名手配」ポスター作戦、略奪絵画をフランスへ取り戻す A Museum’s ‘Wanted’ Poster Campaign Brings Looted Painting Back to France オルレアン美術館は、第二次世界大戦中に盗まれた数百点の作品の回収に取り組んでいる。館長は市民の協力を求めている。 「指名手配」ポスターを使ったキャンペーンが、略奪された絵画をフランスへ取り戻すきっかけとなった。 戦時中に失われた美術品の返還に向けた美術館の取り組みを伝える記事。 NYT Art and Design 保存修復・文化財 海外 ニュース">
+  <p class="meta">NYT Art and Design　2026-11-11 19:03</p>
+  <h2 class="article-title">美術館の「指名手配」ポスター作戦、略奪絵画をフランスへ取り戻す</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 保存修復・文化財</span><span class="chip">地域: 海外</span><span class="chip">種別: ニュース</span></div>
+  <div class="summary">オルレアン美術館は、第二次世界大戦中に盗まれた数百点の作品の回収に取り組んでいる。館長は市民の協力を求めている。<span class="summary-rest" hidden><br><br>「指名手配」ポスターを使ったキャンペーンが、略奪された絵画をフランスへ取り戻すきっかけとなった。<br><br>戦時中に失われた美術品の返還に向けた美術館の取り組みを伝える記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：NYT Art and Design<br>
+    原題：A Museum’s ‘Wanted’ Poster Campaign Brings Looted Painting Back to France<br>
+    原文URL：<a href="https://www.nytimes.com/2026/11/11/world/europe/france-art-wanted-poster.html" target="_blank" rel="noopener">https://www.nytimes.com/2026/11/11/world/europe/france-art-wanted-poster.html</a>
+  </div>
+</article>
+<article
   data-id="e752de414c4203fe4526786aef591aab"
   data-date="2026-11-11"
   data-month="2026-11"
@@ -2698,6 +3475,27 @@
     配信元：Hypebeast Art<br>
     原題：JR Turns Bangkok’s Cloud 11 Into a 2,500-Portrait Monument With “Thailand Creative Archive”<br>
     原文URL：<a href="https://hypebeast.com/2026/11/cloud-11-jr-inside-out-project-bangkok-announcement-info" target="_blank" rel="noopener">https://hypebeast.com/2026/11/cloud-11-jr-inside-out-project-bangkok-announcement-info</a>
+  </div>
+</article>
+<article
+  data-id="1bbe8df9e8263bf43ac294e0695610db"
+  data-date="2026-11-11"
+  data-month="2026-11"
+  data-categories="美術史・古典"
+  data-region="国内"
+  data-source="ART iT"
+  data-kind="特集"
+  data-search="杉田敦「熾火の木の国へ」——ガラスの家からSESCポンペイアへ 杉田敦 ナノソート2021 #03「熾火の木の国へ（後）」 ガラスの家を訪れた杉田敦が、その設計者であり主人でもあるリナ・ボ・バルディと、夫ピエトロ・マリア・バルディの来歴をさかのぼりながら、体制の変化や軍事政権下の表現者たちへと思いを馳せる連載の後編。 ガラスの家からSESCポンペイア、ジャパン・ハウス、そして大衆食堂へと歩を進めながら思考は続いていく。建築と社会、表現のあり方をめぐる思索をたどる回となっている。 ART iT 美術史・古典 国内 特集">
+  <p class="meta">ART iT　2026-11-11 09:00</p>
+  <h2 class="article-title">杉田敦「熾火の木の国へ」——ガラスの家からSESCポンペイアへ</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 美術史・古典</span><span class="chip">地域: 国内</span><span class="chip">種別: 特集</span></div>
+  <div class="summary">ガラスの家を訪れた杉田敦が、その設計者であり主人でもあるリナ・ボ・バルディと、夫ピエトロ・マリア・バルディの来歴をさかのぼりながら、体制の変化や軍事政権下の表現者たちへと思いを馳せる連載の後編。<span class="summary-rest" hidden><br><br>ガラスの家からSESCポンペイア、ジャパン・ハウス、そして大衆食堂へと歩を進めながら思考は続いていく。建築と社会、表現のあり方をめぐる思索をたどる回となっている。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：ART iT<br>
+    原題：杉田敦 ナノソート2021 #03「熾火の木の国へ（後）」<br>
+    原文URL：<a href="https://www.art-it.asia/top/contributertop/admin_ed_columns/295910/" target="_blank" rel="noopener">https://www.art-it.asia/top/contributertop/admin_ed_columns/295910/</a>
   </div>
 </article>
 <article
@@ -2761,6 +3559,27 @@
     配信元：Artsy<br>
     原題：Japanese Artist Mariko Mori Is Creating Hopeful Artworks for the AI Age<br>
     原文URL：<a href="https://www.artsy.net/article/artsy-editorial-japanese-artist-mariko-mori-creating-hopeful-artworks-ai-age" target="_blank" rel="noopener">https://www.artsy.net/article/artsy-editorial-japanese-artist-mariko-mori-creating-hopeful-artworks-ai-age</a>
+  </div>
+</article>
+<article
+  data-id="fedc17bb5a937e2842bbe79e5051a94f"
+  data-date="2026-11-10"
+  data-month="2026-11"
+  data-categories="写真"
+  data-region="海外"
+  data-source="NYT Art and Design"
+  data-kind="レビュー・批評"
+  data-search="批評家が絶賛するアラン・セクラの「フィッシュ・ストーリー」、ニューヨークで公開 Our Critic Calls ‘Fish Story’ the Greatest Seafaring Epic in Contemporary Art 写真家アラン・セクラの「フィッシュ・ストーリー」は、世界的な海運の隠れた世界を、港湾労働者や船員の視点から描いた作品群だ。 ニューヨークで公開されるこのシリーズを、批評家は現代アートにおける最も偉大な海洋叙事詩と評している。 海運の現場に光を当てた写真シリーズの評価を伝える記事。 NYT Art and Design 写真 海外 レビュー・批評">
+  <p class="meta">NYT Art and Design　2026-11-11 00:40</p>
+  <h2 class="article-title">批評家が絶賛するアラン・セクラの「フィッシュ・ストーリー」、ニューヨークで公開</h2>
+  <div class="taxonomy"><span class="chip">カテゴリ: 写真</span><span class="chip">地域: 海外</span><span class="chip">種別: レビュー・批評</span></div>
+  <div class="summary">写真家アラン・セクラの「フィッシュ・ストーリー」は、世界的な海運の隠れた世界を、港湾労働者や船員の視点から描いた作品群だ。<span class="summary-rest" hidden><br><br>ニューヨークで公開されるこのシリーズを、批評家は現代アートにおける最も偉大な海洋叙事詩と評している。<br><br>海運の現場に光を当てた写真シリーズの評価を伝える記事。</span></div>
+  <button type="button" class="summary-toggle" aria-expanded="false">続きを読む</button>
+  <div class="source-box">
+    <strong>ソース・引用元</strong>
+    配信元：NYT Art and Design<br>
+    原題：Our Critic Calls ‘Fish Story’ the Greatest Seafaring Epic in Contemporary Art<br>
+    原文URL：<a href="https://www.nytimes.com/2026/11/10/arts/design/our-critic-calls-fish-story-the-greatest-seafaring-epic-in-contemporary-art.html" target="_blank" rel="noopener">https://www.nytimes.com/2026/11/10/arts/design/our-critic-calls-fish-story-the-greatest-seafaring-epic-in-contemporary-art.html</a>
   </div>
 </article>
 <article
