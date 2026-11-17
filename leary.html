@@ -1153,10 +1153,13 @@ body:not(.leary2-panel-open) .panel{display:none}
   }
 
   function worldToScreen(x, y){
-    const rect = canvas.getBoundingClientRect();
+    /* dragfix 2026-11-17: the result is used as stage-local style coordinates
+       for overlay markers. getBoundingClientRect() includes the cover-fit
+       transform scale, which double-counted the scale and made source
+       markers leap/run away while dragging. Use the unscaled layout size. */
     return {
-      x: (x * state.view.zoom + state.view.x) * (rect.width / state.size.width),
-      y: (y * state.view.zoom + state.view.y) * (rect.height / state.size.height),
+      x: (x * state.view.zoom + state.view.x) * (canvas.offsetWidth / state.size.width),
+      y: (y * state.view.zoom + state.view.y) * (canvas.offsetHeight / state.size.height),
     };
   }
 
