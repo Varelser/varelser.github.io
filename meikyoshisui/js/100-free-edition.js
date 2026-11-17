@@ -156,6 +156,18 @@
   document.addEventListener('keyup', function (e) { if (e.key === 'PrintScreen') veil(); }, true);
   document.addEventListener('keydown', function (e) { if (e.key === 'PrintScreen') veil(); }, true);
 
+  /* ── 7) honest log lines: export functions still log "success"
+        after their (blocked) download click; rewrite those lines ── */
+  if (typeof window.log === 'function') {
+    var origLog = window.log;
+    window.log = function (msg, type) {
+      if (typeof msg === 'string' && /(DOWNLOADED|MULTI EXPORT|MUSICXML EXPORTED|OSC EXPORT|PRESETS EXPORTED)/.test(msg)) {
+        return origLog('// 書き出しは無料版では無効です（完全版はGumroad）', 'warn');
+      }
+      return origLog(msg, type);
+    };
+  }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', badge);
   else badge();
 })();
