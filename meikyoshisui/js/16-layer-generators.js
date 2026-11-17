@@ -1,7 +1,29 @@
 function generateVoicings(pcs,cm,ms){ms=ms||22;const u=[...new Set(pcs.map(p=>((p%12)+12)%12))];if(!u.length)return[];const out=[],seen=new Set();const add=v=>{const sv=[...v].sort((a,b)=>a-b);if(sv.some(n=>n<12||n>115)||sv[sv.length-1]-sv[0]>ms)return;const k=sv.join(',');if(seen.has(k))return;seen.add(k);out.push(sv);};for(let inv=0;inv<u.length;inv++){const rot=[...u.slice(inv),...u.slice(0,inv)];let bass=Math.round((cm-Math.floor(ms/2)-rot[0])/12)*12+rot[0];while(bass<12)bass+=12;while(bass>100)bass-=12;const v=[bass];for(let i=1;i<rot.length;i++){let n=Math.floor(v[v.length-1]/12)*12+rot[i];if(n<=v[v.length-1])n+=12;v.push(n);}add(v);if(v.length>=3){const d2=[...v];d2[d2.length-2]-=12;add(d2);}if(v.length>=4){const d3=[...v];d3[d3.length-3]-=12;add(d3);}}return out;}
 function vlCost(a,b){if(!a.length||!b.length)return 999;const sa=[...a].sort((x,y)=>x-y),sb=[...b].sort((x,y)=>x-y);while(sa.length<sb.length)sa.push(clampNote(sa[sa.length-1]+12));while(sb.length<sa.length)sb.push(clampNote(sb[sb.length-1]+12));return sa.reduce((s,n,i)=>s+Math.abs(n-sb[i]),0);}
 function parallelPenalty(a,b){if(a.length<2||b.length<2)return 0;const n=Math.min(a.length,b.length);let p=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const iA=a[j]-a[i],iB=b[j]-b[i],mI=b[i]-a[i],mJ=b[j]-a[j];if((mI!==0||mJ!==0)&&((mI>0&&mJ>0)||(mI<0&&mJ<0))){if(iA%12===7&&iB%12===7)p+=8;if(iA%12===0&&iA!==0&&iB%12===0)p+=12;}}return p;}
-function bestVoicing(prev,pcs,cm,ms,fd){ms=ms||22;fd=!!fd;const c=generateVoicings(pcs,cm,ms);if(!c.length)return prev.length?prev:[];if(!prev.length)return c.reduce((b,v)=>(v[v.length-1]-v[0])<(b[b.length-1]-b[0])?v:b);const pk=prev.join(',');const pl=fd?c.filter(v=>v.join(',')!==pk):c;if(!pl.length)return prev;let best=Infinity,bv=pl[0];for(const v of pl){const s=vlCost(prev,v)+parallelPenalty(prev,v)*.6;if(s<best){best=s;bv=v;}}return bv;}
+function bestVoicing(prev,pcs,cm,ms,fd){ms=ms||22;fd=!!fd;const c=generateVoicings(pcs,cm,ms);if(!c.length)return prev.length?prev:[];if(!prev.length)return c.reduce((b,v)=>(v[v.length-1]-v[0])<(b[b.length-1]-b[0])?v:b);const pk=prev.join(',');const pl=fd?c.filter(v=>v.join(',')!==pk):c;if(!pl.length)return prev;let best=Infinity,bv=pl[0];
+/* v7.0: 声部連結スムーズネス (S.vlSmooth 0-100, 既定50)。
+   t=0.5 で従来スコアと完全一致。t>0.5 は最大跳躍にペナルティを加えて
+   なめらかに、t<0.5 は移動量を割り引いて大胆なボイシングを許す */
+let _smT=.5;try{if(typeof S!=='undefined'&&S.vlSmooth!=null)_smT=Math.max(0,Math.min(100,S.vlSmooth))/100;}catch(e){}
+for(const v of pl){let s=vlCost(prev,v)+parallelPenalty(prev,v)*.6;if(_smT!==.5){const sa=[...prev].sort((x,y)=>x-y),sb=[...v].sort((x,y)=>x-y);const m=Math.min(sa.length,sb.length);let leap=0;for(let i=0;i<m;i++)leap=Math.max(leap,Math.abs(sa[i]-sb[i]));s+=(_smT-.5)*2*(_smT>.5?leap*.8:-.4*vlCost(prev,v));}if(s<best){best=s;bv=v;}}return bv;}
+/* ═══ v7.0: アボイドノート重み付け ═══
+   p.avoidW (0-1) が有効なときのみ、アボイド音 (長3度コード上の完全4度、
+   コードに含まれない ♭9) を確率的に最寄りのコードトーン/テンションへ寄せる。
+   OFF (0) では rng を消費せず従来の選択をそのまま返す */
+function applyAvoid(note,pool,ci,rm,p){
+  const w=(p&&p.avoidW)||0;if(!w||!pool||!pool.length)return note;
+  const rootPc=((rm%12)+12)%12,rel=((note-rootPc)%12+12)%12;
+  const hasMaj3=ci.includes(4);
+  let isAvoid=false;
+  if(rel===5&&hasMaj3)isAvoid=true;
+  if(rel===1&&!ci.includes(1))isAvoid=true;
+  if(!isAvoid)return note;
+  if(rng()>=w)return note;
+  let best=null,bd=1e9;
+  for(const n of pool){const r2=((n-rootPc)%12+12)%12;const isCT=ci.some(iv=>((iv%12)+12)%12===r2);const isT=r2===2||r2===9||(r2===5&&!hasMaj3);if(!isCT&&!isT)continue;const d=Math.abs(n-note);if(d<bd){bd=d;best=n;}}
+  return best!=null?best:note;
+}
 function nearestOctave(anchor,note){const p=((note%12)+12)%12;let best=note,bd=Math.abs(note-anchor);for(let o=0;o<=9;o++){const n=o*12+p;if(n<12||n>115)continue;const d=Math.abs(n-anchor);if(d<bd){bd=d;best=n;}}return best;}
 
 /* ═══ MACRO ═══ */
@@ -73,7 +95,10 @@ function resolveAttractorMap(attractor,attractorMap,velRange,pitchRange){
 
 /* ═══ LAYER GENERATORS ═══ */
 function makeDrone(rm,ci,si,p,prg){const{ppq,bars,genre,octLayers,humanize,velocity,tensionCurve,dissonance,gateBase,gateHumanize,attractor,attractorMap,lorenz,pcAnalysis,boidsResult}=p;
-const _bDrn=boidsResult?.drone||null;const _bDrnVB=_bDrn?_bDrn.velocityScale:1.0;const bt=ppq*4,total=bt*bars,vB=Math.round(velocity*(genre==='dark_ambient'?.95:.8)*_bDrnVB),hum=humanize/100;const dn=[];for(const o of octLayers){const r=o*12+(rm%12),f=r+7;if(r>=12&&r<=115)dn.push({n:r,v:vB});if(f>=12&&f<=115)dn.push({n:f,v:Math.round(vB*.65)});if(genre==='drone'){const o2=r+12;if(o2<=115)dn.push({n:o2,v:Math.round(vB*.4)});}}if(genre==='dark_ambient'){const tri=rm+6;if(tri>=12&&tri<=115)dn.push({n:tri,v:Math.round(vB*.5)});}if(!dn.length)return trackBytes([tname('Drone'),pc(0,prg.drone)]);const seg=ppq*(genre==='drone'?8:genre==='ambient'?6:4);const ae=[];let c=0;while(c<total){const t=getTension(c,ppq,tensionCurve),sd=Math.min(seg,total-c);
+const _bDrn=boidsResult?.drone||null;const _bDrnVB=_bDrn?_bDrn.velocityScale:1.0;const bt=ppq*4,total=bt*bars,vB=Math.round(velocity*(genre==='dark_ambient'?.95:.8)*_bDrnVB),hum=humanize/100;const dn=[];for(const o of octLayers){const r=o*12+(rm%12),f=r+7;if(r>=12&&r<=115)dn.push({n:r,v:vB});if(f>=12&&f<=115)dn.push({n:f,v:Math.round(vB*.65)});if(genre==='drone'){const o2=r+12;if(o2<=115)dn.push({n:o2,v:Math.round(vB*.4)});}}if(genre==='dark_ambient'){const tri=rm+6;if(tri>=12&&tri<=115)dn.push({n:tri,v:Math.round(vB*.5)});}
+/* v7.0: レイヤー別 density (p.fxDen) — 既定 (未設定/1) では何もしない */
+if(p.fxDen&&p.fxDen!==1&&dn.length>1){if(p.fxDen<1){const keep=[dn[0]];for(let i=1;i<dn.length;i++)if(rng()<p.fxDen)keep.push(dn[i]);dn.length=0;dn.push(...keep);}else{for(const o of octLayers){const r2=o*12+(rm%12)+12;if(r2<=115&&!dn.some(d=>d.n===r2)&&rng()<Math.min(1,p.fxDen-.5))dn.push({n:r2,v:Math.round(vB*.4)});}}}
+if(!dn.length)return trackBytes([tname('Drone'),pc(0,prg.drone)]);const seg=ppq*(genre==='drone'?8:genre==='ambient'?6:4);const ae=[];let c=0;while(c<total){const t=getTension(c,ppq,tensionCurve),sd=Math.min(seg,total-c);
 /* Attractor: mapX/Y/Z設定に従いvel/gate等を変調 */
 const _atD=resolveAttractorMap(attractor||lorenz,attractorMap,15,2);
 const lVelShift=_atD.velShift;
@@ -116,6 +141,8 @@ if(zTransPCs&&si2%Math.max(2,Math.floor(pL/2))===0){
   vo.push(...zNotes);
 }
 let vF=[...new Set(vo)].filter(n=>n>=12&&n<=115).sort((a,b)=>a-b);if(!vF.length){c+=seg;si2++;continue;}
+/* v7.0: レイヤー別 density (p.fxDen) — 既定では何もしない */
+if(p.fxDen&&p.fxDen!==1&&vF.length>1){if(p.fxDen<1){const keep=[vF[0]];for(let i=1;i<vF.length;i++)if(rng()<p.fxDen)keep.push(vF[i]);vF=keep;}else{const cand=scalePool.filter(n=>n>vF[0]&&n<=vF[0]+24&&!vF.includes(n));let added=0;for(const n of cand){if(added>=2)break;if(rng()<Math.min(1,p.fxDen-.5)){vF.push(n);added++;}}vF.sort((a,b)=>a-b);}}
 /* v25.6: RC ゲート — 声部1 が 0 のセグメントはスキップ */
 if(_rcPadGates&&_rcPadGates.length>0&&_rcPadGates[si2%_rcPadGates.length]===0){c+=seg;si2++;continue;}
 const dC=dd/100,resolved=DissonanceResolver.step(vF,dC,scalePool,resolveThreshold,resolveSteps,2);if(resolved)vF=[...new Set(resolved)].filter(n=>n>=12&&n<=115).sort((a,b)=>a-b);DissonanceResolver.update(vF,dC);
@@ -186,7 +213,9 @@ while(c<total){
     else note=src[((Math.floor(rng()*src.length)+lIdxOffset)%src.length+src.length)%src.length];
     if(rng()<drift/100)note=clampNote(note+(rng()<.5?12:-12)*Math.ceil(rng()*2));
     note=clampNote(note+Math.round((octBias+_bArpOB)*6));
-    if(la!==undefined)note=nearestOctave(la,note);la=note;
+    if(la!==undefined)note=nearestOctave(la,note);
+    note=applyAvoid(note,src,ci,rm,p); /* v7.0: アボイド重み付け (OFF時 no-op) */
+    la=note;
     /* IS: Duration / Velocity / Gate を音列で支配 */
     let isV=null;
     if(isInst&&IntegralSerialism.isActive(isInst)){isV=isInst.next();}
@@ -254,7 +283,9 @@ while(c<total){
     let idx=Math.max(0,Math.min(orderedPool.length-1,pi+Math.round((rng()-.5)*4)+lJump));
     if(rng()<drift*.004)idx=Math.max(0,Math.min(orderedPool.length-1,Math.round(idx+(rng()<.5?8:-8))));
     let note=clampNote(orderedPool[idx]+Math.round(octBias*5));
-    if(lm!==undefined)note=nearestOctave(lm,note);lm=note;
+    if(lm!==undefined)note=nearestOctave(lm,note);
+    note=applyAvoid(note,orderedPool,ci,rm,p); /* v7.0: アボイド重み付け (OFF時 no-op) */
+    lm=note;
     /* IS: Melody の Duration / Velocity / Gate を音列で支配 */
     let isV=null;
     if(isInst&&IntegralSerialism.isActive(isInst)){isV=isInst.next();}
@@ -276,9 +307,9 @@ while(c<total){
     if(isV){c+=Math.max(1,finalStep);continue;}
   }c+=step;}return safeAbsToTrack(ae,[tname('Melody'),pc(3,prg.melody)]);}
 
-function makeBass(rm,ci,si,p,prg){const{ppq,bars,genre,octLayers,humanize,velocity,tensionCurve,dissonance,gateBase,gateHumanize}=p;const bt=ppq*4,total=bt*bars,hum=humanize/100;const sL=[...octLayers].sort((a,b)=>a-b),rP=rm%12;let bO=Math.max(0,sL[0]-1);if(bO*12+rP<12)bO++;const bR=Math.min(115,bO*12+rP),bF=Math.min(115,bR+7),bT=Math.min(115,bR+(ci.includes(3)?3:4)),bV=Math.min(127,Math.round(velocity*(genre==='dark_ambient'?1.08:.94)));const ae=[];if(genre==='ritual'||genre==='noise'){for(let bar=0;bar<bars;bar++){const pos=bar*bt,t=getTension(pos,ppq,tensionCurve),mg=Math.min(ppq,total-pos),gt=calcGateTime(ppq,'bass',genre,t,dissonance,gateBase,gateHumanize,mg);ae.push({pos,v:[0x94,bR,modulateVel(bV+humVelDelta(hum,12,pos,total,ppq),t,.25)]});ae.push({pos:pos+gt,v:[0x84,bR,0]});if(bar%2===0){const p2=pos+ppq*2,m2=Math.min(ppq,total-p2);if(m2>0){const g2=calcGateTime(ppq,'bass',genre,t,dissonance,gateBase,gateHumanize,m2);ae.push({pos:p2,v:[0x94,bF,modulateVel(bV-10+humVelDelta(hum,8,p2,total,ppq),t,.25)]});ae.push({pos:p2+g2,v:[0x84,bF,0]});}}}}else{const seg=bt*(genre==='ambient'||genre==='space'?4:2),seq=[bR,bR,bF,bR,bT,bR,bF,bR];let si2=0,c=0;while(c<total){const note=seq[si2%seq.length];si2++;const t=getTension(c,ppq,tensionCurve),sd=Math.min(seg,total-c),gt=calcGateTime(sd,'bass',genre,t,dissonance,gateBase,gateHumanize,sd);ae.push({pos:c,v:[0x94,note,modulateVel(bV+humVelDelta(hum,10,c,total,ppq),t,.25)]});ae.push({pos:c+gt,v:[0x84,note,0]});c+=seg;}}return safeAbsToTrack(ae,[tname('Bass'),pc(4,prg.bass)]);}
+function makeBass(rm,ci,si,p,prg){const{ppq,bars,genre,octLayers,humanize,velocity,tensionCurve,dissonance,gateBase,gateHumanize}=p;const bt=ppq*4,total=bt*bars,hum=humanize/100;const sL=[...octLayers].sort((a,b)=>a-b),rP=rm%12;let bO=Math.max(0,sL[0]-1);if(bO*12+rP<12)bO++;const bR=Math.min(115,bO*12+rP),bF=Math.min(115,bR+7),bT=Math.min(115,bR+(ci.includes(3)?3:4)),bV=Math.min(127,Math.round(velocity*(genre==='dark_ambient'?1.08:.94)));const ae=[];if(genre==='ritual'||genre==='noise'){for(let bar=0;bar<bars;bar++){const pos=bar*bt,t=getTension(pos,ppq,tensionCurve),mg=Math.min(ppq,total-pos),gt=calcGateTime(ppq,'bass',genre,t,dissonance,gateBase,gateHumanize,mg);ae.push({pos,v:[0x94,bR,modulateVel(bV+humVelDelta(hum,12,pos,total,ppq),t,.25)]});ae.push({pos:pos+gt,v:[0x84,bR,0]});if(bar%2===0&&!(p.fxDen&&p.fxDen<1&&rng()>=p.fxDen)){const p2=pos+ppq*2,m2=Math.min(ppq,total-p2);if(m2>0){const g2=calcGateTime(ppq,'bass',genre,t,dissonance,gateBase,gateHumanize,m2);ae.push({pos:p2,v:[0x94,bF,modulateVel(bV-10+humVelDelta(hum,8,p2,total,ppq),t,.25)]});ae.push({pos:p2+g2,v:[0x84,bF,0]});}}}}else{const seg=bt*(genre==='ambient'||genre==='space'?4:2),seq=[bR,bR,bF,bR,bT,bR,bF,bR];let si2=0,c=0;while(c<total){const note=seq[si2%seq.length];si2++;const t=getTension(c,ppq,tensionCurve),sd=Math.min(seg,total-c),gt=calcGateTime(sd,'bass',genre,t,dissonance,gateBase,gateHumanize,sd);const _bSkip=p.fxDen&&p.fxDen<1&&note!==bR&&rng()>=p.fxDen;if(!_bSkip){ae.push({pos:c,v:[0x94,note,modulateVel(bV+humVelDelta(hum,10,c,total,ppq),t,.25)]});ae.push({pos:c+gt,v:[0x84,note,0]});}c+=seg;}}return safeAbsToTrack(ae,[tname('Bass'),pc(4,prg.bass)]);}
 
-function makeOvertone(rm,ci,si,p,prg){const{ppq,bars,octLayers,velocity,genre,tensionCurve,dissonance,gateBase,gateHumanize,spectralAnalysis}=p;const bt=ppq*4,total=bt*bars,vB=Math.round(velocity*.83);const sL=[...octLayers].sort((a,b)=>a-b),bR=(sL[0]||3)*12+(rm%12);const fallbackOffsets=[0,12,19,24,28,31,34,36,38,40,42,43,45,46,47,48];const tuningA4=(typeof CompTuningEngine!=='undefined'&&CompTuningEngine.STATE&&CompTuningEngine.STATE.a4Hz)?CompTuningEngine.STATE.a4Hz:440;const harmonicPlan=(spectralAnalysis&&typeof SpectralHarmonyEngine!=='undefined')?SpectralHarmonyEngine.overtoneChord(SpectralHarmonyEngine.midiToFreq(bR,tuningA4),spectralAnalysis.partials.map(partial=>partial.harmonic),tuningA4,{rootMidi:bR,chordSize:Math.min(6,Math.max(3,Math.round((spectralAnalysis.harmonicDensity||0.5)*4)+2)),minMidi:bR,maxMidi:112,resonantPCs:spectralAnalysis.resonantPCs||[],chordPCs:[rm%12,...ci.map(interval=>((rm+interval)%12+12)%12)],brightness:spectralAnalysis.brightnessScore||0,spread:Math.max(0.2,Math.min(1,0.3+(spectralAnalysis.brightnessScore||0)*0.45+(SPECTRAL_PARAMS.brightnessBoost||0)*0.2))}):null;const voices=(harmonicPlan&&harmonicPlan.voices&&harmonicPlan.voices.length)?harmonicPlan.voices:fallbackOffsets.map((offset,index)=>({note:bR+offset,harmonic:index+1})).filter(voice=>voice.note<=112);const ae=[];for(let hi=0;hi<voices.length;hi++){const voice=voices[hi];const n=voice.note;if(n>112)break;const harmIdx=Math.max(0,(voice.harmonic||hi+1)-1);/* Spectral Harmony: 倍音列から抽出した和声音を Overtone レイヤーへ反映 */const baseV=Math.max(8,Math.round(vB-hi*6-Math.max(0,n-bR)*0.18));const vel=(spectralAnalysis&&SPECTRAL_PARAMS.velShape)?SpectralEngine.shapeVelocity(Math.round(baseV),harmIdx,SPECTRAL_PARAMS):Math.round(baseV);const notePos=Math.round(hi*(bt/Math.max(1,voices.length)));const t=getTension(notePos,ppq,tensionCurve);const gt=calcGateTime(total-notePos,'overtone',genre,t,dissonance,gateBase,gateHumanize,total-notePos);ae.push({pos:notePos,v:[0x95,n,Math.max(1,Math.min(127,modulateVel(vel,t,.3)))]});ae.push({pos:notePos+gt,v:[0x85,n,0]});}return safeAbsToTrack(ae,[tname('Overtones'),pc(5,prg.overtone)]);}
+function makeOvertone(rm,ci,si,p,prg){const{ppq,bars,octLayers,velocity,genre,tensionCurve,dissonance,gateBase,gateHumanize,spectralAnalysis}=p;const bt=ppq*4,total=bt*bars,vB=Math.round(velocity*.83);const sL=[...octLayers].sort((a,b)=>a-b),bR=(sL[0]||3)*12+(rm%12);const fallbackOffsets=[0,12,19,24,28,31,34,36,38,40,42,43,45,46,47,48];const tuningA4=(typeof CompTuningEngine!=='undefined'&&CompTuningEngine.STATE&&CompTuningEngine.STATE.a4Hz)?CompTuningEngine.STATE.a4Hz:440;const harmonicPlan=(spectralAnalysis&&typeof SpectralHarmonyEngine!=='undefined')?SpectralHarmonyEngine.overtoneChord(SpectralHarmonyEngine.midiToFreq(bR,tuningA4),spectralAnalysis.partials.map(partial=>partial.harmonic),tuningA4,{rootMidi:bR,chordSize:Math.min(6,Math.max(3,Math.round((spectralAnalysis.harmonicDensity||0.5)*4)+2)),minMidi:bR,maxMidi:112,resonantPCs:spectralAnalysis.resonantPCs||[],chordPCs:[rm%12,...ci.map(interval=>((rm+interval)%12+12)%12)],brightness:spectralAnalysis.brightnessScore||0,spread:Math.max(0.2,Math.min(1,0.3+(spectralAnalysis.brightnessScore||0)*0.45+(SPECTRAL_PARAMS.brightnessBoost||0)*0.2))}):null;const voices=(harmonicPlan&&harmonicPlan.voices&&harmonicPlan.voices.length)?harmonicPlan.voices:fallbackOffsets.map((offset,index)=>({note:bR+offset,harmonic:index+1})).filter(voice=>voice.note<=112);const ae=[];for(let hi=0;hi<voices.length;hi++){const voice=voices[hi];const n=voice.note;if(n>112)break;/* v7.0: レイヤー別 density (p.fxDen<1 で上位倍音を間引き、既定では何もしない) */if(p.fxDen&&p.fxDen<1&&hi>0&&rng()>=p.fxDen)continue;const harmIdx=Math.max(0,(voice.harmonic||hi+1)-1);/* Spectral Harmony: 倍音列から抽出した和声音を Overtone レイヤーへ反映 */const baseV=Math.max(8,Math.round(vB-hi*6-Math.max(0,n-bR)*0.18));const vel=(spectralAnalysis&&SPECTRAL_PARAMS.velShape)?SpectralEngine.shapeVelocity(Math.round(baseV),harmIdx,SPECTRAL_PARAMS):Math.round(baseV);const notePos=Math.round(hi*(bt/Math.max(1,voices.length)));const t=getTension(notePos,ppq,tensionCurve);const gt=calcGateTime(total-notePos,'overtone',genre,t,dissonance,gateBase,gateHumanize,total-notePos);ae.push({pos:notePos,v:[0x95,n,Math.max(1,Math.min(127,modulateVel(vel,t,.3)))]});ae.push({pos:notePos+gt,v:[0x85,n,0]});}return safeAbsToTrack(ae,[tname('Overtones'),pc(5,prg.overtone)]);}
 
 function makeTexture(rm,ci,si,p,prg){const{ppq,bars,genre,octLayers,octBias,density,humanize,velocity,tensionCurve,dissonance,gateBase,gateHumanize,eucPattern,attractor,attractorMap,lorenz,ca,pcAnalysis,boidsResult,spectralAnalysis}=p;
 const _bTex=boidsResult?.texture||null;const _bTexVB=_bTex?_bTex.velocityScale:1.0;const _bTexRS=_bTex?_bTex.registerOffset:0;const _bTexGS=_bTex?_bTex.gateScale:1.0;const bt=ppq*4,total=bt*bars,hum=humanize/100,vB=Math.round(velocity*.69*_bTexVB);const pool=buildNotePool(rm,si,octLayers);if(!pool.length)return trackBytes([tname('Texture'),pc(6,prg.texture)]);const prob=(density*.5)/100,sB=ppq*(genre==='noise'?.25:genre==='ritual'?.5:1);
@@ -338,7 +369,9 @@ const ae=[];let c=0,idx=Math.floor(pool.length/2),ll,eI=0,stepCount=0;while(c<to
     const lIdxOff=_atL.pitchOff;
     idx=Math.max(0,Math.min(orderedPool.length-1,idx+Math.round((rng()-.5)*6)+lIdxOff));
     let note=clampNote(orderedPool[idx]+Math.round(octBias*5));
-    if(ll!==undefined)note=nearestOctave(ll,note);ll=note;
+    if(ll!==undefined)note=nearestOctave(ll,note);
+    note=applyAvoid(note,orderedPool,ci,rm,p); /* v7.0: アボイド重み付け (OFF時 no-op) */
+    ll=note;
     /* IS: Lead の Duration / Velocity / Gate を音列で支配 */
     let isV=null;
     if(isInst&&IntegralSerialism.isActive(isInst)){isV=isInst.next();}

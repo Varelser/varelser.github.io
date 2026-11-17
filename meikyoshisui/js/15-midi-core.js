@@ -32,11 +32,40 @@ const INAMES={0:'R',1:'b2',2:'2',3:'b3',4:'3',5:'4',6:'b5',7:'5',8:'b6',9:'6',10
 
 /* ═══ MIDI CORE ═══ */
 function vl(v){v=Math.max(0,v);const b=[];b.unshift(v&0x7F);v>>=7;while(v>0){b.unshift((v&0x7F)|0x80);v>>=7;}return b;}
-function trackChunk(d){const l=d.length;return[0x4D,0x54,0x72,0x6B,(l>>24)&0xFF,(l>>16)&0xFF,(l>>8)&0xFF,l&0xFF,...d];}
+function trackChunk(d){d=normalizeTrackBytes(d);const l=d.length;return[0x4D,0x54,0x72,0x6B,(l>>24)&0xFF,(l>>16)&0xFF,(l>>8)&0xFF,l&0xFF,...d];}
 function trackBytes(evs){const b=[];for(let e of evs){b.push(...vl(e.d));b.push(...e.v);}b.push(0,0xFF,0x2F,0);return b;}
 const pc=(ch,p,d=0)=>({d,v:[0xC0|ch,p]});
 const tname=s=>{const b=[...s].map(c=>c.charCodeAt(0));return{d:0,v:[0xFF,0x03,b.length,...b]};};
 function safeAbsToTrack(ae,hdr){ae.sort((a,b)=>{if(a.pos!==b.pos)return a.pos-b.pos;return((a.v[0]&0xF0)===0x80?0:1)-((b.v[0]&0xF0)===0x80?0:1);});let pp=0;const f=[...hdr];for(const e of ae){f.push({d:Math.max(0,e.pos-pp),v:e.v});pp=e.pos;}return trackBytes(f);}
+
+/* ═══ v7.0: MIDI 厳密準拠 — イベント保持パーサ + 正規化 ═══
+   parseTrackEvents: ランニングステータスを許容しつつ全イベント
+   (meta / sysex 含む) を {pos, bytes} で保持する。
+   normalizeTrackBytes: SMF 仕様違反 (トラック先頭や meta/sysex 直後で
+   ランニングステータスに依存する等) があれば明示ステータスで再発行し、
+   違反が無ければ入力をそのまま返す (バイトレベル no-op を保証)。 */
+function parseTrackEvents(data){const evs=[];let p=0,pos=0,lastStatus=0;const n=data.length;
+  const rdVLQ=()=>{let v=0;while(p<n){const b=data[p++];v=(v<<7)|(b&0x7F);if(!(b&0x80))break;}return v;};
+  while(p<n){const delta=rdVLQ();pos+=delta;if(p>=n)break;let b=data[p];
+    if(b===0xFF){const st=p;p++;if(p>=n)break;const type=data[p++];const len=rdVLQ();const end=Math.min(n,p+len);evs.push({pos,bytes:Array.from(data.slice(st,end))});p=end;lastStatus=0;continue;}
+    if(b===0xF0||b===0xF7){const st=p;p++;const len=rdVLQ();const end=Math.min(n,p+len);evs.push({pos,bytes:Array.from(data.slice(st,end))});p=end;lastStatus=0;continue;}
+    if(b&0x80){lastStatus=b;p++;}else if(!lastStatus){p++;continue;}
+    const hi=lastStatus&0xF0;const need=(hi===0xC0||hi===0xD0||lastStatus===0xF1||lastStatus===0xF3)?1:(lastStatus===0xF6?0:2);
+    const db=[];for(let i=0;i<need&&p<n;i++)db.push(data[p++]);
+    evs.push({pos,bytes:[lastStatus,...db]});}
+  return evs;}
+function normalizeTrackBytes(data){const a=Array.from(data||[]);let p=0,lastStatus=0,violation=false;const n=a.length;
+  const rdVLQ=()=>{let v=0;while(p<n){const b=a[p++];v=(v<<7)|(b&0x7F);if(!(b&0x80))break;}return v;};
+  while(p<n){rdVLQ();if(p>=n)break;const b=a[p];
+    if(b===0xFF){p++;if(p>=n)break;p++;const len=rdVLQ();p=Math.min(n,p+len);lastStatus=0;continue;}
+    if(b===0xF0||b===0xF7){p++;const len=rdVLQ();p=Math.min(n,p+len);lastStatus=0;continue;}
+    if(b&0x80){lastStatus=b;p++;}else{if(!lastStatus){violation=true;break;} }
+    const hi=lastStatus&0xF0;const need=(hi===0xC0||hi===0xD0||lastStatus===0xF1||lastStatus===0xF3)?1:(lastStatus===0xF6?0:2);
+    p=Math.min(n,p+need);}
+  if(!violation)return data;
+  const evs=parseTrackEvents(a);const out=[];let pp=0;
+  for(const e of evs){out.push(...vl(Math.max(0,e.pos-pp)),...e.bytes);pp=e.pos;}
+  out.push(0,0xFF,0x2F,0);return out;}
 
 function buildConductorTrack(bpm,ppq,bars,tc,tOn,tDr,secs){const bt=ppq*4,pool=[];const t0=Math.round(60000000/bpm);const tb={tick:0,bytes:[0xFF,0x51,3,(t0>>16)&0xFF,(t0>>8)&0xFF,t0&0xFF]};pool.push(tb);if(secs&&secs.length)for(const s of secs){const tk=s.bar*bt;const nm=[...s.name].map(c=>c.charCodeAt(0));pool.push({tick:Math.max(1,tk),bytes:[0xFF,0x06,nm.length,...nm]});}if(tOn&&tc&&tc.length>0)for(let bar=0;bar<bars;bar++){const tk=bar*bt;const t=tc[bar]!=null?tc[bar]:.5;const bB=Math.max(15,Math.min(200,Math.round(bpm+(t-.5)*2*tDr)));const us=Math.round(60000000/bB);if(bar===0)tb.bytes=[0xFF,0x51,3,(us>>16)&0xFF,(us>>8)&0xFF,us&0xFF];else pool.push({tick:tk,bytes:[0xFF,0x51,3,(us>>16)&0xFF,(us>>8)&0xFF,us&0xFF]});}pool.sort((a,b)=>a.tick-b.tick);const raw=[];let pv=0;for(const ev of pool){raw.push(...vl(ev.tick-pv),...ev.bytes);pv=ev.tick;}raw.push(0,0xFF,0x2F,0);return raw;}
 

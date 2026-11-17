@@ -130,6 +130,17 @@ const StatePersist = (() => {
     };
   }
 
+  /* ── v7.0: Markov STATE (モード/コーパス使用フラグを含む) ── */
+  function extractMarkov() {
+    if (typeof MarkovEngine === 'undefined') return null;
+    const m = MarkovEngine.STATE;
+    return {
+      scaleKey: m.scaleKey, bias: m.bias, tension: m.tension,
+      temperature: m.temperature, seqLength: m.seqLength, octave: m.octave,
+      mode: m.mode || 'order1', corpusUse: !!m.corpusUse,
+    };
+  }
+
   /* ── CC_AUTO_STATE ── */
   function extractCCAuto() {
     if (typeof CC_AUTO_STATE === 'undefined') return null;
@@ -287,6 +298,7 @@ const StatePersist = (() => {
       scaleMut: extractScaleMut(),
       humanizer: extractHumanizer(),
       ccAuto: extractCCAuto(),
+      markov: extractMarkov(),
     };
     /* patch 拡張 (92 の save ラップから還元): キーの追加順もラップと同一に保つ */
     const extras = extractPatchExtras();
@@ -409,6 +421,29 @@ const StatePersist = (() => {
     }
   }
 
+  /* ── v7.0: Markov STATE 復元 ── */
+  function restoreMarkov(data) {
+    if (!data || typeof MarkovEngine === 'undefined') return;
+    const m = MarkovEngine.STATE;
+    if (data.scaleKey && MarkovEngine.SCALE_PRESETS[data.scaleKey]) m.scaleKey = data.scaleKey;
+    if (data.bias) m.bias = data.bias;
+    if (typeof data.tension === 'number') m.tension = data.tension;
+    if (typeof data.temperature === 'number') m.temperature = data.temperature;
+    if (typeof data.seqLength === 'number') m.seqLength = data.seqLength;
+    if (typeof data.octave === 'number') m.octave = data.octave;
+    if (data.mode === 'order1' || data.mode === 'order2' || data.mode === 'chord') m.mode = data.mode;
+    if (typeof data.corpusUse === 'boolean') m.corpusUse = data.corpusUse;
+    try { MarkovEngine.buildUI(); MarkovEngine.rebuildMatrix(); } catch(_) {}
+    const _ms = (id, val, fmt) => {
+      const el = document.getElementById(id); if (el) el.value = val;
+      const vEl = document.getElementById(id + 'V'); if (vEl && fmt) vEl.textContent = fmt(val);
+    };
+    _ms('mkvTension', Math.round(m.tension * 100), v => (v / 100).toFixed(2));
+    _ms('mkvTemp', Math.round(m.temperature * 100), v => (v / 100).toFixed(2));
+    _ms('mkvSeqLen', m.seqLength, v => String(v));
+    _ms('mkvOctave', m.octave, v => 'Oct ' + v);
+  }
+
   /* ── CC_AUTO_STATE 復元 ── */
   function restoreCCAuto(data) {
     if (!data || typeof CC_AUTO_STATE === 'undefined') return;
@@ -464,6 +499,7 @@ const StatePersist = (() => {
     _try('ScaleMut',   () => restoreScaleMut(snap.scaleMut));
     _try('Humanizer',  () => restoreHumanizer(snap.humanizer));
     _try('CCAuto',     () => restoreCCAuto(snap.ccAuto));
+    _try('Markov',     () => restoreMarkov(snap.markov));
 
     /* UI全体を再構築 */
     try { _refreshUI(); } catch(e) {
@@ -702,6 +738,10 @@ const StatePersist = (() => {
     if (_seedVal && S.seed) _seedVal.textContent = S.seed;
     if (_seedInp && S.seedLocked) _seedInp.value = S.seed;
     if (_lockBtn) { _lockBtn.classList.toggle('locked', !!S.seedLocked); _lockBtn.textContent = S.seedLocked ? 'UNLOCK' : 'LOCK'; if (_seedInp) _seedInp.style.display = S.seedLocked ? 'inline-block' : 'none'; }
+    // v7.0: 表現拡張パック (js/98) のコントロール表示を復元状態へ同期
+    if (typeof window !== 'undefined' && typeof window.__MEIKY_V7_SYNC__ === 'function') {
+      try { window.__MEIKY_V7_SYNC__(); } catch(_) {}
+    }
   }
 
   return { save, load, remove, listSlots, autoSave, autoLoad, exportAll, importAll };

@@ -26,6 +26,24 @@ function updateMacroPreview(){if(!S.macroEnabled)return;const cv=generateTension
 
 /* ═══ GENERATE ═══ */
 
+/* ═══ v7.0: 生成の分割実行 (scheduler.postTask / フォールバック) ═══
+   長い生成 (ALL-ON 級) でメインスレッドを定期的に譲り、UI の応答性を保つ。
+   譲る前後で RNG 状態を保存/復元するため、割り込み側が rng() を消費しても
+   生成結果は一切変わらない (スケジューリングのみの変更)。 */
+let _genLastYield=0;
+async function __genYield(){
+  const now=(typeof performance!=='undefined'&&performance.now)?performance.now():Date.now();
+  if(now-_genLastYield<40)return;
+  _genLastYield=now;
+  const st=rngState();
+  try{
+    if(typeof scheduler!=='undefined'&&typeof scheduler.postTask==='function')await scheduler.postTask(()=>{});
+    else if(typeof scheduler!=='undefined'&&typeof scheduler.yield==='function')await scheduler.yield();
+    else await new Promise(r=>setTimeout(r,0));
+  }catch(e){try{await new Promise(r=>setTimeout(r,0));}catch(_){}}
+  rngSeed(st); /* _rngX は 0 にならない不変条件があるため rngSeed(st) で正確に復元 */
+}
+
 /**
  * 1コード・指定バー数のレイヤートラック群を生成して返す
  * (コード進行モード・単一コードモード共用の内部関数)
@@ -36,7 +54,7 @@ function updateMacroPreview(){if(!S.macroEnabled)return;const cv=generateTension
  * @param {Object} shared     doGenerate() 冒頭で計算した共有リソース群
  * @returns {{ tracks: Uint8Array[], trackNames: string[] }}
  */
-function generateForChordCore(c, barCount, barOffset, shared){ /* 2026-11-10: 元の generateForChord 本体。公開名は同ファイル末尾の編成ラッパーが持つ */
+async function generateForChordCore(c, barCount, barOffset, shared){ /* 2026-11-10: 元の generateForChord 本体。公開名は同ファイル末尾の編成ラッパーが持つ。v7.0: レイヤー構築の合間に __genYield() で譲るため async 化 (生成結果は不変) */
   const{ppq,scIv,prg,tensionCurve,eucPattern,sievePattern,sieveScale,boidsResult,
         lorenz,attractor,attractorMap,ca,rubatoDelta,ttForms,isInst,isState,velShape,velShapeMode,velShapeAmt,
         scaleMutExpanded,scaleMutTransMode,scaleMutTransLen,
@@ -86,20 +104,43 @@ function generateForChordCore(c, barCount, barOffset, shared){ /* 2026-11-10: �
   const p={ppq,bars:barCount,genre:S.genre,octLayers:S.octLayers.length?S.octLayers:[S.rootOct],octBias:S.octBias,density:S.density,velocity:S.velocity,humanize:S.humanize,drift:S.drift,dissonance:S.dissonance,polyrhythm:S.polyrhythm,tensionCurve:slicedTension,gateBase:S.gateBase,gateHumanize:S.gateHumanize,eucPattern,resolveThreshold:S.engines.resolution?S.resolveThreshold:1.01,resolveSteps:S.resolveSteps,lorenz,attractor,attractorMap,ca,rubatoDelta,ttForms,pcAnalysis,chordAnalysis,rootPc:c.root%12,isInst,isState,sievePattern,sieveScale,boidsResult,spectralAnalysis,progVelShape,scaleIvAtTick,
     vlVoicing: vlVoicing || null,  /* v25.4: voice-lead 事前計算ボイシング */
     jiPBMap:   jiPBMap   || null,  /* v25.5: JI PitchBend マップ */
-    rcTracks:  rcTracks  || null}; /* v25.6: Rhythmic Canons ゲートパターン */
+    rcTracks:  rcTracks  || null,  /* v25.6: Rhythmic Canons ゲートパターン */
+    avoidW:    (typeof S!=='undefined'&&S.avoidWeight)?S.avoidWeight/100:0, /* v7.0: アボイド重み付け */
+    chordIv:   c.iv};              /* v7.0: コード条件付き Markov 用 */
+
+  /* v7.0: レイヤー別アクティビティ＆レジスタ (S.layerFx) —
+     既定 (d=1, v=1, o=0) のレイヤーには p をそのまま渡し、生成は従来と完全一致 */
+  const _lfx=(typeof S!=='undefined'&&S.layerFx)?S.layerFx:null;
+  const mkP=name=>{
+    const f=_lfx&&_lfx[name];
+    if(!f||(f.d===1&&f.v===1&&f.o===0))return p;
+    const q=Object.assign({},p);
+    if(f.v!==1)q.velocity=Math.max(1,Math.min(127,Math.round(p.velocity*f.v)));
+    if(f.d!==1){q.density=Math.max(0,Math.min(100,Math.round(p.density*f.d)));q.fxDen=f.d;if(name==='markov')q.mkvDenMul=f.d;}
+    if(f.o!==0){q.octLayers=p.octLayers.map(o=>Math.max(0,Math.min(8,o+f.o)));if(name==='markov')q.mkvOctOff=f.o;}
+    return q;
+  };
 
   const tracks=[],tn=[];
-  if(S.layers.drone){tracks.push(makeDrone(onBassMidi,c.iv,effectiveScIv,p,prg));tn.push('Drone');}
-  if(S.layers.pad){tracks.push(makePad(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Pad');}
-  if(S.layers.arp){tracks.push(makeArp(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Arp');}
-  if(S.layers.melody){tracks.push(makeMelody(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Melody');}
-  if(S.layers.bass){tracks.push(makeBass(onBassMidi,c.iv,effectiveScIv,p,prg));tn.push('Bass');}
-  if(S.layers.overtone){tracks.push(makeOvertone(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Overtone');}
-  if(S.layers.texture){tracks.push(makeTexture(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Texture');}
-  if(S.layers.lead){tracks.push(makeLead(rootMidi,c.iv,effectiveScIv,p,prg));tn.push('Lead');}
+  if(S.layers.drone){tracks.push(makeDrone(onBassMidi,c.iv,effectiveScIv,mkP('drone'),prg));tn.push('Drone');}
+  await __genYield();
+  if(S.layers.pad){tracks.push(makePad(rootMidi,c.iv,effectiveScIv,mkP('pad'),prg));tn.push('Pad');}
+  await __genYield();
+  if(S.layers.arp){tracks.push(makeArp(rootMidi,c.iv,effectiveScIv,mkP('arp'),prg));tn.push('Arp');}
+  await __genYield();
+  if(S.layers.melody){tracks.push(makeMelody(rootMidi,c.iv,effectiveScIv,mkP('melody'),prg));tn.push('Melody');}
+  await __genYield();
+  if(S.layers.bass){tracks.push(makeBass(onBassMidi,c.iv,effectiveScIv,mkP('bass'),prg));tn.push('Bass');}
+  await __genYield();
+  if(S.layers.overtone){tracks.push(makeOvertone(rootMidi,c.iv,effectiveScIv,mkP('overtone'),prg));tn.push('Overtone');}
+  await __genYield();
+  if(S.layers.texture){tracks.push(makeTexture(rootMidi,c.iv,effectiveScIv,mkP('texture'),prg));tn.push('Texture');}
+  await __genYield();
+  if(S.layers.lead){tracks.push(makeLead(rootMidi,c.iv,effectiveScIv,mkP('lead'),prg));tn.push('Lead');}
+  await __genYield();
   if(S.layers.markov&&S.engines.markov){
     MarkovEngine.STATE.matrix=MarkovEngine.STATE.matrix||MarkovEngine.buildMatrix(MarkovEngine.SCALE_PRESETS[MarkovEngine.STATE.scaleKey].notes,MarkovEngine.STATE.bias,MarkovEngine.STATE.tension);
-    const mkTrk=MarkovEngine.makeMarkovTrack(rootMidi,effectiveScIv,p,prg);
+    const mkTrk=MarkovEngine.makeMarkovTrack(rootMidi,effectiveScIv,mkP('markov'),prg);
     if(mkTrk&&mkTrk.length){tracks.push(mkTrk);tn.push('Markov');}
   }
   if(S.engines.lsystem&&LSEngine.STATE.enabled&&LSEngine.STATE.lstring){
@@ -221,7 +262,7 @@ function doGenerateCore(_abSlot, _onDone){ /* 2026-11-10: 元の doGenerate 本�
   const _isAB = (_abSlot === 'A' || _abSlot === 'B');
   const btn=document.getElementById(_isAB ? 'btnGenAB' : 'btnGen');
     if(btn){btn.classList.add('busy');btn.textContent=_isAB?'\u2b21 GEN '+_abSlot+'...':'\u2b21 GENERATING...';}
-  setTimeout(()=>{try{if(!_isAB)logClear();
+  setTimeout(async()=>{try{if(!_isAB)logClear();
   /* ── シード設定 ── */
   if(_abSlot === 'B'){
     /* B バリアント: A シードを XOR して差異を作る */
@@ -430,9 +471,10 @@ for(let _pi=0;_pi<activeProg.length;_pi++){
   const _sharedForChord = vlVoicings.length > _pi
     ? { ...shared, vlVoicing: vlVoicings[_pi] }
     : shared;
-  const result=generateForChord(entry.chord,entry.bars,barCursor,_sharedForChord);
+  const result=await generateForChord(entry.chord,entry.bars,barCursor,_sharedForChord);
   slices.push({tracks:result.tracks,trackNames:result.trackNames,bars:entry.bars});
   barCursor+=entry.bars;
+  await __genYield();
 }
 
 /* ── スライスを結合して最終トラック配列を作成 ── */
@@ -473,6 +515,72 @@ if(useCCA){
 /* ── 2026-11-10: Theory Pack II (70) — 有効な追加理論がトラックを足す ── */
 if(typeof TheoryPack!=='undefined'){
   TheoryPack.appendTracks({tracks,tn,ppq,totalBars,chord:c,scaleIv:scIv,rootMidi:rootMidiGlobal,log});
+  await __genYield();
+}
+/* ── v7.0 (item 10): Theory Pack の生イベント列をバイト列へ正規化 ──
+   パック群 (70/85/86/87/88) は {pos,v} の生イベント配列を tracks へ直接
+   push する。従来は writeMIDI のスプレッドで各イベントオブジェクトが
+   0 バイト化し、パックトラックが「イベント数ぶんのゼロ埋め」になって
+   厳密パーサ (mido 等) で読めず無音だった。ここで一元変換する
+   (S.layerTracks も変換後のトラックを参照する)。 */
+for(let _ti=0;_ti<tracks.length;_ti++){
+  const _t=tracks[_ti];
+  if(Array.isArray(_t)&&_t.length&&typeof _t[0]==='object'&&_t[0]!==null&&Array.isArray(_t[0].v)){
+    tracks[_ti]=safeAbsToTrack(_t.map(e=>({pos:e.pos,v:e.v})),[tname(tn[_ti]||('Track'+(_ti+1)))]);
+  }
+}
+/* ── v7.0: セクション境界フィル (S.sectionFill、既定 OFF) ──
+   マクロのセクション境界の直前 2 拍に、次セクションへ向かう
+   上行アルペジオのジェスチャを専用トラックで挿入する */
+if(S.sectionFill&&sections&&sections.length){
+  const fillAe=[],btF=ppq*4;
+  const poolF=buildNotePool(rootMidiGlobal,scIv,[Math.min(8,(S.octLayers.length?Math.max(...S.octLayers):S.rootOct)+1)]);
+  if(poolF.length){
+    for(const sec of sections){
+      if(!sec||sec.bar<=0)continue;
+      const startTick=sec.bar*btF,nF=Math.min(poolF.length,8);
+      for(let i=0;i<nF;i++){
+        const pos=startTick-ppq*2+Math.round(i*(ppq*2/Math.max(1,nF)));
+        if(pos<0)continue;
+        const note=poolF[Math.floor(i*(poolF.length/Math.max(1,nF)))%poolF.length];
+        const velF=Math.max(1,Math.min(127,Math.round(S.velocity*(0.55+0.45*(nF>1?i/(nF-1):1)))));
+        fillAe.push({pos,v:[0x92,note,velF]});
+        fillAe.push({pos:pos+Math.round(ppq/3),v:[0x82,note,0]});
+      }
+    }
+  }
+  if(fillAe.length){tracks.push(safeAbsToTrack(fillAe,[tname('Fill'),pc(2,prg.arp)]));tn.push('Fill');log('// SECTION FILL: '+sections.filter(s=>s&&s.bar>0).length+' boundaries','ok');}
+}
+/* ── v7.0: スウィング＆グルーヴ (S.groove、既定 OFF) ──
+   生成済み全トラックのノートオンへプロファイル別のマイクロタイミング
+   オフセットを適用する。ノートオフは対応するノートオンと同じ量だけ
+   移すため音価は保たれる。OFF 時は一切触らない */
+if(S.groove&&S.groove.enabled){
+  const _prof={swing8:{step:ppq,frac:1/3},shuffle:{step:ppq,frac:1/2},swing16:{step:ppq/2,frac:1/3},laidback:{cst:1/8},push:{cst:-1/12}}[S.groove.profile]||{step:ppq,frac:1/3};
+  const _amt=(S.groove.amount!=null?S.groove.amount:50)/100;
+  const _goff=pos=>{
+    if(_prof.cst!=null)return Math.round(ppq*_prof.cst*_amt);
+    const idx=Math.round(pos/_prof.step);
+    if(Math.abs(pos-idx*_prof.step)>_prof.step*0.26)return 0;
+    return (idx%2===1)?Math.round(ppq*_prof.frac*_amt):0;
+  };
+  for(let _ti=0;_ti<tracks.length;_ti++){
+    const evs=parseTrackEvents(tracks[_ti]);
+    if(!evs.length)continue;
+    const openQ={};let changed=false;
+    const shifted=evs.map(e=>{
+      const st=e.bytes[0];
+      if(st>=0x90&&st<0xA0&&e.bytes.length>2&&e.bytes[2]>0){const o=_goff(e.pos);(openQ[e.bytes[1]]=openQ[e.bytes[1]]||[]).push(o);if(o)changed=true;return{pos:Math.max(0,e.pos+o),bytes:e.bytes};}
+      if((st>=0x80&&st<0xA0)&&(st<0x90||(e.bytes.length>2&&e.bytes[2]===0))){const q=openQ[e.bytes[1]];const o=(q&&q.length)?q.shift():_goff(e.pos);return{pos:Math.max(0,e.pos+o),bytes:e.bytes};}
+      return{pos:e.pos,bytes:e.bytes};
+    });
+    if(!changed)continue;
+    shifted.sort((a,b)=>a.pos-b.pos||(((a.bytes[0]&0xF0)===0x80?0:1)-((b.bytes[0]&0xF0)===0x80?0:1)));
+    const hdr=[];const body=[];
+    for(const e of shifted){if(e.bytes[0]===0xFF&&e.bytes[1]===0x03&&e.pos===0&&!hdr.length&&!body.length)hdr.push({d:0,v:e.bytes});else body.push({pos:e.pos,v:e.bytes});}
+    tracks[_ti]=safeAbsToTrack(body,hdr);
+  }
+  log('// GROOVE: '+S.groove.profile+' '+Math.round(_amt*100)+'%','ok');
 }
 if(!tracks.length){log('\u26a0 レイヤーが無効','warn');btn.classList.remove('busy');btn.textContent='\u2b21 GENERATE MIDI';return;}
 const rS=DissonanceResolver.getState();
@@ -957,7 +1065,7 @@ buildScaleUI=function(){
      メモリ/セクション管理、A/B バリアントのクリアと捕捉、
      export manifest 構築と patch UI 同期
    ═══════════════════════════════════════════════════════════════ */
-function generateForChord(chord, barCount, barOffset, shared) {
+async function generateForChord(chord, barCount, barOffset, shared) { /* v7.0: Core の async 化に伴いラッパーも async (呼び出しは doGenerateCore のみ) */
   const PATCH = window.__MEIKY_PATCH__ || {};
   const buildSharedForBar = currentBarOffset => {
     let nextShared = shared;
@@ -993,7 +1101,7 @@ function generateForChord(chord, barCount, barOffset, shared) {
     : [{ barOffset, bars: barCount }];
   if (!Array.isArray(segments) || segments.length <= 1) {
     const nextShared = buildSharedForBar(barOffset);
-    const result = generateForChordCore(chord, barCount, barOffset, nextShared);
+    const result = await generateForChordCore(chord, barCount, barOffset, nextShared);
     if (typeof PATCH.isCompSectionRuntimeActive === 'function' && PATCH.isCompSectionRuntimeActive()) {
       if (typeof S !== 'undefined' && S) S.compSectionPreTuned = true;
       result.tracks = PATCH.applyCompTuningToTrackSlice(result.tracks, result.trackNames, chord, barOffset);
@@ -1001,16 +1109,18 @@ function generateForChord(chord, barCount, barOffset, shared) {
     return result;
   }
 
-  const segmentResults = segments.map(segment => {
+  const segmentResults = [];
+  for (const segment of segments) {
     const nextShared = buildSharedForBar(segment.barOffset);
-    const result = generateForChordCore(chord, segment.bars, segment.barOffset, nextShared);
+    const result = await generateForChordCore(chord, segment.bars, segment.barOffset, nextShared);
     result.tracks = PATCH.applyCompTuningToTrackSlice(result.tracks, result.trackNames, chord, segment.barOffset);
-    return {
+    segmentResults.push({
       tracks: result.tracks,
       trackNames: result.trackNames,
       bars: segment.bars,
-    };
-  });
+    });
+    await __genYield();
+  }
   if (typeof S !== 'undefined' && S) S.compSectionPreTuned = true;
   return {
     tracks: typeof mergeProgTracks === 'function'

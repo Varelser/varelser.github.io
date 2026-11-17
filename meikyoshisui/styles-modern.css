@@ -1662,3 +1662,13 @@ body.focus-on .ecb-summary { display: flex; }
 @media (prefers-reduced-motion: reduce) {
   .cmdk-box { animation: none; }
 }
+
+/* ═══ v7.0 (item 9): content-visibility ═══
+   対象はフライアウト内パネルのみ。フライアウトはチップ/ボックスの
+   矩形しか計測せず (js/96)、パネル個別の高さには依存しない。
+   メインフローのパネルは js/95 が offsetHeight を実測して列パッキング
+   するため対象外 (推定高さが混ざると配分が壊れる)。 */
+.fam-flyout-body .panel {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}

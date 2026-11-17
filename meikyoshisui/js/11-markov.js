@@ -117,7 +117,94 @@ const STATE={
   octave:4,
   matrix:null,
   sequence:[],
+  /* v7.0: mode = 'order1' (従来) | 'order2' | 'chord' (コード条件付き)。
+     corpusUse/corpus = ドロップした .mid から学習した遷移コーパス */
+  mode:'order1',
+  corpusUse:false,
+  corpus:null,
 };
+
+/* ═══ v7.0: コーパス学習 ═══
+   学習した遷移カウントはトニック相対 (12×12) で保持し、
+   localStorage の新規キー 'meikyoshisui_corpus_v1' に保存する。
+   コーパスが無い / OFF のときは完全に不活性 (従来動作)。 */
+const CORPUS_KEY='meikyoshisui_corpus_v1';
+function learnCorpus(notes,name){
+  if(!notes||notes.length<2)return null;
+  const sorted=[...notes].sort((a,b)=>a.start-b.start);
+  const freq=new Array(12).fill(0);
+  for(const n of sorted)freq[((n.note%12)+12)%12]++;
+  let tonicPc=0;for(let i=1;i<12;i++)if(freq[i]>freq[tonicPc])tonicPc=i;
+  const counts=[];for(let i=0;i<12;i++)counts.push(new Array(12).fill(0));
+  for(let i=0;i<sorted.length-1;i++){
+    const a=((sorted[i].note%12)-tonicPc+12)%12;
+    const b=((sorted[i+1].note%12)-tonicPc+12)%12;
+    counts[a][b]++;
+  }
+  const corpus={v:1,name:String(name||'dropped.mid'),notes:sorted.length,tonicPc,counts};
+  try{localStorage.setItem(CORPUS_KEY,JSON.stringify(corpus));}catch(e){}
+  STATE.corpus=corpus;
+  return corpus;
+}
+function loadCorpus(){
+  try{const raw=localStorage.getItem(CORPUS_KEY);if(raw){const c=JSON.parse(raw);if(c&&c.counts&&c.counts.length===12)STATE.corpus=c;}}catch(e){}
+  return STATE.corpus;
+}
+function clearCorpus(){
+  STATE.corpus=null;
+  try{localStorage.removeItem(CORPUS_KEY);}catch(e){}
+}
+function getCorpus(){return STATE.corpus;}
+/* コーパスを行列化: 現在のスケール音列 sn に対する遷移確率。
+   学習データのある行はコーパスから、無い行は基本行列 (baseMat) から取る。
+   コーパス自体が無ければ null (呼び出し側は基本行列を使う) */
+function corpusMatrix(sn,baseMat){
+  const c=STATE.corpus;if(!c)return null;
+  const n=sn.length,out=[];
+  for(let i=0;i<n;i++){
+    const crow=c.counts[((sn[i]%12)+12)%12]||[];
+    let sum=0;const row=[];
+    for(let j=0;j<n;j++){const v=(crow[((sn[j]%12)+12)%12]||0);row.push(v);sum+=v;}
+    if(sum<=0){out.push(baseMat?baseMat[i]:row.map(()=>1/n));continue;}
+    const sm=sum+0.05*n;
+    out.push(row.map(v=>(v+0.05)/sm));
+  }
+  return out;
+}
+/* コード条件付き: 現在のコードトーン列を強め、それ以外を弱めて再正規化 */
+function reweightChord(mat,sn,chordIv){
+  const pcs=new Set((chordIv||[]).map(v=>((v%12)+12)%12));
+  if(!pcs.size)return mat;
+  return mat.map(row=>{
+    const w=row.map((v,j)=>v*(pcs.has(((sn[j]%12)+12)%12)?1.8:0.7));
+    const s=w.reduce((a,b)=>a+b,0)||1;
+    return w.map(v=>v/s);
+  });
+}
+/* 2次マルコフ近似: 直前音の行も投票させる履歴重み付け遷移 */
+function nextNote2(prevIdx,curIdx,matrix,temperature){
+  if(!matrix||!matrix[curIdx])return 0;
+  const cur=matrix[curIdx],prev=prevIdx!=null?matrix[prevIdx]:null;
+  const w=cur.map((p,j)=>Math.max(p,1e-10)*(prev?0.45+0.55*Math.max(prev[j],0):1));
+  const adj=w.map(p=>Math.pow(p,1/Math.max(temperature,0.01)));
+  const sum=adj.reduce((a,b)=>a+b,0);
+  if(sum<=0)return Math.floor(rng()*cur.length);
+  let rand=rng();
+  for(let i=0;i<adj.length;i++){rand-=adj[i]/sum;if(rand<=0)return i;}
+  return adj.length-1;
+}
+function generateSequence2(length,startIdx,matrix,scaleNotes,rootNote,oct,temperature){
+  const seq=[];
+  let prev=null,cur=startIdx!=null?startIdx:Math.floor(rng()*scaleNotes.length);
+  for(let i=0;i<length;i++){
+    const raw=(oct+1)*12+rootNote+scaleNotes[cur];
+    const midiNote=Math.max(12,Math.min(115,raw));
+    seq.push({scaleIdx:cur,midiNote,noteName:NF[(rootNote+scaleNotes[cur])%12]});
+    const nx=nextNote2(prev,cur,matrix,temperature);
+    prev=cur;cur=nx;
+  }
+  return seq;
+}
 
 function rebuildMatrix(){
   const sn=SCALE_PRESETS[STATE.scaleKey].notes;
@@ -139,17 +226,25 @@ function makeMarkovTrack(rootMidi,scaleIv,p,prg){
   const{ppq,bars,genre,humanize,velocity,tensionCurve,gateBase,gateHumanize,lorenz,pcAnalysis}=p;
   const bt=ppq*4,total=bt*bars;
   const hum=humanize/100;
-  const vB=Math.round(velocity*0.88);
+  /* v7.0: レイヤー別 velocity 倍率 (既定 1 = 従来と同一) */
+  const vB=Math.round(velocity*0.88*(p.mkvVelMul!=null?p.mkvVelMul:1));
 
   const sn=SCALE_PRESETS[STATE.scaleKey].notes;
-  const mat=STATE.matrix||buildMatrix(sn,STATE.bias,STATE.tension);
+  /* v7.0: 実効行列 — コーパス使用時はコーパス行列、コード条件付きモードでは
+     スライスのコードトーンで重み付け。既定 (order1 / コーパスOFF) は従来行列 */
+  const baseMat=STATE.matrix||buildMatrix(sn,STATE.bias,STATE.tension);
+  let mat=baseMat;
+  if(STATE.corpusUse&&STATE.corpus){const cm=corpusMatrix(sn,baseMat);if(cm)mat=cm;}
+  if(STATE.mode==='chord'&&p.chordIv)mat=reweightChord(mat,sn,p.chordIv);
   const rootPc=rootMidi%12;
-  const oct=STATE.octave;
+  const oct=STATE.octave+(p.mkvOctOff||0);
 
   // マルコフシーケンスをbars*seqLengthぶん生成してMIDIに変換
   // seqLength を bars に比例させて十分な長さを確保
-  const totalSteps=Math.max(STATE.seqLength,bars*4);
-  const seq=generateSequence(totalSteps,0,mat,sn,rootPc,oct,STATE.temperature);
+  const totalSteps=Math.max(4,Math.round(Math.max(STATE.seqLength,bars*4)*(p.mkvDenMul!=null?p.mkvDenMul:1)));
+  const seq=STATE.mode==='order2'
+    ?generateSequence2(totalSteps,0,mat,sn,rootPc,oct,STATE.temperature)
+    :generateSequence(totalSteps,0,mat,sn,rootPc,oct,STATE.temperature);
 
   // stepサイズ: seqLength個を bars小節に分配
   const noteStep=Math.round((total/totalSteps));
@@ -249,6 +344,8 @@ function buildUI(){
 
 function getState(){return{...STATE};}
 
-return{SCALE_PRESETS,buildMatrix,nextNote,generateSequence,makeMarkovTrack,rebuildMatrix,rebuildSequence,buildUI,getState,STATE};
+loadCorpus();
+
+return{SCALE_PRESETS,buildMatrix,nextNote,generateSequence,generateSequence2,makeMarkovTrack,rebuildMatrix,rebuildSequence,buildUI,getState,STATE,learnCorpus,loadCorpus,clearCorpus,getCorpus,corpusMatrix,reweightChord};
 })();
 

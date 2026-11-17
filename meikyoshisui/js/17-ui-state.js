@@ -7,7 +7,11 @@ layerTracks:null,conductorRaw:null,multiExport:{enabled:false,layers:{},prefix:'
 /* v25.1: ランダムシード */
 seed:0,seedLocked:false,
 /* v25.3: A/B バリアント */
-midiDataA:null,midiDataB:null,abMode:'A'};
+midiDataA:null,midiDataB:null,abMode:'A',
+/* v7.0 (表現拡張 第1弾): 全て既定 OFF / 中立 — OFF のとき生成結果は v6.3 と完全一致 */
+groove:{enabled:false,profile:'swing8',amount:50},
+layerFx:{drone:{d:1,v:1,o:0},pad:{d:1,v:1,o:0},arp:{d:1,v:1,o:0},melody:{d:1,v:1,o:0},bass:{d:1,v:1,o:0},overtone:{d:1,v:1,o:0},texture:{d:1,v:1,o:0},lead:{d:1,v:1,o:0},markov:{d:1,v:1,o:0}},
+avoidWeight:0,sectionFill:false,vlSmooth:50};
 
 /* ═══ SEEDED RNG (xorshift32) ═══
    rng()       : 0以上1未満の擬似乱数 (Math.random 互換)

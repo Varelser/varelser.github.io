@@ -176,7 +176,8 @@
         if (!keyBest || corr > keyBest.corr) keyBest = { corr, name: ROOT_NAMES[root] + (mode === 'major' ? ' major' : ' minor') };
       }
     }
-    return { entries, key: keyBest.name, bars: numBars, noteCount: notes.length };
+    /* v7.0: notes を公開 (コーパス学習 Markov 用 — 戻り値への追加のみ) */
+    return { entries, key: keyBest.name, bars: numBars, noteCount: notes.length, notes };
   }
   function applyAnalysis(res) {
     if (typeof PROG_STATE === 'undefined' || typeof parseChord !== 'function') throw new Error('進行エンジンが見つかりません');
@@ -227,7 +228,16 @@
         const buf = new Uint8Array(await files[0].arrayBuffer());
         const res = analyzeMidi(buf);
         applyAnalysis(res);
-        status('MIDI解析: ' + res.noteCount + ' 音 / ' + res.bars + ' 小節 → 進行 ' + res.entries.map(e => e.name + '×' + e.bars).join(' ') + ' / 推定キー ' + res.key + ' (Chord Progression に反映しました)');
+        /* v7.0: コーパス学習 — ドロップした .mid の遷移を Markov コーパスとして学習 */
+        let corpusMsg = '';
+        try {
+          if (typeof MarkovEngine !== 'undefined' && MarkovEngine.learnCorpus) {
+            const c = MarkovEngine.learnCorpus(res.notes, files[0].name);
+            if (c) corpusMsg = ' / Markovコーパス学習: ' + c.name + ' (' + c.notes + '音)';
+            if (typeof window.__MEIKY_V7_SYNC__ === 'function') window.__MEIKY_V7_SYNC__();
+          }
+        } catch (e) { /* コーパス学習の失敗は解析本体に影響させない */ }
+        status('MIDI解析: ' + res.noteCount + ' 音 / ' + res.bars + ' 小節 → 進行 ' + res.entries.map(e => e.name + '×' + e.bars).join(' ') + ' / 推定キー ' + res.key + corpusMsg + ' (Chord Progression に反映しました)');
       } catch (e) { status('MIDI解析に失敗: ' + (e && e.message || e), false); }
     });
 

@@ -183,8 +183,19 @@ const VLEngine = (() => {
 
     let bestCost = Infinity;
     let bestVoicing = pool[0];
+    /* v7.0: 声部連結スムーズネス (S.vlSmooth, 既定50 = 従来コストと完全一致)。
+       js/16 bestVoicing と同じ写像: t>0.5 で最大跳躍を罰し、t<0.5 で移動を割引 */
+    let _smT = 0.5;
+    try { if (typeof S !== 'undefined' && S && S.vlSmooth != null) _smT = Math.max(0, Math.min(100, S.vlSmooth)) / 100; } catch (e) {}
     for (const v of pool) {
-      const cost = vlCostSorted(prevVoicing, v) + _parallelPenalty(prevVoicing, v) * 0.6;
+      let cost = vlCostSorted(prevVoicing, v) + _parallelPenalty(prevVoicing, v) * 0.6;
+      if (_smT !== 0.5) {
+        const sa = [...prevVoicing].sort((x, y) => x - y), sb = [...v].sort((x, y) => x - y);
+        const m = Math.min(sa.length, sb.length);
+        let leap = 0;
+        for (let i = 0; i < m; i++) leap = Math.max(leap, Math.abs(sa[i] - sb[i]));
+        cost += (_smT - 0.5) * 2 * (_smT > 0.5 ? leap * 0.8 : -0.4 * vlCostSorted(prevVoicing, v));
+      }
       if (cost < bestCost) {
         bestCost = cost;
         bestVoicing = v;
