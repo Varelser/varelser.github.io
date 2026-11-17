@@ -10435,5 +10435,120 @@ window.addEventListener('storage',function(e){ if(e.key===LS_KEY)sync(); });
 
 </script>
 <!-- /leary-perfect-2026-11-17:body -->
+<!-- leary-panel-tabs-2026-11-17 -->
+<style id="leary-panel-tabs-style">
+/* leary-panel-tabs-2026-11-17: group tabs inside the Leary settings panel */
+#lpTabs{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.12)}
+#lpTabs .btn[aria-pressed="true"]{outline:1px solid #fff;font-weight:700}
+</style>
+<script id="leary-panel-tabs-script">
+/* leary-panel-tabs-2026-11-17 (additive): split the Leary settings panel
+   into three groups (線画 / 色・質感 / 保存・共有) so not everything is on
+   screen at once. Display-only: it toggles style.display on existing panel
+   sections and moves the texture block into the 色 section. It never touches
+   generation, fluid, or existing storage keys. The existing Leary設定/流体
+   mode switch (#cfUiTabs) stays in charge of fluid mode; this script steps
+   aside whenever fluid mode is active. */
+(function () {
+  'use strict';
+  var LS_KEY = 'leary-panel-tab';
+  var GROUPS = [
+    { id: 'draw', label: '線画', heads: ['プリセット', '線', '変形', 'ソース点'] },
+    { id: 'color', label: '色・質感', heads: ['色'] },
+    { id: 'save', label: '保存・共有', heads: ['出力', '拡張'], toolbar: true },
+  ];
+  var ALWAYS_HEADS = ['状態'];
+
+  function panelEl() { return document.querySelector('aside.panel'); }
+
+  function ready() {
+    var p = panelEl();
+    if (!p || !document.getElementById('cfUiTabs')) return false;
+    var heads = {};
+    p.querySelectorAll(':scope > .section').forEach(function (s) {
+      var h = s.querySelector('h3'); if (h) heads[h.textContent.trim()] = s;
+    });
+    return !!(heads['色'] && heads['拡張'] && heads['プリセット']);
+  }
+
+  function init() {
+    var panel = panelEl();
+    var cfTabs = document.getElementById('cfUiTabs');
+    var sections = {};
+    panel.querySelectorAll(':scope > .section').forEach(function (s) {
+      var h = s.querySelector('h3'); if (h) sections[h.textContent.trim()] = s;
+    });
+    var toolbar = panel.querySelector(':scope > .toolbar');
+    var cfSection = document.getElementById('cfSection');
+
+    /* move the texture block （質感） from 拡張 into the 色 section */
+    try {
+      var ext = sections['拡張'], colorSec = sections['色'];
+      if (ext && colorSec) {
+        var texWrap = null;
+        ext.querySelectorAll(':scope > div').forEach(function (d) {
+          if (!texWrap && d.textContent.indexOf('質感（表示のみ') !== -1) texWrap = d;
+        });
+        if (texWrap) colorSec.appendChild(texWrap);
+      }
+    } catch (e) {}
+
+    /* element -> group map */
+    var elGroup = new Map();
+    GROUPS.forEach(function (g) {
+      g.heads.forEach(function (h) { if (sections[h]) elGroup.set(sections[h], g.id); });
+      if (g.toolbar && toolbar) elGroup.set(toolbar, g.id);
+    });
+    var always = ALWAYS_HEADS.map(function (h) { return sections[h]; }).filter(Boolean);
+
+    var current = 'draw';
+    try { var v = localStorage.getItem(LS_KEY); if (GROUPS.some(function (g) { return g.id === v; })) current = v; } catch (e) {}
+
+    var bar = document.createElement('div');
+    bar.id = 'lpTabs';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', '設定グループ');
+    var btns = {};
+    GROUPS.forEach(function (g) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn small'; b.textContent = g.label;
+      b.dataset.lpGroup = g.id;
+      b.addEventListener('click', function () { setGroup(g.id, true); });
+      bar.appendChild(b); btns[g.id] = b;
+    });
+    cfTabs.after(bar);
+
+    function fluidActive() { return !!(cfSection && cfSection.style.display !== 'none'); }
+
+    function apply() {
+      if (fluidActive()) return; /* the mode switch owns visibility in fluid mode */
+      elGroup.forEach(function (gid, el) { el.style.display = gid === current ? '' : 'none'; });
+      always.forEach(function (el) { el.style.display = ''; });
+      GROUPS.forEach(function (g) { btns[g.id].setAttribute('aria-pressed', g.id === current ? 'true' : 'false'); });
+    }
+    function setGroup(id, save) {
+      current = id;
+      if (save) { try { localStorage.setItem(LS_KEY, id); } catch (e) {} }
+      apply();
+      panel.scrollTop = 0;
+    }
+
+    /* the mode switch resets display on all panel children; re-apply after it */
+    cfTabs.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () { setTimeout(apply, 60); });
+    });
+
+    apply();
+    window.__learyPanelTabs = { setGroup: setGroup, apply: apply, group: function () { return current; } };
+  }
+
+  var tries = 0;
+  var iv = setInterval(function () {
+    tries++;
+    if (ready()) { clearInterval(iv); setTimeout(init, 350); }
+    else if (tries > 50) clearInterval(iv);
+  }, 200);
+})();
+</script>
 </body>
 </html>
