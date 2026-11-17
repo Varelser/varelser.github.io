@@ -574,7 +574,7 @@ header.vl-top h1 { position: absolute; left: 50%; transform: translateX(-50%); w
 
 
 </main>
-<footer>DESIGN v6.0 — 計算はすべてこのファイル内で行う。自動保存（ローカルストレージ）と設定JSON・設定コードでの保存に対応する。PSD読み書きに ag-psd（MIT License）を使用。PCでの利用を推奨。</footer>
+<footer>DESIGN v6.1 — 計算はすべてこのファイル内で行う。自動保存（ローカルストレージ）と設定JSON・設定コードでの保存に対応する。PSD読み書きに ag-psd（MIT License）を使用。PCでの利用を推奨。</footer>
 <dialog id="exportDialog" aria-labelledby="exportDialogTitle">
 <h3 id="exportDialogTitle" style="margin:0 0 8px;font-size:15px;text-transform:none;letter-spacing:0;color:#fff">書き出しサイズの確認</h3>
 <p id="exportDialogText" style="margin:0 0 14px"></p>
@@ -1448,7 +1448,7 @@ function chooseExportFactor(){
   return new Promise(res=>{exportChoiceResolve=res;dlg.showModal();});
 }
 function settleExport(v){const dlg=$("exportDialog");if(exportChoiceResolve){const r=exportChoiceResolve;exportChoiceResolve=null;if(dlg&&dlg.open)dlg.close();r(v);}else if(dlg&&dlg.open)dlg.close();}
-function layoutScale(){const c=$("layoutCanvas");const s=Math.min(1080/L.tw,1080/L.th)*zoomF;c.width=Math.max(10,Math.round(L.tw*s));c.height=Math.max(10,Math.round(L.th*s));return s;}
+function layoutScale(){const c=$("layoutCanvas");const dpr=window.devicePixelRatio||1;let s=Math.min(1080/L.tw,1080/L.th)*zoomF*dpr;s=Math.min(s,4096/Math.max(L.tw,L.th),Math.sqrt(16777216/(L.tw*L.th)));c.width=Math.max(10,Math.round(L.tw*s));c.height=Math.max(10,Math.round(L.th*s));return s;}
 function layerCorners(ly){const iw=ly.natW*ly.scale,ih=ly.natH*ly.scale,cx=ly.x+iw/2,cy=ly.y+ih/2,r=(ly.rot||0)*Math.PI/180,co=Math.cos(r),si=Math.sin(r);
   const P=(dx,dy)=>({x:cx+dx*co-dy*si,y:cy+dx*si+dy*co});
   return {cx,cy,iw,ih,co,si,tl:P(-iw/2,-ih/2),tr:P(iw/2,-ih/2),br:P(iw/2,ih/2),bl:P(-iw/2,ih/2),tm:P(0,-ih/2),rm:P(iw/2,0),bm:P(0,ih/2),lm:P(-iw/2,0)};}
