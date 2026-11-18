@@ -738,6 +738,8 @@ if(b){b.addEventListener('click',async function(){if(navigator.share){try{await 
   var btn=document.getElementById('sqa-btn');
   var ans=document.getElementById('sqa-answer');
   var ENDPOINT='https://site-qa.varelser-jp.workers.dev';
+  var GREETING='ｺﾝﾆﾁﾊｧｧｧｧｱｱｱｱｧｱｧｱｧｧｧｱｯｯｯｯｯｯｯｯｯｯｯｯｯ🫶';
+  var greeted=false;
   function render(text){
     ans.textContent='';
     var re=/(https:\/\/[^\s、。）)]+)/g, last=0, m;
@@ -752,7 +754,7 @@ if(b){b.addEventListener('click',async function(){if(navigator.share){try{await 
     btn.disabled=true;ans.style.display='block';ans.textContent='考え中…';
     fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q})})
       .then(function(r){return r.json();})
-      .then(function(d){render(d.answer||d.error||'回答を取得できませんでした。');})
+      .then(function(d){var t=d.answer||d.error||'回答を取得できませんでした。';if(d.answer&&!greeted){greeted=true;t=GREETING+'\n\n'+t;}render(t);})
       .catch(function(){ans.textContent='通信に失敗しました。少し置いてから試してください。';})
       .finally(function(){btn.disabled=false;});
   }
