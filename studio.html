@@ -9,7 +9,7 @@
   tiles, MASTER + OWNERS details, bottom toolbar, help popover
   -> script blocks in order: core Link (BroadcastChannel seed-sync /
   sync-config), console v2 transport, R5 pack (palette / MIDI / Gamepad /
-  Wake Lock / Media Session / recording), Phase C extras, Phase E/F probes
+  Wake Lock / Media Session / recording), Phase C extras, Phase E/F probes, Phase H customize (h-script)
   hooks. INVARIANTS: BC message formats, localStorage/IDB keys, scene and
   share-URL formats, seed derivation — do not change without updating
   ~/workspace/studio-tests/ and re-running the full suite.
@@ -462,7 +462,7 @@ SC_APPS.forEach(id=>{
 $('btnSyncCfg').addEventListener('click',()=>{
   if(!bc){ toast('Link が OFF — sync-config も同じチャンネルで送る'); return; }
   const targets={};
-  SC_APPS.forEach(id=>{ targets[id]={amount:Number($('sc-'+id).value)/100}; });
+  SC_APPS.forEach(id=>{ const v=Number($('sc-'+id).value)/100; targets[id]={amount:(window.__HXF?window.__HXF(id,v):v)}; });
   const msg={app:'studio',type:'sync-config',ts:Date.now(),
     global:{amount:Number($('scAmount').value)/100,attack:Number($('scAttack').value)/100,release:Number($('scRelease').value)/100},targets};
   try{ bc.postMessage(msg); toast('sync-config 送信（反応量を5アプリへ）'); }catch(e){ toast('送信に失敗'); }
@@ -550,17 +550,18 @@ function baseLinkOn(){try{return (typeof linkOn!=='undefined')?!!linkOn:false;}c
 function curSeed(){var s=el('seedIn');return s?String(s.value).trim():'';}
 
 /* ── ペイロード生成（純粋関数・テスト対象） ── */
+function hXf(id,v){try{return window.__HXF?window.__HXF(id,v):v;}catch(e){return v;}}
 function buildSyncConfig(){
   var targets={};
-  R4_APPS5.forEach(function(id){targets[id]={amount:num('r4f-'+id)/100};});
+  R4_APPS5.forEach(function(id){targets[id]={amount:hXf(id,num('r4f-'+id)/100)};});
   return {app:'studio',type:'sync-config',ts:Date.now(),
     global:{amount:num('r4Amount')/100,attack:num('r4Attack')/100,release:num('r4Release')/100},
     targets:targets};
 }
 function buildConsole(transport){
   var targets={};
-  R4_APPS5.forEach(function(id){targets[id]={amount:num('r4f-'+id)/100};});
-  targets.meikyoshisui={amount:num('r4f-meikyo')/100,bpm:num('r4Bpm')};
+  R4_APPS5.forEach(function(id){targets[id]={amount:hXf(id,num('r4f-'+id)/100)};});
+  targets.meikyoshisui={amount:hXf('meikyo',num('r4f-meikyo')/100),bpm:num('r4Bpm')};
   targets.noise={monitor:num('r4f-noise')/100};
   return {app:'studio',type:'console',version:2,ts:Date.now(),
     transport:transport||'state',bpm:num('r4Bpm'),master:curSeed(),
@@ -1589,5 +1590,414 @@ var sl=$('r4SceneList');
 if(sl) sl.addEventListener('click', function(){ setTimeout(forward, 30); });
 window.__phaseF={version:1, transport:function(){ return last; }, forward:forward};
 })();
+</script>
+<style id="h-style">
+/* ═══ Phase H: カスタマイズ — 追加スタイル ═══ */
+:root{--hg:1}
+header{background:linear-gradient(180deg,rgba(255,255,255,calc(.09*var(--hg))),rgba(255,255,255,calc(.035*var(--hg))));backdrop-filter:blur(calc(18px*var(--hg))) saturate(160%);-webkit-backdrop-filter:blur(calc(18px*var(--hg))) saturate(160%)}
+section,.tile{background:linear-gradient(165deg,rgba(255,255,255,calc(.085*var(--hg))),rgba(255,255,255,calc(.03*var(--hg))));backdrop-filter:blur(calc(18px*var(--hg))) saturate(160%);-webkit-backdrop-filter:blur(calc(18px*var(--hg))) saturate(160%)}
+.hud{backdrop-filter:blur(calc(14px*var(--hg))) saturate(160%);-webkit-backdrop-filter:blur(calc(14px*var(--hg))) saturate(160%)}
+#toolbar{backdrop-filter:blur(calc(18px*var(--hg))) saturate(160%);-webkit-backdrop-filter:blur(calc(18px*var(--hg))) saturate(160%)}
+body.h-tiles-s .tiles{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+body.h-tiles-l .tiles{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+#sec-custom .h-h{font-size:13px;letter-spacing:.12em;margin:16px 0 6px;color:var(--txt)}
+#sec-custom .h-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:5px 0}
+#sec-custom .h-nm{min-width:96px;font-size:12px;letter-spacing:.06em}
+#sec-custom select{background:rgba(255,255,255,.06);color:var(--txt);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:5px 8px;font:inherit;font-size:12px}
+#sec-custom .h-file{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);color:var(--txt);font-size:12px;letter-spacing:.08em;padding:5px 11px;cursor:pointer;border-radius:8px}
+#hCount{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font-size:120px;font-weight:200;letter-spacing:.05em;color:#fff;background:rgba(0,0,0,.45);z-index:200;cursor:pointer}
+
+</style>
+<script id="h-script">
+/* ═══ Phase H (2026-11-19): カスタマイズ + 自由度パック ═══
+   既存コードは再実装しない。公開API (window.__R4) と capture-phase の
+   イベント横取り、DOM への加算だけで連携する。送信変換だけは本体側に
+   hXf フック (window.__HXF、無ければ恒等) を埋め込み済み。
+   保存は新キー varelser_studio_prefs_h_v1 のみ。既存キー・形式は不変。 */
+(function(){
+'use strict';
+var PREF_KEY='varelser_studio_prefs_h_v1';
+var FADER7=['yayoi','punkt','lien','leary','topo','meikyo','noise'];
+var XF_APPS=['yayoi','punkt','lien','leary','topo','meikyo'];
+var TILE_IDS=['kalokagathia','lien','leary','topo','yayoi','punkt','noise','meikyo'];
+function el(id){return document.getElementById(id);}
+function clamp01(v){return Math.max(0,Math.min(1,v));}
+function toastH(m){try{if(typeof toast==='function')toast(m);}catch(e){}}
+function defPrefs(){
+  return {tiles:{order:TILE_IDS.slice(),hidden:[],size:'m'},
+    sections:{}, xf:{}, look:{bg:'#000000',glass:1},
+    scene:{mask:{seed:true,bpm:true,global:true,amounts:true,meikyo:true,noise:true},fade:0,masks:{}},
+    perf:{fadeout:false,countin:false}};
+}
+function loadPrefs(){
+  var p=defPrefs();
+  try{
+    var raw=localStorage.getItem(PREF_KEY);
+    if(raw){var j=JSON.parse(raw);if(j&&typeof j==='object'){
+      if(j.tiles)p.tiles=Object.assign(p.tiles,j.tiles);
+      if(j.sections)p.sections=j.sections;
+      if(j.xf)p.xf=j.xf;
+      if(j.look)p.look=Object.assign(p.look,j.look);
+      if(j.scene){p.scene=Object.assign(p.scene,j.scene);p.scene.mask=Object.assign(defPrefs().scene.mask,(j.scene||{}).mask);p.scene.masks=(j.scene||{}).masks||{};}
+      if(j.perf)p.perf=Object.assign(p.perf,j.perf);
+    }}
+  }catch(e){}
+  return p;
+}
+var prefs=loadPrefs();
+function savePrefs(){try{localStorage.setItem(PREF_KEY,JSON.stringify(prefs));}catch(e){}}
+
+/* ── 送信変換 (本体 hXf フックから呼ばれる) ── */
+window.__HXF=function(id,v){
+  var x=prefs.xf[id];
+  if(!x)return v;
+  var out=v;
+  if(x.c==='low')out=Math.pow(v,1.5);
+  else if(x.c==='high')out=Math.sqrt(v);
+  out=out*(typeof x.g==='number'?x.g:1);
+  return clamp01(out);
+};
+
+/* ── フェーダー初期値 (ダブルクリック・リセット用) ── */
+var faderDefaults={};
+function snapDefaults(){
+  FADER7.forEach(function(id){var f=el('r4f-'+id);if(f)faderDefaults['r4f-'+id]=f.value;});
+  ['r4Amount','r4Attack','r4Release'].forEach(function(id){var f=el(id);if(f)faderDefaults[id]=f.value;});
+}
+document.addEventListener('dblclick',function(ev){
+  var t=ev.target;
+  if(!t||t.tagName!=='INPUT'||t.type!=='range')return;
+  if(!(t.id in faderDefaults))return;
+  t.value=faderDefaults[t.id];
+  t.dispatchEvent(new Event('input',{bubbles:true}));
+  toastH('フェーダーを初期値へ: '+t.id.replace('r4f-',''));
+});
+
+/* ── タイル: 並び替え / 表示・非表示 / 大きさ ── */
+function applyTiles(){
+  var wrap=el('tiles');if(!wrap)return;
+  var order=prefs.tiles.order.filter(function(id){return TILE_IDS.indexOf(id)>=0;});
+  TILE_IDS.forEach(function(id){if(order.indexOf(id)<0)order.push(id);});
+  order.forEach(function(id){var t=el('tile-'+id);if(t)wrap.appendChild(t);});
+  TILE_IDS.forEach(function(id){var t=el('tile-'+id);if(t)t.style.display=(prefs.tiles.hidden.indexOf(id)>=0)?'none':'';});
+  document.body.classList.toggle('h-tiles-s',prefs.tiles.size==='s');
+  document.body.classList.toggle('h-tiles-l',prefs.tiles.size==='l');
+}
+
+/* ── セクション開閉の保存 ── */
+function sectionKey(d,i){
+  var s=d.querySelector('summary');
+  return i+':'+(s?s.textContent.trim().slice(0,14):'');
+}
+function initSections(){
+  var ds=document.querySelectorAll('details');
+  ds.forEach(function(d,i){
+    var k=sectionKey(d,i);
+    if(k in prefs.sections)d.open=!!prefs.sections[k];
+    d.addEventListener('toggle',function(){prefs.sections[k]=d.open;savePrefs();});
+  });
+}
+
+/* ── 見た目: 背景の濃さ / ガラスの濃さ ── */
+function applyLook(){
+  document.documentElement.style.setProperty('--bg',prefs.look.bg);
+  document.documentElement.style.setProperty('--hg',String(prefs.look.glass));
+}
+
+/* ── 共有URL拡張 (bpm / amt / g) ── */
+function shareUrlH(){
+  var u=new URL(location.href);
+  var seedEl=el('seedIn');
+  var seed=seedEl?String(seedEl.value).trim():'';
+  if(seed)u.searchParams.set('seed',seed);
+  u.searchParams.set('bpm',String(el('r4Bpm')?el('r4Bpm').value:''));
+  u.searchParams.set('amt',FADER7.map(function(id){return el('r4f-'+id)?el('r4f-'+id).value:'50';}).join(','));
+  u.searchParams.set('g',['r4Amount','r4Attack','r4Release'].map(function(id){return el(id)?el(id).value:'50';}).join(','));
+  return u.toString();
+}
+function setRange(id,v){
+  var f=el(id);if(!f)return;
+  f.value=v;f.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function applyUrlParams(){
+  var q;try{q=new URLSearchParams(location.search);}catch(e){return;}
+  var applied=[];
+  if(q.get('bpm')){var b=el('r4Bpm');if(b){b.value=q.get('bpm');b.dispatchEvent(new Event('change',{bubbles:true}));applied.push('BPM');}}
+  var amt=q.get('amt');
+  if(amt){var parts=String(amt).split(',');FADER7.forEach(function(id,i){if(typeof parts[i]!=='undefined'&&parts[i]!=='')setRange('r4f-'+id,parts[i]);});applied.push('フェーダー');}
+  var g=q.get('g');
+  if(g){var gp=String(g).split(',');['r4Amount','r4Attack','r4Release'].forEach(function(id,i){if(typeof gp[i]!=='undefined'&&gp[i]!=='')setRange(id,gp[i]);});applied.push('全体量');}
+  if(applied.length)toastH('共有リンクから復元: '+applied.join(' / '));
+}
+document.addEventListener('click',function(ev){
+  if(!ev.target||ev.target.id!=='r5ShareBtn')return;
+  ev.stopPropagation();ev.preventDefault();
+  var url=shareUrlH();
+  function done(){toastH('共有リンクをコピー (BPM・フェーダー込み): '+url);}
+  if(navigator.share){navigator.share({title:'Varelser Studio Console',url:url}).catch(function(){copyFallback();});}
+  else copyFallback();
+  function copyFallback(){
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(function(){done();}).catch(function(){if(window.__cShareFb)window.__cShareFb(url);});}
+    else if(window.__cShareFb)window.__cShareFb(url);
+  }
+},true);
+
+/* ── シーン: 保存マスク ── */
+document.addEventListener('click',function(ev){
+  if(!ev.target||ev.target.id!=='r4SceneSave')return;
+  var m=prefs.scene.mask;
+  if(m.seed&&m.bpm&&m.global&&m.amounts&&m.meikyo&&m.noise)return; /* 全ONは従来動作 */
+  ev.stopPropagation();ev.preventDefault();
+  if(!window.__R4)return;
+  var st=window.__R4.currentState();
+  if(!m.seed)st.master='';
+  if(!m.bpm)delete st.bpm;
+  if(!m.global)delete st.global;
+  if(!m.amounts)delete st.amounts;
+  if(!m.meikyo)delete st.meikyo;
+  if(!m.noise)delete st.noiseMonitor;
+  var name=(el('r4SceneName').value||'').trim();
+  var sc=window.__R4.saveScene(name,st);
+  var parts=[];Object.keys(m).forEach(function(k){if(m[k])parts.push(k);});
+  prefs.scene.masks[sc.name]=parts.join('+');savePrefs();
+  toastH('シーン保存 (効かせる項目: '+parts.join(' / ')+'): '+sc.name);
+},true);
+
+/* ── シーン: 切替フェード ── */
+function sceneTargetValues(st){
+  var t={};
+  if(st&&st.global){t.r4Amount=Math.round((st.global.amount||0)*100);t.r4Attack=Math.round((st.global.attack||0)*100);t.r4Release=Math.round((st.global.release||0)*100);}
+  if(st&&st.amounts)FADER7.slice(0,5).forEach(function(id){if(typeof st.amounts[id]==='number')t['r4f-'+id]=Math.round(st.amounts[id]*100);});
+  if(st&&st.meikyo&&typeof st.meikyo.amount==='number')t['r4f-meikyo']=Math.round(st.meikyo.amount*100);
+  if(st&&typeof st.noiseMonitor==='number')t['r4f-noise']=Math.round(st.noiseMonitor*100);
+  return t;
+}
+document.addEventListener('click',function(ev){
+  var fade=Number(prefs.scene.fade)||0;
+  if(fade<=0)return;
+  var btn=ev.target;
+  if(!btn||btn.tagName!=='BUTTON'||btn.textContent!=='呼出')return;
+  var row=btn.closest?btn.closest('.r4-scene'):null;
+  if(!row||!window.__R4)return;
+  var rows=Array.prototype.slice.call(document.querySelectorAll('#r4SceneList .r4-scene'));
+  var idx=rows.indexOf(row);if(idx<0)return;
+  var sc=window.__R4.loadScenes()[idx];if(!sc||!sc.state)return;
+  ev.stopPropagation();ev.preventDefault();
+  var targets=sceneTargetValues(sc.state);
+  var starts={};Object.keys(targets).forEach(function(id){var f=el(id);starts[id]=f?Number(f.value):targets[id];});
+  var t0=performance.now();
+  function step(now){
+    var k=Math.min(1,(now-t0)/(fade*1000));
+    Object.keys(targets).forEach(function(id){
+      var f=el(id);if(!f)return;
+      f.value=Math.round(starts[id]+(targets[id]-starts[id])*k);
+      f.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    if(k<1)requestAnimationFrame(step);
+    else window.__R4.applyScene(sc);
+  }
+  requestAnimationFrame(step);
+},true);
+
+/* ── 演奏支援: STOP フェードアウト / PLAY カウントイン ── */
+var bypassStop=false,bypassPlay=false;
+document.addEventListener('click',function(ev){
+  if(!ev.target||ev.target.id!=='r4StopAll')return;
+  if(!prefs.perf.fadeout||bypassStop)return;
+  ev.stopPropagation();ev.preventDefault();
+  var amt=el('r4Amount');if(!amt)return;
+  var start=Number(amt.value),t0=performance.now(),sentOk=true,lastBucket=-1;
+  toastH('フェードアウト中…');
+  function step(now){
+    var k=Math.min(1,(now-t0)/1200);
+    amt.value=Math.round(start*(1-k));
+    amt.dispatchEvent(new Event('input',{bubbles:true}));
+    var bucket=Math.floor(k*3);
+    if(sentOk&&bucket!==lastBucket){
+      lastBucket=bucket;
+      try{if(window.__R4&&window.__R4.sendAll('state')===false)sentOk=false;}catch(e){sentOk=false;}
+    }
+    if(k<1){setTimeout(function(){requestAnimationFrame(step);},90);}
+    else{
+      bypassStop=true;el('r4StopAll').click();bypassStop=false;
+      setTimeout(function(){amt.value=start;amt.dispatchEvent(new Event('input',{bubbles:true}));},80);
+    }
+  }
+  requestAnimationFrame(step);
+},true);
+var countOverlay=null,countTimer=null;
+function showCount(txt){
+  if(!countOverlay){
+    countOverlay=document.createElement('div');countOverlay.id='hCount';
+    countOverlay.addEventListener('click',cancelCount);
+    document.body.appendChild(countOverlay);
+  }
+  countOverlay.textContent=txt;countOverlay.style.display='flex';
+}
+function hideCount(){if(countOverlay)countOverlay.style.display='none';if(countTimer){clearTimeout(countTimer);countTimer=null;}}
+function cancelCount(){hideCount();toastH('カウントインを中止');}
+document.addEventListener('click',function(ev){
+  if(!ev.target||ev.target.id!=='r4PlayAll')return;
+  if(!prefs.perf.countin||bypassPlay)return;
+  ev.stopPropagation();ev.preventDefault();
+  var bpm=Number(el('r4Bpm')?el('r4Bpm').value:120)||120;
+  var iv=Math.max(220,Math.min(900,60000/bpm));
+  var n=4;
+  showCount(String(n));
+  function tick(){
+    n--;
+    if(n<=0){hideCount();bypassPlay=true;el('r4PlayAll').click();bypassPlay=false;return;}
+    showCount(String(n));
+    countTimer=setTimeout(tick,iv);
+  }
+  countTimer=setTimeout(tick,iv);
+},true);
+
+/* ── 設定まるごと書き出し / 読み込み ── */
+function exportData(){
+  var ls={};
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&(k.indexOf('studio')>=0||k.indexOf('varelser')>=0))ls[k]=localStorage.getItem(k);
+  }
+  return {app:'varelser-studio-settings',version:1,exported:new Date().toISOString(),
+    prefs:prefs,localStorage:ls,scenes:(window.__R4?window.__R4.loadScenes():[])};
+}
+function downloadSettings(){
+  var data=JSON.stringify(exportData(),null,2);
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+  a.download='varelser-studio-settings.json';a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},4000);
+  toastH('設定を書き出し: prefs + 保存データ + シーン');
+}
+function importSettings(file){
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var obj=JSON.parse(String(rd.result));
+      if(!obj||(obj.app!=='varelser-studio-settings'&&!obj.localStorage&&!obj.scenes))throw new Error('not studio settings');
+      if(obj.localStorage)Object.keys(obj.localStorage).forEach(function(k){try{localStorage.setItem(k,obj.localStorage[k]);}catch(e){}});
+      if(obj.scenes&&window.__R4)obj.scenes.forEach(function(sc){if(sc&&sc.state)window.__R4.saveScene(sc.name,sc.state);});
+      if(obj.prefs){try{localStorage.setItem(PREF_KEY,JSON.stringify(obj.prefs));}catch(e){}}
+      toastH('設定を読み込み。再読み込みします');
+      setTimeout(function(){location.reload();},900);
+    }catch(e){toastH('設定JSONを読めなかった');}
+  };
+  rd.readAsText(file);
+}
+
+/* ── CUSTOMIZE パネル ── */
+function selHtml(id,opts,cur){
+  var s='<select id="'+id+'">';
+  opts.forEach(function(o){s+='<option value="'+o[0]+'"'+(String(cur)===String(o[0])?' selected':'')+'>'+o[1]+'</option>';});
+  return s+'</select>';
+}
+function buildPanel(){
+  if(el('sec-custom'))return;
+  var sec=document.createElement('section');
+  sec.id='sec-custom';
+  var xfRows=XF_APPS.map(function(id){
+    var x=prefs.xf[id]||{g:1,c:'lin'};
+    return '<div class="h-row"><span class="h-nm">'+id+'</span>'
+      +selHtml('hxf-g-'+id,[[0.5,'×0.5'],[0.75,'×0.75'],[1,'×1'],[1.5,'×1.5'],[2,'×2']],x.g)
+      +selHtml('hxf-c-'+id,[['lin','リニア'],['low','下凸 (緩やかに立ち上がる)'],['high','上凸 (早めに効く)']],x.c)
+      +'</div>';
+  }).join('');
+  var tileRows=prefs.tiles.order.map(function(id,i){
+    var checked=prefs.tiles.hidden.indexOf(id)>=0?'':' checked';
+    return '<div class="h-row"><span class="h-nm">'+id+'</span>'
+      +'<label><input type="checkbox" id="ht-vis-'+id+'"'+checked+'> 表示</label>'
+      +'<button type="button" data-hmove="'+id+':-1">↑</button>'
+      +'<button type="button" data-hmove="'+id+':1">↓</button></div>';
+  }).join('');
+  var m=prefs.scene.mask;
+  function maskBox(k,label){return '<label><input type="checkbox" id="hmask-'+k+'"'+(m[k]?' checked':'')+'> '+label+'</label>';}
+  if(!prefs.sections.custom)sec.classList.add('closed');
+  sec.innerHTML='<h2>CUSTOMIZE — 自由度 (Phase H) <span class="st">設定はこのブラウザに保存</span></h2>'
+    +'<p class="sec-sum">タイル配置・フェーダーの反応・見た目・シーン拡張・演奏支援（タイトルを押すと開きます）</p>'
+    +'<div class="bd">'
+    +'<h3 class="h-h">タイル (並び替え / 表示 / 大きさ)</h3>'+tileRows
+    +'<div class="h-row"><span class="h-nm">大きさ</span>'+selHtml('h-tile-size',[['s','S'],['m','M'],['l','L']],prefs.tiles.size)+'</div>'
+    +'<h3 class="h-h">フェーダーの反応 (アプリ別・送信値への変換)</h3>'+xfRows
+    +'<p class="note">フェーダーをダブルクリックすると初期値に戻ります。倍率×1・リニアが従来動作です。</p>'
+    +'<h3 class="h-h">見た目 (モノクロのみ)</h3>'
+    +'<div class="h-row"><span class="h-nm">背景</span>'+selHtml('h-bg',[['#000000','純黒'],['#0b0b0d','墨'],['#17181a','灰']],prefs.look.bg)
+    +'<span class="h-nm">ガラスの濃さ</span><input type="range" id="h-glass" min="40" max="160" value="'+Math.round(prefs.look.glass*100)+'"></div>'
+    +'<h3 class="h-h">シーン拡張</h3>'
+    +'<div class="h-row">'+maskBox('seed','Seed')+maskBox('bpm','BPM')+maskBox('global','全体量')+maskBox('amounts','各アプリ量')+maskBox('meikyo','Meikyo')+maskBox('noise','Noise')+'</div>'
+    +'<p class="note">保存時に効かせる項目です (全てONが従来動作)。過去にマスク付きで保存したシーン: '+(Object.keys(prefs.scene.masks).length?Object.keys(prefs.scene.masks).join(', '):'なし')+'</p>'
+    +'<div class="h-row"><span class="h-nm">切替フェード</span>'+selHtml('h-scene-fade',[[0,'なし'],[0.5,'0.5秒'],[1,'1秒'],[2,'2秒']],prefs.scene.fade)+'</div>'
+    +'<h3 class="h-h">演奏支援</h3>'
+    +'<div class="h-row"><label><input type="checkbox" id="h-fadeout"'+(prefs.perf.fadeout?' checked':'')+'> STOP ALL をフェードアウト (約1.2秒)</label></div>'
+    +'<div class="h-row"><label><input type="checkbox" id="h-countin"'+(prefs.perf.countin?' checked':'')+'> PLAY の前にカウントイン (BPM連動4拍)</label></div>'
+    +'<h3 class="h-h">設定まるごと</h3>'
+    +'<div class="h-row"><button type="button" id="h-export">設定を書き出し (JSON)</button>'
+    +'<label class="h-file">設定を読み込み<input type="file" id="h-import" accept="application/json" hidden></label></div>'
+    +'</div>';
+  /* 見出しトグル (R6 と同じ作法: click / Enter / Space + aria-expanded 同期) */
+  var h2=sec.querySelector('h2');
+  h2.setAttribute('tabindex','0');h2.setAttribute('role','button');
+  function hSync(){h2.setAttribute('aria-expanded',sec.classList.contains('closed')?'false':'true');}
+  hSync();
+  h2.addEventListener('click',function(){
+    sec.classList.toggle('closed');hSync();
+    prefs.sections.custom=!sec.classList.contains('closed');savePrefs();
+  });
+  h2.addEventListener('keydown',function(ev){
+    if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();h2.click();}
+  });
+  var anchor=el('sec-console');
+  if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(sec,anchor.nextSibling);
+  else document.body.appendChild(sec);
+  /* 配線 */
+  TILE_IDS.forEach(function(id){
+    var c=el('ht-vis-'+id);
+    if(c)c.addEventListener('change',function(){
+      var h=prefs.tiles.hidden;
+      if(c.checked){var i=h.indexOf(id);if(i>=0)h.splice(i,1);}
+      else if(h.indexOf(id)<0)h.push(id);
+      savePrefs();applyTiles();
+    });
+  });
+  sec.querySelectorAll('[data-hmove]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var parts=b.getAttribute('data-hmove').split(':');var id=parts[0],d=Number(parts[1]);
+      var o=prefs.tiles.order,i=o.indexOf(id),j=i+d;
+      if(j<0||j>=o.length)return;
+      o.splice(i,1);o.splice(j,0,id);savePrefs();applyTiles();buildPanelRefresh();
+    });
+  });
+  el('h-tile-size').addEventListener('change',function(){prefs.tiles.size=this.value;savePrefs();applyTiles();});
+  XF_APPS.forEach(function(id){
+    el('hxf-g-'+id).addEventListener('change',function(){prefs.xf[id]=prefs.xf[id]||{g:1,c:'lin'};prefs.xf[id].g=Number(this.value);savePrefs();});
+    el('hxf-c-'+id).addEventListener('change',function(){prefs.xf[id]=prefs.xf[id]||{g:1,c:'lin'};prefs.xf[id].c=this.value;savePrefs();});
+  });
+  el('h-bg').addEventListener('change',function(){prefs.look.bg=this.value;savePrefs();applyLook();});
+  el('h-glass').addEventListener('input',function(){prefs.look.glass=Number(this.value)/100;savePrefs();applyLook();});
+  ['seed','bpm','global','amounts','meikyo','noise'].forEach(function(k){
+    el('hmask-'+k).addEventListener('change',function(){prefs.scene.mask[k]=this.checked;savePrefs();});
+  });
+  el('h-scene-fade').addEventListener('change',function(){prefs.scene.fade=Number(this.value);savePrefs();});
+  el('h-fadeout').addEventListener('change',function(){prefs.perf.fadeout=this.checked;savePrefs();});
+  el('h-countin').addEventListener('change',function(){prefs.perf.countin=this.checked;savePrefs();});
+  el('h-export').addEventListener('click',downloadSettings);
+  el('h-import').addEventListener('change',function(){if(this.files&&this.files[0])importSettings(this.files[0]);});
+}
+function buildPanelRefresh(){
+  var sec=el('sec-custom');if(!sec)return;
+  sec.remove();buildPanel();
+}
+
+/* ── 初期化 ── */
+snapDefaults();
+buildPanel();
+initSections();
+applyTiles();
+applyLook();
+applyUrlParams();
+window.__H={version:'PhaseH-1',prefs:function(){return prefs;},shareUrl:shareUrlH,exportData:exportData,applyTiles:applyTiles,applyLook:applyLook};
+})();
+
 </script>
 </body></html>
