@@ -1234,5 +1234,121 @@ body.yayoi-fx-on .yayoi-canvas canvas:not(#yayoi-fx-canvas) { visibility: hidden
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addBadge); else addBadge();
 })();
 </script>
+<script id="studio-x-yayoi">
+/* ═══ Studio Link 専用機能 for Yayoi (2026-11-19): シード残像 ═══
+   Studio 接続中だけ、Seed が変わる瞬間に「前の絵」が残像として残る。
+   接続中はキャンバスを定期的に控えておき (ローリングスナップショット)、
+   Seed の変化 (__varelserLinkMasterHash の変化 / seed-sync 受信) を検知したら
+   控えをキャンバスの上に重ねてフェードアウトさせる。残像の長さは Studio の
+   sync-config amount (Yayoi宛) から決まる。本体コード・保存キーには触らない。
+   自分の Link が OFF の間は無効。 */
+(function(){
+'use strict';
+var LSKEY='yayoi.varelserLink.v1', FRESH_MS=6000;
+var SNAPK='yayoi.studioEcho.snap', PENDK='yayoi.studioEcho.pending';
+var lastSeen=0, linked=false, enabled=true, durMul=1.0;
+var syncAmount=null, snapUrl=null, lastHash=null, triggers=0, fading=false;
+function ownOn(){ try{ return localStorage.getItem(LSKEY)==='1'; }catch(e){ return false; } }
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+var ch=null;
+try{ ch=new BroadcastChannel('varelser-link-v1'); }catch(e){}
+if(ch)ch.addEventListener('message',function(ev){
+  var m=ev.data||{};
+  if(m.app==='studio'){
+    if(m.type==='presence'||m.type==='session-bus'){ lastSeen=Date.now(); }
+    else if(m.type==='studio-bye'){ lastSeen=0; }
+    else if(m.type==='sync-config'){
+      var t=m.targets&&m.targets.yayoi;
+      if(t&&typeof t.amount==='number'&&isFinite(t.amount))syncAmount=Math.max(0,Math.min(1,t.amount));
+    }
+  }
+  if(m.type==='seed-sync'){
+    /* Yayoi 本体は seed-sync でページを再読込して Seed を適用するため、
+       残像のリクエストを localStorage に残し、再読込後に必ず表示する */
+    lsSet(PENDK,String(Date.now()));
+    if(linked)triggerEcho();
+  }
+});
+function mainCanvas(){
+  var cs=document.querySelectorAll('canvas'), best=null, area=0;
+  for(var i=0;i<cs.length;i++){ var a=cs[i].width*cs[i].height; if(a>area){ area=a; best=cs[i]; } }
+  return best;
+}
+var off=document.createElement('canvas');
+function snapshot(){
+  var c=mainCanvas(); if(!c||!c.width)return;
+  try{
+    off.width=Math.max(2,Math.round(c.width/2)); off.height=Math.max(2,Math.round(c.height/2));
+    var ctx=off.getContext('2d'); if(!ctx)return;
+    ctx.drawImage(c,0,0,off.width,off.height);
+    snapUrl=off.toDataURL('image/jpeg',0.85);
+    lsSet(SNAPK,snapUrl);
+  }catch(e){}
+}
+function fadeSec(){ return (syncAmount!=null?(1.5+syncAmount*3.5):2.5)*durMul; }
+function triggerEcho(){
+  if(!enabled||fading)return;
+  if(!snapUrl)snapUrl=lsGet(SNAPK);
+  if(!snapUrl)return;
+  var c=mainCanvas(); if(!c)return;
+  var r=c.getBoundingClientRect();
+  if(r.width<10||r.height<10)return;
+  var img=document.getElementById('sxEcho-yayoi');
+  if(!img){ img=document.createElement('img'); img.id='sxEcho-yayoi'; document.body.appendChild(img); }
+  var sec=fadeSec();
+  img.src=snapUrl;
+  img.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height
+    +'px;z-index:40;pointer-events:none;opacity:1;object-fit:contain';
+  fading=true; triggers++;
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    img.style.transition='opacity '+sec+'s linear'; img.style.opacity='0';
+  });});
+  setTimeout(function(){ img.style.transition=''; img.style.opacity='1'; img.removeAttribute('src'); fading=false; },(sec+0.3)*1000);
+  var s=document.getElementById('sxStatus-yayoi');
+  if(s)s.textContent='残像を表示しました ('+triggers+'回目、'+sec.toFixed(1)+'秒)';
+}
+/* ── UI ── */
+var st=document.createElement('style');
+st.textContent='#sxBadge-yayoi{position:fixed;top:10px;right:10px;z-index:9990;display:none;padding:4px 10px;border:1px solid #e8e8ec;border-radius:999px;background:rgba(10,10,12,.85);color:#e8e8ec;font-size:11.5px;letter-spacing:.14em}'
+ +'#sxPanel-yayoi{position:fixed;right:10px;bottom:10px;z-index:9990;display:none;width:250px;padding:10px 12px;border:1px solid #3a3a40;border-radius:10px;background:rgba(14,14,17,.93);color:#e8e8ec;font-size:12.5px;line-height:1.6}'
+ +'#sxPanel-yayoi .t{letter-spacing:.08em}#sxPanel-yayoi .s{opacity:.85;font-size:11.5px}'
+ +'#sxPanel-yayoi label{display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer}'
+ +'#sxPanel-yayoi select{background:#1c1c20;color:#e8e8ec;border:1px solid #3a3a40;border-radius:6px;font-size:12px;padding:2px 4px}';
+document.head.appendChild(st);
+var badge=document.createElement('div'); badge.id='sxBadge-yayoi'; badge.textContent='STUDIO LINKED';
+var panel=document.createElement('div'); panel.id='sxPanel-yayoi';
+panel.innerHTML='<div class="t">STUDIO ECHO — シード残像</div><div class="s" id="sxStatus-yayoi">Seed の変化を待っています</div>'
+ +'<label><input type="checkbox" id="sxEnable-yayoi" checked> 残像有効</label>'
+ +'<label>長さ <select id="sxDur-yayoi"><option value="0.6">短</option><option value="1" selected>中</option><option value="1.6">長</option></select></label>';
+document.body.appendChild(badge); document.body.appendChild(panel);
+panel.querySelector('#sxEnable-yayoi').addEventListener('change',function(){ enabled=this.checked; });
+panel.querySelector('#sxDur-yayoi').addEventListener('change',function(){ durMul=parseFloat(this.value)||1; });
+setInterval(function(){
+  var now=linked;
+  linked=ownOn()&&(Date.now()-lastSeen<FRESH_MS);
+  if(linked!==now){
+    badge.style.display=linked?'block':'none';
+    panel.style.display=linked?'block':'none';
+    if(linked){ lastHash=(typeof window.__varelserLinkMasterHash!=='undefined')?window.__varelserLinkMasterHash:null; snapshot(); }
+    else { snapUrl=null; }
+  }
+  if(!linked)return;
+  var pend=lsGet(PENDK);
+  if(pend){
+    lsSet(PENDK,'');
+    if(Date.now()-parseInt(pend,10)<12000)triggerEcho();
+  }
+  var h=(typeof window.__varelserLinkMasterHash!=='undefined')?window.__varelserLinkMasterHash:null;
+  if(h!=null&&lastHash!=null&&h!==lastHash)triggerEcho();
+  if(h!=null)lastHash=h;
+},400);
+setInterval(function(){ if(linked&&!document.hidden)snapshot(); },2500);
+window.__studioEchoYayoi={version:'PhaseJ-1',
+  get linked(){return linked;}, get triggers(){return triggers;},
+  get hasSnap(){return !!snapUrl;}, get fadeSec(){return fadeSec();}};
+})();
+
+</script>
 </body>
 </html>
