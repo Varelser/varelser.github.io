@@ -1,6 +1,95 @@
 [
   {
     "authors": [
+      "Giannis Daras",
+      "Marios Papachristou",
+      "Adam Klivans",
+      "Antonio Torralba",
+      "Constantinos Daskalakis"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.AI",
+      "cs.CL"
+    ],
+    "field": "cs.LG",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T18:59:37Z",
+    "source": "arXiv",
+    "summaryHtml": "大規模言語モデルの事後学習では、事前学習に比べてはるかに小さいデータセットで教師あり微調整（SFT）を行うのが通例で、過学習と分布の裾野の破局的忘却を招きやすい。本論文は、凍結した事前学習モデルをノイズのある教師として活用し、微調整用のデータセットを補強する原理的な枠組み「Ambient SFT」を提案する。微調整後のモデルが出す条件付き分布を高温化したものが、事前学習モデルの高温化した分布と一致するよう求める。<br><br>温度ハイパーパラメータは事前学習モデルへの信頼度を制御する。高温化により分布の細部ではなく大まかな形を一致させる点が、ノイズのある教師からの学習を成立させる鍵だ。極限ではT→∞で通常のSFTに、T=1で知識蒸留に帰着する。手法はドメイン適応、指示チューニング、推論の各場面で標準的なSFTを上回り、平均で最大21%の相対的改善を示した。<br><br>データが乏しい事後学習でも、事前学習で得た知識を壊さずに引き継ぐ実践的な道筋を示すものだ。小規模データでの微調整における過学習対策として、温度という単一のつまみで制御できる点も実用的だ。出典：arXiv",
+    "timestamp": 1794941977000,
+    "title": "Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching",
+    "titleJa": "アンビエントLLM――温度マッチングによるデータ効率的な教師あり微調整",
+    "url": "https://arxiv.org/abs/2611.23229v1"
+  },
+  {
+    "authors": [
+      "Shobhita Sundaram",
+      "Cansu Sancaktar",
+      "Phillip Isola"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "field": "cs.LG",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T18:57:10Z",
+    "source": "arXiv",
+    "summaryHtml": "LLMエージェントは自らの学習を自ら進めるようになり、自己改善の手法はモデル最適化の各要素をモデル自身に委ねてきた。モデルが高性能化する中で、自己改善の「方法」まで人間が指定し続ける必要があるのか。本論文は、基本的なプリミティブとリソース、自己改善という一般的な目標だけを与え、エージェントが文脈ベースの最適化のための自己学習アルゴリズムを自ら構築する自律的パラダイムを検証する。<br><br>実験ではゲームをテストベッドとし、凍結したLLMエージェントに計算予算と経験収集・文書更新のツールを与え、外部から課された学習ループや実世界データなしに自由に実験させた。十分に高性能なモデルはこうした条件でも自己改善し、自己調整学習の古典的な認知枠組みや、自己生成カリキュラムに関する機械学習の知見と整合する方略を示した。<br><br>学習で生まれたテキストの成果物は外部ベンチマークにも転移し、ゲームの地平や力学、3Dナビゲーションを越えて改善が見られた。エージェントの自律的な学習能力がどこまで伸びるかを測る手がかりになる。出典：arXiv",
+    "timestamp": 1794941830000,
+    "title": "Do LLM Agents Still Need to Be Told How to Self-Improve?",
+    "titleJa": "LLMエージェントは自己改善の方法を教わる必要がまだあるか",
+    "url": "https://arxiv.org/abs/2611.23219v1"
+  },
+  {
+    "authors": [
+      "Tongxi Wu",
+      "Yuyang Cheng",
+      "Jiacheng Xian",
+      "Menglin Yang",
+      "Kai Chen",
+      "Jian Zhang",
+      "Yang Gao"
+    ],
+    "categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "field": "cs.CV",
+    "genre": "Ethics / Safety",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T18:48:02Z",
+    "source": "arXiv",
+    "summaryHtml": "視覚言語モデル（VLM）は、有害な目的の明示的な要求がなくても、視覚的事象の解釈を通じて有害な支援を提供しうる。本論文はこの「場面状態の安全性の脆弱性」を指摘し、375組の画像–質問ペアからなるベンチマークSceneSafetyBenchを導入する。初期・中期・最終の3つの場面状態と5種の視覚提示を網羅する。<br><br>8つのVLMを調べたところ、場面状態の入力は45.6〜72.3%の攻撃成功率で有害な支援を引き出した。層ごとの安全性関連シグナルはQRコード関連画像に最も近い一方、後期層の読み出しは低く、生成中の動態も異なることが分かった。攻撃手法S3TAは有害な目的を場面状態に翻訳し、画像–質問ペアを独立に問い合わせて応答を組み立てる。<br><br>MM-SafetyBenchの7カテゴリ・8モデルでS3TAはモデル平均の攻撃成功率71.2%を達成し、最強のベースラインを6.1ポイント上回った。テキスト側フィルタや視覚モデレーションの防御は限定的で、入力内容の選別だけでなく、場面に根ざした推論からモデルが推し量る支援そのものを守る必要があると結論づけている。出典：arXiv",
+    "timestamp": 1794941282000,
+    "title": "Reading Scene States: Uncovering Safety Failures in Vision-Language Models",
+    "titleJa": "場面の状態を読み取る――視覚言語モデルにおける安全性の失敗を暴く",
+    "url": "https://arxiv.org/abs/2611.23206v1"
+  },
+  {
+    "authors": [
+      "Viet K. Nguyen",
+      "Mohammad I. Husain"
+    ],
+    "categories": [
+      "cs.AI"
+    ],
+    "field": "cs.AI",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T18:44:25Z",
+    "source": "arXiv",
+    "summaryHtml": "AIエージェントが組織の境界を越えて協働する場面が増え、他組織が運用するエージェントのツールを呼び、やり取りする機会が広がっている。既存のエージェントフレームワークは計画と調整を支えるが、組織を越えたエージェントのアイデンティティ、実行の完全性、認可を検証する共通の仕組みが欠けている。本論文は、公開鍵基盤（PKI）、ゼロトラストアーキテクチャ、リモートアテステーションに基づくフレームワーク非依存のセキュリティアーキテクチャ「Agent Trust Infrastructure（ATI）」を提案する。<br><br>ATIは各組織の認証局（AgentCA）をピアとして連合信頼を確立し、共有のルート認証局を不要にする。要求の実行前にエージェント証明書を検証し、承認されたモデル・ツール・システムプロンプトの構成を確認したうえで、3つのポリシーチェックで認可を強制する。既存フレームワークのモデルを変更することなく、外部のセキュリティ施行層として統合できる。<br><br>8組織の連合シミュレーションで評価したところ、14の攻撃シナリオと6つの良性タスクにおいて、すべての施行機構を有効にすると攻撃封じ込め率は43%から84%に上昇した。要求あたりのオーバーヘッドは約174マイクロ秒にとどまる。ATIはオープンソースとして公開され、IETF WIMSEのワークロードトークン形式とEntity Attestation Tokenを用いる。出典：arXiv",
+    "timestamp": 1794941065000,
+    "title": "Agent Trust Infrastructure (ATI): A Federated Identity, Trust, Attestation, and Accountability Architecture for Cross-Organization Autonomous AI Agents",
+    "titleJa": "エージェント信頼基盤ATI――組織を越える自律AIエージェントの連合型セキュリティ",
+    "url": "https://arxiv.org/abs/2611.23202v1"
+  },
+  {
+    "authors": [
       "Vladislav Ruchkin",
       "Roman Koposov",
       "Johan Isaksson"
@@ -227,6 +316,22 @@
     "title": "Decolonising Autistic Phenomenology: Towards a Critical-Enactive Account of Cognitive Diversity",
     "titleJa": "自閉症の現象学を脱植民地化する――認知の多様性を捉え直す批判的エナクティビズム",
     "url": "https://doi.org/10.1159/psp/aelag017"
+  },
+  {
+    "authors": [
+      "Zhenyu Qiao"
+    ],
+    "categories": [],
+    "field": "NeuroData",
+    "genre": "Ethics / Safety",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T00:00:00Z",
+    "source": "Crossref",
+    "summaryHtml": "中国はブレイン・コンピュータ・インタフェース（BCI）に関する国家政策を急速に増やしてきたが、それらが倫理を産業競争に従属させているのか、真の抑制を組み込んでいるのかは議論が分かれてきた。本論文は、10年間に出された9つの国家政策文書を対象に、振興計画3件と倫理・審査・標準文書6件を混合手法の文書分析で検証する。6つのテーマの有無をコード化し、前半と後半でテーマの出現率と文書あたりの制約量を比較した。<br><br>初期の3文書はいずれも制約規定を持たず、すべてが革新目標を掲げていた。一方、後期の6文書には21件の制約規定が分散し、安全性と標準、神経データ保護、倫理審査が増加した。制約量の中央値は0.00から4へ上昇し（p=0.024）、統計的にも有意な変化だった。革新目標は後期の2文書にも残ったが、データガバナンスと倫理条項が組み込まれていた。<br><br>結論として、中国のBCI政策は振興を放棄したのではなく、倫理ガバナンスへの全般的な転換の後に、振興のアジェンダをそのまま維持した上で倫理的制約を重ねたものだった。政策のバランスは「振興のみ」から「抑制付き振興」へ移ったと結論づけている。出典：Crossref",
+    "timestamp": 1794873600000,
+    "title": "Innovation targets and ethical limits in China's brain-computer interface policy: national ethics guidelines versus industrial promotion plans",
+    "titleJa": "中国のブレイン・コンピュータ・インタフェース政策における革新目標と倫理的限界",
+    "url": "https://doi.org/10.63688/neurodata2026184"
   },
   {
     "authors": [
@@ -1637,137 +1742,5 @@
     "title": "Stability-Compensated Threshold Calibration for Selection-Conditioned Risk Control in Large Language Models",
     "titleJa": "大規模言語モデルの選択的予測におけるリスク制御――安定性補償付きしきい値較正",
     "url": "https://arxiv.org/abs/2611.21384"
-  },
-  {
-    "authors": [
-      "Bowen Liu",
-      "Yuhan Li",
-      "Nuo Chen",
-      "Weile Luo",
-      "Miao Peng",
-      "Qintong Zhang",
-      "Qifan Zhang",
-      "Jia Li"
-    ],
-    "categories": [],
-    "field": "Hugging Face Papers",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "Hugging Face",
-    "summaryHtml": "アプリケーションの最適化では、コーディングエージェントが有用な変更を発見し、計算内容を保ったままプログラム全体にわたって調整する必要がある。本研究は、科学アプリケーションとスーパーコンピューティング競技から適応した32のCPU最適化タスクからなるベンチマーク「Accelerate Bench」を提案する。各タスクは動作するプログラムとワークロード、正確性要件、時間制限、許可される編集を与え、最適化の場所と方法はエージェントに委ねられる。<br><br>バージョン1.1で16のコーディングエージェント（モデルとハーネスの組み合わせ）を評価したところ、Score@1は25.5%から67.4%の範囲だった。ほとんどのプログラムは正確だったが、速度向上の大きさがエージェントを分けた。上位2エージェントは32タスク中22以上で2倍以上の高速化を達成し、他の14は8〜17タスクにとどまった。<br><br>制御された再現実験では、アプリケーション全体での調整が重要である理由が示された。同一ソースコードでもビルドと実行時の設定だけで0.29倍から2.12倍まで変わり、あるコード変更は別の変更次第で1.01倍にも6.4倍にもなった。実行可能なワークロードとエージェントの軌跡を組み合わせ、成果とその過程の両方を評価する。出典：Hugging Face Papers",
-    "timestamp": 1794787200000,
-    "title": "Accelerate Bench: Evaluating Agents for Application-Level Program Optimization",
-    "titleJa": "アプリケーションレベルのプログラム最適化を評価する――コーディングエージェント向けベンチマークAccelerate Bench",
-    "url": "https://huggingface.co/papers/2611.20882"
-  },
-  {
-    "authors": [
-      "Xinping Lei",
-      "Minghao Liu",
-      "Ruijie Zhu",
-      "Xiaohui Hu",
-      "Xingqiao Li",
-      "Ao Zhang",
-      "Wenhao Chai",
-      "Han Li",
-      "Tao Wang",
-      "Jingyuan Zhang",
-      "Enduo Zhao",
-      "Yunfeng Shi",
-      "Yiming Liang",
-      "Zetao Yang",
-      "Xingjian Wang",
-      "Yifan Yao",
-      "Xinkai Ma",
-      "Yingru Li",
-      "Tianhan Yang",
-      "Huan Zhou",
-      "Weiran Shi",
-      "Shen Yan",
-      "Jiaheng Liu",
-      "Stephen Huang",
-      "Eli Cheung",
-      "Weihao Xuan"
-    ],
-    "categories": [
-      "cs.SE",
-      "cs.AI"
-    ],
-    "field": "cs.SE",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-15T19:39:01Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "組織の中で働くコーディングエージェントは、何を作るかを定め、同僚と協働し、成果を検証しなければならない。本研究が提案するSWE-CoWorkは、101の実在リポジトリにまたがる101件の開発課題、11のプログラミング言語、12の応用領域からなるベンチマークである。各課題では、エージェントは責任や知識の範囲が異なる26人の同僚がいる模擬的な開発組織に置かれ、短い引き継ぎから出発する。<br><br>エージェントは同僚や職場の記録に分散した要件を回収し、矛盾する証拠を調整したうえで実装し、非公開の実行テストで評価される。11モデルを評価した結果、部分的な実装と課題の完全な遂行のあいだに大きな隔たりがあった。上位2モデルは失敗から成功へのテストの約63%を満たしたが、課題を最後まで完了できたのは8%未満だった。完全な要件を最初から与えても、成功率は約16ポイント上がる一方、課題の完全な達成率は変わらなかった。<br><br>要件レベルの軌跡分析では、つまずきが遂行過程の全体に及ぶことが分かった。Claude-Opus-5.5は質問の93%を担当者に向けたが、入手できた要件は64%にとどまり、先送りされた質問は追及されず、要件を得ても実装が未完成のままになることもあった。完了と報告された要件の31%はテストに失敗した。持続的な要件追跡こそ、信頼できる自律ソフトウェア開発の鍵だという。出典：Hugging Face Papers",
-    "timestamp": 1794771541000,
-    "title": "SWE-CoWork: Benchmarking Coding Agents as Digital Employees in Organizations",
-    "titleJa": "コーディングエージェントは組織の一員になれるか――101の開発課題で測るSWE-CoWork",
-    "url": "https://arxiv.org/abs/2611.20218"
-  },
-  {
-    "authors": [
-      "Quy-Anh Dang",
-      "Chris Ngo"
-    ],
-    "categories": [
-      "cs.CL"
-    ],
-    "field": "cs.CL",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-15T17:30:14Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "方向性アブレーションは、言語モデルの実行中に隠れ状態から「行動方向」に沿う成分を取り除く手法で、拒否のような行動をオフにする標準的な方法である。だが挙動は不安定で、あるモデルではほとんど効かず、別のモデルでは出力が繰り返しに崩壊する。本研究はその理由を示し、修正法を提案する。最終残差ストリームでは、アブレーションはちょうどロジットバイアスに等しく、隠れ状態と方向のなす角をゲートとする固定の語彙フットプリントだという。<br><br>問題は、そのゲートが原点から測られることにある。最終層の状態は原点から遠い大きな共通モードを共有するため、共通モードと重なる方向は良性のテキストでも発火し、標的では発火不足になる。提案するCentered Ablation（CA）は、共通モードを方向から射影して除く閉形式の手法である。8モデルでの評価では、標準手法が発火不足だった場面で攻撃成功率が29ポイントと46ポイント上がり、Gemma-2-9Bの崩壊率は50%から1%に下がり、良性の回答も12〜40ポイント多く保たれた。<br><br>生成前に計算できる2つの数値から、未見のモデルで忠実性が上がるか攻撃成功率が上がるかを予測でき、崩壊指数はテキストがいつ退化するかの目安になる。さらに、2つの標準的な安全性判定器が崩壊したテキストを正反対に評価し、46ポイントもの見かけの効果を生みうることも示した。安全評価の落とし穴を示す結果だ。出典：Hugging Face Papers",
-    "timestamp": 1794763814000,
-    "title": "Centered Ablation: Why Last-Layer Directional Ablation Under-Fires or Collapses, and a Closed-Form Fix",
-    "titleJa": "方向性アブレーションはなぜ暴走するか――最終層の共通モードを除くCentered Ablation",
-    "url": "https://arxiv.org/abs/2611.20148"
-  },
-  {
-    "authors": [
-      "Parsa Mirtaheri",
-      "Mohammadreza Armandpour",
-      "Keivan Alizadeh",
-      "Iman Mirzadeh"
-    ],
-    "categories": [
-      "cs.LG"
-    ],
-    "field": "cs.LG",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-15T01:07:23Z",
-    "source": "arXiv",
-    "summaryHtml": "同じ環境（コードリポジトリ、データベース、アプリ群）で繰り返し働くLLMエージェントは、タスク間に潜む共通構造から学べるはずだ。経験を活かす適応には、文脈に保持する方法と、重みを更新する方法の2つの経路があるが、これまで別々に研究されており、それぞれの寄与や相補性は明らかでなかった。<br><br>本研究は文脈内学習（ICL）、検証可能な報酬による強化学習（GRPO）、自己蒸留（SDPO）を単独・併用で比較した。Qwen3.5-9Bを用い、SWE-bench Verified、AppWorld、ScienceWorld、BIRD-Critic-SQLiteの4環境・109タスクで14の適応手法を評価した。ICL単独の最良ポリシーは平均成功率を28.8%から49.4%へ引き上げ、GRPOを加えると最高の51.6%に達した。<br><br>ただしICLは参照回数や試行を減らす一方で、目の前のタスクの検査や検証を飛ばしがちになる。GRPOを併用するとその行動が回復し、参照の削減は保たれた。検証可能な報酬による強化学習が、保持した経験の使い方を洗練できることを示し、文脈管理と重み更新の統合的研究を促す。出典：arXiv",
-    "timestamp": 1794704843000,
-    "title": "Where Should LLM Agents Adapt at Test Time? In Context, in Weights, or Both",
-    "titleJa": "LLMエージェントはテスト時にどこで適応すべきか――文脈か、重みか、その両方か",
-    "url": "https://arxiv.org/abs/2611.19700"
-  },
-  {
-    "authors": [
-      "Christina Chwyl",
-      "Malena Donas",
-      "Angelica Spata",
-      "Gabriella Gatto",
-      "Akeesha Simmons",
-      "Kim Hoffman",
-      "M. Kati Lear",
-      "Brian Pilecki",
-      "Jenna LeJeune",
-      "Jason Luoma"
-    ],
-    "categories": [],
-    "field": "PsyArXiv",
-    "genre": "Psychedelics / Trauma",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-15T00:27:04Z",
-    "source": "OSF Preprints",
-    "summaryHtml": "社交不安症に対するMDMA支援療法（MDMA-AT）の体験を質的に調べた初めての研究。2回のMDMAセッションを受けた参加者20人に半構造化インタビューを行い、治療的利益に寄与したと感じられた側面を反省的テーマ分析で抽出した。<br><br>5つのテーマが得られた。困難な体験に穏やかに向き合うことで癒しが進むこと（自己批判から好奇心と慈しみへ、感情へのアクセスと処理の向上）、自己と他者への広がった視点による意味づけ（苦悩の起源の明確化、本来の自己の理解、つながりと一体感）、身体化された状態を通じた頭の理解から体感の知への移行（感情の体験と解放、自分とともに安心していられる感覚）、脆弱な自己表現を通じた新しい関係パターンの学習、MDMA体験が継続的な自己発見の拠り所になること。<br><br>参加者は、安全な治療的枠組みの中でのMDMAが、感情と向き合い深く感じ身体で味わうことを促し、新たな洞察と癒しを触媒したと感じていた。自分自身や他者とよりつながり安心できることで、関係の中で本来の自分として現れる意欲が高まったという。出典：OSF Preprints",
-    "timestamp": 1794702424000,
-    "title": "MDMA-Assisted Therapy for Social Anxiety Disorder: A Qualitative Analysis of Patient Experiences of Change",
-    "titleJa": "MDMA支援療法は社交不安に何をもたらすか――患者20人の語りから見えた変化の5テーマ",
-    "url": "https://osf.io/preprints/psyarxiv/7kx2p_v1/"
   }
 ]
