@@ -817,19 +817,34 @@ window.__studioPulseLeary={version:'PhaseJ-1',
 
 </script>
 <script id="studio-fluid-leary">
-/* ═══ Studio Link 専用機能 for Leary 第2弾 (2026-11-19): STUDIO FLUID ═══
-   流体モード (ChromaFlow) × 音連携。Studio 接続中だけ、流体エンジン内蔵の
-   音反応機構 (setAudioSampler) へ session-bus から合成した帯域データを流し、
-   エンジン自身の変調で流体を音に反応させる。加えて Meikyoshisui の拍ごとに
-   衝撃波と渦を撃ち込み、Noise の音量に応じて染料の雨 (splat) を降らせる。
-   接続時は流体モードへ自動で切り替え (前のモードは切断時に復元)。
-   本体コード・保存キーには触らない。自分の Link が OFF の間は無効。 */
+/* ═══ Studio Link 専用機能 for Leary 第2弾 v2 (2026-11-19): STUDIO FLUID ═══
+   流体モード (ChromaFlow) × 音連携 + カスタマイズ。
+   Studio 接続中だけ、流体エンジン内蔵の音反応機構 (setAudioSampler) へ
+   session-bus から合成した帯域データを流し、エンジン自身の変調で流体を
+   音に反応させる。Meikyoshisui の拍ごとに衝撃波/渦を撃ち込み、Noise の
+   音量に応じて染料の雨 (splat) を降らせる。
+   カスタマイズ: 帯域ごとの効き倍率、拍パルス、雨の量、発射パターン、
+   間引き、発射位置、雨の色、接続時の自動切替、プリセット3種。
+   設定は localStorage 'leary.studioFluid.v1' に保存される。
+   本体コード・既存の保存キーには触らない。自分の Link が OFF の間は無効。 */
 (function(){
 'use strict';
-var LSKEY='leary.varelserLink.v1', FRESH_MS=6000;
+var LSKEY='leary.varelserLink.v1', SETKEY='leary.studioFluid.v1', FRESH_MS=6000;
+var DEF={gainOverall:1,gainBass:1,gainTreble:1,beatPulse:1,rain:1,pattern:'alt',beatDiv:1,posMode:'drift',rainColor:'engine',autoFluid:true};
+var PRESETS={
+  calm:{gainOverall:0.6,gainBass:0.7,gainTreble:0.6,beatPulse:0.5,rain:0.4,pattern:'alt',beatDiv:2,posMode:'drift',rainColor:'engine'},
+  standard:{gainOverall:1,gainBass:1,gainTreble:1,beatPulse:1,rain:1,pattern:'alt',beatDiv:1,posMode:'drift',rainColor:'engine'},
+  wild:{gainOverall:1.5,gainBass:1.8,gainTreble:1.4,beatPulse:1.8,rain:1.8,pattern:'random',beatDiv:1,posMode:'circle',rainColor:'engine'}
+};
+var S={};
+(function load(){ var raw=null; try{ raw=localStorage.getItem(SETKEY); }catch(e){}
+  for(var k in DEF)S[k]=DEF[k];
+  if(raw){ try{ var p=JSON.parse(raw); for(var k2 in DEF)if(typeof p[k2]===typeof DEF[k2])S[k2]=p[k2]; }catch(e){} } })();
+function save(){ try{ localStorage.setItem(SETKEY,JSON.stringify(S)); }catch(e){} }
 var lastSeen=0, linked=false, busNoise=null, busMeikyo=null;
 var enabled=true, engaged=false, samplerOn=false, prevUiMode=null, switched=false;
-var rmsT=0, rmsSm=0, peakSm=0, phase=0, lastTick=Date.now(), lastBeatAt=0, beatCount=0, splatCount=0, seq=0;
+var rmsT=0, rmsSm=0, peakSm=0, phase=0, lastTick=Date.now(), lastBeatAt=0;
+var beatCount=0, fireCount=0, shockCount=0, vortexCount=0, splatCount=0, seq=0;
 function ownOn(){ try{ return localStorage.getItem(LSKEY)==='1'; }catch(e){ return false; } }
 var ch=null;
 try{ ch=new BroadcastChannel('varelser-link-v1'); }catch(e){}
@@ -843,23 +858,31 @@ if(ch)ch.addEventListener('message',function(ev){
 function L(){ return window.__learyChromaFlow||null; }
 function ENG(){ var l=L(); return (l&&l.engine)||null; }
 function driftPos(k){ var a=k*2.399963; return [0.5+0.38*Math.cos(a), 0.5+0.38*Math.sin(a)]; }
+function firePos(){
+  if(S.posMode==='center')return [0.5,0.5];
+  if(S.posMode==='circle'){ var a=fireCount*(Math.PI/4); return [0.5+0.3*Math.cos(a), 0.5+0.3*Math.sin(a)]; }
+  return driftPos(seq++);
+}
 function bands(){
   var now=Date.now();
   var bp=(busMeikyo&&busMeikyo.playing)?Math.exp(-(now-lastBeatAt)/180):0;
   if(!engaged)return {bass:0,mid:0,treble:0,overall:0,beatDetected:false};
   return {
-    bass:Math.min(1,rmsSm*1.15+bp*0.5),
-    mid:Math.min(1,rmsSm+bp*0.25),
-    treble:Math.min(1,peakSm*0.9+bp*0.15),
-    overall:rmsSm,
+    bass:Math.min(1,rmsSm*1.15*S.gainBass+bp*0.5*S.beatPulse),
+    mid:Math.min(1,rmsSm*S.gainOverall+bp*0.25*S.beatPulse),
+    treble:Math.min(1,peakSm*0.9*S.gainTreble+bp*0.15*S.beatPulse),
+    overall:Math.min(1,rmsSm*S.gainOverall),
     beatDetected:(now-lastBeatAt)<130&&(busMeikyo&&busMeikyo.playing)?true:false
   };
 }
 function engage(){
   var l=L(); if(!l)return false;
-  if(prevUiMode===null)prevUiMode=l.uiMode||'leary';
-  if(l.uiMode!=='fluid'){ try{ l.setUiMode('fluid'); switched=true; }catch(e){} }
-  try{ l.setActive(true); }catch(e){}
+  if(S.autoFluid){
+    if(prevUiMode===null)prevUiMode=l.uiMode||'leary';
+    if(l.uiMode!=='fluid'){ try{ l.setUiMode('fluid'); switched=true; }catch(e){} }
+    try{ l.setActive(true); }catch(e){}
+  }
+  else if(l.uiMode!=='fluid')return false;
   var eng=ENG(); if(!eng)return false;
   if(!samplerOn){ try{ eng.setAudioSampler(function(){ return bands(); }); samplerOn=true; }catch(e){} }
   engaged=true;
@@ -875,15 +898,55 @@ function release(){
 }
 /* ── UI ── */
 var st=document.createElement('style');
-st.textContent='#sfPanel-leary{position:fixed;left:10px;bottom:10px;z-index:9990;display:none;width:260px;padding:10px 12px;border:1px solid #3a3a40;border-radius:10px;background:rgba(14,14,17,.93);color:#e8e8ec;font-size:12.5px;line-height:1.6}'
+st.textContent='#sfPanel-leary{position:fixed;left:10px;bottom:10px;z-index:9990;display:none;width:264px;max-height:78vh;overflow-y:auto;padding:10px 12px;border:1px solid #3a3a40;border-radius:10px;background:rgba(14,14,17,.94);color:#e8e8ec;font-size:12.5px;line-height:1.55}'
  +'#sfPanel-leary .t{letter-spacing:.08em}#sfPanel-leary .s{opacity:.85;font-size:11.5px}'
- +'#sfPanel-leary label{display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer}';
+ +'#sfPanel-leary .row{display:flex;align-items:center;gap:6px;margin-top:5px}'
+ +'#sfPanel-leary .row label{flex:0 0 64px;font-size:11.5px;opacity:.9}'
+ +'#sfPanel-leary .row output{flex:0 0 30px;text-align:right;font-size:11.5px}'
+ +'#sfPanel-leary input[type=range]{flex:1;accent-color:#e8e8ec;height:14px}'
+ +'#sfPanel-leary select{background:#1c1c20;color:#e8e8ec;border:1px solid #3a3a40;border-radius:6px;font-size:12px;padding:2px 4px;flex:1}'
+ +'#sfPanel-leary .presets{display:flex;gap:6px;margin-top:8px}'
+ +'#sfPanel-leary .presets button{flex:1;background:#1c1c20;color:#e8e8ec;border:1px solid #3a3a40;border-radius:6px;font-size:12px;padding:4px 0;cursor:pointer}'
+ +'#sfPanel-leary .chk{display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer}';
 document.head.appendChild(st);
 var panel=document.createElement('div'); panel.id='sfPanel-leary';
+function sliderRow(id,label){ return '<div class="row"><label for="sf-'+id+'">'+label+'</label><input type="range" id="sf-'+id+'" min="0" max="200" step="5"><output id="sf-'+id+'-v"></output></div>'; }
+function selectRow(id,label,opts){ var o=''; for(var i=0;i<opts.length;i++)o+='<option value="'+opts[i][0]+'">'+opts[i][1]+'</option>';
+  return '<div class="row"><label for="sf-'+id+'">'+label+'</label><select id="sf-'+id+'">'+o+'</select></div>'; }
 panel.innerHTML='<div class="t">STUDIO FLUID — 流体×音連携</div><div class="s" id="sfStatus-leary">流体エンジン待機中</div>'
- +'<label><input type="checkbox" id="sfEnable-leary" checked> 流体×音連携 有効</label>';
+ + sliderRow('gainOverall','全体の効き') + sliderRow('gainBass','低音の効き') + sliderRow('gainTreble','高音の効き')
+ + sliderRow('beatPulse','拍パルス') + sliderRow('rain','雨の量')
+ + selectRow('pattern','発射',[['alt','衝撃波と渦を交互'],['shock','衝撃波のみ'],['vortex','渦のみ'],['random','ランダム']])
+ + selectRow('beatDiv','間引き',[['1','毎拍'],['2','2拍ごと'],['4','4拍ごと']])
+ + selectRow('posMode','発射位置',[['drift','漂う'],['center','中央'],['circle','円周']])
+ + selectRow('rainColor','雨の色',[['engine','エンジンの色'],['mono','モノクロ']])
+ + '<div class="presets"><button type="button" data-preset="calm">静か</button><button type="button" data-preset="standard">標準</button><button type="button" data-preset="wild">過激</button></div>'
+ + '<label class="chk"><input type="checkbox" id="sfAuto-leary"> 接続時に自動で流体モードへ</label>'
+ + '<label class="chk"><input type="checkbox" id="sfEnable-leary"> 流体×音連携 有効</label>';
 document.body.appendChild(panel);
+function reflect(){
+  var ids=['gainOverall','gainBass','gainTreble','beatPulse','rain'];
+  for(var i=0;i<ids.length;i++){ var el=document.getElementById('sf-'+ids[i]); if(el)el.value=Math.round(S[ids[i]]*100);
+    var o=document.getElementById('sf-'+ids[i]+'-v'); if(o)o.textContent=S[ids[i]].toFixed(2).replace(/0$/,''); }
+  var sels=['pattern','posMode','rainColor'];
+  for(var j=0;j<sels.length;j++){ var se=document.getElementById('sf-'+sels[j]); if(se)se.value=S[sels[j]]; }
+  var bd=document.getElementById('sf-beatDiv'); if(bd)bd.value=String(S.beatDiv);
+  var af=document.getElementById('sfAuto-leary'); if(af)af.checked=!!S.autoFluid;
+}
+['gainOverall','gainBass','gainTreble','beatPulse','rain'].forEach(function(id){
+  panel.querySelector('#sf-'+id).addEventListener('input',function(){ S[id]=parseInt(this.value,10)/100;
+    var o=document.getElementById('sf-'+id+'-v'); if(o)o.textContent=S[id].toFixed(2).replace(/0$/,''); save(); });
+});
+['pattern','posMode','rainColor'].forEach(function(id){
+  panel.querySelector('#sf-'+id).addEventListener('change',function(){ S[id]=this.value; save(); });
+});
+panel.querySelector('#sf-beatDiv').addEventListener('change',function(){ S.beatDiv=parseInt(this.value,10)||1; save(); });
+panel.querySelector('#sfAuto-leary').addEventListener('change',function(){ S.autoFluid=this.checked; save(); });
 panel.querySelector('#sfEnable-leary').addEventListener('change',function(){ enabled=this.checked; if(!enabled)release(); });
+panel.querySelectorAll('[data-preset]').forEach(function(b){ b.addEventListener('click',function(){ applyPreset(b.getAttribute('data-preset')); }); });
+function applyPreset(name){ var p=PRESETS[name]; if(!p)return; for(var k in p)S[k]=p[k]; save(); reflect(); }
+reflect();
+/* ── 駆動 ── */
 setInterval(function(){
   var t=Date.now(), dt=Math.min(0.1,(t-lastTick)/1000); lastTick=t;
   var now=linked;
@@ -895,39 +958,50 @@ setInterval(function(){
   var pk=(linked&&busNoise&&typeof busNoise.peak==='number')?busNoise.peak:0;
   peakSm+=(pk-peakSm)*(pk>peakSm?0.5:0.06);
   if(linked&&enabled&&!engaged)engage();
-  if(!engaged)return;
+  if(!engaged){ if(linked){ var s0=document.getElementById('sfStatus-leary'); if(s0)s0.textContent=S.autoFluid?'流体エンジン待機中':'流体モードで開くと連携します'; } return; }
   var eng=ENG(); if(!eng){ engaged=false; samplerOn=false; return; }
-  /* 拍: Meikyoshisui 再生中は BPM 位相で拍イベント */
   var bpm=busMeikyo&&typeof busMeikyo.bpm==='number'?busMeikyo.bpm:null;
   if(bpm&&busMeikyo.playing){
     var prev=phase;
     phase+=2*Math.PI*(bpm/60)*dt;
     if(Math.floor(phase/(2*Math.PI))>Math.floor(prev/(2*Math.PI))){
       lastBeatAt=t; beatCount++;
-      var p=driftPos(seq++);
-      try{
-        if(beatCount%2===0)eng.triggerShockwave(p[0],p[1],0.5+peakSm*0.8);
-        else eng.splatVortex(p[0],p[1],(beatCount%4<2?1:-1)*(0.7+peakSm*0.6));
-      }catch(e){}
+      if(beatCount%S.beatDiv===0){
+        fireCount++;
+        var p=firePos();
+        var kind=S.pattern;
+        if(kind==='alt')kind=(fireCount%2===0)?'shock':'vortex';
+        else if(kind==='random')kind=(((fireCount*2654435761)>>>8)%2===0)?'shock':'vortex';
+        var mag=(0.6+0.4*S.beatPulse);
+        try{
+          if(kind==='shock'){ eng.triggerShockwave(p[0],p[1],(0.5+peakSm*0.8)*mag); shockCount++; }
+          else { eng.splatVortex(p[0],p[1],(fireCount%4<2?1:-1)*(0.7+peakSm*0.6)*mag); vortexCount++; }
+        }catch(e){}
+      }
     }
   }
-  /* 音量の雨: RMS に応じて染料 splat */
-  if(rmsSm>0.15){
-    var prob=(rmsSm-0.15)*0.85;
+  if(rmsSm>0.15&&S.rain>0){
+    var prob=(rmsSm-0.15)*0.85*S.rain;
     var r=((seq*2654435761)%1000)/1000; seq++;
     if(r<prob){
       var q=driftPos(seq);
-      var ang=seq*2.399963+1.3, mag=400+1600*rmsSm;
-      try{ eng.splat(q[0],q[1],Math.cos(ang)*mag,Math.sin(ang)*mag,eng.generateColor()); splatCount++; }catch(e){}
+      var ang=seq*2.399963+1.3, mag2=400+1600*rmsSm;
+      var col=null;
+      try{ col=(S.rainColor==='mono')?(function(){ var v=0.55+0.45*rmsSm; return [v,v,v]; })():eng.generateColor(); }catch(e){}
+      try{ eng.splat(q[0],q[1],Math.cos(ang)*mag2,Math.sin(ang)*mag2,col); splatCount++; }catch(e){}
     }
   }
   var s=document.getElementById('sfStatus-leary');
-  if(s)s.textContent='帯域 overall '+rmsSm.toFixed(2)+' / 拍 '+beatCount+' / splat '+splatCount+(bpm?(' / BPM '+bpm):'');
+  if(s)s.textContent='帯域 overall '+Math.min(1,rmsSm*S.gainOverall).toFixed(2)+' / 拍 '+beatCount+' / 発射 '+fireCount+' / splat '+splatCount+(bpm?(' / BPM '+bpm):'');
 },33);
-window.__studioFluidLeary={version:'PhaseK-1',
+window.__studioFluidLeary={version:'PhaseL-2',
   get linked(){return linked;}, get engaged(){return engaged;},
-  get beats(){return beatCount;}, get splats(){return splatCount;},
+  get beats(){return beatCount;}, get fires(){return fireCount;},
+  get shocks(){return shockCount;}, get vortices(){return vortexCount;},
+  get splats(){return splatCount;},
   bands:function(){ return bands(); },
+  settings:function(){ var o={}; for(var k in S)o[k]=S[k]; return o; },
+  applyPreset:applyPreset,
   get engineReady(){ return !!ENG(); }};
 })();
 
