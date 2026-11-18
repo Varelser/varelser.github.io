@@ -323,6 +323,12 @@
 @keyframes ip-dot4{from{transform:translate(0,-4px)}to{transform:translate(3px,10px)}}
 @media (max-width:400px){.logo .dots{transform:scale(.85)}}
 @media (prefers-reduced-motion: reduce){.logo .dots,.logo .dots i{animation:none}}
+.intro-reveal{position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden;animation:ip-reveal-hide .3s ease 10.9s 1 forwards}
+.intro-reveal i{position:absolute;left:50%;top:130px;transform:translate(-50%,-50%);display:block;width:0;height:0;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0) 45%, rgba(255,255,255,.55) 78%, rgba(255,255,255,.95) 93%, #fff 100%);box-shadow:inset 0 0 18px rgba(255,255,255,.9), inset 0 0 80px rgba(255,255,255,.8), 0 0 0 210vmax #000;animation:ip-reveal-grow 10s cubic-bezier(.6,.02,.3,1) .4s 1 forwards}
+.intro-reveal b{position:absolute;left:50%;top:130px;transform:translate(-50%,-50%);display:block;width:0;height:0;border-radius:50%;box-shadow:0 0 110px 55px rgba(255,255,255,.30), inset 0 0 60px rgba(255,255,255,.35);animation:ip-reveal-grow 10s cubic-bezier(.6,.02,.3,1) .4s 1 forwards}
+@keyframes ip-reveal-grow{from{width:0;height:0}to{width:220vmax;height:220vmax}}
+@keyframes ip-reveal-hide{to{visibility:hidden}}
+@media (prefers-reduced-motion: reduce){.intro-reveal{display:none}}
 @media (prefers-reduced-motion: reduce){.emblem .halo g{animation:none !important;opacity:0 !important}}
 @media (prefers-reduced-motion: reduce){.logo,.emblem a{animation:none !important}.logo img.fx-fill,.emblem .fill-disc{animation:none !important;opacity:0 !important}}
 
@@ -386,7 +392,7 @@
 @media (prefers-reduced-motion: reduce){#sqa-panel{transition:none}}
 </style>
 </head>
-<body>
+<body><div class="intro-reveal" aria-hidden="true"><i></i><b></b></div>
   <main class="page">
       <h1 class="sr-only">VARELSER</h1>
     <header class="header" aria-label="VARELSER links">
