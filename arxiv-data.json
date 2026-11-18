@@ -1498,6 +1498,96 @@
   },
   {
     "authors": [
+      "Blas Eugenio Vicco Zarate",
+      "Miguel Hernán Vicco"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.AI",
+      "cs.NE"
+    ],
+    "field": "cs.LG",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-16T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "継続強化学習では、変化する環境への適応と、過去に経験した条件での性能維持の両立が課題となる。本研究は、進化的探索で生成した専門家（スペシャリスト）を再利用可能なメモリとして組み合わせることで、破局的忘却を抑えられるかを検証した。提案する進化的ニューロプラスティック・エージェント（ENA）は、勾配を使わずに小さなニューラルネットワークを進化させ、検出された動的レジームごとに選ばれた方策をアーカイブし、ベイズ的な方策再利用で取り出す仕組みだ。<br><br>非定常なCartPoleとHalfCheetah環境で評価した。30回のCartPoleアブレーションでは、完全なアーキテクチャが5つのテスト環境で平均成功率83.2%を達成し、難しい環境を学習できた変種のなかで最も一貫した保持を示した。検索規則の選び方も性能に影響することが、選択アブレーションで確認された。<br><br>ただしENAはCartPoleではPPOより適応が遅く、HalfCheetahではSACよりリターンが低かった。証拠は完全なアーキテクチャ全体に関するもので、勾配フリーな最適化が保持の原因であることや、他の継続学習手法に対する優位性は確立されていない。出典：arXiv",
+    "timestamp": 1794787200000,
+    "title": "Mitigating Catastrophic Forgetting with Physics-Indexed Specialist Memory: the Evolutionary Neuroplastic Agent",
+    "titleJa": "破局的忘却を抑える――物理インデックス付き専門家メモリによる進化的ニューロプラスティック・エージェント",
+    "url": "https://arxiv.org/abs/2611.21598"
+  },
+  {
+    "authors": [
+      "Javier Aguilar Martín"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.AI",
+      "cs.CL",
+      "cs.DL"
+    ],
+    "field": "cs.LG",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-16T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "既存研究の埋め込みマップ上で「どこからも遠い点」を選び、アイデアへと解読する――この人気のあるアイデア出しレシピを、本研究は後に実際に現れたものを基準に4つの方法で検証した。遠いランダム方向はそもそもテキストにならず、中心化や白色化の後も24セルのうち22セルが到達圏外のままだった。近傍なしの探索は内側の空白には到達したが、遠い点への到達は限定的だった。<br><br>過去のみのマップのk-meansセルでは、登録済みの「穴スコア」は主にセルの大きさと位置を追跡し、密度ベースのギャップ指標はどのセルが最も速く成長するかをチャンス程度にしか予測できなかった。arXiv論文のLLMによる続きは、引用する論文よりも元の論文に近いままで、レビュアーやオラクル、距離フィードバックによる方向転換は限定的だった。<br><br>着想素材を距離で評価しても逆U字は検出されず、予期のマージンは内容より書式を追っていた。テストは実施前に登録され、追跡調査は主要結果の後に行われた。埋め込み距離を新規性の羅針盤として使うことへの慎重な見直しを迫る結果だ。出典：arXiv",
+    "timestamp": 1794787200000,
+    "title": "Do Embedding-Map Distances Guide LLM Ideation? Four Tests Against What Came Next",
+    "titleJa": "埋め込みマップの距離はLLMのアイデア出しを導くか――後に現れたものに対する4つの検証",
+    "url": "https://arxiv.org/abs/2611.21408"
+  },
+  {
+    "authors": [
+      "Zhiyuan Wang",
+      "Yuanchang Ye",
+      "Jiahao Yuan",
+      "Jinhao Duan",
+      "Xiaoshuang Shi",
+      "Weijun Xie",
+      "Ye Wei",
+      "Kaidi Xu"
+    ],
+    "categories": [
+      "cs.CL"
+    ],
+    "field": "cs.CL",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-16T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "大規模言語モデルは幻覚的な回答を生むことがあり、不確かな質問には回答を控える選択的予測が求められる。だがヒューリスティックな不確実性しきい値だけでは、採用した予測のなかでの誤り率を統計的に制御できない。線形期待制約（LEC）は選択条件付き誤り率の較正を線形損失の制約に帰着させるが、その損失は受理しきい値に対して非単調である。<br><br>本研究は、i.i.d.サンプリングの下でLECの経験的しきい値選択規則が母集団の誤り率目標に違反しうる正確な反例を構成した。このリスク転移のギャップに対処するため、理論的な全データ参照の負の線形リスクでしきい値選択の不安定性を補償するSC-LECを提案し、局所展開のための2つの有限標本証明（安定性に基づく証明と直接証明）を導いた。<br><br>有効な母集団アンカーのマージンがあれば、有限標本での誤り率制御が保証され、独立したマージン認証により高確率の保証も得られる。CommonsenseQA、ARC-Challenge、TriviaQAでの実験では、同じ認証済みアンカーを超える有用な保持率の向上が示された一方、小さなマージンの領域では保守的な挙動も明らかになった。出典：arXiv",
+    "timestamp": 1794787200000,
+    "title": "Stability-Compensated Threshold Calibration for Selection-Conditioned Risk Control in Large Language Models",
+    "titleJa": "大規模言語モデルの選択的予測におけるリスク制御――安定性補償付きしきい値較正",
+    "url": "https://arxiv.org/abs/2611.21384"
+  },
+  {
+    "authors": [
+      "Bowen Liu",
+      "Yuhan Li",
+      "Nuo Chen",
+      "Weile Luo",
+      "Miao Peng",
+      "Qintong Zhang",
+      "Qifan Zhang",
+      "Jia Li"
+    ],
+    "categories": [],
+    "field": "Hugging Face Papers",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-16T00:00:00Z",
+    "source": "Hugging Face",
+    "summaryHtml": "アプリケーションの最適化では、コーディングエージェントが有用な変更を発見し、計算内容を保ったままプログラム全体にわたって調整する必要がある。本研究は、科学アプリケーションとスーパーコンピューティング競技から適応した32のCPU最適化タスクからなるベンチマーク「Accelerate Bench」を提案する。各タスクは動作するプログラムとワークロード、正確性要件、時間制限、許可される編集を与え、最適化の場所と方法はエージェントに委ねられる。<br><br>バージョン1.1で16のコーディングエージェント（モデルとハーネスの組み合わせ）を評価したところ、Score@1は25.5%から67.4%の範囲だった。ほとんどのプログラムは正確だったが、速度向上の大きさがエージェントを分けた。上位2エージェントは32タスク中22以上で2倍以上の高速化を達成し、他の14は8〜17タスクにとどまった。<br><br>制御された再現実験では、アプリケーション全体での調整が重要である理由が示された。同一ソースコードでもビルドと実行時の設定だけで0.29倍から2.12倍まで変わり、あるコード変更は別の変更次第で1.01倍にも6.4倍にもなった。実行可能なワークロードとエージェントの軌跡を組み合わせ、成果とその過程の両方を評価する。出典：Hugging Face Papers",
+    "timestamp": 1794787200000,
+    "title": "Accelerate Bench: Evaluating Agents for Application-Level Program Optimization",
+    "titleJa": "アプリケーションレベルのプログラム最適化を評価する――コーディングエージェント向けベンチマークAccelerate Bench",
+    "url": "https://huggingface.co/papers/2611.20882"
+  },
+  {
+    "authors": [
       "Xinping Lei",
       "Minghao Liu",
       "Ruijie Zhu",
@@ -1654,85 +1744,5 @@
     "title": "Near-Death Experiences and Near-Death-Like Experiences: A Comparative Synthesis and Implications for Their Interpretation",
     "titleJa": "臨死体験と臨死様体験はどこが違うのか――現象・心理・後遺効果の比較統合",
     "url": "https://osf.io/preprints/psyarxiv/tu64g_v1/"
-  },
-  {
-    "authors": [
-      "David Hason Rudd",
-      "Dennis Singh",
-      "Cesar Sanin",
-      "Bryn James"
-    ],
-    "categories": [
-      "cs.CY",
-      "cs.AI"
-    ],
-    "field": "cs.CY",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-14T23:48:47Z",
-    "source": "arXiv",
-    "summaryHtml": "AIが中核業務に組み込まれるにつれ、倫理・法務・運用の複雑なリスクを管理する企業ガバナンス基盤の必要性が高まっている。多くの組織がAI倫理の原則を掲げる一方、AIガバナンスを取締役会の優先事項とする組織の半数未満しか正式な枠組みを持たないという実施の隔たりがある。本論文はその隔たりを埋める構造化された企業AIガバナンス・アーキテクチャ（CAIGA）を提案する。<br><br>柱は二つある。一つは、最高プライバシー責任者（CPO）や最高倫理責任者（ChEO）といった専門のC-suite職の役割の進化で、企業全体のAI利用に対する説明責任を制度化する。もう一つは、法務・技術・データサイエンス・サイバーセキュリティ・事業部門を横断するAIガバナンス委員会で、倫理原則を運用上の決定へ翻訳し、新規AI施策の戦略的なゴー／ノーゴー承認を含む仕組みを担う。<br><br>査読文献やEU AI法を含む規制枠組み、業界実務の概念的検討に基づき、明確な説明責任ポリシー、構造化されたリスク管理ワークフロー、組織全体の倫理的AI文化を組み込んだ再現可能な枠組みを示し、金融サービス部門への適用で例示した。企業リーダーやリスク専門家、政策立案者への直接の示唆を持つ。出典：arXiv",
-    "timestamp": 1794700127000,
-    "title": "Architecting the Corporate AI Infrastructure: The Evolving Roles of AI Governance Committees and Chief Ethics Officers",
-    "titleJa": "企業のAIガバナンス基盤を設計する――AIガバナンス委員会と最高倫理責任者の役割",
-    "url": "https://arxiv.org/abs/2611.19670"
-  },
-  {
-    "authors": [
-      "Jiaju Justin Yan",
-      "Xiaqing Nancy He",
-      "Alan Boss"
-    ],
-    "categories": [],
-    "field": "SocArXiv",
-    "genre": "Other",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-14T23:11:31Z",
-    "source": "OSF Preprints",
-    "summaryHtml": "起業家は苦境にある事業を続けるかどうかの判断でAIに頼るようになった。だが粘り強さの理論は、その要因を起業家本人の内面か人間同士のネットワークに求めてきた。本論文はAIを、人間ではない第三の要因として位置づける理論枠組みを提示する。心理的資源アプローチやエスカレーション理論、閾値理論、AI起業エージェンシー枠組みを土台に、二つの経路を区別する。<br><br>資源経路では、AIが心理的資源を補い、粘り強さの強度を高め、起業家自身の内的資源への依存を緩める。認識経路では、AIが判断の土台となるフィードバックそのものを形づくり、反証的な証拠への応答性として定義される「粘り強さの較正」を左右する。5つの命題は、二つの経路が組み合わさってAIによるエスカレーション増幅が生じる条件や、不確実性が自信と較正の乖離を広げる仕組み、エージェンシー型AIが逆境と向き合う決断の場面を減らす過程を具体化する。<br><br>時間的な拡張として、持続的なAIの支えが粘り強さをもろくする可能性も論じる。AIをめぐる楽観論と悲観論の双方を調停し、小規模事業主や助言者、AI設計者に向けた検証可能な示唆を提示する。起業の現場でAIが「続ける力」をどう変えるかを考えるための枠組みである。出典：OSF Preprints",
-    "timestamp": 1794697891000,
-    "title": "Keep on Keeping On, With a Machine: Artificial Intelligence and the Calibration of Entrepreneurial Persistence",
-    "titleJa": "AIに相談して続けるかやめるか――起業家の「粘り強さ」をAIがどう変えるか",
-    "url": "https://osf.io/preprints/socarxiv/gtd4z_v1/"
-  },
-  {
-    "authors": [
-      "Ziwei Gu",
-      "Michael S. Lee",
-      "Drew Rein",
-      "Yash Maurya"
-    ],
-    "categories": [
-      "cs.CL"
-    ],
-    "field": "cs.CL",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-14T22:16:38Z",
-    "source": "arXiv",
-    "summaryHtml": "シンガポールはLLMの法律推論を試す独特の舞台だ。継承した英コモンローと現地特有の法令が組み合わさり、モデルは一般的なコモンローの直観と現地の法理を区別しなければならない。また一般の法律相談では事実が不足しがちで、結論を左右する事実は準拠する法理次第で変わる。既存の法律ベンチマークはシンガポール法も、この種のあいまいさ認識もほとんど扱ってこなかった。<br><br>本研究はシンガポール法の自由記述式法律推論とあいまいさ認識のための大規模ベンチマーク「SG-LegalClarify」を提案する。弁護士が作成した1100問（10法領域、完全指定340問・不足指定760問）からなり、不足指定の各問には隠れた事実と完全指定版の対応問があり、計1860の評価事例になる。回答は弁護士作成のIRAC（争点・準則・適用・結論）ルーブリックで採点される。<br><br>19のLLMをクローズドブックとウェブ検索付きで評価した結果、最良モデルでも必須ルーブリック項目の充足率はクローズドブックで69.8%（平均53.8%）、ウェブ検索付きで77.8%（平均63.0%）にとどまり、ベンチマークは未飽和である。モデルは明確化が必要な場面の認識にも苦労した。公開スプリットと評価パイプラインが公開される。出典：arXiv",
-    "timestamp": 1794694598000,
-    "title": "SG-LegalClarify: A Large-Scale Benchmark for Legal Reasoning and Ambiguity Recognition in Singapore Law",
-    "titleJa": "シンガポール法の法律推論ベンチマーク――あいまいさを見抜く力を測る",
-    "url": "https://arxiv.org/abs/2611.19643"
-  },
-  {
-    "authors": [
-      "Mirco Milletarì",
-      "Tuhin Kundu"
-    ],
-    "categories": [
-      "cs.AI"
-    ],
-    "field": "cs.AI",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-14T20:45:31Z",
-    "source": "arXiv",
-    "summaryHtml": "複雑な場面で働くエージェントは、環境情報の不完全さ、曖昧なユーザー指示、複雑な業務ルール、方策の確率的ゆらぎに直面する。LLMエージェントのベンチマークは増えているが、実運用での信頼性を評価するには、条件ごとに性能を定量化する体系的な枠組みが必要だ。Thinkingboxベンチマークでも最強モデルが業務シナリオで一貫した性能を出せずにいる。<br><br>本論文はエージェントシステムの不確実性と信頼性を評価する統計的フレームワークを提案する。シナリオ・事例・サンプルの階層を定義し、平均合格率、pass@k、pasŝ^kといった既存の指標に不確実性の推定を付与する。指標ごとにサンプリングのばらつきを明示し、条件別の性能を体系的に比較できるようにする。階層の異なる水準で集計すると、方策モデルの異なる構造や性質が見えてくる。<br><br>著者らはこの階層的集計を、物理学や統計学の「粗視化（coarse-graining）」と結びつけ、階層的な不確実性伝播を構成的に導出した。不偏なpass@k推定量の有限標本での分散の厳密な式も独自に導き、実行ノイズとタスクの異質性を分離する。出典：arXiv",
-    "timestamp": 1794689131000,
-    "title": "A Hierarchical Statistical Framework for Evaluating Agent Reliability",
-    "titleJa": "エージェントの信頼性を測る階層的統計フレームワーク",
-    "url": "https://arxiv.org/abs/2611.19614"
   }
 ]
