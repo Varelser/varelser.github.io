@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>循環の図 ― 『慈愛体系』図版アニメーション</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+.wrap{max-width:1320px;margin:0 auto;padding:14px 12px 26px}
+canvas{width:100%;height:auto;display:block;background:#fff}
+.figwrap{position:relative}
+.hot{position:absolute;display:block;cursor:pointer}
+.hot:focus-visible{outline:2px solid #111;outline-offset:-2px}
+</style><style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.35s}</style><meta name="theme-color" content="#ffffff"></head><body><div class="wrap">
+<div class="figwrap">
+<canvas id="fig" width="1600" height="1150" role="img" aria-label="関係図：note に書かれた記事が Knowledge Network に整理され、最終的に『慈愛体系』になる。『慈愛体系』は新たな記事の源泉となり、循環が続いている。"></canvas>
+<a class="hot" style="left:7%;top:43%;width:36%;height:49%" href="https://varelser.github.io/knowledgenetwork.html" target="_top" aria-label="Knowledge Network を開く" title="Knowledge Network"></a>
+<a class="hot" style="left:59%;top:43%;width:35%;height:49%" href="https://note.com/varelser" target="_blank" rel="noopener" aria-label="note を開く" title="note"></a>
+</div>
+</div>
+<script>
+(function(){
+"use strict";
+var W=1600,H=1150;
+var cv=document.getElementById('fig');
+var ctx=cv.getContext('2d');
+var FONT='-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif';
+
+/* ---------- fixed seed RNG (deterministic layout) ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var rand=mulberry32(20261118);
+
+/* ---------- geometry ---------- */
+var JIAI={x:800,y:275};            /* 『慈愛体系』, top center */
+var KN={x:395,y:730};              /* Knowledge Network, bottom left */
+var NOTE={x:1205,y:730};           /* note, bottom right */
+
+/* Knowledge Network: 13 chapter groups (Ch.2..Ch.14), dots around cluster centers */
+var chapters=[];
+(function(){
+  var groups=13;
+  for(var g=0;g<groups;g++){
+    var ang=(g/groups)*Math.PI*2 - Math.PI/2;
+    var ringR=(g%3===0)?86:128;
+    var cx=KN.x+Math.cos(ang)*ringR*1.18;
+    var cy=KN.y+Math.sin(ang)*ringR*0.78;
+    var dots=[];
+    var n=6+Math.floor(rand()*4); /* 6..9 dots per group */
+    for(var i=0;i<n;i++){
+      var a=rand()*Math.PI*2, r=10+rand()*34;
+      dots.push({x:cx+Math.cos(a)*r, y:cy+Math.sin(a)*r*0.82, r:3.4+rand()*2.6});
+    }
+    chapters.push({label:'第'+(g+2)+'章', cx:cx, cy:cy, dots:dots});
+  }
+})();
+
+/* note: 3 stacked article cards, each with text lines (always fully written) */
+var cards=[];
+(function(){
+  for(var c=0;c<3;c++){
+    var x=NOTE.x-168+c*16, y=NOTE.y-148+c*104, w=320, h=92;
+    var lines=[];
+    var nl=4;
+    for(var i=0;i<nl;i++){
+      lines.push({x:x+22, y:y+30+i*16, w:(i===0? w-110 : w-44-rand()*70), head:(i===0)});
+    }
+    cards.push({x:x,y:y,w:w,h:h,lines:lines});
+  }
+})();
+
+/* flow paths (quadratic beziers) */
+function path(a,b,lift){
+  return {ax:a.x,ay:a.y,bx:b.x,by:b.y,cx:(a.x+b.x)/2,cy:(a.y+b.y)/2-lift};
+}
+var P_JK=path(JIAI,KN,60);    /* Jiai <-> KN */
+var P_KN=path(KN,NOTE,-40);   /* KN <-> note (slight downward bow) */
+var P_NJ=path(NOTE,JIAI,60);  /* note <-> Jiai */
+function qpoint(p,t){
+  var u=1-t;
+  return {x:u*u*p.ax+2*u*t*p.cx+t*t*p.bx, y:u*u*p.ay+2*u*t*p.cy+t*t*p.by};
+}
+
+/* ---------- drawing helpers ---------- */
+function circle(x,y,r,fill,stroke,lw){
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+  if(fill){ctx.fillStyle=fill; ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke();}
+}
+function line(x1,y1,x2,y2,stroke,lw){
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+  ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke();
+}
+function text(str,x,y,size,fill,align,weight){
+  ctx.font=(weight||'400')+' '+size+'px '+FONT;
+  ctx.fillStyle=fill; ctx.textAlign=align||'center'; ctx.textBaseline='middle';
+  ctx.fillText(str,x,y);
+}
+function drawPath(p,stroke,lw){
+  ctx.beginPath(); ctx.moveTo(p.ax,p.ay);
+  ctx.quadraticCurveTo(p.cx,p.cy,p.bx,p.by);
+  ctx.strokeStyle=stroke; ctx.lineWidth=lw||1; ctx.stroke();
+}
+/* particles flowing along a path; reverse=true runs b -> a.
+   The cycle note -> KN -> Jiai -> note is "reverse" on all three paths. */
+function flowParticles(p,phase,count){
+  for(var i=0;i<count;i++){
+    var t=1-((phase + i/count)%1); /* reverse direction */
+    var pt=qpoint(p,t);
+    var fade=Math.sin((1-t)*Math.PI);
+    var g=Math.round(17+(1-fade)*120);
+    circle(pt.x,pt.y,4.6,'rgba('+g+','+g+','+g+',1)');
+    var pt2=qpoint(p,Math.min(1,t+0.035));
+    line(pt.x,pt.y,pt2.x,pt2.y,'rgba(0,0,0,.28)',1.4);
+  }
+}
+
+/* ---------- main draw: one continuous loop, everything present ---------- */
+function draw(phase){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+
+  /* faint permanent links between the three poles */
+  drawPath(P_JK,'rgba(0,0,0,.16)',1);
+  drawPath(P_KN,'rgba(0,0,0,.16)',1);
+  drawPath(P_NJ,'rgba(0,0,0,.16)',1);
+
+  /* ----- Knowledge Network (always fully lit) ----- */
+  for(var g=0;g<chapters.length;g++){
+    var a=chapters[g], b=chapters[(g+1)%chapters.length];
+    line(a.cx,a.cy,b.cx,b.cy,'rgba(0,0,0,.10)',1);
+    line(KN.x,KN.y,a.cx,a.cy,'rgba(0,0,0,.07)',1);
+  }
+  for(var gi=0;gi<chapters.length;gi++){
+    var ch=chapters[gi];
+    for(var d=0;d<ch.dots.length;d++){
+      var dot=ch.dots[d];
+      line(ch.cx,ch.cy,dot.x,dot.y,'rgba(0,0,0,.22)',1);
+    }
+    for(var e=0;e<ch.dots.length;e++){
+      var dt=ch.dots[e];
+      circle(dt.x,dt.y,dt.r,'rgba(17,17,17,1)');
+    }
+    circle(ch.cx,ch.cy,3.2,'#111');
+    text(ch.label,ch.cx,ch.cy+52,13,'rgba(0,0,0,.9)','center');
+  }
+  circle(KN.x,KN.y,7,'#111');
+  text('Knowledge Network',KN.x,KN.y+238,27,'#111','center','600');
+  text('目次・索引',KN.x,KN.y+272,17,'rgba(0,0,0,.82)','center');
+  text('『慈愛体系』の章立てに沿って編成',KN.x,KN.y+298,14.5,'rgba(0,0,0,.78)','center');
+
+  /* ----- note cards (always fully written) ----- */
+  for(var ci=cards.length-1;ci>=0;ci--){
+    var card=cards[ci];
+    ctx.beginPath();
+    if(ctx.roundRect){ctx.roundRect(card.x,card.y,card.w,card.h,8);}else{ctx.rect(card.x,card.y,card.w,card.h);}
+    ctx.fillStyle='#fff'; ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.55)'; ctx.lineWidth=1.2; ctx.stroke();
+    text('note',card.x+34,card.y+16,12,'rgba(0,0,0,.78)','left','600');
+  }
+  for(var cj=0;cj<cards.length;cj++){
+    var cd=cards[cj];
+    for(var li=0;li<cd.lines.length;li++){
+      var ln=cd.lines[li];
+      line(ln.x,ln.y,ln.x+ln.w,ln.y, ln.head?'rgba(0,0,0,.88)':'rgba(0,0,0,.55)', ln.head?5:3.4);
+    }
+  }
+  text('note',NOTE.x,NOTE.y+238,27,'#111','center','600');
+  text('記事の本文側',NOTE.x,NOTE.y+272,17,'rgba(0,0,0,.82)','center');
+  text('項目を1件ずつ深掘りする',NOTE.x,NOTE.y+298,14.5,'rgba(0,0,0,.78)','center');
+
+  /* ----- Jiai (always complete, solid) ----- */
+  var pulse=Math.sin(phase*Math.PI*2)*3;
+  circle(JIAI.x,JIAI.y,148+pulse,null,'rgba(0,0,0,.16)',1);
+  circle(JIAI.x,JIAI.y,122,null,'rgba(0,0,0,.30)',1);
+  circle(JIAI.x,JIAI.y,96,'#111');
+  text('慈愛体系',JIAI.x,JIAI.y-8,29,'#fff','center','600');
+  text('総本山',JIAI.x,JIAI.y+24,14.5,'rgba(255,255,255,.92)','center');
+  text('『慈愛体系』',JIAI.x,JIAI.y+196,27,'#111','center','600');
+  text('すべての源泉',JIAI.x,JIAI.y+230,17,'rgba(0,0,0,.82)','center');
+
+  /* ----- the loop, turning continuously: note -> KN -> Jiai -> note ----- */
+  flowParticles(P_KN,phase,6);        /* note -> KN */
+  flowParticles(P_JK,phase+0.33,6);   /* KN -> Jiai */
+  flowParticles(P_NJ,phase+0.66,6);   /* Jiai -> note */
+}
+
+/* ---------- playback: just keeps turning ---------- */
+var LOOP_MS=9000;
+var reduced=false;
+if(window.matchMedia){ reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+function frame(now){
+  draw((now%LOOP_MS)/LOOP_MS);
+  requestAnimationFrame(frame);
+}
+if(reduced){
+  draw(0.3);
+}else{
+  requestAnimationFrame(frame);
+}
+})();
+</script>
+<script>/* jiai-fig-gate */
+(function(){var orig=window.requestAnimationFrame.bind(window),pend=[],fDoc=!document.hidden,fIo=true,fPar=true,running=true;function eff(){return fDoc&&fIo&&fPar;}function upd(){var r=eff();if(r===running)return;running=r;if(running){var p=pend;pend=[];for(var i=0;i<p.length;i++)orig(p[i]);}}window.requestAnimationFrame=function(cb){if(eff())return orig(cb);pend.push(cb);return 0;};window.addEventListener('message',function(e){if(e.origin!==window.location.origin)return;var d=e.data;if(d&&d.type==='jiai-vis'){fPar=!!d.visible;upd();}});if('IntersectionObserver' in window){try{new IntersectionObserver(function(es){if(es[0]){fIo=es[0].isIntersecting;upd();}}).observe(document.documentElement);}catch(_){}}document.addEventListener('visibilitychange',function(){fDoc=!document.hidden;upd();});})();
+</script>
+</body></html>
