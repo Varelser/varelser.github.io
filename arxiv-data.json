@@ -46,6 +46,28 @@
   },
   {
     "authors": [
+      "Aviv Yossef",
+      "Or Patashnik",
+      "Or Zamir"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.CR",
+      "cs.CV"
+    ],
+    "field": "cs.LG",
+    "genre": "Ethics / Safety",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T18:49:17Z",
+    "source": "arXiv",
+    "summaryHtml": "生成モデルへのウォーターマークは、出力品質を落とさない「歪みのない」ものであることが望ましい。従来の手法は画像の圧縮や切り抜き、サイズ変更といった良性の変換に弱く、しかも自己回帰テキストや拡散モデルの初期ノイズ制御など、特定のモデル内部へのアクセスを前提とすることが多かった。<br><br>本論文は、生成モデルへのブラックボックスのサンプリングと意味埋め込みへのクエリだけで動作する、証明可能な歪みなしの意味的ウォーターマークを提案する。内容を保つ変換の下で検出が頑健になるよう、意味埋め込みに求められる2つの性質――変換に対する安定性と、同一プロンプトからの独立生成の区別――を定式化し、このトレードオフに直接最適化した画像エンコーダを学習した。<br><br>既成の埋め込みと比べ、分離性能を高めつつ安定性を保ち、各種変換に対して頑健な集約検出を実現した。集約検出により、単一サンプルでは捉えにくい弱い信号も確実に拾える。オープンソースモデルとクローズドモデルの両方で有効性を示しており、ブラックボックスのみで済む点が実用上の強みだ。出典：arXiv",
+    "timestamp": 1794941357000,
+    "title": "Distortion-Free Semantic Watermarks for Black-Box Generative Models",
+    "titleJa": "歪みのない意味的ウォーターマーク――ブラックボックス生成モデル向け",
+    "url": "https://arxiv.org/abs/2611.23208v1"
+  },
+  {
+    "authors": [
       "Tongxi Wu",
       "Yuyang Cheng",
       "Jiacheng Xian",
@@ -87,6 +109,94 @@
     "title": "Agent Trust Infrastructure (ATI): A Federated Identity, Trust, Attestation, and Accountability Architecture for Cross-Organization Autonomous AI Agents",
     "titleJa": "エージェント信頼基盤ATI――組織を越える自律AIエージェントの連合型セキュリティ",
     "url": "https://arxiv.org/abs/2611.23202v1"
+  },
+  {
+    "authors": [
+      "Hai Huang",
+      "Bartosz Żuk",
+      "Rassul Magauin",
+      "Jiaxin Huang",
+      "Xue Liu"
+    ],
+    "categories": [
+      "cs.CL",
+      "cs.AI"
+    ],
+    "field": "cs.CL",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T18:38:27Z",
+    "source": "arXiv",
+    "summaryHtml": "次トークン予測だけでは、言語モデルが学ぶべき内部表現の構造までは十分に導けないのではないか。本論文はコルモゴロフ複雑性の二部符号化の考え方にもとづき、表現を「構造」と「実現の細部」に分離する構造–残差の原理を提案する。<br><br>実装は2通りある。Boundary Bottleneck Concept（BBC）はトークン区間の情報を境界キャリア経由で伝えつつ局所的な自己回帰計算を保ち、Continuous Concept（CC）は表現の幾何を正則化して低周波の構造と高周波の残差へスペクトル分解する。BBCは浅い層、CCは深い層で最も効果が高く、両者の併用でGPT-2 Mediumの負の対数尤度が1.44%改善した。20Bトークンまでの学習でも効果は持続した。理論面では、多重性を補正した境界アテンションが、区間内の経路エネルギーが消える極限で厳密になることも示した。<br><br>表現そのものに構造のバイアスを与えることで、次トークン予測を超えた事前学習の改善が可能だと示した。境界状態の予測上の重要性が増し、スペクトル残差エネルギーが減ることも診断で確認されている。出典：arXiv",
+    "timestamp": 1794940707000,
+    "title": "Structure--Residual Inductive Biases for Language Model Pretraining",
+    "titleJa": "言語モデル事前学習における構造–残差の帰納バイアス",
+    "url": "https://arxiv.org/abs/2611.23197v1"
+  },
+  {
+    "authors": [
+      "Lorenzo Masoero"
+    ],
+    "categories": [
+      "cs.SE",
+      "cs.AI",
+      "cs.CL"
+    ],
+    "field": "cs.SE",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T17:59:13Z",
+    "source": "arXiv",
+    "summaryHtml": "コードはかつてない速度で進化する一方、顧客向けドキュメントは置き去りにされがちだ。LLMエージェントがドキュメントを主要な情報源として使うようになり、古い情報が権威あるものとして広まる害は大きくなっている。著者らは、解決済みサポートチケットやコードとドキュメントの不一致といった手がかりを拾い、ドキュメントのずれを修復するマルチエージェントシステムを実運用に投入した。<br><br>中核はトリアージエージェント「TriAgent」で、43日間のシャドー運用で499件のチケットをトリアージし、92か所のドキュメント不足を発見した。独立したモデル系列のLLM判定パネルによると、検証可能な主張の81.1%が正しく、長さを揃えた比較ではTriAgentの回答が70.5%で人間のエンジニアの回答を上回った。<br><br>人間とエージェントの回答は補完的で、人間が既存ドキュメントの奥に埋もれた知見を示すことも多かった。そうした知見は人間の確認を経てドキュメントの修正につながり、修正後に同じチケットへ答え直すと、判定者は71.4%で修正後の回答を好んだ。ドキュメントを直すことがエージェントの回答を直接改善する好循環が確認された。出典：arXiv",
+    "timestamp": 1794938353000,
+    "title": "Mind the Gap: A Deployed Multi-Agent System for Documentation Maintenance",
+    "titleJa": "ギャップを埋める――ドキュメント保守のための実運用マルチエージェントシステム",
+    "url": "https://arxiv.org/abs/2611.23142v1"
+  },
+  {
+    "authors": [
+      "Basavaraj R M",
+      "Harshal Chandel"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.CL",
+      "cs.CV"
+    ],
+    "field": "cs.LG",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T17:45:28Z",
+    "source": "arXiv",
+    "summaryHtml": "検索拡張型の視覚言語モデルは、検索テキストと画像という2つの証拠源から答えるが、どちらも誤りうる。本論文はCOCOとVisual Genomeから20万件の画像–質問項目を作り、検索ノイズや画像のぼかし、反事実的なすり替えといった統制されたストレス条件で、モデルが2つのモダリティをどう組み合わせるかを調べた。<br><br>理想的なベイズ的合図統合から予測を導き、テキストを重み付けしすぎる「知識の慣性」とその逆の「感覚の捕捉」を定式化した。4つの公開モデルはいずれも清浄な入力では92.5〜94.2%の正答率だったが、敵対的な条件では41.3〜59.9%まで落ちた。LLaVA系はテキストを過重みし、InternVL3は画像を重視した。文書が嘘をつくと、正解の34.8〜71.4%が捨てられた。<br><br>検索の有無で回答を照合する訓練不要の整合性チェックは、誤解を招く文書下での精度をカバレッジと引き換えに改善したが、画像がひどく劣化した場合のフォールバックはうまくいかなかった。清浄時の正答の多くが画像に接地していない「接地の錯覚」を定量化する指標も提案され、再現用の出力・コード・監査が公開されている。出典：arXiv",
+    "timestamp": 1794937528000,
+    "title": "The Illusion of Grounding: Do Vision-Language Models Weigh Retrieved Text and Images Like an Ideal Observer?",
+    "titleJa": "接地の錯覚――視覚言語モデルは検索テキストと画像を理想的観測者のように重み付けするか",
+    "url": "https://arxiv.org/abs/2611.23127v1"
+  },
+  {
+    "authors": [
+      "Sikun Xu",
+      "Raphael Thomadsen",
+      "Dennis J. Zhang",
+      "Heng Zhang"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.CL",
+      "stat.ME",
+      "stat.ML"
+    ],
+    "field": "cs.LG",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T05:18:14Z",
+    "source": "arXiv",
+    "summaryHtml": "公開されているLLMリーダーボードはモデルの評価と採用を左右するが、上位モデルの報告スコアは体系的に過大評価されている可能性がある。ノイズを含むベンチマーク得点を並べ替えると、実力だけでなく抽選の幸運も報われてしまうためで、著者らはこれを「勝者の呪い」と呼ぶ。同じ選択効果は順位全体を歪める「順位誘導バイアス」にもなる。<br><br>対策としてm-out-of-Nブートストラップによる補正法を開発した。固定されたモデル群と独立同分布の有界タスクを仮定し、理論的にはΘ(N^-1/2)の順位バイアスをo(N^-1/2)の残差まで減らせることを証明した。5系統14ベンチマークでの1位の調整幅は約0.09〜3.86ポイントで、SWE-bench Verifiedでは同点首位に0.90ポイントの調整がついた。<br><br>さらに同じ手法で各モデルの取りうる順位の区間を求め、モデルを階層に分ける。SWE-bench Verifiedでは173モデル中13モデルが最上位層に入った。スコア補正と順位区間をまとめた報告書RULERを生の順位と併せて公開し、順位の精度も読者が判断できるようにすべきだと提言している。出典：arXiv",
+    "timestamp": 1794892694000,
+    "title": "SOTA or Luck? The Winner's Curse in LLM Leaderboards",
+    "titleJa": "SOTAか運か――LLMリーダーボードにおける勝者の呪い",
+    "url": "https://arxiv.org/abs/2611.22227v1"
   },
   {
     "authors": [
@@ -1630,117 +1740,5 @@
     "title": "WeVisForensics: Self-Evolving Agent for Omni AI-Generated Video Detection",
     "titleJa": "AI生成動画を見破る自己進化エージェント――法医学的証拠で裏づけるWeVisForensics",
     "url": "https://arxiv.org/abs/2611.21373"
-  },
-  {
-    "authors": [
-      "Lukas Ellinger",
-      "Georg Groh"
-    ],
-    "categories": [
-      "cs.CL",
-      "cs.AI"
-    ],
-    "field": "cs.CL",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "細部が不確かなとき、答えを粗くすれば推測や棄権をせずに有用な情報を残せる。たとえば年や場所を正確に言えない場合でも、大まかな時代や地域なら正しく答えられることがある。本研究は、言語モデルがこうした振る舞いを学べるかを問う。複数のサンプル回答の一致と、異なる粒度の回答の認識から得たモデル条件付きの教師信号で学習させる。LFM2.5-1.2B、Ministral 3B、Qwen3.5-9B、Gemma 4 31Bを時間・地理の質問と3つの汎化データセットで評価した。<br><br>領域内の複数の設定では、微調整により正しさと情報量のバランスが、基本の回答を最良の固定レベルまで粗くしたものを上回った。汎化データセットでは4モデルすべてが、基本モデルの確信度が低いときほど粗い答えを出すようになった。確信度と粒度の結びつきが、学習を通じて般化したことを示す。<br><br>小さい3モデルでは、正しさと粒度を同時に考慮したとき、未知の関係に対する回答が基本の回答より好まれた。確信度に応じた粒度の適応は学習可能であり、その効果はモデルや設定によって異なることが示された。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "Teaching Language Models to Adapt Answer Granularity to Their Confidence",
-    "titleJa": "自信に応じて答えの粒度を変える言語モデル――確信度に合わせた粗さの学習",
-    "url": "https://arxiv.org/abs/2611.21211"
-  },
-  {
-    "authors": [
-      "Yancheng Long",
-      "Xuanyu Zheng",
-      "Wei Chen",
-      "Luoyuan Zhang",
-      "Haoyang Xu",
-      "Bin Wen",
-      "Tingting Gao"
-    ],
-    "categories": [
-      "cs.CV",
-      "cs.AI"
-    ],
-    "field": "cs.CV",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "長い動画の理解には、証拠の所在を特定し、視覚の細部を解像し、観察を統合して答える必要がある。証拠があっても、長く密な映像列の中でこれらを行うのは知覚と推論の双方に負担がかかる。動画エージェントは選択的に調べられるが、フレームを計画側へ返すと推論文脈に視覚情報がたまる。知覚を委譲すれば負担は減るが、まばらなサンプリングでは決定的な細部を見逃し、フレームごとの説明では文脈の増大が残る。<br><br>VideoNexusは詳細な動画知覚と証拠駆動の計画・推論を分離する学習不要の枠組みである。計画側がどこを調べ、何を解像し、どの密度でサンプルするかを制御し、知覚サブエージェントは音声付き映像を独立した文脈で処理して、時間的に根拠づけられた簡潔な証拠を返す。<br><br>Gemini 3.8 Flashを計画と知覚の両方に使うと、LVBench全体で88.6%の精度となり、同じ基盤モデルの静的な取り込みを3.6ポイント、内蔵のエージェント処理を1.1ポイント上回り、後者のAPIコストの44%で済んだ。Kimi K3でも公式のVideo-GAIA ReActハーネスを8.5ポイント上回った。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "VideoNexus: Video Perception Beyond the Reasoning Context",
-    "titleJa": "長い動画の理解は推論文脈の外へ――知覚と計画を分離するVideoNexus",
-    "url": "https://arxiv.org/abs/2611.21392"
-  },
-  {
-    "authors": [
-      "Blas Eugenio Vicco Zarate",
-      "Miguel Hernán Vicco"
-    ],
-    "categories": [
-      "cs.LG",
-      "cs.AI",
-      "cs.NE"
-    ],
-    "field": "cs.LG",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "継続強化学習では、変化する環境への適応と、過去に経験した条件での性能維持の両立が課題となる。本研究は、進化的探索で生成した専門家（スペシャリスト）を再利用可能なメモリとして組み合わせることで、破局的忘却を抑えられるかを検証した。提案する進化的ニューロプラスティック・エージェント（ENA）は、勾配を使わずに小さなニューラルネットワークを進化させ、検出された動的レジームごとに選ばれた方策をアーカイブし、ベイズ的な方策再利用で取り出す仕組みだ。<br><br>非定常なCartPoleとHalfCheetah環境で評価した。30回のCartPoleアブレーションでは、完全なアーキテクチャが5つのテスト環境で平均成功率83.2%を達成し、難しい環境を学習できた変種のなかで最も一貫した保持を示した。検索規則の選び方も性能に影響することが、選択アブレーションで確認された。<br><br>ただしENAはCartPoleではPPOより適応が遅く、HalfCheetahではSACよりリターンが低かった。証拠は完全なアーキテクチャ全体に関するもので、勾配フリーな最適化が保持の原因であることや、他の継続学習手法に対する優位性は確立されていない。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "Mitigating Catastrophic Forgetting with Physics-Indexed Specialist Memory: the Evolutionary Neuroplastic Agent",
-    "titleJa": "破局的忘却を抑える――物理インデックス付き専門家メモリによる進化的ニューロプラスティック・エージェント",
-    "url": "https://arxiv.org/abs/2611.21598"
-  },
-  {
-    "authors": [
-      "Javier Aguilar Martín"
-    ],
-    "categories": [
-      "cs.LG",
-      "cs.AI",
-      "cs.CL",
-      "cs.DL"
-    ],
-    "field": "cs.LG",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "既存研究の埋め込みマップ上で「どこからも遠い点」を選び、アイデアへと解読する――この人気のあるアイデア出しレシピを、本研究は後に実際に現れたものを基準に4つの方法で検証した。遠いランダム方向はそもそもテキストにならず、中心化や白色化の後も24セルのうち22セルが到達圏外のままだった。近傍なしの探索は内側の空白には到達したが、遠い点への到達は限定的だった。<br><br>過去のみのマップのk-meansセルでは、登録済みの「穴スコア」は主にセルの大きさと位置を追跡し、密度ベースのギャップ指標はどのセルが最も速く成長するかをチャンス程度にしか予測できなかった。arXiv論文のLLMによる続きは、引用する論文よりも元の論文に近いままで、レビュアーやオラクル、距離フィードバックによる方向転換は限定的だった。<br><br>着想素材を距離で評価しても逆U字は検出されず、予期のマージンは内容より書式を追っていた。テストは実施前に登録され、追跡調査は主要結果の後に行われた。埋め込み距離を新規性の羅針盤として使うことへの慎重な見直しを迫る結果だ。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "Do Embedding-Map Distances Guide LLM Ideation? Four Tests Against What Came Next",
-    "titleJa": "埋め込みマップの距離はLLMのアイデア出しを導くか――後に現れたものに対する4つの検証",
-    "url": "https://arxiv.org/abs/2611.21408"
-  },
-  {
-    "authors": [
-      "Zhiyuan Wang",
-      "Yuanchang Ye",
-      "Jiahao Yuan",
-      "Jinhao Duan",
-      "Xiaoshuang Shi",
-      "Weijun Xie",
-      "Ye Wei",
-      "Kaidi Xu"
-    ],
-    "categories": [
-      "cs.CL"
-    ],
-    "field": "cs.CL",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "大規模言語モデルは幻覚的な回答を生むことがあり、不確かな質問には回答を控える選択的予測が求められる。だがヒューリスティックな不確実性しきい値だけでは、採用した予測のなかでの誤り率を統計的に制御できない。線形期待制約（LEC）は選択条件付き誤り率の較正を線形損失の制約に帰着させるが、その損失は受理しきい値に対して非単調である。<br><br>本研究は、i.i.d.サンプリングの下でLECの経験的しきい値選択規則が母集団の誤り率目標に違反しうる正確な反例を構成した。このリスク転移のギャップに対処するため、理論的な全データ参照の負の線形リスクでしきい値選択の不安定性を補償するSC-LECを提案し、局所展開のための2つの有限標本証明（安定性に基づく証明と直接証明）を導いた。<br><br>有効な母集団アンカーのマージンがあれば、有限標本での誤り率制御が保証され、独立したマージン認証により高確率の保証も得られる。CommonsenseQA、ARC-Challenge、TriviaQAでの実験では、同じ認証済みアンカーを超える有用な保持率の向上が示された一方、小さなマージンの領域では保守的な挙動も明らかになった。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "Stability-Compensated Threshold Calibration for Selection-Conditioned Risk Control in Large Language Models",
-    "titleJa": "大規模言語モデルの選択的予測におけるリスク制御――安定性補償付きしきい値較正",
-    "url": "https://arxiv.org/abs/2611.21384"
   }
 ]
