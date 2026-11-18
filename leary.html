@@ -816,5 +816,121 @@ window.__studioPulseLeary={version:'PhaseJ-1',
 })();
 
 </script>
+<script id="studio-fluid-leary">
+/* ═══ Studio Link 専用機能 for Leary 第2弾 (2026-11-19): STUDIO FLUID ═══
+   流体モード (ChromaFlow) × 音連携。Studio 接続中だけ、流体エンジン内蔵の
+   音反応機構 (setAudioSampler) へ session-bus から合成した帯域データを流し、
+   エンジン自身の変調で流体を音に反応させる。加えて Meikyoshisui の拍ごとに
+   衝撃波と渦を撃ち込み、Noise の音量に応じて染料の雨 (splat) を降らせる。
+   接続時は流体モードへ自動で切り替え (前のモードは切断時に復元)。
+   本体コード・保存キーには触らない。自分の Link が OFF の間は無効。 */
+(function(){
+'use strict';
+var LSKEY='leary.varelserLink.v1', FRESH_MS=6000;
+var lastSeen=0, linked=false, busNoise=null, busMeikyo=null;
+var enabled=true, engaged=false, samplerOn=false, prevUiMode=null, switched=false;
+var rmsT=0, rmsSm=0, peakSm=0, phase=0, lastTick=Date.now(), lastBeatAt=0, beatCount=0, splatCount=0, seq=0;
+function ownOn(){ try{ return localStorage.getItem(LSKEY)==='1'; }catch(e){ return false; } }
+var ch=null;
+try{ ch=new BroadcastChannel('varelser-link-v1'); }catch(e){}
+if(ch)ch.addEventListener('message',function(ev){
+  var m=ev.data||{};
+  if(m.app!=='studio')return;
+  if(m.type==='presence'){ lastSeen=Date.now(); }
+  else if(m.type==='session-bus'){ lastSeen=Date.now(); busNoise=m.noise||null; busMeikyo=m.meikyo||null; }
+  else if(m.type==='studio-bye'){ lastSeen=0; busNoise=null; busMeikyo=null; }
+});
+function L(){ return window.__learyChromaFlow||null; }
+function ENG(){ var l=L(); return (l&&l.engine)||null; }
+function driftPos(k){ var a=k*2.399963; return [0.5+0.38*Math.cos(a), 0.5+0.38*Math.sin(a)]; }
+function bands(){
+  var now=Date.now();
+  var bp=(busMeikyo&&busMeikyo.playing)?Math.exp(-(now-lastBeatAt)/180):0;
+  if(!engaged)return {bass:0,mid:0,treble:0,overall:0,beatDetected:false};
+  return {
+    bass:Math.min(1,rmsSm*1.15+bp*0.5),
+    mid:Math.min(1,rmsSm+bp*0.25),
+    treble:Math.min(1,peakSm*0.9+bp*0.15),
+    overall:rmsSm,
+    beatDetected:(now-lastBeatAt)<130&&(busMeikyo&&busMeikyo.playing)?true:false
+  };
+}
+function engage(){
+  var l=L(); if(!l)return false;
+  if(prevUiMode===null)prevUiMode=l.uiMode||'leary';
+  if(l.uiMode!=='fluid'){ try{ l.setUiMode('fluid'); switched=true; }catch(e){} }
+  try{ l.setActive(true); }catch(e){}
+  var eng=ENG(); if(!eng)return false;
+  if(!samplerOn){ try{ eng.setAudioSampler(function(){ return bands(); }); samplerOn=true; }catch(e){} }
+  engaged=true;
+  return true;
+}
+function release(){
+  var eng=ENG();
+  if(eng&&samplerOn){ try{ eng.setAudioSampler(undefined); }catch(e){} samplerOn=false; }
+  engaged=false;
+  var l=L();
+  if(l&&switched&&l.uiMode==='fluid'){ try{ l.setUiMode(prevUiMode||'leary'); }catch(e){} }
+  switched=false; prevUiMode=null;
+}
+/* ── UI ── */
+var st=document.createElement('style');
+st.textContent='#sfPanel-leary{position:fixed;left:10px;bottom:10px;z-index:9990;display:none;width:260px;padding:10px 12px;border:1px solid #3a3a40;border-radius:10px;background:rgba(14,14,17,.93);color:#e8e8ec;font-size:12.5px;line-height:1.6}'
+ +'#sfPanel-leary .t{letter-spacing:.08em}#sfPanel-leary .s{opacity:.85;font-size:11.5px}'
+ +'#sfPanel-leary label{display:flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer}';
+document.head.appendChild(st);
+var panel=document.createElement('div'); panel.id='sfPanel-leary';
+panel.innerHTML='<div class="t">STUDIO FLUID — 流体×音連携</div><div class="s" id="sfStatus-leary">流体エンジン待機中</div>'
+ +'<label><input type="checkbox" id="sfEnable-leary" checked> 流体×音連携 有効</label>';
+document.body.appendChild(panel);
+panel.querySelector('#sfEnable-leary').addEventListener('change',function(){ enabled=this.checked; if(!enabled)release(); });
+setInterval(function(){
+  var t=Date.now(), dt=Math.min(0.1,(t-lastTick)/1000); lastTick=t;
+  var now=linked;
+  linked=ownOn()&&(t-lastSeen<FRESH_MS);
+  if(linked!==now)panel.style.display=linked?'block':'none';
+  if(!linked){ if(engaged)release(); rmsT=0; }
+  rmsT=(linked&&busNoise&&typeof busNoise.rms==='number')?busNoise.rms:0;
+  rmsSm+=(rmsT-rmsSm)*0.12;
+  var pk=(linked&&busNoise&&typeof busNoise.peak==='number')?busNoise.peak:0;
+  peakSm+=(pk-peakSm)*(pk>peakSm?0.5:0.06);
+  if(linked&&enabled&&!engaged)engage();
+  if(!engaged)return;
+  var eng=ENG(); if(!eng){ engaged=false; samplerOn=false; return; }
+  /* 拍: Meikyoshisui 再生中は BPM 位相で拍イベント */
+  var bpm=busMeikyo&&typeof busMeikyo.bpm==='number'?busMeikyo.bpm:null;
+  if(bpm&&busMeikyo.playing){
+    var prev=phase;
+    phase+=2*Math.PI*(bpm/60)*dt;
+    if(Math.floor(phase/(2*Math.PI))>Math.floor(prev/(2*Math.PI))){
+      lastBeatAt=t; beatCount++;
+      var p=driftPos(seq++);
+      try{
+        if(beatCount%2===0)eng.triggerShockwave(p[0],p[1],0.5+peakSm*0.8);
+        else eng.splatVortex(p[0],p[1],(beatCount%4<2?1:-1)*(0.7+peakSm*0.6));
+      }catch(e){}
+    }
+  }
+  /* 音量の雨: RMS に応じて染料 splat */
+  if(rmsSm>0.15){
+    var prob=(rmsSm-0.15)*0.85;
+    var r=((seq*2654435761)%1000)/1000; seq++;
+    if(r<prob){
+      var q=driftPos(seq);
+      var ang=seq*2.399963+1.3, mag=400+1600*rmsSm;
+      try{ eng.splat(q[0],q[1],Math.cos(ang)*mag,Math.sin(ang)*mag,eng.generateColor()); splatCount++; }catch(e){}
+    }
+  }
+  var s=document.getElementById('sfStatus-leary');
+  if(s)s.textContent='帯域 overall '+rmsSm.toFixed(2)+' / 拍 '+beatCount+' / splat '+splatCount+(bpm?(' / BPM '+bpm):'');
+},33);
+window.__studioFluidLeary={version:'PhaseK-1',
+  get linked(){return linked;}, get engaged(){return engaged;},
+  get beats(){return beatCount;}, get splats(){return splatCount;},
+  bands:function(){ return bands(); },
+  get engineReady(){ return !!ENG(); }};
+})();
+
+</script>
 </body>
 </html>
