@@ -1350,5 +1350,80 @@ window.__studioEchoYayoi={version:'PhaseJ-1',
 })();
 
 </script>
+<script id="studio-freedom-yayoi">
+/* ═══ FREEDOM CONSOLE for Yayoi (2026-11-19, Phase N) ═══
+   Yayoi は id 付き入力を持たず、設定は localStorage の
+   'yayoi-settings-v2' オブジェクトに集約されている。そのため
+   プリセットは設定オブジェクトの名前付きコピーとして実装し、
+   適用時は書き戻して再読込する (Yayoi 本体もシード同期で再読込する
+   設計のため、その作法に合わせる)。本体コードには触らない。 */
+(function(){
+'use strict';
+var OBJKEY='yayoi-settings-v2', SETKEY='yayoi.studioFreedom.v1';
+var S={presets:{}};
+(function load(){ try{ var raw=localStorage.getItem(SETKEY);
+  if(raw){ var p=JSON.parse(raw); if(p.presets)S.presets=p.presets; } }catch(e){} })();
+function save(){ try{ localStorage.setItem(SETKEY,JSON.stringify(S)); }catch(e){} }
+function readObj(){ try{ var raw=localStorage.getItem(OBJKEY);
+  return raw?JSON.parse(raw):null; }catch(e){ return null; } }
+var st=document.createElement('style');
+st.textContent='#fdPanel-yayoi{position:fixed;left:10px;bottom:10px;z-index:9988;width:284px;max-height:74vh;overflow-y:auto;padding:10px 12px;border:1px solid #3a3a40;border-radius:10px;background:rgba(14,14,17,.94);color:#e8e8ec;font-size:12.5px;line-height:1.55}'
+ +'#fdPanel-yayoi .t{letter-spacing:.08em}#fdPanel-yayoi .sec{margin-top:9px;border-top:1px solid #2c2c31;padding-top:7px}'
+ +'#fdPanel-yayoi .sec b{font-size:12px;letter-spacing:.06em}#fdPanel-yayoi .s{opacity:.85;font-size:11.5px}'
+ +'#fdPanel-yayoi .row{display:flex;align-items:center;gap:6px;margin-top:5px}'
+ +'#fdPanel-yayoi input[type=text]{background:#1c1c20;color:#e8e8ec;border:1px solid #3a3a40;border-radius:6px;font-size:12px;padding:3px 6px;flex:1}'
+ +'#fdPanel-yayoi button{background:#1c1c20;color:#e8e8ec;border:1px solid #3a3a40;border-radius:6px;font-size:12px;padding:4px 8px;cursor:pointer}'
+ +'#fdPanel-yayoi .chip{display:inline-flex;gap:4px;align-items:center;margin:3px 4px 0 0}'
+ +'#fdPanel-yayoi .keys{font-size:11.5px;opacity:.88;line-height:1.7}';
+document.head.appendChild(st);
+var panel=document.createElement('div'); panel.id='fdPanel-yayoi'; panel.setAttribute('data-fd-panel','1');
+panel.innerHTML='<div class="t">FREEDOM CONSOLE — Yayoi</div>'
+ +'<div class="sec"><b>設定プリセット</b>'
+ +'<div class="s">現在の設定一式 (yayoi-settings-v2) を名前付きで保存します。適用すると設定を書き戻して再読込します。</div>'
+ +'<div class="row"><input type="text" id="fdPresetName-yayoi" placeholder="名前"><button type="button" id="fdPresetSave-yayoi">保存</button></div>'
+ +'<div id="fdPresetList-yayoi"></div>'
+ +'<div class="s" id="fdState-yayoi"></div></div>'
+ +'<div class="sec"><b>ショートカット</b><div class="keys">1〜9=プリセット適用（再読込） / F=このパネルの表示切替</div></div>';
+document.body.appendChild(panel);
+function $(id){ return panel.querySelector('#'+id+'-yayoi'); }
+function state(){ var o=readObj(); $('fdState').textContent=o?('現在の設定: '+Object.keys(o).length+' 項目を検出'):'設定オブジェクトが見つかりません'; }
+function applyPreset(name){ var p=S.presets[name]; if(!p)return;
+  try{ localStorage.setItem(OBJKEY,JSON.stringify(p)); }catch(e){}
+  $('fdState').textContent='「'+name+'」を適用しました。再読込します…';
+  setTimeout(function(){ location.reload(); },350); }
+function buildList(){ var wrap=$('fdPresetList'); wrap.innerHTML='';
+  var names=Object.keys(S.presets);
+  names.forEach(function(name,idx){
+    var chip=document.createElement('span'); chip.className='chip';
+    var b=document.createElement('button'); b.type='button'; b.textContent=(idx+1)+'. '+name;
+    b.addEventListener('click',function(){ applyPreset(name); });
+    var x=document.createElement('button'); x.type='button'; x.textContent='×';
+    x.addEventListener('click',function(){ delete S.presets[name]; save(); buildList(); });
+    chip.appendChild(b); chip.appendChild(x); wrap.appendChild(chip);
+  });
+  if(!names.length)wrap.innerHTML='<span class="s">まだありません</span>';
+}
+$('fdPresetSave').addEventListener('click',function(){
+  var o=readObj(); if(!o){ $('fdState').textContent='設定オブジェクトが見つからないため保存できません'; return; }
+  var name=($('fdPresetName').value||'').trim()||('プリセット'+(Object.keys(S.presets).length+1));
+  S.presets[name]=o; save(); buildList(); state(); });
+document.addEventListener('keydown',function(ev){
+  var t=ev.target; if(!t)return; var tag=(t.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||tag==='select'||t.isContentEditable)return;
+  if(ev.metaKey||ev.ctrlKey||ev.altKey)return;
+  var k=ev.key.toLowerCase();
+  if(k==='f')panel.style.display=(panel.style.display==='none')?'block':'none';
+  else if(/^[1-9]$/.test(k)){ var names=Object.keys(S.presets); var nm=names[parseInt(k,10)-1];
+    if(nm)applyPreset(nm); }
+});
+buildList(); state();
+window.__studioFreedom={version:'PhaseN-1-yayoi',app:'yayoi',
+  settings:function(){ return JSON.parse(JSON.stringify(S)); },
+  savePreset:function(name){ var o=readObj(); if(o){ S.presets[name]=o; save(); buildList(); } },
+  applyPreset:applyPreset,
+  hasSettingsObject:function(){ return !!readObj(); }};
+})();
+
+</script>
 </body>
 </html>
