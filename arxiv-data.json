@@ -135,6 +135,22 @@
   },
   {
     "authors": [
+      "Hansang Lee"
+    ],
+    "categories": [],
+    "field": "cs.AI",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T18:24:58Z",
+    "source": "arXiv",
+    "summaryHtml": "選好最適化（PO）は大規模視覚言語モデルの対象幻覚を減らす標準的手法だ。ところがLLaVA-1.5-7Bの公開POチェックポイント4件を調べると、幻覚率の低下と引き換えに対象網羅性も下がっていた。言及される対象カテゴリが減り、CHAIRでの集合レベルの対象F1に有意な改善はなかった。<br><br>ではPOの改善のうちどれだけをベースモデルが早期停止で再現できるか。文末（EOS）ロジットへの正のバイアスでベースモデルは各POモデルの再現率に到達し、2つの異なるCOCO集合で3件のチェックポイントのCHAIRi改善の58〜86%を早期停止だけで再現した。長く書いても失われたカテゴリは戻らない。貪欲デコーディングでは負のEOSバイアスで失われた再現率の2〜9%しか回復せず、追加された対象言及の94〜96%は既出カテゴリの繰り返しだった。<br><br>そこでベースモデルが言及した高確信度の対象カテゴリをPOキャプションに訓練なしで追加する「ベース誘導型対象カテゴリ復元」を提案する。開発集合で固定した閾値により、3件のチェックポイントは保持用COCO集合でベースモデルの再現率から1ポイント以内に近づき、対象幻覚率はベースモデルより低くなった。出典：arXiv",
+    "timestamp": 1794939898000,
+    "title": "Say Less, Hallucinate Less? Diagnosing and Restoring Object Coverage in Preference-Optimized Vision-Language Models",
+    "titleJa": "少なく語れば幻覚は減るか――選好最適化された視覚言語モデルの対象網羅性の診断と回復",
+    "url": "https://arxiv.org/abs/2611.23179"
+  },
+  {
+    "authors": [
       "Lorenzo Masoero"
     ],
     "categories": [
@@ -173,6 +189,88 @@
     "title": "The Illusion of Grounding: Do Vision-Language Models Weigh Retrieved Text and Images Like an Ideal Observer?",
     "titleJa": "接地の錯覚――視覚言語モデルは検索テキストと画像を理想的観測者のように重み付けするか",
     "url": "https://arxiv.org/abs/2611.23127v1"
+  },
+  {
+    "authors": [
+      "Giovanni Adorni",
+      "Daniele Grosso"
+    ],
+    "categories": [],
+    "field": "cs.AI",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T17:27:01Z",
+    "source": "arXiv",
+    "summaryHtml": "生成AIは計算システムにおける自然言語の役割を変えつつある。従来の自然言語処理では言語は分析・分類・翻訳・生成の対象だったが、大規模言語モデルにより、自然言語は推論を構造化し、問題解決を編成し、人間とAIの協働を調整する実行可能な認知的媒体として機能し始めている。本論文はその理論的・認識論的拡張として「自然言語プログラミング（NLPg）」を提唱する。<br><br>NLPgではプロンプトは目標・制約・前提・検証基準・中間の推論状態を外化する動的な認知アーティファクトと捉えられる。プロンプト操作は単なる技術的対話ではなく、分散した人間／AIの記憶アーキテクチャの中で働く対話的認知プログラミングだ。分散認知、拡張された心、メタ認知、対話的学習の理論を踏まえ、「対話的ワーキングメモリ」の概念を提案し、プロンプトと対話状態が推論の連続性と反省的調整を支える一時的な外部記憶として働くと論じる。<br><br>既存の記憶アーキテクチャ（BTMA、SKGE、RMR）をこの枠組みに位置づけ、エピソード的・意味的・メタ認知的層が長期の対話の一貫性を支える様子を示す。自然言語が通信媒体であると同時に実行可能な仕様、認知の足場、分散記憶として働く、ポスト記号的・ポストインターフェースのパラダイムが示唆される。出典：arXiv",
+    "timestamp": 1794936421000,
+    "title": "Natural Language Programming: Rethinking Language, Memory, and Cognition in the Era of Generative AI",
+    "titleJa": "自然言語プログラミング――生成AI時代の言語・記憶・認知の再考",
+    "url": "https://arxiv.org/abs/2611.23106"
+  },
+  {
+    "authors": [
+      "Silviu Pitis",
+      "Parand A. Alamdari",
+      "Jessica Tang",
+      "Toryn Q. Klassen",
+      "Sheila A. McIlraith"
+    ],
+    "categories": [],
+    "field": "cs.AI",
+    "genre": "Ethics / Safety",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T17:01:00Z",
+    "source": "arXiv",
+    "summaryHtml": "AIエージェントは数百の自然言語基準で統治されるが、既存の検証器は大量の基準に対してエージェントの出力を効率よく評価し、満たす・違反する・該当しないを報告できない。本論文は、共有コンテキストと対象テキストを符号化し、N個の自然言語基準を並列に採点して基準ごとの三値判定を返すツリーアテンション検証器VFMを提案する。<br><br>VFMは39万4千件の（コンテキスト、対象、基準、判定）タプルからなるCriteriaBankで事前学習した。微調整したVFM-4Bは合成ガバナンスベンチマークでGPT-5.4を上回り、DynaBenchではトレース単位の失敗検出でDynaGuard-4Bを上回った。基準ごとの判定は違反した規則を特定し、大規模な思考連鎖ジャッジへの的を絞ったエスカレーションを支える。<br><br>CriteriaBankによる事前学習は、特にデータが少ない領域でのドメイン横断の転移を改善した。H100 1枚で4Kトークンのコンテキストに対し1,000基準を2秒以内、11GB未満のVRAMで評価でき、実行時検証に適する。出典：arXiv",
+    "timestamp": 1794934860000,
+    "title": "Runtime Verification of Multiple Natural Language Criteria for Agent Governance",
+    "titleJa": "実行時検証――多数の自然言語基準によるエージェント統治",
+    "url": "https://arxiv.org/abs/2611.23074"
+  },
+  {
+    "authors": [
+      "Yuanhao Zeng",
+      "Shaocheng Lan",
+      "Ao Lu",
+      "Kuang Yan",
+      "Heng Lin",
+      "Xinang Xu",
+      "Yuan Luo",
+      "Yueting Wang",
+      "Yexin Li",
+      "Ruo Shan",
+      "Kan Ren"
+    ],
+    "categories": [],
+    "field": "cs.AI",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T16:57:03Z",
+    "source": "arXiv",
+    "summaryHtml": "エージェント進化は、提案者がプロンプトやスキル、記憶などの候補アーティファクトを書き、評価スコアが高いものを選択する単純なループで進む。期待される一方で、手法によって論文ごとの勝敗が入れ替わり、特定のタスクでは進化が立ち上がらないという謎があった。本論文はその原因を「解像度仮説」として提示する。問題はより良いアーティファクトを提案できないことではなく、ノイズの多い評価がそれを確実に見分けられないことにあるという。<br><br>7つの進化手法と6つのモデル、1,000万回超のLLM呼び出しによる検証では、評価スコアが使われる2つの水準で仮説が支持された。候補の水準では、有用な候補は存在するのに選択は有害なものとの区別でランダムと変わらず、誤りがラウンドを重ねて蓄積する。手法の水準では、数ポイントの差は同じ手法の独立した2回の実行の差より小さく、発表された順位は運に左右されることが多い。<br><br>エージェント進化はしばしば、真の改善を確実に検出できるかどうかに律速されている。自己改善エージェントの開発は、候補改善システムを増やす設計から、真の改善を検出可能で蓄積可能にする方向への転換が求められる。出典：arXiv",
+    "timestamp": 1794934623000,
+    "title": "The Resolution Hypothesis: Agent Evolution's Key Is Identifying Improvements",
+    "titleJa": "エージェント進化の鍵は改善の見極めにある――解像度仮説の検証",
+    "url": "https://arxiv.org/abs/2611.23068"
+  },
+  {
+    "authors": [
+      "Ron Bekkerman",
+      "Nichole Li",
+      "Bahareh Kargar",
+      "Mark Somers"
+    ],
+    "categories": [],
+    "field": "cs.AI",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-17T15:57:22Z",
+    "source": "arXiv",
+    "summaryHtml": "2022年末の大規模言語モデル（LLM）登場以来、科学の未来が問われてきたが、その影響を測るには科学実践がそれ以前からどう変化していたかを知る必要がある。本論文は2015〜2025年の5分野250万本の全文論文を分析し、語彙・構造・認識論・社会的な幅広い次元で傾向を追跡した。LLM登場前からの変化の延長線上にあるものと、登場後に生じた断絶とを区別するのが狙いだ。<br><br>一部の語の頻度変化を除けば、2023年以前からの傾向の多くは目立った断絶なく続いていた。例外として、コンピュータ科学の共著チームの成長がアジアで著しく加速した一方、生物医学のトピック多様性の見かけの低下は、論文フォーマットの標準化を反映したものだった。LLMによる科学の変容は、語彙の表層的な変化を除けばまだ検出できる段階にないという。<br><br>LLMの採用が深まる中で世界の科学の健全性を監視するための経験的基盤を確立する研究だ。LLMが科学を変えたという語りに対し、250万本という大規模な実証データに基づく慎重な評価を提示している。出典：arXiv",
+    "timestamp": 1794931042000,
+    "title": "Large Language Models Have Not Yet Transformed Science",
+    "titleJa": "大規模言語モデルはまだ科学を変えていない",
+    "url": "https://arxiv.org/abs/2611.22975"
   },
   {
     "authors": [
@@ -1642,103 +1740,5 @@
     "title": "Seen but Unsaid: Locating and Repairing Cross-Image Comparison in Vision-Language Models",
     "titleJa": "見えているのに言えない――視覚言語モデルの画像間比較の失敗箇所と修復",
     "url": "https://arxiv.org/abs/2611.21539"
-  },
-  {
-    "authors": [
-      "Arunkumar V"
-    ],
-    "categories": [],
-    "field": "cs.AI,cs.CL,cs.CY",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "言語モデルが、規則によって申請が却下された人に説明を書く場面が増えている。複数の規則が独立に却下の理由になっている場合、説明が真の理由を挙げていても、それを直しただけでは却下は覆らない。本研究はこの欠けた性質を「救済可能性」と名づけた。説明に挙げられた内容を変えるだけで決定が覆るかどうかを厳密に計算し、ヒッティングセットの議論から、政策だけを見て正しい理由が役に立たない場合を予測する。<br><br>アクセス制御や米国の給付資格から移植した7つの規則体系のうち6つで、理由が複数ある場合、単一の正しい理由だけではほぼ救済につながらなかった。20の言語モデルを調べると、挙げられた理由が正しいかどうかを判定する検査は、この失敗を偶然程度にしか見抜けなかった。一方、説明どおりに行動すればうまくいくかを問う強い判定器は失敗を検出できた。強力な推論モデルでも、4つ以上の独立した理由がある却下では多く失敗した。<br><br>すべての規則を尋ねると改善の余地がある公開モデルはすべて良くなった。資格判定の説明は、決定関数そのものから作られ、説明どおりに行動すればうまくいくかどうかで評価されるべきだという結論が導かれた。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "Right Reason, Wrong Advice: Evaluating Recourse in LLM Explanations of Denied Requests",
-    "titleJa": "正しい理由、間違った助言――却下の説明における言語モデルの「救済可能性」を測る",
-    "url": "https://arxiv.org/abs/2611.21545"
-  },
-  {
-    "authors": [
-      "Arunkumar V",
-      "Manoranjan Gandhudi",
-      "Gangadharan G. R.",
-      "Arun Prakash",
-      "S. Senthilkumar"
-    ],
-    "categories": [],
-    "field": "cs.LG,cs.AI,cs.CL",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "検証可能な報酬による強化学習は、検証器の誤りをそのまま引き継ぐ。数学やコードの外では検証器は代理指標やルーブリック、学習済みの判定器などであり、真の目的との隔たりは測られないため、報酬の上昇が改善なのかハックなのか区別できない。本研究は、実行可能な認可ポリシーに基づき真の報酬を過程レベルで厳密に計算できる設定を構築し、検証器を7つの現実的な軸で劣化させながら学習させ、厳密な検証器で全ロールアウトを採点した。<br><br>4つの現象が現れた。楽観的な検証器は「水増し」でハックされ、十分性プロキシのスコアは0.940に達する一方、真の忠実度は0.731から0.667へ低下した。結果のみを見る検証器は飽和して学習を止め、ノイズは効果を薄め、順序を保つギャップは害がなかった。検証器の選択誤りとギャップの符号を調べるモデル不要の監査と、短い飽和パイロットにより、どの現象が起きるかを事前に予測できた。<br><br>2つのフレームワーク、2つのモデルベンダーなど9つの構成で現象は再現し、十分性の損害は10の再現セルのすべてで正だった。損害の大きさ自体は再現せず、5つの事前登録した説明の試みは失敗も含めて報告されている。テストベッドと14の実在ポリシーが公開された。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "Optimistic Verifiers Get Hacked: Reward Hacking Under an Exact Process Oracle",
-    "titleJa": "楽観的な検証器はハックされる――検証可能な報酬における報酬ハッキングの実態",
-    "url": "https://arxiv.org/abs/2611.21538"
-  },
-  {
-    "authors": [
-      "Charles Raison"
-    ],
-    "categories": [],
-    "field": "ClinicalTrials.gov",
-    "genre": "Psychedelics / Trauma",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "ClinicalTrials.gov",
-    "summaryHtml": "シロシビンが健康な老化に与える影響を検証するランダム化第I相用量設定試験「LONG-LIFE」が始まった。60〜80歳の医学的に安定した高齢者最大50名を対象に、シロシビン25mgを1回、2回（4週間隔）、3回（4週間隔）投与する群と、待機リスト対照群の4群に均等に割り付ける。老化のバイオマーカー、認知機能、「生きる目的」や人生の意味といった行動指標をベースラインから12か月間追跡し、主要評価は16週時点の変化とする。<br><br>背景には、DNAメチル化に基づくエピジェネティック・クロックなど生物学的老化のバイオマーカーが、加齢に伴う生理変化や疾病リスクを予測する道具として確立してきたことがある。前臨床研究ではシロシビンとその活性代謝物シロシンが、細胞老化、酸化ストレス、神経可塑性、エピジェネティック調節といった老化に関わる経路に影響する可能性が示唆されてきた。観察研究でも「生きる目的」や社会的つながりが、高齢者の罹患率・死亡率の低下と関連することが示されている。<br><br>待機群には12か月の追跡終了後にシロシビン25mgを1回提供する。本試験の結果は、効果の兆しがあれば第II相試験の用量選択に活かされる。実施はVail Health Behavioral Health、代表はCharles Raison。開始は2026年11月16日、完了は2028年12月を見込む。出典：ClinicalTrials.gov",
-    "timestamp": 1794787200000,
-    "title": "Psilocybin Effects on Healthy Aging Biomarkers and Purpose in Life",
-    "titleJa": "シロシビンは健康な老化に効くか――老化バイオマーカーと「生きる目的」を測るLONG-LIFE試験",
-    "url": "https://clinicaltrials.gov/study/NCT07719088"
-  },
-  {
-    "authors": [
-      "Sajib Acharjee Dip",
-      "Brian Ouyang",
-      "Lala Motlhabi"
-    ],
-    "categories": [
-      "cs.AI",
-      "cs.SE"
-    ],
-    "field": "cs.AI",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "LLMエージェントはAPIを呼び出し、その結果を信じて答える。だがAPIは無言で失敗することがある。誤ったフィルタ名など要求の一部を無視しながら、HTTP 200とそれらしい誤った結果を返すのだ。チェックリストやレビューモデル、LLMジャッジといった既存策はモデル自身に気づかせようとするが、問題に気づいてもそのまま答えてしまうことが多い。<br><br>本研究のSilentGuardは、判断をモデルからツール呼び出しを動かすハーネスへ移す。各結果を「正しいAPIなら必ず満たす不変条件」と照合し、破る値を差し止める。公開研究用API15件のうち11件で無言の失敗が見つかり、件数は最大691倍に膨れていた。既存策では誤答の70%以上が残り、ジャッジが指摘した件数の77.4%をエージェントはそのまま報告した。<br><br>7つのオープンモデルでは対象の誤りに対する誤答率が74.0%から1.7%へ、3つのフロンティアモデルでは70.2%から0.5%へ下がり、誤りのない課題での性能低下はなかった。警告だけでは70.1%が誤ったままで、強制こそが鍵だという。新しい種類の誤りでも61.1%から24.5%へ改善し、誤答は回復ではなく棄権で回避する。出典：Hugging Face Papers",
-    "timestamp": 1794787200000,
-    "title": "Invariant-Aware Harness Enforcement to Protect LLM Agents from Silent API Failures",
-    "titleJa": "LLMエージェントをAPIの無言の失敗から守る――不変条件を強制するSilentGuard",
-    "url": "https://arxiv.org/abs/2611.20595"
-  },
-  {
-    "authors": [
-      "Yipeng Du",
-      "Yuxi Li",
-      "Ying Zhang",
-      "Chong Sun",
-      "Chen Li",
-      "Jing Lyu",
-      "Ying Tai"
-    ],
-    "categories": [
-      "cs.CV",
-      "cs.AI"
-    ],
-    "field": "cs.CV",
-    "genre": "Vision / Multimodal",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-16T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "動画生成の進歩に伴い、明示的な法医学的証拠に裏づけられた検出が求められている。既存手法は一度きりの思考連鎖で短い局所的な痕跡を見落とすか、あらかじめ決められたマルチエージェント手順で検査の選択肢が限られる。調査方針だけを最適化しても、固定された専門家の法医学的能力そのものは高まらない。<br><br>本研究のWeVisForensicsは、主調査エージェントが視覚と音声の手がかりを担う自己進化型の検査サブエージェント群を統括する枠組みである。調査官はどの痕跡を、どの時間窓で調べ、いつ結論するかを学び、そのやり取りが両レベルのエージェントへの共通のフィードバックになる。2つの時間尺度での方策最適化DTPOは、調査官の高速な強化学習と検査官の緩やかな改良を結び、かつて見逃した微細な痕跡を報告できるようにする。<br><br>役割別の法医学注釈と対話軌跡を組み合わせたForenCue-30Kも整備した。実験では領域内・領域外・エージェント型ベンチマークで平均95.2%の検出精度となり、最強の先行検出器を9.0ポイント上回り、判定を局所的な証拠で裏づけた。出典：arXiv",
-    "timestamp": 1794787200000,
-    "title": "WeVisForensics: Self-Evolving Agent for Omni AI-Generated Video Detection",
-    "titleJa": "AI生成動画を見破る自己進化エージェント――法医学的証拠で裏づけるWeVisForensics",
-    "url": "https://arxiv.org/abs/2611.21373"
   }
 ]
