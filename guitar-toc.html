@@ -321,6 +321,19 @@ document.querySelectorAll('.chapter.has-sub').forEach(function(el){
   var panel = document.getElementById('qa-panel');
   document.getElementById('qa-tab').addEventListener('click', function(){ panel.classList.toggle('open'); });
   document.getElementById('qa-close').addEventListener('click', function(){ panel.classList.remove('open'); });
+  var qaTab = document.getElementById('qa-tab');
+  var hoverTimer = null;
+  function cancelClose(){ if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; } }
+  qaTab.addEventListener('mouseenter', function(){ cancelClose(); panel.classList.add('open'); });
+  panel.addEventListener('mouseenter', cancelClose);
+  panel.addEventListener('mouseleave', function(){
+    cancelClose();
+    hoverTimer = setTimeout(function(){
+      var b = document.getElementById('qa-btn');
+      if (b && b.disabled) return;
+      panel.classList.remove('open');
+    }, 450);
+  });
   var form = document.getElementById('qa-form');
   var input = document.getElementById('qa-input');
   var btn = document.getElementById('qa-btn');
