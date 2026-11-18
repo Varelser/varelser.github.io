@@ -361,6 +361,30 @@
 .share-btn:hover{background:var(--fg)!important;color:var(--bg)!important}
 .share-btn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 </style>
+
+<style>
+#sqa-tab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:80;background:#111;color:#fff;border:none;border-radius:10px 0 0 10px;padding:16px 9px;font-family:inherit;font-size:13.5px;letter-spacing:.14em;writing-mode:vertical-rl;cursor:pointer}
+#sqa-tab:hover{background:#000}
+#sqa-panel{position:fixed;top:0;right:0;height:100dvh;width:min(410px,94vw);background:#fff;border-left:1px solid rgba(0,0,0,.14);z-index:90;transform:translateX(102%);transition:transform .45s cubic-bezier(.22,.8,.24,1);display:flex;flex-direction:column;box-shadow:-12px 0 32px rgba(0,0,0,.08);color:#111;font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif}
+#sqa-panel.open{transform:translateX(0)}
+#sqa-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(0,0,0,.12)}
+#sqa-head .t{font-size:15px;font-weight:600;letter-spacing:.06em}
+#sqa-close{background:none;border:none;font-size:20px;cursor:pointer;color:#111;padding:2px 6px;line-height:1}
+#sqa-body{padding:18px 20px;overflow-y:auto}
+.sqa-lead{font-size:13.5px;color:rgba(0,0,0,.78);line-height:1.9;margin:0 0 18px}
+.sqa-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.sqa-chip{font-family:inherit;font-size:12.5px;padding:7px 14px;border:1px solid rgba(0,0,0,.18);border-radius:999px;background:#fff;color:#111;cursor:pointer}
+.sqa-chip:hover{border-color:#111}
+.sqa-form{display:flex;gap:8px}
+.sqa-input{flex:1;font-family:inherit;font-size:14.5px;padding:12px 14px;border:1px solid rgba(0,0,0,.18);border-radius:8px;color:#111;background:#fff;min-width:0}
+.sqa-input:focus{outline:2px solid #111;outline-offset:1px}
+.sqa-btn{font-family:inherit;font-size:14px;padding:12px 22px;border:1px solid #111;border-radius:8px;background:#111;color:#fff;cursor:pointer;flex:none}
+.sqa-btn:disabled{opacity:.45;cursor:wait}
+.sqa-answer{margin-top:20px;font-size:14.5px;line-height:2.0;white-space:pre-wrap;border-top:1px solid rgba(0,0,0,.12);padding-top:18px;display:none;word-break:break-word}
+.sqa-answer a{color:#111;text-decoration:underline}
+.sqa-note{margin-top:14px;font-size:11.5px;color:rgba(0,0,0,.78);line-height:1.8}
+@media (prefers-reduced-motion: reduce){#sqa-panel{transition:none}}
+</style>
 </head>
 <body>
   <main class="page">
@@ -679,6 +703,62 @@
 <script>
 var b=document.getElementById('shareBtn');
 if(b){b.addEventListener('click',async function(){if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(e){}}else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);b.classList.add('copied');setTimeout(function(){b.classList.remove('copied');},2000);}catch(e){}}});}
+</script>
+
+<button id="sqa-tab" type="button" aria-controls="sqa-panel" aria-expanded="false">サイトに聞く</button>
+<aside id="sqa-panel" aria-label="サイトについて質問するパネル">
+<div id="sqa-head"><span class="t">サイトのことを質問する</span><button id="sqa-close" type="button" aria-label="閉じる">×</button></div>
+<div id="sqa-body">
+<p class="sqa-lead">このサイト（VARELSER）について、AIに質問できます。アプリ・書籍・ニュース・音楽など、サイトの内容に基づいて答え、該当ページへのリンクを添えます。サイトに無いことは「このサイトの範囲では分かりません」と答えます。</p>
+<div class="sqa-chips">
+<button type="button" class="sqa-chip">どんなアプリがある？</button>
+<button type="button" class="sqa-chip">等高線を作れるツールは？</button>
+<button type="button" class="sqa-chip">本の紹介はどこ？</button>
+<button type="button" class="sqa-chip">音楽はどこで聴ける？</button>
+<button type="button" class="sqa-chip">カメラのニュースは？</button>
+</div>
+<form class="sqa-form" id="sqa-form">
+<input class="sqa-input" id="sqa-input" type="text" maxlength="500" placeholder="例：ノイズを作れるツールはある？" aria-label="質問を入力" />
+<button class="sqa-btn" id="sqa-btn" type="submit">聞く</button>
+</form>
+<div class="sqa-answer" id="sqa-answer" role="status"></div>
+<p class="sqa-note">AIの回答はサイト情報に基づく要約です。無料枠の範囲で運用しているため、混み合うと答えられないことがあります。</p>
+</div>
+</aside>
+<script>
+(function(){
+  var panel=document.getElementById('sqa-panel');
+  var tab=document.getElementById('sqa-tab');
+  function setOpen(o){panel.classList.toggle('open',o);tab.setAttribute('aria-expanded',o?'true':'false');}
+  tab.addEventListener('click',function(){setOpen(!panel.classList.contains('open'));});
+  document.getElementById('sqa-close').addEventListener('click',function(){setOpen(false);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setOpen(false);});
+  var form=document.getElementById('sqa-form');
+  var input=document.getElementById('sqa-input');
+  var btn=document.getElementById('sqa-btn');
+  var ans=document.getElementById('sqa-answer');
+  var ENDPOINT='https://site-qa.varelser-jp.workers.dev';
+  function render(text){
+    ans.textContent='';
+    var re=/(https:\/\/[^\s、。）)]+)/g, last=0, m;
+    while((m=re.exec(text))!==null){
+      if(m.index>last)ans.appendChild(document.createTextNode(text.slice(last,m.index)));
+      var a=document.createElement('a');a.href=m[1];a.textContent=m[1];a.rel='noopener';ans.appendChild(a);last=m.index+m[1].length;
+    }
+    if(last<text.length)ans.appendChild(document.createTextNode(text.slice(last)));
+  }
+  function ask(q){
+    if(!q)return;
+    btn.disabled=true;ans.style.display='block';ans.textContent='考え中…';
+    fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:q})})
+      .then(function(r){return r.json();})
+      .then(function(d){render(d.answer||d.error||'回答を取得できませんでした。');})
+      .catch(function(){ans.textContent='通信に失敗しました。少し置いてから試してください。';})
+      .finally(function(){btn.disabled=false;});
+  }
+  form.addEventListener('submit',function(ev){ev.preventDefault();ask(input.value.trim());});
+  document.querySelectorAll('.sqa-chip').forEach(function(c){c.addEventListener('click',function(){input.value=c.textContent;ask(c.textContent);});});
+})();
 </script>
 </body>
 </html>
