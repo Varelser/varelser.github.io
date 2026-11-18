@@ -2000,4 +2000,65 @@ window.__H={version:'PhaseH-1',prefs:function(){return prefs;},shareUrl:shareUrl
 })();
 
 </script>
+<script id="i-script">
+/* ═══ Phase I (2026-11-19): Studio Link 専用機能の基盤 ═══
+   Link ON の間だけ、既存チャンネルに presence と session-bus を流す。
+   session-bus は Studio が既に受信している各アプリの state の集約中継で、
+   アプリ側の「Studio でしかできない機能」はこれを栄養にする。
+   既存のメッセージ形式・保存キーには一切触らない。 */
+(function(){
+'use strict';
+var ch=null;
+try{ ch=new BroadcastChannel('varelser-link-v1'); }catch(e){}
+if(!ch)return;
+var latest={noise:null,meikyo:null};
+var lastState={noise:0,meikyo:0};
+ch.addEventListener('message',function(ev){
+  var m=ev.data||{};
+  if(m.type!=='state')return;
+  if(m.app==='noise'){
+    latest.noise={rms:(typeof m.levelRms==='number'?m.levelRms:null),
+      peak:(typeof m.levelPeak==='number'?m.levelPeak:null),playing:!!m.playing};
+    lastState.noise=Date.now();
+  }
+  if(m.app==='meikyoshisui'){
+    latest.meikyo={bpm:(typeof m.bpm==='number'?m.bpm:null),playing:!!m.playing};
+    lastState.meikyo=Date.now();
+  }
+});
+function linkOnNow(){ try{ return (typeof linkOn!=='undefined')?!!linkOn:false; }catch(e){ return false; } }
+function busPayload(){
+  var now=Date.now();
+  return {app:'studio',type:'session-bus',ts:now,
+    noise:(now-lastState.noise<4000)?latest.noise:null,
+    meikyo:(now-lastState.meikyo<4000)?latest.meikyo:null};
+}
+var note=document.getElementById('linkState');
+var line=document.createElement('div');
+line.id='iLinkState';line.className='note';
+line.textContent='STUDIO LINK 専用機能: 待機中 (Link OFF)';
+if(note&&note.parentNode)note.parentNode.insertBefore(line,note.nextSibling);
+var wasOn=false;
+setInterval(function(){
+  var on=linkOnNow();
+  if(on&&!wasOn){ try{ch.postMessage({app:'studio',type:'presence',ts:Date.now(),start:true});}catch(e){} }
+  if(!on&&wasOn){
+    try{ ch.postMessage({app:'studio',type:'studio-bye',ts:Date.now()});
+         ch.postMessage({app:'studio',type:'studio-bye',ts:Date.now()}); }catch(e){}
+    line.textContent='STUDIO LINK 専用機能: 待機中 (Link OFF)';
+  }
+  wasOn=on;
+  if(!on)return;
+  var bus=busPayload();
+  try{ ch.postMessage({app:'studio',type:'presence',ts:Date.now()}); }catch(e){}
+  try{ ch.postMessage(bus); }catch(e){}
+  line.textContent='STUDIO LINK 専用機能: 接続中 — Noise '
+    +(bus.noise?('状態受信中 (RMS '+(bus.noise.rms==null?'—':Math.round(bus.noise.rms*100)/100)+')'):'未接続')
+    +' / Meikyoshisui '
+    +(bus.meikyo?('状態受信中 (BPM '+(bus.meikyo.bpm==null?'—':bus.meikyo.bpm)+')'):'未接続');
+},500);
+window.__I={version:'PhaseI-1',latest:function(){return latest;},bus:busPayload,linkOn:linkOnNow};
+})();
+
+</script>
 </body></html>
