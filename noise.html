@@ -521,7 +521,7 @@
 
   gtag('config', 'G-ZHGK3HRHX3');
 </script>
-</head>
+<style data-vt-optin>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}</style></head>
 <body>
 <div id="app">
   <aside id="panel">
@@ -1427,9 +1427,36 @@ document.addEventListener('pointerdown', function(ev){
 function boot(){ tick(); setInterval(tick, 700); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(boot, 300); });
 else setTimeout(boot, 300);
-window.__studioDock = { version: 'PhaseO-3', app: CFG.app, pop: POP, open: function(){ return state.open; }, toggle: toggle };
+/* Phase T: the VT opt-in must exist before the browser prepares the
+   cross-document capture, so inject it at script evaluation time
+   (the Phase Q injection at boot+300ms can be too late). */
+(function(){ try{ if(!document.getElementById('sdockVtEarly')){ var st=document.createElement('style'); st.id='sdockVtEarly'; st.textContent='@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}'; (document.head||document.documentElement).appendChild(st); } }catch(e){} })();
+/* Phase T: shared-element hero (Studio tile -> this app) */
+(function(){
+  function norm(x){ return x==='meikyo' ? 'meikyoshisui' : x; }
+  var raw=null; try{ raw=sessionStorage.getItem('varelser.vtHero'); }catch(e){}
+  if(!raw) return;
+  var d=null; try{ d=JSON.parse(raw); }catch(e){}
+  try{ sessionStorage.removeItem('varelser.vtHero'); }catch(e){}
+  if(!d || !d.src || Date.now()-d.ts>20000) return;
+  if(norm(d.app) !== norm(CFG.app)) return;
+  function place(){
+    if(!document.body || document.getElementById('vtHero')) return;
+    var hero=document.createElement('img');
+    hero.id='vtHero'; hero.src=d.src; hero.alt='';
+    hero.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;z-index:99995;pointer-events:none;';
+    hero.style.viewTransitionName='varelser-tile-hero';
+    document.body.appendChild(hero);
+    window.__vtHeroShown=true;
+    var killed=false;
+    function kill(){ if(killed) return; killed=true; if(!hero.parentNode) return; hero.style.transition='opacity .6s ease'; hero.style.opacity='0'; setTimeout(function(){ hero.remove(); },700); }
+    setTimeout(kill, 1200);
+    window.addEventListener('pagereveal', function(e){ window.__vtReveal=!!(e&&e.viewTransition); if(e&&e.viewTransition&&e.viewTransition.finished){ e.viewTransition.finished.then(function(){ setTimeout(kill,150); }, function(){}); } });
+  }
+  if(document.body) place(); else document.addEventListener('DOMContentLoaded', place);
 })();
-
+window.__studioDock = { version: 'PhaseO-4', app: CFG.app, pop: POP, open: function(){ return state.open; }, toggle: toggle, hero: function(){ return !!window.__vtHeroShown; } };
+})();
 </script>
 </body>
 </html>

@@ -2076,4 +2076,91 @@ window.__I={version:'PhaseI-1',latest:function(){return latest;},bus:busPayload,
 /* Varelser Studio — Phase Q: View Transitions (cross-document opt-in + tile transitions) */
 window.__Q = { version: 'PhaseQ-1', vtApi: !!document.startViewTransition, vtNav: true };
 </script>
+<script id="t-script">
+/* Varelser Studio — Phase T: shared-element transitions.
+   (1) ステージ遷移: setStage を包み、タイルのサムネイル (.ph) から
+       ステージ枠 (stageFrame) へ view-transition-name を引き継いで
+       同一ドキュメント View Transition でモーフさせる。
+   (2) タイル内読込: loadTile を包み、.ph から生成された iframe へ
+       名前を引き継いでモーフさせる。
+   (3) 別タブ/直接遷移: タイルクリック時にサムネイル画像を
+       sessionStorage へ記録し、遷移先アプリのヒーロー要素が
+       同名で受け取る (クロスドキュメント遷移 / 新規タブでは被せフェード)。
+   いずれも View Transition 非対応環境では従来動作にそのまま落ちる。 */
+(function(){
+'use strict';
+var NAME='varelser-tile-hero', lastNamed=null;
+function norm(x){ return x==='meikyo' ? 'meikyoshisui' : x; }
+function setName(el){ if(lastNamed && lastNamed!==el) lastNamed.style.viewTransitionName=''; if(el){ el.style.viewTransitionName=NAME; lastNamed=el; } }
+function clearName(el){ if(el) el.style.viewTransitionName=''; if(lastNamed===el) lastNamed=null; }
+
+/* (3) record for cross-page hero + name the thumbnail */
+document.addEventListener('click', function(e){
+  var t=e.target;
+  var tile=(t && t.closest) ? t.closest('.tile[id^="tile-"]') : null;
+  if(!tile) return;
+  var ph=tile.querySelector('.ph');
+  if(ph) setName(ph);
+  var src=null;
+  if(ph){
+    var bg='';
+    try{ bg=getComputedStyle(ph).backgroundImage||''; }catch(err){}
+    var m=bg.match(/url\(["']?(data:[^"')]+)["']?\)/);
+    if(m) src=m[1];
+  }
+  if(!src) return;
+  try{ sessionStorage.setItem('varelser.vtHero', JSON.stringify({app: norm(tile.id.slice(5)), src: src, ts: Date.now()})); }catch(err){}
+}, true);
+window.addEventListener('pageshow', function(){ clearName(lastNamed); });
+
+function canVT(){ return typeof document.startViewTransition==='function'; }
+function settle(vt, fn){
+  try{ vt.finished.then(fn, fn); }catch(e){ fn(); }
+  /* ready / updateCallbackDone も放置すると skip 時に未処理拒否になる */
+  try{ vt.ready.then(function(){}, function(){}); }catch(e){}
+  try{ vt.updateCallbackDone.then(function(){}, function(){}); }catch(e){}
+}
+/* Phase Q のタイル遷移が実行中の間は、モーフなしで即実行に落とす
+   (相手のビジーフラグが固着しても、機能自体は絶対に止めない) */
+
+/* (1) stage morph */
+if(typeof window.setStage==='function'){
+  var origStage=window.setStage;
+  window.setStage=function(app){
+    var ph=app && document.getElementById('ph-'+app.id);
+    var frame=document.getElementById('stageFrame');
+    if(!app || !ph || !frame || !canVT() || window.__hVtBusy) return origStage(app);
+    setName(ph);
+    var vt;
+    try{
+      vt=document.startViewTransition(function(){
+        origStage(app);
+        clearName(ph); setName(frame);
+      });
+    }catch(e){ clearName(ph); return origStage(app); }
+    settle(vt, function(){ clearName(frame); });
+  };
+}
+/* (2) tile-load morph */
+if(typeof window.loadTile==='function'){
+  var origLoad=window.loadTile;
+  window.loadTile=function(app){
+    var ph=app && document.getElementById('ph-'+app.id);
+    if(!app || !ph || !canVT() || window.__hVtBusy) return origLoad(app);
+    setName(ph);
+    var vt;
+    try{
+      vt=document.startViewTransition(function(){
+        origLoad(app);
+        var tile=document.getElementById('tile-'+app.id);
+        var f=tile ? tile.querySelector('iframe') : null;
+        clearName(ph); if(f) setName(f);
+        settle(vt, function(){ if(f) clearName(f); });
+      });
+    }catch(e){ clearName(ph); return origLoad(app); }
+  };
+}
+window.__T={version:'PhaseT-1'};
+})();
+</script>
 </body></html>
