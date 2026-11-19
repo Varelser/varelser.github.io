@@ -841,6 +841,75 @@
   },
   {
     "authors": [
+      "Randall Balestriero",
+      "Yann LeCun",
+      "Kerda Varaku"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.AI",
+      "cs.CV",
+      "cs.RO",
+      "stat.ML"
+    ],
+    "field": "cs.LG",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-18",
+    "source": "arXiv",
+    "summaryHtml": "ワールドモデルは観測しきれない世界で動作する。隠れた外乱（船を押す潮流など）が行動の結果を変えたとき、「別の行動をとっていたらどうなっていたか」という反実仮想の問いが生まれる。その答えは悪い判断と運の悪さを区別する。本論文は、事実の遷移だけから学習したワールドモデルは、データや容量をどれだけ増やしても、この問いに自力では答えられないことを証明する。<br><br>多くの物理系では、観測された結果と動力学の単純な性質があれば十分である。「自然は跳躍しない」という原則のもと、行動と外乱が別々の力として働くとき、その相互作用は時間の二次の効果にとどまるため、反実仮想の結果は一次近似で、観測結果に、代替行動と事実行動の下でのワールドモデルの予測の差を加えたものになる。これにより、反実仮想データも追加パラメータも再学習も不要な反実仮想ワールドモデルが得られる。遷移時間hに対し反実仮想誤差のO(h²) boundと、対応するミニマックス下限も示された。<br><br>JEPAワールドモデルを用いたピクセルからの検証では、四つのレンダリング済みシミュレータで反実仮想R²が38〜46%から86〜96%に改善し、水中ビークルでは90〜94%に達した。DINOv3、SigLIP 2、CLIP、EVA-02といった他の凍結エンコーダでも81〜95%が得られた。後知恵プランニングでは、目標に到達できたはずの行動を35〜69%の事象で見つけ、シミュレータを知るオラクルプランナーの14〜23%を上回った。出典：arXiv",
+    "timestamp": 1794960000000,
+    "title": "Counterfactual World Models: JEPAs That Reason About \"What If\"",
+    "titleJa": "反実仮想ワールドモデル――「もしも」を推論するJEPA",
+    "url": "https://arxiv.org/abs/2611.24778"
+  },
+  {
+    "authors": [
+      "Eugene Agichtein",
+      "Charles L. A. Clarke",
+      "Kaustubh Dhole",
+      "William Stern"
+    ],
+    "categories": [
+      "cs.IR",
+      "cs.CL"
+    ],
+    "field": "cs.IR",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-18",
+    "source": "arXiv",
+    "summaryHtml": "LLMジャッジは大規模な関連性判定の作成に広く使われるようになったが、判定ごとに最先端モデルへの高価な呼び出しが必要で、解釈が難しく再現性にも欠ける。本論文は、LLMがトピックごとに可読性の高いプログラムを書き、文書ごとの判定を置き換えられるかを問う。提案手法ExecJudgesは、最先端LLMで評価ガイドラインを実行可能プログラムに変換し、語彙照合や標準NLPライブラリ、プール統計だけに依存させる。<br><br>人間ラベルの少数の例を用いるExecJudges-L変種も用意された。七つのTRECコレクションで、訓練されたNIST評価者、最先端LLMジャッジ、近年のトピック別分類器と比較して評価した。結果は、ExecJudgesがTREC DL 2019〜2021でClaude Sonnet 5.5のLLMジャッジと同水準でNIST評価者と一致し、ExecJudges-Lは全七コレクションで同じラベル数のトピック別分類器を上回った。<br><br>ラベルは公式TREC DLランをケンドールのタウ0.87〜0.94で順位づけし、プログラム作成コストはトピックあたり0.17〜0.49ドルの一度きりで、採点に追加コストはかからない。ExecJudgesは、深い結果プールのラベリングやシステム評価・順位改善のための、再現可能で検証可能、効率的かつ費用対効果の高いLLMジャッジの代替手段になる。出典：arXiv",
+    "timestamp": 1794960000000,
+    "title": "Can Programs Replace LLM Judges? Executable Program Judges for Scalable and Efficient Relevance Labeling",
+    "titleJa": "プログラムはLLMジャッジに取って代われるか――実行可能なプログラム判定器による効率的な関連性ラベリング",
+    "url": "https://arxiv.org/abs/2611.24849"
+  },
+  {
+    "authors": [
+      "Xiaoqian Shen",
+      "Yunyang Xiong",
+      "Changsheng Zhao",
+      "Saksham Suri",
+      "Chong Zhou",
+      "Zechun Liu"
+    ],
+    "categories": [
+      "cs.CV"
+    ],
+    "field": "cs.CV",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-18",
+    "source": "Hugging Face Papers",
+    "summaryHtml": "視覚言語モデルは高度なマルチモーダル課題の解決にテキスト推論への依存を強めているが、このパラダイムには二つの根本的な限界がある。テキスト推論だけでは、課題に関連する視覚的証拠の解釈が答えを左右する視覚中心の設問で知覚能力が制限される。推論の様式と深さの設問依存のばらつきを無視して一律にテキスト推論を適用すると、論理的推論がほとんど不要な場合にも冗長で不必要な痕跡を生む。<br><br>本論文は、視覚的想像力をテキスト思考を補完する推論様式として導入する適応的視覚テキスト推論（AVTR）を提案する。生成的な視覚的省察を通じて視覚観察に立ち返り、顕著な証拠を抽出できる。さらに、推論様式の選択を学習されるルーティング問題として定式化し、単一のポリシーが入力の知覚的・推論的要求に応じて、視覚的省察とテキスト推論の相補的な強みを適応的に活用できるようにする。<br><br>16のベンチマークで、AVTRはQwen3.5ベースラインの平均スコアを4.5ポイント改善し、推論レイテンシを33%削減した。より小さいバックボーンにも効果的に拡張でき、評価した2B規模のベースラインを上回った。出典：Hugging Face Papers",
+    "timestamp": 1794960000000,
+    "title": "AVTR: Adaptive Multimodal Reasoning with Visual Imagination",
+    "titleJa": "AVTR――視覚的想像力を備えた適応的マルチモーダル推論",
+    "url": "https://arxiv.org/abs/2611.24161"
+  },
+  {
+    "authors": [
       "Giannis Daras",
       "Marios Papachristou",
       "Adam Klivans",
@@ -1646,58 +1715,5 @@
     "title": "Decolonising Autistic Phenomenology: Towards a Critical-Enactive Account of Cognitive Diversity",
     "titleJa": "自閉症の現象学を脱植民地化する――認知の多様性を捉え直す批判的エナクティビズム",
     "url": "https://doi.org/10.1159/psp/aelag017"
-  },
-  {
-    "authors": [
-      "Zhenyu Qiao"
-    ],
-    "categories": [],
-    "field": "NeuroData",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-17T00:00:00Z",
-    "source": "Crossref",
-    "summaryHtml": "中国はブレイン・コンピュータ・インタフェース（BCI）に関する国家政策を急速に増やしてきたが、それらが倫理を産業競争に従属させているのか、真の抑制を組み込んでいるのかは議論が分かれてきた。本論文は、10年間に出された9つの国家政策文書を対象に、振興計画3件と倫理・審査・標準文書6件を混合手法の文書分析で検証する。6つのテーマの有無をコード化し、前半と後半でテーマの出現率と文書あたりの制約量を比較した。<br><br>初期の3文書はいずれも制約規定を持たず、すべてが革新目標を掲げていた。一方、後期の6文書には21件の制約規定が分散し、安全性と標準、神経データ保護、倫理審査が増加した。制約量の中央値は0.00から4へ上昇し（p=0.024）、統計的にも有意な変化だった。革新目標は後期の2文書にも残ったが、データガバナンスと倫理条項が組み込まれていた。<br><br>結論として、中国のBCI政策は振興を放棄したのではなく、倫理ガバナンスへの全般的な転換の後に、振興のアジェンダをそのまま維持した上で倫理的制約を重ねたものだった。政策のバランスは「振興のみ」から「抑制付き振興」へ移ったと結論づけている。出典：Crossref",
-    "timestamp": 1794873600000,
-    "title": "Innovation targets and ethical limits in China's brain-computer interface policy: national ethics guidelines versus industrial promotion plans",
-    "titleJa": "中国のブレイン・コンピュータ・インタフェース政策における革新目標と倫理的限界",
-    "url": "https://doi.org/10.63688/neurodata2026184"
-  },
-  {
-    "authors": [
-      "Ashok Kumar Mukhopadhyay"
-    ],
-    "categories": [],
-    "field": "The American Journal of Applied Sciences",
-    "genre": "Consciousness / Philosophy",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-17T00:00:00Z",
-    "source": "Crossref",
-    "summaryHtml": "情報は物理学・心理学・宇宙論・生物学といった従来の学問分野を超越しながら、ゼロ点エネルギーを通じてそれらと結びついている。空間・時間・物質の起源は知られているが、情報がいつどのように出現したかは未解明のままだ。本論文は、情報を二元性を超えた自律的な意識の組織図における統制的な実行者として提示する。<br><br>著者は「上皮質意識」の深い体験に由来する概念として、自然と意識の五重枠組み（Pentaune）と、主観性の本質的要素を客観的に取り込む非局所的でスケール不変のシステム心を提示する。この枠組みから、マルチバースと暗黒エネルギーの起源、「生命」を生命形態として包むことの意味、生命がなければ記憶もないという仮説、情報ホログラムといった論点に示唆が得られるという。著者によれば、意識のスケールにおける大きな転換がこの枠組みの出発点となっている。<br><br>理論的・思弁的な色彩の強い論文で、実証的な検証は示されていない。情報が意識の組織図のなかでどのような役割を果たすのかを問う、哲学的枠組みの提案として位置づけられる。出典：Crossref",
-    "timestamp": 1794873600000,
-    "title": "A Transdisciplinary Science of Information within the Organogram of Consciousness",
-    "titleJa": "意識の組織図における情報の学際的科学",
-    "url": "https://doi.org/10.37547/tajas/volume08issue11-03"
-  },
-  {
-    "authors": [
-      "Jason Liang",
-      "Dylan Waldner",
-      "Risto Miikkulainen"
-    ],
-    "categories": [
-      "cs.AI",
-      "cs.MA"
-    ],
-    "field": "cs.AI",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-17T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "自己改善エージェントは通常、作り出す結果で最適化され、どう作るかには注意が払われにくい。指示は設計者が働き方を形づくる手段が限られ、特に課題がオープンエンドな場合にそうなる。本研究は、エージェントの永続的な指示ファイルに短い価値声明を入れることで、性能だけでなく何を作るかが変わるかを調べた。<br><br>シュワルツの基本的価値理論の4つの高次価値（変化への開放性、保守、自己増強、自己超越）を評価した。多様なコーディング課題で、自己改善の複数回の反復を通じて価値を固定した。開放性の価値は汎化データでの性能を高め、反対の保守の価値は価値なしのエージェントを下回った。価値は解法のアルゴリズムの規模・複雑さ・アプローチも変えた。<br><br>ただし人間の監督は依然必要で、エージェント自身に価値を改訂させると価値間の差は狭まり、AI文献から蒸留した価値は価値なしと比べて検出可能な利得がなかった。適切に設計された価値は、自己改善コーディングエージェントが何を作るか、課題が許す範囲でどれだけうまく作るかに影響する。出典：arXiv",
-    "timestamp": 1794873600000,
-    "title": "Values Shape What Self-Improving Coding Agents Build",
-    "titleJa": "価値観が自己改善コーディングエージェントの作るものを決める",
-    "url": "https://arxiv.org/abs/2611.23067"
   }
 ]
