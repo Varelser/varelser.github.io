@@ -1892,7 +1892,9 @@ window.__studioFreedom={version:'PhaseP-2',app:CFG.app,
 /* Varelser Studio — Side Dock (Phase O)
    既存の追加パネル (Studio Link / STUDIO FLUID / FREEDOM CONSOLE) を
    右端の縦タブ・レールに集約する。パネルの中身・id・保存キーには触らず、
-   DOM の置き場所と見せ方だけを引き受ける。 */
+   DOM の置き場所と見せ方だけを引き受ける。
+   Phase Q: ラップを Popover (manual) 化してトップレイヤー表示にし、
+   ページ遷移の View Transitions を opt-in する。未対応環境では従来動作。 */
 (function(){
 'use strict';
 var CFG = {"app": "punkt", "tabs": [{"key": "link", "label": "連携", "panel": "sxPanel-punkt", "badge": "sxBadge-punkt", "api": "__studioDotsPunkt"}, {"key": "free", "label": "自由化", "panel": "fdPanel-punkt", "badge": null, "api": "__studioFreedom"}]};
@@ -1912,12 +1914,17 @@ var css = ''
 + '.sdock-wrap{position:fixed;right:31px;top:50%;transform:translateY(-50%) translateX(118%);transition:transform .3s ease;z-index:99996;pointer-events:none;}'
 + '.sdock-wrap.open{transform:translateY(-50%) translateX(0);pointer-events:auto;}'
 + '.sdock-wrap>*{max-width:calc(100vw - 52px);}'
++ '.sdock-wrap[popover]{left:auto;bottom:auto;width:auto;height:auto;margin:0;padding:0;border:none;background:transparent;overflow:visible;color:inherit;}'
++ '@starting-style{.sdock-wrap[popover]:popover-open{transform:translateY(-50%) translateX(118%);}}'
 + '@media (max-width:640px){.sdock-tab{font-size:11px;padding:10px 5px;}}';
+var POP = ('showPopover' in HTMLElement.prototype);
+var VT_CSS = '@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}';
 
 var rail = null, tabs = {}, wraps = {};
 function ensureChrome(){
   if (document.getElementById('sdockStyle')) return;
   var st = document.createElement('style'); st.id = 'sdockStyle'; st.textContent = css; document.head.appendChild(st);
+  var vt = document.createElement('style'); vt.id = 'sdockVt'; vt.textContent = VT_CSS; document.head.appendChild(vt);
   rail = document.createElement('div'); rail.id = 'sdockRail'; rail.setAttribute('role', 'tablist'); rail.setAttribute('aria-label', 'Studio panels');
   document.body.appendChild(rail);
   CFG.tabs.forEach(function(t){
@@ -1934,6 +1941,7 @@ function adopt(t){
   if (!panel || panel.dataset.docked) return !!panel;
   ensureChrome();
   var wrap = document.createElement('div'); wrap.className = 'sdock-wrap'; wrap.id = 'sdockWrap-' + t.key;
+  if (POP) wrap.setAttribute('popover', 'manual');
   document.body.appendChild(wrap);
   wrap.appendChild(panel);
   panel.dataset.docked = '1';
@@ -1953,11 +1961,27 @@ function panelAvail(t){
 function linkedNow(t){
   try { var a = t.api && window[t.api]; return !!(a && a.linked); } catch (e) { return false; }
 }
+var hideTimers = {};
 function applyOpen(){
   CFG.tabs.forEach(function(t){
     var w = wraps[t.key], b = tabs[t.key];
-    if (w) w.classList.toggle('open', state.open === t.key);
-    if (b) { b.classList.toggle('active', state.open === t.key); b.setAttribute('aria-expanded', state.open === t.key ? 'true' : 'false'); }
+    var open = (state.open === t.key);
+    if (w) {
+      w.classList.toggle('open', open);
+      if (POP) {
+        var isOpen = false; try { isOpen = w.matches(':popover-open'); } catch (e) {}
+        if (open) {
+          if (hideTimers[t.key]) { clearTimeout(hideTimers[t.key]); hideTimers[t.key] = null; }
+          if (!isOpen) { try { w.showPopover(); } catch (e) {} }
+        } else if (isOpen && !hideTimers[t.key]) {
+          hideTimers[t.key] = setTimeout(function(){
+            hideTimers[t.key] = null;
+            if (state.open !== t.key) { try { w.hidePopover(); } catch (e) {} }
+          }, 330);
+        }
+      }
+    }
+    if (b) { b.classList.toggle('active', open); b.setAttribute('aria-expanded', open ? 'true' : 'false'); }
   });
 }
 function toggle(key){
@@ -2001,7 +2025,7 @@ document.addEventListener('pointerdown', function(ev){
 function boot(){ tick(); setInterval(tick, 700); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(boot, 300); });
 else setTimeout(boot, 300);
-window.__studioDock = { version: 'PhaseO-2', app: CFG.app, open: function(){ return state.open; }, toggle: toggle };
+window.__studioDock = { version: 'PhaseO-3', app: CFG.app, pop: POP, open: function(){ return state.open; }, toggle: toggle };
 })();
 
 </script>

@@ -1675,6 +1675,16 @@ document.addEventListener('dblclick',function(ev){
 
 /* ── タイル: 並び替え / 表示・非表示 / 大きさ ── */
 function applyTiles(){
+  if (document.startViewTransition && !window.__hVtBusy) {
+    window.__hVtBusy = true;
+    try {
+      var __vt = document.startViewTransition(function(){ applyTilesRaw(); });
+      if (__vt && __vt.finished && __vt.finished.finally) __vt.finished.finally(function(){ window.__hVtBusy = false; });
+      else window.__hVtBusy = false;
+    } catch (e) { window.__hVtBusy = false; applyTilesRaw(); }
+  } else applyTilesRaw();
+}
+function applyTilesRaw(){
   var wrap=el('tiles');if(!wrap)return;
   var order=prefs.tiles.order.filter(function(id){return TILE_IDS.indexOf(id)>=0;});
   TILE_IDS.forEach(function(id){if(order.indexOf(id)<0)order.push(id);});
@@ -2060,5 +2070,10 @@ setInterval(function(){
 window.__I={version:'PhaseI-1',latest:function(){return latest;},bus:busPayload,linkOn:linkOnNow};
 })();
 
+</script>
+<style id="q-style">@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}</style>
+<script id="q-script">
+/* Varelser Studio — Phase Q: View Transitions (cross-document opt-in + tile transitions) */
+window.__Q = { version: 'PhaseQ-1', vtApi: !!document.startViewTransition, vtNav: true };
 </script>
 </body></html>
