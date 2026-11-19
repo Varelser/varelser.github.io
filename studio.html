@@ -1675,7 +1675,7 @@ document.addEventListener('dblclick',function(ev){
 
 /* ── タイル: 並び替え / 表示・非表示 / 大きさ ── */
 function applyTiles(){
-  if (document.startViewTransition && !window.__hVtBusy) {
+  if (document.startViewTransition && !window.__hVtBusy && !window.__rmq) {
     window.__hVtBusy = true;
     try {
       var __vt = document.startViewTransition(function(){ applyTilesRaw(); });
@@ -2071,7 +2071,7 @@ window.__I={version:'PhaseI-1',latest:function(){return latest;},bus:busPayload,
 })();
 
 </script>
-<style id="q-style">@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}</style>
+<style id="q-style">@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.01s!important}}</style>
 <script id="q-script">
 /* Varelser Studio — Phase Q: View Transitions (cross-document opt-in + tile transitions) */
 window.__Q = { version: 'PhaseQ-1', vtApi: !!document.startViewTransition, vtNav: true };
@@ -2113,7 +2113,7 @@ document.addEventListener('click', function(e){
 }, true);
 window.addEventListener('pageshow', function(){ clearName(lastNamed); });
 
-function canVT(){ return typeof document.startViewTransition==='function'; }
+function canVT(){ return typeof document.startViewTransition==='function' && !window.__rmq; }
 function settle(vt, fn){
   try{ vt.finished.then(fn, fn); }catch(e){ fn(); }
   /* ready / updateCallbackDone も放置すると skip 時に未処理拒否になる */
@@ -2161,6 +2161,53 @@ if(typeof window.loadTile==='function'){
   };
 }
 window.__T={version:'PhaseT-1'};
+})();
+</script>
+<script id="v-script">
+/* Phase V: モーション軽減 (prefers-reduced-motion) とキーボード操作
+   - window.__rmq に OS のモーション軽減設定を映し、Phase Q/T の遷移が参照する
+   - タイルの見出し/サムネイルをキーボード操作可能にする
+     (セクション見出しは R6/H が既に keydown 配線済みのため触らない —
+      二重配線するとトグルが2回発火して相殺される) */
+(function(){
+'use strict';
+var mq=null;
+try{ mq=window.matchMedia('(prefers-reduced-motion: reduce)'); }catch(e){}
+function upd(){ window.__rmq=!!(mq&&mq.matches); }
+upd();
+if(mq){ if(mq.addEventListener)mq.addEventListener('change',upd); else if(mq.addListener)mq.addListener(upd); }
+function label(el,txt){ if(!el.getAttribute('aria-label'))el.setAttribute('aria-label',txt); }
+function enhance(){
+  var tiles=document.querySelectorAll('.tile');
+  for(var i=0;i<tiles.length;i++){
+    var t=tiles[i], nm=t.querySelector('.nm'), name=nm?nm.textContent.trim():'';
+    var th=t.querySelector('.th'), ph=t.querySelector('.ph');
+    if(th){ th.setAttribute('tabindex','0'); th.setAttribute('role','button'); label(th,name+' をステージに表示'); }
+    if(ph){ ph.setAttribute('tabindex','0'); ph.setAttribute('role','button'); label(ph,name+' を読み込む'); }
+  }
+}
+enhance();
+setTimeout(enhance,600); setTimeout(enhance,1800);
+var mt=null;
+try{
+  var wrap=document.getElementById('tiles');
+  if(wrap){ new MutationObserver(function(){ clearTimeout(mt); mt=setTimeout(enhance,150); }).observe(wrap,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']}); }
+}catch(e){}
+var prevAT=window.applyTiles;
+if(typeof prevAT==='function'){ window.applyTiles=function(){ var r=prevAT.apply(this,arguments); setTimeout(enhance,60); return r; }; }
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter'&&e.key!==' ')return;
+  var t=e.target;
+  if(!t||!t.closest)return;
+  var hit=t.closest('.tile .th, .tile .ph');
+  if(!hit)return;
+  e.preventDefault();
+  hit.click();
+});
+var st=document.createElement('style'); st.id='v-style';
+st.textContent='.tile .th:focus-visible,.tile .ph:focus-visible,section>h2:focus-visible{outline:2px solid currentColor;outline-offset:2px}';
+document.head.appendChild(st);
+window.__V={version:'PhaseV-1', reduced:function(){ return !!window.__rmq; }};
 })();
 </script>
 </body></html>

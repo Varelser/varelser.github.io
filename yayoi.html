@@ -372,7 +372,7 @@ body.yayoi-fx-on .yayoi-canvas canvas:not(#yayoi-fx-canvas) { visibility: hidden
 
   gtag('config', 'G-ZHGK3HRHX3');
 </script>
-<style data-vt-optin>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}</style></head>
+<style data-vt-optin>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.01s!important}}</style></head>
 
 <body>
   <div id="loading-fallback">
@@ -1292,6 +1292,7 @@ function snapshot(){
 function fadeSec(){ return (syncAmount!=null?(1.5+syncAmount*3.5):2.5)*durMul; }
 function triggerEcho(src){
   if(!enabled||fading)return;
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   if(!snapUrl)snapUrl=lsGet(SNAPK);
   if(!snapUrl)return;
   var c=mainCanvas(); if(!c)return;
@@ -1399,7 +1400,7 @@ function captureMorph(){ try{ var cvs=mainCanvas(); if(!cvs||!cvs.width)return;
   off.getContext('2d').drawImage(cvs,0,0,off.width,off.height);
   sessionStorage.setItem(MORPH_KEY, JSON.stringify({img:off.toDataURL('image/jpeg',0.85), ts:Date.now()})); }catch(e){} }
 var morphShown=false;
-function showMorph(){ if(morphShown)return; var raw=null; try{ raw=sessionStorage.getItem(MORPH_KEY); }catch(e){}
+function showMorph(){ if(morphShown)return; if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){ try{ sessionStorage.removeItem(MORPH_KEY); }catch(e){} return; } var raw=null; try{ raw=sessionStorage.getItem(MORPH_KEY); }catch(e){}
   if(!raw)return; var d=null; try{ d=JSON.parse(raw); }catch(e){}
   if(!d||!d.img||Date.now()-d.ts>20000){ try{ sessionStorage.removeItem(MORPH_KEY); }catch(e){} return; }
   var cvs=mainCanvas(); if(!cvs)return; var r=cvs.getBoundingClientRect(); if(r.width<10)return;
@@ -1496,9 +1497,9 @@ var css = ''
 + '.sdock-wrap>*{max-width:calc(100vw - 52px);}'
 + '.sdock-wrap[popover]{left:auto;bottom:auto;width:auto;height:auto;margin:0;padding:0;border:none;background:transparent;overflow:visible;color:inherit;}'
 + '@starting-style{.sdock-wrap[popover]:popover-open{transform:translateY(-50%) translateX(118%);}}'
-+ '@media (max-width:640px){.sdock-tab{font-size:11px;padding:10px 5px;}}';
++ '@media (max-width:640px){.sdock-tab{font-size:11px;padding:10px 5px;}}' + '@media (prefers-reduced-motion:reduce){.sdock-wrap{transition:none}}';
 var POP = ('showPopover' in HTMLElement.prototype);
-var VT_CSS = '@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}';
+var VT_CSS = '@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.01s!important}}';
 
 var rail = null, tabs = {}, wraps = {};
 function ensureChrome(){
@@ -1618,6 +1619,7 @@ else setTimeout(boot, 300);
   try{ sessionStorage.removeItem('varelser.vtHero'); }catch(e){}
   if(!d || !d.src || Date.now()-d.ts>20000) return;
   if(norm(d.app) !== norm(CFG.app)) return;
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   function place(){
     if(!document.body || document.getElementById('vtHero')) return;
     var hero=document.createElement('img');
@@ -1633,7 +1635,7 @@ else setTimeout(boot, 300);
   }
   if(document.body) place(); else document.addEventListener('DOMContentLoaded', place);
 })();
-window.__studioDock = { version: 'PhaseO-4', app: CFG.app, pop: POP, open: function(){ return state.open; }, toggle: toggle, hero: function(){ return !!window.__vtHeroShown; } };
+window.__studioDock = { version: 'PhaseO-5', app: CFG.app, pop: POP, open: function(){ return state.open; }, toggle: toggle, hero: function(){ return !!window.__vtHeroShown; } };
 })();
 </script>
 </body>

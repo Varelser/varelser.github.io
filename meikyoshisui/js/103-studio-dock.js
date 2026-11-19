@@ -25,9 +25,9 @@ var css = ''
 + '.sdock-wrap>*{max-width:calc(100vw - 52px);}'
 + '.sdock-wrap[popover]{left:auto;bottom:auto;width:auto;height:auto;margin:0;padding:0;border:none;background:transparent;overflow:visible;color:inherit;}'
 + '@starting-style{.sdock-wrap[popover]:popover-open{transform:translateY(-50%) translateX(118%);}}'
-+ '@media (max-width:640px){.sdock-tab{font-size:11px;padding:10px 5px;}}';
++ '@media (max-width:640px){.sdock-tab{font-size:11px;padding:10px 5px;}}' + '@media (prefers-reduced-motion:reduce){.sdock-wrap{transition:none}}';
 var POP = ('showPopover' in HTMLElement.prototype);
-var VT_CSS = '@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}';
+var VT_CSS = '@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation-duration:.01s!important}}';
 
 var rail = null, tabs = {}, wraps = {};
 function ensureChrome(){
@@ -147,6 +147,7 @@ else setTimeout(boot, 300);
   try{ sessionStorage.removeItem('varelser.vtHero'); }catch(e){}
   if(!d || !d.src || Date.now()-d.ts>20000) return;
   if(norm(d.app) !== norm(CFG.app)) return;
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   function place(){
     if(!document.body || document.getElementById('vtHero')) return;
     var hero=document.createElement('img');
@@ -162,5 +163,5 @@ else setTimeout(boot, 300);
   }
   if(document.body) place(); else document.addEventListener('DOMContentLoaded', place);
 })();
-window.__studioDock = { version: 'PhaseO-4', app: CFG.app, pop: POP, open: function(){ return state.open; }, toggle: toggle, hero: function(){ return !!window.__vtHeroShown; } };
+window.__studioDock = { version: 'PhaseO-5', app: CFG.app, pop: POP, open: function(){ return state.open; }, toggle: toggle, hero: function(){ return !!window.__vtHeroShown; } };
 })();
