@@ -93,10 +93,22 @@ function tick(){
   applyOpen();
 }
 document.addEventListener('keydown', function(ev){
-  if (ev.key === 'Escape' && state.open) { state.open = null; save(); applyOpen(); }
+  if (ev.key === 'Escape' && state.open) { state.open = null; save(); applyOpen(); return; }
+  if (ev.altKey && /^[1-9]$/.test(ev.key)) {
+    var avail = CFG.tabs.filter(function(t){ return panelAvail(t); });
+    var t = avail[parseInt(ev.key, 10) - 1];
+    if (t) { ev.preventDefault(); toggle(t.key); }
+  }
 });
+document.addEventListener('pointerdown', function(ev){
+  if (!state.open) return;
+  var w = wraps[state.open];
+  if (w && w.contains(ev.target)) return;
+  if (rail && rail.contains(ev.target)) return;
+  state.open = null; save(); applyOpen();
+}, true);
 function boot(){ tick(); setInterval(tick, 700); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(boot, 300); });
 else setTimeout(boot, 300);
-window.__studioDock = { version: 'PhaseO-1', app: CFG.app, open: function(){ return state.open; }, toggle: toggle };
+window.__studioDock = { version: 'PhaseO-2', app: CFG.app, open: function(){ return state.open; }, toggle: toggle };
 })();

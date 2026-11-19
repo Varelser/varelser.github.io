@@ -1084,7 +1084,8 @@ panel.innerHTML='<div class="t">FREEDOM CONSOLE — 自由化</div>'
  +'<div class="row"><input type="text" id="fdPresetName" placeholder="名前" style="flex:1"><button type="button" id="fdPresetSave">保存</button></div>'
  +'<div id="fdPresetList"></div>'
  +'<div class="row"><label for="fdMorphSec">モーフィング</label><input type="number" id="fdMorphSec" min="1" max="60" step="1" value="5" style="width:52px"><span class="s">秒で選択したプリセットへ</span></div>'
- +'<div class="s">プリセット名をクリック=即適用、M=モーフィング、×=削除。数字キー 1〜9 でも適用。</div></div>'
+ +'<div class="s">プリセット名をクリック=即適用、M=モーフィング、×=削除。数字キー 1〜9 でも適用。</div>'
+ +'<div class="row"><button type="button" id="fdExport">設定を書き出し</button><button type="button" id="fdImport">読み込み</button><input type="file" id="fdImportFile" accept="application/json" style="display:none"></div></div>'
  +'<div class="sec"><b>Studio連携・追加ターゲット</b>'
  +'<label class="chk"><input type="checkbox" id="fdM3Enable"> 拍パルスの追加ターゲット 有効</label>'
  +'<label class="chk"><input type="checkbox" id="fdM3Turb"> 乱流</label>'
@@ -1229,7 +1230,29 @@ document.addEventListener('keydown',function(ev){
     if(nm){ cancelMorph(); applySnap(S.presets[nm]); } }
 });
 buildPins(); buildPresetList();
-window.__studioFreedomLeary={version:'PhaseM-1',
+/* ── 設定の書き出し/読み込み (Phase P) ── */
+function exportData(){ return JSON.stringify({app:'varelser-freedom-settings',target:'leary',version:'PhaseP-2',settings:S},null,1); }
+function importData(str){ try{ var o=JSON.parse(str);
+  if(!o||o.target!=='leary'||!o.settings||typeof o.settings!=='object')return false;
+  if(typeof o.settings.extRange==='boolean')S.extRange=o.settings.extRange;
+  if(Array.isArray(o.settings.pins))S.pins=o.settings.pins;
+  if(o.settings.presets&&typeof o.settings.presets==='object')S.presets=o.settings.presets;
+  if(o.settings.m3&&typeof o.settings.m3==='object')S.m3=o.settings.m3;
+  save(); setTimeout(function(){ location.reload(); },250); return true;
+ }catch(e){ return false; } }
+panel.querySelector('#fdExport').addEventListener('click',function(){
+  var blob=new Blob([exportData()],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='leary-freedom-settings.json'; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400); });
+panel.querySelector('#fdImport').addEventListener('click',function(){ panel.querySelector('#fdImportFile').click(); });
+panel.querySelector('#fdImportFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){ var ok=importData(String(rd.result||''));
+    if(!ok)alert('読み込めませんでした（Leary の設定ファイルではありません）'); };
+  rd.readAsText(f); this.value=''; });
+window.__studioFreedomLeary={version:'PhaseP-2',
+  exportData:exportData, importData:importData,
   settings:function(){ return JSON.parse(JSON.stringify(S)); },
   savePreset:function(name){ S.presets[name]=snapshot(); save(); buildPresetList(); },
   applyPreset:function(name){ cancelMorph(); applySnap(S.presets[name]); },
@@ -1336,12 +1359,24 @@ function tick(){
   applyOpen();
 }
 document.addEventListener('keydown', function(ev){
-  if (ev.key === 'Escape' && state.open) { state.open = null; save(); applyOpen(); }
+  if (ev.key === 'Escape' && state.open) { state.open = null; save(); applyOpen(); return; }
+  if (ev.altKey && /^[1-9]$/.test(ev.key)) {
+    var avail = CFG.tabs.filter(function(t){ return panelAvail(t); });
+    var t = avail[parseInt(ev.key, 10) - 1];
+    if (t) { ev.preventDefault(); toggle(t.key); }
+  }
 });
+document.addEventListener('pointerdown', function(ev){
+  if (!state.open) return;
+  var w = wraps[state.open];
+  if (w && w.contains(ev.target)) return;
+  if (rail && rail.contains(ev.target)) return;
+  state.open = null; save(); applyOpen();
+}, true);
 function boot(){ tick(); setInterval(tick, 700); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(boot, 300); });
 else setTimeout(boot, 300);
-window.__studioDock = { version: 'PhaseO-1', app: CFG.app, open: function(){ return state.open; }, toggle: toggle };
+window.__studioDock = { version: 'PhaseO-2', app: CFG.app, open: function(){ return state.open; }, toggle: toggle };
 })();
 
 </script>

@@ -1382,6 +1382,7 @@ panel.innerHTML='<div class="t">FREEDOM CONSOLE — Yayoi</div>'
  +'<div class="s">現在の設定一式 (yayoi-settings-v2) を名前付きで保存します。適用すると設定を書き戻して再読込します。</div>'
  +'<div class="row"><input type="text" id="fdPresetName-yayoi" placeholder="名前"><button type="button" id="fdPresetSave-yayoi">保存</button></div>'
  +'<div id="fdPresetList-yayoi"></div>'
+ +'<div class="row"><button type="button" id="fdExport-yayoi">設定を書き出し</button><button type="button" id="fdImport-yayoi">読み込み</button><input type="file" id="fdImportFile-yayoi" accept="application/json" style="display:none"></div>'
  +'<div class="s" id="fdState-yayoi"></div></div>'
  +'<div class="sec"><b>ショートカット</b><div class="keys">1〜9=プリセット適用（再読込） / F=このパネルの表示切替</div></div>';
 document.body.appendChild(panel);
@@ -1417,7 +1418,26 @@ document.addEventListener('keydown',function(ev){
     if(nm)applyPreset(nm); }
 });
 buildList(); state();
-window.__studioFreedom={version:'PhaseN-1-yayoi',app:'yayoi',
+/* ── 設定の書き出し/読み込み (Phase P) ── */
+function exportData(){ return JSON.stringify({app:'varelser-freedom-settings',target:'yayoi',version:'PhaseP-2',settings:S},null,1); }
+function importData(str){ try{ var o=JSON.parse(str);
+  if(!o||o.target!=='yayoi'||!o.settings||typeof o.settings!=='object')return false;
+  if(o.settings.presets&&typeof o.settings.presets==='object')S.presets=o.settings.presets;
+  save(); setTimeout(function(){ location.reload(); },250); return true;
+ }catch(e){ return false; } }
+$('fdExport').addEventListener('click',function(){
+  var blob=new Blob([exportData()],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='yayoi-freedom-settings.json'; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400); });
+$('fdImport').addEventListener('click',function(){ $('fdImportFile').click(); });
+$('fdImportFile').addEventListener('change',function(){ var f=this.files&&this.files[0]; if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){ var ok=importData(String(rd.result||''));
+    if(!ok)alert('読み込めませんでした（Yayoi の設定ファイルではありません）'); };
+  rd.readAsText(f); this.value=''; });
+window.__studioFreedom={version:'PhaseP-2-yayoi',app:'yayoi',
+  exportData:exportData, importData:importData,
   settings:function(){ return JSON.parse(JSON.stringify(S)); },
   savePreset:function(name){ var o=readObj(); if(o){ S.presets[name]=o; save(); buildList(); } },
   applyPreset:applyPreset,
@@ -1521,12 +1541,24 @@ function tick(){
   applyOpen();
 }
 document.addEventListener('keydown', function(ev){
-  if (ev.key === 'Escape' && state.open) { state.open = null; save(); applyOpen(); }
+  if (ev.key === 'Escape' && state.open) { state.open = null; save(); applyOpen(); return; }
+  if (ev.altKey && /^[1-9]$/.test(ev.key)) {
+    var avail = CFG.tabs.filter(function(t){ return panelAvail(t); });
+    var t = avail[parseInt(ev.key, 10) - 1];
+    if (t) { ev.preventDefault(); toggle(t.key); }
+  }
 });
+document.addEventListener('pointerdown', function(ev){
+  if (!state.open) return;
+  var w = wraps[state.open];
+  if (w && w.contains(ev.target)) return;
+  if (rail && rail.contains(ev.target)) return;
+  state.open = null; save(); applyOpen();
+}, true);
 function boot(){ tick(); setInterval(tick, 700); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(boot, 300); });
 else setTimeout(boot, 300);
-window.__studioDock = { version: 'PhaseO-1', app: CFG.app, open: function(){ return state.open; }, toggle: toggle };
+window.__studioDock = { version: 'PhaseO-2', app: CFG.app, open: function(){ return state.open; }, toggle: toggle };
 })();
 
 </script>
