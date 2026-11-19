@@ -695,6 +695,54 @@
   },
   {
     "authors": [
+      "Xirui Jiang",
+      "Yuxi Chen",
+      "Rui Yang",
+      "Feng Luo",
+      "Pengcheng Wang",
+      "Bingxuan Li",
+      "Zihao Zhao",
+      "Yushan Li",
+      "Han Wang",
+      "Manling Li",
+      "Yang Zhang",
+      "Shiyu Chang",
+      "Tong Zhang",
+      "Huan Zhang"
+    ],
+    "categories": [
+      "cs.CV"
+    ],
+    "field": "cs.CV",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-18T00:00:00Z",
+    "source": "Hugging Face Papers",
+    "summaryHtml": "ゲームは視覚エージェントの優れた実験場だが、知覚、長期計画、精密な制御が求められる一方で、人間のプレイ収集は高コストで、プレイ動画からは行動情報が欠落する。既存のデータセットは対象ゲームが限られ、明示的な課題や検証可能な成果もないことが多い。本研究は、ゲーム環境とプレイヤーを共に進化させ、多様で検証可能な遊戯経験を大規模に集めるGame2Playerを提案する。<br><br>Game2Playerのループでは、Builderエージェントが既存のウェブゲームを改変して内部状態を露出させ、状態ベースの進捗指標と成功判定を持つ課題を定義する。コーディングプレイヤーとVLMプレイヤーが課題に挑み、問題をBuilderへ報告して修復するため、プレイ自体が環境の検証と訓練データの収集を兼ねる。こうして568の検証済みウェブゲームと3,436の課題、1.57万の軌跡（307時間のプレイ）を収集し、50ゲームをベンチマークPlayerBenchとして分離した。<br><br>収集した経験を訓練データとして評価するため、進捗に寄与するステップを重くする進捗重み付きSFTでVLMエージェントを訓練した。Game2Player-9BはPlayerBenchの進捗率を14.3%から31.2%へ、外部ベンチマークGameWorldでは30.0%から53.1%へ高めた。既存のゲーム世界を構築・検証・学習することで、視覚エージェントの経験を拡張する道筋を示す。出典： Hugging Face Papers",
+    "timestamp": 1794960000000,
+    "title": "Game2Player: Scaling Gameplay Experience for Visual Agents through Environment-Player Co-Development",
+    "titleJa": "Game2Player――環境とプレイヤーの共進化で視覚エージェントの遊戯経験を大規模化する",
+    "url": "https://arxiv.org/abs/2611.24154"
+  },
+  {
+    "authors": [
+      "Lilly Pijnenburg Muller",
+      "Tim Stevens"
+    ],
+    "categories": [],
+    "field": "Security Dialogue",
+    "genre": "Ethics / Safety",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-18T00:00:00Z",
+    "source": "Crossref",
+    "summaryHtml": "現在のAIの発展は、有力な行為者の規範的な好みに沿った技術的未来を描く、強力な想像力（イマジナリー）に支えられている。本研究は、巨大テック企業の利益と技術解決主義に駆動されたAIの想像力が、英国におけるAIとサイバーセキュリティの想像力の形成にどう影響したかを、科学技術社会論の「社会技術的想像力」の概念とテクノポリティクスの視点から検討した。<br><br>英国政府の文書と、政府高官・非政府専門家・産業界の関係者37人へのインタビューをもとに、2022年から2024年にかけてAIとサイバーセキュリティの想像力がどのように生まれ、政府内の論争がどう交渉・解決され、英国の安全保障政治の中でどう安定化したかをたどった。企業の想像力と技術楽観主義に支配されたテクノポリティクスが、政府や社会が代替的な想像力を描き実行する能力を制約していることが示された。<br><br>AIの想像力は科学技術の目標と価値を推進する一方で、その形成と機能の力学を理解することが、安全保障の軌跡を理解するうえで重要であることを実証的に裏づけた。想像力が政策と実践にどう影響するかを追うことで、技術の未来をめぐる選択肢が誰の手にあるのかを問い直している。出典： Crossref",
+    "timestamp": 1794960000000,
+    "title": "Contesting sociotechnical imaginaries: the technopolitics of artificial intelligence/cybersecurity convergence",
+    "titleJa": "社会技術的想像力をめぐる争い――AIとサイバーセキュリティの融合のテクノポリティクス",
+    "url": "https://doi.org/10.1093/secdia/xhag013"
+  },
+  {
+    "authors": [
       "Giannis Daras",
       "Marios Papachristou",
       "Adam Klivans",
@@ -1670,45 +1718,5 @@
     "title": "Large-scale Neuron Community Discovery Reveals Neuron-Sparse Behaviors in Language Models",
     "titleJa": "大規模なニューロン群集の発見が明かす言語モデルの疎なふるまい",
     "url": "https://arxiv.org/abs/2611.23112"
-  },
-  {
-    "authors": [
-      "Khiem Le",
-      "Ting Hua",
-      "Nitesh V. Chawla"
-    ],
-    "categories": [
-      "cs.LG"
-    ],
-    "field": "cs.LG",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-17T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "GRPOは検証可能な報酬でLLMの推論能力を引き出す主流の強化学習手法だが、根本的な弱点がある。訓練問題が基盤モデルの能力を超えると生成される応答がすべて失敗し、報酬がゼロになって勾配信号が得られず、能力の拡張が止まる。ヒントを文脈に加えて問題を易しくする「ヒント付きGRPO」は勾配を生むが、推論時にはヒントが存在しないため訓練と推論の文脈が食い違い、性能向上が不安定になる。<br><br>本研究はヒントの役割を「問題を易しくすること」ではなく「モデルのふるまいを操ること」と捉え直し、ASH（Activation Steering for Hinting）を提案した。訓練ではヒント付きとヒントなしの両方の問題を提示し、ヒントによるふるまいの変化のうち問題に依存しない成分を捉える訓練可能なステアリングベクトルを最適化する。推論時にはこのベクトルをモデルの活性化に直接注入し、ヒントなしでヒント付きのふるまいを再現する。<br><br>Qwen3-1.7B/4B-BaseとLlama-3.2-1B/3B-Instructの4モデルで検証した結果、ASHは数学ベンチマーク（AMC、OlympiadBench、AIME24、AIME25）や分布外ベンチマーク（Minerva、GPQA-Diamond）のpass@kを一貫して改善した。Qwen3-1.7B-Baseと4B-Baseの平均pass@8はそれぞれ2.60ポイント、2.21ポイント向上した。出典：arXiv",
-    "timestamp": 1794873600000,
-    "title": "Get Hint-Augmented GRPO Done Right Through Activation Steering",
-    "titleJa": "ヒント付きGRPOを正しく行う――活性化ステアリングによる推論強化",
-    "url": "https://arxiv.org/abs/2611.23124"
-  },
-  {
-    "authors": [
-      "Robin Sharma",
-      "Parisa Suchdev"
-    ],
-    "categories": [
-      "cs.HC",
-      "cs.AI"
-    ],
-    "field": "cs.HC",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-17T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "ウェブ調査エージェントはネットで情報を集め、引用付きの報告書を書く。ユーザーが「成長を重視して」などの優先順位を示すことはできるが、何を基準に判断すべきかまでは伝わらないため、判断基準の選択はエージェントに委ねられる。本研究はOpenAIとAnthropicのモデルで構築された2つのエージェントが、示された優先順位をどう解釈するかを調べた。<br><br>36回の実行で、エージェントはMicrosoftとAlphabetを企業として比較した。「成長」または「レジリエンス（強靭性）」への注意を求める指示と、優先順位なしの条件を比べた。優先順位が与えられた24本の報告書のうち21本はその優先順位に焦点を当てたが、判断基準はばらついた。成長条件ではOpenAI側はリスクや予測可能性を考慮してMicrosoftを、Anthropic側は成長の速さで判断してAlphabetを高く評価した。レジリエンス条件では基準が一部異なりつつ、多くがMicrosoftをより強靭とした。<br><br>検索や出典の測度では、Anthropicエージェントの検索文言だけが条件で検出可能な違いを示した。評価は報告書の焦点や正確さだけでなく、その判断の背後にある基準を見るべきだという結論で、基準をユーザーが見て調整できるインターフェースが提案された。出典：arXiv",
-    "timestamp": 1794873600000,
-    "title": "How Web Research Agents Interpret User Priorities",
-    "titleJa": "ウェブ調査エージェントはユーザーの優先順位をどう解釈するか",
-    "url": "https://arxiv.org/abs/2611.22989"
   }
 ]
