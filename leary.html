@@ -1410,9 +1410,9 @@ else setTimeout(boot, 300);
   var raw=null; try{ raw=sessionStorage.getItem('varelser.vtHero'); }catch(e){}
   if(!raw) return;
   var d=null; try{ d=JSON.parse(raw); }catch(e){}
-  try{ sessionStorage.removeItem('varelser.vtHero'); }catch(e){}
   if(!d || !d.src || Date.now()-d.ts>20000) return;
   if(norm(d.app) !== norm(CFG.app)) return;
+  try{ sessionStorage.removeItem('varelser.vtHero'); }catch(e){}
   if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   function place(){
     if(!document.body || document.getElementById('vtHero')) return;

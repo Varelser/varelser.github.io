@@ -1679,8 +1679,13 @@ function applyTiles(){
     window.__hVtBusy = true;
     try {
       var __vt = document.startViewTransition(function(){ applyTilesRaw(); });
-      if (__vt && __vt.finished && __vt.finished.finally) __vt.finished.finally(function(){ window.__hVtBusy = false; });
-      else window.__hVtBusy = false;
+      var __noop = function(){};
+      var __done = function(){ window.__hVtBusy = false; };
+      if (__vt) {
+        if (__vt.ready && __vt.ready.then) __vt.ready.then(__noop, __noop);
+        if (__vt.updateCallbackDone && __vt.updateCallbackDone.then) __vt.updateCallbackDone.then(__noop, __noop);
+        if (__vt.finished && __vt.finished.then) __vt.finished.then(__done, __done); else __done();
+      } else window.__hVtBusy = false;
     } catch (e) { window.__hVtBusy = false; applyTilesRaw(); }
   } else applyTilesRaw();
 }

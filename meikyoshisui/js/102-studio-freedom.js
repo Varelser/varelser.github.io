@@ -165,16 +165,21 @@ function snapshot(){ var o={};
   Object.keys(REG).forEach(function(id){ var e=elOf(id); if(!e)return; var r=REG[id];
     o[id]=(r.kind==='chk')?e.checked:e.value; });
   return o; }
+var lastEditEl=null, lastEditTs=0;
+document.addEventListener('input',function(e){ lastEditEl=e.target; lastEditTs=Date.now(); },true);
 function applySnap(o){ if(!o)return;
   Object.keys(REG).forEach(function(id){ if(o[id]===undefined)return; var r=REG[id];
     if(r.kind==='chk')setCheck(id,!!o[id]);
     else if(r.kind==='num')setVal(id,parseFloat(o[id]));
     else setVal(id,o[id]); });
+  var tApply=Date.now();
   /* 一部のアプリは他項目の変更で全コントロールを内部状態から再同期するため、
      400ms 後にもう一度、目標値と違う数値項目だけを書き直す。 */
   setTimeout(function(){
     Object.keys(REG).forEach(function(id){ if(o[id]===undefined)return; var r=REG[id];
-      if(r.kind!=='num')return; var want=parseFloat(o[id]); var cur=getNum(id);
+      if(r.kind!=='num')return; var el=elOf(id);
+      if(el&&(el===document.activeElement||(el===lastEditEl&&lastEditTs>tApply)))return;
+      var want=parseFloat(o[id]); var cur=getNum(id);
       if(isFinite(want)&&cur!==null&&Math.abs(cur-want)>1e-9)setVal(id,want); });
   },400); }
 var morphTimer=null;
