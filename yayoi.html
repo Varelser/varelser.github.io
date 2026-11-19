@@ -1388,7 +1388,26 @@ panel.innerHTML='<div class="t">FREEDOM CONSOLE — Yayoi</div>'
 document.body.appendChild(panel);
 function $(id){ return panel.querySelector('#'+id+'-yayoi'); }
 function state(){ var o=readObj(); $('fdState').textContent=o?('現在の設定: '+Object.keys(o).length+' 項目を検出'):'設定オブジェクトが見つかりません'; }
-function applyPreset(name){ var p=S.presets[name]; if(!p)return;
+var MORPH_KEY='yayoi.studioFreedom.morph';
+function mainCanvas(){ var cvs=null,best=0; document.querySelectorAll('canvas').forEach(function(c){ var a=c.width*c.height; if(a>best){best=a;cvs=c;} }); return cvs; }
+function captureMorph(){ try{ var cvs=mainCanvas(); if(!cvs||!cvs.width)return;
+  var sc=Math.min(1,1600/cvs.width); var off=document.createElement('canvas');
+  off.width=Math.max(2,Math.round(cvs.width*sc)); off.height=Math.max(2,Math.round(cvs.height*sc));
+  off.getContext('2d').drawImage(cvs,0,0,off.width,off.height);
+  sessionStorage.setItem(MORPH_KEY, JSON.stringify({img:off.toDataURL('image/jpeg',0.85), ts:Date.now()})); }catch(e){} }
+var morphShown=false;
+function showMorph(){ if(morphShown)return; var raw=null; try{ raw=sessionStorage.getItem(MORPH_KEY); }catch(e){}
+  if(!raw)return; var d=null; try{ d=JSON.parse(raw); }catch(e){}
+  if(!d||!d.img||Date.now()-d.ts>20000){ try{ sessionStorage.removeItem(MORPH_KEY); }catch(e){} return; }
+  var cvs=mainCanvas(); if(!cvs)return; var r=cvs.getBoundingClientRect(); if(r.width<10)return;
+  morphShown=true; try{ sessionStorage.removeItem(MORPH_KEY); }catch(e){}
+  var img=document.createElement('img'); img.id='fdMorph-yayoi'; img.src=d.img; img.alt='';
+  img.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;z-index:99990;pointer-events:none;opacity:1;transition:opacity 1.4s linear;';
+  document.body.appendChild(img);
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ img.style.opacity='0'; }); });
+  setTimeout(function(){ img.remove(); },1800); }
+setTimeout(showMorph,1400); setTimeout(showMorph,4000);
+function applyPreset(name){ var p=S.presets[name]; if(!p)return; captureMorph();
   try{ localStorage.setItem(OBJKEY,JSON.stringify(p)); }catch(e){}
   $('fdState').textContent='「'+name+'」を適用しました。再読込します…';
   setTimeout(function(){ location.reload(); },350); }
@@ -1436,11 +1455,12 @@ $('fdImportFile').addEventListener('change',function(){ var f=this.files&&this.f
   rd.onload=function(){ var ok=importData(String(rd.result||''));
     if(!ok)alert('読み込めませんでした（Yayoi の設定ファイルではありません）'); };
   rd.readAsText(f); this.value=''; });
-window.__studioFreedom={version:'PhaseP-2-yayoi',app:'yayoi',
+window.__studioFreedom={version:'PhaseS-1-yayoi',app:'yayoi',
   exportData:exportData, importData:importData,
   settings:function(){ return JSON.parse(JSON.stringify(S)); },
   savePreset:function(name){ var o=readObj(); if(o){ S.presets[name]=o; save(); buildList(); } },
   applyPreset:applyPreset,
+  morphPending:function(){ try{ return !!sessionStorage.getItem(MORPH_KEY); }catch(e){ return false; } },
   hasSettingsObject:function(){ return !!readObj(); }};
 })();
 
