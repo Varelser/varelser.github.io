@@ -1241,13 +1241,14 @@ body.yayoi-fx-on .yayoi-canvas canvas:not(#yayoi-fx-canvas) { visibility: hidden
    Seed の変化 (__varelserLinkMasterHash の変化 / seed-sync 受信) を検知したら
    控えをキャンバスの上に重ねてフェードアウトさせる。残像の長さは Studio の
    sync-config amount (Yayoi宛) から決まる。本体コード・保存キーには触らない。
-   自分の Link が OFF の間は無効。 */
+   自分の Link が OFF の間は無効。
+   Phase U: 残像を疑似モーフィング化 (フェード＋scale 1→1.05＋blur 0→7px)。 */
 (function(){
 'use strict';
 var LSKEY='yayoi.varelserLink.v1', FRESH_MS=6000;
 var SNAPK='yayoi.studioEcho.snap', PENDK='yayoi.studioEcho.pending';
 var lastSeen=0, linked=false, enabled=true, durMul=1.0;
-var syncAmount=null, snapUrl=null, lastHash=null, triggers=0, fading=false;
+var syncAmount=null, snapUrl=null, lastHash=null, triggers=0, morphs=0, fading=false;
 function ownOn(){ try{ return localStorage.getItem(LSKEY)==='1'; }catch(e){ return false; } }
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
@@ -1265,9 +1266,11 @@ if(ch)ch.addEventListener('message',function(ev){
   }
   if(m.type==='seed-sync'){
     /* Yayoi 本体は seed-sync でページを再読込して Seed を適用するため、
-       残像のリクエストを localStorage に残し、再読込後に必ず表示する */
+       残像のリクエストを localStorage に残し、再読込後に必ず表示する。
+       Phase U: リロード前に最新フレームを取り直してモーフの起点にする */
     lsSet(PENDK,String(Date.now()));
-    if(linked)triggerEcho();
+    snapshot();
+    if(linked)triggerEcho('live');
   }
 });
 function mainCanvas(){
@@ -1287,7 +1290,7 @@ function snapshot(){
   }catch(e){}
 }
 function fadeSec(){ return (syncAmount!=null?(1.5+syncAmount*3.5):2.5)*durMul; }
-function triggerEcho(){
+function triggerEcho(src){
   if(!enabled||fading)return;
   if(!snapUrl)snapUrl=lsGet(SNAPK);
   if(!snapUrl)return;
@@ -1299,14 +1302,15 @@ function triggerEcho(){
   var sec=fadeSec();
   img.src=snapUrl;
   img.style.cssText='position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height
-    +'px;z-index:40;pointer-events:none;opacity:1;object-fit:contain';
-  fading=true; triggers++;
+    +'px;z-index:40;pointer-events:none;opacity:1;object-fit:contain;transform:scale(1);filter:blur(0px);transform-origin:center center';
+  fading=true; triggers++; morphs++;
   requestAnimationFrame(function(){ requestAnimationFrame(function(){
-    img.style.transition='opacity '+sec+'s linear'; img.style.opacity='0';
+    img.style.transition='opacity '+sec+'s ease-in-out, transform '+sec+'s ease-in-out, filter '+sec+'s ease-in-out';
+    img.style.opacity='0'; img.style.transform='scale(1.05)'; img.style.filter='blur(7px)';
   });});
-  setTimeout(function(){ img.style.transition=''; img.style.opacity='1'; img.removeAttribute('src'); fading=false; },(sec+0.3)*1000);
+  setTimeout(function(){ img.style.transition=''; img.style.opacity='1'; img.style.transform=''; img.style.filter=''; img.removeAttribute('src'); fading=false; },(sec+0.3)*1000);
   var s=document.getElementById('sxStatus-yayoi');
-  if(s)s.textContent='残像を表示しました ('+triggers+'回目、'+sec.toFixed(1)+'秒)';
+  if(s)s.textContent='モーフを表示しました ('+morphs+'回目、'+sec.toFixed(1)+'秒)';
 }
 /* ── UI ── */
 var st=document.createElement('style');
@@ -1318,7 +1322,7 @@ st.textContent='#sxBadge-yayoi{position:fixed;top:10px;right:10px;z-index:9990;d
 document.head.appendChild(st);
 var badge=document.createElement('div'); badge.id='sxBadge-yayoi'; badge.textContent='STUDIO LINKED';
 var panel=document.createElement('div'); panel.id='sxPanel-yayoi';
-panel.innerHTML='<div class="t">STUDIO ECHO — シード残像</div><div class="s" id="sxStatus-yayoi">Seed の変化を待っています</div>'
+panel.innerHTML='<div class="t">STUDIO ECHO — シード残像モーフ</div><div class="s" id="sxStatus-yayoi">Seed の変化を待っています</div>'
  +'<label><input type="checkbox" id="sxEnable-yayoi" checked> 残像有効</label>'
  +'<label>長さ <select id="sxDur-yayoi"><option value="0.6">短</option><option value="1" selected>中</option><option value="1.6">長</option></select></label>';
 document.body.appendChild(badge); document.body.appendChild(panel);
@@ -1337,18 +1341,17 @@ setInterval(function(){
   var pend=lsGet(PENDK);
   if(pend){
     lsSet(PENDK,'');
-    if(Date.now()-parseInt(pend,10)<12000)triggerEcho();
+    if(Date.now()-parseInt(pend,10)<12000)triggerEcho('pend');
   }
   var h=(typeof window.__varelserLinkMasterHash!=='undefined')?window.__varelserLinkMasterHash:null;
-  if(h!=null&&lastHash!=null&&h!==lastHash)triggerEcho();
+  if(h!=null&&lastHash!=null&&h!==lastHash)triggerEcho('live');
   if(h!=null)lastHash=h;
 },400);
 setInterval(function(){ if(linked&&!document.hidden)snapshot(); },2500);
-window.__studioEchoYayoi={version:'PhaseJ-1',
-  get linked(){return linked;}, get triggers(){return triggers;},
+window.__studioEchoYayoi={version:'PhaseU-2',
+  get linked(){return linked;}, get triggers(){return triggers;}, get morphs(){return morphs;},
   get hasSnap(){return !!snapUrl;}, get fadeSec(){return fadeSec();}};
 })();
-
 </script>
 <script id="studio-freedom-yayoi">
 /* ═══ FREEDOM CONSOLE for Yayoi (2026-11-19, Phase N) ═══
