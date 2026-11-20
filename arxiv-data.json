@@ -990,6 +990,73 @@
   },
   {
     "authors": [
+      "Guoxin Chen",
+      "Shuang Sun",
+      "Fanzhe Meng",
+      "Xinyu Tang",
+      "Ruihua Song",
+      "Wayne Xin Zhao"
+    ],
+    "categories": [
+      "daily-papers"
+    ],
+    "field": "daily-papers",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-19T00:00:00Z",
+    "source": "Hugging Face Papers",
+    "summaryHtml": "タスクの成功だけでは、ポストトレーニングで何を強化すべきかは決まらない。成功した教師の軌跡にも、根拠のない仮定や非生産的な繰り返し、表面的な検証が含まれうる。本研究は、自然言語で書かれた「スキル」を使って望ましくない習慣を抑え、十分に現れていない有効な行動を引き出すSkill-FT（スキル誘導ファインチューニング）を提案する。<br><br>AutoMasterは、LLMエージェントが軌跡の分析やスキルの設計、データ選択、ロールアウトと目標モデルの評価からのフィードバックを通じて、こうした介入を自律的に開発するシステムである。ターミナル操作、検索、ソフトウェア工学のタスクで、4Bと9Bの目標モデルを対象に検証した。教師やタスクプール、訓練データ量、SFTの方法を固定した条件で、従来のSFTと比べて平均1.42〜8.99ポイントの改善が得られた。<br><br>さらに、SFTの際にスキル指示を残しておくと、評価時には指示が無く、教師あり出力が同一でも、除去した場合より平均性能が高くなることも分かった。行動の形を整えることで、固定されたモデルをより良い教師にできるという知見である。出典：arXiv",
+    "timestamp": 1795046400000,
+    "title": "AutoMaster: Autonomous Post-Training by Making the Same Model a Better Teacher",
+    "titleJa": "AutoMaster――同じモデルをより良い教師にすることで自律的にポストトレーニングを行う",
+    "url": "https://arxiv.org/abs/2611.26510"
+  },
+  {
+    "authors": [
+      "Élodie Côté-Gauthier",
+      "Doina Precup",
+      "Isabeau Prémont-Schwarz"
+    ],
+    "categories": [
+      "cs.LG"
+    ],
+    "field": "cs.LG",
+    "genre": "Neuroscience",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-19T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "継続的強化学習では、タスクが変わっても適応しつつ、環境について学んだことを再利用しなければならない。後継特徴は環境の動態とタスク固有の報酬を分離するが、その有効性は基底特徴の選び方に依存する。本研究は、内嗅皮質のグリッド細胞が後継表現の固有ベクトルと同一視されるという知見を設計原理として採用した。<br><br>固定された参照方策の遷移行列の固有ベクトルから基底を構成する。この基底では、ある状態行動対の後継特徴は同じ対の基底特徴の線形結合となり、係数はθ_i = 1/(1−γλ_i)という閉形式で与えられる。長期リターンは即時報酬と同じ特徴から予測でき、後継特徴ネットワークやリプレイバッファは不要で、新しいタスクへの適応は報酬に対する線形回帰に帰着する。<br><br>一様ランダムウォークを参照方策とする2目標グリッドワールドでは、この方法で構築されたエージェントは目標が変わるたびにほぼ最大のリターンを維持した。参照方策に対する1ステップのポリシー改善に相当する貪欲行動で単一目標に到達できることも示された。出典：arXiv",
+    "timestamp": 1795046400000,
+    "title": "Grid Cells as Spectral Successor Features: A Reusable Basis for Continual Reinforcement Learning",
+    "titleJa": "グリッド細胞をスペクトル後継特徴として――継続的強化学習のための再利用可能な基盤",
+    "url": "https://arxiv.org/abs/2611.26504"
+  },
+  {
+    "authors": [
+      "Tuna Han Salih Meral",
+      "Kaan Oktay",
+      "Alec Helbling",
+      "Atakan Kara",
+      "Duen Horng Chau",
+      "Pinar Yanardag"
+    ],
+    "categories": [
+      "cs.CV",
+      "cs.LG"
+    ],
+    "field": "cs.CV",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-19T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "強化学習によるポストトレーニングは、拡散トランスフォーマーの画質やテキスト描画、構図の正確さを大きく高める。テキスト描画や複数物体の構図といった能力はプロンプトに依存するため、その改善には複雑な入力依存の変換の学習が必要だと考えるのが自然である。本研究は、そうした利得のどれだけが入力に依存しないシフトで説明できるかを切り分けた。<br><br>凍結したベースモデルのブロック出力に加える固定のステアリングベクトルという、意図的に単純なパラメータ化でRL調整済みモデルを調べた。SD3.5-MではこのベクトルはRL調整済みLoRAの65分の1のパラメータ数（0.29M対18.8M）しかない。報酬を使わず、公開されたRL調整済みチェックポイントの速度予測に合わせる形で適合させた。<br><br>ベクトルはプロンプトやトークン、サンプリングシードによらず同一だが、6つのRL調整済み画像モデルで報酬利得の90.0〜96.3%、2つの動画モデルで89.8%と111.9%を再現した。ゼロからオンラインRLで訓練すると、テキスト描画や人間の好みでは重みベースのRLを上回る。定数シフトだけでポリシー勾配RLの利得の大半が説明できるという結論である。出典：arXiv",
+    "timestamp": 1795046400000,
+    "title": "RL Post-Training in Diffusion Transformers Is Activation Steering",
+    "titleJa": "拡散トランスフォーマーにおけるRLポストトレーニングは活性化ステアリングである",
+    "url": "https://arxiv.org/abs/2611.26627"
+  },
+  {
+    "authors": [
       "Yan Qiu",
       "Yuanyuan Li"
     ],
@@ -1654,77 +1721,5 @@
     "title": "Agentic Harness Engineering Beta: Requirement-Centered Evolution of Agent Harnesses",
     "titleJa": "エージェンティック・ハーネス・エンジニアリングβ――要求中心のエージェントハーネス進化",
     "url": "https://arxiv.org/abs/2611.24924"
-  },
-  {
-    "authors": [
-      "Sarah H. Cen",
-      "Lindsey A. Gailmard",
-      "Joohan Kim",
-      "Rishi Bommasani",
-      "Daniel E. Ho",
-      "Percy Liang"
-    ],
-    "categories": [
-      "cs.CY",
-      "cs.AI"
-    ],
-    "field": "cs.CY",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-18T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "AIシステムはモデル、データ、計算資源、資本、人材などを提供する多くの組織の上に築かれる。AIスタックの層構造は比較的よく理解されているが、層をまたぐアクターと構成要素の関係はほとんど文書化されてこなかった。本研究はAIの開発と展開を担う組織の複雑なネットワーク、すなわち「組織的AIサプライチェーン」に焦点を当てた。<br><br>著者らは集中、権力、チョークポイント、連鎖的障害、責任の分散、リスクといった懸念を動機として示したうえで、サプライチェーンを地図化するパイプラインを記述した。その成果は、日付・説明・種別・タグなどを注釈した、AIエコシステムのアクターと関係の大規模な多層データセットである。<br><br>このデータにより、モデル・データ・チップ・インフラ・資本・人材が組織間をどう流れるかを体系的に把握でき、最も中心的なアクターの特定、ネットワーク集中度の分析、コミュニティとチョークポイントの同定といった例示的な分析が可能になった。公開文書の欠落によりデータセットは必然的に不完全であることも著者らは認めている。出典：arXiv",
-    "timestamp": 1794960000000,
-    "title": "Mapping the AI Supply Chain: Dependencies, Vulnerabilities, and Market Concentration in the AI Ecosystem",
-    "titleJa": "AIサプライチェーンの地図化――AIエコシステムにおける依存関係・脆弱性・市場集中",
-    "url": "https://arxiv.org/abs/2611.24927"
-  },
-  {
-    "authors": [
-      "Xirui Jiang",
-      "Yuxi Chen",
-      "Rui Yang",
-      "Feng Luo",
-      "Pengcheng Wang",
-      "Bingxuan Li",
-      "Zihao Zhao",
-      "Yushan Li",
-      "Han Wang",
-      "Manling Li",
-      "Yang Zhang",
-      "Shiyu Chang",
-      "Tong Zhang",
-      "Huan Zhang"
-    ],
-    "categories": [
-      "cs.CV"
-    ],
-    "field": "cs.CV",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-18T00:00:00Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "ゲームは視覚エージェントの優れた実験場だが、知覚、長期計画、精密な制御が求められる一方で、人間のプレイ収集は高コストで、プレイ動画からは行動情報が欠落する。既存のデータセットは対象ゲームが限られ、明示的な課題や検証可能な成果もないことが多い。本研究は、ゲーム環境とプレイヤーを共に進化させ、多様で検証可能な遊戯経験を大規模に集めるGame2Playerを提案する。<br><br>Game2Playerのループでは、Builderエージェントが既存のウェブゲームを改変して内部状態を露出させ、状態ベースの進捗指標と成功判定を持つ課題を定義する。コーディングプレイヤーとVLMプレイヤーが課題に挑み、問題をBuilderへ報告して修復するため、プレイ自体が環境の検証と訓練データの収集を兼ねる。こうして568の検証済みウェブゲームと3,436の課題、1.57万の軌跡（307時間のプレイ）を収集し、50ゲームをベンチマークPlayerBenchとして分離した。<br><br>収集した経験を訓練データとして評価するため、進捗に寄与するステップを重くする進捗重み付きSFTでVLMエージェントを訓練した。Game2Player-9BはPlayerBenchの進捗率を14.3%から31.2%へ、外部ベンチマークGameWorldでは30.0%から53.1%へ高めた。既存のゲーム世界を構築・検証・学習することで、視覚エージェントの経験を拡張する道筋を示す。出典： Hugging Face Papers",
-    "timestamp": 1794960000000,
-    "title": "Game2Player: Scaling Gameplay Experience for Visual Agents through Environment-Player Co-Development",
-    "titleJa": "Game2Player――環境とプレイヤーの共進化で視覚エージェントの遊戯経験を大規模化する",
-    "url": "https://arxiv.org/abs/2611.24154"
-  },
-  {
-    "authors": [
-      "Lilly Pijnenburg Muller",
-      "Tim Stevens"
-    ],
-    "categories": [],
-    "field": "Security Dialogue",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-18T00:00:00Z",
-    "source": "Crossref",
-    "summaryHtml": "現在のAIの発展は、有力な行為者の規範的な好みに沿った技術的未来を描く、強力な想像力（イマジナリー）に支えられている。本研究は、巨大テック企業の利益と技術解決主義に駆動されたAIの想像力が、英国におけるAIとサイバーセキュリティの想像力の形成にどう影響したかを、科学技術社会論の「社会技術的想像力」の概念とテクノポリティクスの視点から検討した。<br><br>英国政府の文書と、政府高官・非政府専門家・産業界の関係者37人へのインタビューをもとに、2022年から2024年にかけてAIとサイバーセキュリティの想像力がどのように生まれ、政府内の論争がどう交渉・解決され、英国の安全保障政治の中でどう安定化したかをたどった。企業の想像力と技術楽観主義に支配されたテクノポリティクスが、政府や社会が代替的な想像力を描き実行する能力を制約していることが示された。<br><br>AIの想像力は科学技術の目標と価値を推進する一方で、その形成と機能の力学を理解することが、安全保障の軌跡を理解するうえで重要であることを実証的に裏づけた。想像力が政策と実践にどう影響するかを追うことで、技術の未来をめぐる選択肢が誰の手にあるのかを問い直している。出典： Crossref",
-    "timestamp": 1794960000000,
-    "title": "Contesting sociotechnical imaginaries: the technopolitics of artificial intelligence/cybersecurity convergence",
-    "titleJa": "社会技術的想像力をめぐる争い――AIとサイバーセキュリティの融合のテクノポリティクス",
-    "url": "https://doi.org/10.1093/secdia/xhag013"
   }
 ]
