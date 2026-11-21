@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Japan Politics (国内政治) candidate fetcher (fixed script, #9 lane).
+"""Japan Politics (国内政治) candidate fetcher — dry-run preparation by #9.
 
 Fetches RSS/Atom feeds verified or probed for the domestic-politics lane,
 parses with the stdlib only, and writes candidates in the established
@@ -59,6 +59,23 @@ def parse_dt(raw):
         return None
 
 
+def page_description(url):
+    """Fallback for feeds whose items carry no description (e.g. Jiji
+    ranking RDF): read the article page's meta description. Summarizing
+    from a bare title makes the summarizer invent details, so an item
+    must never reach the summarizer without body text."""
+    try:
+        req = urllib.request.Request(url, headers=UA)
+        with urllib.request.build_opener().open(req, timeout=30) as resp:
+            page = resp.read().decode("utf-8", errors="replace")
+        m = re.search(r'<meta[^>]+name="description"[^>]+content="([^"]+)"', page)
+        if not m:
+            m = re.search(r'<meta[^>]+content="([^"]+)"[^>]+name="description"', page)
+        return clean(m.group(1))[:1200] if m else ""
+    except Exception:
+        return ""
+
+
 def fetch_one(src):
     name, url, lang = src
     req = urllib.request.Request(url, headers=UA)
@@ -83,12 +100,15 @@ def fetch_one(src):
         dt = parse_dt(fields.get("pubDate") or fields.get("published") or fields.get("updated") or fields.get("date"))
         if not title or not link.startswith("http"):
             continue
+        desc = clean(fields.get("description") or fields.get("summary") or "")[:1200]
+        if not desc:
+            desc = page_description(link)
         items.append({
             "sourceName": name,
             "originalTitle": title,
             "url": link,
             "publishedAt": dt.isoformat().replace("+00:00", "Z") if dt else "",
-            "description": clean(fields.get("description") or fields.get("summary") or "")[:1200],
+            "description": desc,
             "lang": lang,
             "region": "国内",
         })
