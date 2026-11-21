@@ -29,7 +29,22 @@ from email.utils import parsedate_to_datetime
 SOURCES = [
     ("Yahoo!ニュース 国内", "https://news.yahoo.co.jp/rss/categories/domestic.xml", "ja"),
     ("時事通信", "https://www.jiji.com/rss/ranking.rdf", "ja"),
+    ("朝日新聞 政治", "https://www.asahi.com/rss/asahi/politics.rdf", "ja"),
     ("Japan Times", "https://www.japantimes.co.jp/feed/", "en"),
+    ("東洋経済オンライン", "https://toyokeizai.net/list/feed/rss", "ja"),
+    ("現代ビジネス", "https://gendai.media/list/feed/rss", "ja"),
+    ("PRESIDENT Online", "https://president.jp/list/rss/", "ja"),
+    ("文春オンライン", "https://bunshun.jp/list/feed/rss", "ja"),
+    ("Wedge", "https://wedge.ismedia.jp/list/feed/rss", "ja"),
+    ("Business Insider Japan", "https://www.businessinsider.jp/feed/index.xml", "ja"),
+    # Google News aggregations: the only working route in this environment
+    # to publishers whose own RSS is blocked (NHK, 読売, 日経, 産経, 東京新聞…).
+    # Item sourceName comes from each item's <source> element; the URL stays
+    # a news.google.com redirect link (it does not resolve server-side).
+    ("Google News 国会", "https://news.google.com/rss/search?q=%E5%9B%BD%E4%BC%9A&hl=ja&gl=JP&ceid=JP:ja", "ja"),
+    ("Google News 内閣", "https://news.google.com/rss/search?q=%E5%86%85%E9%96%A3%20%E9%A6%96%E7%9B%B8&hl=ja&gl=JP&ceid=JP:ja", "ja"),
+    ("Google News 選挙", "https://news.google.com/rss/search?q=%E9%81%B8%E6%8C%99%20%E6%94%BF%E5%85%9A&hl=ja&gl=JP&ceid=JP:ja", "ja"),
+    ("Google News 自治体", "https://news.google.com/rss/search?q=%E7%9F%A5%E4%BA%8B%20%E5%B8%82%E9%95%B7%E9%81%B8&hl=ja&gl=JP&ceid=JP:ja", "ja"),
     ("NHK 政治", "https://www.nhk.or.jp/rss/news/cat4.xml", "ja"),
 ]
 
@@ -95,7 +110,10 @@ def fetch_one(src):
                 fields["link"] = child.get("href")
             else:
                 fields[tag] = child.text or ""
+        item_source = fields.get("source") or name
         title = clean(fields.get("title", ""))
+        if fields.get("source") and title.endswith(" - " + fields["source"]):
+            title = title[: -len(" - " + fields["source"])].strip()
         link = (fields.get("link") or fields.get("guid") or "").strip()
         dt = parse_dt(fields.get("pubDate") or fields.get("published") or fields.get("updated") or fields.get("date"))
         if not title or not link.startswith("http"):
@@ -104,7 +122,7 @@ def fetch_one(src):
         if not desc:
             desc = page_description(link)
         items.append({
-            "sourceName": name,
+            "sourceName": item_source,
             "originalTitle": title,
             "url": link,
             "publishedAt": dt.isoformat().replace("+00:00", "Z") if dt else "",
@@ -135,12 +153,15 @@ def main():
                 failed.append({"source": name, "error": str(e)[:200]})
                 per_source[name] = {"fetched": 0, "within_days": 0}
 
-    seen, deduped = set(), []
+    seen, seen_titles, deduped = set(), set(), []
     for it in sorted(all_items, key=lambda x: x["publishedAt"], reverse=True):
         key = it["url"]
-        if key in seen:
+        ntitle = re.sub(r"[^\w]", "", it["originalTitle"].lower())
+        if key in seen or (ntitle and ntitle in seen_titles):
             continue
         seen.add(key)
+        if ntitle:
+            seen_titles.add(ntitle)
         deduped.append(it)
 
     with open(args.out, "w", encoding="utf-8") as f:
