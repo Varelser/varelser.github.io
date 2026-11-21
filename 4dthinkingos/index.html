@@ -62,11 +62,11 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
 .app-title{position:absolute;left:50%;transform:translateX(-50%);font-size:1rem;line-height:1;letter-spacing:.2em;font-weight:300;color:rgba(255,255,255,.78);margin:0;white-space:nowrap;font-family:inherit;}
 @media (max-width:640px){.app-header{padding:0 10px;}.app-brand img{height:20px;}.app-brand .app-emblem{width:24px;height:24px;}.app-title{font-size:.8rem;}}
 </style>
-    <script type="module" crossorigin src="/4dthinkingos/assets/index-CcYYrmYB.js"></script>
+    <script type="module" crossorigin src="/4dthinkingos/assets/index-CIbf3gvS.js"></script>
     <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/vendor-runtime-DYMO2raA.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-core-CogH23b9.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-panels-CaU1cRXb.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-spatial-D8xhPJ2R.js">
+    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-core-Bkf-VaW9.js">
+    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-panels-BItEqiBx.js">
+    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-spatial-hQ5V3j84.js">
     <link rel="stylesheet" crossorigin href="/4dthinkingos/assets/index-Cynkyw0p.css">
   <link rel="manifest" href="/4dthinkingos/manifest.webmanifest"></head>
   <body>
@@ -92,14 +92,16 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
     if (document.startViewTransition && !reduceMotion.matches) {
       var lastMainMutation = 0;
       var mo = new MutationObserver(function(){ lastMainMutation = performance.now(); });
-      var moTarget = null;
-      function armObserver(){
-        if (moTarget && document.contains(moTarget)) return;
+      /* 監視は常駐させない。かつては (1) main の出現を待つ documentElement
+         全体の監視と (2) main 全体の監視が常時走っており、アプリのあらゆる
+         DOM 変更でコールバックが発火し続けていた（性能監査 Major）。
+         main の変更時刻が必要なのは View Transition を始めるクリックの
+         直後だけなので、対象クリックの間だけ main を監視し、遷移の終了で
+         解除する（イベント駆動化）。main が未出現の間は何も監視しない。 */
+      function armMainObserver(){
         var main = document.querySelector('#root > main');
-        if (main) { moTarget = main; mo.observe(main, {childList:true, subtree:true}); }
+        if (main) mo.observe(main, {childList:true, subtree:true});
       }
-      armObserver();
-      new MutationObserver(armObserver).observe(document.documentElement, {childList:true, subtree:true});
 
       var pending = null;
       document.addEventListener('click', function(ev){
@@ -113,6 +115,9 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
           var label = head ? (head.textContent || '') : '';
           if (!/トピック|レイアウト・表示|画面分割/.test(label)) return;
           var clickAt = performance.now();
+          lastMainMutation = 0;
+          mo.disconnect();
+          armMainObserver();
           var vt = document.startViewTransition(function(){
             return new Promise(function(resolve){
               if (lastMainMutation > clickAt) { resolve(); return; }
@@ -134,6 +139,7 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
           document.documentElement.classList.add('tw-vt-active');
           var clear = function(){
             if (pending === vt) pending = null;
+            mo.disconnect();
             document.documentElement.classList.remove('tw-vt-active');
           };
           vt.finished.then(clear, clear);
