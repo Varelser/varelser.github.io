@@ -365,6 +365,27 @@
   },
   {
     "authors": [
+      "Yunqi Zhao",
+      "Run Peng",
+      "Ze Dong",
+      "Ryan Lu",
+      "Yinpei Dai",
+      "Joyce Chai"
+    ],
+    "categories": [],
+    "field": "cs.AI",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-19T17:45:07Z",
+    "source": "arXiv",
+    "summaryHtml": "リアルタイムのタスク誘導は本質的に柔軟である。エージェントがユーザーを作業へ導くとき、複数の応答やタイミングが適切であり、時には黙っていることが最善になる場合もある。ところが既存のベンチマークは、合成された対話を何を言うべきか・いつ言うべきかの固定された目標として扱い、この柔軟さを見落としてきた。<br><br>FLUIDは、マルチモーダルなタスク誘導における柔軟な相互作用をモデル化・評価・実現する統一フレームワークである。実際の人間同士の誘導記録（WTaGとHoloAssist）を用い、介入をその根拠・必要性・タイミングの柔軟性に結びつける。この表現を、柔軟な誘導の評価とリアルタイムエージェントの構築の両方に用いた。エージェントは応答の正しさ・介入の精度・タイミングのよさ・遅延の総合バランスで、評価したシステムの中で最も優れていた。一方で、発話の重なりを避ける点にはまだ改善の余地があるという。<br><br>FLUIDは状況に応じたタスク誘導を、硬直した参照マッチングから、より自然で適応的な人間とAIの相互作用へと進めるものだ。出典：arXiv",
+    "timestamp": 1795110307000,
+    "title": "FLUID: Flexible, Evidence-Grounded Situated Task Guidance",
+    "titleJa": "「FLUID」――状況に応じた柔軟なタスク誘導――黙るべき時を知るエージェント",
+    "url": "https://arxiv.org/abs/2611.26491"
+  },
+  {
+    "authors": [
       "Leah von der Heyde",
       "Florian Keusch",
       "Trent D Buskirk",
@@ -415,6 +436,46 @@
     "title": "Beam Model Technical Report",
     "titleJa": "「Beam」――コーディング・推論・エージェント特化の5010億パラメータMoEモデル",
     "url": "https://arxiv.org/abs/2611.26358"
+  },
+  {
+    "authors": [
+      "Yu Zhao",
+      "Jiaxin Zhang",
+      "Rohit Saxena",
+      "Fazl Barez",
+      "Pasquale Minervini",
+      "Yiwen Guo"
+    ],
+    "categories": [],
+    "field": "cs.CV",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-19T14:43:17Z",
+    "source": "arXiv",
+    "summaryHtml": "画像で考える（TwI）は、視覚言語モデルが細部を切り取ってズームすることで知覚のボトルネックを越え、精度と解釈可能な領域接地推論の両方を約束する手法である。しかし精度の向上は、ツール使用の誠実さを保証しない。モデルはズームした領域に実際には頼らずにツールを呼ぶことが多く、ツール支援推論の信頼性を損なっていた。<br><br>原因は学習データにある。ズームなしで答えられる問いでは、モデルは返された証拠を無視しても正解でき、学習が進むほどこの問題は悪化する。そこで本研究は、モデルの能力の変化に合わせて学習データを適応させ、ズームした証拠が正解に今も役立つ問いで学習する。小さな物体を特定して細部の検証可能な問いを作るデータ合成パイプラインと、ズームが不要なときはツールなしの回答を好む適応的報酬を組み合わせた。<br><br>その結果、推論の誠実さは大幅に向上し、視覚探索ベンチマークで最先端の性能を示した。V*で11.6%、HR-Bench 4Kで7.9%、8Kで9.4%の向上である。マルチモーダル幻覚ベンチマークでも既存のTwIベースラインを上回った。誠実さの向上は精度を犠牲にせず、推論過程を直接監督しなくても正しい学習データから両立できることが示された。出典：arXiv",
+    "timestamp": 1795099397000,
+    "title": "Learning to Think with Images Faithfully via Adaptive Data Selection",
+    "titleJa": "画像で考える推論の「誠実さ」を取り戻す――ズームの証拠を本当に使う学習法",
+    "url": "https://arxiv.org/abs/2611.26199"
+  },
+  {
+    "authors": [
+      "Edgar A. Duéñez-Guzmán",
+      "Eduardo Dueñez",
+      "Edgar Said Hernandez Sanchez",
+      "Suzanne Sadedin"
+    ],
+    "categories": [],
+    "field": "cs.AI",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-19T10:48:00Z",
+    "source": "arXiv",
+    "summaryHtml": "生成モデルは多くの候補解を出すが、それらを順位づける手がかりを自らは持たない。対策の一つは「検証可能な成果物」を求めること、つまり証拠に対して実行できるプログラムを出させることだ。ただ実行可能な検証を要求すると、解の質と計算予算の両方にコストがかかるのではないかと懸念されてきた。本研究はARC-AGI-2の120課題でこの2つのコストを測った。<br><br>検証可能な成果物を要求すると、LLMのスコアは120課題中93から68へ（77%から57%へ）下がった。失われた25課題のうち21課題は、どのプログラム生成設定でも、サンプリングでも探索でも、どの予算でも到達できなかった。ただし回答のみの手法だけが解けた28課題のうち27課題では、プログラム側も実演をすべて再現するプログラムを持ちながらテストで失敗していた。ボトルネックは説明を見つけることではなく、汎化する説明を得ることにある。<br><br>既にサンプルされた2つのプログラムに対する短い進化的探索は、追加のモデルコストなしに、best-of-2のサンプリング済みコードを9.2課題上回った。プログラムは学習例に対して検証できるため、課題が説明できた時点で早期終了でき、同じ停止規則の下でbest-of-nサンプリングは予算の最大38%、進化アームは最大49%を節約した。同じ手法を量子誤り訂正のデコーダ合成にも適用し、解釈可能なデコーダが得られた。出典：arXiv",
+    "timestamp": 1795085280000,
+    "title": "The Price of an Explanation: What Demanding Verifiable Artifacts Costs, and What It Buys Back",
+    "titleJa": "説明を求めると何を失い、何を取り戻せるか――検証可能な成果物の代償",
+    "url": "https://arxiv.org/abs/2611.25896"
   },
   {
     "authors": [
@@ -1627,71 +1688,5 @@
     "title": "Phantom Success, Silent Failure: Auditing the Success Checkers of Simulated Manipulation Benchmarks",
     "titleJa": "見かけの成功、沈黙の失敗――模倣操作ベンチマークの成功判定を監査する",
     "url": "https://arxiv.org/abs/2611.25179"
-  },
-  {
-    "authors": [
-      "Yan Qiu",
-      "Yuanyuan Li"
-    ],
-    "categories": [
-      "cs.CL"
-    ],
-    "field": "cs.CL",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-18T18:56:12Z",
-    "source": "arXiv",
-    "summaryHtml": "ジェイルブレイクや有害なプロンプトは、大規模言語モデルの安全な運用における課題であり続けている。既存の検出手法は下流の分類器を別途訓練する必要があり、その分、訓練コストとラベル付きデータの負担が大きかった。<br><br>本研究は対照学習した表現に基づく手法JDPIを提案する。二値の安全性ラベルだけを用いて有害・良性のプロトタイプを構築し、プロトタイプとの相対距離で判定するため、分類器の追加訓練が不要で、必要なラベル付き事例も少なく済む。異なる入力形式を扱う4つのベンチマークで検証された。<br><br>4つのベンチマークで、対照微調整により検出精度が9.1〜18.0ポイント向上した。同じエンコーダを用いた場合、1つのベンチマークでは分類器を上回り、残りでも0.017以内の差にとどまった。Llama Guard 3-8BをROC-AUCで0.173〜0.310上回り、12件の転移実験でも分類器を平均1.59ポイント上回る頑健さを示した。多ターンの会話では現在の発話だけでなく蓄積された会話履歴を用いることで、会話レベルの精度がさらに高まった。出典： arXiv",
-    "timestamp": 1795028172000,
-    "title": "Jailbreak Detection on Large Language Models via Contrastive Prototype Structures",
-    "titleJa": "ジェイルブレイク検出――対照プロトタイプ構造でLLMの安全性を判定する手法",
-    "url": "https://arxiv.org/abs/2611.24936"
-  },
-  {
-    "authors": [
-      "Yash Jangir",
-      "Karan Mirakhor",
-      "Renos Zabounidis",
-      "Muhammad Zubair Irshad",
-      "Sergey Zakharov",
-      "Yonatan Bisk",
-      "Homanga Bharadhwaj"
-    ],
-    "categories": [
-      "cs.RO"
-    ],
-    "field": "cs.RO",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-18T18:52:28Z",
-    "source": "arXiv",
-    "summaryHtml": "エージェントの行動の結果を予測するには、身体の動きと環境の反応の両方をモデル化する必要がある。従来の動画ワールドモデルは数値的な行動から両方を学ぼうとしていたが、幾何学や運動学だけでも意図する動きは定まる。本研究は、身体の将来の配置をカメラに整合させて描画したものと数値的な行動軌跡を条件とする、身体に依存しない動画ワールドモデル「Doppel」を提案する。<br><br>意図する動きを明示することで、モデルは物体の動きや相互作用による環境変化の予測に集中できる。描画された動きは、異なる身体や行動空間に共通の視覚的インターフェースも与える。カメラの外部パラメータがないロボットデータセットでも、カメラ姿勢を復元して描画軌跡と観測を整合させた。8つのデータセット、8種の身体（単腕・双腕ロボットアーム、器用なヒューマノイド、人間の手と身体）で約600時間の動画を用い、身体ラベルなしで単一の共有動画バックボーンと条件付けアダプタを共同学習した。<br><br>3つのロボットアームデータセットで、Doppelは行動のみを条件とするベースラインよりPSNRで1.00dB（分布外評価では1.20dB）改善し、物体の動きもより一貫して予測した。8身体で学習したDoppel-8は、6評価セット中4つで3ロボット版を上回った。出典：arXiv",
-    "timestamp": 1795027948000,
-    "title": "Render the Robot, Generate the World: One Video World Model Across Embodiments",
-    "titleJa": "ロボットを描き、世界を生成する――身体を問わない動画ワールドモデル",
-    "url": "https://arxiv.org/abs/2611.24925v1"
-  },
-  {
-    "authors": [
-      "Jiashu Li",
-      "Tianyu Gao",
-      "Qinglong Liu",
-      "Jinping Wang",
-      "Ye Wei",
-      "Zhiqiang Gao"
-    ],
-    "categories": [
-      "cs.LG"
-    ],
-    "field": "cs.LG",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-18T18:08:08Z",
-    "source": "arXiv",
-    "summaryHtml": "数学的推論は単一の能力ではなく、問題ごとに異なる推論スキルが求められる。近年の研究は数学的推論を原子スキルに分解し、能力別のモジュールを開発してきたが、それらをどう効果的に活用するかは未開拓だった。<br><br>本研究は事例ごとに原子推論スキルを合成する枠組みAMRを提案する。能力別のLoRAエキスパートのライブラリを訓練し、勾配不要の最適化で多様な合成プロトタイプを発見する。各プロトタイプの適合は参照解答のトークン単位の負の対数尤度で評価し、信頼度マージンで曖昧な割当てを除去して軽量ルーターに蒸留する。推論時は問題ごとに適切な合成を選択する。<br><br>AtomicMathベンチマークで一貫した改善が得られた。汎用モデルと数学特化モデルの両方で改善が確認され、Qwen2.5-Math-Instruct-7Bではレベル1の平均分野精度が64.4%から68.1%へ、レベル2が59.3%から63.7%へ、論理推論は39.4%から46.8%へ向上した。専門スキルを効果的に合成することが数学的推論の強化に有望だと示された。出典： arXiv",
-    "timestamp": 1795025288000,
-    "title": "Atomic MathReasoner: Instance-Level Composition of Atomic Reasoning Skills for Mathematical LLMs",
-    "titleJa": "Atomic MathReasoner――原子推論スキルの事例別合成で数学LLMを強化",
-    "url": "https://arxiv.org/abs/2611.24846"
   }
 ]
