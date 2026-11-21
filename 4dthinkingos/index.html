@@ -62,12 +62,12 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
 .app-title{position:absolute;left:50%;transform:translateX(-50%);font-size:1rem;line-height:1;letter-spacing:.2em;font-weight:300;color:rgba(255,255,255,.78);margin:0;white-space:nowrap;font-family:inherit;}
 @media (max-width:640px){.app-header{padding:0 10px;}.app-brand img{height:20px;}.app-brand .app-emblem{width:24px;height:24px;}.app-title{font-size:.8rem;}}
 </style>
-    <script type="module" crossorigin src="/4dthinkingos/assets/index-Bo2amN_5.js"></script>
+    <script type="module" crossorigin src="/4dthinkingos/assets/index-BxlSXLEz.js"></script>
     <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/vendor-runtime-DYMO2raA.js">
     <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-core-RWF4PZf2.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-panels-DBb77cuz.js">
-    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-spatial-DBMwVStO.js">
-    <link rel="stylesheet" crossorigin href="/4dthinkingos/assets/index-vTare_Ec.css">
+    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-panels-DzTFBF2C.js">
+    <link rel="modulepreload" crossorigin href="/4dthinkingos/assets/app-spatial-CbSYbrQp.js">
+    <link rel="stylesheet" crossorigin href="/4dthinkingos/assets/index-B9j2xXNv.css">
   <link rel="manifest" href="/4dthinkingos/manifest.webmanifest"></head>
   <body>
     <header class="app-header">
@@ -204,7 +204,15 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
      reskin stylesheet. Choice persists in localStorage
      'tw.sphere.look.v1' (default 'standard'). The pill bar is our
      own element appended to <body> (React never touches it) and is
-     visible only while the sphere view is on screen. */
+     visible only while the sphere view is on screen.
+     v2.55.1: sphere lookups anchor at '#root main', not '#root > main'.
+     In split modes each pane's <main> is nested inside pane containers
+     (never a direct child of #root), so the old anchor found no sphere
+     in split mode: the look layer (CSS + this script's pill/body/PNG
+     helpers) silently dropped and the sphere rendered with raw
+     attributes — "the sphere changes color when splitting". The View
+     Transition observer above keeps '#root > main' on purpose: it
+     tracks the single primary main and stays inert while splitting. */
   try {
     var LOOKS = [['standard','標準'],['blueprint','設計図'],['orb','天体'],
                  ['minimal','余白'],['constellation','星座'],['glass','硝子'],
@@ -242,14 +250,14 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
         bar.querySelectorAll('button').forEach(function(x) {
           x.classList.toggle('on', x.getAttribute('data-look') === l[0]);
         });
-        var wrap = document.querySelector('#root > main > div:has(> svg)');
+        var wrap = document.querySelector('#root main > div:has(> svg)');
         if (wrap && wrap.animate) wrap.animate([{ opacity: 0.3 }, { opacity: 1 }], { duration: 240, easing: 'ease-out' });
       });
       bar.appendChild(b);
     });
     document.body.appendChild(bar);
     var syncVis = function() {
-      var on = !!document.querySelector('#root > main svg #sphereGlow');
+      var on = !!document.querySelector('#root main svg #sphereGlow');
       bar.style.display = on ? 'flex' : 'none';
     };
     setInterval(syncVis, 600);
@@ -409,7 +417,7 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
       requestAnimationFrame(bframe);
       var look = document.documentElement.getAttribute('data-tw-sphere');
       if (!BODY[look]) { if (cv && cv.parentElement) cv.remove(); return; }
-      var svg = document.querySelector('#root > main svg:has(#sphereGlow)');
+      var svg = document.querySelector('#root main svg:has(#sphereGlow)');
       if (!svg) { if (cv && cv.parentElement) cv.remove(); return; }
       var shell = svg.querySelector(':scope > circle:nth-of-type(2)');
       var cont = svg.parentElement;
@@ -447,7 +455,7 @@ body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
       }
     } catch (e) {}
 
-    function sphereSvg() { return document.querySelector('#root > main svg:has(#sphereGlow)'); }
+    function sphereSvg() { return document.querySelector('#root main svg:has(#sphereGlow)'); }
     function saveBlob(blob, name) {
       var a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
