@@ -1528,6 +1528,28 @@
   },
   {
     "authors": [
+      "Yicheng Cai",
+      "Taegyu Kim",
+      "Peng Liu"
+    ],
+    "categories": [
+      "cs.CR",
+      "cs.AI",
+      "cs.SE"
+    ],
+    "field": "cs.CR",
+    "genre": "Ethics / Safety",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-19T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "エージェントアプリケーションの導入が進む一方、エージェント特有の攻撃が現実の脅威になっている。セキュリティ事故が起きると、組織は侵害の起点（CEP）を特定し、被害を修復して再発を防ぐために遡及調査を行う。利用できる主な手がかりはエージェント機能を記録した軌跡ログとソースコードだが、アプリ固有の関数呼び出しログは限られていることが多い。軌跡ログはエージェント機能の抽象度で記録されるのに対し、起点の候補はアプリのコード実行層の関数呼び出しであり、この意味的な隔たりのため、分析者は候補ごとにコードを手作業で確認する必要があった。<br><br>本論文は、分析者が少数のクエリで起点を特定できる遡及ツール「Origin」を提案する。二つの課題は、二つの意味層の対応関係を捉える中間抽象を定義することと、中間抽象で定めた層横断グラフを構築するための領域と変数の対応を決めることだ。Originは、意味レベルで領域から推定された関数と低レベルのテイント伝播サブグラフの変数を結ぶ層横断依存グラフ（CLDG）とそのクエリ言語、および領域推論アルゴリズムでこれらに対処する。<br><br>人気のあるエージェントアプリ5件、攻撃インシデント8件のケーススタディでは、Originを使う分析者がすべての起点を正しく特定した。既存のツールでは提供できない起点の特定を、少数のクエリで実現したという。出典：arXiv（cs.CR）",
+    "timestamp": 1795046400000,
+    "title": "Backtracking Agent Applications Security Incidents",
+    "titleJa": "エージェントアプリのセキュリティ事故を遡る――起点特定ツールOrigin",
+    "url": "https://arxiv.org/abs/2611.26525"
+  },
+  {
+    "authors": [
       "Zirui Song",
       "Jiadong Zhang",
       "Zheng Lu",
@@ -1692,26 +1714,5 @@
     "title": "Read Together, Answer Apart: How Earlier Questions Help Vision-Language Models Look",
     "titleJa": "一緒に読み、別々に答える――先行する質問が視覚言語モデルを助ける仕組み",
     "url": "https://arxiv.org/abs/2611.24785v1"
-  },
-  {
-    "authors": [
-      "Yuhe Liu",
-      "Qi Li",
-      "Shihua Zhang",
-      "Xinchao Wang"
-    ],
-    "categories": [
-      "cs.CV"
-    ],
-    "field": "cs.CV",
-    "genre": "Vision / Multimodal",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-18T16:56:59Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "Jevのような「システム1」モデルは、高速で並列な予測によって瞬時に判断を返す。本研究は同じ判断パラダイムで高品質な画像を単一フォワードパスで生成できることを示した。Jeverationは凍結した視覚言語モデルの視覚意味知識を流用し、全体的な画像生成に転用する。<br><br>課題は全体の一貫性だった。一つのプロンプトには多くの正解画像がありうるが、並列予測は一つのまとまった画像に収束しなければならない。そこで全位置を共有のランダム状態で条件づけ、異なる抽出ごとに異なるが一貫した画像が得られるようにした。直接の画像教師ではモデルがこの状態を無視しがちなため、まず離散画像コードの分布を学習して単一パス生成を導いた。<br><br>テキストから画像への生成だけでなく、画像から画像への生成と密な予測も同じアーキテクチャで統一し、一つのチェックポイントで3タスクを各1フォワードパスでこなす。512×512画像を78ミリ秒で生成し、既存の統合モデルより最大122倍速く、画像品質と密な予測性能でも競争力を保った。出典：Hugging Face Papers",
-    "timestamp": 1795021019000,
-    "title": "Jeveration: System One Models Now Generate",
-    "titleJa": "Jeveration――システム1モデルによる単一フォワードパスでの画像生成",
-    "url": "https://arxiv.org/abs/2611.24738"
   }
 ]
