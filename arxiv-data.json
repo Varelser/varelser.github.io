@@ -1452,6 +1452,85 @@
   },
   {
     "authors": [
+      "Arshia Rafieioskouie",
+      "Matthew Lucas",
+      "Tzu-Han Hsu",
+      "Borzoo Bonakdarpour"
+    ],
+    "categories": [
+      "cs.AI",
+      "cs.LO"
+    ],
+    "field": "arXiv",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-20T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "望ましい振る舞いを形式仕様として与え、それを報酬設計に落とし込む「仕様誘導型強化学習」は、エージェントの行動を保証付きで導く枠組みとして知られる。だが従来は単独エージェントや協調的な設定が中心で、相手が敵対的に動き、観測も部分的な環境への拡張は進んでいなかった。本研究は戦略論理を用い、エージェントの戦略を明示的に量化し、線形時相論理で目的と制約を記述する手法SLICRを提案した。<br><br>SLICRでは、各エージェントが仕様を満たすためにどう行動すべきかだけでなく、他のエージェントの戦略や振る舞いにどう応じるかも推論の対象になる。仕様が報酬整形に翻訳されることで、敵対的な相手の出方を読みながら制約を守る学習が可能になる。Predator-Prey、Google Research Football、SMAC-HARDの拡張版という3つのベンチマークで評価し、有効性と拡張性、多様な敵対戦略への適応性を示した。<br><br>仕様を報酬に翻訳する従来枠組みを、敵対・部分観測のマルチエージェント設定へ広げた点が意義。形式仕様による保証と、相手の戦略を読む推論を両立させる方向性を示した。評価はシミュレーションのベンチマークに限られ、実環境での検証は今後の課題。出典：arXiv",
+    "timestamp": 1795132800000,
+    "title": "SLICR: Strategy Logic-Guided Multi-Agent Reinforcement Learning",
+    "titleJa": "仕様に導かれるマルチエージェント強化学習――戦略論理SLICR",
+    "url": "https://arxiv.org/abs/2611.27865v1"
+  },
+  {
+    "authors": [
+      "Dylan Forde"
+    ],
+    "categories": [
+      "cs.LG"
+    ],
+    "field": "arXiv",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-20T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "長文脈モデルは疎な注意や構造化注意で計算量を抑えるが、数十万の妨害情報の中から少数の関連事実を取り出すと、正規化の重みが分散して検索精度が落ちる。ハブ・アンド・スポーク型の最適輸送は、密な行列を局所ウィンドウと共有ハブ上の線形サイズのグラフに置き換える。本研究はこれを発展させたTHOTを提案した。<br><br>THOTは、容量制限付きゲーティングで余分な妨害の重みをゼロにし、3段階のアニーリング付きSinkhorn法で残差を抑え、Tritonカーネルによる随伴計算と、未来漏れゼロの因果版を備える。L=128で学習したモデルがL=262,144でも固定結合の想起率97.40%（α=0.05では98.83%）を達成し、softmax型ハブの3.52%を大きく上回った。<br><br>カーネルはL=262Kで順伝播と逆伝播を100.1ミリ秒、L=4096ではFlashAttentionの4.37ミリ秒に対し1.34ミリ秒で処理した。WikiText-103のマルチニードル検索では128問中128問正解と、短い文脈で学習したRoPEの0.78%を圧倒した。長文脈の検索を高速かつ正確にする実用的な手法といえる。出典：arXiv",
+    "timestamp": 1795132800000,
+    "title": "Topology Hub Optimal Transport: Eliminating Long Context Dilution at Flash Speed",
+    "titleJa": "長文脈の希薄化を断つ――ハブ型最適輸送THOT",
+    "url": "https://arxiv.org/abs/2611.27951v1"
+  },
+  {
+    "authors": [
+      "Hassan Iqbal",
+      "Krishna Kumar"
+    ],
+    "categories": [
+      "cs.RO"
+    ],
+    "field": "arXiv",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-20T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "損傷したロボットは、どの経路なら通れるか、その任務でどれだけのリスクを許すかを判断しなければならない。学習モデルが計画に役立つかは、モデルが計画側へ何を渡すか、すなわち「決定インターフェース」で決まる。行動方針を直接渡す方法と、経路の結果を予測するワールドモデル型では何が違うのか。本研究は損傷した四足歩行ロボットと人型ロボットのシミュレーションで4種のインターフェースを比べた。<br><br>比較したのは、行動方針そのもの、通れない経路に固定の罰則を付けた方針、実現可能性と移動時間を予測する結果モデル、さらに地形ごとの成功確率と移動時間を予測して経路全体に合成する「能力契約」の4つである。低リスクの試行2回で、能力契約は危険地形の順位づけを新規試行4回分と同等に行えた。実現不能な経路の選択を5%に抑える条件では、結果モデルは辞退する任務をGo2で約32%から7〜8%、H1で57%から35〜36%へ減らした。<br><br>固定の罰則も差を縮めるが、最適な罰則はリスク目標ごとに変わる。結果を予測して渡すことで、リスク要件が厳しくなっても経路を変えて任務を維持できる。評価はシミュレーションに限られ、実機での検証は今後の課題。出典：arXiv",
+    "timestamp": 1795132800000,
+    "title": "What Must a Model Tell a Planner? Outcome Interfaces for Risk-Aware Planning After Robot Damage",
+    "titleJa": "損傷したロボットに何を伝えるか――計画への結果インターフェース",
+    "url": "https://arxiv.org/abs/2611.27939v1"
+  },
+  {
+    "authors": [
+      "Kaden Zheng",
+      "Pratyusha Sharma"
+    ],
+    "categories": [
+      "cs.AI",
+      "cs.LG"
+    ],
+    "field": "arXiv",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-20T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "機械学習では、アーキテクチャの選択と学習は別々に行われてきた。古典的なトランスフォーマーは、注意層とMLP層を各層で同じ順序に固定し、その中で重みだけを最適化する。だがこの均一性は慣習にすぎず、課題ごとに最適な構造はもっと小さく不均一なはずだ。本研究は、学習そのものがモデルの位相を形づくるModel Carvingを提案した。<br><br>各サブ層に学習可能なスカラーゲートを付け、学習損失が不要な部品を訓練中に取り除くことで、1回の学習で重みと構造の両方を学ぶ。1億4000万〜27億パラメータの標準トランスフォーマーとループ型で検証し、同じ計算量で、最大1.7倍の計算量で学習した密モデルより低い検証損失を達成した。剪定や蒸留で作った同サイズのモデルも上回った。<br><br>取り除いた層は実行されないため、トークンあたりの計算量は最大34%減り、復号は品質を落とさず最大1.6倍速くなった。優位性は規模が大きいほど広がり、下流タスクにも及ぶ。大きなモデルの中に、より小さく速く強いモデルが眠っていることを示した。出典：arXiv",
+    "timestamp": 1795132800000,
+    "title": "Model Carving: Training Transformers That Optimize Their Own Topology",
+    "titleJa": "学習しながら削る――トランスフォーマーの自己成形Model Carving",
+    "url": "https://arxiv.org/abs/2611.27962v1"
+  },
+  {
+    "authors": [
       "Hidir Yesiltepe",
       "Julius Berner",
       "Arash Vahdat",
@@ -1544,121 +1623,5 @@
     "title": "Depth Pro 2: Sharp and Temporally Consistent Metric Monocular Depth",
     "titleJa": "鮮明さと時間的一貫性を両立――単眼深度推定Depth Pro 2",
     "url": "https://arxiv.org/abs/2611.26603"
-  },
-  {
-    "authors": [
-      "Yiyan Ji",
-      "Qixun Wang",
-      "Yang Shi",
-      "Zhuoran Zhang",
-      "Yifan Xu",
-      "Tengfei Liu",
-      "Yuqi Tang",
-      "Xiaohan Zhang",
-      "Shujie Li",
-      "Jiafu Tang",
-      "Xuanyu Zhu",
-      "Xinyu Liu",
-      "Yan He",
-      "Yushuo Guan",
-      "Zihao Wang",
-      "Xianghua Ying",
-      "Shixuan Liu",
-      "Haotian Wang",
-      "Wenjing Yang",
-      "Zhaoxiang Zhang",
-      "Yuanxing Zhang",
-      "Pengfei Wan",
-      "Jiaheng Liu"
-    ],
-    "categories": [
-      "cs.CV"
-    ],
-    "field": "cs.CV",
-    "genre": "Vision / Multimodal",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-19T18:51:58Z",
-    "source": "arXiv",
-    "summaryHtml": "Code2Videoはエージェントが作る3Dプロキシで動画生成を導き、構造と動きを明示的に制御できる。しかし、最適な下流品質のためにプロキシとプロンプトをどう構築すべきかや、この枠組みの能力と限界は十分に調べられていなかった。本研究は、制御実験と盲検の人間評価により、プロキシの粒度、物理シミュレーション、プロンプトを検討した。粗いプロキシは自然な動きに、中程度の粒度のプロキシは整合性に有利という課題依存のトレードオフが明らかになり、物理シミュレーションとプロキシ整合プロンプトが平均品質をさらに高めた。<br><br>知見に基づき、課題適応型のエージェント枠組みCoda-DaVinciを提案する。プロキシ誘導生成と直接生成を使い分け、エンティティごとにモデリング粒度を適応させ、シミュレーションとプロキシ基盤プロンプトを協調させる。マルチエージェントのハーネスがシーン資産を保持し、目視検査と独立レビューで修正を導く。<br><br>実験では、VTRでの指示追従とR2Mでのシーン整合性で最先端、直接生成より物理的妥当性が向上し、比較したCode2Videoベースラインより視覚的リアリズムが高いことが示された。長尺動画でも事象構造と連続する相互作用の整合性が改善したが、遷移の安定性とシーン設定への忠実さには限界が残った。出典：arXiv",
-    "timestamp": 1795114318000,
-    "title": "Coda-DaVinci: Reimagining Video Generation with Code2Video",
-    "titleJa": "Coda-DaVinci――Code2Videoによる動画生成の再構想",
-    "url": "https://arxiv.org/abs/2611.26595"
-  },
-  {
-    "authors": [
-      "Adrià Ciurana Lanau",
-      "Harleen Hanspal",
-      "Lusine Abrahamyan",
-      "Emilio Tylson Baixauli",
-      "Yu Cao",
-      "Danai Triantafyllidou",
-      "Stefano Zorzi",
-      "Gustavo Zanoni Felipe",
-      "Peter Griger",
-      "Stefan Sietzen",
-      "Petru-Daniel Tudosiu"
-    ],
-    "categories": [
-      "cs.AI"
-    ],
-    "field": "cs.AI",
-    "genre": "Vision / Multimodal",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-19T18:45:31Z",
-    "source": "arXiv",
-    "summaryHtml": "グラフィックデザインはRGBA層の順序ある合成であり、層の分離が選択・移動・再利用を可能にする。既存の多層モデルは各層を全画面または領域サイズの空間潜在グリッドで表すため、表現サイズは層の空間範囲の合計とともに増大する。本研究は、多層変分オートエンコーダProtoVAEに基づく潜在拡散フレームワークProtoDiffusionを提案する。<br><br>ProtoVAEはデザインを1つの共有空間プロトタイプと層ごとの候補ベクトル1つに符号化し、各候補が共有デコーダを条件づけて対応するRGBA層を再構成する。N層の表現はバックボーン固有のパッキング前でHW+Nトークンとなり、層ごとの全グリッド表現のNHWと比べて大幅に小さい。ProtoDiffusionはプロトタイプと固定数の候補スロットを画像またはテキストを条件として共同でノイズ除去し、境界ボックスを任意のレイアウト指示として使える。不要なスロットは空のままにし、層数とレイアウトを入力なしに決定する。<br><br>画像からデザインへの生成とテキストからデザインへの生成の両方に対応する。ProtoVAEは層クロップで40.43dBのPSNRを達成し、LayerD評価では画像からの生成でRGB L1が境界ボックスあり0.040、なし0.057、ボックス誘導のアルファsoft IoUは0.850で最強の微調整ベースライン（0.871）に匹敵した。テキストからの生成では統合画像のFIDが66.41でFLUX.2の86.84を上回り、テキスト精度0.860、生成後分解カスケードの19.1倍の速度で動作した。出典：arXiv",
-    "timestamp": 1795113931000,
-    "title": "ProtoDiffusion: Token-per-Layer Generative Modeling of Multi-Layer Images",
-    "titleJa": "ProtoDiffusion――層ごとのトークンで多層画像を生成する拡散モデル",
-    "url": "https://arxiv.org/abs/2611.26586v1"
-  },
-  {
-    "authors": [
-      "Sean Tang",
-      "Peiran Wang",
-      "Ying Li",
-      "Esha Shivakumar",
-      "Tao Meng",
-      "Yuan Tian"
-    ],
-    "categories": [
-      "cs.CR",
-      "cs.AI",
-      "cs.SI"
-    ],
-    "field": "cs.CR",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-19T18:33:42Z",
-    "source": "arXiv",
-    "summaryHtml": "生成エンジンは検索したウェブページを合成して回答や推薦、順位付けを作る。生成エンジン最適化（GEO）サービスは、ユーザー生成コンテンツ（UGC）プラットフォームに宣伝記事を載せ、依頼主の可視性をその回答の中で売る。医療や金融の分野では、誤解を招く助言が害を及ぼすおそれがある。<br><br>本研究は、中国の主要UGCプラットフォーム3つで、そうした有料コンテンツ運用の1件を測定した。関連アカウント1,985件、推定46万6,357件の宣伝配置を発見。ネットワークは多様な商品を扱い、数か月にわたり複数プラットフォームで連携キャンペーンを展開し、リスト記事の内容を進化させていた。米中9つの生成エンジンで、引用可能なページの4.5〜20%が同ネットワークに由来した。<br><br>8つのエンジンでは回答の52%で依頼主が名指しされ、カテゴリ首位の68%に迫る。UGCへのGEO配置が生成エンジンの結果に影響を与える実効性が示され、内容レベルの防御だけでは不十分で、アカウント単位・プラットフォーム単位の信号が必要だと結論づけている。出典：arXiv（cs.CR）",
-    "timestamp": 1795113222000,
-    "title": "GEOHunter: Mapping a Generative Engine Optimization Network in the Wild",
-    "titleJa": "生成エンジン最適化の闇市場を暴く――1,985アカウント・46万件の宣伝配置",
-    "url": "https://arxiv.org/abs/2611.26564"
-  },
-  {
-    "authors": [
-      "Jinzhe Li",
-      "Qi Wang",
-      "Dandan Guo",
-      "Li Liu",
-      "Yuan Wu",
-      "Yi Chang"
-    ],
-    "categories": [
-      "cs.AI"
-    ],
-    "field": "cs.AI",
-    "genre": "Vision / Multimodal",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-19T18:25:41Z",
-    "source": "arXiv",
-    "summaryHtml": "マルチモーダル意思決定モデルが行動やモデレーション、品質判断を担うとき、その信頼性は、提示の仕方が変わっても意味的な判断を保ち、無関係な追加情報を無視し、証拠と整合する情報と矛盾する情報を見分けられるかにかかっている。既存の評価は意思決定インターフェースの偏りとマルチモーダルモデルの挙動を別々に扱ってきた。<br><br>MM-SystemOneBiasは9つの公開データセットから集めた5323事例、11タスク場面で13モデルを評価し、選択肢の順序・ラベル、外部判断、画像とテキストの記述、無関係情報、評価尺度の6種の介入を対で与える。7組の決定モデルとバックボーンの比較では、決定モデルのほうが順序・ラベル・無関係情報・評価尺度の変化に対して安定していた。<br><br>一方で、意味的な判断が変わらない組でも回答確率の平均絶対変化は4.56〜11.55ポイントに及び、正答率だけでは見えない入力の影響が残ることが示された。決定モデルは正しい外部判断から得る精度の伸びも小さく、整合的な記述による好ましい変化も小さいという両面があった。出典：arXiv",
-    "timestamp": 1795112741000,
-    "title": "MM-SystemOneBias: Evaluating Bias in Multimodal Jev-Style System One Decision Models",
-    "titleJa": "MM-SystemOneBias――マルチモーダル意思決定モデルの偏りを6種の介入で測る",
-    "url": "https://arxiv.org/abs/2611.26557"
   }
 ]
