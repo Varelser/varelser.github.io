@@ -69,6 +69,22 @@
   },
   {
     "authors": [
+      "Kosturika Bandyopadhyay"
+    ],
+    "categories": [],
+    "field": "International Journal of Law Management & Humanities",
+    "genre": "Ethics / Safety",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-22T00:00:00Z",
+    "source": "Crossref",
+    "summaryHtml": "AI技術は女性や少女に対するジェンダーに基づく暴力（GBV）の姿を変えた。本論文はAIがGBVを引き起こす4つの形を整理し、現行法がそれにどこまで対応できるかをインドを中心に検討した。偽情報の拡散、非合意ポルノ中心のディープフェイク、生体・顔認識データの収集と監視、サイバーストーキングや名誉毀損、プラットフォームからの排除である。<br><br>国際枠組みとしてCEDAW委員会の一般勧告19号・35号、イスタンブール条約、欧州評議会の性差別的ヘイトスピーチ基準がある。インドではIT法（2000年）、IT仲介者規則（2021年）、新刑法（2023年）が対応するが、仲介者規則は2026年に合成コンテンツへ拡張されたものの、AIによるGBVを全面的に扱う法律はまだない。AI規制と男女平等の保護が別々に進み、プラットフォームや開発者の責任が不明確なままだ。<br><br>改善策として、設計段階からの安全性、ディープフェイクの表示、レッドチーミング、脆弱な女性の通報経路、内部告発者保護、デジタル教育などが挙げられた。各国の法整備と制度能力の強化、社会の意識変革が必要であり、世界的にも女性の権利保護を中心に据えたAI規制が求められると結論づけた。出典：Crossref（International Journal of Law Management & Humanities）",
+    "timestamp": 1795305600000,
+    "title": "Digital Gender-Based Violence in the Age of Artificial Intelligence",
+    "titleJa": "AIが変えるジェンダー暴力――ディープフェイクと監視、法の空白",
+    "url": "https://doi.org/10.63108/ijlmh.13323"
+  },
+  {
+    "authors": [
       "Hicham Jakha"
     ],
     "categories": [],
@@ -1681,26 +1697,5 @@
     "title": "PIPETTE: Prompt Injection Purple-Teaming for Robust LLM Agents",
     "titleJa": "PIPETTE――間接プロンプトインジェクションに対するLLMエージェントの紫チーム演習",
     "url": "https://arxiv.org/abs/2611.24362"
-  },
-  {
-    "authors": [
-      "Ziqi Jin",
-      "Jiaxi Li",
-      "Weiwen Xu",
-      "Aixin Sun"
-    ],
-    "categories": [
-      "cs.CL"
-    ],
-    "field": "cs.CL",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-19T00:00:00Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "ループ型言語モデルは、共有した層スタックを1トークンあたりT回繰り返すことで、少ないパラメータ数で推論を深める。従来の早期終了（アーリーエグジット）は最初の数パスで打ち切るため、過去トークンのキー・バリュー・キャッシュが浅い深さで切り捨てられてしまう。本研究はその逆の発想「遅延参入（レイトエントリー）」を調べた。新しいトークンが最初のパスを飛ばし、深い文脈キャッシュ上で最後のK回（K<T）のパスに直接入る方式である。<br><br>軽量なファインチューニングで参入境界における隠れ状態のノルムのずれを解消すると、深いキャッシュされた文脈が、省かれたトークン固有のパスの代わりを果たす。遅延参入は、モデル系列やパス数の組み合わせを横断して、対応する早期終了を上回った。さらに、深いキャッシュの構築で処理が止まらないよう、候補ブロックは最後のKパスだけで検証し、確定済みトークンは後続ステップと並行して1からTまでのパスを完了させる。<br><br>この「Wake検証」は、出力GEMM内に組み込んだ仕組みで、貪欲法と完全一致する検証（τ=0）、マージンで判定する検証（τ>0）、ロールバックなしの損失あり遅延参入（τ=∞）を単一の静的CUDAグラフに統一する。Ouro-2.6B（T=4）ではK=2のWakeがτ=0で5.2倍の高速化を達成し、Huginn-3.5BではT=64で貪欲法と完全一致のまま8.4倍に達した。出典：Hugging Face Papers",
-    "timestamp": 1795046400000,
-    "title": "Late Entry in Looped Language Models",
-    "titleJa": "ループ型言語モデルの遅延参入――深いキャッシュを活かす高速な推論手法",
-    "url": "https://arxiv.org/abs/2611.24576"
   }
 ]
