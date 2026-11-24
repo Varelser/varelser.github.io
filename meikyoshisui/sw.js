@@ -1,6 +1,6 @@
 /* MEIKYOSHISUI Service Worker — cache-first for same-origin GET.
    Bump CACHE_VERSION on every release so clients pick up new files. */
-const CACHE_VERSION = 'meikyoshisui-v49-20261125';
+const CACHE_VERSION = 'meikyoshisui-v50-20261125';
 const CORE = [
  "./",
  "./index.html",
@@ -9,6 +9,8 @@ const CORE = [
  "./styles-modern.css",
  "./manifest.webmanifest",
  "./icon.svg",
+ "./assets/varelser-logo.png",
+ "./assets/varelser-emblem.png",
  "./js/00-oscilloscope.js",
  "./js/01-euclidean.js",
  "./js/02-pcset.js",
@@ -108,15 +110,17 @@ const CORE = [
  "./js/94-platform.js",
  "./js/97-focus-cmdk.js",
  "./js/98-expression-pack.js",
+ "./js/104-runtime-fixes.js",
+ "./js/105-studio-features.js",
+ "./js/106-cc-freehand.js",
+ "./js/107-gen-worker.js",
+ "./js/gen-worker.js",
  "./js/99-varelser-link.js",
  "./js/100-free-edition.js",
  "./js/101-studio-resonance.js",
  "./js/102-studio-freedom.js",
- "./js/103-studio-dock.js",
- "./js/104-runtime-fixes.js",
- "./js/105-studio-features.js"
+ "./js/103-studio-dock.js"
 ];
-const SCOPE_PATH = new URL('./', self.location).pathname;
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
 });
@@ -125,17 +129,12 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  if (e.request.method !== 'GET' || url.origin !== location.origin || !url.pathname.startsWith(SCOPE_PATH)) return;
-  const cacheKey = (url.search && (e.request.mode === 'navigate' || url.pathname === SCOPE_PATH || url.pathname.endsWith('/index.html')))
-    ? new Request(url.origin + url.pathname)
-    : e.request;
-  e.respondWith(
-    caches.match(cacheKey, { ignoreSearch: true }).then(hit => hit || fetch(e.request).then(res => {
-      if (res && res.ok && res.status === 200) {
-        const copy = res.clone();
-        caches.open(CACHE_VERSION).then(c => c.put(cacheKey, copy)).catch(() => {});
-      }
-      return res;
-    }))
-  );
+  if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+    if (res && res.ok && res.type === 'basic') {
+      const copy = res.clone();
+      caches.open(CACHE_VERSION).then(c => c.put(e.request, copy)).catch(() => {});
+    }
+    return res;
+  }).catch(() => caches.match('./index.html'))));
 });
