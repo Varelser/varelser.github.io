@@ -610,6 +610,27 @@ body.noise-focus #sec-device,body.noise-focus #sec-sleep,body.noise-focus #sec-a
   .part-ctrls input[type="range"] { width: 82px; accent-color: #fff; }
   .part-ctrls b { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; min-width: 28px; text-align: right; color: #fff; }
 
+  /* CRT Static Visualizer (2026-11-24) */
+  .readout[data-view="crt"] .card:not([data-viz="crt"]) { display: none !important; }
+  .readout:not([data-view="crt"]) .card[data-viz="crt"] { display: none !important; }
+  .readout[data-view="crt"] .card[data-viz="crt"] {
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / -1;
+    min-height: 460px;
+  }
+  @media (max-width: 768px) {
+    .readout[data-view="crt"] .card[data-viz="crt"] { min-height: 320px; }
+  }
+  .crt-wrap { position: relative; flex: 1; display: flex; min-height: 300px; background: #000; }
+  #crtCanvas { width: 100%; height: 100%; min-height: 300px; display: block; background: #000; flex: 1; }
+  .crt-fx {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at center, rgba(0,0,0,0) 52%, rgba(0,0,0,0.42) 100%),
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 3px);
+  }
+
   /* Noise Power Tools (2026-11-24) */
   #sec-power .body { display: grid; gap: 14px; }
   .pt-block { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line-soft); min-width: 0; }

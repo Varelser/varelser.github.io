@@ -655,7 +655,222 @@
     requestAnimationFrame(loop);
   }
 
+
+  /* ================= CRT static view ================= */
+  var LS_C = 'noise_crt_v1';
+  var crtCfg = Object.assign({ noise: 1.0, signal: 1.0, roll: 0.5 }, load(LS_C, {}));
+  var crtBtn = null;
+  var crtActive = false;
+  var crtSeed = 0x1B873593;
+  function crtRnd() {
+    var x = crtSeed;
+    x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+    crtSeed = x >>> 0;
+    return crtSeed / 4294967295;
+  }
+
+  function buildCrtUi() {
+    if (!readout) return;
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-viz', 'crt');
+    card.innerHTML =
+      '<div class="ch">砂嵐（CRT）</div>' +
+      '<div class="crt-wrap"><canvas id="crtCanvas" role="img" aria-label="砂嵐表示"></canvas><div class="crt-fx"></div></div>' +
+      '<div class="lgl-ctrls">' +
+        '<label class="sl">ノイズ量 <input id="crtNoise" type="range" min="0" max="2" step="0.05"></label>' +
+        '<label class="sl">信号 <input id="crtSignal" type="range" min="0" max="2" step="0.05"></label>' +
+        '<label class="sl">ロール <input id="crtRoll" type="range" min="0" max="2" step="0.05"></label>' +
+      '</div>' +
+      '<div class="lgl-hud" id="crtHud">CRT / ready</div>';
+    readout.appendChild(card);
+
+    crtBtn = document.createElement('button');
+    crtBtn.type = 'button';
+    crtBtn.className = 'viz-btn';
+    crtBtn.id = 'crtBtn';
+    crtBtn.textContent = '砂嵐';
+    crtBtn.setAttribute('data-help', 'ブラウン管テレビの無信号ノイズ（砂嵐）ビジュアライザ。音が大きいと波形の残像が砂嵐の奥に浮かび上がります。');
+    var anchorBtn = $('liquidglBtn') || document.querySelector('.viz-btn[data-viz-view="grid"]');
+    if (anchorBtn && anchorBtn.parentNode) anchorBtn.parentNode.insertBefore(crtBtn, anchorBtn.nextSibling);
+    else if (readout.parentNode) readout.parentNode.insertBefore(crtBtn, readout);
+
+    $('crtNoise').value = crtCfg.noise;
+    $('crtSignal').value = crtCfg.signal;
+    $('crtRoll').value = crtCfg.roll;
+    $('crtNoise').addEventListener('input', function (e) { crtCfg.noise = Number(e.target.value); save(LS_C, crtCfg); });
+    $('crtSignal').addEventListener('input', function (e) { crtCfg.signal = Number(e.target.value); save(LS_C, crtCfg); });
+    $('crtRoll').addEventListener('input', function (e) { crtCfg.roll = Number(e.target.value); save(LS_C, crtCfg); });
+
+    crtBtn.addEventListener('click', function () {
+      if (readout.getAttribute('data-view') !== 'crt') activateCrt();
+    });
+    var mo = new MutationObserver(function () {
+      if (readout.getAttribute('data-view') !== 'crt' && crtActive) {
+        crtActive = false;
+        if (crtBtn) crtBtn.classList.remove('active');
+      }
+    });
+    mo.observe(readout, { attributes: true, attributeFilter: ['data-view'] });
+
+    startCrtLoop();
+  }
+
+  function activateCrt() {
+    readout.setAttribute('data-view', 'crt');
+    document.querySelectorAll('.viz-btn[data-viz-view].active').forEach(function (b) { b.classList.remove('active'); });
+    if (lglBtn) lglBtn.classList.remove('active');
+    if (crtBtn) crtBtn.classList.add('active');
+    crtActive = true;
+  }
+
+  function startCrtLoop() {
+    var canvas = $('crtCanvas');
+    var hud = $('crtHud');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    var NW = 192, NH = 144;
+    var nc = document.createElement('canvas');
+    nc.width = NW; nc.height = NH;
+    var nctx = nc.getContext('2d');
+    var img = nctx.createImageData(NW, NH);
+    var data = img.data;
+    var W = 600, H = 300;
+    var rollY = 0;
+    var lvlS = 0, fluxS = 0, prevSpec = null;
+    var tearUntil = 0, tearAmp = 0;
+    var lastHud = 0, lastTs = 0, simT = 0, frameN = 0;
+    var freq = null, wave = null;
+
+    function resize() {
+      var r = canvas.getBoundingClientRect();
+      var dpr = Math.min(1.5, window.devicePixelRatio || 1);
+      var w = Math.max(50, Math.round(r.width * dpr));
+      var h = Math.max(50, Math.round(r.height * dpr));
+      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; W = w; H = h; }
+    }
+
+    function features() {
+      var raw = window.__noiseAnalysers || [];
+      var an = null;
+      for (var i = raw.length - 1; i >= 0; i--) {
+        if (!raw[i].context || raw[i].context.state !== 'closed') { an = raw[i]; break; }
+      }
+      if (!an || !an.frequencyBinCount) {
+        var d = demoFeatures(simT);
+        return { bass: d.bass, mid: d.mid, high: d.high, level: (d.bass + d.mid + d.high) / 3 * 0.35, flux: d.flux, source: 'Demo', waveArr: null };
+      }
+      var len = an.frequencyBinCount;
+      if (!freq || freq.length !== len) { freq = new Uint8Array(len); prevSpec = new Float32Array(len); }
+      if (!wave || wave.length !== an.fftSize) wave = new Uint8Array(an.fftSize);
+      try {
+        an.getByteFrequencyData(freq);
+        an.getByteTimeDomainData(wave);
+      } catch (_) {
+        var d2 = demoFeatures(simT);
+        return { bass: d2.bass, mid: d2.mid, high: d2.high, level: (d2.bass + d2.mid + d2.high) / 3 * 0.35, flux: d2.flux, source: 'Demo', waveArr: null };
+      }
+      var bass = 0, mid = 0, high = 0, sum = 0, fsum = 0;
+      var bEnd = Math.max(2, Math.floor(len * 0.06)), mEnd = Math.floor(len * 0.35);
+      for (var k = 0; k < len; k++) {
+        var v = freq[k] / 255;
+        sum += v;
+        var diff = v - prevSpec[k];
+        if (diff > 0) fsum += diff;
+        prevSpec[k] = v;
+        if (k < bEnd) bass += v; else if (k < mEnd) mid += v; else high += v;
+      }
+      bass /= bEnd; mid /= Math.max(1, mEnd - bEnd); high /= Math.max(1, len - mEnd);
+      return { bass: bass, mid: mid, high: high, level: sum / len, flux: Math.min(1, fsum / len * 6), source: 'Audio', waveArr: wave };
+    }
+
+    function frame(ts) {
+      requestAnimationFrame(frame);
+      if (!crtActive || document.hidden) { lastTs = ts; return; }
+      var dt = lastTs ? Math.min(0.05, (ts - lastTs) / 1000) : 0.016;
+      lastTs = ts;
+      simT += dt;
+      frameN++;
+      if (canvas.width < 20 || frameN % 60 === 0) resize();
+
+      var f = features();
+      lvlS += (f.level - lvlS) * 0.18;
+      fluxS = Math.max(fluxS * 0.90, f.flux);
+      var sig = Math.max(0, Math.min(1, (lvlS * 2.2 - 0.05) * Number(crtCfg.signal)));
+      if (fluxS > 0.30 && ts > tearUntil) { tearUntil = ts + 90 + fluxS * 160; tearAmp = 4 + fluxS * 22; }
+      var tearing = ts < tearUntil;
+
+      // ロール帯の前進（低音で揺れる）
+      rollY += (0.015 + Number(crtCfg.roll) * 0.55 + f.bass * 0.9) * dt * 33;
+      if (rollY >= NH) rollY -= NH;
+      var barSigma = NH * 0.10;
+      var flick = 0.96 + crtRnd() * 0.08;
+      var amp = (150 + Number(crtCfg.noise) * 90) * flick;
+      var base = 28;
+
+      for (var y = 0; y < NH; y++) {
+        var dy = Math.abs(y - rollY); if (dy > NH / 2) dy = NH - dy;
+        var g = 1 - 0.38 * Math.exp(-(dy * dy) / (2 * barSigma * barSigma));
+        var rowOff = y * NW * 4;
+        for (var x = 0; x < NW; x++) {
+          var v = (base + crtRnd() * amp) * g;
+          if (v > 255) v = 255;
+          var o = rowOff + x * 4;
+          data[o] = v; data[o + 1] = v; data[o + 2] = v; data[o + 3] = 255;
+        }
+      }
+      nctx.putImageData(img, 0, 0);
+
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, W, H);
+      ctx.imageSmoothingEnabled = false;
+      ctx.globalAlpha = Math.max(0.25, Math.min(1, (0.45 + Number(crtCfg.noise) * 0.4) * (1 - sig * 0.38)));
+      var STRIPS = 14;
+      var sh = NH / STRIPS;
+      for (var sIdx = 0; sIdx < STRIPS; sIdx++) {
+        var dxp = 0;
+        if (tearing && crtRnd() < 0.45) dxp = (crtRnd() - 0.5) * 2 * tearAmp * (W / NW);
+        var sy = sIdx * sh;
+        ctx.drawImage(nc, 0, sy, NW, sh, dxp, sy * (H / NH), W, sh * (H / NH) + 1);
+      }
+      ctx.globalAlpha = 1;
+
+      // 信号の残像：波形が砂嵐の奥に浮かぶ（強いほど明るく、二重像つき）
+      if (sig > 0.03) {
+        var yOff = (crtRnd() - 0.5) * (tearing ? 10 : 3);
+        ctx.lineWidth = Math.max(1.5, H / 160);
+        for (var pass = 0; pass < 2; pass++) {
+          ctx.strokeStyle = 'rgba(255,255,255,' + (sig * (pass ? 0.16 : 0.5)).toFixed(3) + ')';
+          ctx.beginPath();
+          var n = 128;
+          for (var px2 = 0; px2 <= n; px2++) {
+            var wv;
+            if (f.waveArr) {
+              var wi = Math.floor(px2 / n * (f.waveArr.length - 1));
+              wv = (f.waveArr[wi] - 128) / 128;
+            } else {
+              wv = Math.sin(px2 * 0.22 + simT * 7) * 0.4 * Math.sin(simT * 1.3) + Math.sin(px2 * 0.05 - simT * 3) * 0.3;
+            }
+            var X = px2 / n * W;
+            var Y = H * 0.5 + wv * H * 0.30 + yOff + pass * H * 0.035;
+            if (px2 === 0) ctx.moveTo(X, Y); else ctx.lineTo(X, Y);
+          }
+          ctx.stroke();
+        }
+      }
+
+      if (hud && ts - lastHud > 500) {
+        lastHud = ts;
+        hud.textContent = 'CRT | source ' + f.source + ' | signal ' + sig.toFixed(2) + ' | flux ' + fluxS.toFixed(2) + (tearing ? ' | SYNC LOST' : '');
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
   buildLiquidUi();
+  buildCrtUi();
   buildParticlePro();
   buildMidiLearnUi();
 })();
