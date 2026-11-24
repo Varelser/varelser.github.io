@@ -559,8 +559,8 @@
         var distC = Math.sqrt(dcx * dcx + dcy * dcy) || 1;
         var ux = dcx / distC, uy = dcy / distC;
 
-        // 爆散方向は粒ごとに持ち、ビートのたびに一部が振り直される
-        if (smoothFlux > 0.5 && rnd() < 0.03) {
+        // 爆散方向は粒ごとに持ち、ビートのたびに一部が振り直される (平時も少しずつ)
+        if (rnd() < 0.004 || (smoothFlux > 0.5 && rnd() < 0.03)) {
           var ba = rnd() * Math.PI * 2;
           pBx[i] = Math.cos(ba); pBy[i] = Math.sin(ba);
         }
@@ -568,16 +568,18 @@
         // 弱い誘導＋ランダム爆散＋拡散。減衰は粒ごとに違い、速度が残る。
         var pull = 0.012 + bVal * 0.020;
         var kick = smoothFlux * (1.9 + bVal * 3.4) * (0.6 + 0.4 * Math.sin(pPhase[i] * 7.0)) * (0.5 + ch * 0.55);
-        var jitter = (0.30 + smoothHigh * 3.4 + bVal * 2.8 + energy * 2.2) * (hasAudio ? 1 : 0.25) * ch;
-        var nvx = vx[i] + (tx - px[i]) * pull + (ux * 0.4 + pBx[i] * 0.9) * kick + (rnd() - 0.5) * jitter;
-        var nvy = vy[i] + (ty - py[i]) * pull + (uy * 0.4 + pBy[i] * 0.9) * kick + (rnd() - 0.5) * jitter;
+        var jitter = (0.45 + smoothHigh * 3.4 + bVal * 2.8 + energy * 2.2) * (hasAudio ? 1 : 0.25) * ch;
+        // 音量そのものに連動する持続圧: 静かなベッドでも帯域が鳴っていれば散り続ける
+        var push = bVal * 0.55 * ch;
+        var nvx = vx[i] + (tx - px[i]) * pull + (ux * 0.4 + pBx[i] * 0.9) * kick + (ux * 0.25 + pBx[i] * 0.75) * push + (rnd() - 0.5) * jitter;
+        var nvy = vy[i] + (ty - py[i]) * pull + (uy * 0.4 + pBy[i] * 0.9) * kick + (uy * 0.25 + pBy[i] * 0.75) * push + (rnd() - 0.5) * jitter;
         // スクランブル: 強い立ち上がりで一部の粒の速度を丸ごと振り直す
-        if (smoothFlux > 0.55 && rnd() < 0.010 * ch) {
+        if ((smoothFlux > 0.35 && rnd() < 0.008 * ch) || (bVal > 0.8 && rnd() < 0.002 * ch)) {
           var sa = rnd() * Math.PI * 2, sm = 6 + rnd() * 24;
           nvx = Math.cos(sa) * sm; nvy = Math.sin(sa) * sm;
         }
         // 再噴出: 一部の粒がランダムな位置から新たに噴き出す
-        if (smoothFlux > 0.6 && rnd() < 0.0035 * ch) {
+        if (smoothFlux > 0.4 && rnd() < 0.003 * ch) {
           var ra = rnd() * Math.PI * 2, rr = Math.pow(rnd(), 0.6) * baseRad * 1.15;
           px[i] = cx + Math.cos(ra) * rr; py[i] = cy + Math.sin(ra) * rr;
           ox[i] = px[i]; oy[i] = py[i];
@@ -605,6 +607,24 @@
         }
       }
       if (tailLines) ctx.stroke();
+
+      // Tail が 0 でも、速い粒だけは最小限の飛跡を描く (カオスな動きの可視化)
+      if (!tailLines) {
+        ctx.lineWidth = 0.7;
+        ctx.strokeStyle = 'rgba(180, 220, 248, 0.30)';
+        ctx.beginPath();
+        var streaks = 0;
+        for (var si = 0; si < count && streaks < 2600; si++) {
+          var sdx = px[si] - ox[si];
+          var sdy = py[si] - oy[si];
+          if (sdx * sdx + sdy * sdy > 49) {
+            ctx.moveTo(px[si], py[si]);
+            ctx.lineTo(px[si] - sdx * 0.9, py[si] - sdy * 0.9);
+            streaks++;
+          }
+        }
+        if (streaks) ctx.stroke();
+      }
 
       // 2) 丸い細かい粒子本体（シャープ粒＋ブラー粒の2層ブレンド）
       for (var i = 0; i < count; i++) {
