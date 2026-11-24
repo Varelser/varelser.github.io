@@ -314,7 +314,7 @@
     var ctrls = document.createElement('div');
     ctrls.className = 'part-ctrls';
     ctrls.innerHTML =
-      '<label class="sl">量 <input id="pCount" type="range" min="100" max="1200" step="20"><b id="pCountVal"></b></label>' +
+      '<label class="sl">量 <input id="pCount" type="range" min="100" max="10000" step="20"><b id="pCountVal"></b></label>' +
       '<label class="sl">Tail <input id="pTail" type="range" min="0" max="1" step="0.02"><b id="pTailVal"></b></label>' +
       '<label class="sl">ブラー <input id="pBlur" type="range" min="0" max="1" step="0.02"><b id="pBlurVal"></b></label>' +
       '<label class="sl">反応 <input id="pReact" type="range" min="0.2" max="2.5" step="0.05"><b id="pReactVal"></b></label>';
@@ -344,7 +344,7 @@
     var sharpSprite = makeCircleSprite(24, 0.58, 0.14);
     var blurSprite = makeCircleSprite(40, 0.14, 0.42);
 
-    var MAX_N = 1200;
+    var MAX_N = 10000;
     var px = new Float32Array(MAX_N);
     var py = new Float32Array(MAX_N);
     var ox = new Float32Array(MAX_N);
@@ -354,6 +354,7 @@
     var pBand = new Uint8Array(MAX_N);
     var pAngle = new Float32Array(MAX_N);
     var pRadius = new Float32Array(MAX_N);
+    var pPhase = new Float32Array(MAX_N);
     var pBaseSize = new Float32Array(MAX_N);
     var pSeed = 0x2468ACE1;
     function rnd() {
@@ -372,6 +373,7 @@
         var r = Math.pow(rnd(), 0.65) * rad;
         pAngle[i] = a;
         pRadius[i] = r / Math.max(1, rad);
+        pPhase[i] = rnd() * Math.PI * 2;
         pBand[i] = Math.floor(rnd() * 32);
         pBaseSize[i] = 0.75 + Math.pow(rnd(), 2.2) * 1.9;
         px[i] = cx + Math.cos(a) * r;
@@ -515,12 +517,13 @@
       var cy = H * 0.5;
       var baseRad = Math.min(W, H) * 0.42;
       var count = Math.max(100, Math.min(MAX_N, Math.round(Number(pCfg.count) || 560)));
+      var tailLines = tail > 0.03 && count <= 5000;
       var tailBoost = 0.6 + tail * 2.8;
 
       ctx.globalCompositeOperation = 'lighter';
 
       // 1) Tail 軌跡線（Tail > 0.03 のとき各粒子の移動方向に極細の尾を描く）
-      if (tail > 0.03) {
+      if (tailLines) {
         ctx.lineWidth = 0.6 + blur * 0.8;
         ctx.strokeStyle = 'rgba(180, 220, 248, ' + (0.14 + tail * 0.24).toFixed(2) + ')';
         ctx.beginPath();
@@ -531,10 +534,15 @@
         ox[i] = px[i];
         oy[i] = py[i];
 
-        // 担当帯域の音量で目標半径が伸縮し、低域で引き締まり、Fluxで外へ弾ける
-        pAngle[i] += (0.004 + smoothMid * 0.028 + bVal * 0.022) * (i & 1 ? 1 : -1);
-        var targetR = baseRad * (pRadius[i] * (0.72 + bVal * 0.85) + smoothFlux * 0.28 - smoothBass * 0.14);
-        targetR = Math.max(6, Math.min(baseRad * 1.28, targetR));
+        // 半径方向の呼吸を主役にする: 担当帯域の音量で中心付近〜円盤の外周
+        // いっぱいまで大きく往復し、回転は帯域ごとの遅いドリフトに落とす。
+        // 粒ごとの位相ずれで、輪がそろって回る見え方を崩す。
+        pAngle[i] += (0.0012 + smoothMid * 0.006 + bVal * 0.005) * ((pBand[i] % 2) ? 1 : -1);
+        var reach = 0.22 + 0.78 * pRadius[i];
+        var drive = bVal * 1.12 + smoothFlux * 0.30 - smoothBass * 0.10;
+        var wob = 0.16 * Math.sin(simT * (0.45 + (pBand[i] % 6) * 0.06) + pPhase[i]) * (0.35 + 0.65 * bVal);
+        var targetR = baseRad * Math.max(0.02, Math.min(1.30, (drive + wob) * reach));
+        targetR = Math.max(4, targetR);
         var tx = cx + Math.cos(pAngle[i]) * targetR;
         var ty = cy + Math.sin(pAngle[i]) * targetR;
 
@@ -546,14 +554,14 @@
         px[i] += vx[i];
         py[i] += vy[i];
 
-        if (tail > 0.03) {
+        if (tailLines) {
           var dx = px[i] - ox[i];
           var dy = py[i] - oy[i];
           ctx.moveTo(px[i], py[i]);
           ctx.lineTo(px[i] - dx * tailBoost, py[i] - dy * tailBoost);
         }
       }
-      if (tail > 0.03) ctx.stroke();
+      if (tailLines) ctx.stroke();
 
       // 2) 丸い細かい粒子本体（シャープ粒＋ブラー粒の2層ブレンド）
       for (var i = 0; i < count; i++) {
@@ -566,8 +574,9 @@
           : 0.24;
 
         // ブラー層（ぼんやり丸く発光）
-        if (blur > 0.02) {
+        if (blur > 0.02 && (count <= 2000 || (i & 1) === 0)) {
           var br = rCore * (2.2 + blur * 4.4);
+          if (count > 2000 && br > 13) br = 13;
           ctx.globalAlpha = alpha * (0.18 + blur * 0.52);
           ctx.drawImage(blurSprite, x - br, y - br, br * 2, br * 2);
         }
