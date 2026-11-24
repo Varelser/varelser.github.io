@@ -355,6 +355,9 @@
     var pAngle = new Float32Array(MAX_N);
     var pRadius = new Float32Array(MAX_N);
     var pPhase = new Float32Array(MAX_N);
+    var pChaos = new Float32Array(MAX_N);
+    var pBx = new Float32Array(MAX_N);
+    var pBy = new Float32Array(MAX_N);
     var pBaseSize = new Float32Array(MAX_N);
     var pSeed = 0x2468ACE1;
     function rnd() {
@@ -374,6 +377,10 @@
         pAngle[i] = a;
         pRadius[i] = r / Math.max(1, rad);
         pPhase[i] = rnd() * Math.PI * 2;
+        pChaos[i] = 0.3 + rnd() * 2.2;
+        var ba0 = rnd() * Math.PI * 2;
+        pBx[i] = Math.cos(ba0);
+        pBy[i] = Math.sin(ba0);
         pBand[i] = Math.floor(rnd() * 32);
         pBaseSize[i] = 0.75 + Math.pow(rnd(), 2.2) * 1.9;
         px[i] = cx + Math.cos(a) * r;
@@ -534,9 +541,10 @@
         ox[i] = px[i];
         oy[i] = py[i];
 
-        // 自由粒子モデル: ホーム位置への誘導は弱くし、慣性で飛ぶ。
-        // ビート (Flux) で外向きに弾け、拡散 (ジッター) は音量連動で強くなる。
-        // 回転はほぼ消してドリフトだけ残す。
+        // カオス自由粒子モデル: ホームへの誘導は弱く、慣性で飛ぶ。
+        // ビート (Flux) で粒ごとのランダム方向へ爆散し、強い立ち上がりでは
+        // 速度の振り直し (スクランブル) とランダム位置からの再噴出が起きる。
+        // 乱れ具合・減衰は粒ごとにばらつく (pChaos 0.3〜2.5)。回転はほぼ消す。
         pAngle[i] += (0.0006 + smoothMid * 0.003 + bVal * 0.0025) * ((pBand[i] % 2) ? 1 : -1);
         var reach = 0.22 + 0.78 * pRadius[i];
         var drive = bVal * 1.12 + smoothFlux * 0.30 - smoothBass * 0.10;
@@ -551,20 +559,40 @@
         var distC = Math.sqrt(dcx * dcx + dcy * dcy) || 1;
         var ux = dcx / distC, uy = dcy / distC;
 
-        // 弱い誘導＋ビート衝撃＋拡散。減衰は小さく、速度が残る。
+        // 爆散方向は粒ごとに持ち、ビートのたびに一部が振り直される
+        if (smoothFlux > 0.5 && rnd() < 0.03) {
+          var ba = rnd() * Math.PI * 2;
+          pBx[i] = Math.cos(ba); pBy[i] = Math.sin(ba);
+        }
+        var ch = pChaos[i];
+        // 弱い誘導＋ランダム爆散＋拡散。減衰は粒ごとに違い、速度が残る。
         var pull = 0.012 + bVal * 0.020;
-        var kick = smoothFlux * (1.9 + bVal * 3.4) * (0.6 + 0.4 * Math.sin(pPhase[i] * 7.0));
-        var jitter = (0.30 + smoothHigh * 3.4 + bVal * 2.8 + energy * 2.2) * (hasAudio ? 1 : 0.25);
-        var nvx = vx[i] + (tx - px[i]) * pull + ux * kick + (rnd() - 0.5) * jitter;
-        var nvy = vy[i] + (ty - py[i]) * pull + uy * kick + (rnd() - 0.5) * jitter;
+        var kick = smoothFlux * (1.9 + bVal * 3.4) * (0.6 + 0.4 * Math.sin(pPhase[i] * 7.0)) * (0.5 + ch * 0.55);
+        var jitter = (0.30 + smoothHigh * 3.4 + bVal * 2.8 + energy * 2.2) * (hasAudio ? 1 : 0.25) * ch;
+        var nvx = vx[i] + (tx - px[i]) * pull + (ux * 0.4 + pBx[i] * 0.9) * kick + (rnd() - 0.5) * jitter;
+        var nvy = vy[i] + (ty - py[i]) * pull + (uy * 0.4 + pBy[i] * 0.9) * kick + (rnd() - 0.5) * jitter;
+        // スクランブル: 強い立ち上がりで一部の粒の速度を丸ごと振り直す
+        if (smoothFlux > 0.55 && rnd() < 0.010 * ch) {
+          var sa = rnd() * Math.PI * 2, sm = 6 + rnd() * 24;
+          nvx = Math.cos(sa) * sm; nvy = Math.sin(sa) * sm;
+        }
+        // 再噴出: 一部の粒がランダムな位置から新たに噴き出す
+        if (smoothFlux > 0.6 && rnd() < 0.0035 * ch) {
+          var ra = rnd() * Math.PI * 2, rr = Math.pow(rnd(), 0.6) * baseRad * 1.15;
+          px[i] = cx + Math.cos(ra) * rr; py[i] = cy + Math.sin(ra) * rr;
+          ox[i] = px[i]; oy[i] = py[i];
+          var va = rnd() * Math.PI * 2, vm = 4 + rnd() * 18;
+          nvx = Math.cos(va) * vm; nvy = Math.sin(va) * vm;
+        }
         // 遠くへ飛んだ粒はゆるやかに引き戻す (消えっぱなしにしない)
-        var maxR = baseRad * 1.9;
-        if (distC > maxR) { var back = (distC - maxR) * 0.004; nvx -= ux * back; nvy -= uy * back; }
-        var damp = 0.94 + tail * 0.04;
+        var maxR = baseRad * 2.6;
+        if (distC > maxR) { var back = (distC - maxR) * 0.0025; nvx -= ux * back; nvy -= uy * back; }
+        var damp = 0.935 + tail * 0.04 + (ch - 1) * 0.014;
+        if (damp > 0.99) damp = 0.99; else if (damp < 0.90) damp = 0.90;
         nvx *= damp; nvy *= damp;
         // 速度上限 (暴走防止)
         var sp2 = nvx * nvx + nvy * nvy;
-        if (sp2 > 676) { var sc = 26 / Math.sqrt(sp2); nvx *= sc; nvy *= sc; }
+        if (sp2 > 1600) { var sc = 40 / Math.sqrt(sp2); nvx *= sc; nvy *= sc; }
         vx[i] = nvx; vy[i] = nvy;
         px[i] += vx[i];
         py[i] += vy[i];
