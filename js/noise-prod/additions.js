@@ -534,23 +534,38 @@
         ox[i] = px[i];
         oy[i] = py[i];
 
-        // 半径方向の呼吸を主役にする: 担当帯域の音量で中心付近〜円盤の外周
-        // いっぱいまで大きく往復し、回転は帯域ごとの遅いドリフトに落とす。
-        // 粒ごとの位相ずれで、輪がそろって回る見え方を崩す。
-        pAngle[i] += (0.0012 + smoothMid * 0.006 + bVal * 0.005) * ((pBand[i] % 2) ? 1 : -1);
+        // 自由粒子モデル: ホーム位置への誘導は弱くし、慣性で飛ぶ。
+        // ビート (Flux) で外向きに弾け、拡散 (ジッター) は音量連動で強くなる。
+        // 回転はほぼ消してドリフトだけ残す。
+        pAngle[i] += (0.0006 + smoothMid * 0.003 + bVal * 0.0025) * ((pBand[i] % 2) ? 1 : -1);
         var reach = 0.22 + 0.78 * pRadius[i];
         var drive = bVal * 1.12 + smoothFlux * 0.30 - smoothBass * 0.10;
         var wob = 0.16 * Math.sin(simT * (0.45 + (pBand[i] % 6) * 0.06) + pPhase[i]) * (0.35 + 0.65 * bVal);
-        var targetR = baseRad * Math.max(0.02, Math.min(1.30, (drive + wob) * reach));
+        var targetR = baseRad * Math.max(0.02, Math.min(1.45, (drive + wob) * reach));
         targetR = Math.max(4, targetR);
         var tx = cx + Math.cos(pAngle[i]) * targetR;
         var ty = cy + Math.sin(pAngle[i]) * targetR;
 
-        // バネ追従＋高域マイクロ振動（音への即応性を高める）
-        var pull = 0.065 + bVal * 0.16 + smoothFlux * 0.12;
-        var jitter = (0.12 + smoothHigh * 1.6 + bVal * 1.1) * (hasAudio ? 1 : 0.2);
-        vx[i] = (vx[i] + (tx - px[i]) * pull + (rnd() - 0.5) * jitter) * (0.80 + tail * 0.11);
-        vy[i] = (vy[i] + (ty - py[i]) * pull + (rnd() - 0.5) * jitter) * (0.80 + tail * 0.11);
+        // 中心からの向き (弾けの基準)
+        var dcx = px[i] - cx, dcy = py[i] - cy;
+        var distC = Math.sqrt(dcx * dcx + dcy * dcy) || 1;
+        var ux = dcx / distC, uy = dcy / distC;
+
+        // 弱い誘導＋ビート衝撃＋拡散。減衰は小さく、速度が残る。
+        var pull = 0.012 + bVal * 0.020;
+        var kick = smoothFlux * (1.9 + bVal * 3.4) * (0.6 + 0.4 * Math.sin(pPhase[i] * 7.0));
+        var jitter = (0.30 + smoothHigh * 3.4 + bVal * 2.8 + energy * 2.2) * (hasAudio ? 1 : 0.25);
+        var nvx = vx[i] + (tx - px[i]) * pull + ux * kick + (rnd() - 0.5) * jitter;
+        var nvy = vy[i] + (ty - py[i]) * pull + uy * kick + (rnd() - 0.5) * jitter;
+        // 遠くへ飛んだ粒はゆるやかに引き戻す (消えっぱなしにしない)
+        var maxR = baseRad * 1.9;
+        if (distC > maxR) { var back = (distC - maxR) * 0.004; nvx -= ux * back; nvy -= uy * back; }
+        var damp = 0.94 + tail * 0.04;
+        nvx *= damp; nvy *= damp;
+        // 速度上限 (暴走防止)
+        var sp2 = nvx * nvx + nvy * nvy;
+        if (sp2 > 676) { var sc = 26 / Math.sqrt(sp2); nvx *= sc; nvy *= sc; }
+        vx[i] = nvx; vy[i] = nvy;
         px[i] += vx[i];
         py[i] += vy[i];
 
