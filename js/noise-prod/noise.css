@@ -1,0 +1,664 @@
+/* === Style Block #1 === */
+/* ==== Lien design system, adapted for Noise ==== */
+  :root{
+    --bg:#000000;
+    --fg:#ffffff;
+    --muted:#a3a3a3;
+    --muted-2:#737373;
+    --border:#171717;
+    --panel-bg:rgba(0,0,0,0.90);
+    --panel-header-bg:rgba(10,10,10,0.50);
+    --panel-border:#262626;
+    --control-bg:#171717;
+    --control-bg-hover:#262626;
+    --option-active-bg:#f5f5f5;
+    --option-active-fg:#000000;
+    --option-active-border:#f5f5f5;
+    --option-inactive-fg:#737373;
+    --option-inactive-border:#262626;
+    --option-inactive-hover:#525252;
+    --overlay-bg:rgba(0,0,0,0.72);
+    --overlay-fg:#ffffff;
+    --overlay-border:rgba(255,255,255,0.15);
+    --toolbar-hover:rgba(255,255,255,0.10);
+    --shadow:0 25px 50px -12px rgba(0,0,0,0.75);
+    --backdrop:blur(20px);
+    --accent:#ffffff;
+    --danger:#ff6b6b;
+    --ok:#9cffc1;
+    --line-soft:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font:13px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  button,input,select{font:inherit;color:var(--fg)}
+  button{border:0;background:none;color:inherit;padding:0;cursor:pointer}
+  button:disabled,input:disabled{opacity:.4;cursor:default}
+  [hidden]{display:none !important}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+  ::-webkit-scrollbar-thumb:hover{background:#555}
+  button:focus-visible,input:focus-visible,select:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;
+  }
+  @keyframes slideUpFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  #app{min-height:100%;display:flex;flex-direction:column;padding-bottom:76px}
+  #stage{order:1;min-width:0;display:grid;grid-template-rows:auto auto auto auto auto auto}
+  /* Lien header: centred thin title */
+  .app-header{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;padding:16px 16px 10px;user-select:none;background:var(--bg);
+  }
+  .app-title{
+    margin:0;font-size:.875rem;line-height:1.25rem;letter-spacing:.2em;
+    font-weight:300;color:color-mix(in srgb,var(--fg) 78%,transparent);
+  }
+  .app-sub{
+    margin:0;font-size:10px;line-height:1.4;color:var(--muted-2);
+    text-transform:uppercase;letter-spacing:.16em;
+  }
+  #panel{
+    order:2;border-top:1px solid var(--border);
+    /* NOTE: no overflow here. #panel used to have overflow:auto, but that
+       makes it a scroll container, and a sticky element inside a
+       non-scrolling container never sticks — the preset sidebar scrolled
+       away with the page. Removing it lets #sec-preset stick to the viewport. */
+    padding:20px 16px 24px;background:var(--bg);
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:16px;align-content:start;align-items:start;
+  }
+  /* Lien toolbar: transport, fixed to the bottom of the viewport.
+     (sticky cannot work here: the toolbar is a grid item of #stage and its
+     grid row is only as tall as the toolbar itself, so it has no room to stick.) */
+  .toolbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    display:flex;align-items:center;justify-content:center;
+    padding:12px 24px calc(12px + env(safe-area-inset-bottom));
+    background:var(--panel-bg);
+    backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);
+    border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  }
+  .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+  .actions button,.panel-tools button,.session-actions button,.grid2 button{
+    padding:8px 12px;font-size:12px;line-height:1rem;border-radius:8px;
+    color:color-mix(in srgb,var(--fg) 78%,transparent);background:transparent;
+    transition:background-color .2s ease,color .2s ease;min-height:36px;white-space:nowrap;
+  }
+  .actions button:hover,.panel-tools button:hover,.session-actions button:hover,.grid2 button:hover{
+    background:color-mix(in srgb,var(--fg) 8%,transparent);color:var(--fg);
+  }
+  .actions button:disabled{opacity:.4}
+  /* Primary transport (Play): Lien active-option treatment */
+  #playBtn{background:var(--option-active-bg);color:var(--option-active-fg);font-weight:600}
+  #playBtn:hover{background:var(--option-active-bg);color:var(--option-active-fg);opacity:.85}
+  #reverseBtn.active{background:var(--option-active-bg);color:var(--option-active-fg);font-weight:600}
+  #resetBtn{color:var(--danger)}
+  #resetBtn:hover{color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+  .status{
+    padding:10px 24px;color:var(--muted);border-bottom:1px solid var(--border);
+    min-height:38px;font-size:10px;line-height:1.4;letter-spacing:.16em;text-transform:uppercase;
+  }
+  .ok{color:var(--ok)}
+  .err{color:var(--danger)}
+  /* Lien floating-panel treatment for the control sections */
+  .section{
+    border:1px solid var(--panel-border);border-radius:12px;overflow:hidden;
+    margin-bottom:0;background:var(--panel-bg);min-width:0;
+    box-shadow:var(--shadow);backdrop-filter:var(--backdrop);-webkit-backdrop-filter:var(--backdrop);
+    animation:slideUpFade .2s ease-out forwards;
+  }
+  .section > .head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:12px 16px;background:var(--panel-header-bg);
+    border-bottom:1px solid var(--panel-border);cursor:pointer;user-select:none;
+  }
+  .section > .head h2,.section > .head h3{
+    margin:0;font-size:12px;line-height:1rem;font-weight:600;
+    text-transform:uppercase;letter-spacing:.12em;
+    color:color-mix(in srgb,var(--fg) 72%,transparent);
+  }
+  .section .body{padding:16px}
+  .type-info{font-size:11px;line-height:1.6;color:var(--muted);margin:-4px 0 10px;min-height:18px}
+  .type-info a{color:inherit;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+  .footer a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+  .section.collapsed > .body{display:none !important}
+  /* !important is required here: #masterFields / #layer*Fields get
+     display:grid from their ID selectors below, and an ID beats the
+     .section.collapsed > .body rule without it — the body would stay
+     visible even though the section is collapsed. */
+  .section.collapsed > .head{border-bottom:none}
+  .collapse-btn{
+    flex:none;width:28px;height:28px;padding:0;border-radius:9999px;
+    border:0;background:transparent;color:var(--muted);
+    font-size:13px;line-height:1;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:background-color .2s ease,color .2s ease;
+  }
+  .collapse-btn:hover{color:var(--fg);background:var(--toolbar-hover)}
+  .collapse-btn .chev{display:inline-block;transition:transform .15s ease}
+  .section.collapsed .collapse-btn .chev{transform:rotate(-90deg)}
+  .panel-tools{
+    display:flex;gap:8px;grid-column:1/-1;justify-content:flex-start;
+  }
+  .panel-tools button{flex:0 1 auto}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  /* Lien slider-block: muted label left, mono value right */
+  .field{display:grid;gap:6px;margin-bottom:10px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px}
+  .field label b{
+    color:var(--muted-2);font-weight:400;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  .field input[type="range"]{
+    width:100%;height:4px;margin:0;appearance:none;-webkit-appearance:none;
+    border-radius:9999px;background:var(--control-bg);cursor:pointer;outline:none;
+    accent-color:var(--accent);transition:background-color .2s ease;
+  }
+  .field input[type="range"]:hover{background:var(--control-bg-hover)}
+  .field input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:14px;height:14px;
+    border-radius:9999px;background:var(--accent);border:0;
+  }
+  .field input[type="range"]::-moz-range-thumb{
+    width:14px;height:14px;border-radius:9999px;background:var(--accent);border:0;
+  }
+  .field input[type="range"]::-moz-range-track{height:4px;border-radius:9999px;background:var(--control-bg)}
+  .field input[type="number"],.field select,.field input[type="text"],.field input[type="password"]{
+    width:100%;background:var(--control-bg);border:0;border-radius:8px;
+    padding:8px 10px;min-height:36px;
+  }
+  .checkboxes{display:flex;flex-wrap:wrap;gap:12px 18px}
+  .check{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    color:var(--muted);font-size:12px;cursor:pointer;
+  }
+  .check span{transition:color .2s ease}
+  .check:hover span{color:var(--fg)}
+  .check input{accent-color:var(--accent)}
+  /* Lien option-buttons for the preset pills */
+  .pillrow{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{
+    flex:1 1 50px;min-width:50px;min-height:0;
+    padding:6px 10px;font-size:10px;line-height:.875rem;text-transform:uppercase;
+    letter-spacing:.12em;border-radius:6px;color:var(--option-inactive-fg);
+    background:transparent;cursor:pointer;user-select:none;
+    transition:background-color .2s ease,color .2s ease;
+  }
+  .pill:hover{color:var(--fg);background:color-mix(in srgb,var(--fg) 8%,transparent)}
+  .preset-filters{margin-bottom:8px}
+  .preset-filters .pill.active,.pill.active{
+    background:var(--option-active-bg);color:var(--option-active-fg);
+  }
+  .readout{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:16px;padding:16px 24px;min-height:0;
+  }
+  .card{
+    background:var(--panel-bg);border:1px solid var(--border);border-radius:12px;
+    overflow:hidden;min-height:280px;display:grid;grid-template-rows:auto 1fr;
+  }
+  .card .ch{
+    padding:10px 16px;border-bottom:1px solid var(--panel-border);
+    font-size:10px;line-height:.875rem;text-transform:uppercase;letter-spacing:.16em;
+    font-weight:500;color:var(--muted);
+  }
+  canvas{display:block;width:100%;height:100%;background:#000}
+  .legend{
+    display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:8px;padding:16px 24px;
+  }
+  .session-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .mini{
+    border:1px solid var(--border);border-radius:12px;
+    padding:12px 16px;background:transparent;
+  }
+  .mini .k{
+    font-size:10px;line-height:.875rem;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.16em;margin-bottom:4px;
+  }
+  .mini .v{font-weight:500;word-break:break-word;font-size:12px;color:color-mix(in srgb,var(--fg) 78%,transparent)}
+  .help{color:var(--muted);font-size:11px;line-height:1.7;margin-top:8px}
+  .footer{
+    border-top:1px solid var(--border);padding:12px 24px 14px;
+    color:var(--muted-2);font-size:10px;line-height:1.4;
+    text-transform:uppercase;letter-spacing:.16em;
+  }
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  @media (max-width:1300px){
+    .readout{grid-template-columns:1fr}
+  }
+  @media (max-width:1100px){
+    #panel{grid-template-columns:1fr;max-height:none}
+  }
+  @media (max-width:768px){
+    #app{padding-bottom:168px}
+    .toolbar{padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+    .actions{gap:6px}
+    .section .body{padding:16px}
+    .readout,.legend{padding-left:16px;padding-right:16px}
+    .status{padding-left:16px;padding-right:16px}
+  }
+  /* ==== Dense panel layout ==== */
+  /* Blank inside short cards came from the grid default (stretch): every card
+     in a row grew as tall as Master (~40 fields). align-items:start above
+     makes each card hug its own content. */
+  /* Two-column fields for Master + Layers from tablet widths up. */
+  @media (min-width:768px){
+    #masterFields,#layerAFields,#layerBFields,#layerCFields{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;
+    }
+    #masterFields .field,#layerAFields .field,#layerBFields .field,#layerCFields .field{margin-bottom:0}
+  }
+  /* Desktop: preset becomes a fixed left sidebar (sticky, its own scroll),
+     the rest of the sections fill a grid to its right.
+     1200-1499px: sidebar 300px + 2 content columns; master spans both.
+     1500px+: sidebar 320px + 3 content columns; master spans 2 of 3.
+     Row order on the right stays as written
+     (session, master / A, B, C / sleep, ai, midi / notes). */
+  @media (min-width:1200px){
+    #panel{grid-template-columns:300px repeat(2,minmax(0,1fr))}
+    #sec-preset{grid-column:1;grid-row:2/span 6;position:sticky;top:16px;align-self:start;max-height:calc(100dvh - 32px);display:flex;flex-direction:column}
+    #sec-preset>.body{overflow-y:auto;min-height:0;flex:1 1 auto}
+    #sec-master{grid-column:span 2}
+    #sec-notes{grid-column:span 2}
+  }
+  @media (min-width:1500px){
+    #panel{grid-template-columns:320px repeat(3,minmax(0,1fr))}
+    #sec-preset{grid-row:2/span 4}
+    #sec-notes{grid-column:span 3}
+    /* Master is ~40 fields: 3 columns here (~300px each at 1919px wide),
+       which cuts its height by another third. Layers stay 2-column. */
+    #masterFields{grid-template-columns:repeat(3,1fr)}
+  }
+  /* Lien overlay card for the tooltip */
+  #tooltip{
+    position:fixed;z-index:9999;max-width:300px;
+    padding:12px 16px;border-radius:12px;
+    background:var(--overlay-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--overlay-border);color:var(--overlay-fg);
+    font-size:12px;line-height:1.55;letter-spacing:.04em;pointer-events:none;
+    opacity:0;transform:translateY(2px);
+    transition:opacity .15s ease,transform .15s ease;
+    box-shadow:var(--shadow);
+  }
+  #tooltip.visible{opacity:1;transform:translateY(0)}
+  [data-help]{cursor:help}
+
+  /* ==== v2-lien-refine: bring Noise to the SHIPPED frameless Lien standard ==== */
+  /* 1. Frameless: remove every remaining square frame / divider line.
+        Fills, radius, blur and shadows stay, exactly as Lien final. */
+  #panel { border-top: 0; }
+  .section { border: 0; animation: none; }
+  .section > .head { border-bottom: 0; }
+  .card { border: 0; background: transparent; box-shadow: none; }
+  .card .ch { border-bottom: 0; padding-left: 2px; background: transparent; }
+  .mini { border: 0; padding: 8px 2px; }
+  .toolbar { border-top: 0; border-bottom: 0; box-shadow: 0 -18px 36px rgba(0,0,0,0.55); }
+  .status { border-bottom: 0; letter-spacing: 0.08em; }
+  .footer { border-top: 0; }
+  #tooltip { border: 0; }
+  /* ==== latest-tech: popover tooltip reset + preset rows ==== */
+  #tooltip[popover]{margin:0;inset:auto}
+  .up-row{display:flex;gap:6px;align-items:stretch;margin-top:6px}
+  .up-row .up-apply{flex:1 1 auto;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .up-row button{padding:6px 10px;font-size:11px;line-height:1rem;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer}
+  .up-row button:hover{background:var(--control-bg-hover)}
+  /* explicit border:0 guard (Yayoi lesson: a dropped declaration alone
+     can revive the UA default border) */
+  #panel button, #panel input, #panel select, #panel textarea,
+  .toolbar button { border: 0; }
+
+  /* 2. Header: Lien's exact 56px, centred title only. The subtitle is
+        hidden (the same slogan already runs in the stage footer). */
+  .app-header {
+    flex-direction: row; height: 56px; padding: 0 16px; gap: 0;
+  }
+  .app-sub { display: none; }
+
+  /* 3. Legend: 7 items get 7 columns on wide screens, and the items no
+        longer stretch into tall empty boxes. */
+  .legend { grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: start; gap: 8px 16px; padding-top: 4px; }
+  @media (max-width: 1300px) { .legend { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 768px) { .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* 4. Preset pills: names are long, so they get two tidy columns in
+        their natural case instead of Lien's short-label uppercase.
+        Category filters keep the Lien uppercase treatment. */
+  #presetPills { gap: 6px; }
+  #presetPills .pill {
+    flex: 1 1 calc(50% - 3px); max-width: calc(50% - 3px); min-width: 118px;
+    text-transform: none; letter-spacing: 0.02em; font-size: 11px;
+    line-height: 1.35; padding: 7px 10px; text-align: left;
+    white-space: normal; overflow-wrap: break-word;
+  }
+  #presetFilters .pill { flex: 0 1 auto; min-width: 0; }
+
+  /* 5. Preset sidebar (>=1200px): select full-width, buttons under it. */
+  @media (min-width: 1200px) {
+    #sec-preset .body > .grid2 { grid-template-columns: 1fr; }
+  }
+
+  /* 6. Toolbar: one row at every width (Punkt mobile lesson).
+        Overflow scrolls sideways instead of wrapping to two rows,
+        so the reserved bottom space is a constant 76px. */
+  #app { padding-bottom: 76px; }
+  .toolbar { justify-content: center; }
+  .actions { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+  .actions::-webkit-scrollbar { display: none; }
+  .actions button { flex: 0 0 auto; }
+  @media (max-width: 1100px) { .toolbar { justify-content: flex-start; } }
+
+  /* 7. Mobile: visualizers keep presence without 3x280px of scroll. */
+  @media (max-width: 768px) {
+    #app { padding-bottom: 76px; }
+    .card { min-height: 200px; }
+    .readout { gap: 12px; }
+  }
+
+  /* 9. Checkbox rows: buildFields prints the label twice (field label +
+        check label) and the current .check spreads its children to both
+        edges, so the name appeared at the far right, detached from the
+        box. Keep one label, next to the box. */
+  .field .check { justify-content: flex-start; gap: 8px; }
+  .field:has(> .check) > label:first-child { display: none; }
+
+  /* 10. Small screens: the preset select gets the full width too. */
+  @media (max-width: 768px) {
+    #sec-preset .body > .grid2 { grid-template-columns: 1fr; }
+  }
+
+  /* 8. Panel breathing room, matching Lien's 20px panel body. */
+  #panel { gap: 20px; padding: 24px; }
+  @media (max-width: 768px) { #panel { padding: 20px 16px; } }
+
+  /* ==== Visual views: selector bar, view modes, immersive ==== */
+  .vizbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px;
+    padding: 12px 24px 0;
+  }
+  .vizbar .viz-sep { flex: 1 1 auto; }
+  .viz-sens { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.12em; color: var(--option-inactive-fg); white-space: nowrap; }
+  .viz-sens input[type="range"] { width: 92px; accent-color: #ffffff; cursor: pointer; }
+  .viz-btn {
+    padding: 6px 10px; font-size: 10px; line-height: 0.875rem;
+    letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+    border: 0; border-radius: 6px; background: transparent;
+    color: var(--option-inactive-fg); cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .viz-btn:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+  .viz-btn.active { background: var(--option-active-bg); color: var(--option-active-fg); }
+  @media (max-width: 768px) { .vizbar { padding: 10px 16px 0; } }
+
+  /* which cards a view shows */
+  .readout[data-view="trio"] .card[data-viz="lissajous"],
+  .readout[data-view="trio"] .card[data-viz="polar"],
+  .readout[data-view="trio"] .card[data-viz="flow"],
+  .readout[data-view="trio"] .card[data-viz="particle"],
+  .readout[data-view="trio"] .card[data-viz="liquid"],
+  .readout[data-view="trio"] .card[data-viz="level"],
+  .readout[data-view="trio"] .card[data-viz="oct"],
+  .readout[data-view="trio"] .card[data-viz="rgram"],
+  .readout[data-view="trio"] .card[data-viz="corr"] { display: none; }
+  .readout[data-view="scope"] .card:not([data-viz="scope"]),
+  .readout[data-view="spec"] .card:not([data-viz="spec"]),
+  .readout[data-view="gram"] .card:not([data-viz="gram"]),
+  .readout[data-view="lissajous"] .card:not([data-viz="lissajous"]),
+  .readout[data-view="polar"] .card:not([data-viz="polar"]),
+  .readout[data-view="particle"] .card:not([data-viz="particle"]),
+  .readout[data-view="liquid"] .card:not([data-viz="liquid"]),
+  .readout[data-view="flow"] .card:not([data-viz="flow"]),
+  .readout[data-view="level"] .card:not([data-viz="level"]),
+  .readout[data-view="oct"] .card:not([data-viz="oct"]),
+  .readout[data-view="rgram"] .card:not([data-viz="rgram"]),
+  .readout[data-view="corr"] .card:not([data-viz="corr"]) { display: none; }
+  /* a single view goes full width and taller */
+  .readout[data-view="scope"] .card, .readout[data-view="spec"] .card,
+  .readout[data-view="gram"] .card, .readout[data-view="lissajous"] .card,
+  .readout[data-view="polar"] .card, .readout[data-view="flow"] .card,
+  .readout[data-view="particle"] .card, .readout[data-view="liquid"] .card,
+  .readout[data-view="level"] .card, .readout[data-view="oct"] .card,
+  .readout[data-view="rgram"] .card, .readout[data-view="corr"] .card {
+    grid-column: 1 / -1; min-height: 460px;
+  }
+  @media (max-width: 768px) {
+    .readout[data-view="scope"] .card, .readout[data-view="spec"] .card,
+    .readout[data-view="gram"] .card, .readout[data-view="lissajous"] .card,
+    .readout[data-view="polar"] .card, .readout[data-view="flow"] .card,
+    .readout[data-view="particle"] .card, .readout[data-view="liquid"] .card,
+    .readout[data-view="level"] .card, .readout[data-view="oct"] .card,
+    .readout[data-view="rgram"] .card, .readout[data-view="corr"] .card {
+      min-height: 320px;
+    }
+  }
+  @media (max-width: 1300px) {
+    .readout[data-view="grid"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 768px) {
+    .readout[data-view="grid"] { grid-template-columns: 1fr; }
+  }
+  /* immersive: stage fullscreen, chrome hidden, views fill the screen */
+  #stage:fullscreen { background: #000; display: flex; flex-direction: column; }
+  #stage:fullscreen .vizbar, #stage:fullscreen .status,
+  #stage:fullscreen .legend, #stage:fullscreen .footer,
+  #stage:fullscreen .app-header, #stage:fullscreen .card .ch { display: none; }
+  /* the transport toolbar stays in fullscreen on purpose: play/stop
+     without leaving immersion */
+  #stage:fullscreen .readout { flex: 1 1 auto; height: 100%; }
+  #stage:fullscreen .card { height: 100%; min-height: 0; }
+
+  /* ==== Panel order: core four first, session last ==== */
+  #sec-preset { order: 1; }
+  #sec-master { order: 2; }
+  #sec-layerA { order: 3; }
+  #sec-layerB { order: 4; }
+  #sec-layerC { order: 5; }
+  #sec-sleep { order: 6; }
+  #sec-ai { order: 7; }
+  #sec-midi { order: 8; }
+  #sec-notes { order: 9; }
+  #sec-session { order: 99; }
+  @media (min-width: 1200px) {
+    /* Master spans two columns again (user report 2026-11-13): at one
+       ~370px column its ~40 fields crushed into ~100px sliders and the
+       right-hand column was effectively unusable. Session takes the
+       full content width on the last row. */
+    #sec-master { grid-column: span 2; }
+    #sec-session { grid-column: 2 / -1; }
+  }
+  @media (min-width: 1500px) {
+    /* One extra content column so Master + A + B + C sit in a
+       single row next to the sticky preset sidebar. */
+    #panel { grid-template-columns: 320px repeat(4, minmax(0, 1fr)); }
+  }
+  /* Gapless packing: fine row units + dense flow; the spans are set
+     per-section by initPanelMasonry() from measured content heights. */
+  @media (min-width: 1200px) {
+    #panel { grid-auto-rows: 10px; grid-auto-flow: dense; grid-template-rows: auto; }
+    /* The tools bar owns the real (auto-sized) first row. Without this
+       it is a phase-4 item spanning all columns, and the preset's tall
+       span exiles it below the preset, dragging Master with it. */
+    #panel .panel-tools { grid-row: 1; }
+  }
+
+/* === Style Block #2 === */
+/* share-icon 2026-11-17 (B) */
+#shareBtn{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;color:inherit;flex:none!important;transition:background .18s,transform .18s}
+#shareBtn svg{width:20px;height:20px;display:block}
+#shareBtn .ic-check{display:none}
+#shareBtn.copied .ic-share{display:none}
+#shareBtn.copied .ic-check{display:block}
+#shareBtn:hover{background:rgba(255,255,255,.12)!important;transform:translateY(-1px)}
+#shareBtn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+/* === Style Block #3 === */
+/* ==== Noise B: Focus / pro reorganisation (2026-11-16, user chose B) ==== */
+/* Header: 64px standard (top-page logotype, white version for dark bg) */
+.app-header{flex-direction:row;height:64px;padding:0 16px;gap:8px;justify-content:space-between;position:relative}
+.app-brand{display:inline-flex;align-items:center;text-decoration:none;transition:opacity .2s ease;-webkit-tap-highlight-color:transparent}
+.app-brand:hover{opacity:.75}
+.app-brand img{height:24px;width:auto;display:block}
+.app-brand .app-emblem{width:28px;height:28px;object-fit:contain}
+.app-title{position:absolute;left:50%;transform:translateX(-50%);font-size:1rem;line-height:1;white-space:nowrap}
+@media (max-width:640px){.app-header{padding:0 10px}.app-brand img{height:20px}.app-brand .app-emblem{width:24px;height:24px}.app-title{font-size:.8rem}}
+/* Vizbar: single row, sideways scroll, sensitivity stays at the right end */
+.vizbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-top:8px}
+.vizbar::-webkit-scrollbar{display:none}
+.vizbar>*{flex:0 0 auto}
+.vizbar .viz-sep{flex:1 1 24px;min-width:12px}
+/* Focus mode: secondary sections are hidden, never removed */
+body.noise-focus #sec-device,body.noise-focus #sec-sleep,body.noise-focus #sec-ai,body.noise-focus #sec-midi,body.noise-focus #sec-session,body.noise-focus #sec-notes{display:none !important}
+#focusToggleBtn[aria-pressed="true"]{background:var(--option-active-bg);color:var(--option-active-fg)}
+/* CmdK palette */
+#cmdkOverlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:flex;align-items:flex-start;justify-content:center;padding:12vh 16px 16px}
+#cmdkOverlay[hidden]{display:none !important}
+#cmdkBox{width:min(640px,100%);background:#0a0a0a;border:1px solid #333;border-radius:12px;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,.75)}
+#cmdkInput{width:100%;background:#000;color:#fff;border:0;padding:14px 16px;font-size:15px;outline:none}
+#cmdkList{max-height:46vh;overflow-y:auto;padding:6px}
+.cmdk-item{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:9px 10px;border-radius:8px;font-size:13px;color:#d4d4d4;background:transparent;cursor:pointer}
+.cmdk-item .k{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#737373;white-space:nowrap}
+.cmdk-item.sel{background:#f5f5f5;color:#000}
+.cmdk-item.sel .k{color:#525252}
+#cmdkEmpty{padding:14px 16px;color:#737373;font-size:12px}
+
+/* === Style Block #4 === */
+/* ==== Noise C: favourites / recent / preset search / shortcuts (2026-11-17) ==== */
+#panel .panel-tools{flex-wrap:wrap}
+#presetSearch{width:100%;box-sizing:border-box;background:var(--control-bg);border:0;border-radius:8px;padding:8px 10px;min-height:36px;margin:2px 0 8px}
+#presetQuick{display:grid;gap:6px;margin-top:10px}
+#presetQuick .q-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
+#presetQuick .q-row{display:flex;flex-wrap:wrap;gap:6px}
+.q-chip{padding:6px 10px;font-size:11px;line-height:1.35;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q-chip:hover{background:var(--control-bg-hover)}
+#favToggleBtn{padding:6px 10px;font-size:11px;border-radius:6px;background:transparent;color:var(--option-inactive-fg);cursor:pointer}
+#favToggleBtn.on{color:#000;background:var(--option-active-bg)}
+#keysOverlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:flex;align-items:flex-start;justify-content:center;padding:10vh 16px 16px}
+#keysOverlay[hidden]{display:none !important}
+#keysBox{width:min(560px,100%);background:#0a0a0a;border:1px solid #333;border-radius:12px;padding:18px 20px;box-shadow:0 25px 50px -12px rgba(0,0,0,.75)}
+#keysBox h2{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#d4d4d4}
+#keysBox table{width:100%;border-collapse:collapse;font-size:12.5px}
+#keysBox td{padding:5px 6px;border-bottom:1px solid #1c1c1c;color:#d4d4d4}
+#keysBox td:first-child{font-family:ui-monospace,Menlo,monospace;color:#fff;white-space:nowrap;width:42%}
+#keysClose{margin-top:12px;padding:8px 14px;border-radius:8px;background:var(--control-bg);color:#fff;cursor:pointer}
+
+/* === Style Block #5 === */
+/* ==== Noise D: morph + drift (2026-11-17) ==== */
+#morphBar{display:grid;gap:8px;margin-top:12px;border-top:1px solid var(--line-soft);padding-top:10px}
+#morphBar .m-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
+#morphBar .m-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#morphTarget{flex:1 1 140px;background:var(--control-bg);border:0;border-radius:8px;padding:8px 10px;min-height:36px}
+#morphMix{flex:1 1 120px}
+#morphBar button{padding:7px 12px;font-size:11px;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer}
+#morphBar button.on{color:#000;background:var(--option-active-bg)}
+#morphBar select.mini{background:var(--control-bg);border:0;border-radius:6px;padding:6px 8px;min-height:32px}
+#morphBar label.check{font-size:11px;color:var(--muted)}
+#driftBar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;border-top:1px solid var(--line-soft);padding-top:10px}
+#driftBar button{padding:7px 12px;font-size:11px;border-radius:6px;background:var(--control-bg);color:var(--fg);cursor:pointer}
+#driftBar button.on{color:#000;background:var(--option-active-bg)}
+#driftBar .m-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
+#driftAmt{width:110px}
+
+/* === Style Block #6 === */
+#smpRangeRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px}
+#smpRangeRow input[type=range]{width:110px}
+.ghi-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ghi-label{font-size:11px;opacity:.75;letter-spacing:.06em}
+.ghi-status{font-size:11px;opacity:.8}
+#schedBar input[type=time]{background:#161616;color:#eee;border:1px solid #444;border-radius:6px;padding:2px 6px;font-size:12px;color-scheme:dark}
+
+/* === Style Block #7 === */
+@media print{body{display:none !important}}
+
+/* === Style Block #8 === */
+/* Noise additions 2026-11-24: Liquid GL card visibility + controls */
+  .readout[data-view="liquidgl"] .card:not([data-viz="liquidgl"]) { display: none !important; }
+  .readout:not([data-view="liquidgl"]) .card[data-viz="liquidgl"] { display: none !important; }
+  .readout[data-view="liquidgl"] .card[data-viz="liquidgl"] {
+    display: flex;
+    flex-direction: column;
+    grid-column: 1 / -1;
+    min-height: 460px;
+  }
+  @media (max-width: 768px) {
+    .readout[data-view="liquidgl"] .card[data-viz="liquidgl"] { min-height: 320px; }
+  }
+  #liquidgl { width: 100%; height: 100%; min-height: 300px; display: block; background: #000; flex: 1; }
+  .lgl-ctrls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 6px 8px 2px; }
+  .lgl-ctrls .sl { display: flex; align-items: center; gap: 6px; font-size: 11px; opacity: .9; }
+  .lgl-ctrls input[type="range"] { width: 84px; accent-color: #fff; }
+  .lgl-hud { font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; opacity: .85; padding: 2px 8px 6px; }
+  .lgl-armed { outline: 2px solid #fff !important; outline-offset: 1px; }
+  #midiLearnBtn.active { background: #fff; color: #000; font-weight: 700; }
+
+  /* Fine Round Particle Visualizer (2026-11-24) */
+  .card[data-viz="particle"] { display: flex; flex-direction: column; }
+  .card[data-viz="particle"] #part { display: none !important; }
+  #partPro { width: 100%; height: 100%; min-height: 240px; display: block; background: #000; flex: 1; }
+  .part-ctrls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 6px 8px 4px; border-top: 1px solid var(--panel-border, #262626); }
+  .part-ctrls .sl { display: flex; align-items: center; gap: 6px; font-size: 11px; opacity: .9; }
+  .part-ctrls input[type="range"] { width: 82px; accent-color: #fff; }
+  .part-ctrls b { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; min-width: 28px; text-align: right; color: #fff; }
+
+  /* Noise Power Tools (2026-11-24) */
+  #sec-power .body { display: grid; gap: 14px; }
+  .pt-block { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line-soft); min-width: 0; }
+  .pt-block:first-child { padding-top: 0; border-top: 0; }
+  .pt-title { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-2); }
+  .pt-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .pt-row button, .pt-row select {
+    padding: 6px 10px; font-size: 11px; border-radius: 6px;
+    background: var(--control-bg); color: var(--fg);
+  }
+  .pt-row button:hover { background: var(--control-bg-hover); }
+  .pt-row button.on { background: var(--option-active-bg); color: var(--option-active-fg); font-weight: 600; }
+  .pt-meta { font-size: 11px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .pt-xy-axes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .pt-axis { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted-2); min-width: 0; }
+  .pt-axis select {
+    flex: 1 1 auto; min-width: 0; padding: 5px 8px; font-size: 11px;
+    border-radius: 6px; background: var(--control-bg); color: var(--fg);
+  }
+  #xyPad {
+    width: 100%; height: 150px; display: block; border-radius: 8px;
+    background: #080808; border: 1px solid var(--panel-border);
+    cursor: crosshair; touch-action: none;
+  }
+  .pt-rec-out { display: grid; gap: 6px; }
+  .pt-rec-video { width: 100%; max-height: 180px; border-radius: 6px; background: #000; border: 1px solid var(--panel-border); }
+  .pt-rec-dl {
+    display: inline-block; padding: 6px 10px; border-radius: 6px;
+    background: var(--control-bg); color: var(--fg); font-size: 11px;
+    text-decoration: none; text-align: center;
+  }
+  .pt-rec-dl:hover { background: var(--control-bg-hover); }
+
+  /* Multi-Tier DSP Engine (2026-11-24) */
+  .dsp-tier-box {
+    grid-column: 1 / -1;
+    display: grid; gap: 8px;
+    padding: 10px 12px; margin-bottom: 4px;
+    border: 1px solid var(--panel-border); border-radius: 8px;
+    background: rgba(255, 255, 255, 0.025);
+  }
+  .dsp-tier-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; }
+  .dsp-tier-title { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-2); }
+  .dsp-tier-spec { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+  #dspTierSelect {
+    width: 100%; padding: 7px 10px; border-radius: 6px;
+    background: var(--control-bg); color: var(--fg); font-size: 12px;
+  }
+  .dsp-tier-sliders { display: grid; gap: 6px; }
+  .dsp-sl { display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--muted); }
+  .dsp-sl input[type="range"] { flex: 1 1 auto; accent-color: #fff; cursor: pointer; }
+  .dsp-sl b { font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; min-width: 32px; text-align: right; color: #fff; }

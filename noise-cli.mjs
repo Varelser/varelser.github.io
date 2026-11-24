@@ -33,9 +33,21 @@ if (!fs.existsSync(htmlPath)) {
   process.exit(1);
 }
 const html = fs.readFileSync(htmlPath, 'utf8');
-const m = html.match(/<script>([\s\S]*)<\/script>/);
-if (!m) { console.error('script block not found in noise.html'); process.exit(1); }
-const src = m[1];
+if (html.includes('js/noise-prod/')) {
+  console.error('noise-cli: this noise.html is the modular build (js/noise-prod/*).');
+  console.error('The modular core is name-mangled, so headless rendering is not available from it.');
+  console.error('Use noise-cli.mjs next to the single-file readable build (the mother noise.html) instead.');
+  process.exit(1);
+}
+const blocks = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map((x) => x[1]);
+if (!blocks.length) { console.error('script block not found in noise.html'); process.exit(1); }
+blocks.sort((a, b) => b.length - a.length);
+const src = blocks[0];
+if (!src.includes('const NOISE_TYPES')) {
+  console.error('noise-cli: could not find the readable app script in noise.html (obfuscated or modular build?).');
+  console.error('Use noise-cli.mjs next to the single-file readable build (the mother noise.html) instead.');
+  process.exit(1);
+}
 
 function braceBlock(s, startIdx) {
   const i = s.indexOf('{', startIdx);
@@ -57,7 +69,9 @@ parts.push(src.slice(src.indexOf('function getExportFormat'), src.indexOf('funct
 parts.push(braceBlock(src, src.indexOf('function normalizeParams')));
 // DSP span: lp .. renderBlock
 {
-  const a = src.indexOf('function lp(');
+  // Start where the getExport span ended (normalizeParams): the lp..normalizeParams
+  // region is already included above, and re-including it duplicates const NOISE_SAMPLES.
+  const a = src.indexOf('function normalizeParams');
   const rb = src.indexOf('function renderBlock(');
   parts.push(src.slice(a, rb) + braceBlock(src, rb));
 }
@@ -66,6 +80,13 @@ parts.push(braceBlock(src, src.indexOf('function normalizeParams')));
   const a = src.indexOf('function initExportSafetyState');
   const enc = src.indexOf('function encodeAudioChunked');
   parts.push(src.slice(a, enc) + braceBlock(src, enc));
+}
+
+// Late-defined export helpers the streamed scanners call (they live past
+// encodeAudioChunked in the current layout, outside the spans above).
+for (const name of ['function makeExportConv']) {
+  const i = src.indexOf(name);
+  if (i >= 0) parts.push(braceBlock(src, i));
 }
 
 const epilogue = `

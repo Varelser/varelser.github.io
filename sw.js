@@ -3,11 +3,21 @@
 // page, so only /noise.html is treated as the app document there) and
 // Cloudflare Pages (app also served at /, /index.html and /noise due to
 // pretty-URL canonicalisation).
-const CACHE = 'noise-pwa-v9';
+const CACHE = 'noise-pwa-v13';
 const ON_PAGES = self.location.hostname.endsWith('.pages.dev');
 const DOC_PATHS = ON_PAGES ? ['/', '/index.html', '/noise', '/noise.html'] : ['/noise.html'];
 const CORE = [
   '/noise.html',
+  '/assets/noise-kamon-white.png',
+  '/js/noise-prod/noise.css',
+  '/js/noise-prod/core.min.js',
+  '/js/noise-prod/extensions.min.js',
+  '/js/noise-prod/studio.min.js',
+  '/js/noise-prod/free-guard.min.js',
+  '/js/noise-prod/liquid-gl.js',
+  '/js/noise-prod/additions.js',
+  '/js/noise-prod/dsp-tiers.js',
+  '/js/noise-prod/power-tools.js',
   '/manifest.webmanifest',
   '/icon.svg',
   'https://noise-assets.pages.dev/icon-192.png',
