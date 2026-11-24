@@ -521,6 +521,25 @@
 #shareBtn:hover{background:rgba(255,255,255,.12)!important;transform:translateY(-1px)}
 #shareBtn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 </style>
+<script>
+/* Noise additions 2026-11-24 (1/3): capture the app's AnalyserNodes for the Liquid GL view.
+   Transparent wrapper: calls the original createAnalyser and only records the result. */
+(function () {
+  'use strict';
+  window.__noiseAnalysers = [];
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (AC && AC.prototype && AC.prototype.createAnalyser) {
+      var orig = AC.prototype.createAnalyser;
+      AC.prototype.createAnalyser = function () {
+        var an = orig.call(this);
+        try { window.__noiseAnalysers.push(an); } catch (_) {}
+        return an;
+      };
+    }
+  } catch (_) {}
+})();
+</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1155410682712798" crossorigin="anonymous"></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c0413bd193ab4c8c80adac07e8027864"}'></script><!-- End Cloudflare Web Analytics -->
 <script type="text/javascript">function _0x332c(_0x2cfff5,_0x391edb){_0x2cfff5=_0x2cfff5-0x18e;var _0x3d9cb6=_0x3d9c();var _0x332c9b=_0x3d9cb6[_0x2cfff5];if(_0x332c['yKYkmG']===undefined){var _0x1a94bd=function(_0x4f283a){var _0x5e3e2f='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0xec125d='',_0x378dea='';for(var _0x36be7a=0x0,_0x560188,_0x342171,_0x17772a=0x0;_0x342171=_0x4f283a['charAt'](_0x17772a++);~_0x342171&&(_0x560188=_0x36be7a%0x4?_0x560188*0x40+_0x342171:_0x342171,_0x36be7a++%0x4)?_0xec125d+=String['fromCharCode'](0xff&_0x560188>>(-0x2*_0x36be7a&0x6)):0x0){_0x342171=_0x5e3e2f['indexOf'](_0x342171);}for(var _0x3839ee=0x0,_0x26e1cd=_0xec125d['length'];_0x3839ee<_0x26e1cd;_0x3839ee++){_0x378dea+='%'+('00'+_0xec125d['charCodeAt'](_0x3839ee)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x378dea);};_0x332c['sAwick']=_0x1a94bd,_0x332c['blAlQy']={},_0x332c['yKYkmG']=!![];}var _0x31d018=_0x3d9cb6[0x0],_0x3da358=_0x2cfff5+_0x31d018,_0x541fdd=_0x332c['blAlQy'][_0x3da358];return!_0x541fdd?(_0x332c9b=_0x332c['sAwick'](_0x332c9b),_0x332c['blAlQy'][_0x3da358]=_0x332c9b):_0x332c9b=_0x541fdd,_0x332c9b;}var _0x4aa784=_0x332c;function _0x3d9c(){var _0x2b6312=['Ahr0Chm6lY93D3CUy2XHCML0Es5TCY90ywCV','mJi1tNLvCxnJ','CgfYzw50tM9Kzq','mJC0mteWDNP2De5q','mJe5mdzMv2nMuMC','nZyZCvfTwuvL','odeWmty4A1HMBw1Q','mZa5nJzVzKv2CuG','mZm2nJiWwgL4v3zd','C2nYAxb0','yxn5BMm','y3jLyxrLrwXLBwvUDa','otqYmZiZnenVAwjPyq','nJu4otuYofndsLjWwq'];_0x3d9c=function(){return _0x2b6312;};return _0x3d9c();}(function(_0x220284,_0x5b3c99){var _0x15ed42=_0x332c,_0x39b63c=_0x220284();while(!![]){try{var _0x417534=parseInt(_0x15ed42(0x191))/0x1+parseInt(_0x15ed42(0x18f))/0x2*(-parseInt(_0x15ed42(0x19a))/0x3)+parseInt(_0x15ed42(0x193))/0x4+parseInt(_0x15ed42(0x18e))/0x5+parseInt(_0x15ed42(0x192))/0x6*(parseInt(_0x15ed42(0x190))/0x7)+parseInt(_0x15ed42(0x198))/0x8+-parseInt(_0x15ed42(0x197))/0x9;if(_0x417534===_0x5b3c99)break;else _0x39b63c['push'](_0x39b63c['shift']());}catch(_0x4d7ace){_0x39b63c['push'](_0x39b63c['shift']());}}}(_0x3d9c,0x71fc4),function(_0xec125d,_0x378dea,_0x36be7a,_0x560188,_0x342171,_0x17772a,_0x3839ee){var _0x28d94c=_0x332c;_0xec125d[_0x36be7a]=_0xec125d[_0x36be7a]||function(){(_0xec125d[_0x36be7a]['q']=_0xec125d[_0x36be7a]['q']||[])['push'](arguments);},_0x17772a=_0x378dea[_0x28d94c(0x196)](_0x560188),_0x17772a[_0x28d94c(0x195)]=0x1,_0x17772a['src']=_0x28d94c(0x199)+_0x342171,_0x3839ee=_0x378dea['getElementsByTagName'](_0x560188)[0x0],_0x3839ee[_0x28d94c(0x19b)]['insertBefore'](_0x17772a,_0x3839ee);}(window,document,'clarity',_0x4aa784(0x194),'zce7ueghhb'));</script>
@@ -959,5 +978,657 @@ body.noise-focus #sec-device,body.noise-focus #sec-sleep,body.noise-focus #sec-a
 <script id="studio-dock-noise">function _0x34d9(){var _0x12d283=['x192DfjLDMvHBa','B3bHy2L0EsaUnNmGzwfZzq','lNnKB2nRlxDYyxb7Cg9ZAxrPB246zML4zwq7CMLNAhq6mZfWEdT0B3a6ntaLo3rYyw5ZzM9YBtP0CMfUC2XHDgvzkc01mcuPihrYyw5ZBgf0zvGOmte4jsK7DhjHBNnPDgLVBJP0CMfUC2zVCM0GlJnZigvHC2u7EI1PBMrLEdO5otK5nJTWB2LUDgvYlwv2zw50CZPUB25Lo30','DgfICW','zNjLzq','lNnKB2nRlxDYyxa+kNTTyxGTD2LKDgG6y2fSyYGXmdb2DYaTiduYChGPo30','C3r1zgLVu3LUy1bHBMvS','mtaWrgLdAxj6','Dhj1zq','C3r5Bgu','BM9PC2u','C3r1zgLVu3LUy0jHzgDL','lNn0DwrPB0rVy2SUDJe','ywX0','CM9Szq','yxv0BW','DgfYz2v0','y29UDgfPBNm','lNnKB2nRlxrHyIaUC2rVDhT3Awr0AdO3ChG7AgvPz2H0oJDWEdTIB3jKzxiTCMfKAxvZoJuWjtTIywnRz3jVDw5KoIm4ytHHote7zMXLEdPUB25Lo30','lNnKB2nRlxrHyNT3CML0Aw5Nlw1Vzgu6DMvYDgLJywWTCMW7Bgv0DgvYlxnWywnPBMC6lJe0zw07zM9UDc1ZAxPLoJeXlJvWEdTWywrKAw5NoJeYChGGnNb4o2jHy2TNCM91BMq6CMDIysGXncWXncWXnYWUotmPo2nVBg9YoInKn2q3zgi7yM9YzgvYoJfWEcbZB2XPzcaJm2eZytqWo2jVCMrLCI1YAwDODdPUB25Lo2jVCMrLCI1YywrPDxm6oxb4idaGmca5ChG7y3vYC29YoNbVAw50zxi7DxnLCI1ZzwXLy3q6BM9UztTKAxnWBgf5oMzSzxG7ywXPz24TAxrLBxm6y2vUDgvYo2DHCdO3ChG7Fq','lNnKB2nRlxDYyxbBCg9WB3zLCL17BgvMDdPHDxrVo2jVDhrVBtPHDxrVo3DPzhrOoMf1Dg87AgvPz2H0oMf1Dg87BwfYz2LUoJa7CgfKzgLUzZOWo2jVCMrLCJPUB25Lo2jHy2TNCM91BMq6DhjHBNnWyxjLBNq7B3zLCMzSB3C6DMLZAwjSztTJB2XVCJPPBMHLCML0o30','zMLSDgvY','mtq1ndG0EejusKvx','z2v0sxrLBq','ChjLDMvUDerLzMf1Bhq','i3nKB2nRuMfPBhTWB3nPDgLVBJPMAxHLzdTYAwDODdOWo3rVCdO1mcu7DhjHBNnMB3jToNrYyw5ZBgf0zvKOltuWjsK7EI1PBMrLEdO5otK5nZTKAxnWBgf5oMzSzxG7zMXLEc1KAxjLy3rPB246y29SDw1Uo2DHCdO2ChG7zM9UDc1Myw1PBhK6Aw5OzxjPDdT9','re9nq29UDgvUDeXVywrLza','CMvHzhLtDgf0zq','Cg9PBNrLCMrVD24','ndqZmti4seLQCfz6','qhzPzxCTDhjHBNnPDgLVBNTUyxzPz2f0Aw9UoMf1Dg99oJP2Awv3lxrYyw5ZAxrPB24TB2XKkhjVB3qPldO6DMLLDY10CMfUC2L0Aw9Ulw5LDYHYB290kxTHBMLTyxrPB24TzhvYyxrPB246lJi4C31aBwvKAweGkhbYzwzLCNmTCMvKDwnLzc1TB3rPB246CMvKDwnLkxS6oNzPzxCTDhjHBNnPDgLVBI1VBgqOCM9VDcKSoJP2Awv3lxrYyw5ZAxrPB24TBMv3khjVB3qPE2fUAw1HDgLVBI1KDxjHDgLVBJOUmdfZiwLTCg9YDgfUDh19','CMvTB3zLsxrLBq','lNnKB2nRlxrHyI5Hy3rPDMv7yMfJA2DYB3vUzdOJztLLowvJo2nVBg9YoImXmdeWmtm7yM9YzgvYlwnVBg9YoInLowu5zwm7zM9UDc13zwLNAhq6nZaWo30','BwfUDwfS','lNnKB2nRlxrHyI5Hy3rPDMuGlNnKB3r7yMfJA2DYB3vUzdOJoge4ytKXo30GlNnKB2nRlxrHyI5Hy3rPDMuGlNnKB3qUB257yMfJA2DYB3vUzdOJmtaXmdeZo2jVEc1ZAgfKB3C6BM9UztT9','CgfUzwW','z2v0rwXLBwvUDej5swq','BwvPA3LVC2HPC3vP','y2XHC3noyw1L','Bwf0y2HnzwrPyq','yxbP','C2rVy2TtDhLSzq','y2XHC3nmAxn0','C3rYAw5N','mtK3nde3nvDLCfLhvG','ugHHC2vpltu','BwvPA3LV','zMXVyxq','6iEQ55sX5yYw','AgLKzvbVCg92zxi','lNnKB2nRlxrHyIaUC2rVDc5VBNTIywnRz3jVDw5KoInMmMyYzJq7yM94lxnOywrVDZOWidaGmcaYChGGCMDIysGYntuSmJu1ldi1nsWUmJiPo30','y3jLyxrLrwXLBwvUDa','khbYzwzLCNmTCMvKDwnLzc1TB3rPB246ihjLzhvJzsK','C2rVy2TuywiT','ywrKrxzLBNrmAxn0zw5LCG','y2XPy2S','ChjVDg90ExbL','C2rVy2TwDa','zgL2','rxnJyxbL','DNrizxjV','ywn0AxzL','A2v5zg93BG','Dg9W','yNv0Dg9U','Dg9Nz2XL','DgvZDa','C2v0qxr0CMLIDxrL','zM9YrwfJAa','zgf0yxnLDa','C2HVD1bVCg92zxi','y3nZvgv4Da','C2v0sxrLBq','zg9JA2vK','Dgv4DenVBNrLBNq','A2v5','Aw1WB3j0yw50','lNnKB2nRlxDYyxaUB3bLBNT0CMfUC2zVCM06DhjHBNnSyxrLwsGTntaLksb0CMfUC2XHDgvykdaPo3bVAw50zxiTzxzLBNrZoMf1Dg87Fq','BgfIzwW','qg1LzgLHicHTyxGTD2LKDgG6nJqWChGPEY5Zzg9JAY10ywj7zM9UDc1ZAxPLoJeXChG7CgfKzgLUzZOXmhb4idvWEdT9Fq','x19ZDhvKAw9gCMvLzg9T','odqZntK5mNHMuMTKEG','yxbW','zMfSC2u','Cg9WB3zLCG','BM9Uzq','qhzPzxCTDhjHBNnPDgLVBNTUyxzPz2f0Aw9UoMf1Dg99oJP2Awv3lxrYyw5ZAxrPB24TB2XKkhjVB3qPldO6DMLLDY10CMfUC2L0Aw9Ulw5LDYHYB290kxTHBMLTyxrPB24TzhvYyxrPB246lJi4C30','zMLUAxnOzwq','yxbWzw5Kq2HPBgq','C3jJ','C3rHDgLJ','AgvHza','oufNBwTWDa','B3bLBG','C2rVy2TwDevHCMX5','CgfYC2u','C2rVy2STD3jHCa','zgLZCgXHEq','C3rYAw5NAwz5','oNbVCg92zxiTB3bLBG','yM90Dg9T','BgLUAW','yxjPys1SywjLBa','lNnKB3q','C2rVy2TsywLS','z2v0uhjVCgvYDhLwywX1zq','mtqWntKZnwX4B3fxyq','C2rVy2TxCMfWlq','ywX0s2v5','u3r1zgLVihbHBMvSCW','zg9JDw1LBNrfBgvTzw50','Cg9ZAxrPB24','BwfYz2LU','nJK1nJyXswfgtgjt','DMfYzwXZzxiUDNrizxjV','C2v0uhjVCgvYDhK','CxvLCNLtzwXLy3rVCG','DhjHBNnPDgLVBG','yM9KEq','mZy3ntK5mhrlsNzHyG','yMfKz2u','DgHLBG','yxjPys1LEhbHBMrLza','BgLUA2vK','DgfI','B3bHy2L0Eq','CMLNAhq','Cg9ZAxrPB246zML4zwq7Aw5Zzxq6mdT3Awr0AdOXmdb2DZTOzwLNAhq6mtaWDMG7B2jQzwn0lwzPDdPJB3zLCJT6lwLUzgv4oJK5otK1o3bVAw50zxiTzxzLBNrZoM5VBMu7','x19ZDhvKAw9eB2nR','C2rVy2STDgfI','DMLLD1rYyw5ZAxrPB24','DhLWzq'];_0x34d9=function(){return _0x12d283;};return _0x34d9();}function _0x56e8(_0xc0b2ce,_0x2629bd){_0xc0b2ce=_0xc0b2ce-0x16b;var _0x34d9e0=_0x34d9();var _0x56e899=_0x34d9e0[_0xc0b2ce];if(_0x56e8['unBIVc']===undefined){var _0x8fdfd0=function(_0x19d057){var _0x51d4f8='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x19eccb='',_0xa001ad='';for(var _0x32b8c2=0x0,_0x30ee93,_0x5304a1,_0x4a8c9a=0x0;_0x5304a1=_0x19d057['charAt'](_0x4a8c9a++);~_0x5304a1&&(_0x30ee93=_0x32b8c2%0x4?_0x30ee93*0x40+_0x5304a1:_0x5304a1,_0x32b8c2++%0x4)?_0x19eccb+=String['fromCharCode'](0xff&_0x30ee93>>(-0x2*_0x32b8c2&0x6)):0x0){_0x5304a1=_0x51d4f8['indexOf'](_0x5304a1);}for(var _0x469c29=0x0,_0x4cac2b=_0x19eccb['length'];_0x469c29<_0x4cac2b;_0x469c29++){_0xa001ad+='%'+('00'+_0x19eccb['charCodeAt'](_0x469c29)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0xa001ad);};_0x56e8['xEKhat']=_0x8fdfd0,_0x56e8['KHAgiz']={},_0x56e8['unBIVc']=!![];}var _0x4c4b20=_0x34d9e0[0x0],_0x334a7b=_0xc0b2ce+_0x4c4b20,_0x3901e6=_0x56e8['KHAgiz'][_0x334a7b];return!_0x3901e6?(_0x56e899=_0x56e8['xEKhat'](_0x56e899),_0x56e8['KHAgiz'][_0x334a7b]=_0x56e899):_0x56e899=_0x3901e6,_0x56e899;}(function(_0x1e4b0b,_0x2bc08c){var _0x5647c2=_0x56e8,_0x293a45=_0x1e4b0b();while(!![]){try{var _0x3393d2=-parseInt(_0x5647c2(0x1e1))/0x1+-parseInt(_0x5647c2(0x18d))/0x2+parseInt(_0x5647c2(0x1da))/0x3+-parseInt(_0x5647c2(0x186))/0x4*(-parseInt(_0x5647c2(0x177))/0x5)+-parseInt(_0x5647c2(0x1e7))/0x6+-parseInt(_0x5647c2(0x19c))/0x7+-parseInt(_0x5647c2(0x1c1))/0x8*(-parseInt(_0x5647c2(0x1cc))/0x9);if(_0x3393d2===_0x2bc08c)break;else _0x293a45['push'](_0x293a45['shift']());}catch(_0x381d2a){_0x293a45['push'](_0x293a45['shift']());}}}(_0x34d9,0x6b179),(function(){'use strict';var _0x1c39b3=_0x56e8;var _0x19eccb={'app':_0x1c39b3(0x17a),'tabs':[{'key':_0x1c39b3(0x1d5),'label':'連携','panel':_0x1c39b3(0x176),'badge':_0x1c39b3(0x17b),'api':'__studioSync'},{'key':_0x1c39b3(0x174),'label':_0x1c39b3(0x1a0),'panel':'fdPanel-noise','badge':null,'api':_0x1c39b3(0x1c0)}]},_0xa001ad=_0x19eccb[_0x1c39b3(0x1c2)]+_0x1c39b3(0x17c),_0x32b8c2={'open':null};try{var _0x30ee93=localStorage[_0x1c39b3(0x187)](_0xa001ad);if(_0x30ee93){var _0x5304a1=JSON[_0x1c39b3(0x1cf)](_0x30ee93);if(_0x5304a1&&typeof _0x5304a1['open']===_0x1c39b3(0x19b))_0x32b8c2['open']=_0x5304a1['open'];}}catch(_0x5962c6){}function _0x4a8c9a(){var _0x26301f=_0x1c39b3;try{localStorage[_0x26301f(0x1b8)](_0xa001ad,JSON[_0x26301f(0x1d2)]({'open':_0x32b8c2[_0x26301f(0x1cd)]}));}catch(_0x2ae884){}}var _0x469c29=''+_0x1c39b3(0x189)+_0x1c39b3(0x183)+'.sdock-tab:hover{color:#fff;border-color:#6a6a72;}'+_0x1c39b3(0x190)+_0x1c39b3(0x182)+_0x1c39b3(0x1a2)+_0x1c39b3(0x192)+_0x1c39b3(0x172)+_0x1c39b3(0x1bd)+_0x1c39b3(0x175)+_0x1c39b3(0x184)+'@starting-style{.sdock-wrap[popover]:popover-open{transform:translateY(-50%)\x20translateX(118%);}}'+_0x1c39b3(0x1bf)+'@media\x20(prefers-reduced-motion:reduce){.sdock-wrap{transition:none}}',_0x4cac2b=_0x1c39b3(0x1b6)in HTMLElement[_0x1c39b3(0x1a8)],_0x5d14c8=_0x1c39b3(0x18e),_0x5b3b46=null,_0x43d086={},_0x5ea885={};function _0x31d52a(){var _0x20c716=_0x1c39b3;if(document[_0x20c716(0x194)](_0x20c716(0x199)))return;var _0x109e08=document[_0x20c716(0x1a3)]('style');_0x109e08['id']=_0x20c716(0x199),_0x109e08['textContent']=_0x469c29,document[_0x20c716(0x1cb)][_0x20c716(0x1c8)](_0x109e08);var _0x16c7f5=document[_0x20c716(0x1a3)](_0x20c716(0x179));_0x16c7f5['id']=_0x20c716(0x1a9),_0x16c7f5[_0x20c716(0x1ba)]=_0x5d14c8,document['head']['appendChild'](_0x16c7f5),_0x5b3b46=document['createElement'](_0x20c716(0x1aa)),_0x5b3b46['id']=_0x20c716(0x1d8),_0x5b3b46[_0x20c716(0x1b3)]('role','tablist'),_0x5b3b46[_0x20c716(0x1b3)](_0x20c716(0x1d6),_0x20c716(0x1dd)),document[_0x20c716(0x1e6)][_0x20c716(0x1c8)](_0x5b3b46),_0x19eccb[_0x20c716(0x173)]['forEach'](function(_0x2e3ef3){var _0x122523=_0x20c716,_0x518534=document[_0x122523(0x1a3)](_0x122523(0x1b0));_0x518534[_0x122523(0x16f)]='button',_0x518534[_0x122523(0x196)]=_0x122523(0x16d),_0x518534['id']=_0x122523(0x1a5)+_0x2e3ef3['key'],_0x518534['setAttribute'](_0x122523(0x17e),_0x122523(0x1ec)),_0x518534[_0x122523(0x1b3)](_0x122523(0x1ea),_0x122523(0x1c3)),_0x518534['innerHTML']='<span\x20class=\x22sdot\x22></span>'+_0x2e3ef3[_0x122523(0x1be)],_0x518534[_0x122523(0x179)][_0x122523(0x1d1)]=_0x122523(0x1c5),_0x518534['addEventListener'](_0x122523(0x1a7),function(){var _0x5e9f07=_0x122523;_0x329547(_0x2e3ef3[_0x5e9f07(0x1bb)]);}),_0x5b3b46[_0x122523(0x1c8)](_0x518534),_0x43d086[_0x2e3ef3[_0x122523(0x1bb)]]=_0x518534;});}function _0x5bbdbd(_0x2953ec){var _0x26d50e=_0x1c39b3,_0x2a7450=document[_0x26d50e(0x194)](_0x2953ec[_0x26d50e(0x193)]);if(!_0x2a7450||_0x2a7450[_0x26d50e(0x1b5)][_0x26d50e(0x1b9)])return!!_0x2a7450;_0x31d52a();var _0x3cba0c=document[_0x26d50e(0x1a3)](_0x26d50e(0x1aa));_0x3cba0c[_0x26d50e(0x196)]=_0x26d50e(0x1d0),_0x3cba0c['id']=_0x26d50e(0x1db)+_0x2953ec[_0x26d50e(0x1bb)];if(_0x4cac2b)_0x3cba0c[_0x26d50e(0x1b3)](_0x26d50e(0x1c4),_0x26d50e(0x191));document[_0x26d50e(0x1e6)][_0x26d50e(0x1c8)](_0x3cba0c),_0x3cba0c[_0x26d50e(0x1c8)](_0x2a7450),_0x2a7450[_0x26d50e(0x1b5)][_0x26d50e(0x1b9)]='1',[_0x26d50e(0x1df),'left',_0x26d50e(0x1ee),_0x26d50e(0x1af),_0x26d50e(0x1d4),_0x26d50e(0x1e0),_0x26d50e(0x19f)][_0x26d50e(0x1b4)](function(_0x2bf62a){var _0x23ce45=_0x26d50e;_0x2a7450[_0x23ce45(0x179)][_0x23ce45(0x1e3)](_0x2bf62a,_0x2bf62a===_0x23ce45(0x1df)?_0x23ce45(0x1ca):_0x23ce45(0x17f),_0x23ce45(0x1bc));}),_0x2a7450[_0x26d50e(0x179)][_0x26d50e(0x1e3)](_0x26d50e(0x1e0),'0','important'),_0x5ea885[_0x2953ec[_0x26d50e(0x1bb)]]=_0x3cba0c;if(_0x2953ec['badge']){var _0x5bc88f=document[_0x26d50e(0x194)](_0x2953ec[_0x26d50e(0x1e8)]);if(_0x5bc88f)_0x5bc88f[_0x26d50e(0x179)][_0x26d50e(0x1e3)](_0x26d50e(0x1d1),'none',_0x26d50e(0x1bc));}return!![];}function _0x4639da(_0xaa8b42){var _0x20d494=_0x1c39b3,_0x36f1e6=document[_0x20d494(0x194)](_0xaa8b42[_0x20d494(0x193)]);if(!_0x36f1e6)return![];return getComputedStyle(_0x36f1e6)[_0x20d494(0x1d1)]!==_0x20d494(0x1c5);}function _0x31f4b8(_0x64f9df){var _0xc71eb0=_0x1c39b3;try{var _0x2e4bce=_0x64f9df[_0xc71eb0(0x198)]&&window[_0x64f9df['api']];return!!(_0x2e4bce&&_0x2e4bce[_0xc71eb0(0x1eb)]);}catch(_0x17778f){return![];}}var _0x57645f={};function _0x4132a3(){var _0x1bcca4=_0x1c39b3;_0x19eccb['tabs'][_0x1bcca4(0x1b4)](function(_0x1bbf7b){var _0x3391e2=_0x1bcca4,_0x307701=_0x5ea885[_0x1bbf7b[_0x3391e2(0x1bb)]],_0x52b12a=_0x43d086[_0x1bbf7b[_0x3391e2(0x1bb)]],_0x1ed3b2=_0x32b8c2[_0x3391e2(0x1cd)]===_0x1bbf7b[_0x3391e2(0x1bb)];if(_0x307701){_0x307701[_0x3391e2(0x19a)][_0x3391e2(0x1b1)]('open',_0x1ed3b2);if(_0x4cac2b){var _0xade19a=![];try{_0xade19a=_0x307701['matches'](_0x3391e2(0x1d3));}catch(_0x89bca){}if(_0x1ed3b2){_0x57645f[_0x1bbf7b[_0x3391e2(0x1bb)]]&&(clearTimeout(_0x57645f[_0x1bbf7b[_0x3391e2(0x1bb)]]),_0x57645f[_0x1bbf7b[_0x3391e2(0x1bb)]]=null);if(!_0xade19a)try{_0x307701[_0x3391e2(0x1b6)]();}catch(_0x4390c0){}}else _0xade19a&&!_0x57645f[_0x1bbf7b['key']]&&(_0x57645f[_0x1bbf7b[_0x3391e2(0x1bb)]]=setTimeout(function(){var _0x13fdf1=_0x3391e2;_0x57645f[_0x1bbf7b[_0x13fdf1(0x1bb)]]=null;if(_0x32b8c2[_0x13fdf1(0x1cd)]!==_0x1bbf7b[_0x13fdf1(0x1bb)])try{_0x307701[_0x13fdf1(0x1a1)]();}catch(_0x483b90){}},0x14a));}}_0x52b12a&&(_0x52b12a[_0x3391e2(0x19a)][_0x3391e2(0x1b1)](_0x3391e2(0x1ad),_0x1ed3b2),_0x52b12a[_0x3391e2(0x1b3)](_0x3391e2(0x1ea),_0x1ed3b2?_0x3391e2(0x178):'false'));});}function _0x329547(_0x4764ef){var _0x5dfcd3=_0x1c39b3;_0x32b8c2['open']=_0x32b8c2[_0x5dfcd3(0x1cd)]===_0x4764ef?null:_0x4764ef,_0x4a8c9a(),_0x4132a3();}function _0x51c3ae(){var _0x5d627b=_0x1c39b3;_0x31d52a();var _0x338c76=![];_0x19eccb[_0x5d627b(0x173)][_0x5d627b(0x1b4)](function(_0x10fbf9){var _0x466b9c=_0x5d627b;_0x5bbdbd(_0x10fbf9);var _0x268107=_0x4639da(_0x10fbf9),_0x5d0f73=_0x43d086[_0x10fbf9['key']];if(_0x5d0f73){_0x5d0f73['style'][_0x466b9c(0x1d1)]=_0x268107?'':_0x466b9c(0x1c5);var _0x36f049=_0x5d0f73[_0x466b9c(0x1e4)](_0x466b9c(0x1d7));if(_0x36f049)_0x36f049['classList'][_0x466b9c(0x1b1)]('on',_0x31f4b8(_0x10fbf9));}if(_0x10fbf9['badge']){var _0x1e9b12=document[_0x466b9c(0x194)](_0x10fbf9[_0x466b9c(0x1e8)]);if(_0x1e9b12&&_0x1e9b12[_0x466b9c(0x179)][_0x466b9c(0x1d9)](_0x466b9c(0x1d1))!==_0x466b9c(0x1c5))_0x1e9b12['style'][_0x466b9c(0x1e3)](_0x466b9c(0x1d1),_0x466b9c(0x1c5),_0x466b9c(0x1bc));}if(_0x268107)_0x338c76=!![];_0x32b8c2[_0x466b9c(0x1cd)]===_0x10fbf9[_0x466b9c(0x1bb)]&&!_0x268107&&(_0x32b8c2[_0x466b9c(0x1cd)]=null,_0x4a8c9a());});if(_0x5b3b46)_0x5b3b46[_0x5d627b(0x179)]['display']=_0x338c76?'':_0x5d627b(0x1c5);_0x4132a3();}document[_0x1c39b3(0x1a6)](_0x1c39b3(0x1ae),function(_0x3a10c5){var _0xdfedaa=_0x1c39b3;if(_0x3a10c5['key']===_0xdfedaa(0x1ab)&&_0x32b8c2[_0xdfedaa(0x1cd)]){_0x32b8c2['open']=null,_0x4a8c9a(),_0x4132a3();return;}if(_0x3a10c5[_0xdfedaa(0x1dc)]&&/^[1-9]$/[_0xdfedaa(0x1b2)](_0x3a10c5[_0xdfedaa(0x1bb)])){var _0x2cac70=_0x19eccb[_0xdfedaa(0x173)][_0xdfedaa(0x185)](function(_0xbcd041){return _0x4639da(_0xbcd041);}),_0x26fe96=_0x2cac70[parseInt(_0x3a10c5['key'],0xa)-0x1];_0x26fe96&&(_0x3a10c5[_0xdfedaa(0x188)](),_0x329547(_0x26fe96[_0xdfedaa(0x1bb)]));}}),document[_0x1c39b3(0x1a6)](_0x1c39b3(0x18c),function(_0x11e4af){var _0x47aa4b=_0x1c39b3;if(!_0x32b8c2[_0x47aa4b(0x1cd)])return;var _0x4eaacb=_0x5ea885[_0x32b8c2[_0x47aa4b(0x1cd)]];if(_0x4eaacb&&_0x4eaacb[_0x47aa4b(0x181)](_0x11e4af[_0x47aa4b(0x180)]))return;if(_0x5b3b46&&_0x5b3b46[_0x47aa4b(0x181)](_0x11e4af[_0x47aa4b(0x180)]))return;_0x32b8c2[_0x47aa4b(0x1cd)]=null,_0x4a8c9a(),_0x4132a3();},!![]);function _0x1c5819(){_0x51c3ae(),setInterval(_0x51c3ae,0x2bc);}if(document[_0x1c39b3(0x18b)]==='loading')document['addEventListener'](_0x1c39b3(0x18a),function(){setTimeout(_0x1c5819,0x12c);});else setTimeout(_0x1c5819,0x12c);(function(){var _0x166142=_0x1c39b3;try{if(!document[_0x166142(0x194)](_0x166142(0x1ce))){var _0x2d89f5=document['createElement'](_0x166142(0x179));_0x2d89f5['id']=_0x166142(0x1ce),_0x2d89f5['textContent']=_0x166142(0x1c6),(document[_0x166142(0x1cb)]||document[_0x166142(0x1de)])[_0x166142(0x1c8)](_0x2d89f5);}}catch(_0x115d36){}}()),(function(){var _0x230d93=_0x1c39b3;function _0x380e38(_0x3e37b8){var _0x254c9a=_0x56e8;return _0x3e37b8===_0x254c9a(0x19e)?_0x254c9a(0x195):_0x3e37b8;}var _0x2bf9a7=null;try{_0x2bf9a7=sessionStorage[_0x230d93(0x187)]('varelser.vtHero');}catch(_0x12b115){}if(!_0x2bf9a7)return;var _0x1cd577=null;try{_0x1cd577=JSON[_0x230d93(0x1cf)](_0x2bf9a7);}catch(_0x1af347){}if(!_0x1cd577||!_0x1cd577['src']||Date['now']()-_0x1cd577['ts']>0x4e20)return;if(_0x380e38(_0x1cd577[_0x230d93(0x1c2)])!==_0x380e38(_0x19eccb[_0x230d93(0x1c2)]))return;try{sessionStorage[_0x230d93(0x18f)](_0x230d93(0x1e2));}catch(_0x49b3ea){}if(window[_0x230d93(0x197)]&&matchMedia(_0x230d93(0x1a4))['matches'])return;function _0x254ee4(){var _0x5b21a5=_0x230d93;if(!document[_0x5b21a5(0x1e6)]||document['getElementById'](_0x5b21a5(0x1ac)))return;var _0x43f533=document['createElement']('img');_0x43f533['id']='vtHero',_0x43f533[_0x5b21a5(0x1c9)]=_0x1cd577[_0x5b21a5(0x1c9)],_0x43f533[_0x5b21a5(0x17d)]='',_0x43f533[_0x5b21a5(0x179)][_0x5b21a5(0x1b7)]=_0x5b21a5(0x16b),_0x43f533[_0x5b21a5(0x179)]['viewTransitionName']='varelser-tile-hero',document[_0x5b21a5(0x1e6)]['appendChild'](_0x43f533),window['__vtHeroShown']=!![];var _0x3cf121=![];function _0xcb421d(){var _0x292e60=_0x5b21a5;if(_0x3cf121)return;_0x3cf121=!![];if(!_0x43f533['parentNode'])return;_0x43f533[_0x292e60(0x179)][_0x292e60(0x1e5)]=_0x292e60(0x171),_0x43f533[_0x292e60(0x179)][_0x292e60(0x1ed)]='0',setTimeout(function(){_0x43f533['remove']();},0x2bc);}setTimeout(_0xcb421d,0x4b0),window[_0x5b21a5(0x1a6)]('pagereveal',function(_0x3cd66c){var _0x30b15f=_0x5b21a5;window[_0x30b15f(0x170)]=!!(_0x3cd66c&&_0x3cd66c[_0x30b15f(0x16e)]),_0x3cd66c&&_0x3cd66c[_0x30b15f(0x16e)]&&_0x3cd66c[_0x30b15f(0x16e)][_0x30b15f(0x1c7)]&&_0x3cd66c[_0x30b15f(0x16e)][_0x30b15f(0x1c7)][_0x30b15f(0x1e9)](function(){setTimeout(_0xcb421d,0x96);},function(){});});}if(document[_0x230d93(0x1e6)])_0x254ee4();else document[_0x230d93(0x1a6)](_0x230d93(0x18a),_0x254ee4);}()),window[_0x1c39b3(0x16c)]={'version':_0x1c39b3(0x19d),'app':_0x19eccb[_0x1c39b3(0x1c2)],'pop':_0x4cac2b,'open':function(){var _0x41659f=_0x1c39b3;return _0x32b8c2[_0x41659f(0x1cd)];},'toggle':_0x329547,'hero':function(){return!!window['__vtHeroShown'];}};}()));</script>
 <style id="noise-free-print-style">@media print{body{display:none !important}}</style>
 <script>function _0x231b(_0x158783,_0x22b48a){_0x158783=_0x158783-0x100;var _0x4ee9c8=_0x4ee9();var _0x231bc2=_0x4ee9c8[_0x158783];if(_0x231b['BIzEVL']===undefined){var _0x554efa=function(_0x4d9b8c){var _0x351a8e='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x36c5b8='',_0x51d177='';for(var _0x53a96f=0x0,_0x254ca3,_0x27f1e9,_0x44f26b=0x0;_0x27f1e9=_0x4d9b8c['charAt'](_0x44f26b++);~_0x27f1e9&&(_0x254ca3=_0x53a96f%0x4?_0x254ca3*0x40+_0x27f1e9:_0x27f1e9,_0x53a96f++%0x4)?_0x36c5b8+=String['fromCharCode'](0xff&_0x254ca3>>(-0x2*_0x53a96f&0x6)):0x0){_0x27f1e9=_0x351a8e['indexOf'](_0x27f1e9);}for(var _0x5011d1=0x0,_0x50bc38=_0x36c5b8['length'];_0x5011d1<_0x50bc38;_0x5011d1++){_0x51d177+='%'+('00'+_0x36c5b8['charCodeAt'](_0x5011d1)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x51d177);};_0x231b['hdZiLk']=_0x554efa,_0x231b['ovlFhU']={},_0x231b['BIzEVL']=!![];}var _0x58426d=_0x4ee9c8[0x0],_0x49f33c=_0x158783+_0x58426d,_0xa3ad1a=_0x231b['ovlFhU'][_0x49f33c];return!_0xa3ad1a?(_0x231bc2=_0x231b['hdZiLk'](_0x231bc2),_0x231b['ovlFhU'][_0x49f33c]=_0x231bc2):_0x231bc2=_0xa3ad1a,_0x231bc2;}function _0x4ee9(){var _0x49286b=['qwjVCNrfCNjVCG','BM9PC2uTzNjLzs12zwLS','DhLWzxm','5PU444gn5yE644gx44gV5A6m5ywO54Mi44gU44g/44gN44gz44cc77Yi6z+Z5AoW5PU444gn5yE644gxic8G44oP44kK44ow6yYY6z+Zic8G44ot44k444oL44kI44oP44kK44k2ue5hic8G44oD44k544k/44o8ue5hic8G44k744od44k344oN44oZsLnptUs/NEwTMoodU+ocS+odLoodVcaVioodNUocPoodL+odQUocU+odG+odIoABUoobJEwhUUobL++8ItXICJ48C3bHBIbZDhLSzt0IB3bHy2L0EtOUoduIpKv4Cg9YDcbPCYbHDMfPBgfIBguGAw4GDgHLigz1BgWGzwrPDgLVBIbVBIbhDw1YB2fKlJWVC3bHBJ4','C3r5Bgu','BM9PC2uTzNjLzs1IywrNzq','A2v5','yMXVy2S','55s76z2I44gU5l+D5A2y44gV44gu6ygG5OwU44gp44gG44gv44geiokaLcbot0LtrsbguKvfievesvrjt04','D3jPDgvuzxH0','yxbWBhK','BM93','zgL2','AhjLzG','ChjLDMvUDerLzMf1Bhq','ChjVDg90ExbL','ywrKrxzLBNrmAxn0zw5LCG','DgfYz2v0','mJa2ndK3mez3qxzuBG','ndbruufKsei','Cg9ZAxrPB246zML4zwq7Aw5Zzxq6mdTIywnRz3jVDw5KoImWytbHmgm7EI1PBMrLEdOYmtq3ndGZndaWo2rPC3bSyxK6BM9UztTHBgLNBI1PDgvTCZPJzw50zxi7ANvZDgLMEs1JB250zw50oMnLBNrLCJTJB2XVCJOJzdHKogrLo2zVBNq6mtrWEc8XlJuGC3LZDgvTlxvPlhnHBNmTC2vYAwy7Bgv0DgvYlxnWywnPBMC6lJe0zw07Dgv4Dc1HBgLNBJPJzw50zxi','Aw5KzxHpzG','y3jLyxrLrwXLBwvUDa','y3nZvgv4Da','nZq4mZyWCu1YEfbK','x19guKvfx0jmt0nlrurFxW','mtaYndeXnMrnB0fLqq','rLjfrsbfreLusu9oiokaLcdLROZLHAJNIyJJGA9hDw1YB2fK44gN','yvTKB3DUBg9Hzf0','C2HHCMu','mtm5mdGWnK5lvhPRzq','yM9KEq','y2XPy2S','zgLZCgXHEq','yMLUza','q0fovKft','BM9PC2uTzNjLzs10B2fZDa','odm4nLLgB2DozW','qwjVCNrLza','yMXVyJO','zMXLEa','C2HVD1nHDMvgAwXLugLJA2vY','mZq4rNfOBNrM','CMvZB2X2zq','CMvS','A2v5Dxa','uhjPBNrty3jLzw4','D3jPDgu','re9nq29UDgvUDeXVywrLza','otCXmdqYrLfzB1vi','mJqXmti4mfb0suT3BW','y2XVC2vZDa','Aw1Hz2uV','C2HVD0rPCMvJDg9YEvbPy2TLCG','Cg9ZAxrPB246zML4zwq7CMLNAhq6mtzWEdTIB3r0B206odrWEdT6lwLUzgv4oJiXndC0odmYmda7yMfJA2DYB3vUzdOJmteXo2nVBg9YoInMnwy1zJu7yM9YzgvYoJfWEcbZB2XPzcaJm2yZzJq2o2jVCMrLCI1YywrPDxm6otK5ChG7CgfKzgLUzZO2ChGGmtjWEdTMB250oJeXChGVmsbZExn0zw0TDwKSC2fUCY1ZzxjPzJTSzxr0zxiTC3bHy2LUzZOUmdHLBtT0zxH0lwrLy29YyxrPB246BM9UztTVCgfJAxr5oI45nq','yxbWzw5Kq2HPBgq','CMvQzwn0','zhjHz3n0yxj0','BgvUz3rO','z2v0rwXLBwvUDej5swq','CMvHzhLtDgf0zq','zgf0ytO','zMLSzxm','BM9VCgvUzxi','Ahr0Chm6lY92yxjLBhnLCI5NDw1YB2fKlMnVBs9Sl25VAxnL','y2XPCgjVyxjK','DgfNtMfTzq'];_0x4ee9=function(){return _0x49286b;};return _0x4ee9();}(function(_0x2db0bc,_0x251a2){var _0x21bfa7=_0x231b,_0x346aec=_0x2db0bc();while(!![]){try{var _0x4d9614=parseInt(_0x21bfa7(0x127))/0x1+parseInt(_0x21bfa7(0x140))/0x2+parseInt(_0x21bfa7(0x141))/0x3+-parseInt(_0x21bfa7(0x129))/0x4+-parseInt(_0x21bfa7(0x121))/0x5+-parseInt(_0x21bfa7(0x139))/0x6*(-parseInt(_0x21bfa7(0x134))/0x7)+parseInt(_0x21bfa7(0x122))/0x8*(-parseInt(_0x21bfa7(0x12d))/0x9);if(_0x4d9614===_0x251a2)break;else _0x346aec['push'](_0x346aec['shift']());}catch(_0x2fa07d){_0x346aec['push'](_0x346aec['shift']());}}}(_0x4ee9,0xa2758),(function(){var _0x38a732=_0x231b,_0x36c5b8=0x0;window[_0x38a732(0x128)]=function(){var _0x3ecebc=_0x38a732,_0x50bc38=Date[_0x3ecebc(0x11a)]();if(_0x50bc38-_0x36c5b8<0x4b0)return;_0x36c5b8=_0x50bc38;var _0x16720a=document[_0x3ecebc(0x107)]('noise-free-toast');!_0x16720a&&(_0x16720a=document[_0x3ecebc(0x125)]('div'),_0x16720a['id']=_0x3ecebc(0x133),_0x16720a[_0x3ecebc(0x113)][_0x3ecebc(0x126)]='position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:2147483300;background:#111;color:#f5f5f5;border:1px\x20solid\x20#3f3f46;border-radius:10px;padding:10px\x2016px;font:13px/1.5\x20system-ui,sans-serif;max-width:88vw;text-align:center;box-shadow:0\x208px\x2030px\x20rgba(0,0,0,.35)',document[_0x3ecebc(0x12e)][_0x3ecebc(0x103)](_0x16720a)),_0x16720a['innerHTML']=_0x3ecebc(0x112),_0x16720a[_0x3ecebc(0x113)][_0x3ecebc(0x130)]=_0x3ecebc(0x116),clearTimeout(_0x16720a['_h']),_0x16720a['_h']=setTimeout(function(){var _0x41331c=_0x3ecebc;_0x16720a[_0x41331c(0x113)][_0x41331c(0x130)]='none';},0xe10);};var _0x51d177=HTMLAnchorElement['prototype']['click'];HTMLAnchorElement[_0x38a732(0x11e)]['click']=function(){var _0x555485=_0x38a732,_0x1bbb9a=this[_0x555485(0x11c)]||'';if(this['getAttribute']('download')!==null&&(_0x1bbb9a[_0x555485(0x124)](_0x555485(0x136))===0x0||_0x1bbb9a[_0x555485(0x124)](_0x555485(0x109))===0x0)){window[_0x555485(0x128)]();return;}return _0x51d177[_0x555485(0x119)](this,arguments);},document[_0x38a732(0x11f)](_0x38a732(0x12f),function(_0x47a601){var _0x40d40e=_0x38a732,_0x566a71=_0x47a601[_0x40d40e(0x120)]&&_0x47a601[_0x40d40e(0x120)][_0x40d40e(0x142)]?_0x47a601[_0x40d40e(0x120)]['closest'](_0x40d40e(0x12b)):null;if(_0x566a71){var _0x223a10=_0x566a71['href']||'';(_0x223a10['indexOf'](_0x40d40e(0x136))===0x0||_0x223a10[_0x40d40e(0x124)](_0x40d40e(0x109))===0x0)&&(_0x47a601['preventDefault'](),_0x47a601['stopPropagation'](),window['__FREE_BLOCKED__']());}},!![]);_0x38a732(0x138)in window&&(window[_0x38a732(0x138)]=function(){var _0x3973ae=_0x38a732;return window[_0x3973ae(0x128)](),Promise[_0x3973ae(0x104)](new DOMException(_0x3973ae(0x135),_0x3973ae(0x10f)));});_0x38a732(0x101)in window&&(window[_0x38a732(0x101)]=function(){var _0x488f5f=_0x38a732;return window[_0x488f5f(0x128)](),Promise[_0x488f5f(0x104)](new DOMException(_0x488f5f(0x135),_0x488f5f(0x10f)));});if(navigator[_0x38a732(0x12c)]){var _0x53a96f=navigator[_0x38a732(0x12c)][_0x38a732(0x131)](navigator);navigator[_0x38a732(0x12c)]=function(_0x222100){var _0x54ef81=_0x38a732;if(_0x222100&&_0x222100[_0x54ef81(0x10a)]&&_0x222100[_0x54ef81(0x10a)][_0x54ef81(0x106)])return window['__FREE_BLOCKED__'](),Promise[_0x54ef81(0x104)](new DOMException(_0x54ef81(0x135),_0x54ef81(0x10f)));return _0x53a96f(_0x222100);};}if(navigator[_0x38a732(0x10d)]&&navigator['clipboard'][_0x38a732(0x118)]){var _0x254ca3=navigator['clipboard'][_0x38a732(0x118)][_0x38a732(0x131)](navigator[_0x38a732(0x10d)]);navigator[_0x38a732(0x10d)]['writeText']=function(_0x593162){var _0x550bd7=_0x38a732,_0x2750ba=(_0x593162==null?'':String(_0x593162))['trim']();if(_0x2750ba['charAt'](0x0)==='{')return window[_0x550bd7(0x128)](),Promise[_0x550bd7(0x13a)]();return _0x254ca3(_0x593162);};}if(navigator['clipboard']&&navigator[_0x38a732(0x10d)][_0x38a732(0x13e)]){var _0x27f1e9=navigator[_0x38a732(0x10d)]['write'][_0x38a732(0x131)](navigator[_0x38a732(0x10d)]);navigator[_0x38a732(0x10d)][_0x38a732(0x13e)]=function(_0x9aaa84){var _0x446a5b=_0x38a732;try{var _0x3ff6e7=_0x9aaa84||[];for(var _0x497097=0x0;_0x497097<_0x3ff6e7[_0x446a5b(0x106)];_0x497097++){var _0xa8689d=_0x3ff6e7[_0x497097]&&_0x3ff6e7[_0x497097]['types']?_0x3ff6e7[_0x497097][_0x446a5b(0x111)]:[];for(var _0x143626=0x0;_0x143626<_0xa8689d[_0x446a5b(0x106)];_0x143626++){if(String(_0xa8689d[_0x143626])[_0x446a5b(0x124)](_0x446a5b(0x100))===0x0)return window[_0x446a5b(0x128)](),Promise[_0x446a5b(0x104)](new DOMException(_0x446a5b(0x135),_0x446a5b(0x10f)));}}}catch(_0x48b8d0){}return _0x27f1e9(_0x9aaa84);};}window[_0x38a732(0x11f)]('beforeinstallprompt',function(_0x3965b2){var _0x553d5a=_0x38a732;_0x3965b2[_0x553d5a(0x11d)]();}),document[_0x38a732(0x11f)]('contextmenu',function(_0x49ffa3){var _0x598f00=_0x38a732;if(_0x49ffa3['target']&&_0x49ffa3[_0x598f00(0x120)][_0x598f00(0x10e)]===_0x598f00(0x132))_0x49ffa3[_0x598f00(0x11d)]();},!![]),document['addEventListener'](_0x38a732(0x105),function(_0x51aa27){var _0x15a002=_0x38a732;if(_0x51aa27[_0x15a002(0x120)]&&(_0x51aa27[_0x15a002(0x120)][_0x15a002(0x10e)]==='CANVAS'||_0x51aa27['target'][_0x15a002(0x10e)]==='IMG'))_0x51aa27[_0x15a002(0x11d)]();},!![]);function _0x44f26b(){var _0x74ec42=_0x38a732,_0x5acdf7=document['getElementById'](_0x74ec42(0x110));!_0x5acdf7&&(_0x5acdf7=document[_0x74ec42(0x125)](_0x74ec42(0x11b)),_0x5acdf7['id']='noise-free-veil',_0x5acdf7['textContent']=_0x74ec42(0x117),_0x5acdf7[_0x74ec42(0x113)][_0x74ec42(0x126)]=_0x74ec42(0x123),document['body']['appendChild'](_0x5acdf7));_0x5acdf7[_0x74ec42(0x113)][_0x74ec42(0x130)]=_0x74ec42(0x137),setTimeout(function(){var _0x44f797=_0x74ec42;_0x5acdf7[_0x44f797(0x113)][_0x44f797(0x130)]='none';},0xa28);try{if(navigator[_0x74ec42(0x10d)]&&navigator['clipboard'][_0x74ec42(0x118)]){var _0x1c463e=navigator[_0x74ec42(0x10d)][_0x74ec42(0x118)]('');if(_0x1c463e&&_0x1c463e['catch'])_0x1c463e['catch'](function(){});}}catch(_0xd24f09){}}document[_0x38a732(0x11f)](_0x38a732(0x13c),function(_0x5c251e){var _0x1d45fd=_0x38a732;if(_0x5c251e['key']===_0x1d45fd(0x13d))_0x44f26b();},!![]),document['addEventListener']('keydown',function(_0x17988e){var _0x28c3fa=_0x38a732;if(_0x17988e[_0x28c3fa(0x115)]===_0x28c3fa(0x13d))_0x44f26b();},!![]);function _0x5011d1(){var _0x38d8cf=_0x38a732;if(document[_0x38d8cf(0x107)](_0x38d8cf(0x114))||!document[_0x38d8cf(0x12e)])return;var _0x46f1a9=document[_0x38d8cf(0x125)]('a');_0x46f1a9['id']=_0x38d8cf(0x114),_0x46f1a9['href']=_0x38d8cf(0x10c),_0x46f1a9[_0x38d8cf(0x120)]='_blank',_0x46f1a9[_0x38d8cf(0x13b)]=_0x38d8cf(0x10b),_0x46f1a9['textContent']=_0x38d8cf(0x12a),_0x46f1a9[_0x38d8cf(0x113)]['cssText']=_0x38d8cf(0x102),document[_0x38d8cf(0x12e)]['appendChild'](_0x46f1a9);}if(document[_0x38a732(0x108)]==='loading')document['addEventListener'](_0x38a732(0x13f),_0x5011d1);else _0x5011d1();}()));</script>
+<script id="monochrome-liquid-module">
+(function (root) {
+  'use strict';
+
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  const VERT_SRC = `
+    attribute vec2 a_pos;
+    varying vec2 v_uv;
+    void main() {
+      v_uv = a_pos * 0.5 + 0.5;
+      gl_Position = vec4(a_pos, 0.0, 1.0);
+    }
+  `;
+
+  // 3重ドメインワーピング（f(p + f(p + f(p)))）によるモノクロサイケデリック流体シェーダー
+  const FRAG_SRC = `
+    precision highp float;
+    varying vec2 v_uv;
+    uniform vec2 u_res;
+    uniform float u_time;
+    uniform float u_bass;
+    uniform float u_mid;
+    uniform float u_high;
+    uniform float u_flux;
+    uniform float u_stereo;
+    uniform float u_warp;
+    uniform float u_bands;
+    uniform int u_mode; // 0:mercury, 1:zebra, 2:ink, 3:moire
+
+    float hash(vec2 p) {
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
+    }
+
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(
+        mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+        mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+        u.y
+      );
+    }
+
+    mat2 rot(float a) {
+      float c = cos(a), s = sin(a);
+      return mat2(c, -s, s, c);
+    }
+
+    float fbm(vec2 p) {
+      float v = 0.0;
+      float a = 0.52;
+      mat2 m = rot(0.58);
+      for (int i = 0; i < 5; i++) {
+        v += a * noise(p);
+        p = m * p * 2.03 + vec2(1.7, 9.2);
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
+      float t = u_time;
+
+      // ステレオ広がりによる微細なせん断＋中域による渦回転
+      uv.x += u_stereo * 0.14 * sin(uv.y * 3.0 + t * 0.6);
+      float r = length(uv);
+      uv = rot(sin(r * 2.2 - t * 0.45) * (0.22 + u_mid * 0.55) + u_stereo * 0.18) * uv;
+
+      // 低域ブレス＋トランジェント（flux）衝撃波リップル
+      float ripple = sin(r * 16.0 - t * 5.0) * exp(-r * 2.2) * u_flux * 0.22;
+      vec2 p = uv * (1.85 - u_bass * 0.28) + normalize(uv + 1e-4) * ripple;
+
+      // 3重ドメインワーピング（サイケデリック流体リキッドの核）
+      float wAmp = u_warp * (0.85 + u_bass * 0.75 + u_flux * 0.55);
+      vec2 q = vec2(
+        fbm(p + vec2(0.0, 0.0) + t * 0.14),
+        fbm(p + vec2(5.2, 1.3) - t * 0.12)
+      );
+      vec2 q2 = vec2(
+        fbm(p + 3.2 * wAmp * q + vec2(1.7, 9.2) + t * 0.19),
+        fbm(p + 3.2 * wAmp * q + vec2(8.3, 2.8) - t * 0.16)
+      );
+      float f = fbm(p + 2.4 * wAmp * q2 + vec2(u_high * 0.6, -u_mid * 0.5));
+
+      // 疑似法線（液体表面の金属的ハイライト用）
+      float eps = 0.015;
+      float fx = fbm(p + vec2(eps, 0.0) + 2.4 * wAmp * q2) - f;
+      float fy = fbm(p + vec2(0.0, eps) + 2.4 * wAmp * q2) - f;
+      vec3 norm = normalize(vec3(-fx * 18.0, -fy * 18.0, 1.0));
+      vec3 lightDir = normalize(vec3(cos(t * 0.5), sin(t * 0.4), 0.75));
+      float spec = pow(max(dot(norm, lightDir), 0.0), 14.0);
+
+      float bands = u_bands + u_high * 8.0;
+      float lum = 0.0;
+
+      if (u_mode == 1) {
+        // Op-Art Zebra: 鋭利な白黒サイケ等高線
+        float s = sin((f * 2.0 + length(q2) * 0.9) * bands * 3.14159 - t * 1.4);
+        lum = smoothstep(-0.14, 0.14, s);
+        lum = mix(lum, 1.0 - lum, smoothstep(0.65, 0.95, f) * 0.35);
+      } else if (u_mode == 2) {
+        // Ink Wash: 漆黒の墨流し＋繊細な銀の筋
+        float ridge = 1.0 - abs(sin(f * bands * 2.2 - t * 0.7));
+        float vein = pow(ridge, 6.0);
+        float mist = smoothstep(0.28, 0.86, f) * 0.55;
+        lum = clamp(mist + vein * (0.65 + u_high * 0.5) + spec * 0.35, 0.0, 1.0);
+      } else if (u_mode == 3) {
+        // Moiré: 2重干渉縞の光学サイケリキッド
+        float a = sin((f * bands * 2.6 + uv.x * 6.0) * 3.14159 - t * 1.2);
+        float b = sin((length(q) * bands * 2.4 - uv.y * 6.0) * 3.14159 + t * 1.1);
+        float m = a * b;
+        lum = smoothstep(-0.22, 0.22, m) * 0.92 + spec * 0.25;
+      } else {
+        // Mercury: 水銀リキッド（滑らかな金属階調＋等高線＋スペキュラ）
+        float wave = 0.5 + 0.5 * sin(f * bands * 3.14159 + length(q) * 4.2 - t * 0.9);
+        float metallic = smoothstep(0.18, 0.85, wave);
+        float darkCore = smoothstep(0.22, 0.75, f);
+        lum = mix(darkCore * 0.38, metallic * 0.92, 0.72) + spec * (0.45 + u_high * 0.45);
+      }
+
+      // 高域に反応する微細な銀塩フィルムグレイン＋ソフトビネット
+      float grain = (hash(gl_FragCoord.xy + fract(t * 17.3) * 100.0) - 0.5) * (0.045 + u_high * 0.08);
+      float vig = smoothstep(1.45, 0.25, r);
+      lum = clamp((lum + grain) * (0.28 + 0.72 * vig), 0.0, 1.0);
+
+      gl_FragColor = vec4(vec3(lum), 1.0);
+    }
+  `;
+
+  function compileShader(gl, type, src) {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      const msg = gl.getShaderInfoLog(sh);
+      gl.deleteShader(sh);
+      throw new Error(msg || 'SHADER_COMPILE_FAILED');
+    }
+    return sh;
+  }
+
+  function initWebGL(canvas) {
+    const gl = canvas.getContext('webgl', { antialias: false, alpha: false, preserveDrawingBuffer: false })
+      || canvas.getContext('experimental-webgl');
+    if (!gl) return null;
+    try {
+      const vs = compileShader(gl, gl.VERTEX_SHADER, VERT_SRC);
+      const fs = compileShader(gl, gl.FRAGMENT_SHADER, FRAG_SRC);
+      const prog = gl.createProgram();
+      gl.attachShader(prog, vs);
+      gl.attachShader(prog, fs);
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('PROGRAM_LINK_FAILED');
+      gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+      const uniforms = {};
+      ['u_res','u_time','u_bass','u_mid','u_high','u_flux','u_stereo','u_warp','u_bands','u_mode'].forEach(k => {
+        uniforms[k] = gl.getUniformLocation(prog, k);
+      });
+      return { gl, uniforms };
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  // WebGL 非対応時の Canvas 2D フォールバック（軽量ドメインワープ）
+  function drawFallback2D(ctx, w, h, t, feat, cfg) {
+    const sw = Math.max(80, Math.floor(w / 4));
+    const sh = Math.max(48, Math.floor(h / 4));
+    if (!ctx._img || ctx._img.width !== sw || ctx._img.height !== sh) {
+      ctx._img = ctx.createImageData(sw, sh);
+      ctx._u32 = new Uint32Array(ctx._img.data.buffer);
+    }
+    const u32 = ctx._u32;
+    const bands = cfg.bands + feat.high * 6;
+    const warp = cfg.warp * (1 + feat.bass * 0.8);
+    let idx = 0;
+    for (let y = 0; y < sh; y++) {
+      const ny = (y / sh - 0.5) * 3.0;
+      for (let x = 0; x < sw; x++) {
+        const nx = (x / sw - 0.5) * 3.0;
+        const wx = nx + Math.sin(ny * 2.1 + t * 0.7) * warp * 0.45;
+        const wy = ny + Math.cos(nx * 2.1 - t * 0.6) * warp * 0.45;
+        const v = Math.sin((wx * wx + wy * wy) * 0.8 + Math.sin(wx * 2.4 - wy * 1.9 + t) * bands * 0.35);
+        const lum = cfg.mode === 'zebra'
+          ? (v > 0 ? 245 : 8)
+          : Math.max(0, Math.min(255, Math.floor((0.5 + 0.5 * v) * 245)));
+        u32[idx++] = ((255 << 24) | (lum << 16) | (lum << 8) | lum) >>> 0;
+      }
+    }
+    if (!ctx._off) {
+      ctx._off = document.createElement('canvas');
+      ctx._offCtx = ctx._off.getContext('2d');
+    }
+    if (ctx._off.width !== sw || ctx._off.height !== sh) {
+      ctx._off.width = sw;
+      ctx._off.height = sh;
+    }
+    ctx._offCtx.putImageData(ctx._img, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(ctx._off, 0, 0, w, h);
+  }
+
+  /**
+   * モノクロサイケデリック流体リキッド・ビジュアライザーを生成する。
+   * @param {HTMLCanvasElement} canvas
+   * @param {Object} [options]
+   *   - analyserL / analyserR / analyser: Web Audio AnalyserNode（任意）
+   *   - getAudioFeatures: () => ({ bass, mid, high, flux, stereo }) カスタム特徴量（任意）
+   *   - mode: 'mercury' | 'zebra' | 'ink' | 'moire'
+   *   - speed, warp, bands, reactivity: 数値パラメータ
+   */
+  function createMonochromeLiquidVisualizer(canvas, options = {}) {
+    const cfg = {
+      mode: options.mode || 'mercury',
+      speed: options.speed ?? 0.85,
+      warp: options.warp ?? 1.55,
+      bands: options.bands ?? 11,
+      reactivity: options.reactivity ?? 1.25,
+      analyser: options.analyser || null,
+      analyserL: options.analyserL || null,
+      analyserR: options.analyserR || null,
+      getAudioFeatures: options.getAudioFeatures || null,
+      onFrame: options.onFrame || null
+    };
+
+    const webgl = initWebGL(canvas);
+    const ctx2d = webgl ? null : canvas.getContext('2d');
+    const backend = webgl ? 'WebGL' : 'Canvas2D';
+
+    let freqL = new Uint8Array(512);
+    let freqR = new Uint8Array(512);
+    let prevEnergy = 0;
+    const smooth = { bass: 0, mid: 0, high: 0, flux: 0, stereo: 0 };
+    let simTime = 0;
+    let lastTs = 0;
+    let rafId = 0;
+    let running = true;
+
+    const resize = () => {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(240, Math.floor(rect.width * dpr));
+      const h = Math.max(160, Math.floor(rect.height * dpr));
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      if (webgl) webgl.gl.viewport(0, 0, w, h);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    function sampleFeatures(dt) {
+      if (typeof cfg.getAudioFeatures === 'function') {
+        const ext = cfg.getAudioFeatures(simTime) || {};
+        return {
+          bass: clamp(ext.bass || 0, 0, 2),
+          mid: clamp(ext.mid || 0, 0, 2),
+          high: clamp(ext.high || 0, 0, 2),
+          flux: clamp(ext.flux || 0, 0, 2),
+          stereo: clamp(ext.stereo || 0, -1, 1)
+        };
+      }
+      const anL = cfg.analyserL || cfg.analyser;
+      const anR = cfg.analyserR || cfg.analyserL || cfg.analyser;
+      if (!anL) return { bass: 0, mid: 0, high: 0, flux: 0, stereo: 0 };
+
+      const len = anL.frequencyBinCount || 512;
+      if (freqL.length !== len) {
+        freqL = new Uint8Array(len);
+        freqR = new Uint8Array(len);
+      }
+      anL.getByteFrequencyData(freqL);
+      anR.getByteFrequencyData(freqR);
+
+      const bandAvg = (a, b) => {
+        const i0 = Math.max(0, Math.floor(a * len));
+        const i1 = Math.min(len - 1, Math.ceil(b * len));
+        let s = 0, diff = 0;
+        for (let i = i0; i <= i1; i++) {
+          s += (freqL[i] + freqR[i]) * 0.5;
+          diff += (freqL[i] - freqR[i]);
+        }
+        const n = Math.max(1, i1 - i0 + 1);
+        return { avg: s / (n * 255), diff: diff / (n * 255) };
+      };
+      const b = bandAvg(0.0, 0.08);
+      const m = bandAvg(0.08, 0.35);
+      const h = bandAvg(0.35, 0.85);
+      const energy = b.avg * 0.5 + m.avg * 0.35 + h.avg * 0.15;
+      const flux = Math.max(0, (energy - prevEnergy) * 6.5);
+      prevEnergy = energy;
+      return {
+        bass: b.avg,
+        mid: m.avg,
+        high: h.avg,
+        flux,
+        stereo: clamp((b.diff + m.diff + h.diff) * 1.5, -1, 1)
+      };
+    }
+
+    const modeToInt = (m) => (m === 'zebra' ? 1 : m === 'ink' ? 2 : m === 'moire' ? 3 : 0);
+
+    function frame(ts) {
+      if (!running) return;
+      rafId = requestAnimationFrame(frame);
+      if (document.hidden) return;
+      const dt = lastTs ? Math.min(0.05, (ts - lastTs) / 1000) : 0.016;
+      lastTs = ts;
+
+      const raw = sampleFeatures(dt);
+      const react = cfg.reactivity;
+      const atk = 1 - Math.exp(-dt * 14);
+      const rel = 1 - Math.exp(-dt * 4.5);
+      smooth.bass += (raw.bass * react - smooth.bass) * (raw.bass * react > smooth.bass ? atk : rel);
+      smooth.mid += (raw.mid * react - smooth.mid) * (raw.mid * react > smooth.mid ? atk : rel);
+      smooth.high += (raw.high * react - smooth.high) * (raw.high * react > smooth.high ? atk : rel);
+      smooth.flux += (raw.flux * react - smooth.flux) * (raw.flux * react > smooth.flux ? 0.55 : rel);
+      smooth.stereo += (raw.stereo * react - smooth.stereo) * rel;
+
+      simTime += dt * cfg.speed * (0.65 + smooth.bass * 0.9 + smooth.mid * 0.5);
+
+      if (webgl) {
+        const { gl, uniforms } = webgl;
+        gl.uniform2f(uniforms.u_res, canvas.width, canvas.height);
+        gl.uniform1f(uniforms.u_time, simTime);
+        gl.uniform1f(uniforms.u_bass, smooth.bass);
+        gl.uniform1f(uniforms.u_mid, smooth.mid);
+        gl.uniform1f(uniforms.u_high, smooth.high);
+        gl.uniform1f(uniforms.u_flux, smooth.flux);
+        gl.uniform1f(uniforms.u_stereo, smooth.stereo);
+        gl.uniform1f(uniforms.u_warp, cfg.warp);
+        gl.uniform1f(uniforms.u_bands, cfg.bands);
+        gl.uniform1i(uniforms.u_mode, modeToInt(cfg.mode));
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      } else if (ctx2d) {
+        drawFallback2D(ctx2d, canvas.width, canvas.height, simTime, smooth, cfg);
+      }
+
+      if (typeof cfg.onFrame === 'function') cfg.onFrame(smooth, backend);
+    }
+    rafId = requestAnimationFrame(frame);
+
+    return {
+      backend,
+      resize,
+      setConfig(patch) { Object.assign(cfg, patch); },
+      setAnalysers(anL, anR) { cfg.analyserL = anL; cfg.analyserR = anR || anL; cfg.getAudioFeatures = null; },
+      destroy() {
+        running = false;
+        cancelAnimationFrame(rafId);
+        window.removeEventListener('resize', resize);
+      }
+    };
+  }
+
+  root.createMonochromeLiquidVisualizer = createMonochromeLiquidVisualizer;
+})(typeof globalThis !== 'undefined' ? globalThis : window);
+</script>
+<style>
+  /* Noise additions 2026-11-24: Liquid GL card visibility + controls */
+  .readout[data-view="liquidgl"] .card:not([data-viz="liquidgl"]) { display: none !important; }
+  .readout:not([data-view="liquidgl"]) .card[data-viz="liquidgl"] { display: none !important; }
+  .card[data-viz="liquidgl"] { flex-direction: column; }
+  #liquidgl { width: 100%; height: 100%; min-height: 260px; display: block; background: #000; flex: 1; }
+  .lgl-ctrls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 6px 8px 2px; }
+  .lgl-ctrls .sl { display: flex; align-items: center; gap: 6px; font-size: 11px; opacity: .9; }
+  .lgl-ctrls input[type="range"] { width: 84px; accent-color: #fff; }
+  .lgl-hud { font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; opacity: .85; padding: 2px 8px 6px; }
+  .lgl-armed { outline: 2px solid #fff !important; outline-offset: 1px; }
+  #midiLearnBtn.active { background: #fff; color: #000; font-weight: 700; }
+</style>
+<script>
+/* Noise additions 2026-11-24 (3/3): Liquid GL view + MIDI Learn.
+   Both are additive: they use only the DOM, the app's own controls and
+   standard Web APIs, and never modify the app's own script blocks. */
+(function () {
+  'use strict';
+  var LS_L = 'noise_liquidgl_v1';
+  var LS_M = 'noise_midilearn_v1';
+  function $(id) { return document.getElementById(id); }
+  function load(key, dflt) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : dflt; } catch (_) { return dflt; }
+  }
+  function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (_) {} }
+
+  /* ================= Liquid GL view ================= */
+  var readout = $('readout');
+  var lglCfg = Object.assign(
+    { mode: 'mercury', speed: 0.85, warp: 1.55, bands: 11, reactivity: 1.25 },
+    load(LS_L, {})
+  );
+  var lglViz = null;
+  var lglBtn = null;
+  var lglPoll = 0;
+  var lglSource = 'Demo';
+
+  var demoFeatures = function (t) {
+    var pulse = Math.pow(0.5 + 0.5 * Math.sin(t * 2.1), 4);
+    return {
+      bass: 0.35 + 0.55 * (0.5 + 0.5 * Math.sin(t * 0.9)) + pulse * 0.3,
+      mid: 0.28 + 0.45 * (0.5 + 0.5 * Math.sin(t * 1.4 + 1.2)),
+      high: 0.22 + 0.4 * (0.5 + 0.5 * Math.sin(t * 3.1 + 0.5)),
+      flux: pulse * 0.85,
+      stereo: Math.sin(t * 0.65) * 0.7
+    };
+  };
+
+  function buildLiquidUi() {
+    if (!readout || typeof window.createMonochromeLiquidVisualizer !== 'function') return;
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-viz', 'liquidgl');
+    card.innerHTML =
+      '<div class="ch">リキッドGL（WebGL流体）</div>' +
+      '<canvas id="liquidgl" role="img" aria-label="リキッドGL表示"></canvas>' +
+      '<div class="lgl-ctrls">' +
+        '<select id="lglMode" aria-label="Liquid style">' +
+          '<option value="mercury">Mercury（水銀）</option>' +
+          '<option value="zebra">Op-Art Zebra（白黒等高線）</option>' +
+          '<option value="ink">Ink Wash（墨流し）</option>' +
+          '<option value="moire">Moiré（光学干渉）</option>' +
+        '</select>' +
+        '<label class="sl">Speed <input id="lglSpeed" type="range" min="0.1" max="2.5" step="0.05"></label>' +
+        '<label class="sl">Warp <input id="lglWarp" type="range" min="0.3" max="3.0" step="0.05"></label>' +
+        '<label class="sl">Bands <input id="lglBands" type="range" min="2" max="28" step="0.5"></label>' +
+        '<label class="sl">React <input id="lglReact" type="range" min="0" max="2.5" step="0.05"></label>' +
+      '</div>' +
+      '<div class="lgl-hud" id="lglHud">WebGL / ready</div>';
+    readout.appendChild(card);
+
+    lglBtn = document.createElement('button');
+    lglBtn.type = 'button';
+    lglBtn.className = 'viz-btn';
+    lglBtn.id = 'liquidglBtn';
+    lglBtn.textContent = 'リキッドGL';
+    lglBtn.setAttribute('data-help', 'WebGLシェーダーのモノクロ流体ビジュアライザ（3重ドメインワーピング）。Mercury / Zebra / Ink / Moiré の4スタイル。再生中はアプリの音声に反応します。');
+    var gridBtn = document.querySelector('.viz-btn[data-viz-view="grid"]');
+    if (gridBtn && gridBtn.parentNode) gridBtn.parentNode.insertBefore(lglBtn, gridBtn.nextSibling);
+    else if (readout.parentNode) readout.parentNode.insertBefore(lglBtn, readout);
+
+    $('lglMode').value = lglCfg.mode;
+    $('lglSpeed').value = lglCfg.speed;
+    $('lglWarp').value = lglCfg.warp;
+    $('lglBands').value = lglCfg.bands;
+    $('lglReact').value = lglCfg.reactivity;
+
+    function pushCfg() {
+      save(LS_L, lglCfg);
+      if (lglViz) lglViz.setConfig({
+        mode: lglCfg.mode, speed: Number(lglCfg.speed), warp: Number(lglCfg.warp),
+        bands: Number(lglCfg.bands), reactivity: Number(lglCfg.reactivity)
+      });
+    }
+    $('lglMode').addEventListener('change', function (e) { lglCfg.mode = e.target.value; pushCfg(); });
+    $('lglSpeed').addEventListener('input', function (e) { lglCfg.speed = Number(e.target.value); pushCfg(); });
+    $('lglWarp').addEventListener('input', function (e) { lglCfg.warp = Number(e.target.value); pushCfg(); });
+    $('lglBands').addEventListener('input', function (e) { lglCfg.bands = Number(e.target.value); pushCfg(); });
+    $('lglReact').addEventListener('input', function (e) { lglCfg.reactivity = Number(e.target.value); pushCfg(); });
+
+    lglBtn.addEventListener('click', function () {
+      if (readout.getAttribute('data-view') !== 'liquidgl') activateLiquid();
+    });
+
+    var mo = new MutationObserver(function () {
+      if (readout.getAttribute('data-view') !== 'liquidgl' && lglViz) deactivateLiquid();
+    });
+    mo.observe(readout, { attributes: true, attributeFilter: ['data-view'] });
+  }
+
+  function activateLiquid() {
+    readout.setAttribute('data-view', 'liquidgl');
+    if (lglBtn) lglBtn.classList.add('active');
+    if (lglViz) return;
+    var canvas = $('liquidgl');
+    var hud = $('lglHud');
+    if (!canvas) return;
+    var lastHud = 0;
+    lglViz = window.createMonochromeLiquidVisualizer(canvas, {
+      mode: lglCfg.mode, speed: Number(lglCfg.speed), warp: Number(lglCfg.warp),
+      bands: Number(lglCfg.bands), reactivity: Number(lglCfg.reactivity),
+      getAudioFeatures: demoFeatures,
+      onFrame: function (f, backend) {
+        var now = performance.now();
+        if (hud && now - lastHud > 500) {
+          lastHud = now;
+          hud.textContent = backend + ' | ' + lglCfg.mode + ' | source ' + lglSource +
+            ' | bass ' + f.bass.toFixed(2) + ' mid ' + f.mid.toFixed(2) +
+            ' high ' + f.high.toFixed(2) + ' flux ' + f.flux.toFixed(2);
+        }
+      }
+    });
+    // アプリ側 AnalyserNode が生成されたら実音声へ切り替える
+    lglPoll = window.setInterval(function () {
+      var ans = window.__noiseAnalysers || [];
+      if (ans.length && lglViz) {
+        if (ans.length >= 3) lglViz.setAnalysers(ans[ans.length - 2], ans[ans.length - 1]);
+        else lglViz.setAnalysers(ans[0], ans[0]);
+        lglSource = 'Audio';
+        window.clearInterval(lglPoll); lglPoll = 0;
+      }
+    }, 700);
+  }
+
+  function deactivateLiquid() {
+    if (lglBtn) lglBtn.classList.remove('active');
+    if (lglPoll) { window.clearInterval(lglPoll); lglPoll = 0; }
+    if (lglViz) { try { lglViz.destroy(); } catch (_) {} lglViz = null; }
+    lglSource = 'Demo';
+  }
+
+  /* ================= MIDI Learn ================= */
+  var mlBindings = load(LS_M, {});
+  var mlOn = false;
+  var mlArmed = null;
+  var mlAccess = null;
+  var mlStatus = null;
+
+  function mlStatusText(msg) {
+    if (!mlStatus) return;
+    mlStatus.textContent = msg ||
+      ('MIDI Learn 割当: ' + Object.keys(mlBindings).length + ' 件' +
+       (mlOn ? '（Learn ON: 操作子をクリック → CCを動かしてください）' : ''));
+  }
+
+  function mlApply(id, v) {
+    var el = $(id);
+    if (!el) return;
+    if (el.type === 'checkbox') {
+      el.checked = v >= 64;
+    } else if (el.tagName === 'SELECT') {
+      el.selectedIndex = Math.min(el.options.length - 1, Math.floor(v / 128 * el.options.length));
+    } else {
+      var min = parseFloat(el.min || '0');
+      var max = parseFloat(el.max || '1');
+      var step = parseFloat(el.step || '0');
+      var x = min + (v / 127) * (max - min);
+      if (step > 0) x = Math.round(x / step) * step;
+      el.value = String(Math.round(x * 10000) / 10000);
+    }
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function mlOnMessage(e) {
+    var d = e.data;
+    if (!d || d.length < 3) return;
+    if ((d[0] & 0xF0) !== 0xB0) return;
+    var cc = d[1], val = d[2];
+    if (mlArmed) {
+      mlBindings[cc] = mlArmed.id;
+      save(LS_M, mlBindings);
+      mlStatusText('CC' + cc + ' → #' + mlArmed.id + ' に割り当てました');
+      mlArmed.classList.remove('lgl-armed');
+      mlArmed = null;
+      return;
+    }
+    var id = mlBindings[cc];
+    if (id) mlApply(id, val);
+  }
+
+  function mlHook() {
+    if (!mlAccess) return;
+    mlAccess.inputs.forEach(function (inp) { inp.onmidimessage = mlOnMessage; });
+  }
+
+  function mlEnsureAccess() {
+    if (mlAccess || !navigator.requestMIDIAccess) return;
+    navigator.requestMIDIAccess({ sysex: false }).then(function (acc) {
+      mlAccess = acc;
+      mlHook();
+      acc.onstatechange = mlHook;
+    }).catch(function () {
+      mlStatusText('MIDIアクセスが許可されませんでした');
+    });
+  }
+
+  function buildMidiLearnUi() {
+    var midiBtn = $('midiBtn');
+    if (!midiBtn || !midiBtn.parentNode) return;
+    var wrap = midiBtn.parentNode;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'secondary';
+    btn.id = 'midiLearnBtn';
+    btn.textContent = 'MIDI Learn';
+    btn.setAttribute('data-help', 'ONにしてパラメータの操作子をクリックし、MIDIコントローラのノブ/CCを動かすと割り当てます。割当はこのブラウザに保存されます。固定マップ（CC7等）は従来どおり同時に働きます。');
+    var clear = document.createElement('button');
+    clear.type = 'button';
+    clear.className = 'secondary';
+    clear.id = 'midiLearnClearBtn';
+    clear.textContent = '割当を全消去';
+    mlStatus = document.createElement('div');
+    mlStatus.className = 'help';
+    mlStatus.id = 'midiLearnStatus';
+    wrap.appendChild(btn);
+    wrap.appendChild(clear);
+    wrap.appendChild(mlStatus);
+    mlStatusText();
+
+    btn.addEventListener('click', function () {
+      mlOn = !mlOn;
+      btn.classList.toggle('active', mlOn);
+      btn.textContent = mlOn ? 'MIDI Learn: ON' : 'MIDI Learn';
+      if (mlOn) mlEnsureAccess();
+      if (!mlOn && mlArmed) { mlArmed.classList.remove('lgl-armed'); mlArmed = null; }
+      mlStatusText();
+    });
+    clear.addEventListener('click', function () {
+      mlBindings = {};
+      save(LS_M, mlBindings);
+      mlStatusText('割当を全て消去しました');
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!mlOn) return;
+      var t = e.target;
+      if (!t || !t.id) return;
+      if (t.id === 'midiLearnBtn' || t.id === 'midiLearnClearBtn') return;
+      if (!/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (mlArmed) mlArmed.classList.remove('lgl-armed');
+      mlArmed = t;
+      mlArmed.classList.add('lgl-armed');
+      mlStatusText('#' + t.id + ' を選択中。割り当てたいCCを動かしてください');
+    }, true);
+
+    window.__noiseMidiLearn = {
+      bindings: function () { return Object.assign({}, mlBindings); },
+      applyCC: function (cc, v) { var id = mlBindings[cc]; if (id) mlApply(id, v); },
+      _message: mlOnMessage
+    };
+  }
+
+  buildLiquidUi();
+  buildMidiLearnUi();
+})();
+</script>
 </body>
 </html>
