@@ -1,0 +1,21 @@
+# Secret scan (added 2026-11-25 by Muse #1, approved by the user).
+# Runs gitleaks on every push and pull request. A red check means a secret
+# was found in the diff/history — it does not block direct pushes by itself
+# (no branch protection), but makes leaks visible immediately.
+name: gitleaks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
