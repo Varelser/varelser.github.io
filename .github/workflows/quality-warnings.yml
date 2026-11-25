@@ -1,0 +1,118 @@
+# Quality warnings gate (added 2026-11-25 by Muse #1, approved by the user).
+# WARNING ONLY: this workflow never fails a build and never blocks a deploy.
+# It surfaces three classes of problems as GitHub annotations + a step summary:
+#   1. Spotify links (the user's standing rule: no Spotify links on public
+#      pages, EXCEPT the Midnight Espresso page, whose show link is allowed).
+#   2. Missing Open Graph basics (og:title / og:image) on index pages.
+#   3. Broken local references (href/src pointing at files that do not exist).
+# Lighthouse is intentionally NOT run here (too slow/flaky per push); visual
+# and performance checks stay on the iMac-side Lighthouse CLI sampling.
+name: quality-warnings
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  warn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Spotify link check (warning only)
+        run: |
+          echo "## Spotify link check" >> "$GITHUB_STEP_SUMMARY"
+          hits=$(grep -rInE "open\.spotify\.com|spotify:(track|album|artist|show|episode|playlist)" \
+                   --include="*.html" --include="*.md" --include="*.js" . \
+                   | grep -vi "midnight" || true)
+          if [ -n "$hits" ]; then
+            echo "$hits" | while IFS= read -r line; do
+              file=$(echo "$line" | cut -d: -f1); ln=$(echo "$line" | cut -d: -f2)
+              echo "::warning file=${file#./},line=${ln}::Possible Spotify link (rule: no Spotify links on public pages except Midnight Espresso)"
+            done
+            echo "$hits" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No Spotify links found (outside the Midnight Espresso exception)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 0
+
+      - name: OGP + broken local reference check (warning only)
+        run: |
+          python3 - <<'PYEOF'
+          import os, re, sys
+          from html.parser import HTMLParser
+
+          warnings = []
+          html_files = []
+          for root, dirs, files in os.walk("."):
+              dirs[:] = [d for d in dirs if d not in (".git", ".github", "node_modules")]
+              for f in files:
+                  if f.endswith((".html", ".htm")):
+                      html_files.append(os.path.join(root, f))
+
+          class RefParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.refs = []
+                  self.has_og_title = False
+                  self.has_og_image = False
+              def handle_starttag(self, tag, attrs):
+                  a = dict(attrs)
+                  if tag == "meta":
+                      if a.get("property") == "og:title":
+                          self.has_og_title = True
+                      if a.get("property") == "og:image":
+                          self.has_og_image = True
+                  for key in ("href", "src"):
+                      if key in a and a[key]:
+                          self.refs.append(a[key])
+
+          for path in html_files:
+              try:
+                  text = open(path, encoding="utf-8", errors="replace").read()
+              except Exception:
+                  continue
+              p = RefParser()
+              try:
+                  p.feed(text)
+              except Exception:
+                  pass
+              base = os.path.basename(path)
+              if base in ("index.html", "index.htm"):
+                  if not p.has_og_title:
+                      warnings.append((path, "Missing og:title"))
+                  if not p.has_og_image:
+                      warnings.append((path, "Missing og:image"))
+              for ref in p.refs:
+                  if ref.startswith(("http://", "https://", "//", "mailto:", "tel:", "data:", "#", "javascript:")):
+                      continue
+                  target = ref.split("#")[0].split("?")[0]
+                  if not target:
+                      continue
+                  if target.startswith("/"):
+                      cand = "." + target
+                  else:
+                      cand = os.path.normpath(os.path.join(os.path.dirname(path), target))
+                  if os.path.isdir(cand):
+                      cand = os.path.join(cand, "index.html")
+                  if not os.path.exists(cand):
+                      warnings.append((path, f"Broken local reference: {ref}"))
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as s:
+              s.write("\n## OGP / local reference check\n")
+              if warnings:
+                  for path, msg in warnings[:200]:
+                      s.write(f"- {path}: {msg}\n")
+              else:
+                  s.write("No problems found.\n")
+          for path, msg in warnings[:200]:
+              print(f"::warning file={path.lstrip('./')}::{msg}")
+          print(f"total warnings: {len(warnings)}")
+          sys.exit(0)
+          PYEOF
+          exit 0
