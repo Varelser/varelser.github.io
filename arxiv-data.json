@@ -803,6 +803,96 @@
   },
   {
     "authors": [
+      "Lianghui Zhu",
+      "Shijie Wang",
+      "Xinggang Wang",
+      "Jinze Bai",
+      "Bo Wang",
+      "Xiang Bai"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.CL"
+    ],
+    "field": "arXiv",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-25T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "ループ型Transformerは層を繰り返し使うことで表現力を高めるが、効率が課題だった。本論文は、ループ間で何を受け渡すべきかを再考し、キー・バリュー（KV）をメモリとして深さとループをまたいで選択的に再利用するMixture-of-Loops Attention（MoLA）を備えたMixture-of-Loops Transformer（MoLT）を提案する。残差ストリームを保持するMoLT-Rと、埋め込みから再出発するMoLT-KVの2形態があり、後者は同一位置のループ間依存をなくし、ループ強制による並列学習と組み合わせて、学習時のループ回を超えた単一走査デコーディングを可能にする。<br><br>さらに効率と品質の均衡のため、メモリ構築と予測読み出しを分離したU字型MoLT（U-MoLT）を導入し、不要なデコーダ走査を予測を変えずに省略する。4000億トークンの事前学習では、7億・15億の密モデルと30億のMoEモデルでOLMo3を上回り、7億モデルで検証クロスエントロピーのトークン効率が1.7倍、30億MoEでは10ドメインのパープレキシティが0.75改善し、10タスクの精度が2.1ポイント向上した。Qwen3.5-0.8B-Baseの1000億トークン継続事前学習でも、全11ドメインで改善した。<br><br>推論時には、MoL-Hybrid-2を用いたU-MoLTがループなしのOLMo3とほぼ同等のレイテンシ（Sサイズで996.6ミリ秒対1000.6ミリ秒）を達成した。ループ型アーキテクチャの効率問題に対する具体的な設計解を示した点が意義だが、評価は同系列のベースラインとの比較が中心で、実運用での汎用性は今後の検証課題である。出典：arXiv",
+    "timestamp": 1795564800000,
+    "title": "Mixture-of-Loops Transformer",
+    "titleJa": "ループ混合Transformer――深さとループをまたぐKVメモリで表現力と効率を両立",
+    "url": "https://arxiv.org/abs/2611.34923"
+  },
+  {
+    "authors": [
+      "Violeta Kastreva",
+      "Philip Whittington",
+      "Dennis Komm",
+      "Tiago Pimentel"
+    ],
+    "categories": [
+      "cs.CL",
+      "cs.LG"
+    ],
+    "field": "arXiv",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-25T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "言語モデルの前処理であるトークン化は、圧縮や単語尤度などの目的で最適なトークナイザーを求める問題として定式化できる。本論文は、P≠NPの仮定のもとでは、多項式時間アルゴリズムが最適解の定数倍以内に収まるトークナイザーを見つけることはできない、すなわちトークン化は近似可能性クラスAPXに属さないことを証明した。直接型とボトムアップ型の両方のトークン化、圧縮目的とユニグラム対数尤度目的の両方、二値以上のすべてのアルファベットについて成立する。<br><br>さらに、単項アルファベット上でも直接型トークン化はAPX困難であり、多項式時間近似スキーム（PTAS）も存在しないことが示された。トークナイザーの設計が経験則やヒューリスティクスに頼らざるを得ない理由に、計算複雑性理論からの根拠を与えた結果といえる。<br><br>証明は理論的なもので、実験的な評価は含まれていない。実用的なトークナイザー（BPEなど）の性能を直接否定するものではなく、最適性の保証が得られないことを示した点に留まることに注意が必要だ。言語モデルの基盤技術に対する理論的な限界の明確化として意義がある。出典：arXiv",
+    "timestamp": 1795564800000,
+    "title": "Tokenisation is not in APX",
+    "titleJa": "トークン化はAPXに属さない――最適なトークナイザーの近似不可能性の証明",
+    "url": "https://arxiv.org/abs/2611.34938"
+  },
+  {
+    "authors": [
+      "Shreshth Rai",
+      "Rishii Kumar Singh",
+      "Aksh Aggarwal"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.CL",
+      "cs.DB"
+    ],
+    "field": "arXiv",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-25T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "Text-to-SQLエージェントの強化学習では、生成したクエリの実行結果が参照と一致すれば報酬が与えられる。しかしデータに欠陥を暴く行がなければ、誤ったクエリが偶然一致して報酬を得てしまう。本論文は、最終クエリをコード生成した隠しデータベースのコピー数件でも実行し、すべて一致した場合にのみ報酬を与える反事実データベース（CF）報酬を提案する。全一致を要求する厳密形と、一致割合で払う平均形がある。<br><br>1302問の合成監査では、厳密形により満額報酬を受ける誤クエリの割合が29.5%から16.8%へ、報酬ハッキングは54.1%から1.9%へ低下し、正しいクエリ2847件の誤却下は0件だった。生成器の系列を知らなくても同程度の効果が得られた。一方、3.35BモデルでのGRPO比較では、平均形での学習はドメイン内精度を改善せず（8.4%対11.7%）、Spiderでは1.6ポイントの向上にとどまった。2つの報酬が異なるのはロールアウトの5〜7%にすぎないためだ。<br><br>単一シードでは両者の優劣が逆転する例もあり、報酬設計の比較には複数シードが不可欠だと示された。報酬ハッキングを大幅に抑える手法を提示した一方、精度向上にはつながらなかった点が限界として残る。出典：arXiv",
+    "timestamp": 1795564800000,
+    "title": "Single-Database Rewards Are Hackable: Counterfactual Execution for Trustworthy Text-to-SQL RL",
+    "titleJa": "単一データベースの報酬はハッキング可能――反事実実行による信頼できるText-to-SQL強化学習",
+    "url": "https://arxiv.org/abs/2611.34363"
+  },
+  {
+    "authors": [
+      "Yurun Chen",
+      "Biao Yi",
+      "Qihang Yu",
+      "Keting Yin",
+      "Shengyu Zhang"
+    ],
+    "categories": [
+      "cs.AI"
+    ],
+    "field": "arXiv",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-25T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "スマートグラスのようなAIウェアラブルは、エージェントが利用できる文脈をデジタル環境から利用者の物理的な周囲へと広げる。コンピュータ作業は明示的な指示だけでなく、進行中の活動から生まれることもある。本論文はこの対話様式を「Ego Use」と呼び、一人称の観察のもとでエージェントを評価するベンチマークEgoUseBenchを提案する。明示的な指示によるComputer-Use、実行前に記録済みの一人称文脈を与えるOffline Ego Use、意図の変化に合わせて観察を続けながら行うOnline Ego Useの3設定がある。<br><br>74時間超の実世界の一人称記録をもとに693タスクを構築し、タスクの変化をGraft（要求の改訂）、Refresh（新たな一人称観察）、Clarify（エージェントからの情報確認）の3類型に分けた。先進モデルを評価した結果、Online Ego Useの平均成功率はComputer-Useより26.3%低かった。<br><br>一人称の観察は着用者の視点に限られ、証拠が不完全・曖昧な場合がある。新たな観察が届くたびに、エージェントは物理的文脈と利用者の意図の理解を改訂し、過去のデジタル操作がなお有効かを再評価しなければならない。変化し続ける文脈に実行を合わせ続ける難しさを定量化した点に意義がある。出典：arXiv",
+    "timestamp": 1795564800000,
+    "title": "EgoUseBench: Benchmarking Computer-Use Agents under Evolving First-Person Contexts",
+    "titleJa": "EgoUseBench――変化する一人称文脈のもとでコンピュータ利用エージェントを測るベンチマーク",
+    "url": "https://arxiv.org/abs/2611.34466"
+  },
+  {
+    "authors": [
       "Vansh Kapoor",
       "Max Sobol Mark",
       "Sreyas Venkataraman",
@@ -1626,113 +1716,5 @@
     "title": "SALSA: Sampling Adversarial Suffixes from Learned Distributions for LLM Safety Assessment",
     "titleJa": "SALSA――敵対的サフィックスの分布を学習しLLMの脆弱性を高速に探る",
     "url": "https://arxiv.org/abs/2611.33030"
-  },
-  {
-    "authors": [
-      "Fabian Gröger",
-      "Shuo Wen",
-      "Maria Brbić"
-    ],
-    "categories": [
-      "cs.LG",
-      "cs.AI",
-      "cs.CL"
-    ],
-    "field": "arXiv",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-24T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "基盤モデルは大規模な事前学習ののち、タスクごとに適応される。だが適応は本当に新しい能力を付け加えているのか、それともベースモデルがすでに持つ力を引き出しているだけなのか。本研究は、適応による更新を全入力に共通する成分と入力依存の残差に分解し、この問いを検証した。適応の本質をめぐる問いは、モデルの能力がどこに宿るのかという理解にも直結する。<br><br>その結果、適応による性能向上の大部分は共通成分だけで説明できることがわかった。層ごとに定数ベクトルを学ぶだけの「シフトアダプタ」が、LoRAやフルファインチューニングの挙動を再現したのである。研究チームはこれを「可能態の原理」と呼び、タスク専門性に必要な能力はベースモデルにすでに内在し、適応はそれを一定方向へ押し出す「現実化」にすぎないと主張する。<br><br>この原理は、パラメータ効率的な適応やモデルのステアリング、収束の理解に示唆を与え、「ニューラル・シケット」と呼ばれる現象の説明にもつながるという。基盤モデルの能力観を捉え直す、哲学的な含みをもった一本である。出典：arXiv",
-    "timestamp": 1795478400000,
-    "title": "On Potentiality and Actuality Of Foundation Models",
-    "titleJa": "基盤モデルの可能態と現実態――適応は新たな能力を加えるのか",
-    "url": "https://arxiv.org/abs/2611.32991"
-  },
-  {
-    "authors": [
-      "Yaswanth Chittepu",
-      "Raghavendra Addanki",
-      "Anup Rao",
-      "Branislav Kveton",
-      "Scott Niekum"
-    ],
-    "categories": [
-      "cs.LG",
-      "cs.AI",
-      "cs.CL",
-      "cs.NE"
-    ],
-    "field": "arXiv",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-24T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "LLMエージェントは通常、過去の観測と行動の全履歴を「状態」の代わりに保持するが、その多くはもはや不要な情報である。履歴を丸ごと抱え込む方式は入力を肥大化させ、計算コストとノイズの両方を増やす。本研究は、参照エージェントの能力を保ちつつ、履歴を最小限の抽象へ圧縮する「エージェント状態」の定義を提案した。<br><br>振る舞いの完全な一致ではなくタスク性能で十分性を定義し、状態抽象を決定論的な再帰プログラムとして表現。探索では参照エージェントの振る舞いをなぞるのではなく、タスクの成否そのものを基準にした。LLMに誘導された遺伝的アルゴリズムで探索した結果、ALFWorldとScienceWorldで参照エージェントに近い成功率を保ちながら、方策への平均入力を最大で71%と57%削減できた。<br><br>得られたプログラムは直接点検でき、対話の進行中に何が保持され、何が更新され、何が破棄されるかを明示的に説明できる。長い対話ほど履歴は膨らむため、圧縮の効果は実用上も大きい。エージェントの効率化と透明性を両立させる一歩となる。出典：arXiv",
-    "timestamp": 1795478400000,
-    "title": "Learning Compact State Abstractions for LLM Agents",
-    "titleJa": "LLMエージェントの状態を圧縮する――必要な情報だけを残す抽象化の学習",
-    "url": "https://arxiv.org/abs/2611.31800"
-  },
-  {
-    "authors": [
-      "Vincent Koc",
-      "Aditya Washikar",
-      "Rishab Naveen Venkataraman",
-      "Onur Solmaz",
-      "Zhentong Fan",
-      "Xinyang Han",
-      "Toby Vincent John",
-      "Hao Li",
-      "Achyut Mukund",
-      "Biresh Chandra Biswas",
-      "Eshan Shukla",
-      "Louis Pan",
-      "Ivan Kudryavtsev",
-      "Patthigulla Sai Surendra",
-      "Krish Oberoi",
-      "Ayaan Zaidi",
-      "Hema Veeradhi",
-      "Taylor Agarwal",
-      "Erik Erlandson",
-      "Agustin Rivera",
-      "Jacob Tomlinson",
-      "Louka Ewington-Pitsos"
-    ],
-    "categories": [
-      "cs.AI",
-      "cs.CL",
-      "cs.SE"
-    ],
-    "field": "arXiv",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-24T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "一般の人々のあいだでAIエージェントの利用が急増するなか、どの構成が自分の用途に最も有効かは分かりにくい。日常の利用では、どのモデルとどのハーネスを組み合わせるかが悩みの種になっている。本研究は、1000万人超のユーザーリクエストをもとにした100件の日常タスクからなるベンチマークShellBenchを提案した。雑然としたファイルや競合する情報源のある現実的な作業環境で、正しさと安全性を採点する。<br><br>12モデル×5ハーネス×3推論レベル、計53,100回の実行を評価した結果、性能を最も左右するのはハーネスの選択ではなくモデルの選択だった。ただし上位3モデルの差はわずか1.1ポイントで、GPT-6 Astraが62.5%で首位、GPT-6.1 Solは61.4%を約6分の1の推定コストで達成した。<br><br>ハーネスによる違いは性能・安全性のいずれでも小さく、pass@1は42.9〜45.2の範囲にとどまった。日常利用では最上位モデルや特定のハーネスにこだわる必要は薄く、費用対効果の高い選択肢が実用的であることが示された。出典：arXiv",
-    "timestamp": 1795478400000,
-    "title": "ShellBench: What Matters More for AI Agents, Models, or Harness for Everyday Tasks",
-    "titleJa": "AIエージェントの実力は何で決まるか――日常タスクのベンチマークShellBench",
-    "url": "https://arxiv.org/abs/2611.32946"
-  },
-  {
-    "authors": [
-      "Georgios Politis",
-      "Evangelos Pappas"
-    ],
-    "categories": [
-      "cs.CR",
-      "cs.DC"
-    ],
-    "field": "Hugging Face Papers",
-    "genre": "Ethics / Safety",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-24T00:00:00Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "分割学習におけるプライバシー評価では、防御そのものの欠陥と、評価方法の欠陥が混同されがちである。評価者が見落としやすい落とし穴として、露出した勾配チャネル、ずれたラベルへの再構成の照合、未較正のプローブの使用が挙げられる。本研究は、こうした測定側の失敗を切り分け、過去の4件の分割LLMキャンペーンを遡及的に再分析した。<br><br>24件の必須プローブのうち較正を満たしたのは4件のみだったが、それでも13構成で限定的なプライバシー侵害が確認された。残りの6構成は有用性や学習効果の不足で除外された。7セルの防御再設計パイロットでは、較正済みの次バイト構造プローブが全セルで基準を突破し、最終的に4件が不合格、3件が判定不能となった。<br><br>共有鍵の直交ラッパーは受動的な盗聴からは守るが、侵害されたホストからは活性化を隠せないことも示された。1,522件のチェックを122件のSHA-256固定アーティファクトで再実行可能にし、検証可能性も確保している。プライバシー主張の検証には、まず測定の較正が不可欠であることが示唆される。出典：Hugging Face Papers",
-    "timestamp": 1795478400000,
-    "title": "Separating Measurement Failures from Defence Failures in Split Language-Model Privacy",
-    "titleJa": "分割型言語モデルのプライバシー評価――測定の失敗と防御の失敗を切り分ける",
-    "url": "https://huggingface.co/papers/2611.31752"
   }
 ]
