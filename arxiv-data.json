@@ -1090,6 +1090,150 @@
   },
   {
     "authors": [
+      "Steffen Urban"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "field": "arXiv cs.LG",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-24T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "大規模言語モデル（LLM）に、2万パラメータのCIFAR-10用CNNの重みをすべてテキストで与え、ツールもデータも推論の実行もなしに4ビット量子化ネットワークを作らせる実験を行った。単純な最近傍丸め（RTN）では精度が81.4%から60.4%へ落ちる。Claude系の4モデルを対象に、入力と指示の異なる4つの評価プロトコルで検証した。<br><br>浮動小数点版とRTN版の両方を与えた場合、Opus 5.5は層ごとに1つの回答で、各3×3カーネル内の丸め誤差を相殺するよう調整し、精度を77.95%まで回復した。浮動小数点版のみを与えた場合は、誤差を相殺する修正を挙げても適用せず、RTNに留まった。ただし尺度をやや切り詰めることで、Fable 5.2の量子化ネットワークは70.0%まで上がった。<br><br>結果は、フロンティアLLMが重み空間を直接推論して量子化誤差の大部分を回復できることを示す一方、自発的な最適化の適用には限界があることも明らかにした。較正データから丸めを学ぶAdaRoundには及ばないものの、ツールなしの推論だけでの到達点として注目される。<br><br>出典：arXiv",
+    "timestamp": 1795478400000,
+    "title": "Can a Frontier LLM Repair a Quantized Network by Tool-Free Weight-Space Programming?",
+    "titleJa": "フロンティアLLMは道具なしで量子化ネットワークを修復できるか――重み空間プログラミングの検証",
+    "url": "https://arxiv.org/abs/2611.33031"
+  },
+  {
+    "authors": [
+      "Yuchao Wu",
+      "XingCheng Liang",
+      "Xuanze Wang",
+      "Yini Huang",
+      "Yue Wu"
+    ],
+    "categories": [
+      "cs.CL",
+      "cs.IR"
+    ],
+    "field": "arXiv cs.CL",
+    "genre": "LLM / NLP",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-24T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "長期の会話記憶では、複数の対話セッションに散らばった補完的な事実を拾う必要があり、問いと直接の類似度が低い中間の証拠も含まれる。既存手法は派生的な記憶表現や関係構造に頼り、構築コストが高く、原文の詳細が失われがちだった。SAG-Memは会話メッセージを重なりのないチャンクで丸ごと保存し、問い合わせ時に語彙拡張で補完的証拠を探す枠組みである。<br><br>記憶の構築にモデル推論は不要で、LLMによる抽出・要約・関係構築を使わず語彙索引だけを用いる。問い合わせ時はBM25で候補を拾い、証拠評価器が有用なチャンクを選び、その語彙的手がかりで再検索する。相対時間の表現にはカレンダー解釈を注釈し、原文と時間の粒度を保つ。軽量版SAG-Mem-Liteは証拠採点を埋め込みによる候補採点に置き換える。<br><br>LoCoMoで83.08、LongMemEvalで80.20と、両ベンチマークで評価手法中最高を記録し、LongMemEvalでは最強の比較対象を7.20ポイント上回った。Lite版も77.09と77.20を記録し、全コンテキスト方式や他の記憶ベース手法より運用コストが低く、問い合わせの遅延も小さい。会話の保存と証拠主導の検索拡張が、長期会話記憶の有効な設計であることが示された。<br><br>出典：arXiv",
+    "timestamp": 1795478400000,
+    "title": "SAG-Mem-1.0 Technical Report",
+    "titleJa": "SAG-Mem――会話を丸ごと残し、語彙の手がかりで証拠を掘り起こす長期会話記憶",
+    "url": "https://arxiv.org/abs/2611.33124"
+  },
+  {
+    "authors": [
+      "Jiawei Gu",
+      "Linjie Li",
+      "Yiming Liu",
+      "Yunzhuo Hao",
+      "Huichen Wang",
+      "Guanzheng Chen",
+      "Zhichao Peng",
+      "Luxin Xu",
+      "Xinyu Zhang",
+      "Li Luo",
+      "Disen Lan",
+      "Zican Hu",
+      "Mingyang Song",
+      "David Valente",
+      "Alex Jinpeng Wang",
+      "Yafu Li",
+      "Ganqu Cui",
+      "Zhengyuan Yang",
+      "Qizhe Xie",
+      "Yejin Choi",
+      "Ranjay Krishna",
+      "Yu Cheng"
+    ],
+    "categories": [
+      "cs.CV",
+      "cs.AI",
+      "cs.CL"
+    ],
+    "field": "Hugging Face Papers",
+    "genre": "Vision / Multimodal",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-24T00:00:00Z",
+    "source": "Hugging Face Papers",
+    "summaryHtml": "人は言葉だけでなく絵でも考える。画像と言葉が交互に現れる推論では、モデルが中間画像を作り、それを手がかりにさらに推論を進める。従来は課題ごとの実演データが必要で、収集が難しかった。本研究は画像そのものを教師とする2段階の学習法ThinkMorph-SSLを提案する。<br><br>第1段階のプレテキスト推論では、画像の色付けやノイズ除去といった視覚課題を、指示なしの交互トレースに変換する。モデルは劣化した画像を説明し、復元した画像を生成して解釈する。指示文を必要としないため、大量の画像から教師信号を作れるのが特徴である。第2段階では自動構築した実演で質問駆動の指示チューニングを行う。<br><br>同じ指示チューニング量で比較すると、プレテキスト推論を経たモデルは指示チューニングのみを上回った。完全なレシピではベースモデルから12ベンチマーク平均で11.33ポイント向上した。画像由来の教師信号が、交互推論に必要な視覚能力を育て、課題別実演からの学習も改善することが示された。課題固有の実演が乏しい場面でも有効である。<br><br>出典：Hugging Face Papers",
+    "timestamp": 1795478400000,
+    "title": "ThinkMorph-SSL: Scaling Interleaved Multimodal Reasoning with Pretext Tasks",
+    "titleJa": "ThinkMorph-SSL――画像そのものを教師にする、画像と言葉が交わる推論の学習法",
+    "url": "https://huggingface.co/papers/2611.32183"
+  },
+  {
+    "authors": [
+      "Feixiang Ruan",
+      "Guodong Lv",
+      "Kewei Zhang",
+      "Wenbo Huang",
+      "Yintianrun Zhang",
+      "Qiang Wang",
+      "Ruiyang Si",
+      "Shunyu Yang",
+      "Shulong Jiang",
+      "Weicheng Duan",
+      "Rui Ni",
+      "Jianxin Bi",
+      "Lekai Wang",
+      "Yuze Fan",
+      "Haobo Li",
+      "Zeliang Fu"
+    ],
+    "categories": [
+      "cs.RO"
+    ],
+    "field": "arXiv cs.RO",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-24T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "器用な把持・操作の学習は、高品質な実演データの不足に阻まれてきた。人間動画からの変換は不正確で、テレオペレーションは力覚フィードバックがなく、外骨格による収集は拡張しにくい。PyRUA-Dexは、実演なしでコーディングエージェントがプログラム方策を育てる枠組みである。<br><br>方策の開発は2段階からなる。探索段階では複数のエージェントが並行して課題スキルとその組合せを探し、蒸留エージェントが成功例を課題ライブラリと1つのプログラムにまとめる。技能の発見と統合を分担することで、実演なしでも複雑な操作を組み立てられる。洗練段階では配置をランダム化して頑健性と実行効率を高める。<br><br>シミュレーションではBench2Dexで72.9の最高記録、DexJoCoでは完全ランダム化下で成功率81.0%を達成し、両ベンチマークで既存の学習済み方策を上回った。22自由度の両手を備えた実機では、楽譜からのピアノ演奏や書道の習得に新曲あたり最短30分と効率的だった。人間による実演データに頼らずに器用な操作を獲得できる道筋が示された。<br><br>出典：arXiv",
+    "timestamp": 1795478400000,
+    "title": "PyRUA-Dex: Learning Programmatic Policies for Dexterous Bimanual Manipulation with Coding Agents",
+    "titleJa": "PyRUA-Dex――実演なしで器用な両手操作を育てる、コーディングエージェントによるプログラム方策",
+    "url": "https://arxiv.org/abs/2611.33144"
+  },
+  {
+    "authors": [
+      "Xingjian Ran",
+      "Xiaoye Mo",
+      "Sihao Liu",
+      "Li Luo",
+      "Taiqiang Wu",
+      "Ji Zhao",
+      "Wenqi Shao",
+      "Hongyang Li",
+      "Jiaqi Wang",
+      "Bo Dai"
+    ],
+    "categories": [
+      "cs.RO",
+      "cs.CV"
+    ],
+    "field": "arXiv cs.RO",
+    "genre": "Agents / Robotics",
+    "monthKey": "2026-11",
+    "publishedAt": "2026-11-24T00:00:00Z",
+    "source": "arXiv",
+    "summaryHtml": "身体を持つエージェントの空間知能では、探索と相互作用で情報を集め、推論して行動する必要がある。既存のベンチマークは、正しい結果と、課題の要件を満たしたことを十分に区別できていなかった。課題の要件とは、対象の探索や配置など、結果に至る過程で満たすべき条件である。ROAM-Benchはロボットの移動や衝突の制約下でこれらの能力を評価する。<br><br>結果と課題要件は、シミュレーションの状態とエピソード記録を用いた独立の検証で評価され、形状・網羅性・配置をより厳しく確認する。27の屋内環境で11種類・5グループ・計250課題を人手で検証し、物体や部屋の探索、数え上げ、幾何判断、方向推論、再配置を扱う。人間の評価者は100課題で厳密な成功率84%を記録した。<br><br>7つの最先端視覚言語モデルでは、要件を満たさないのに正しい結果を出す場合と、厳しい検証を通っても結果が誤っている場合という、相補的な2つの失敗様式が見つかった。より完全な対象観測と較正されたフィードバックが、最終的な空間判断を改善することも確認された。<br><br>出典：arXiv",
+    "timestamp": 1795478400000,
+    "title": "ROAM-Bench: Evaluating Embodied Active Spatial Intelligence through Evidence Verification",
+    "titleJa": "ROAM-Bench――身体を持つエージェントの空間知能を「証拠」で測るベンチマーク",
+    "url": "https://arxiv.org/abs/2611.33143"
+  },
+  {
+    "authors": [
       "Seongchan Kim",
       "Soowon Son",
       "Sangoh Kim",
@@ -1652,122 +1796,5 @@
     "title": "Self-Upgrading Embodied Agents",
     "titleJa": "夜に自分の重みを書き換えるロボット――自己改善する身体化エージェント",
     "url": "https://arxiv.org/abs/2611.31117v1"
-  },
-  {
-    "authors": [
-      "Kairong Han",
-      "Nuanqiao Shan",
-      "Ziyu Zhao",
-      "Xinpeng Dong",
-      "Zijing Hu",
-      "Dian Jin",
-      "Leyan Deng",
-      "Junjian Ye",
-      "Lujia Pan",
-      "Fei Wu",
-      "Kun Kuang"
-    ],
-    "categories": [],
-    "field": "Hugging Face Papers",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-23T00:00:00Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "大規模言語モデルの強化学習では、最終出力やテキストの解答軌跡に報酬を与える手法が主流だが、報酬は粗く、推論の信頼性も十分でない。こうした枠組みはモデルが「何を言うか」に注目し、内部で「どう考えるか」を見落としている。そこで本研究は、テキスト報酬のエイリアシング（別々の推論過程が同じ報酬を受け取る問題）を指摘し、隠れ状態と注意マップに基づいて内部の推論過程に報酬を与える注意過程報酬モデル（APRM）を提案した。<br><br>APRMは約4600万パラメータの小さなモデルで、ランキング目的と反事実目的で学習され、分布シフトに対応するため定期的に更新されながら強化学習の最適化を導く。代表的な強化学習手法と組み合わせた実験では、平均pass@8が2.88%向上した。内部の推論信号を報酬に組み込むことで、表面的な正解だけでなく質の高い推論過程そのものを育てられる見通しが示された。<br><br>言語モデルの推論を「結果」ではなく「過程」から評価・強化する方向性は、推論の信頼性向上における有望な一手である。ただし評価は限られた手法と指標によるもので、他のモデル規模や課題への一般化は今後の検証が必要である。出典：Hugging Face Papers",
-    "timestamp": 1795392000000,
-    "title": "From Rewarding What Models Say to How They Think: Attention Process Reward Model for LLM Reinforcement Learning",
-    "titleJa": "「何を言うか」ではなく「どう考えるか」を褒める――注意過程報酬モデルによるLLM推論の強化",
-    "url": "https://huggingface.co/papers/2611.30627"
-  },
-  {
-    "authors": [
-      "Terry Ma",
-      "Aidan Zhang"
-    ],
-    "categories": [
-      "cs.AI"
-    ],
-    "field": "arXiv",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-23T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "言語モデルの推論では、多数決で得た答えを、追加の推論や検証で置き換えることがある。本研究はそうした置き換えを「上書き」と呼び、いつ上書きすべきかを検討した。障害は2つある。正しい代替案がそもそも存在するかどうかと、それを生み出す・選び出す方法の信頼性である。多数決の出発点として16件の回答を用い、追加の推論、プログラムの実行、他モデルによる推論の3つの方法を、3つのオープンな推論モデルと150問の数学競技問題で比較した。<br><br>多数決が誤っている場合、正しい答えは元の回答群にそもそも含まれていないことが多かった。同じモデルによる追加の推論はめったに上書きせず、プログラムの実行は評価したすべての合意しきい値で、誤りを増やすより正す方が多かった。他モデルによる上書きは弱いベースラインの一部を改善したが、より正確なモデル単体に対する優位は確立できなかった。合意のしきい値を厳しくすると上書きの頻度は下がるが、正す割合が一貫して上がるわけではなかった。<br><br>最も厳しいしきい値では上書きが起きる問題自体が少なく、信頼性についての結論は限られる。多数決の答えを覆すには、正しい代替案の存在と検証方法の信頼性の両方が鍵になることが示された。出典：arXiv",
-    "timestamp": 1795392000000,
-    "title": "When Does Overriding the Majority Vote Help?",
-    "titleJa": "多数決の答えをいつ覆すべきか――推論・プログラム実行・他モデルによる上書きの検証",
-    "url": "https://arxiv.org/abs/2611.31165v1"
-  },
-  {
-    "authors": [
-      "Nicolas Bolouri",
-      "Gaya Mehenni",
-      "Daniel Toyama"
-    ],
-    "categories": [
-      "cs.AI"
-    ],
-    "field": "arXiv",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-23T00:00:00Z",
-    "source": "arXiv",
-    "summaryHtml": "エージェントに何を最適化させるかを設計することは、エージェント自体を最適化することと同じくらい難しい。既存の言語モデルによる報酬生成は、あらかじめ決められた課題の目的を洗練させるものが多く、「何を探索するか」と「どう実装するか」が結びついて、結果として得られる行動の幅を狭めがちだった。本研究は、実行可能なエージェント目的をオープンエンドに進化させるフレームワーク「Habitats」を提案した。<br><br>Habitatsは報酬と方策のペアの集団を維持し、すべての方策を集団のすべての報酬で評価してクロス適合度行列を作り、自己習熟・転移・機能的多様性を可視化する。集団レベルのPlannerがこの情報をもとに親となる報酬を選び、的を絞った変異の指示を出し、別のMutatorがその指示を検証済みの報酬プログラムに翻訳する。カードサンドボックスと3つの連続制御環境（カートポール、ホッパー、チーター）で評価した結果、Habitatsは専門性と行動多様性の両方で既存手法を上回り、最終的な多様性は直接変異の1.8倍、独立生成の2.5倍に達した。<br><br>進化中に見ていない10の下流目的でも、凍結したHabitatsの方策ライブラリは適応の勝率で既存手法を上回り、2万エピソード学習した課題専用方策をも上回った。集団レベルの計画と報酬合成を分離することで、多様で学習可能・再利用可能な行動を発見できることが示された。出典：arXiv",
-    "timestamp": 1795392000000,
-    "title": "Habitats: A Framework for Open-Ended Evolution of Agent Objectives",
-    "titleJa": "エージェントの「目的」自体を進化させる――オープンエンドな目的進化フレームワークHabitats",
-    "url": "https://arxiv.org/abs/2611.31160v1"
-  },
-  {
-    "authors": [
-      "Qinyue Li",
-      "Weijie Qiao",
-      "Qingyi Tao",
-      "Zerui Gong",
-      "Zhe Yang",
-      "Quanzhou Li",
-      "Taolin Zhang",
-      "Jinglin He",
-      "Zhonghua Wu",
-      "Chen Change Loy"
-    ],
-    "categories": [],
-    "field": "Hugging Face Papers",
-    "genre": "Agents / Robotics",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-23T00:00:00Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "一人称視点の人間の動画や多様なロボットの記録には豊かな力学が含まれるが、行動ラベルがないか、共通の行動空間がない。潜在行動モデル（LAM）はこうした力学を回復できるが、逆動力学モデルと順動力学モデルをゼロから学習するため、画素再構成と潜在容量・精度のトレードオフを抱える。一方、学習済みの動画ワールドモデルは高忠実度の力学を生成できるが、その表現は全層に絡み合っている。本研究はワールドモデルをLAMとみなし、最小限の変更で力学を抽出できることを示した。<br><br>Native LAMは1つの学習済み動画拡散トランスフォーマーを逆・順動力学の両方として動かし、学習可能な力学レジスタだけを因果的な橋渡しとして、動きだけが異なる反事実的な時間ペアで学習し、動画の力学をコンパクトな潜在行動に蒸留する。さらにNative LAMを力学の教師とする視覚言語行動方策の事前学習パラダイムPAWlicyも提案した。Native LAMの潜在行動はLARYベンチマークで既存LAMを上回り、転移の学習なしに新しいロボット・新しい場面・人間の手からロボットへと同じ動きを再現した。<br><br>3.8BモデルでPAWlicyはRoboTwin 2.0で平均成功率93.6%を達成し、実機ロボットでもpi_0.5を上回った。両段階とも公開データと公開ワールドモデルのみを用いている。出典：Hugging Face Papers",
-    "timestamp": 1795392000000,
-    "title": "World Models as Native Latent Action Models",
-    "titleJa": "ワールドモデルをそのまま潜在行動モデルに――動画の力学を抽出するNative LAM",
-    "url": "https://huggingface.co/papers/2611.30898"
-  },
-  {
-    "authors": [
-      "Yikai Zhang",
-      "Mai Xu",
-      "Yunbei Zhang",
-      "Qirui Jin",
-      "Kenan Li",
-      "Yuwen Jia",
-      "Jinwei Yao",
-      "Xiangyu Zhang",
-      "Jielun Tan",
-      "Jin Pan",
-      "Zijian Jin",
-      "Xiao Sun"
-    ],
-    "categories": [],
-    "field": "Hugging Face Papers",
-    "genre": "LLM / NLP",
-    "monthKey": "2026-11",
-    "publishedAt": "2026-11-23T00:00:00Z",
-    "source": "Hugging Face Papers",
-    "summaryHtml": "強化学習でコーディングエージェントを訓練する際、隠れたテストが報酬を決めるが、課題集はそのテストを参照修正に対してしか検証していない。本研究は、報酬ラベルの正しさに焦点を当て、SWE-Gymを2つのLLMファミリーで監査した。9Bベースモデルが一度も解けない課題の74%は、正しい修正を却下するテスト（偽陰性）を含んでいた。誤ったラベルの課題を修正・除去すると、残った監査済み課題で訓練したモデルの方が、同じ規模・同じ難易度でSWE-bench VerifiedとSWE-bench Proの保留課題で2.4ポイントと2.7ポイント高く得点した。<br><br>単に解けない課題を落とすだけではこの効果はなかった。さらに、誤ったパッチが通る偽陽性は全合格パッチの約4分の1を占めるが、それを捕捉する新テストを追加しても保留課題の得点は検出できるほど変わらなかった。合格率は課題が報酬を生むかどうかを示すだけで、その報酬が正しいかは示さない。研究チームは監査済み1087課題のSWE-Gym-Verifiedと、実行証拠付きの判定、訓練セット、監査パイプライン全体を公開した。<br><br>コーディングエージェントの学習データでは、課題の難しさだけでなく報酬ラベルの正しさを検証することが重要であり、監査済みデータが学習効率を高めることが示された。出典：Hugging Face Papers",
-    "timestamp": 1795392000000,
-    "title": "What Makes Good Data for Training Coding Agents? A Systematic Study on SWE-Gym",
-    "titleJa": "コーディングエージェントの良い学習データとは――SWE-Gymの報酬ラベル監査",
-    "url": "https://huggingface.co/papers/2611.30207"
   }
 ]
